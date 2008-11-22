@@ -1,0 +1,8 @@
+Manifest-version: 1.0
+Name: com/knowgate/dfs
+Specification-Title: Distributed File System
+Specification-Version: 0.5
+Specification-Vendor: Know Gate S.L.
+Implementation-Title: com.knowgate.dfs
+Implementation-Version: 0.5
+Implementation-Vendor: Know Gate S.L.

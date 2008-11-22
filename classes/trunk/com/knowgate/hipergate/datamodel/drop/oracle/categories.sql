@@ -1,0 +1,19 @@
+
+DROP PROCEDURE k_sp_get_user_mailfolder;
+DROP PROCEDURE k_sp_get_user_mailroot;
+DROP PROCEDURE k_sp_del_category_r;
+DROP PROCEDURE k_sp_del_category;
+DROP PROCEDURE k_sp_get_cat_path;
+DROP PROCEDURE k_sp_cat_obj_position;
+DROP PROCEDURE k_sp_cat_expand;
+DROP PROCEDURE k_sp_del_user;
+DROP PROCEDURE k_sp_del_group;
+DROP PROCEDURE k_sp_cat_usr_perm;
+DROP PROCEDURE k_sp_cat_grp_perm;
+DROP PROCEDURE k_sp_cat_del_grp;
+DROP PROCEDURE k_sp_cat_del_usr;
+DROP PROCEDURE k_sp_cat_set_grp;
+DROP PROCEDURE k_sp_cat_set_usr;
+DROP PROCEDURE k_sp_cat_level;
+DROP PROCEDURE k_sp_cat_descendant;
+DROP PROCEDURE k_sp_get_cat_id;

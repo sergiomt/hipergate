@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head><!--
+  Copyright (c) 2002 KnowGate
+  All Rights Reserved.
+--></head>
+
+<body bgcolor="white"><h2>Distributed Cache Peer</h2>
+
+<p>
+The distributed cache is used for keeping a local copy of frecuently accesed data
+at the web or apllication server reducing database accesses.
+</p>
+The hole distributed cache structure is composed by a number or nodes (peers) and,
+possibly, a central cache coordinator.
+<p>
+The cache coordinator is not necessary if you only have one client peer,
+or if different peers do not share any data that may be changed at runtime.
+</p>
+<p>
+If there are multiple cache clients concurrently caching and updating 
+the same data, for example in a web server farm where all web server use the same
+centralized database, then it will be necessary to install the cache coordinator
+in an application server such as JBoss or another EJB container accesible throught RMI.
+<br>
+The cache coordinator is supplied in a different package from cache client as both
+components are to be installed on different machines.
+</p>
+<br>
+<img src="doc-files/cachepeers-1.gif">
+<br><br>
+<img src="doc-files/cachepeers-2.gif">
+<br><br>
+<h2>UML</h2>
+<img src="doc-files/package_cache.gif"></body>
+</html>

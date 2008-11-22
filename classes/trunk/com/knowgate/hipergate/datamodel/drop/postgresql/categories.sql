@@ -1,0 +1,18 @@
+DROP FUNCTION k_sp_get_user_mailfolder(CHAR,VARCHAR);
+DROP FUNCTION k_sp_get_user_mailroot(CHAR);
+DROP FUNCTION k_sp_del_category_r(CHAR);
+DROP FUNCTION k_sp_del_category(CHAR);
+DROP FUNCTION k_sp_get_cat_path(CHAR);
+DROP FUNCTION k_sp_cat_obj_position(CHAR, CHAR);
+DROP FUNCTION k_sp_cat_expand_node(CHAR, CHAR, INTEGER, INTEGER);
+DROP FUNCTION k_sp_cat_expand(CHAR);
+DROP FUNCTION k_sp_del_user(CHAR);
+DROP FUNCTION k_sp_del_group(CHAR);
+DROP FUNCTION k_sp_cat_usr_perm(CHAR, CHAR);
+DROP FUNCTION k_sp_cat_grp_perm(CHAR, CHAR);
+DROP FUNCTION k_sp_cat_del_grp(CHAR, CHAR, SMALLINT, SMALLINT);
+DROP FUNCTION k_sp_cat_del_usr(CHAR, CHAR, SMALLINT, SMALLINT);
+DROP FUNCTION k_sp_cat_set_grp(CHAR, CHAR, INTEGER, SMALLINT, SMALLINT);
+DROP FUNCTION k_sp_cat_set_usr(CHAR, CHAR, INTEGER, SMALLINT, SMALLINT);
+DROP FUNCTION k_sp_cat_level(CHAR);
+DROP FUNCTION k_sp_get_cat_id(VARCHAR);

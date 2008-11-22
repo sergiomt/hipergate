@@ -1,0 +1,10 @@
+[PropertyInfo]
+auditTransact,String,false,false, , ,true,<default>
+auditUser,String,false,false, , ,true,<default>
+items,Set,false,false, , ,true,<default>
+table,DBTable,false,false, , ,true,<default>
+[IconNames]
+
+
+
+

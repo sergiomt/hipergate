@@ -1,0 +1,8 @@
+Manifest-version: 1.0
+Name: com/knowgate/hipergate
+Specification-Title: HiperGate Data Model generic Support Classes
+Specification-Version: 2.2
+Specification-Vendor: Know Gate S.L.
+Implementation-Title: com.knowgate.hipergate
+Implementation-Version: 2.2
+Implementation-Vendor: Know Gate S.L.

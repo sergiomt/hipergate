@@ -1,0 +1,18 @@
+
+CREATE PROCEDURE k_sp_nextval @NMTable CHAR(18), @NextVal INTEGER OUTPUT AS
+  DECLARE seq CURSOR LOCAL DYNAMIC SCROLL_LOCKS FOR SELECT nm_table, nu_current FROM k_sequences WITH (ROWLOCK) WHERE nm_table=@NMTable FOR UPDATE OF nu_current
+  OPEN seq
+    FETCH NEXT FROM seq INTO @NMTable, @NextVal
+    UPDATE k_sequences SET nu_current=nu_current+1 WHERE CURRENT OF seq
+  CLOSE seq
+  DEALLOCATE seq
+GO;
+
+CREATE PROCEDURE k_sp_currval @NMTable CHAR(18), @NextVal INTEGER OUTPUT AS
+  SELECT @NextVal=nu_current FROM k_sequences WITH (ROWLOCK) WHERE nm_table=@NMTable
+GO;
+
+CREATE PROCEDURE k_sp_set_connection_options AS
+  SET NUMERIC_ROUNDABORT OFF
+  SET ANSI_PADDING,ANSI_WARNINGS,CONCAT_NULL_YIELDS_NULL,ARITHABORT,QUOTED_IDENTIFIER,ANSI_NULLS ON
+GO;

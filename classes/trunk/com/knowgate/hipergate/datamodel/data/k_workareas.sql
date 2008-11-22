@@ -1,0 +1,2 @@
+﻿INSERT INTO k_workareas (gu_workarea,nm_workarea,id_domain,gu_owner,bo_active,path_logo,max_quota,len_quota) VALUES ('c0a80146f4d1f5137b100047cde63b79','system_default',1024,'bab84ab397564299b068693187464b4f',1,NULL,104857600,0);
+INSERT INTO k_workareas (gu_workarea,nm_workarea,id_domain,gu_owner,bo_active,path_logo,max_quota,len_quota) VALUES ('aa0000ca39854673b17518ec5f870000','model_default' ,1025,'c1f4f56ffa344a5498c15a021203cf81',1,NULL,104857600,0);

@@ -1,0 +1,17 @@
+INSERT INTO k_apps (id_app,nm_app) VALUES (10,'Incidents Tracker');
+INSERT INTO k_apps (id_app,nm_app) VALUES (11,'Duty Manager');
+INSERT INTO k_apps (id_app,nm_app) VALUES (12,'Project Manager');
+INSERT INTO k_apps (id_app,nm_app) VALUES (13,'Mailwire');
+INSERT INTO k_apps (id_app,nm_app) VALUES (14,'Web Builder');
+INSERT INTO k_apps (id_app,nm_app) VALUES (15,'Virtual Disk');
+INSERT INTO k_apps (id_app,nm_app) VALUES (16,'Sales');
+INSERT INTO k_apps (id_app,nm_app) VALUES (17,'Collaborative Tools');
+INSERT INTO k_apps (id_app,nm_app) VALUES (18,'Marketing Tools');
+INSERT INTO k_apps (id_app,nm_app) VALUES (19,'Directory');
+INSERT INTO k_apps (id_app,nm_app) VALUES (20,'Shop');
+INSERT INTO k_apps (id_app,nm_app) VALUES (21,'Hipermail');
+INSERT INTO k_apps (id_app,nm_app) VALUES (22,'Training');
+INSERT INTO k_apps (id_app,nm_app) VALUES (23,'Wiki');
+INSERT INTO k_apps (id_app,nm_app) VALUES (24,'Passwords Manager');
+INSERT INTO k_apps (id_app,nm_app) VALUES (30,'Configuration');
+--INSERT INTO k_apps (id_app,nm_app) VALUES (25,'Surveys');

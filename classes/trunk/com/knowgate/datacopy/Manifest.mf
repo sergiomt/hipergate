@@ -1,0 +1,8 @@
+Manifest-version: 1.0
+Name: com/knowgate/datacopy
+Specification-Title: Complex Relational Data Object Copy
+Specification-Version: 1.0
+Specification-Vendor: Know Gate S.L.
+Implementation-Title: com.knowgate.datacopy
+Implementation-Version: 1.0
+Implementation-Vendor: Know Gate S.L.

@@ -1,0 +1,128 @@
+  // ----------------------------------------------------------
+  /* Esta función no es necesaria, puede ser sustituida por
+     siempre por bucles xsl:for-each y llamadas xsl:call-template
+     con parámetros
+
+  private void prebuild(String sBasePath) throws IOException, TransformerException {
+    // Toma una platilla XSL de entrada y sustituye las cadenas
+    // <-- INSERT BLOCKS TAGGED 'patron' -->
+    // por los bloques que cumplan el patrón de búsqueda especificado.
+    // Tras a sustitución, guarda cada página en una entrada del array aPages
+
+    File oFile;
+    FileReader oReader;
+    int iPos;
+    int iQuote;
+    int iFileLen;
+    int iReaded;
+    Node oBlocks;
+    Node oPages;
+    Element oContainer;
+    Element oContainers;
+    Node oTopNode;
+    Node oCurrentBlock;
+    Node oMetaBlock;
+    Node oMetaBlocks;
+    Element oTemplate;
+    String sContainerGUID;
+    String sContainerXSL;
+    String sPattern;
+    String sMetaBlockGUID;
+    LinkedList oMatchingBlocks;
+    ListIterator oBlockIterator;
+    StringBuffer oBlockBuff;
+    char aCharBuff[];
+
+    // Posicionarse en el nodo raiz de los contenedores
+    oTopNode = getRootNode().getFirstChild();
+    if (oTopNode.getNodeName().equals("xml-stylesheet"))
+      oTopNode = oTopNode.getNextSibling();
+
+    oPages = seekChildByName(oTopNode, "pages");
+
+    // Iterar sobre la lista de contenedores
+    for (Node oCurrentPage=getFirstElement(oPages);
+         oCurrentPage!=null;
+         oCurrentPage=getNextElement(oCurrentPage)) {
+
+      // Obtener el GUID del contenedor que describe la pagina
+      sContainerGUID = getTextValue(seekChildByName(oCurrentPage, "container"));
+
+      // Obtener el nodo del contenedor en la estructura del microsite
+      oContainers = oMSite.seekChildByName(oMSite.getRootNode().getFirstChild(), "containers");
+      oContainer = oMSite.seekChildByAttr(oContainers, "guid", sContainerGUID);
+
+      // Obtener la ruta al archivo fisico de la plantilla del contenedor
+      oTemplate = oMSite.seekChildByName(oContainer, "template");
+
+      // Para cada contenedor cargar su plantilla XSL
+      oFile = new File(sBasePath + oMSite.getTextValue(oTemplate));
+      iFileLen = new Long(oFile.length()).intValue();
+      aCharBuff = new char[iFileLen];
+      oReader = new FileReader(oFile);
+      iReaded = oReader.read(aCharBuff);
+      oReader.close();
+      oFile = null;
+      sContainerXSL = new String(aCharBuff, 0, iReaded);
+
+      // Dejar una referencia al nodo padre de metabloques
+      oMetaBlocks = oMSite.seekChildByName(oContainer, "metablocks");
+
+      // Reemplazar cada INSERT BLOCKS TAGGED '%' -->
+      // por su lista de bloques que cumplen la condicion del TAG
+
+      for (;;) {
+        // Buscar la siguiente ocurrencia de <!-- INSERT BLOCKS TAGGED
+        iPos = sContainerXSL.indexOf("<!-- INSERT BLOCKS TAGGED '");
+        // Si no se encontró ninguna ocurrencia finalizar el bucle
+        if (iPos<0) break;
+        // Buscar la 2ª comilla simple dentro de la ocurrencia
+        iQuote = sContainerXSL.indexOf(39, iPos+27);
+        // Sacar el patrón de busqueda
+        sPattern = sContainerXSL.substring(iPos+27, iQuote);
+        // Obtener un puntero al nodo <blocks>
+        oBlocks = seekChildByName(oCurrentPage, "blocks");
+        // Obtener la lista de bloques cuyo <tag> cumple el patron de TAGGED '...'
+        oMatchingBlocks = matchChildsByTag(oBlocks, sPattern);
+        // Para cada bloque que cumple el patrón cargar su metabloque asociado
+        // y pegarlo en la plantilla en el lugar de <!-- INSERT BLOCKS TAGGED '...' -->
+        oBlockIterator = oMatchingBlocks.listIterator();
+        // Crear un StringBuffer de tamaño inicial el de la plantilla + 2Kb por bloque (ad hoc)
+        oBlockBuff = new StringBuffer(sContainerXSL.length()+oMatchingBlocks.size()*2048);
+        // Añadir oBlockBuff toda la plantilla hasta el inicio de <!-- INSERT BLOCKS TAGGED '...' -->
+        oBlockBuff.append(sContainerXSL.substring(0,iPos));
+        while (oBlockIterator.hasNext()) {
+          oCurrentBlock = (Node) oBlockIterator.next();
+          // Buscar el GUID del metabloque en el PageSet
+         sMetaBlockGUID = getTextValue(seekChildByName(oCurrentBlock, "metablock"));
+
+          // Con el GUID del MetaBloque, cargar su plantilla leyendo la ruta del archivo desde el Microsite
+          oMetaBlock = oMSite.seekChildByAttr(oMetaBlocks, "id", sMetaBlockGUID);
+          if (null==oMetaBlock)
+            throw new TransformerException("metablock " + sMetaBlockGUID + " not found");
+
+          oTemplate = oMSite.seekChildByName(oMetaBlock, "template");
+
+          // Leer el fichero de la plantilla del bloque cuidando de que no se desborde el buffer de lectura
+          oFile = new File(sBasePath + oMSite.getTextValue(oTemplate));
+          // Ver si el fichero a leer es mayor que el buffer
+          iReaded = new Long(oFile.length()).intValue();
+          // En caso de que vaya a desbordarse, ampliar el buffer
+          if (iReaded>iFileLen) aCharBuff = new char[iFileLen = iReaded];
+          // Cargar el fichero de una vez...
+          oReader = new FileReader(oFile);
+          iReaded = oReader.read(aCharBuff);
+          oReader.close();
+          oFile = null;
+
+          // Concatenar el XSL de la plantilla del metabloque dentro del la plantilla del contenedor actual
+          oBlockBuff.append(aCharBuff, 0, iReaded);
+        } // wend
+
+        oBlockBuff.append(sContainerXSL.substring(iQuote+5));
+        sContainerXSL = oBlockBuff.toString();
+      } // next()
+      aPages.add(sContainerXSL);
+    } // next (c)
+  }  // prebuild()
+  */

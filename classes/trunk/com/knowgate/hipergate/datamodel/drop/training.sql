@@ -1,0 +1,12 @@
+DROP VIEW v_active_courses;
+DROP TABLE k_absentisms_lookup;
+DROP TABLE k_absentisms;
+DROP TABLE k_evaluations;
+DROP TABLE k_x_course_subject;
+DROP TABLE k_subjects_lookup;
+DROP TABLE k_subjects;
+DROP TABLE k_x_course_bookings;
+DROP TABLE k_x_course_alumni;
+DROP TABLE k_academic_courses;
+DROP TABLE k_courses;
+DROP TABLE k_courses_lookup;

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<DATASTRUCT>
+  <ROWSETS>
+    <INIT>
+    </INIT>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_domains</FROM>
+        <TO>k_domains</TO>
+        <WHERE>id_domain=?</WHERE>
+        <FROM_PK>id_domain</FROM_PK>
+        <TO_PK>id_domain</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFERENCED">id_domain,id_domain</MAPPING>
+        <MAPPING>NOW(),dt_created</MAPPING>
+        <MAPPING>'{#DomainNm}',nm_domain</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_workareas</FROM>
+        <TO>k_workareas</TO>
+        <WHERE>gu_workarea IN (SELECT gu_workarea FROM k_workareas WHERE id_domain=?)</WHERE>
+        <FROM_PK>id_domain,nm_workarea</FROM_PK>
+        <TO_PK>id_domain,nm_workarea</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="NEWGUID">gu_workarea,gu_workarea</MAPPING>
+        <MAPPING>'assign from k_users after exec',gu_owner</MAPPING>
+        <MAPPING>{#DomainId},id_domain</MAPPING>
+        <MAPPING>NOW(),dt_created</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_users</FROM>
+        <TO>k_users</TO>
+        <WHERE>id_domain=?</WHERE>
+        <FROM_PK>id_domain,tx_nickname</FROM_PK>
+        <TO_PK>id_domain,tx_nickname</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="NEWGUID">gu_user,gu_user</MAPPING>
+        <MAPPING TRANSFORM="REFER(k_domains.id_domain)">id_domain,id_domain</MAPPING>
+        <MAPPING>LOWER(CONCAT(nm_user,'@hipergate-{#DomainNm}.com')),tx_main_email</MAPPING>
+        <MAPPING>'{#DomainNm}',tx_surname1</MAPPING>
+        <MAPPING>'{#DomainNm}',tx_pwd</MAPPING>
+        <MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_workarea,gu_workarea</MAPPING>
+        <MAPPING>NULL,gu_category</MAPPING>
+        <MAPPING>NOW(),dt_created</MAPPING>
+      </MAPPINGS>
+      <AFTER>
+        <EXEC>UPDATE k_workareas SET gu_owner=(SELECT gu_user FROM k_users WHERE id_domain={#DomainId} AND nm_user LIKE 'Admin%') WHERE id_domain={#DomainId}</EXEC>
+      </AFTER>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_x_portlet_user</FROM>
+        <TO>k_x_portlet_user</TO>
+        <WHERE>id_domain=?</WHERE>
+        <FROM_PK>id_domain,gu_user,gu_workarea,nm_portlet,nm_page,nm_zone</FROM_PK>
+        <TO_PK>id_domain,gu_user,gu_workarea,nm_portlet,nm_page,nm_zone</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_users.gu_user)">gu_user,gu_user</MAPPING>
+        <MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_workarea,gu_workarea</MAPPING>
+      </MAPPINGS>
+    </ROWSET>    
+    <ROWSET>
+      <ACTION>
+        <FROM>k_acl_groups</FROM>
+        <TO>k_acl_groups</TO>
+        <WHERE>nm_acl_group LIKE 'MODEL%' AND id_domain=?</WHERE>
+        <FROM_PK>id_domain,nm_acl_group</FROM_PK>
+        <TO_PK>id_domain,nm_acl_group</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="NEWGUID">gu_acl_group,gu_acl_group</MAPPING>
+        <MAPPING TRANSFORM="REFER(k_domains.id_domain)">id_domain,id_domain</MAPPING>
+        <MAPPING>CONCAT('{#DomainNm}',' ',SUBSTRING(nm_acl_group FROM POSITION('/' IN nm_acl_group))),nm_acl_group</MAPPING>
+      </MAPPINGS>
+      <AFTER>
+        <EXEC>UPDATE k_domains SET gu_owner=(SELECT gu_user FROM k_users WHERE id_domain={#DomainId} AND nm_user LIKE 'Admin%'), gu_admins=(SELECT gu_acl_group FROM k_acl_groups WHERE id_domain={#DomainId} AND nm_acl_group='{#DomainNm} / Administrators') WHERE id_domain={#DomainId}</EXEC>
+      </AFTER>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_x_group_user</FROM>
+        <TO>k_x_group_user</TO>
+        <WHERE>gu_user IN (SELECT gu_user FROM k_users WHERE id_domain=?)</WHERE>
+        <FROM_PK>gu_acl_group,gu_user</FROM_PK>
+        <TO_PK>gu_acl_group,gu_user</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_users.gu_user)">gu_user,gu_user</MAPPING>
+        <MAPPING TRANSFORM="REFER(k_acl_groups.gu_acl_group)">gu_acl_group,gu_acl_group</MAPPING>
+        <MAPPING>NOW(),dt_created</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_categories</FROM>
+        <TO>k_categories</TO>
+        <WHERE>nm_category LIKE 'MODEL%' AND gu_owner IN (SELECT gu_user FROM k_users WHERE id_domain=?)</WHERE>
+        <FROM_PK>gu_category</FROM_PK>
+        <TO_PK>gu_category</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="NEWGUID">gu_category,gu_category</MAPPING>
+        <MAPPING TRANSFORM="REFER(k_users.gu_user)">gu_owner,gu_owner</MAPPING>
+        <MAPPING>COALESCE(CONCAT(UCASE('{#DomainNm}'),NULLIF(substring(nm_category from position('_' in nm_category)),'_MODEL')),UCASE('{#DomainNm}')),nm_category</MAPPING>
+        <MAPPING>NOW(),dt_created</MAPPING>
+        <MAPPING>NULL,dt_modified</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_cat_labels</FROM>
+        <TO>k_cat_labels</TO>
+        <WHERE>gu_category IN (SELECT gu_category FROM k_categories WHERE nm_category LIKE 'MODEL%' AND gu_owner IN (SELECT gu_user FROM k_users WHERE id_domain=?))</WHERE>
+        <FROM_PK>gu_category,id_language</FROM_PK>
+        <TO_PK>gu_category,id_language</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_categories.gu_category)">gu_category,gu_category</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_cat_tree</FROM>
+        <TO>k_cat_tree</TO>
+        <WHERE>gu_child_cat IN (SELECT gu_category FROM k_categories WHERE nm_category LIKE 'MODEL%' AND gu_owner IN (SELECT gu_user FROM k_users WHERE id_domain=?))</WHERE>
+        <FROM_PK>gu_parent_cat,gu_child_cat</FROM_PK>
+        <TO_PK>gu_parent_cat,gu_child_cat</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_categories.gu_category)">gu_parent_cat,gu_parent_cat</MAPPING>
+        <MAPPING TRANSFORM="REFER(k_categories.gu_category)">gu_child_cat,gu_child_cat</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_cat_root</FROM>
+        <TO>k_cat_root</TO>
+        <WHERE>gu_category IN (SELECT gu_category FROM k_categories WHERE nm_category LIKE 'MODEL%' AND gu_owner IN (SELECT gu_user FROM k_users WHERE id_domain=?))</WHERE>
+        <FROM_PK>gu_category,gu_category</FROM_PK>
+        <TO_PK>gu_category,gu_category</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_categories.gu_category)">gu_category,gu_category</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_x_cat_group_acl</FROM>
+        <TO>k_x_cat_group_acl</TO>
+        <WHERE>gu_acl_group IN (SELECT gu_acl_group FROM k_acl_groups WHERE id_domain=?) AND gu_category IN (SELECT gu_category FROM k_categories WHERE nm_category LIKE 'MODEL%')</WHERE>
+        <FROM_PK>gu_category,gu_acl_group</FROM_PK>
+        <TO_PK>gu_category,gu_acl_group</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_categories.gu_category)">gu_category,gu_category</MAPPING>
+        <MAPPING TRANSFORM="REFER(k_acl_groups.gu_acl_group)">gu_acl_group,gu_acl_group</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_x_cat_user_acl</FROM>
+        <TO>k_x_cat_user_acl</TO>
+        <WHERE>gu_user IN (SELECT gu_user FROM k_users WHERE id_domain=?) AND gu_category IN (SELECT gu_category FROM k_categories WHERE nm_category LIKE 'MODEL%')</WHERE>
+        <FROM_PK>gu_category,gu_user</FROM_PK>
+        <TO_PK>gu_category,gu_user</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_categories.gu_category)">gu_category,gu_category</MAPPING>
+        <MAPPING TRANSFORM="REFER(k_users.gu_user)">gu_user,gu_user</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+  </ROWSETS>
+</DATASTRUCT>

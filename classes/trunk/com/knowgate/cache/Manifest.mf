@@ -1,0 +1,8 @@
+Manifest-version: 1.0
+Name: com/knowgate/cache
+Specification-Title: Distributed Cache Peer
+Specification-Version: 1.1
+Specification-Vendor: Know Gate S.L.
+Implementation-Title: com.knowgate.cache
+Implementation-Version: 1.2
+Implementation-Vendor: Know Gate S.L.
