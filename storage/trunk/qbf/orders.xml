@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<qbf>
+  <title_es>Consulta de Pedidos</title_es>
+  <title_en>Orders Query</title_en>
+  <title_fr>#fr#Orders Query</title_fr>
+  <title_de>#de#Orders Query</title_de>
+  <title_it>#it#Orders Query</title_it>
+  <title_ru>#ru#Orders Query</title_ru>
+  <title_pt>#pt#Orders Query</title_pt>  
+  <title_cn>#zh#Orders Query</title_cn>
+  <title_tw>#tw#Orders Query</title_tw>
+  <method>post</method>
+  <action>../shop/order_list.jsp?selected=7&amp;subselected=1</action>
+  <baseobject>v_orders b</baseobject>
+  <basefilter>gu_workarea='${cookie.workarea}'</basefilter>
+  <fields>
+    <field><name>pg_order</name>
+      <label_es>Num Pedido</label_es>
+      <label_en>Order Num</label_en>
+      <type>integer</type>
+    </field>
+    <field><name>nm_client</name>
+      <label_es>Cliente</label_es>
+      <label_en>Customer</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>nm_legal</name>
+      <label_es>Razon Social</label_es>
+      <label_en>Legal Name</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>id_legal</name>
+      <label_es>NIF</label_es>
+      <label_en>Legal Id</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>de_order</name>
+      <label_es>Descripcion</label_es>
+      <label_en>Description</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>im_total</name>
+      <label_es>Importe</label_es>
+      <label_en>Amount</label_en>
+      <type>float</type>
+    </field>
+    <field><name>bo_approved</name>
+      <label_es>Aprobada</label_es>
+      <label_en>Approved</label_en>
+      <type>integer</type>
+    </field>
+    <field><name>bo_credit_ok</name>
+      <label_es>Credito OK (0=No,1=Si)</label_es>
+      <label_en>Credit OK (0=No, 1=Yes)</label_en>
+      <type>integer</type>
+    </field>
+    <field><name>id_priority</name>
+      <label_es>Prioridad</label_es>
+      <label_en>Priority</label_en>
+      <type>lookup</type><form>lookup_f.jsp?nm_table=k_orders_lookup</form>
+    </field>
+    <field><name>id_status</name>
+      <label_es>Estado</label_es>
+      <label_en>Status</label_en>
+      <type>lookup</type><form>lookup_f.jsp?nm_table=k_orders_lookup</form>
+    </field>
+    <field><name>id_pay_status</name>
+      <label_es>Cobro</label_es>
+      <label_en>Payment</label_en>
+      <type>lookup</type><form>lookup_f.jsp?nm_table=k_orders_lookup</form>
+    </field>
+    <field><name>id_ship_method</name>
+      <label_es>Metodo Envio</label_es>
+      <label_en>Shipping Method</label_en>
+      <type>lookup</type><form>lookup_f.jsp?nm_table=k_orders_lookup</form>
+    </field>
+    <field><name>tx_location</name>
+      <label_es>Delegacion</label_es>
+      <label_en>Subsidiary</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>nm_sale_point</name>
+      <label_es>Punto de Venta</label_es>
+      <label_en>Selling Point</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>nm_warehouse</name>
+      <label_es>Almacen</label_es>
+      <label_en>Warehouse</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>dt_modified</name>
+      <label_es>Fecha Modificacion</label_es>
+      <label_en>Date Modified</label_en>
+      <type>date</type>
+    </field>
+    <field><name>dt_promised</name>
+      <label_es>Fecha Compromiso</label_es>
+      <label_en>Date Promised</label_en>
+      <type>date</type>
+    </field>
+    <field><name>dt_delivered</name>
+      <label_es>Fecha Entrega</label_es>
+      <label_en>Date Delivered</label_en>
+      <type>date</type>
+    </field>
+    <field><name>dt_invoiced</name>
+      <label_es>Fecha Facturacion</label_es>
+      <label_en>Date Billed</label_en>
+      <type>date</type>
+    </field>
+    <field><name>dt_printed</name>
+      <label_es>Fecha Impresion</label_es>
+      <label_en>Date Printed</label_en>
+      <type>date</type>
+    </field>
+    <field><name>tp_billing</name>
+      <label_es>Medio Pago</label_es>
+      <label_en>Payment Method</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>tx_comments</name>
+      <label_es>Comentarios</label_es>
+      <label_en>Comments</label_en>
+      <type>varchar</type>
+    </field>
+  </fields>
+
+  <columns>
+    <column default="no"><name>gu_order</name>
+      <label_es>Id Pedido</label_es>
+      <label_en>Order Id</label_en></column>
+    <column default="yes"><name>pg_order</name>
+      <label_es>Num Pedido</label_es>
+      <label_en>Order Num</label_en></column>
+    <column default="yes"><name>de_order</name>
+      <label_es>Descripcion</label_es>
+      <label_en>Description</label_en></column>
+    <column default="yes"><name>nm_client</name>
+      <label_es>Cliente</label_es>
+      <label_en>Customer</label_en></column>
+    <column default="yes"><name>id_legal</name>
+      <label_es>NIF</label_es>
+      <label_en>Legal Id</label_en></column>
+    <column default="no"><name>gu_shop</name>
+      <label_es>Id Tienda</label_es>
+      <label_en>Shop Id</label_en></column>
+    <column default="yes"><name>nm_shop</name>
+      <label_es>Nombre Tienda</label_es>
+      <label_en>Shop Name</label_en></column>
+    <column default="yes"><name>id_currency</name>
+      <label_es>Moneda</label_es>
+      <label_en>Currency</label_en></column>
+    <column default="no"><name>bo_active</name>
+      <label_es>Activo</label_es>
+      <label_en>Active</label_en></column>
+    <column default="yes"><name>bo_approved</name>
+      <label_es>Aprobado</label_es>
+      <label_en>Approved</label_en></column>
+    <column default="yes"><name>bo_credit_ok</name>
+      <label_es>Credito OK</label_es>
+      <label_en>Credit OK</label_en></column>
+    <column default="yes"><name>id_priority</name>
+      <label_es>Prioridad</label_es>
+      <label_en>Priority</label_en></column>
+    <column default="no"><name>gu_sales_man</name>
+      <label_es>Id Vendedor</label_es>
+      <label_en>Salesman Id</label_en></column>
+    <column default="no"><name>nm_sale_point</name>
+      <label_es>Punto de Venta</label_es>
+      <label_en>Selling Point</label_en></column>
+    <column default="no"><name>nm_warehouse</name>
+      <label_es>Almacen</label_es>
+      <label_en>Warehouse</label_en></column>
+    <column default="yes"><name>dt_created</name>
+      <label_es>Fecha Creacion</label_es>
+      <label_en>Date Created</label_en></column>
+    <column default="yes"><name>dt_modified</name>
+      <label_es>Fecha Modificacion</label_es>
+      <label_en>Date Modified</label_en></column>
+    <column default="yes"><name>dt_invoiced</name>
+      <label_es>Fecha Facturacion</label_es>
+      <label_en>Date Billed</label_en></column>
+    <column default="yes"><name>dt_delivered</name>
+      <label_es>Fecha Entrega</label_es>
+      <label_en>Date Delivered</label_en></column>
+    <column default="no"><name>dt_printed</name>
+      <label_es>Fecha Impresion</label_es>
+      <label_en>Date Printed</label_en></column>
+    <column default="yes"><name>dt_promised</name>
+      <label_es>Fecha Compromiso</label_es>
+      <label_en>Date Promised</label_en></column>
+    <column default="yes"><name>dt_payment</name>
+      <label_es>Fecha Pago</label_es>
+      <label_en>Date Payment</label_en></column>
+    <column default="no"><name>dt_cancel</name>
+      <label_es>Fecha Cancelacion</label_es>
+      <label_en>Date Cancelled</label_en></column>
+    <column default="no"><name>tx_location</name>
+      <label_es>Delegacion</label_es>
+      <label_en>Subsidiary</label_en></column>
+    <column default="no"><name>id_ref</name>
+      <label_es>Referencia</label_es>
+      <label_en>Reference</label_en></column>
+    <column default="yes"><name>id_status</name>
+      <label_es>Estado</label_es>
+      <label_en>Status</label_en></column>
+    <column default="yes"><name>id_pay_status</name>
+      <label_es>Cobro</label_es>
+      <label_en>Payment</label_en></column>
+    <column default="no"><name>id_ship_method</name>
+      <label_es>Metodo Envio</label_es>
+      <label_en>Shipping Method</label_en></column>
+    <column default="no"><name>im_subtotal</name>
+      <label_es>Subtotal</label_es>
+      <label_en>Subtotal</label_en></column>
+    <column default="no"><name>im_taxes</name>
+      <label_es>Impuestos</label_es>
+      <label_en>Taxes</label_en></column>
+    <column default="no"><name>im_shipping</name>
+      <label_es>Coste Envio</label_es>
+      <label_en>Shipping Cost</label_en></column>
+    <column default="no"><name>im_discount</name>
+      <label_es>Descuento</label_es>
+      <label_en>Discount</label_en></column>
+    <column default="yes"><name>im_total</name>
+      <label_es>Total</label_es>
+      <label_en>Total</label_en></column>
+    <column default="yes"><name>tp_billing</name>
+      <label_es>Medio Pago</label_es>
+      <label_en>Payment Method</label_en></column>
+    <column default="no"><name>tp_card</name>
+      <label_es>Tipo Tarj Credito</label_es>
+      <label_en>Credit Card</label_en></column>
+    <column default="no"><name>tx_ship_notes</name>
+      <label_es>Notas Envio</label_es>
+      <label_en>Shipping Notes</label_en></column>
+    <column default="no"><name>tx_email_to</name>
+      <label_es>e-mail</label_es>
+      <label_en>e-mail</label_en></column>
+    <column default="no"><name>tx_comments</name>
+      <label_es>Comentarios</label_es>
+      <label_en>Comments</label_en></column>
+    <column default="no"><name>gu_company</name>
+      <label_es>Id Empresa</label_es>
+      <label_en>Company Id</label_en></column>
+    <column default="no"><name>nm_legal</name>
+      <label_es>Razon Social</label_es>
+      <label_en>Legal Name</label_en></column>
+    <column default="no"><name>nm_commercial</name>
+      <label_es>Nombre Comercial</label_es>
+      <label_en>Commercial Name</label_en></column>
+    <column default="no"><name>id_sector</name>
+      <label_es>Sector</label_es>
+      <label_en>Sector</label_en></column>
+    <column default="no"><name>tp_company</name>
+      <label_es>Tipo Empresa</label_es>
+      <label_en>Company Type</label_en></column>
+    <column default="no"><name>gu_geozone</name>
+      <label_es>Id Zona Geografica</label_es>
+      <label_en>Geographic Zone</label_en></column>
+    <column default="yes"><name>ship_tp_street</name>
+      <label_es>Tipo Via (Envio)</label_es>
+      <label_en>Street Type (Ship)</label_en></column>
+    <column default="yes"><name>ship_nm_street</name>
+      <label_es>Nombre Via (Envio)</label_es>
+      <label_en>Street Name (Ship)</label_en></column>
+    <column default="yes"><name>ship_nu_street</name>
+      <label_es>Num Via (Envio)</label_es>
+      <label_en>Street name (Ship)</label_en></column>
+    <column default="yes"><name>ship_tx_addr1</name>
+      <label_es>Direccion Linea 1 (Envio)</label_es>
+      <label_en>Address Line 1 (Ship)</label_en></column>
+    <column default="yes"><name>ship_tx_addr2</name>
+      <label_es>Direccion Linea 2 (Envio)</label_es>
+      <label_en>Address Line 2 (Ship)</label_en></column>
+    <column default="yes"><name>ship_nm_country</name>
+      <label_es>Pais (Envio)</label_es>
+      <label_en>Country (Ship)</label_en></column>
+    <column default="yes"><name>ship_nm_state</name>
+      <label_es>Estado/Provincia (Envio)</label_es>
+      <label_en>State/Region (Ship)</label_en></column>
+    <column default="yes"><name>ship_mn_city</name>
+      <label_es>Ciudad (Envio)</label_es>
+      <label_en>City (Ship)</label_en></column>
+    <column default="yes"><name>ship_zipcode</name>
+      <label_es>Cod Postal (Envio)</label_es>
+      <label_en>Zipcode (Ship)</label_en></column>
+    <column default="yes"><name>ship_work_phone</name>
+      <label_es>Telefono Centralita (Envio)</label_es>
+      <label_en>Work Phone (Ship)</label_en></column>
+    <column default="yes"><name>ship_direct_phone</name>
+      <label_es>Telefono Directo (Envio)</label_es>
+      <label_en>Direct Phone (Ship)</label_en></column>
+    <column default="yes"><name>ship_home_phone</name>
+      <label_es>Telefono Personal (Envio)</label_es>
+      <label_en>Personal Phone (Bill)</label_en></column>
+    <column default="yes"><name>ship_mov_phone</name>
+      <label_es>Telefono Movil (Envio)</label_es>
+      <label_en>Mobile Phone (Ship)</label_en></column>
+    <column default="yes"><name>ship_fax_phone</name>
+      <label_es>Fax (Envio)</label_es>
+      <label_en>Fax (Ship)</label_en></column>
+    <column default="yes"><name>ship_po_box</name>
+      <label_es>Aptdo Correos (Envio)</label_es>
+      <label_en>P.O. Box (Ship)</label_en></column>
+    <column default="yes"><name>ship_contact_person</name>
+      <label_es>Pers Contacto (Envio)</label_es>
+      <label_en>Contact Person (Ship)</label_en></column>
+    <column default="yes"><name>ship_tx_salutation</name>
+      <label_es>Saludo (Envio)</label_es>
+      <label_en>Salutation (Ship)</label_en></column>
+    <column default="no"><name>bill_tp_street</name>
+      <label_es>Tipo Via (Facturacion)</label_es>
+      <label_en>Street Type (Bill)</label_en></column>
+    <column default="no"><name>bill_nm_street</name>
+      <label_es>Nombre Via (Facturacion)</label_es>
+      <label_en>Street Name (Bill)</label_en></column>
+    <column default="no"><name>bill_nu_street</name>
+      <label_es>Num Via (Facturacion)</label_es>
+      <label_en>Street Num (Bill)</label_en></column>
+    <column default="no"><name>bill_tx_addr1</name>
+      <label_es>Direccion Linea 1 (Facturacion)</label_es>
+      <label_en>Address Line 1 (Bill)</label_en></column>
+    <column default="no"><name>bill_tx_addr2</name>
+      <label_es>Direccion Linea 2 (Facturacion)</label_es>
+      <label_en>Address Line 2 (Bill)</label_en></column>
+    <column default="no"><name>bill_nm_country</name>
+      <label_es>Pais (Facturacion)</label_es>
+      <label_en>Country (Bill)</label_en></column>
+    <column default="no"><name>bill_nm_state</name>
+      <label_es>Estado/Provincia (Facturacion)</label_es>
+      <label_en>State/Region (Bill)</label_en></column>
+    <column default="no"><name>bill_mn_city</name>
+      <label_es>Ciudad (Facturacion)</label_es>
+      <label_en>City (Bill)</label_en></column>
+    <column default="no"><name>bill_zipcode</name>
+      <label_es>Cod Postal (Facturacion)</label_es>
+      <label_en>Zipcode (Bill)</label_en></column>
+    <column default="no"><name>bill_work_phone</name>
+      <label_es>Telefono Centralita (Facturacion)</label_es>
+      <label_en>Work Phone (Bill)</label_en></column>
+    <column default="no"><name>bill_direct_phone</name>
+      <label_es>Telefono Directo (Facturacion)</label_es>
+      <label_en>Direct Phone (Bill)</label_en></column>
+    <column default="no"><name>bill_home_phone</name>
+      <label_es>Telefono Personal (Facturacion)</label_es>
+      <label_en>Personal Phone (Bill)</label_en></column>
+    <column default="no"><name>bill_mov_phone</name>
+      <label_es>Telefono Movil (Facturacion)</label_es>
+      <label_en>Mobile Phone (Bill)</label_en></column>
+    <column default="no"><name>bill_fax_phone</name>
+      <label_es>Fax (Facturacion)</label_es>
+      <label_en>Fax (Bill)</label_en></column>
+    <column default="no"><name>bill_po_box</name>
+      <label_es>Aptdo Correos (Facturacion)</label_es>
+      <label_en>P.O. Box (Bill)</label_en></column>
+    <column default="no"><name>bill_contact_person</name>
+      <label_es>Pers Contacto (Facturacion)</label_es>
+      <label_en>Contact Person (Bill)</label_en></column>
+    <column default="no"><name>bill_tx_salutation</name>
+      <label_es>Saludo (Facturacion)</label_es>
+      <label_en>Salutation (Bill)</label_en></column>
+  </columns>
+  <sortable>
+    <by>
+      <name>pg_order</name>
+      
+      <label_es>Num Pedido</label_es>
+      
+      <label_en>Order Num</label_en>
+    </by>
+    <by>
+      <name>nm_client</name>
+      
+      <label_es>Nombre Cliente</label_es>
+      
+      <label_en>Customer Name</label_en>
+    </by>
+    <by>
+      <name>im_total</name>
+      
+      <label_es>Importe</label_es>
+      
+      <label_en>Amount</label_en>
+    </by>
+    <by>
+      <name>tx_location</name>
+      
+      <label_es>Delegacion</label_es>
+      
+      <label_en>Subsidiary</label_en>
+    </by>
+    <by>
+      <name>dt_created</name>
+      
+      <label_es>Fecha Creacion</label_es>
+      
+      <label_en>Date Created</label_en>
+    </by>
+    <by>
+      <name>dt_modified</name>
+      
+      <label_es>Fecha Modificacion</label_es>
+      
+      <label_en>Date Modified</label_en>
+    </by>
+    <by>
+      <name>dt_delivered</name>
+      
+      <label_es>Fecha Entrega</label_es>
+      
+      <label_en>Date Delivered</label_en>
+    </by>
+    <by>
+      <name>dt_invoiced</name>
+      
+      <label_es>Fecha Facturacion</label_es>
+      
+      <label_en>Date Billing</label_en>
+    </by>
+    <by>
+      <name>dt_payment</name>
+      
+      <label_es>Fecha Cobro</label_es>
+      
+      <label_en>Date Payment</label_en>
+    </by>
+  </sortable>
+</qbf>

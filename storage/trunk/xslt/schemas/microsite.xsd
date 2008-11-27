@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.2 (http://www.xmlspy.com) by KnowGate (KnowGate) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	<xs:element name="colors">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="color" type="xs:string" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="container">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="guid" minOccurs="0"/>
+				<xs:element ref="name"/>
+				<xs:element ref="template"/>
+				<xs:element ref="thumbnail"/>
+				<xs:element ref="metablocks"/>
+				<xs:element name="parameters" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="guid" type="xs:string"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="containers">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="container" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="family" type="xs:string"/>
+	<xs:element name="fonts">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="family" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="guid" type="xs:string"/>
+	<xs:element name="metablock">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="name"/>
+				<xs:element ref="template" minOccurs="0"/>
+				<xs:element ref="objects" minOccurs="0"/>
+				<xs:element ref="maxoccurs"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+			<xs:attribute name="listingOrder" type="xs:short" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="metablocks">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="metablock" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="microsite">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="name"/>
+				<xs:element ref="fonts"/>
+				<xs:element ref="colors"/>
+				<xs:element ref="containers"/>
+			</xs:sequence>
+			<xs:attribute name="guid" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="name" type="xs:string"/>
+	<xs:element name="template" type="xs:string"/>
+	<xs:element name="objects" type="xs:string"/>
+	<xs:element name="maxoccurs" type="xs:short"/>
+	<xs:element name="thumbnail" type="xs:string"/>
+</xs:schema>

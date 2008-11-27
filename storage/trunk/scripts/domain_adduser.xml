@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATASTRUCT>
+  <ROWSETS>
+    <INIT></INIT>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_users</FROM>
+        <TO>k_users</TO>
+        <WHERE>gu_user='{#OldUserId}'</WHERE>
+        <FROM_PK>gu_user</FROM_PK>
+        <TO_PK>gu_user</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING>'{#NewUserId}',gu_user</MAPPING>
+        <MAPPING>{#iTargetDomain},id_domain</MAPPING>
+        <MAPPING>LOWER('{#NewUserNickName}'),tx_nickname</MAPPING>
+        <MAPPING>LOWER('{#NewUserMainMail}'),tx_main_email</MAPPING>
+        <MAPPING>'{#NewUserNm}',tx_surname1</MAPPING>
+        <MAPPING>'{#NewUserPwd}',tx_pwd</MAPPING>
+        <MAPPING>NULL,gu_category</MAPPING>
+        <MAPPING>DATEADD(month,2,GETDATE()),dt_cancel</MAPPING>        
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_x_group_user</FROM>
+        <TO>k_x_group_user</TO>
+        <WHERE>gu_user IN (SELECT gu_user FROM k_users WHERE gu_user='{#OldUserId}')</WHERE>
+        <FROM_PK>gu_user,gu_acl_group AS VARCHAR</FROM_PK>
+        <TO_PK>gu_user,gu_acl_group AS VARCHAR</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING>'{#NewUserId}',gu_user</MAPPING>
+      </MAPPINGS>
+    </ROWSET>    
+    <ROWSET>
+      <ACTION>
+        <FROM>k_categories</FROM>
+        <TO>k_categories</TO>
+        <WHERE>nm_category LIKE '{#iSourceDomainNm}%' AND gu_owner IN (SELECT gu_user FROM k_users WHERE gu_user='{#OldUserId}')</WHERE>
+        <FROM_PK>nm_category</FROM_PK>
+        <TO_PK>nm_category</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="NEWGUID">gu_category,gu_category</MAPPING>
+        <MAPPING>'{#NewUserId}',gu_owner</MAPPING>
+        <MAPPING>ISNULL(REPLACE(nm_category,SUBSTRING(RIGHT(nm_category+'_',LEN(nm_category+'_')-CHARINDEX('_',nm_category+'_')),1,CHARINDEX('_',RIGHT(nm_category+'_',LEN(nm_category+'_')-CHARINDEX('_',nm_category+'_')-1))),LOWER('{#NewUserNickName}')),UPPER('{#iSourceDomainNm}')),nm_category</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_cat_labels</FROM>
+        <TO>k_cat_labels</TO>
+        <WHERE>gu_category IN (SELECT gu_category FROM k_categories WHERE nm_category LIKE '{#iSourceDomainNm}%' AND gu_owner IN (SELECT gu_user FROM k_users WHERE gu_user='{#OldUserId}'))</WHERE>
+        <FROM_PK>gu_category,id_language</FROM_PK>
+        <TO_PK>gu_category,id_language</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_categories.gu_category)">gu_category,gu_category</MAPPING>
+        <MAPPING>REPLACE(tr_category,'superusuario','{#NewUserNickName}'),tr_category</MAPPING>
+      </MAPPINGS>
+    </ROWSET>    
+    <ROWSET>
+      <ACTION>
+        <FROM>k_cat_tree</FROM>
+        <TO>k_cat_tree</TO>
+        <WHERE>gu_child_cat IN (SELECT gu_category FROM k_categories WHERE nm_category LIKE '{#iSourceDomainNm}%' AND gu_owner IN (SELECT gu_user FROM k_users WHERE gu_user='{#OldUserId}'))</WHERE>
+        <FROM_PK>gu_parent_cat,gu_child_cat</FROM_PK>
+        <TO_PK>gu_parent_cat,gu_child_cat</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_categories.gu_category)">gu_parent_cat,gu_parent_cat</MAPPING>
+        <MAPPING TRANSFORM="REFER(k_categories.gu_category)">gu_child_cat,gu_child_cat</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_x_cat_user_acl</FROM>
+        <TO>k_x_cat_user_acl</TO>
+        <WHERE>gu_user IN (SELECT gu_user FROM k_users WHERE gu_user='{#OldUserId}') </WHERE>
+        <FROM_PK>gu_category,gu_user</FROM_PK>
+        <TO_PK>gu_category,gu_user</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_categories.gu_category)">gu_category,gu_category</MAPPING>
+        <MAPPING>'{#NewUserId}',gu_user</MAPPING>
+      </MAPPINGS>
+    </ROWSET>    
+    <ROWSET>
+      <ACTION>
+        <FROM>k_products</FROM>
+        <TO>k_products</TO>
+        <WHERE>gu_product IN (SELECT gu_object FROM k_x_cat_objs WHERE id_class=15 AND gu_category IN (SELECT gu_category FROM k_categories WHERE nm_category LIKE '{#iSourceDomainNm}%' AND gu_owner IN (SELECT gu_user FROM k_users WHERE gu_user='{#OldUserId}')))</WHERE>
+        <FROM_PK>gu_product</FROM_PK>
+        <TO_PK>gu_product</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="NEWGUID">gu_product,gu_product</MAPPING>
+      </MAPPINGS>
+    </ROWSET>    
+    <ROWSET>
+      <ACTION>
+        <FROM>k_prod_locats</FROM>
+        <TO>k_prod_locats</TO>
+        <WHERE>gu_product IN (SELECT gu_object FROM k_x_cat_objs WHERE id_class=15 AND gu_category IN (SELECT gu_category FROM k_categories WHERE nm_category LIKE '{#iSourceDomainNm}%' AND gu_owner IN (SELECT gu_user FROM k_users WHERE gu_user='{#OldUserId}')))</WHERE>
+        <FROM_PK>gu_product</FROM_PK>
+        <TO_PK>gu_product</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_products.gu_product)">gu_product,gu_product</MAPPING>
+        <MAPPING TRANSFORM="NEWGUID">gu_location,gu_location</MAPPING>
+      </MAPPINGS>
+    </ROWSET>    
+    <ROWSET>
+      <ACTION>
+        <FROM>k_prod_attr</FROM>
+        <TO>k_prod_attr</TO>
+        <WHERE>gu_product IN (SELECT gu_object FROM k_x_cat_objs WHERE id_class=15 AND gu_category IN (SELECT gu_category FROM k_categories WHERE nm_category LIKE '{#iSourceDomainNm}%' AND gu_owner IN (SELECT gu_user FROM k_users WHERE gu_user='{#OldUserId}')))</WHERE>
+        <FROM_PK>gu_product</FROM_PK>
+        <TO_PK>gu_product</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_products.gu_product)">gu_product,gu_product</MAPPING>
+      </MAPPINGS>
+    </ROWSET>    
+    <ROWSET>
+      <ACTION>
+        <FROM>k_x_cat_objs</FROM>
+        <TO>k_x_cat_objs</TO>
+        <WHERE>gu_object IN (SELECT gu_object FROM k_x_cat_objs WHERE id_class=15 AND gu_category IN (SELECT gu_category FROM k_categories WHERE nm_category LIKE '{#iSourceDomainNm}%' AND gu_owner IN (SELECT gu_user FROM k_users WHERE gu_user='{#OldUserId}')))</WHERE>
+        <FROM_PK>gu_category,gu_object</FROM_PK>
+        <TO_PK>gu_category,gu_object</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_categories.gu_category)">gu_category,gu_category</MAPPING>
+        <MAPPING TRANSFORM="REFER(k_products.gu_product)">gu_object,gu_object</MAPPING>
+      </MAPPINGS>
+    </ROWSET>    
+   </ROWSETS>
+</DATASTRUCT>

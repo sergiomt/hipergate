@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<microsite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:noNamespaceSchemaLocation="http://www.hipergate.org/xslt/schemas/microsite.xsd"	   
+           guid="c0a80146f64791d722100005b5aa3492">
+  <name>Traditional</name>
+  <fonts>
+    <family>Arial</family>
+    <family>Times</family>
+    <family>Verdana</family>
+  </fonts>
+  <colors>
+    <color>Azul-Naranja</color>
+    <color>Verde-Dorado</color>
+    <color>Burdeos-Negro</color>
+  </colors>
+  <containers>
+    <container guid="3cd64cc2a9184d2c96b2a2fdf8f989cc">
+      <name>Newsletter</name>
+      <template>Traditional.xsl</template>
+      <thumbnail>Traditional.gif</thumbnail>
+      <metablocks>
+        <metablock id="TITULAR" listingOrder="1">
+      	  <name>Titular</name>
+      	  <template>#inline:.</template>
+      	  <objects>p:TITULAR_TEXTO</objects>
+      	  <maxoccurs>1</maxoccurs>
+	</metablock>
+        <metablock id="BIENVENIDA" listingOrder="2">
+      	  <name>Bienvenida</name>
+      	  <template>#inline:.</template>
+      	  <objects>p:BIENVENIDA_INTRO,p:BIENVENIDA_TEXTO</objects>
+      	  <maxoccurs>1</maxoccurs>
+	</metablock>
+        <metablock id="ARTICULO" listingOrder="3">
+      	  <name>Articulo</name>
+      	  <template>#inline:formatArticle</template>
+      	  <objects>i:IMAGEN_ARTICULO,p:TITULO_ARTICULO,p:PARRAFO_ARTICULO,p:ENLACE_ARTICULO_[0..1]</objects>
+      	  <maxoccurs></maxoccurs>
+	</metablock>
+        <metablock id="PIE" listingOrder="4">
+      	  <name>Pie de Pagina</name>
+      	  <template>#inline:.</template>
+      	  <objects>i:FOTO_PIE,p:PIE_TEXTO</objects>
+      	  <maxoccurs>1</maxoccurs>
+	</metablock>
+      </metablocks>
+    </container>
+  </containers>
+</microsite>

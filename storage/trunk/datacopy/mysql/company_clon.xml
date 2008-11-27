@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<DATASTRUCT>
+  <ROWSETS>
+    <INIT>
+    </INIT>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_companies</FROM>
+        <TO>k_companies</TO>
+        <WHERE>gu_company=? </WHERE>
+        <ERASE>gu_company=?</ERASE>
+        <FROM_PK>gu_company</FROM_PK>
+        <TO_PK>gu_company</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFERENCED">gu_company,gu_company</MAPPING>
+        <MAPPING>NOW(),dt_created</MAPPING>
+        <MAPPING>NOW(),dt_modified</MAPPING>
+        <MAPPING>CONCAT(nm_legal,' (',CAST((SELECT COUNT(gu_company) FROM k_companies) AS VARCHAR(11)),')'),nm_legal</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_companies_attrs</FROM>
+        <TO>k_companies_attrs</TO>
+        <WHERE>gu_object=?</WHERE>
+        <ERASE>gu_object=?</ERASE>
+        <FROM_PK>gu_object,nm_attr</FROM_PK>
+        <TO_PK>gu_object,nm_attr</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_companies.gu_company)">gu_object,gu_object</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_addresses</FROM>
+        <TO>k_addresses</TO>
+        <WHERE>gu_address IN (SELECT gu_address FROM k_x_company_addr WHERE gu_company=?)</WHERE>
+        <ERASE>gu_address IN (SELECT gu_address FROM k_x_company_addr WHERE gu_company=?)</ERASE>
+        <FROM_PK>gu_address</FROM_PK>
+        <TO_PK>gu_address</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING>NOW(),dt_created</MAPPING>
+        <MAPPING>NOW(),dt_modified</MAPPING>
+        <MAPPING TRANSFORM="NEWGUID">gu_address,gu_address</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_x_company_addr</FROM>
+        <TO>k_x_company_addr</TO>
+        <WHERE>gu_company=?</WHERE>
+        <ERASE>gu_company=?</ERASE>
+        <FROM_PK>gu_company,CAST(gu_address AS VARCHAR(50))</FROM_PK>
+        <TO_PK>gu_company,gu_address</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_addresses.gu_address)">gu_address,gu_address</MAPPING>
+      </MAPPINGS>
+    </ROWSET>    
+  </ROWSETS>
+</DATASTRUCT>

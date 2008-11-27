@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<microsite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:noNamespaceSchemaLocation="http://www.hipergate.org/xslt/schemas/microsite.xsd"	   
+           guid="c0a80146f5979ffc831001b2a9961864">
+  <name>Estandar</name>
+  <fonts>
+    <family>Arial</family>
+    <family>Times</family>
+    <family>Verdana</family>
+  </fonts>
+  <colors>
+    <color>rojo</color>
+    <color>verde</color>
+    <color>azul</color>
+  </colors>
+  <containers>
+    <container guid="c0a80146f5bc91d683100138af53e8ab">
+      <name>Home</name>
+      <template>Estandar_Home.xsl</template>
+      <thumbnail>Estandar.gif</thumbnail>
+      <metablocks>
+        <metablock id="LOGOHOME">
+      	  <name>LOGOHOME</name>
+      	  <template>#inline:.</template>
+      	  <objects>i:LOGO-HOME,p:TEXTO-LOGO</objects>
+      	  <maxoccurs>1</maxoccurs>
+	</metablock>
+        <metablock id="TEXTOHOME">
+      	  <name>TEXTOHOME</name>
+      	  <template>#inline:.</template>
+      	  <objects>p:TEXTO-HOME</objects>
+      	  <maxoccurs>1</maxoccurs>
+	</metablock>
+        <metablock id="ENTRADA">
+      	  <name>ENTRADA</name>
+      	  <template>#inline:.</template>
+      	  <objects>p:TITULO,p:SUBTITULO</objects>
+      	  <maxoccurs>1</maxoccurs>
+	</metablock>
+      </metablocks>	
+    </container>
+    <container guid="c0a80146f597a0327f1001b39f3f58d6">
+      <name>Informacion</name>
+      <template>Estandar_Informacion.xsl</template>
+      <thumbnail>Estandar.gif</thumbnail>
+      <metablocks>
+        <metablock id="ENTRADA">
+      	  <name>ENTRADA</name>
+      	  <template>#inline:.</template>
+      	  <objects>p:TITULO,p:SUBTITULO</objects>
+      	  <maxoccurs>1</maxoccurs>
+	</metablock>
+        <metablock id="FOTOYTEXTO">
+      	  <name>FOTOYTEXTO</name>
+      	  <template>#inline:.</template>
+      	  <objects>p:PARRAFO-TITULO,p:PARRAFO-INTRO,p:PARRAFO-ARTICULO,i:FOTO-ARTICULO</objects>
+      	  <maxoccurs></maxoccurs>
+	</metablock>
+        <metablock id="FOTOTEXTOFOTO">
+      	  <name>FOTOTEXTOFOTO</name>
+      	  <template>#inline:.</template>
+      	  <objects>p:PARRAFO-TITULO,p:PARRAFO-INTRO,p:PARRAFO-ARTICULO,i:FOTO-ARTICULO-IZQUIERDA,i:FOTO-ARTICULO-DERECHA</objects>
+      	  <maxoccurs></maxoccurs>
+	</metablock>
+        <metablock id="DOCUMENTO">
+      	  <name>DOCUMENTO</name>
+      	  <template>#inline:.</template>
+      	  <objects>p:DOCUMENTO[1..5]</objects>
+      	  <maxoccurs></maxoccurs>
+	</metablock>
+        <metablock id="ENLACE">
+      	  <name>ENLACE</name>
+      	  <template>#inline:.</template>
+      	  <objects>p:ENLACE[1..5]</objects>
+      	  <maxoccurs></maxoccurs>
+	</metablock>
+      </metablocks>
+    </container>
+    <container guid="c0a80146f5e499cbe0100039a0156cad">
+      <name>ListaCategorias</name>
+      <template>Estandar_ListaCategorias.xsl</template>
+      <thumbnail>Estandar.gif</thumbnail>
+      <metablocks>
+      </metablocks>
+    </container>
+    <container guid="d1b80146f5e488cbf0210040a0157bce">
+      <name>ListaProductos</name>
+      <template>Estandar_ListaProductos.xsl</template>
+      <thumbnail>Estandar.gif</thumbnail>
+      <metablocks>
+      </metablocks>
+      <parameters>SELECT gu_category AS category FROM k_cat_expand WHERE gu_rootcat='{#catalog}'</parameters>
+    </container>
+    <container guid="c0a80146f5e499cbe0100038a0156ecd">
+      <name>Recursos</name>
+      <template>Estandar_Recursos.xsl</template>
+      <thumbnail>Estandar.gif</thumbnail>
+      <metablocks>
+        <metablock id="LOGOTIPO">
+      	  <name>LOGOTIPO</name>
+      	  <template>#inline:.</template>
+      	  <objects>i:LOGOTIPO</objects>
+      	  <maxoccurs>1</maxoccurs>
+	</metablock>
+        <metablock id="MENU">
+      	  <name>MENU</name>
+      	  <template>#inline:.</template>
+      	  <objects>p:OPCION-[1..10]</objects>
+      	  <maxoccurs>1</maxoccurs>
+	</metablock>
+      </metablocks>
+    </container>
+  </containers>
+</microsite>

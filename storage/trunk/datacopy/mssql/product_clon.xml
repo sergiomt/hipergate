@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATASTRUCT>
+  <ROWSETS>
+    <INIT>
+    </INIT>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_products</FROM>
+        <TO>k_products</TO>
+        <WHERE>gu_product=?</WHERE>
+        <ERASE>gu_product=?</ERASE>
+        <FROM_PK>gu_product</FROM_PK>
+        <TO_PK>gu_product</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="NEWGUID">gu_product,gu_product</MAPPING>
+        <MAPPING>GETDATE(),dt_created</MAPPING>
+        <MAPPING>GETDATE(),dt_modified</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_prod_locats</FROM>
+        <TO>k_prod_locats</TO>
+        <WHERE>gu_product=?</WHERE>
+        <ERASE>gu_product=?</ERASE>
+        <FROM_PK>gu_product,pg_prod_locat</FROM_PK>
+        <TO_PK>gu_product,pg_prod_locat</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="NEWGUID">gu_location,gu_location</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_prod_attr</FROM>
+        <TO>k_prod_attr</TO>
+        <WHERE>gu_product=?</WHERE>
+        <ERASE>gu_product=?</ERASE>
+        <FROM_PK>gu_product</FROM_PK>
+        <TO_PK>gu_product</TO_PK>
+      </ACTION>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_prod_attrs</FROM>
+        <TO>k_prod_attrs</TO>
+        <WHERE>gu_object=?</WHERE>
+        <ERASE>gu_object=?</ERASE>
+        <FROM_PK>gu_object,nm_attr</FROM_PK>
+        <TO_PK>gu_object,nm_attr</TO_PK>        
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_products.gu_product)">gu_object,gu_object</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_x_cat_objs</FROM>
+        <TO>k_x_cat_objs</TO>
+        <WHERE>gu_object=?</WHERE>
+        <ERASE>gu_object=?</ERASE>
+        <FROM_PK>CAST(gu_category AS VARCHAR(50)),gu_object</FROM_PK>
+        <TO_PK>gu_category,gu_object</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_products.gu_product)">gu_object,gu_object</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+  </ROWSETS>
+</DATASTRUCT>

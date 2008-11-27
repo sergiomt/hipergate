@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl"?>
+<pageset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.hipergate.org/xslt/schemas/pageset.xsd" guid=":gu_pageset">
+  <microsite>:gu_microsite</microsite>
+  <font>Arial</font>
+  <color>rojo</color>
+  <pages>
+    <page guid=":gu_pagex">
+      <title>:page_title</title>
+      <container>d1b80146f5e488cbf0210040a0157bce</container>
+      <blocks>
+      </blocks>
+    </page>
+  </pages>
+</pageset>

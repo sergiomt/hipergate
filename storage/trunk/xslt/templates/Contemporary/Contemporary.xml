@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<microsite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:noNamespaceSchemaLocation="http://www.hipergate.org/xslt/schemas/microsite.xsd"	   
+           guid="c0a80146f64790ac7c100003fcc20a22">
+  <name>Contemporary</name>
+  <fonts>
+    <family>Arial</family>
+    <family>Times</family>
+    <family>Verdana</family>
+  </fonts>
+  <colors>
+    <color>Azul-Naranja</color>
+    <color>Verde-Amarillo</color>
+    <color>Burdeos-Negro</color>
+  </colors>
+  <containers>
+    <container guid="3cd64cc2a9184d2c96b2a2fdf8f989cc">
+      <name>Contemporary</name>
+      <template>Contemporary.xsl</template>
+      <thumbnail>Contemporary.gif</thumbnail>
+      <metablocks>
+        <metablock id="LOGO_SUPERIOR" listingOrder="1">
+      	  <name>Logotipo Superior</name>
+      	  <template>#inline:.</template>
+      	  <objects>i:LOGOTIPO_CENTRAL</objects>
+      	  <maxoccurs>1</maxoccurs>
+	</metablock>
+        <metablock id="TITULAR" listingOrder="2">
+      	  <name>Titular</name>
+      	  <template>#inline:.</template>
+      	  <objects>p:TITULAR_TEXTO,p:TITULAR_COMENTARIO,p:TITULAR_FECHA</objects>
+      	  <maxoccurs>1</maxoccurs>
+	</metablock>
+        <metablock id="BIENVENIDA" listingOrder="3">
+      	  <name>Bienvenida</name>
+      	  <template>#inline:.</template>
+      	  <objects>p:BIENVENIDA_TEXTO</objects>
+      	  <maxoccurs>1</maxoccurs>
+	</metablock>
+        <metablock id="ARTICULO" listingOrder="4">
+      	  <name>Articulo</name>
+      	  <template>#inline:formatArticle</template>
+      	  <objects>i:IMAGEN_ARTICULO,p:TITULO_ARTICULO,p:PARRAFO_ARTICULO_[1..10],p:ENLACE_ARTICULO_[0..1]</objects>
+      	  <maxoccurs>10</maxoccurs>
+	</metablock>
+        <metablock id="LATERAL_SUPERIOR" listingOrder="5">
+      	  <name>Lateral Superior</name>
+      	  <template>#inline:.</template>
+      	  <objects>i:FOTO_LATERAL_SUPERIOR,p:TITULO_LATERAL_SUPERIOR,p:TEXTO_LATERAL_SUPERIOR_[1..5],p:ENLACE_LATERAL_SUPERIOR_[1..5]</objects>
+      	  <maxoccurs>1</maxoccurs>
+	</metablock>
+        <metablock id="LATERAL_CENTRAL" listingOrder="6">
+      	  <name>Lateral Central</name>
+      	  <template>#inline:.</template>
+      	  <objects>i:FOTO_LATERAL_CENTRAL,p:TITULO_LATERAL_CENTRAL,p:TEXTO_LATERAL_CENTRAL_[1..5],p:ENLACE_LATERAL_CENTRAL_[1..5]</objects>
+      	  <maxoccurs>1</maxoccurs>
+	</metablock>
+        <metablock id="LATERAL_INFERIOR" listingOrder="7">
+      	  <name>Lateral Inferior</name>
+      	  <template>#inline:.</template>
+      	  <objects>i:FOTO_LATERAL_INFERIOR,p:TITULO_LATERAL_INFERIOR,p:TEXTO_LATERAL_INFERIOR_[1..5],p:ENLACE_LATERAL_INFERIOR_[1..5]</objects>
+      	  <maxoccurs>1</maxoccurs>
+	</metablock>
+        <metablock id="PIE" listingOrder="8">
+      	  <name>Pie de Pagina</name>
+      	  <template>#inline:.</template>
+      	  <objects>i:FOTO_PIE,p:PIE_EMAIL,p:PIE_CONTACTO,p:PIE_WEB,p:PIE_TEXTO</objects>
+      	  <maxoccurs>1</maxoccurs>
+	</metablock>
+      </metablocks>
+    </container>
+  </containers>
+</microsite>

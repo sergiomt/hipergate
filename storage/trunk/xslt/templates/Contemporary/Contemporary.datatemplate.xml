@@ -1,0 +1,339 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl"?>
+<pageset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.hipergate.org/xslt/schemas/pageset.xsd" guid=":gu_pageset">
+  <microsite>:gu_microsite</microsite>
+  <font>Verdana</font>
+  <color>Azul-Naranja</color>
+  <pages>
+    <page guid=":gu_pagex">
+      <title><![CDATA[:page_title]]></title>
+      <container>:gu_container</container>
+      <blocks>
+        <block id="001">
+          <metablock>LOGO_SUPERIOR</metablock>
+          <tag>Logotipo Superior</tag>
+          <paragraphs>
+            <paragraph id="REMOVABLE"></paragraph>
+          </paragraphs>
+          <images>
+            <image id="REMOVABLE"></image>
+            <image id="LOGOTIPO_CENTRAL">
+              <path>http://images.hipergate.org/styles/common/default_468x60_es.gif</path>
+              <url>http://www.su-dominio.es/</url>
+              <alt><![CDATA[Texto Alternativo]]></alt>
+              <width>468</width>
+              <height>60</height>
+            </image>
+          </images>
+          <zone/>
+        </block>
+
+        <block id="002">
+          <metablock>TITULAR</metablock>
+          <tag>Titular</tag>
+          <paragraphs>
+            <paragraph id="REMOVABLE"></paragraph>
+            <paragraph id="TITULAR_TEXTO">
+              <text><![CDATA[Titular de la Newsletter]]></text>
+              <url></url>
+            </paragraph>
+            <paragraph id="TITULAR_COMENTARIO">
+              <text><![CDATA[Comentarios Opcionales]]></text>
+              <url></url>
+            </paragraph>
+            <paragraph id="TITULAR_FECHA">
+              <text><![CDATA[{#Sistema.Fecha}]]></text>
+              <url></url>
+            </paragraph>
+          </paragraphs>
+          <images>
+            <image id="REMOVABLE"></image>
+          </images>
+          <zone />
+        </block>
+
+        <block id="003">
+          <metablock>BIENVENIDA</metablock>
+          <tag>Bienvenida</tag>
+          <paragraphs>
+            <paragraph id="REMOVABLE"></paragraph>
+            <paragraph id="BIENVENIDA_TEXTO">
+              <text><![CDATA[Estimado {#Datos.Nombre}: <br /><br />&nbsp;&nbsp;&nbsp;Este es el texto introductorio de su newsletter. Aquí podrá añadir una pequeña descripción o bienvenida de los contenidos que va a mostrar.]]></text>
+              <url></url>
+            </paragraph>
+          </paragraphs>
+          <images>
+            <image id="REMOVABLE"></image>
+          </images>
+          <zone />
+        </block>
+
+        <block id="004">
+          <metablock>ARTICULO</metablock>
+          <tag>Articulo</tag>
+          <paragraphs>
+            <paragraph id="REMOVABLE"></paragraph>
+            <paragraph id="TITULO_ARTICULO">
+              <text><![CDATA[Primer Artículo o Producto destacado]]></text>
+              <url></url>
+            </paragraph>
+            <paragraph id="PARRAFO_ARTICULO_01">
+              <text><![CDATA[Describa su producto con detalle, dispone de un espacio ilimitado para añadir características o novedades sobre su producto o servicio.]]></text>
+              <url></url>
+            </paragraph>
+            <paragraph id="PARRAFO_ARTICULO_02">
+              <text><![CDATA[Recuerde que puede añadir una imágen sobre el producto o noticia que está enviando. Esta imágen puede ser de formato GIF, JPG o PNG, y se recomienda que no exceda los 200 pixel de ancho y alto.]]></text>
+              <url></url>
+            </paragraph>
+            <paragraph id="PARRAFO_ARTICULO_03">
+              <text><![CDATA[Todos los párrafos son opcionales, no es necesario introducir más contenido que el estricatamente necesario. En el enlace inferior podrá invitar al receptor a leer más sobre el producto o servicio destacado.]]></text>
+              <url></url>
+            </paragraph>
+            <paragraph id="PARRAFO_ARTICULO_04">
+              <text><![CDATA[Párrafo como enlace.]]></text>
+              <url>http://www.sudominio.es/</url>
+            </paragraph>
+            <paragraph id="PARRAFO_ARTICULO_05">
+              <text><![CDATA[En el párrafo anterior hemos añadido un enlace. Esto le permite crear links parciales dentro del texto. Esta plantilla está limitada a 5 párrafos por artículo/producto.]]></text>
+              <url></url>
+            </paragraph>
+            <paragraph id="ENLACE_ARTICULO_1">
+              <text><![CDATA[Mas Informacion]]></text>
+              <url>http://www.sudominio.es/</url>
+            </paragraph>
+          </paragraphs>
+          <images>
+            <image id="REMOVABLE"></image>
+            <image id="IMAGEN_ARTICULO">
+              <path>http://images.hipergate.org/styles/common/default_100x100_es.gif</path>
+              <url>http://www.sudominio.es/</url>
+              <alt><![CDATA[Describa brevemente esta imágen (producto, referencia, código, etc)]]></alt>
+              <width>100</width>
+              <height>100</height>
+            </image>
+          </images>
+          <zone/>
+        </block>
+
+        <block id="005">
+          <metablock>ARTICULO</metablock>
+          <tag>Articulo</tag>
+          <paragraphs>
+            <paragraph id="REMOVABLE"></paragraph>
+            <paragraph id="TITULO_ARTICULO">
+              <text><![CDATA[Segundo artículo o producto destacado]]></text>
+              <url></url>
+            </paragraph>
+            <paragraph id="PARRAFO_ARTICULO_01">
+              <text><![CDATA[¡Es muy fácil añadir productos o servicios a su mensaje. Tan solo utilice el menú flotante para agregar o quitar bloques de información.]]></text>
+              <url></url>
+            </paragraph>
+            <paragraph id="PARRAFO_ARTICULO_02">
+              <text><![CDATA[Los artículos tienen una estructura determinada por el titular, hasta 5 párrafos de información, un enlace y una imágen.]]></text>
+              <url></url>
+            </paragraph>
+            <paragraph id="PARRAFO_ARTICULO_03">
+              <text><![CDATA[En este artículo, la imágen lateral no contiene ningún enlace. Si desea añadir uno utilice la opción "Modificar Bloque" y agrege el enlace a su página web.]]></text>
+              <url></url>
+            </paragraph>
+            <paragraph id="PARRAFO_ARTICULO_04">
+              <text><![CDATA[Si desea añadir más productos destacados puede utilizar el lateral derecho de esta plantilla, que le permite añadir textos cortos y enlaces con una imágen en tres bloques (superior, central e inferior).]]></text>
+              <url></url>
+            </paragraph>
+            <paragraph id="ENLACE_ARTICULO_1">
+              <text><![CDATA[Más información]]></text>
+              <url>http://www.sudominio.es/</url>
+            </paragraph>
+          </paragraphs>
+          <images>
+            <image id="REMOVABLE"></image>
+            <image id="IMAGEN_ARTICULO">
+              <path>http://images.hipergate.org/styles/common/default_100x100_es.gif</path>
+              <url></url>
+              <alt><![CDATA[Esta imágen no tiene enlace]]></alt>
+              <width>100</width>
+              <height>100</height>
+            </image>
+          </images>
+          <zone/>
+        </block>
+
+        <block id="006">
+          <metablock>LATERAL_SUPERIOR</metablock>
+          <tag>Lateral Superior</tag>
+          <paragraphs>
+            <paragraph id="REMOVABLE"></paragraph>
+            <paragraph id="TITULO_LATERAL_SUPERIOR">
+              <text><![CDATA[Bloque Superior]]></text>
+              <url></url>
+            </paragraph>
+            <paragraph id="TEXTO_LATERAL_SUPERIOR_1">
+              <text><![CDATA[Texto 1 (con enlace)]]></text>
+              <url>http://www.knowgate.es/</url>
+            </paragraph>
+            <paragraph id="TEXTO_LATERAL_SUPERIOR_2">
+              <text><![CDATA[Texto 2]]></text>
+              <url></url>
+            </paragraph>
+            <paragraph id="TEXTO_LATERAL_SUPERIOR_3">
+              <text><![CDATA[Texto 3]]></text>
+              <url></url>
+            </paragraph>
+            <paragraph id="ENLACE_LATERAL_SUPERIOR_1">
+              <text><![CDATA[Enlace 1]]></text>
+              <url>http://www.knowgate.es/</url>
+            </paragraph>
+            <paragraph id="ENLACE_LATERAL_SUPERIOR_2">
+              <text><![CDATA[Enlace 2]]></text>
+              <url>http://www.knowgate.es/</url>
+            </paragraph>
+            <paragraph id="ENLACE_LATERAL_SUPERIOR_3">
+              <text><![CDATA[Enlace 3]]></text>
+              <url>http://www.knowgate.es/</url>
+            </paragraph>
+          </paragraphs>
+          <images>
+            <image id="REMOVABLE"></image>
+            <image id="FOTO_LATERAL_SUPERIOR">
+              <path>http://images.hipergate.org/styles/common/default_100x100_es.gif</path>
+              <url>http://www.knowgate.es/</url>
+              <alt><![CDATA[KnowGate.es]]></alt>
+              <width>100</width>
+              <height>100</height>
+            </image>
+          </images>
+          <zone/>
+        </block>
+            
+        <block id="007">
+          <metablock>LATERAL_CENTRAL</metablock>
+          <tag>Lateral Central</tag>
+          <paragraphs>
+            <paragraph id="REMOVABLE"></paragraph>
+            <paragraph id="TITULO_LATERAL_CENTRAL">
+              <text><![CDATA[Bloque Central]]></text>
+              <url></url>
+            </paragraph>
+            <paragraph id="TEXTO_LATERAL_CENTRAL_1">
+              <text><![CDATA[Texto 1]]></text>
+              <url></url>
+            </paragraph>
+            <paragraph id="TEXTO_LATERAL_CENTRAL_2">
+              <text><![CDATA[Texto 2 (con enlace)]]></text>
+              <url>http://www.knowgate.es/</url>
+            </paragraph>
+            <paragraph id="TEXTO_LATERAL_CENTRAL_3">
+              <text><![CDATA[Texto 3]]></text>
+              <url></url>
+            </paragraph>
+            <paragraph id="ENLACE_LATERAL_CENTRAL_1">
+              <text><![CDATA[Enlace 1]]></text>
+              <url>http://www.knowgate.es/</url>
+            </paragraph>
+            <paragraph id="ENLACE_LATERAL_CENTRAL_2">
+              <text><![CDATA[Enlace 2]]></text>
+              <url>http://www.knowgate.es/</url>
+            </paragraph>
+            <paragraph id="ENLACE_LATERAL_CENTRAL_3">
+              <text><![CDATA[Enlace 3]]></text>
+              <url>http://www.knowgate.es/</url>
+            </paragraph>
+          </paragraphs>
+          <images>
+            <image id="REMOVABLE"></image>
+            <image id="FOTO_LATERAL_CENTRAL">
+              <path>http://images.hipergate.org/styles/common/default_100x100_es.gif</path>
+              <url>http://www.knowgate.es/</url>
+              <alt><![CDATA[KnowGate.es]]></alt>
+              <width>100</width>
+              <height>100</height>
+            </image>
+          </images>
+          <zone/>
+        </block>
+            
+        <block id="008">
+          <metablock>LATERAL_INFERIOR</metablock>
+          <tag>Lateral Inferior</tag>
+          <paragraphs>
+            <paragraph id="REMOVABLE"></paragraph>
+            <paragraph id="TITULO_LATERAL_INFERIOR">
+              <text><![CDATA[Bloque Inferior]]></text>
+              <url></url>
+            </paragraph>
+            <paragraph id="TEXTO_LATERAL_INFERIOR_1">
+              <text><![CDATA[Texto 1]]></text>
+              <url></url>
+            </paragraph>
+            <paragraph id="TEXTO_LATERAL_INFERIOR_2">
+              <text><![CDATA[Texto 2]]></text>
+              <url></url>
+            </paragraph>
+            <paragraph id="TEXTO_LATERAL_INFERIOR_3">
+              <text><![CDATA[Texto 3 (con enlace)]]></text>
+              <url>http://www.knowgate.es/</url>
+            </paragraph>
+            <paragraph id="ENLACE_LATERAL_INFERIOR_1">
+              <text><![CDATA[Enlace 1]]></text>
+              <url>http://www.knowgate.es/</url>
+            </paragraph>
+            <paragraph id="ENLACE_LATERAL_INFERIOR_2">
+              <text><![CDATA[Enlace 2]]></text>
+              <url>http://www.knowgate.es/</url>
+            </paragraph>
+            <paragraph id="ENLACE_LATERAL_INFERIOR_3">
+              <text><![CDATA[Enlace 3]]></text>
+              <url>http://www.knowgate.es/</url>
+            </paragraph>
+          </paragraphs>
+          <images>
+            <image id="REMOVABLE"></image>
+            <image id="FOTO_LATERAL_INFERIOR">
+              <path>http://images.hipergate.org/styles/common/default_100x100_es.gif</path>
+              <url>http://www.knowgate.es/</url>
+              <alt><![CDATA[KnowGate.es]]></alt>
+              <width>100</width>
+              <height>100</height>
+            </image>
+          </images>
+          <zone/>
+        </block>
+
+        <block id="009">
+          <metablock>PIE</metablock>
+          <tag>Pie de pagina</tag>
+          <paragraphs>
+            <paragraph id="REMOVABLE"></paragraph>
+            <paragraph id="PIE_EMAIL">
+              <text><![CDATA[info@knowgate.es]]></text>
+              <url>mailto:info@knowgate.es</url>
+            </paragraph>
+            <paragraph id="PIE_CONTACTO">
+              <text><![CDATA[Telefono 902 333 444 (+34 91 230 40 40)]]></text>
+              <url></url>
+            </paragraph>
+            <paragraph id="PIE_WEB">
+              <text><![CDATA[www.knowgate.es]]></text>
+              <url>http://www.knowgate.es/</url>
+            </paragraph>
+            <paragraph id="PIE_TEXTO">
+              <text><![CDATA[Informacion Adicional (como darse de baja, CIF de la empresa, etc)]]></text>
+              <url></url>
+            </paragraph>
+          </paragraphs>
+          <images>
+            <image id="REMOVABLE"></image>
+            <image id="FOTO_PIE">
+              <path>http://images.hipergate.org/styles/common/default_100x100_es.gif</path>
+              <url>http://www.knowgate.es/</url>
+              <alt><![CDATA[KnowGate.es]]></alt>
+              <width>100</width>
+              <height>100</height>
+            </image>
+          </images>
+          <zone/>
+        </block>
+      </blocks>
+    </page>
+  </pages>
+</pageset>

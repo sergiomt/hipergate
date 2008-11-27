@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<DATASTRUCT>
+  <ROWSETS>
+    <INIT>
+    </INIT>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_courses</FROM>
+        <TO>k_courses</TO>
+        <WHERE>gu_course=? </WHERE>
+        <ERASE>gu_course=?</ERASE>
+        <FROM_PK>gu_course</FROM_PK>
+        <TO_PK>gu_course</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFERENCED">gu_course,gu_course</MAPPING>
+        <MAPPING>GETDATE(),dt_created</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_x_course_subject</FROM>
+        <TO>k_x_course_subject</TO>
+        <WHERE>gu_course=?</WHERE>
+        <ERASE>gu_course=?</ERASE>
+        <FROM_PK>gu_course,gu_subject</FROM_PK>
+        <TO_PK>gu_course,gu_subject</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_courses.gu_course)">gu_course,gu_course</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+  </ROWSETS>
+</DATASTRUCT>

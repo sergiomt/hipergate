@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<DATASTRUCT>
+  <ROWSETS>
+    <INIT>
+    </INIT>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_dispatch_notes</FROM>
+        <TO>k_dispatch_notes</TO>
+        <WHERE>gu_dispatch=?</WHERE>
+        <ERASE>gu_dispatch=?</ERASE>
+        <FROM_PK>gu_dispatch</FROM_PK>
+        <TO_PK>gu_dispatch</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="NEWGUID">gu_dispatch,gu_dispatch</MAPPING>
+        <MAPPING>{#PgDispatchNote},pg_DISPATCH</MAPPING>
+        <MAPPING>CURRENT_TIMESTAMP,dt_created</MAPPING>
+        <MAPPING>NULL,dt_modified</MAPPING>
+        <MAPPING>NULL,dt_printed</MAPPING>
+        <MAPPING>NULL,dt_cancel</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_dispatch_lines</FROM>
+        <TO>k_dispatch_lines</TO>
+        <WHERE>gu_dispatch=?</WHERE>
+        <ERASE>gu_dispatch=?</ERASE>
+        <FROM_PK>gu_dispatch,pg_line</FROM_PK>
+        <TO_PK>gu_dispatch,pg_line</TO_PK>        
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_dispatch_notes.gu_dispatch)">gu_dispatch,gu_dispatch</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+  </ROWSETS>
+</DATASTRUCT>

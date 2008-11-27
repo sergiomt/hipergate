@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<DATASTRUCT>
+  <ROWSETS>
+    <INIT>
+    </INIT>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_academic_courses</FROM>
+        <TO>k_academic_courses</TO>
+        <WHERE>gu_acourse=? </WHERE>
+        <ERASE>gu_acourse=?</ERASE>
+        <FROM_PK>gu_acourse</FROM_PK>
+        <TO_PK>gu_acourse</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFERENCED">gu_acourse,gu_acourse</MAPPING>
+        <MAPPING>NOW(),dt_created</MAPPING>
+        <MAPPING>'CLON',id_course</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_x_course_alumni</FROM>
+        <TO>k_x_course_alumni</TO>
+        <WHERE>gu_acourse=?</WHERE>
+        <ERASE>gu_acourse=?</ERASE>
+        <FROM_PK>gu_acourse,gu_alumni</FROM_PK>
+        <TO_PK>gu_acourse,gu_alumni</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_academic_courses.gu_acourse)">gu_acourse,gu_acourse</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+  </ROWSETS>
+</DATASTRUCT>

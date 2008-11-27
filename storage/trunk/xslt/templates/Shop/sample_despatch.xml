@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<DespatchAdvice xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-1.0" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-1.0" xmlns:cur="urn:oasis:names:specification:ubl:schema:xsd:CurrencyCode-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ID>2</ID>
+  <GUID>7f000001106a7669d5a100001e7bc8ca</GUID>
+  <cbc:IssueDate/>
+  <DocumentStatusCode>SHIPPED</DocumentStatusCode>
+  <cbc:Note><![CDATA[Deliver before 6 P.M.]]></cbc:Note>
+  <LineItemCountNumeric>2</LineItemCountNumeric>
+  <cac:OrderReference>
+    <cac:BuyersID><![CDATA[51409272]]></cac:BuyersID>
+    <cac:SellerID><![CDATA[B82568718]]></cac:SellerID>
+  </cac:OrderReference>
+  <cac:BuyerParty>
+    <cac:Party>
+      <cac:PartyName><cbc:Name><![CDATA[Paul Klein]]></cbc:Name></cac:PartyName>
+      <cac:Address>
+        <ID>7f000001106709e1bda10000ec419d26</ID>
+        <cbc:PostBox></cbc:PostBox>
+        <cbc:StreetName><![CDATA[Bulbury]]></cbc:StreetName>
+        <cbc:AdditionalStreetName><![CDATA[ST]]></cbc:AdditionalStreetName>
+        <cbc:BuildingName><![CDATA[]]></cbc:BuildingName>
+        <cbc:BuildingNumber><![CDATA[80]]></cbc:BuildingNumber>
+        <cbc:CityName><![CDATA[]]></cbc:CityName>
+        <cbc:PostalZone></cbc:PostalZone>
+        <cbc:CountrySubentity><![CDATA[]]></cbc:CountrySubentity>
+        <cbc:CountrySubentityCode></cbc:CountrySubentityCode>
+        <cbc:AddressLine><![CDATA[]]></cbc:AddressLine>
+        <Country><![CDATA[]]></Country>
+      </cac:Address>
+    </cac:Party>
+    <cac:AccountsContact>
+      <cbc:Name><![CDATA[]]></cbc:Name>
+      <cbc:Telephone><![CDATA[]]></cbc:Telephone>
+    </cac:AccountsContact>
+  </cac:BuyerParty>
+  <cac:SellerParty>
+    <cac:Party>
+      <cac:PartyName><cbc:Name><![CDATA[Know Gate Ltd.]]></cbc:Name></cac:PartyName>
+      <cac:Address>
+        <ID>7f0000011067057c4ef100008c688128</ID>
+        <cbc:StreetName><![CDATA[Wesleyan]]></cbc:StreetName>
+        <cbc:AdditionalStreetName><![CDATA[ST]]></cbc:AdditionalStreetName>
+        <cbc:BuildingName><![CDATA[]]></cbc:BuildingName>
+        <cbc:BuildingNumber><![CDATA[107]]></cbc:BuildingNumber>
+        <cbc:CityName><![CDATA[Boston]]></cbc:CityName>
+        <cbc:PostalZone></cbc:PostalZone>
+        <cbc:CountrySubentity><![CDATA[MA]]></cbc:CountrySubentity>
+        <cbc:CountrySubentityCode></cbc:CountrySubentityCode>
+        <cbc:AddressLine><![CDATA[]]></cbc:AddressLine>
+        <Country><![CDATA[United States]]></Country>
+      </cac:Address>
+    </cac:Party>
+    <cac:AccountsContact>
+      <cbc:Name><![CDATA[]]></cbc:Name>
+      <cbc:Telephone><![CDATA[]]></cbc:Telephone>
+    </cac:AccountsContact>
+  </cac:SellerParty>
+  <cac:Delivey>
+    <cac:DeliveyAddress>
+        <ID>7f00000110670211e12100002a4874df</ID>
+        <cbc:StreetName><![CDATA[Yokohama]]></cbc:StreetName>
+        <cbc:AdditionalStreetName><![CDATA[ST]]></cbc:AdditionalStreetName>
+        <cbc:BuildingName><![CDATA[]]></cbc:BuildingName>
+        <cbc:BuildingNumber><![CDATA[1310]]></cbc:BuildingNumber>
+        <cbc:CityName><![CDATA[]]></cbc:CityName>
+        <cbc:PostalZone></cbc:PostalZone>
+        <cbc:CountrySubentity><![CDATA[]]></cbc:CountrySubentity>
+        <cbc:CountrySubentityCode></cbc:CountrySubentityCode>
+        <cbc:AddressLine><![CDATA[]]></cbc:AddressLine>
+        <Country><![CDATA[us]]></Country>
+    </cac:DeliveyAddress>
+  </cac:Delivey>
+  <cac:DespatchLine>
+    <ID>1</ID>
+    <cbc:DeliveredQuantity>1</cbc:DeliveredQuantity>
+    <cac:Item>
+      <cbc:Description><![CDATA[Tux Earrings]]></cbc:Description>
+    </cac:Item>
+  </cac:DespatchLine>
+  <cac:DespatchLine>
+    <ID>2</ID>
+    <cbc:DeliveredQuantity>1</cbc:DeliveredQuantity>
+    <cac:Item>
+      <cbc:Description><![CDATA[Tux Pendant]]></cbc:Description>
+    </cac:Item>
+  </cac:DespatchLine>
+  </DespatchAdvice>

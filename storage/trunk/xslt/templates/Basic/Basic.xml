@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<microsite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:noNamespaceSchemaLocation="http://www.hipergate.org/xslt/schemas/microsite.xsd" guid="0c7c148619c944819576fcec428e7350">
+  <name>Basic</name>
+  <fonts>
+    <family>Geneva</family>
+    <family>Times</family>
+    <family>Verdana</family>
+  </fonts>
+  <colors>
+    <color>Blanco-Negro</color>
+  </colors>
+  <containers>
+    <container guid="3cd64cc2a9184d2c96b2a2fdf8f989cc">
+      <name>Basic</name>
+      <template>Basic.xsl</template>      
+      <thumbnail>Basic.gif</thumbnail>
+      <metablocks>
+        <metablock id="LOGOSUPERIOR" listingOrder="1">
+      	  <name>LOGO SUPERIOR</name>
+      	  <template>#inline:.</template>
+      	  <objects>i:LOGOKG160x36</objects>
+      	  <maxoccurs>1</maxoccurs>
+	</metablock>
+        <metablock id="CABECERA" listingOrder="2">
+      	  <name>CABECERA</name>
+      	  <template>#inline:.</template>
+      	  <objects>p:CABECERA-TEXTO,p:CABECERA-FECHA</objects>
+      	  <maxoccurs>1</maxoccurs>
+	</metablock>
+        <metablock id="BIENVENIDA" listingOrder="3">
+      	  <name>BIENVENIDA</name>
+      	  <template>#inline:.</template>
+      	  <objects>p:BIENVENIDA-TEXTO</objects>
+      	  <maxoccurs>1</maxoccurs>
+	</metablock>
+        <metablock id="ARTICULO" listingOrder="4">
+      	  <name>ARTICULO</name>
+      	  <template>#inline:formatArticle</template>
+      	  <objects>p:TITULO-SUMARIO,p:PARRAFO-SUMARIO,p:TITULO-ARTICULO,p:PARRAFO-ARTICULO-[1..10],p:ENLACE-ARTICULO-[0..1]</objects>
+      	  <maxoccurs>10</maxoccurs>
+	</metablock>
+        <metablock id="DESTACADO" listingOrder="5">
+      	  <name>DESTACADO</name>
+      	  <template>#inline:.</template>
+      	  <objects>p:TITULO-DESTACADO,p:TEXTO-DESTACADO-[1..10],p:ENLACE-DESTACADO-[1..10]</objects>
+      	  <maxoccurs>10</maxoccurs>
+	</metablock>
+	<metablock id="LINKS" listingOrder="6">
+      	  <name>LINKS</name>
+      	  <template>#inline:.</template>
+      	  <objects>p:ENLACE-LINKS-[1..10]</objects>
+      	  <maxoccurs>10</maxoccurs>
+	</metablock>	
+      </metablocks>
+    </container>
+  </containers>
+</microsite>
+
+

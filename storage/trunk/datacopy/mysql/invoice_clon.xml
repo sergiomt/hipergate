@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<DATASTRUCT>
+  <ROWSETS>
+    <INIT>
+    </INIT>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_invoices</FROM>
+        <TO>k_invoices</TO>
+        <WHERE>gu_invoice=?</WHERE>
+        <ERASE>gu_invoice=?</ERASE>
+        <FROM_PK>gu_invoice</FROM_PK>
+        <TO_PK>gu_invoice</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="NEWGUID">gu_invoice,gu_invoice</MAPPING>
+        <MAPPING>{#PgInvoice},pg_invoice</MAPPING>
+        <MAPPING>NOW(),dt_created</MAPPING>
+        <MAPPING>NULL,dt_modified</MAPPING>
+        <MAPPING>NULL,dt_invoiced</MAPPING>
+        <MAPPING>NULL,dt_printed</MAPPING>
+        <MAPPING>NULL,dt_paid</MAPPING>
+        <MAPPING>NULL,dt_cancel</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_invoice_lines</FROM>
+        <TO>k_invoice_lines</TO>
+        <WHERE>gu_invoice=?</WHERE>
+        <ERASE>gu_invoice=?</ERASE>
+        <FROM_PK>gu_invoice,pg_line</FROM_PK>
+        <TO_PK>gu_invoice,pg_line</TO_PK>        
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_invoices.gu_invoice)">gu_invoice,gu_invoice</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+  </ROWSETS>
+</DATASTRUCT>

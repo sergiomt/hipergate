@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl"?>
+<pageset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.hipergate.org/xslt/schemas/pageset.xsd" guid=":gu_pageset">
+  <microsite>:gu_microsite</microsite>
+  <font>Verdana</font>
+  <color>Blanco-Negro</color>
+  <pages>
+    <page guid=":gu_pagex">
+      <title><![CDATA[:page_title]]></title>
+      <container>:gu_container</container>
+      <blocks>
+	<block id="004">
+	  <metablock>DESTACADO</metablock>
+	  <tag>DESTACADO</tag>
+	  <paragraphs>
+	    <paragraph id="REMOVABLE"></paragraph>
+	    <paragraph id="TITULO-DESTACADO">
+	    <text><![CDATA[Título de destacados]]></text>
+	    <url></url>
+	    </paragraph>
+	    <paragraph id="TEXTO-DESTACADO-01">
+	    <text><![CDATA[Texto destacado 1]]></text>
+	    <url></url>
+	    </paragraph>
+	    <paragraph id="TEXTO-DESTACADO-02">
+	    <text><![CDATA[Texto destacado 2]]></text>
+	    <url></url>
+	    </paragraph>
+	    <paragraph id="TEXTO-DESTACADO-03">
+	    <text><![CDATA[Texto destacado 3]]></text>
+	    <url></url>
+	    </paragraph>
+   	    <paragraph id="ENLACE-DESTACADO-01">
+	    <text><![CDATA[Enlace destacado 1]]></text>
+	    <url>www.hipergate.es</url>
+	    </paragraph>
+	  </paragraphs>
+	  <images>
+	    <image id="REMOVABLE"></image>
+	  </images>
+	  <zone/>
+	</block>
+	<block id="003">
+	  <metablock>LOGOSUPERIOR</metablock>
+	  <tag>LOGOSUPERIOR</tag>
+	  <paragraphs>
+	    <paragraph id="REMOVABLE"></paragraph>
+	  </paragraphs>
+	  <images>
+	    <image id="REMOVABLE"></image>
+	    <image id="LOGOKG160x36">
+	      <path>http://www.hipergate.org/images/topLogo.gif</path>
+	      <url>www.hipergate.org</url>
+	      <alt><![CDATA[LOGOSUPERIOR]]></alt>
+	      <width>200</width>
+	      <height>50</height>
+	    </image>
+	  </images>
+	  <zone/>
+	</block>
+	<block id="002">
+	  <metablock>ARTICULO</metablock>
+	  <tag>ARTICULO</tag>
+	  <paragraphs>
+	    <paragraph id="REMOVABLE"></paragraph>
+	    <paragraph id="TITULO-ARTICULO">
+	    <text><![CDATA[Título de artículo 1]]></text>
+	    <url></url>
+	    </paragraph>
+	    <paragraph id="PARRAFO-ARTICULO-03">
+	    <text><![CDATA[Párrafo 3 de artículo 1]]></text>
+	    <url></url>
+	    </paragraph>
+	    <paragraph id="PARRAFO-ARTICULO-02">
+	    <text><![CDATA[Párrafo 2 de artículo 1]]></text>
+	    <url></url>
+	    </paragraph>
+	    <paragraph id="PARRAFO-ARTICULO-01">
+	    <text><![CDATA[Párrafo 1 de artículo 1]]></text>
+	    <url></url>
+	    </paragraph>
+	  </paragraphs>
+	  <images>
+	    <image id="REMOVABLE"></image>
+	  </images>
+	  <zone/>
+	</block>
+	<block id="001">
+	  <metablock>CABECERA</metablock>
+	  <tag>CABECERA</tag>
+          <paragraphs>
+	    <paragraph id="REMOVABLE"></paragraph>
+	    <paragraph id="CABECERA-TEXTO">
+	    <text><![CDATA[Aqui puede insertar un texto de cabecera...]]></text>
+	    <url></url>
+	    </paragraph>
+	    <paragraph id="CABECERA-FECHA">
+	    <text><![CDATA[{#Sistema.Fecha}]]></text>
+	    <url></url>
+	    </paragraph>
+          </paragraphs>
+	  <images>
+	    <image id="REMOVABLE"></image>
+	  </images>
+          <zone/>
+	</block>
+      </blocks>
+    </page>
+  </pages>
+</pageset>

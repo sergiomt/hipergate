@@ -1,0 +1,251 @@
+<binding forwards="false">
+  <mapping class="com.knowgate.surveys.SurveyPage" name="SURVEY">
+    <value name="NAME" field="name" style="attribute" usage="required"/>
+    <value name="TITLE" field="title" style="attribute" usage="required"/>
+    <value name="DESCRIPTION" field="description" style="attribute" usage="optional"/>
+    <value name="ASCIIFILE" field="asciifile" style="attribute" usage="optional"/>
+    <value name="DELIMITER" field="delimiter" style="attribute" usage="optional" default=";"/>
+    <value name="DOSBR" field="dosbr" style="attribute" usage="optional" default="no"/>
+    <value name="STYLESHEET" field="stylesheet" style="attribute" usage="optional"/>
+    <value name="THEME" field="theme" style="attribute" usage="optional" default="cleanhtml"/>
+    <value name="BGCOLOR" field="bgcolor" style="attribute" usage="optional" default="white"/>
+    <value name="REDIRECT" field="redirect" style="attribute" usage="optional" default="no"/>
+    <value name="SUBMITTEXT" field="submittext" style="attribute" usage="optional" default="Submit"/>
+    <value name="CLEARTEXT" field="cleartext" style="attribute" usage="optional" default="Clear"/>
+    <value name="SAVETEXT" field="savetext" style="attribute" usage="optional" default="Save"/>
+    <value name="MULTIPAGE" field="multipage" style="attribute" usage="optional"/>
+    <value name="LASTPAGE" field="lastpage" style="attribute" usage="optional"/>
+    <value name="PROGRES" field="progres" style="attribute" usage="optional" default="no"/>
+    <value name="SHOWCLEAR" field="showclear" style="attribute" usage="optional" format="boolean.default:default" default="true"/>
+    <value name="SHOWSAVE" field="showsave" style="attribute" usage="optional" format="boolean.default:default" default="false"/>    
+    <collection name="RESOURCES" ordered="false" field="resources" usage="optional">
+      <structure name="ENUMERATION" usage="optional" type="com.knowgate.surveys.Enumeration">
+        <value name="NAME" field="name" style="attribute" usage="required"/>
+        <collection field="enumelements">
+          <structure name="ENUMELEMENT" type="com.knowgate.surveys.ChoiceElement">
+            <value name="VALUE"   field="value" style="element" usage="required"/>
+            <value name="CHECKED" field="checked" style="element" usage="optional" format="boolean.default:default" default="false"/>
+            <value name="CAPTION" field="caption" style="element" usage="required"/>
+          </structure>
+        </collection>
+      </structure>
+      <structure name="SCRIPT" usage="optional" type="com.knowgate.surveys.Script">
+        <value name="LANGUAGE" field="slanguage" style="attribute" usage="required"/>
+        <value name="TYPE" field="stype" style="attribute" usage="required"/>
+        <value name="DEFER" field="defer" usage="optional" format="boolean.default:default" default="false"/>
+        <value field="scode" style="cdata" usage="optional"/>
+      </structure>
+    </collection>
+    <collection name="QUESTIONS" ordered="false" field="questions">
+      <structure name="TEXT" value-style="element" usage="optional" type="com.knowgate.surveys.Text">
+        <value name="NAME" field="name" style="attribute" usage="required"/>
+        <value field="value" style="cdata" usage="optional"/>
+        <value name="MAXLEN" field="maxlen" usage="optional" format="int:default" default="80"/>
+        <value name="MUSTANSWER" field="mustanswer" usage="optional" format="boolean.default:default" default="false"/>
+        <value name="CAPTION" field="caption" usage="optional"/>
+        <value name="CAPTSTYLE" field="captstyle" usage="optional" default="caption"/>
+        <value name="STYLE" field="style" usage="optional" default="text1"/>
+        <value name="NUMERICAL" field="numerical" usage="optional" format="boolean.default:default" default="false"/>
+        <value name="MINVAL" field="minval" usage="optional" format="float:default"/>
+        <value name="MAXVAL" field="maxval" usage="optional" format="float:default"/>
+        <value name="ILLEGALVAL" field="illegalval" usage="optional" default="-1"/>	
+      </structure>
+      <structure name="MULTITEXT" value-style="element" usage="optional" type="com.knowgate.surveys.MultiText">
+        <value name="NAME" field="name" style="attribute" usage="required"/>
+        <value name="MUSTANSWER" field="mustanswer" usage="optional" format="boolean.default:default" default="false"/>
+        <value name="ASCII7CAPS" field="ascii7caps" usage="optional" format="boolean.default:default" default="false"/>
+        <value name="CAPTION" field="caption" usage="optional"/>
+        <value name="CAPTSTYLE" field="captstyle" usage="optional" default="caption"/>
+        <value name="STYLE" field="style" usage="optional" default="text1"/>
+        <value name="ILLEGALVAL" field="illegalval" usage="optional" default="-1"/>
+        <collection field="textelements">
+          <structure name="TEXTELEMENT" type="com.knowgate.surveys.TextElement">
+            <value name="MAXLEN" field="maxlen" style="element" usage="optional" format="int:default" default="80"/>
+            <value name="NUMERICAL" field="numerical" usage="optional" format="boolean.default:default" default="false"/>
+            <value name="CAPTION" field="caption" style="element" usage="optional"/>
+            <value field="value" style="cdata" set-method="setValue" get-method="getValue" usage="optional"/>
+          </structure>
+        </collection>
+      </structure>
+      <structure name="MEMO" value-style="element" usage="optional" type="com.knowgate.surveys.Memo">
+        <value name="NAME" field="name" style="attribute" usage="required"/>
+        <value field="value" style="cdata" usage="optional"/>
+        <value name="COLS" field="cols" usage="optional" format="int:default" default="40"/>
+        <value name="ROWS" field="rows" usage="optional" format="int:default" default="25"/>
+        <value name="MUSTANSWER" field="mustanswer" usage="optional" format="boolean.default:default" default="false"/>
+        <value name="CAPTION" field="caption" usage="optional"/>
+        <value name="CAPTSTYLE" field="captstyle" usage="optional" default="caption"/>
+        <value name="STYLE" field="style" usage="optional" default="text1"/>
+      </structure>
+      <structure name="LICKERT" value-style="element" usage="optional" type="com.knowgate.surveys.Lickert">
+        <value name="NAME" field="name" style="attribute" usage="required"/>
+        <value name="SELECTEDINDEX" field="selectedindex" usage="optional" format="int:default"/>
+        <value name="STEPS" field="steps" usage="optional" format="float:default" default="5"/>
+        <value name="LEFTTAG" field="lefttag" usage="optional" format="float:default" default="0"/>
+        <value name="RIGHTTAG" field="righttag" usage="optional" format="float:default" default="4"/>
+        <value name="REVERSED" field="reversed" usage="optional" format="boolean.default:default" default="false"/>
+        <value name="MUSTANSWER" field="mustanswer" usage="optional" format="boolean.default:default" default="false"/>
+        <value name="CAPTION" field="caption" usage="optional"/>
+        <value name="LEFTCAPT" field="leftcapt" usage="optional"/>
+        <value name="RIGHTCAPT" field="rightcapt" usage="optional"/>
+        <value name="CAPTSTYLE" field="captstyle" usage="optional" default="caption"/>
+        <value name="STYLE" field="style" usage="optional" default="element1"/>
+        <value name="ILLEGALVAL" field="illegalval" usage="optional" default="-1"/>
+      </structure>
+      <structure name="HOTORNOT" value-style="element" usage="optional" type="com.knowgate.surveys.HotOrNot">
+        <value name="NAME" field="name" style="attribute" usage="required"/>
+        <value name="MUSTANSWER" field="mustanswer" usage="optional" format="boolean.default:default" default="false"/>
+        <value name="CAPTION" field="caption" usage="optional"/>
+        <value name="CAPTSTYLE" field="captstyle" usage="optional" default="caption"/>
+        <value name="STYLE" field="style" usage="optional" default="element1"/>
+        <structure name="PICTURE" field="pict" value-style="attribute" usage="required" type="com.knowgate.surveys.Picture">
+          <value name="SRC" field="src" usage="required"/>
+          <value name="WIDTH" field="width" usage="required" format="int:default"/>
+          <value name="HEIGHT" field="height" usage="required" format="int:default"/>
+          <value name="BORDER" field="border" usage="required" format="int:default"/>
+          <value name="ALT" field="alt" usage="required"/>
+        </structure>
+        <collection field="lickerts">
+          <structure name="LICKERT" value-style="element" usage="optional" type="com.knowgate.surveys.Lickert">
+            <value name="NAME" field="name" style="attribute" usage="required"/>
+            <value name="SELECTEDINDEX" field="selectedindex" usage="optional" format="int:default"/>
+            <value name="STEPS" field="steps" usage="optional" format="float:default" default="5"/>
+            <value name="LEFTTAG" field="lefttag" usage="optional" format="float:default" default="0"/>
+            <value name="RIGHTTAG" field="righttag" usage="optional" format="float:default" default="4"/>
+            <value name="REVERSED" field="reversed" usage="optional" format="boolean.default:default" default="false"/>
+            <value name="MUSTANSWER" field="mustanswer" usage="optional" format="boolean.default:default" default="false"/>
+            <value name="CAPTION" field="caption" usage="optional"/>
+            <value name="LEFTCAPT" field="leftcapt" usage="optional"/>
+            <value name="RIGHTCAPT" field="rightcapt" usage="optional"/>
+            <value name="CAPTSTYLE" field="captstyle" usage="optional" default="caption"/>
+            <value name="STYLE" field="style" usage="optional" default="element1"/>
+            <value name="ILLEGALVAL" field="illegalval" usage="optional" default="-1"/>
+          </structure>
+        </collection>
+      </structure>
+      <structure name="CHOICE" value-style="element" usage="optional" type="com.knowgate.surveys.Choice">
+        <value name="NAME" field="name" style="attribute" usage="required"/>
+        <value name="SELECTEDINDEX" field="selectedindex" usage="optional" format="int:default"/>
+        <value name="MUSTANSWER" field="mustanswer" usage="optional" format="boolean.default:default" default="false"/>
+        <value name="CAPTION" field="caption" usage="optional"/>
+        <value name="CAPTSTYLE" field="captstyle" usage="optional" default="caption"/>
+        <value name="STYLE" field="style" usage="optional" default="element1"/>
+        <value name="OTHERFIELD" field="otherfield" usage="optional" default="-1"/>
+        <value name="ILLEGALVAL" field="illegalval" usage="optional" default="-1"/>
+        <collection field="choiceelements">
+          <structure name="CHOICEELEMENT" type="com.knowgate.surveys.ChoiceElement">
+            <value name="VALUE"   field="value" style="element" usage="required"/>
+            <value name="CHECKED" field="checked" style="element" usage="optional" format="boolean.default:default" default="false"/>
+            <value name="CAPTION" field="caption" style="element" usage="optional"/>
+          </structure>
+        </collection>
+      </structure>
+      <structure name="MULTICHOICE" value-style="element" usage="optional" type="com.knowgate.surveys.MultiChoice">
+        <value name="NAME" field="name" style="attribute" usage="required"/>
+        <value name="MUSTANSWER" field="mustanswer" usage="optional" format="boolean.default:default" default="false"/>
+        <value name="CAPTION" field="caption" usage="optional"/>
+        <value name="CAPTSTYLE" field="captstyle" usage="optional" default="caption"/>
+        <value name="STYLE" field="style" usage="optional" default="element1"/>
+        <value name="OTHERFIELD" field="otherfield" usage="optional" default="-1"/>
+        <value name="ILLEGALVAL" field="illegalval" usage="optional" default="-1"/>
+        <value name="COLCAPTSTYLE" field="colcaptstyle" usage="optional" default="colcap"/>
+        <collection field="colheaders" value-style="element">
+          <value name="HEADER"/>
+        </collection>        
+        <collection field="choiceelements">
+          <structure name="MULTICHOICEELEMENT" type="com.knowgate.surveys.ChoiceElement">
+            <value name="COLUMN"  field="column" style="attribute" format="int:default" usage="optional"/>
+            <value name="VALUE"   field="value" style="element" usage="required"/>
+            <value name="CHECKED" field="checked" style="element" usage="optional" format="boolean.default:default" default="false"/>
+            <value name="CAPTION" field="caption" style="element" usage="optional"/>
+          </structure>
+        </collection>
+      </structure>
+      <structure name="BOOLEAN" value-style="element" usage="optional" type="com.knowgate.surveys.BoolAlternative">
+        <value name="NAME" field="name" style="attribute" usage="required"/>
+        <value name="CHECKED" field="checked" usage="optional" format="boolean.default:default" default="false"/>
+        <value name="CAPTION" field="caption" usage="optional"/>
+        <value name="CAPTSTYLE" field="captstyle" usage="optional" default="caption"/>
+        <value name="STYLE" field="style" usage="optional" default="element1"/>
+      </structure>
+      <structure name="LIST" value-style="element" usage="optional" type="com.knowgate.surveys.ListChoice">
+        <value name="NAME" field="name" style="attribute" usage="required"/>
+        <value name="VISIBLELEN" field="visiblelen" usage="optional" format="int:default" default="5"/>
+        <value name="MUSTANSWER" field="mustanswer" usage="optional" format="boolean.default:default" default="false"/>
+        <value name="NUMERICAL" field="numerical" usage="optional" format="boolean.default:default" default="false"/>
+        <value name="CAPTION" field="caption" usage="optional"/>
+        <value name="CAPTSTYLE" field="captstyle" usage="optional" default="caption"/>
+        <value name="STYLE" field="style" usage="optional" default="element1"/>
+        <value name="ILLEGALVAL" field="illegalval" usage="optional" default="-1"/>
+        <collection field="choiceelements">
+          <structure name="LISTELEMENT" type="com.knowgate.surveys.ChoiceElement">
+            <value name="VALUE" field="value" style="element" usage="required"/>
+            <value name="SELECTED" field="checked" style="element" usage="required" format="boolean.default:default" default="false"/>
+            <value name="CAPTION" field="caption" style="element" usage="required"/>
+          </structure>
+        </collection>
+      </structure>
+      <structure name="MATRIX" value-style="element" usage="optional" type="com.knowgate.surveys.Matrix">
+        <value name="NAME" field="name" style="attribute" usage="required"/>
+        <value name="COLTITLES" field="coltitles" usage="optional"/>
+        <value name="BORDER" field="border" usage="optional"/>
+        <value name="COLWIDTH" field="colwidth" usage="optional" format="int:default"/>
+        <value name="STYLE" field="style" usage="optional" default="element2"/>
+        <value name="CAPTION" field="caption" usage="optional"/>
+        <value name="CAPTALIGN" field="captalign" usage="optional" default="top"/>
+        <value name="CAPTSTYLE" field="captstyle" usage="optional" default="matcap"/>
+        <value name="ILLEGALVAL" field="illegalval" usage="optional" default="-1"/>
+        <value name="MUSTANSWER" field="mustanswer" usage="optional" format="boolean.default:default" default="false"/>
+        <value name="COLCAPTSTYLE" field="colcaptstyle" usage="optional" default="colcap"/>
+        <value name="ROWCAPTSTYLE" field="rowcaptstyle" usage="optional" default="rowcap"/>
+        <value name="UNIQUECOLUMNS" field="uniquecolumns" usage="optional" format="boolean.default:default" default="false"/>
+        <value name="UNIQUEROWS" field="uniquerows" usage="optional" format="boolean.default:default" default="false"/>
+        <collection field="rows">
+          <structure name="MATRIXROW" usage="optional" type="com.knowgate.surveys.MatrixRow">
+            <value name="CAPTION" field="caption" style="element" usage="optional"/>
+            <collection field="cols">
+              <structure name="MATRIXCELL" usage="optional" type="com.knowgate.surveys.MatrixCell">
+        	<value name="CELLTYPE" field="celltype" style="element" usage="optional" default="ChoiceElement"/>
+        	<value name="CAPTION" field="caption" style="element" usage="optional"/>
+        	<value name="VALUE" field="value" style="element" usage="optional"/>
+                <value name="SELECTEDINDEX" field="selectedindex" style="element" usage="optional" format="int:default"/>
+                <value name="STEPS" field="steps" style="element" usage="optional" format="float:default" default="5"/>
+                <value name="LEFTTAG" field="lefttag" style="element" usage="optional" format="float:default" default="0"/>
+                <value name="RIGHTTAG" field="righttag" style="element" usage="optional" format="float:default" default="4"/>
+                <value name="MAXLEN" field="maxlen" style="element" usage="optional" format="int:default" default="80"/>
+                <value name="NUMERICAL" field="numerical" style="element" usage="optional" format="boolean.default:default" default="false"/>
+        	<collection field="listelements">
+          	  <structure name="LISTELEMENT" usage="optional" type="com.knowgate.surveys.ChoiceElement">
+            	    <value name="VALUE" field="value" style="element" usage="required"/>
+            	    <value name="SELECTED" field="checked" style="element" usage="required" format="boolean.default:default" default="false"/>
+            	    <value name="CAPTION" field="caption" style="element" usage="required"/>
+          	  </structure>
+        	</collection>
+              </structure>
+            </collection>        
+          </structure>        
+        </collection>
+      </structure>
+    </collection>
+    <structure name="CASEROUTE" value-style="element" field="router" usage="optional" type="com.knowgate.surveys.CaseRoute">
+      <collection field="routecases">
+        <structure name="CASE" usage="optional" type="com.knowgate.surveys.RouteCase">
+          <value name="PAGE" field="page" style="attribute" format="int:default" usage="required"/>
+          <value field="test" style="cdata" usage="required"/>
+        </structure>
+      </collection>
+      <structure name="ELSE" field="elseroute" usage="optional" type="com.knowgate.surveys.RouteCase">
+        <value name="PAGE" field="page" style="attribute" format="int:default" usage="required"/>
+      </structure>
+    </structure>
+  </mapping>
+  <mapping class="com.knowgate.surveys.Answer" name="ANSWER">
+    <value name="NAME" set-method="setName" get-method="getName" style="attribute" usage="required"/>
+    <value set-method="setValue" get-method="getValue" style="cdata" usage="required"/>
+  </mapping>
+  <mapping class="com.knowgate.surveys.DataSheet" name="SURVEYDATASHEET">
+  <value name="GUID" field="guid" style="attribute" usage="required"/>
+  <value name="TIMESTAMP" field="lastupdate" style="attribute" usage="required" format="Date:default"/>
+  <collection name="ANSWERS" field="answers"/>
+  </mapping>
+</binding>

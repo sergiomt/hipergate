@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl"?>
+<pageset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.hipergate.org/xslt/schemas/pageset.xsd" guid=":gu_pageset">
+  <microsite>:gu_microsite</microsite>
+  <font>Arial</font>
+  <color>rojo</color>
+  <pages>
+    <page guid=":gu_pagex">
+      <title>:page_title</title>
+      <container>c0a80146f5bc91d683100138af53e8ab</container>
+      <blocks>
+	<block id="002">
+	  <metablock>LOGOHOME</metablock>
+	  <tag>LOGOHOME</tag>
+          <paragraphs>
+	    <paragraph id="TEXTO-LOGO">
+	      <text><![CDATA[Productos y servicios variados para todos los gustos]]></text>
+	      <url></url>
+	    </paragraph>          
+	  </paragraphs>
+	  <images>
+	    <image id="REMOVABLE"></image>
+	    <image id="LOGO-HOME">
+	    <path>http://images.hipergate.org/images/logo_knowgate.gif</path>
+	    <url>http://www.hipergate.org</url>
+	    <alt>Imagen Home</alt>
+	    <width>272</width>
+	    <height>236</height>
+	    </image>
+	  </images>
+          <zone/>
+	</block>
+	<block id="001">
+	  <metablock>ENTRADA</metablock>
+	  <tag>ENTRADA</tag>
+          <paragraphs>
+	    <paragraph id="REMOVABLE"></paragraph>
+	    <paragraph id="TITULO">
+	    <text><![CDATA[Bienvenidos a <nombre de la compania>]]></text>
+	    <url></url>
+	    </paragraph>
+	    <paragraph id="SUBTITULO">
+	    <text><![CDATA[<Titulo de la pagina principal>]]></text>
+	    <url></url>
+	    </paragraph>
+	  </paragraphs>
+	  <images>
+	    <image id="REMOVABLE"></image>
+	  </images>
+          <zone/>
+	</block>
+      </blocks>
+    </page>
+    <page guid=":gu_pageres">
+      <title>Recursos</title>
+      <container>c0a80146f5e499cbe0100038a0156ecd</container>
+      <blocks>
+	<block id="002">
+	  <metablock>MENU</metablock>
+	  <tag>MENU</tag>
+          <paragraphs>
+	    <paragraph id="REMOVABLE"></paragraph>
+	    <paragraph id="OPCION-01">
+	    <text><![CDATA[Home]]></text>
+	    <url>javascript:callPage("Home")</url>
+	    </paragraph>
+	  </paragraphs>
+	  <images>
+	    <image id="REMOVABLE"></image>
+	  </images>
+          <zone/>
+	</block>
+	<block id="001">
+	  <metablock>LOGOTIPO</metablock>
+	  <tag>LOGOTIPO</tag>
+          <paragraphs>
+	    <paragraph id="REMOVABLE"></paragraph>
+	  </paragraphs>
+	  <images>
+	    <image id="REMOVABLE"></image>
+	    <image id="LOGOTIPO">
+	    <path>http://images.hipergate.org/styles/estandar/defarticle.jpg</path>
+	    <url>javascript:callPage("Home")</url>
+	    <alt>Logotipo</alt>
+	    <width>96</width>
+	    <height>82</height>
+	    </image>
+	  </images>
+          <zone/>
+	</block>
+      </blocks>
+    </page>
+  </pages>
+</pageset>

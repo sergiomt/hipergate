@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATASTRUCT>
+  <ROWSETS>
+    <INIT></INIT>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_workareas</FROM>
+        <TO>k_workareas</TO>
+        <WHERE>gu_workarea IN (SELECT gu_workarea FROM k_workareas WHERE nm_workarea like '{#iSourceDomainNm}%')</WHERE>
+        <FROM_PK>id_domain,nm_workarea</FROM_PK>
+        <TO_PK>id_domain,nm_workarea</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="NEWGUID">gu_workarea,gu_workarea</MAPPING>
+        <MAPPING>{#iTargetDomain},id_domain</MAPPING>
+        <MAPPING>LOWER('{#NewUserNickName}')+'_workarea',nm_workarea</MAPPING>
+        <MAPPING>'{#NewUserId}',gu_owner</MAPPING>
+      </MAPPINGS>
+    </ROWSET>    
+    <ROWSET>
+      <ACTION>
+        <FROM>k_x_app_workarea</FROM>
+        <TO>k_x_app_workarea</TO>
+        <WHERE>gu_workarea IN (SELECT gu_workarea FROM k_workareas WHERE nm_workarea like '{#iSourceDomainNm}%')</WHERE>
+        <FROM_PK>gu_workarea,cast(id_app as SMALLINT)</FROM_PK>
+        <TO_PK>gu_workarea,cast(id_app as SMALLINT)</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_workarea,gu_workarea</MAPPING>
+        <MAPPING>id_app,id_app</MAPPING>
+        <MAPPING>LOWER('{#NewUserNickName}')+'_workarea',path_files</MAPPING>
+        <MAPPING>NULL,gu_admins</MAPPING>
+        <MAPPING>gu_powusers,gu_powusers</MAPPING>
+        <MAPPING>NULL,gu_guests</MAPPING>
+        <MAPPING>NULL,gu_other</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_addresses_lookup</FROM>
+        <TO>k_addresses_lookup</TO>
+        <WHERE>gu_owner IN (SELECT gu_workarea FROM k_workareas WHERE nm_workarea = '{#iSourceDomainNm}_workarea')</WHERE>
+        <FROM_PK>gu_owner,id_section,pg_lookup</FROM_PK>
+        <TO_PK>gu_owner,id_section,pg_lookup</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_owner,gu_owner</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_rooms_lookup</FROM>
+        <TO>k_rooms_lookup</TO>
+        <WHERE>gu_owner IN (SELECT gu_workarea FROM k_workareas WHERE nm_workarea = '{#iSourceDomainNm}_workarea')</WHERE>
+        <FROM_PK>gu_owner,id_section,pg_lookup</FROM_PK>
+        <TO_PK>gu_owner,id_section,pg_lookup</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_owner,gu_owner</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_rooms</FROM>
+        <TO>k_rooms</TO>
+        <WHERE>gu_workarea IN (SELECT gu_workarea FROM k_workareas WHERE nm_workarea = '{#iSourceDomainNm}_workarea')</WHERE>
+        <FROM_PK>nm_room,gu_workarea</FROM_PK>
+        <TO_PK>nm_room,gu_workarea</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_workarea,gu_workarea</MAPPING> 
+        <MAPPING>{#iTargetDomain},id_domain</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_fellows_lookup</FROM>
+        <TO>k_fellows_lookup</TO>
+        <WHERE>gu_owner IN (SELECT gu_workarea FROM k_workareas WHERE nm_workarea = '{#iSourceDomainNm}_workarea')</WHERE>
+        <FROM_PK>gu_owner,id_section,pg_lookup</FROM_PK>
+        <TO_PK>gu_owner,id_section,pg_lookup</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_owner,gu_owner</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_fellows</FROM>
+        <TO>k_fellows</TO>
+        <WHERE>gu_workarea IN (SELECT gu_workarea FROM k_workareas WHERE nm_workarea = '{#iSourceDomainNm}_workarea')</WHERE>
+        <FROM_PK>gu_fellow</FROM_PK>
+        <TO_PK>gu_fellow</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="NEWGUID">gu_fellow,gu_fellow</MAPPING>
+      	<MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_workarea,gu_workarea</MAPPING>
+      	<MAPPING>{#iTargetDomain},id_domain</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_companies_lookup</FROM>
+        <TO>k_companies_lookup</TO>
+        <WHERE>gu_owner IN (SELECT gu_workarea FROM k_workareas WHERE nm_workarea = '{#iSourceDomainNm}_workarea')</WHERE>
+        <FROM_PK>gu_owner,id_section,pg_lookup</FROM_PK>
+        <TO_PK>gu_owner,id_section,pg_lookup</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_owner,gu_owner</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_companies</FROM>
+        <TO>k_companies</TO>
+        <WHERE>gu_workarea IN (SELECT gu_workarea FROM k_workareas WHERE nm_workarea = '{#iSourceDomainNm}_workarea')</WHERE>
+        <FROM_PK>gu_company</FROM_PK>
+        <TO_PK>gu_company</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="NEWGUID">gu_company,gu_company</MAPPING>
+      	<MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_workarea,gu_workarea</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_addresses </FROM>
+        <TO>k_addresses</TO>
+        <WHERE>gu_address IN (SELECT gu_address FROM k_x_company_addr WHERE gu_company IN (SELECT gu_company from k_companies where gu_workarea IN (SELECT gu_workarea FROM k_workareas WHERE nm_workarea = '{#iSourceDomainNm}_workarea')))</WHERE>
+        <FROM_PK>gu_address</FROM_PK>
+        <TO_PK>gu_address</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="NEWGUID">gu_address,gu_address</MAPPING>
+      	<MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_workarea,gu_workarea</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_x_company_addr</FROM>
+        <TO>k_x_company_addr</TO>
+        <WHERE>gu_company IN (SELECT gu_company from k_companies where gu_workarea IN (SELECT gu_workarea FROM k_workareas WHERE nm_workarea = '{#iSourceDomainNm}_workarea'))</WHERE>
+        <FROM_PK>gu_company, gu_address</FROM_PK>
+        <TO_PK>gu_company, gu_address</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="REFER(k_companies.gu_company)">gu_company,gu_company</MAPPING>
+      	<MAPPING TRANSFORM="REFER(k_addresses.gu_address)">gu_address,gu_address</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_contacts_lookup</FROM>
+        <TO>k_contacts_lookup</TO>
+        <WHERE>gu_owner IN (SELECT gu_workarea FROM k_workareas WHERE nm_workarea = '{#iSourceDomainNm}_workarea')</WHERE>
+        <FROM_PK>gu_owner,id_section,pg_lookup</FROM_PK>
+        <TO_PK>gu_owner,id_section,pg_lookup</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_owner,gu_owner</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_contacts</FROM>
+        <TO>k_contacts</TO>
+        <WHERE>gu_workarea IN (SELECT gu_workarea FROM k_workareas WHERE nm_workarea = '{#iSourceDomainNm}_workarea')</WHERE>
+        <FROM_PK>gu_contact</FROM_PK>
+        <TO_PK>gu_contact</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="NEWGUID">gu_contact,gu_contact</MAPPING>
+        <MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_workarea,gu_workarea</MAPPING>
+        <MAPPING>'{#NewUserId}',gu_writer </MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+
+    <ROWSET>
+      <ACTION>
+        <FROM>k_addresses </FROM>
+        <TO>k_addresses</TO>
+        <WHERE>gu_address IN (SELECT gu_address FROM k_x_contact_addr WHERE gu_contact IN (SELECT gu_contact FROM k_contacts WHERE gu_workarea in (select gu_workarea from k_workareas where nm_workarea = '{#iSourceDomainNm}_workarea')))</WHERE>
+        <FROM_PK>gu_address</FROM_PK>
+        <TO_PK>gu_address</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="NEWGUID">gu_address,gu_address</MAPPING>
+      	<MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_workarea,gu_workarea</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+
+    <ROWSET>
+      <ACTION>
+        <FROM>k_x_contact_addr</FROM>
+        <TO>k_x_contact_addr</TO>
+        <WHERE>gu_contact IN (SELECT gu_contact FROM k_contacts WHERE gu_workarea in (select gu_workarea from k_workareas where nm_workarea = '{#iSourceDomainNm}_workarea'))</WHERE>
+        <FROM_PK>gu_contact</FROM_PK>
+        <TO_PK>gu_contact</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="REFER(k_contacts.gu_contact)">gu_contact,gu_contact</MAPPING>
+      	<MAPPING TRANSFORM="REFER(k_addresses.gu_address)">gu_address,gu_address</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+
+    <ROWSET>
+      <ACTION>
+        <FROM>k_oportunities_lookup</FROM>
+        <TO>k_oportunities_lookup</TO>
+        <WHERE>gu_owner IN (SELECT gu_workarea FROM k_workareas WHERE nm_workarea = '{#iSourceDomainNm}_workarea')</WHERE>
+        <FROM_PK>gu_owner,id_section,pg_lookup</FROM_PK>
+        <TO_PK>gu_owner,id_section,pg_lookup</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_owner,gu_owner</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_oportunities</FROM>
+        <TO>k_oportunities</TO>
+        <WHERE>gu_workarea IN (SELECT gu_workarea FROM k_workareas WHERE nm_workarea = '{#iSourceDomainNm}_workarea')</WHERE>
+        <FROM_PK>gu_oportunity</FROM_PK>
+        <TO_PK>gu_oportunity</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="NEWGUID">gu_oportunity,gu_oportunity</MAPPING>
+      	<MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_workarea,gu_workarea</MAPPING>
+      	<MAPPING>'{#NewUserId}',gu_writer </MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_queries</FROM>
+        <TO>k_queries</TO>
+        <WHERE>gu_workarea IN (SELECT gu_workarea FROM k_workareas WHERE nm_workarea = '{#iSourceDomainNm}_workarea')</WHERE>
+        <FROM_PK>gu_query</FROM_PK>
+        <TO_PK>gu_query</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="NEWGUID">gu_query,gu_query</MAPPING>
+      	<MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_workarea,gu_workarea</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_lists</FROM>
+        <TO>k_lists</TO>
+        <WHERE>gu_workarea IN (SELECT gu_workarea FROM k_workareas WHERE nm_workarea = '{#iSourceDomainNm}_workarea')</WHERE>
+        <FROM_PK>gu_query</FROM_PK>
+        <TO_PK>gu_query</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="NEWGUID">gu_list,gu_list</MAPPING>
+      	<MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_workarea,gu_workarea</MAPPING>
+      	<MAPPING TRANSFORM="REFER(k_queries.gu_query)">gu_query,gu_query</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_projects_lookup</FROM>
+        <TO>k_projects_lookup</TO>
+        <WHERE>gu_owner IN (SELECT gu_workarea FROM k_workareas WHERE nm_workarea = '{#iSourceDomainNm}_workarea')</WHERE>
+        <FROM_PK>gu_owner,id_section,pg_lookup</FROM_PK>
+        <TO_PK>gu_owner,id_section,pg_lookup</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_owner,gu_owner</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_projects</FROM>
+        <TO>k_projects</TO>
+        <WHERE>gu_owner IN (SELECT gu_workarea FROM k_workareas WHERE nm_workarea = '{#iSourceDomainNm}_workarea')</WHERE>
+        <FROM_PK>gu_project</FROM_PK>
+        <TO_PK>gu_project</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="NEWGUID">gu_project,gu_project</MAPPING>
+      	<MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_owner,gu_owner</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_project_expand</FROM>
+        <TO>k_project_expand</TO>
+        <WHERE>gu_rootprj in (select gu_project from k_projects where gu_owner in (select gu_workarea from k_workareas where nm_workarea = '{#iSourceDomainNm}_workarea'))</WHERE>
+        <FROM_PK>gu_rootprj,gu_project</FROM_PK>
+        <TO_PK>gu_rootprj,gu_project</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="REFER(k_projects.gu_project)">gu_rootprj,gu_rootprj</MAPPING>
+      	<MAPPING TRANSFORM="REFER(k_projects.gu_project)">gu_project,gu_project</MAPPING>
+        <MAPPING TRANSFORM="REFER(k_projects.gu_project)">gu_parent,gu_parent</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_duties_lookup</FROM>
+        <TO>k_duties_lookup</TO>
+        <WHERE>gu_owner IN (SELECT gu_workarea FROM k_workareas WHERE nm_workarea = '{#iSourceDomainNm}_workarea')</WHERE>
+        <FROM_PK>gu_owner,id_section,pg_lookup</FROM_PK>
+        <TO_PK>gu_owner,id_section,pg_lookup</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_owner,gu_owner</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_duties</FROM>
+        <TO>k_duties</TO>
+        <WHERE>gu_project IN (select gu_project from k_projects where gu_owner in (select gu_workarea from k_workareas where nm_workarea = '{#iSourceDomainNm}_workarea'))</WHERE>
+        <FROM_PK>gu_duty</FROM_PK>
+        <TO_PK>gu_duty</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="NEWGUID">gu_duty,gu_duty</MAPPING>
+      	<MAPPING TRANSFORM="REFER(k_projects.gu_project)">gu_project,gu_project</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_x_duty_resource</FROM>
+        <TO>k_x_duty_resource</TO>
+        <WHERE>gu_duty IN (select gu_duty from k_duties where gu_project IN (select gu_project from k_projects where gu_owner in (select gu_workarea from k_workareas where nm_workarea = '{#iSourceDomainNm}_workarea')))</WHERE>
+        <FROM_PK>gu_duty,nm_resource</FROM_PK>
+        <TO_PK>gu_duty,nm_resource</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="REFER(k_duties.gu_duty)">gu_duty,gu_duty</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_bugs_lookup</FROM>
+        <TO>k_bugs_lookup</TO>
+        <WHERE>gu_owner IN (SELECT gu_workarea FROM k_workareas WHERE nm_workarea = '{#iSourceDomainNm}_workarea')</WHERE>
+        <FROM_PK>gu_owner,id_section,pg_lookup</FROM_PK>
+        <TO_PK>gu_owner,id_section,pg_lookup</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_owner,gu_owner</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_bugs</FROM>
+        <TO>k_bugs</TO>
+        <WHERE>gu_project IN (select gu_project from k_projects where gu_owner in (select gu_workarea from k_workareas where nm_workarea = '{#iSourceDomainNm}_workarea'))</WHERE>
+        <FROM_PK>gu_bug</FROM_PK>
+        <TO_PK>gu_bug</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="NEWGUID">gu_bug,gu_bug</MAPPING>
+      	<MAPPING TRANSFORM="REFER(k_projects.gu_project)">gu_project,gu_project</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_pagesets</FROM>
+        <TO>k_pagesets</TO>
+        <WHERE>gu_workarea IN (SELECT gu_workarea FROM k_workareas WHERE nm_workarea = '{#iSourceDomainNm}_workarea')</WHERE>
+        <FROM_PK>gu_pageset</FROM_PK>
+        <TO_PK>gu_pageset</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="NEWGUID">gu_pageset,gu_pageset</MAPPING>
+      	<MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_workarea,gu_workarea</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_meetings</FROM>
+        <TO>k_meetings</TO>
+        <WHERE>gu_workarea IN (SELECT gu_workarea FROM k_workareas WHERE nm_workarea = '{#iSourceDomainNm}_workarea')</WHERE>
+        <FROM_PK>gu_meeting</FROM_PK>
+        <TO_PK>gu_meeting</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="NEWGUID">gu_meeting,gu_meeting</MAPPING>
+      	<MAPPING TRANSFORM="REFER(k_workareas.gu_workarea)">gu_workarea,gu_workarea</MAPPING>
+      	<MAPPING TRANSFORM="REFER(k_fellows.gu_fellow)">gu_fellow,gu_fellow</MAPPING>
+      	<MAPPING>{#iTargetDomain},id_domain</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+  </ROWSETS>
+</DATASTRUCT>

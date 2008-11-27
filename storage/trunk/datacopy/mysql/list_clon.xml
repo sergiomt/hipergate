@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATASTRUCT>
+  <ROWSETS>
+    <INIT>
+    </INIT>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_lists</FROM>
+        <TO>k_lists</TO>
+        <WHERE>gu_list=? </WHERE>
+        <ERASE>gu_list=?</ERASE>
+        <FROM_PK>gu_list</FROM_PK>
+        <TO_PK>gu_list</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFERENCED">gu_list,gu_list</MAPPING>
+        <MAPPING>NOW(),dt_created</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_x_list_members</FROM>
+        <TO>k_x_list_members</TO>
+        <WHERE>gu_list=?</WHERE>
+        <ERASE>gu_list=?</ERASE>
+        <FROM_PK>gu_list,tx_email</FROM_PK>
+        <TO_PK>gu_list,tx_email</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_lists.gu_list)">gu_list,gu_list</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+  </ROWSETS>
+</DATASTRUCT>

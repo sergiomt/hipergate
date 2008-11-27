@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATASTRUCT>
+  <ROWSETS>
+    <INIT></INIT>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_suppliers</FROM>
+        <TO>k_suppliers</TO>
+        <WHERE>gu_supplier=?</WHERE>
+        <ERASE>gu_supplier=?</ERASE>
+        <FROM_PK>gu_supplier</FROM_PK>
+        <TO_PK>gu_supplier</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING>CURRENT_TIMESTAMP,dt_created</MAPPING>
+        <MAPPING>CURRENT_TIMESTAMP,dt_modified</MAPPING>
+        <MAPPING>nm_legal || ' (' || CAST((SELECT COUNT(gu_supplier) FROM k_suppliers) AS VARCHAR(11)) || ')',nm_legal</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_addresses</FROM>
+        <TO>k_addresses</TO>
+        <WHERE>gu_address IN (SELECT gu_address FROM k_suppliers WHERE gu_supplier=?)</WHERE>
+        <ERASE>gu_address IN (SELECT gu_address FROM k_suppliers WHERE gu_supplier=?)</ERASE>
+        <FROM_PK>gu_address</FROM_PK>
+        <TO_PK>gu_address</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING>CURRENT_TIMESTAMP,dt_created</MAPPING>
+        <MAPPING>CURRENT_TIMESTAMP,dt_modified</MAPPING>
+        <MAPPING TRANSFORM="NEWGUID">gu_address,gu_address</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+  </ROWSETS>
+</DATASTRUCT>

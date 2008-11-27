@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<qbf>
+  <title_es>Consulta de Miembros de Listas</title_es>
+  <title_en>List Members Query</title_en>
+  <title_fr>#fr#List Members Query</title_fr>
+  <title_de>#de#List Members Query</title_de>
+  <title_it>#it#List Members Query</title_it>
+  <title_ru>#ru#List Members Query</title_ru>
+  <title_pt>#pt#List Members Query</title_pt>  
+  <title_cn>#zh#List Members Query</title_cn>
+  <title_tw>#zh#List Members Query</title_tw>
+  <method>post</method>
+  <action>../crm/member_wizard_02.jsp</action>
+  <baseobject>k_member_address</baseobject>
+  <basefilter>gu_workarea='${cookie.workarea}' AND (bo_private=0 OR gu_writer='${cookie.userid}')</basefilter>
+  <fields>
+    <field><name>tx_name</name>
+      <label_es>Nombre</label_es>
+      <label_en>Name</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>tx_surname</name>
+      <label_es>Apellidos</label_es>
+      <label_en>Surname</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>nm_legal</name>
+      <label_es>Razon Social</label_es>
+      <label_en>Legal Name</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>nm_commercial</name>
+      <label_es>Nombre Comercial</label_es>
+      <label_en>Commercial Name</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>de_title</name>
+      <label_es>Empleo</label_es>
+      <label_en>Position</label_en>
+      <type>lookup</type><form>lookup_f.jsp?nm_table=k_contacts_lookup</form>
+    </field>
+    <field><name>id_sector</name>
+      <label_es>Sector</label_es>
+      <label_en>Sector</label_en>
+      <type>lookup</type><form>lookup_f.jsp?nm_table=k_companies_lookup</form>
+    </field>
+    <field><name>nm_legal</name>
+      <label_es>Empresa</label_es>
+      <label_en>Company</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>tp_company</name>
+      <label_es>Tipo Empresa</label_es>
+      <label_en>Company Type</label_en>
+      <type>lookup</type><form>lookup_f.jsp?nm_table=k_companies_lookup</form>
+    </field>
+    <field><name>id_status</name>
+      <label_es>Estado</label_es>
+      <label_en>Status</label_en>
+      <type>lookup</type><form>lookup_f.jsp?nm_table=k_contacts_lookup</form>
+    </field>
+    <field><name>id_ref</name>
+      <label_es>Referencia</label_es>
+      <label_en>Reference</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>id_gender</name>
+      <label_es>Sexo</label_es>
+      <label_en>Gender</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>dt_modified</name>
+      <label_es>Fecha Mod. Registro</label_es>
+      <label_en>Date Modified</label_en>
+      <type>date</type>
+    </field>
+    <field><name>dt_birth</name>
+      <label_es>Fecha Nacimiento</label_es>
+      <label_en>Date of birth</label_en>
+      <type>date</type>
+    </field>
+    <field><name>ny_age</name>
+      <label_es>Edad</label_es>
+      <label_en>Age</label_en>
+      <type>integer</type>
+    </field>
+    <field><name>sn_passport</name>
+      <label_es>Doc Identidad</label_es>
+      <label_en>Identity Document</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>tx_dept</name>
+      <label_es>Departamento</label_es>
+      <label_en>Department</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>tx_division</name>
+      <label_es>Division</label_es>
+      <label_en>Division</label_en>
+      <type>varchar</type>
+    </field>        
+    <field><name>ix_address</name>
+      <label_es>Indice de Direccion</label_es>
+      <label_en>Address Index</label_en>
+      <type>integer</type>
+    </field>
+    <field><name>tp_location</name>
+      <label_es>Tipo de Direccion</label_es>
+      <label_en>Address Type</label_en>
+      <type>lookup</type><form>lookup_f.jsp?nm_table=k_addresses_lookup</form>
+    </field>
+    <field><name>nm_street</name>
+      <label_es>Nombre Via</label_es>
+      <label_en>Street Name</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>full_addr</name>
+      <label_es>Resto Direccion</label_es>
+      <label_en>Full Address</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>nm_country</name>
+      <label_es>Pais</label_es>
+      <label_en>Country</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>nm_state</name>
+      <label_es>Provincia</label_es>
+      <label_en>State/Region</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>zipcode</name>
+      <label_es>Codigo Postal</label_es>
+      <label_en>Zipcode</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>tx_email</name>
+      <label_es>e-mail</label_es>
+      <label_en>e-mail</label_en>
+      <type>varchar</type>
+    </field>    
+  </fields>
+  
+  <columns>
+    <column default="yes"><name>tx_name</name>
+      <label_es>Nombre</label_es>
+      <label_en>Name</label_en></column>
+    <column default="yes"><name>tx_surname</name>
+      <label_es>Apellidos</label_es>
+      <label_en>Surname</label_en></column>
+    <column default="yes"><name>nm_legal</name>
+      <label_es>Razon Social</label_es>
+      <label_en>Legal Name</label_en></column>
+    <column default="yes"><name>tx_email</name>
+      <label_es>e-mail</label_es>
+      <label_en>e-mail</label_en></column>
+    <column><name>nm_commercial</name>
+      <label_es>Nombre Comercial</label_es>
+      <label_en>Commercial Name</label_en></column>
+    <column><name>de_title</name>
+      <label_es>Empleo</label_es>
+      <label_en>Position</label_en></column>
+    <column><name>id_sector</name>
+      <label_es>Sector</label_es>
+      <label_en>Sector</label_en></column>
+    <column><name>nm_legal</name>
+      <label_es>Empresa</label_es>
+      <label_en>Company</label_en></column>
+    <column><name>tp_company</name>
+      <label_es>Tipo Empresa</label_es>
+      <label_en>Company Type</label_en></column>
+    <column><name>id_status</name>
+      <label_es>Estado</label_es>
+      <label_en>Status</label_en></column>
+    <column><name>id_ref</name>
+      <label_es>Referencia</label_es>
+      <label_en>Reference</label_en></column>
+    <column><name>id_gender</name>
+      <label_es>Sexo</label_es>
+      <label_en>Gender</label_en></column>
+    <column><name>dt_modified</name>
+      <label_es>Fecha Mod. Registro</label_es>
+      <label_en>Date Modified</label_en></column>
+    <column><name>dt_birth</name>
+      <label_es>Fecha Nacimiento</label_es>
+      <label_en>Date of birth</label_en></column>
+    <column><name>ny_age</name>
+      <label_es>Edad</label_es>
+      <label_en>Age</label_en></column>
+    <column><name>sn_passport</name>
+      <label_es>Doc Identidad</label_es>
+      <label_en>Identity Document</label_en></column>
+    <column><name>tx_dept</name>
+      <label_es>Departamento</label_es>
+      <label_en>Department</label_en></column>
+    <column><name>tx_division</name>
+      <label_es>Division</label_es>
+      <label_en>Division</label_en></column>        
+    <column><name>ix_address</name>
+      <label_es>Indice de Direccion</label_es>
+      <label_en>Address Index</label_en></column>
+    <column><name>tp_location</name>
+      <label_es>Tipo de Direccion</label_es>
+      <label_en>Address Type</label_en></column>
+    <column><name>nm_street</name>
+      <label_es>Nombre Via</label_es>
+      <label_en>Street Name</label_en></column>
+    <column><name>full_addr</name>
+      <label_es>Resto Direccion</label_es>
+      <label_en>Full Address</label_en></column>
+    <column><name>nm_country</name>
+      <label_es>Pais</label_es>
+      <label_en>Country</label_en></column>
+    <column><name>nm_state</name>
+      <label_es>Provincia</label_es>
+      <label_en>State/Region</label_en></column>
+    <column><name>zipcode</name>
+      <label_es>Codigo Postal</label_es>
+      <label_en>Zipcode</label_en></column>
+    <column><name>dt_modified</name>
+      <label_es>Fecha Mod. Registro</label_es></column>
+  </columns>
+
+  <sortable>
+    <by>
+      <name>nm_legal</name>
+      
+      <label_es>Razon Social</label_es>
+      
+      <label_en>Legal Name</label_en>
+    </by>
+    <by>
+      <name>id_sector</name>
+      
+      <label_es>Sector</label_es>
+      
+      <label_en>Sector</label_en>
+    </by>
+    <by>
+      <name>id_status</name>
+      
+      <label_es>Estado</label_es>
+      
+      <label_es>Status</label_es>
+    </by>
+  </sortable>
+</qbf>

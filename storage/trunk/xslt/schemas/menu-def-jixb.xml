@@ -1,0 +1,13 @@
+<binding forwards="false">
+  <mapping class="com.knowgate.hipergate.MenuOption" name="option">
+    <value name="name" field="name" style="attribute" usage="optional"/>
+    <value name="mask" field="mask" style="element" usage="required"/>
+    <value name="title" field="title" style="element" usage="required"/>
+    <value name="href" field="href" style="element" usage="required"/>
+    <value name="forbid" field="forbid" style="element" usage="optional"/>
+    <collection name="suboptions" ordered="false" field="suboptions" usage="optional"/>
+  </mapping>
+  <mapping class="com.knowgate.hipergate.Menu" name="menu">
+   <collection name="options" ordered="false" field="options" usage="required"/>
+  </mapping>
+</binding>

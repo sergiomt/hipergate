@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<qbf>
+  <title_es>Consulta de Oportunidades</title_es>
+  <title_en>Oportunities Query</title_en>
+  <title_fr>#fr#Oportunities Query</title_fr>
+  <title_de>#de#Oportunities Query</title_de>
+  <title_it>#it#Oportunities Query</title_it>
+  <title_ru>#ru#Oportunities Query</title_ru>
+  <title_pt>#pt#Oportunities Query</title_pt>  
+  <title_cn>#zh#Oportunities Query</title_cn>
+  <title_tw>#zh#Oportunities Query</title_tw>
+  <method>post</method>
+  <action>../crm/oportunity_listing_f.jsp?selected=2&amp;subselected=2</action>
+  <baseobject>k_oportunities b</baseobject>
+  <basefilter>(b.gu_workarea='${cookie.workarea}' AND (b.gu_writer='${cookie.userid}' OR b.bo_private=0))</basefilter>
+    
+  <fields>
+    <field><name>tl_oportunity</name>
+      <label_es>Titulo</label_es>
+      <label_en>Title</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>tp_oportunity</name>
+      <label_es>Tipo</label_es>
+      <label_en>Type</label_en>
+      <type>lookup</type><form>lookup_f.jsp?nm_table=k_oportunities_lookup</form>
+    </field>
+    <field><name>tx_company</name>
+      <label_es>Compania</label_es>
+      <label_en>Company</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>tx_contact</name>
+      <label_es>Individuo</label_es>
+      <label_en>Individual</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>tp_origin</name>
+      <label_es>Origen</label_es>
+      <label_en>Origin</label_en>
+      <type>lookup</type><form>lookup_f.jsp?nm_table=k_oportunities_lookup</form>
+    </field>
+    <field><name>id_status</name>
+      <label_es>Estado</label_es>
+      <label_en>Status</label_en>
+      <type>lookup</type><form>lookup_f.jsp?nm_table=k_oportunities_lookup</form>
+    </field>
+    <field><name>id_objetive</name>
+      <label_es>Objetivo</label_es>
+      <label_en>Objective</label_en>
+      <type>lookup</type><form>lookup_f.jsp?nm_table=k_oportunities_lookup</form>
+    </field>
+    <field><name>tx_cause</name>
+      <label_es>Causa de Cierre</label_es>
+      <label_en>Closing cause</label_en>
+      <type>lookup</type><form>lookup_f.jsp?nm_table=k_oportunities_lookup</form>
+    </field>
+    <field><name>im_revenue</name>
+      <label_es>Importe</label_es>
+      <label_en>Amount</label_en>
+      <type>float</type>
+    </field>
+    <field><name>dt_next_action</name>
+      <label_es>Fecha Siguiente Accion</label_es>
+      <label_en>Next Action Date</label_en>
+      <type>date</type>
+    </field>
+    <field><name>tx_note</name>
+      <label_es>Notas</label_es>
+      <label_en>Notes</label_en>
+      <type>varchar</type>
+    </field>
+  </fields>
+
+  <columns>
+    <column default="yes"><name>tl_oportunity</name>
+      <label_es>Titulo</label_es>
+      <label_en>Title</label_en></column>
+    <column default="yes"><name>tp_oportunity</name>
+      <label_es>Tipo</label_es>
+      <label_en>Type</label_en></column>
+    <column default="yes"><name>tx_company</name>
+      <label_es>Compania</label_es>
+      <label_en>Company</label_en></column>
+    <column default="yes"><name>tx_contact</name>
+      <label_es>Individuo</label_es>
+      <label_en>Individual</label_en></column>
+    <column default="yes"><name>tp_origin</name>
+      <label_es>Origen</label_es>
+      <label_en>Origin</label_en></column>
+    <column default="yes"><name>id_status</name>
+      <label_es>Estado</label_es>
+      <label_en>Status</label_en></column>
+    <column default="yes"><name>id_objetive</name>
+      <label_es>Objetivo</label_es>
+      <label_en>Objective</label_en></column>
+    <column default="yes"><name>tx_cause</name>
+      <label_es>Causa de Cierre</label_es>
+      <label_en>Closing Cause</label_en></column>
+    <column default="yes"><name>im_revenue</name>
+      <label_es>Importe</label_es>
+      <label_en>Amount</label_en></column>
+    <column default="yes"><name>dt_next_action</name>
+      <label_es>Siguiente Accion</label_es>
+      <label_en>Date Next Action</label_en></column>
+    <column default="yes"><name>dt_modified</name>
+      <label_es>Fecha Modificacion</label_es>
+      <label_en>Date Modified</label_en></column>
+    <column default="yes"><name>tx_note</name>
+      <label_es>Notas</label_es>
+      <label_en>Notes</label_en></column>
+  </columns>
+
+  <sortable>
+    <by>
+      <name>tl_oportunity</name>
+      
+      <label_es>Titulo</label_es>
+      
+      <label_en>Title</label_en>
+    </by>
+    <by>
+      <name>tp_oportunity</name>
+      
+      <label_es>Tipo</label_es>
+      
+      <label_en>Title</label_en>
+    </by>
+    <by>
+      <name>tx_company</name>
+      
+      <label_es>Compania</label_es>
+    </by>
+    <by>
+      <name>tx_contact</name>
+      
+      <label_es>Individuo</label_es>
+    </by>
+    <by>
+      <name>im_revenue</name>
+      
+      <label_es>Importe</label_es>
+    </by>
+    <by>
+      <name>id_status</name>
+      
+      <label_es>Estado</label_es>
+    </by>
+    <by>
+      <name>dt_next_action</name>
+      
+      <label_es>Siguiente Accion</label_es>
+    </by>
+    <by>
+      <name>dt_modified</name>
+      
+      <label_es>Fecha Modificacion</label_es>
+    </by>
+  </sortable>
+</qbf>

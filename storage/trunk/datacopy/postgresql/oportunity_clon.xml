@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATASTRUCT>
+  <ROWSETS>
+    <INIT>
+    </INIT>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_oportunities</FROM>
+        <TO>k_oportunities</TO>
+        <WHERE>gu_oportunity=? </WHERE>
+        <ERASE>gu_oportunity=?</ERASE>
+        <FROM_PK>gu_oportunity</FROM_PK>
+        <TO_PK>gu_oportunity</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFERENCED">gu_oportunity,gu_oportunity</MAPPING>
+        <MAPPING>CURRENT_TIMESTAMP,dt_created</MAPPING>
+        <MAPPING>CURRENT_TIMESTAMP,dt_modified</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+  </ROWSETS>
+</DATASTRUCT>

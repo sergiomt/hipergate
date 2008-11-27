@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Invoice xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-1.0" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-1.0" xmlns:cur="urn:oasis:names:specification:ubl:schema:xsd:CurrencyCode-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ID>1</ID>
+  <GUID>7f000001106832df692100000a45e2d8</GUID>
+  <cbc:IssueDate/>
+  <InvoiceCurrencyCode>840</InvoiceCurrencyCode>
+  <LineItemCountNumeric>2</LineItemCountNumeric>
+  <cac:OrderReference>
+    <cac:BuyersID><![CDATA[B82568718]]></cac:BuyersID>
+    <cac:SellerID><![CDATA[B82568718]]></cac:SellerID>
+    <DocumentStatusCode><![CDATA[]]></DocumentStatusCode>
+  </cac:OrderReference>
+  <cac:BuyerParty>
+    <cac:Party>
+      <cac:PartyName><cbc:Name><![CDATA[Paul Klein]]></cbc:Name></cac:PartyName>
+      <cac:Address>
+        <ID>7f000001106709e1bda10000ec419d26</ID>
+        <cbc:PostBox></cbc:PostBox>
+        <cbc:StreetName><![CDATA[Bulbury]]></cbc:StreetName>
+        <cbc:AdditionalStreetName><![CDATA[ST]]></cbc:AdditionalStreetName>
+        <cbc:BuildingName><![CDATA[]]></cbc:BuildingName>
+        <cbc:BuildingNumber><![CDATA[80]]></cbc:BuildingNumber>
+        <cbc:CityName><![CDATA[]]></cbc:CityName>
+        <cbc:PostalZone></cbc:PostalZone>
+        <cbc:CountrySubentity><![CDATA[]]></cbc:CountrySubentity>
+        <cbc:CountrySubentityCode></cbc:CountrySubentityCode>
+        <cbc:AddressLine><![CDATA[]]></cbc:AddressLine>
+        <Country><![CDATA[]]></Country>
+      </cac:Address>
+    </cac:Party>
+    <cac:AccountsContact>
+      <cbc:Name><![CDATA[]]></cbc:Name>
+      <cbc:Telephone><![CDATA[]]></cbc:Telephone>
+    </cac:AccountsContact>
+  </cac:BuyerParty>
+  <cac:SellerParty>
+    <cac:Party>
+      <cac:PartyName><cbc:Name><![CDATA[Know Gate Ltd.]]></cbc:Name></cac:PartyName>
+      <cac:Address>
+        <ID>7f0000011067057c4ef100008c688128</ID>
+        <cbc:StreetName><![CDATA[Wesleyan]]></cbc:StreetName>
+        <cbc:AdditionalStreetName><![CDATA[ST]]></cbc:AdditionalStreetName>
+        <cbc:BuildingName><![CDATA[]]></cbc:BuildingName>
+        <cbc:BuildingNumber><![CDATA[107]]></cbc:BuildingNumber>
+        <cbc:CityName><![CDATA[Boston]]></cbc:CityName>
+        <cbc:PostalZone></cbc:PostalZone>
+        <cbc:CountrySubentity><![CDATA[MA]]></cbc:CountrySubentity>
+        <cbc:CountrySubentityCode></cbc:CountrySubentityCode>
+        <cbc:AddressLine><![CDATA[]]></cbc:AddressLine>
+        <Country><![CDATA[United States]]></Country>
+      </cac:Address>
+    </cac:Party>
+    <cac:AccountsContact>
+      <cbc:Name><![CDATA[]]></cbc:Name>
+      <cbc:Telephone><![CDATA[]]></cbc:Telephone>
+    </cac:AccountsContact>
+  </cac:SellerParty>
+  <cac:PaymentMeans>
+    <cbc:DuePaymentDate>2005-09-30</cbc:DuePaymentDate>
+    <PayeeFinancialAccount>
+      <ID>00018888XX1234567890</ID>
+      <FinancialInstitutionBranch><![CDATA[1st Boston Bank]]></FinancialInstitutionBranch>
+    </PayeeFinancialAccount>
+    <PayerFinancialAccount>
+      <ID></ID>
+      <FinancialInstitutionBranch><![CDATA[]]></FinancialInstitutionBranch>
+    </PayerFinancialAccount>
+    <Payment>
+      <ID/>
+      <PaidAmount>268</PaidAmount>
+        <cbc:ReceivedDate></cbc:ReceivedDate>
+    </Payment>
+  </cac:PaymentMeans>
+  <cac:Delivery>
+    <cac:DeliveryAddress>
+        <ID>7f00000110670211e12100002a4874df</ID>
+        <cbc:StreetName><![CDATA[Yokohama]]></cbc:StreetName>
+        <cbc:AdditionalStreetName><![CDATA[ST]]></cbc:AdditionalStreetName>
+        <cbc:BuildingName><![CDATA[]]></cbc:BuildingName>
+        <cbc:BuildingNumber><![CDATA[1310]]></cbc:BuildingNumber>
+        <cbc:CityName><![CDATA[]]></cbc:CityName>
+        <cbc:PostalZone></cbc:PostalZone>
+        <cbc:CountrySubentity><![CDATA[]]></cbc:CountrySubentity>
+        <cbc:CountrySubentityCode></cbc:CountrySubentityCode>
+        <cbc:AddressLine><![CDATA[]]></cbc:AddressLine>
+        <Country><![CDATA[us]]></Country>
+    </cac:DeliveryAddress>
+  </cac:Delivery>
+  <cac:TaxTotal>
+    <cbc:TotalTaxAmount amountCurrencyCodeListVersionID="0.3" amountCurrencyID="840">0.00</cbc:TotalTaxAmount>
+  </cac:TaxTotal>
+  <cac:LegalTotal>
+    <cbc:LineExtensionTotalAmount amountCurrencyCodeListVersionID="0.3" amountCurrencyID="840">248.00</cbc:LineExtensionTotalAmount>
+    <cbc:TaxInclusiveTotalAmount amountCurrencyCodeListVersionID="0.3" amountCurrencyID="840">268.00</cbc:TaxInclusiveTotalAmount>
+  </cac:LegalTotal>
+  <cac:InvoiceLine>
+    <ID>1</ID>
+    <cbc:InvoicedQuantity>1</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount amountCurrencyCodeListVersionID="0.3" amountCurrencyID="840">49.00</cbc:LineExtensionAmount>
+    <cac:Item>
+      <cbc:Description><![CDATA[Tux Earrings]]></cbc:Description>
+    </cac:Item>
+    <BasePrice>49.00</BasePrice>
+  </cac:InvoiceLine>
+  <cac:InvoiceLine>
+    <ID>2</ID>
+    <cbc:InvoicedQuantity>1</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount amountCurrencyCodeListVersionID="0.3" amountCurrencyID="840">199.00</cbc:LineExtensionAmount>
+    <cac:Item>
+      <cbc:Description><![CDATA[Tux Pendant]]></cbc:Description>
+    </cac:Item>
+    <BasePrice>199.00</BasePrice>
+  </cac:InvoiceLine>
+  </Invoice>

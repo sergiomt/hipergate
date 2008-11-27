@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl"?>
+<pageset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.hipergate.org/xslt/schemas/pageset.xsd" guid=":gu_pageset">
+	<microsite>:gu_microsite</microsite>
+	<font>Verdana</font>
+	<color>Burdeos</color>
+	<pages>
+		<page guid=":gu_pagex">
+			<title><![CDATA[:page_title]]></title>
+			<container>:gu_container</container>
+			<blocks>
+				<block id="001">
+					<metablock>TITULAR</metablock>
+					<tag>Titular</tag>
+					<paragraphs>
+						<paragraph id="REMOVABLE"/>
+						<paragraph id="TITULAR_TEXTO">
+							<text><![CDATA[Titular de la Newsletter]]></text>
+							<url/>
+						</paragraph>
+					</paragraphs>
+					<images>
+						<image id="REMOVABLE"/>
+					</images>
+					<zone/>
+				</block>
+				<block id="002">
+					<metablock>BIENVENIDA</metablock>
+					<tag>Bienvenida</tag>
+					<paragraphs>
+						<paragraph id="REMOVABLE"/>
+						<paragraph id="BIENVENIDA_INTRO">
+							<text><![CDATA[Estimado {#Datos.Nombre}:]]></text>
+							<url/>
+						</paragraph>
+						<paragraph id="BIENVENIDA_TEXTO">
+							<text><![CDATA[Introduzca el texto introductorio de su newsletter. Recuerde que en este bloque puede insertar HTML directamente.]]></text>
+							<url/>
+						</paragraph>
+					</paragraphs>
+					<images>
+						<image id="REMOVABLE"/>
+					</images>
+					<zone/>
+				</block>
+				<block id="003">
+					<metablock>ARTICULO</metablock>
+					<tag>Articulo</tag>
+					<paragraphs>
+						<paragraph id="REMOVABLE"/>
+						<paragraph id="TITULO_ARTICULO">
+							<text><![CDATA[Titular Articulo 1]]></text>
+							<url/>
+						</paragraph>
+						<paragraph id="PARRAFO_ARTICULO">
+							<text><![CDATA[Articulo 1]]></text>
+							<url/>
+						</paragraph>
+						<paragraph id="ENLACE_ARTICULO">
+							<text><![CDATA[Mas Informacion]]></text>
+							<url>http://www.knowgate.es/</url>
+						</paragraph>
+					</paragraphs>
+					<images>
+						<image id="REMOVABLE"/>
+						<image id="IMAGEN_ARTICULO">
+							<path>http://images.hipergate.org/styles/common/default_100x100_es.gif</path>
+							<url>http://www.knowgate.es/</url>
+							<alt><![CDATA[KnowGate.es]]></alt>
+							<width>100</width>
+							<height>100</height>
+						</image>
+					</images>
+					<zone/>
+				</block>
+				<block id="004">
+					<metablock>ARTICULO</metablock>
+					<tag>Articulo</tag>
+					<paragraphs>
+						<paragraph id="REMOVABLE"/>
+						<paragraph id="TITULO_ARTICULO">
+							<text><![CDATA[Titular Articulo 2]]></text>
+							<url/>
+						</paragraph>
+						<paragraph id="PARRAFO_ARTICULO">
+							<text><![CDATA[Articulo 2]]></text>
+							<url/>
+						</paragraph>
+						<paragraph id="ENLACE_ARTICULO">
+							<text><![CDATA[Mas Informacion]]></text>
+							<url>http://www.knowgate.es/</url>
+						</paragraph>
+					</paragraphs>
+					<images>
+						<image id="REMOVABLE"/>
+						<image id="IMAGEN_ARTICULO">
+							<path>http://images.hipergate.org/styles/common/default_100x100_es.gif</path>
+							<url>http://www.knowgate.es/</url>
+							<alt><![CDATA[KnowGate.es]]></alt>
+							<width>100</width>
+							<height>100</height>
+						</image>
+					</images>
+					<zone/>
+				</block>
+				<block id="005">
+					<metablock>PIE</metablock>
+					<tag>Pie de pagina</tag>
+					<paragraphs>
+						<paragraph id="PIE_TEXTO">
+							<text><![CDATA[Informacion Adicional (como darse de baja, CIF de la empresa, etc)]]></text>
+							<url/>
+						</paragraph>
+					</paragraphs>
+					<images>
+						<image id="REMOVABLE"/>
+						<image id="FOTO_PIE">
+							<path>http://images.hipergate.org/styles/common/default_100x100_es.gif</path>
+							<url>http://www.knowgate.es/</url>
+							<alt><![CDATA[KnowGate.es]]></alt>
+							<width>100</width>
+							<height>100</height>
+						</image>
+					</images>
+					<zone/>
+				</block>
+			</blocks>
+		</page>
+	</pages>
+</pageset>

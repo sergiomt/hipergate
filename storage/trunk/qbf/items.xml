@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<qbf>
+  <title_es>Consulta de Productos</title_es>
+  <title_en>Products Query</title_en>
+  <title_fr>#fr#Products Query</title_fr>
+  <title_de>#de#Products Query</title_de>
+  <title_it>#it#Products Query</title_it>
+  <title_ru>#ru#Products Query</title_ru>
+  <title_pt>#pt#Products Query</title_pt>
+  <title_cn>#zh#Products Query</title_cn>
+  <title_tw>#zh#Products Query</title_tw>
+  <method>post</method>
+  <action>../shop/item_list_f.jsp?selected=1&amp;subselected=3</action>
+  <baseobject>k_fellows b</baseobject>
+  <basefilter>gu_workarea='${cookie.workarea}'</basefilter>
+  <fields>
+    <field><name>nm_product</name>
+      <label_es>Nombre</label_es>
+      <label_en>Name</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>de_product</name>
+      <label_es>Descripcion</label_es>
+      <label_en>Description</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>dt_modified</name>
+      <label_es>Fecha Modificacion</label_es>
+      <label_en>Date Modified</label_en>
+      <type>date</type>
+    </field>
+    <field><name>pr_list</name>
+      <label_es>Precio</label_es>
+      <label_en>Price</label_en>
+      <type>float</type>
+    </field>
+    <field><name>author</name>
+      <label_es>Autor</label_es>
+      <label_en>Author</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>availability</name>
+      <label_es>Disponibilidad</label_es>
+      <label_en>Availability</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>brand</name>
+      <label_es>Marca</label_es>
+      <label_en>Brand name</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>color</name>
+      <label_es>Color</label_es>
+      <label_en>Color</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>doc_no</name>
+      <label_es>Num. Documento</label_es>
+      <label_en>Document Num.</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>isbn</name>
+      <label_es>ISBN</label_es>
+      <label_en>ISBN</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>product_group</name>
+      <label_es>Grupo de Productos</label_es>
+      <label_en>Product Group</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>size_x</name>
+      <label_es>Ancho</label_es>
+      <label_en>Wide</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>size_y</name>
+      <label_es>Largo</label_es>
+      <label_en>Long</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>size_z</name>
+      <label_es>Alto</label_es>
+      <label_en>Height</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>subject</name>
+      <label_es>Asunto</label_es>
+      <label_en>Subject</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>typeof</name>
+      <label_es>Tipo</label_es>
+      <label_en>Type</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>weight</name>
+      <label_es>Peso</label_es>
+      <label_en>Weight</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>nu_current_stock</name>
+      <label_es>Stock</label_es>
+      <label_en>Stock</label_en>
+      <type>integer</type>
+    </field>
+  </fields>
+
+  <columns>
+    <column default="yes"><name>nm_product</name>
+      <label_es>Nombre</label_es>
+      <label_en>Name</label_en></column>
+    <column default="yes"><name>de_product</name>
+      <label_es>Descripcion</label_es>
+      <label_en>Description</label_en></column>
+    <column default="yes"><name>pr_list</name>
+      <label_es>Precio</label_es>
+      <label_en>Price</label_en></column>
+    <column default="yes"><name>nu_current_stock</name>
+      <label_es>Stock</label_es>
+      <label_en>Stock</label_en></column>
+  </columns>
+
+  <sortable>
+    <by>
+      <name>nm_product</name>
+      
+      <label_es>Nombre</label_es>
+      
+      <label_en>Name</label_en>
+    </by>
+  </sortable>
+</qbf>

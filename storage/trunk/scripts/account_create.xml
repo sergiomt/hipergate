@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATASTRUCT>
+  <ROWSETS>
+    <INIT></INIT>
+    
+    <ROWSET>
+      <ACTION>
+        <FROM>k_addresses</FROM>
+        <TO>k_addresses</TO>
+        <WHERE>gu_address = '010F4C9838A54DAB8888888888888888'</WHERE>
+        <FROM_PK>gu_address</FROM_PK>
+        <TO_PK>gu_address</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+      	<MAPPING TRANSFORM="NEWGUID">gu_address,gu_address</MAPPING>
+      	<MAPPING>'{#sGuWorkarea}',gu_workarea</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    
+    <ROWSET>
+      <ACTION>
+        <FROM>k_accounts</FROM>
+        <TO>k_accounts</TO>
+        <WHERE>id_account='0123456789'</WHERE>
+        <FROM_PK>id_account</FROM_PK>
+        <TO_PK>id_account</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING>'{#sNewIdAccount}',id_account</MAPPING>
+        <MAPPING>'{#sTpAccount}',tp_account</MAPPING>
+        <MAPPING>{#iDomain},id_domain</MAPPING>
+        <MAPPING>{#iMaxUsers},max_users</MAPPING>
+        <MAPPING>'{#sSnPassport}',sn_passport</MAPPING>
+        <MAPPING>'{#sTpPassport}',tp_passport</MAPPING>
+        <MAPPING>'{#sTpBilling}',tp_billing</MAPPING>
+        <MAPPING TRANSFORM="REFER(k_addresses.gu_address)">gu_billing_addr,gu_billing_addr</MAPPING>
+        <MAPPING>'{#sGuWorkarea}',gu_workarea</MAPPING>
+        <MAPPING>'{#sGuUser}',gu_user</MAPPING>
+        <MAPPING>GETDATE(),dt_created</MAPPING>        
+      	<MAPPING>DATEADD(day,60,GETDATE()),dt_cancel</MAPPING>        
+        
+      </MAPPINGS>
+    </ROWSET>	   
+   </ROWSETS>
+</DATASTRUCT>

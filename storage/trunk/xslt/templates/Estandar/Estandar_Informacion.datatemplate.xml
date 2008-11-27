@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl"?>
+<pageset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.hipergate.org/xslt/schemas/pageset.xsd" guid=":gu_pageset">
+  <microsite>:gu_microsite</microsite>
+  <font>Arial</font>
+  <color>rojo</color>
+  <pages>
+    <page guid=":gu_pagex">
+      <title>:page_title</title>
+      <container>c0a80146f597a0327f1001b39f3f58d6</container>
+      <blocks>
+	<block id="002">
+	  <metablock>FOTOYTEXTO</metablock>
+	  <tag>FOTOYTEXTO</tag>
+          <paragraphs>
+	    <paragraph id="REMOVABLE"></paragraph>
+	    <paragraph id="PARRAFO-TITULO">
+	    <text><![CDATA[<Escriba aqui el titulo de articulo>]]></text>
+	    <url></url>
+	    </paragraph>	  
+	    <paragraph id="PARRAFO-INTRO">
+	    <text><![CDATA[<Escriba aqui un parrafo introductorio>]]></text>
+	    <url></url>
+	    </paragraph>
+	    <paragraph id="PARRAFO-ARTICULO">
+	    <text><![CDATA[Espacio para el texto del articulo]]></text>
+	    <url></url>
+	    </paragraph>
+	    </paragraphs>
+	  <images>
+	    <image id="REMOVABLE"></image>
+	    <image id="FOTO-ARTICULO-IZQUIERDA">
+	    <path>http://images.hipergate.org/styles/estandar/defarticle.jpg</path>
+	    <url></url>
+	    <alt>Imagen</alt>
+	    <width>96</width>
+	    <height>82</height>
+	    </image>
+	  </images>
+          <zone/>
+	</block>
+	<block id="001">
+	  <metablock>ENTRADA</metablock>
+	  <tag>ENTRADA</tag>
+          <paragraphs>
+	    <paragraph id="REMOVABLE"></paragraph>
+	    <paragraph id="TITULO">
+	    <text><![CDATA[<Titulo de la pagina>]]></text>
+	    <url></url>
+	    </paragraph>
+	    <paragraph id="SUBTITULO">
+	    <text><![CDATA[<Subtitulo de la pagina>]]></text>
+	    <url></url>
+	    </paragraph>
+	  </paragraphs>
+	  <images>
+	    <image id="REMOVABLE"></image>
+	  </images>
+          <zone/>
+	</block>
+      </blocks>
+    </page>
+  </pages>
+</pageset>

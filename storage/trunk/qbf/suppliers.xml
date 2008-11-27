@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<qbf>
+  <title_es>Consulta de Proveedores</title_es>
+  <title_en>Suppliers Query</title_en>
+  <title_fr>#fr#Suppliers Query</title_fr>
+  <title_de>#de#Suppliers Query</title_de>
+  <title_it>#it#Suppliers Query</title_it>
+  <title_ru>#ru#Suppliers Query</title_ru>
+  <title_pt>#pt#Suppliers Query</title_pt>
+  <title_cn>#zh#Suppliers Query</title_cn>
+  <title_tw>#zh#Suppliers Query</title_tw>
+  <method>post</method>
+  <action>../crm/suppliers_listing.jsp?selected=2&amp;subselected=5</action>
+  <baseobject>v_supplier_address b</baseobject>
+  <basefilter>gu_workarea='${cookie.workarea}'</basefilter>
+
+  <fields>
+    <field><name>nm_legal</name>
+      <label_es>Razon Social</label_es>
+      <label_en>Legal Name</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>nm_commercial</name>
+      <label_es>Nombre Comercial</label_es>
+      <label_en>Commercial Name</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>id_legal</name>
+      <label_es>NIF</label_es>
+      <label_en>Legal Id</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>id_status</name>
+      <label_es>Estado</label_es>
+      <label_en>Status</label_en>
+      <type>lookup</type><form>lookup_f.jsp?nm_table=k_suppliers_lookup</form>
+    </field>
+    <field><name>id_ref</name>
+      <label_es>Referencia</label_es>
+      <label_en>Referencia</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>de_supplier</name>
+      <label_es>Descripcion</label_es>
+      <label_en>Description</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>ix_address</name>
+      <label_es>Indice de Direccion</label_es>
+      <label_en>Address Index</label_en>
+      <type>integer</type>
+    </field>
+    <field><name>tp_location</name>
+      <label_es>Tipo de Direccion</label_es>
+      <label_en>Address Type</label_en>
+      <type>lookup</type><form>lookup_f.jsp?nm_table=k_addresses_lookup</form>
+    </field>
+    <field><name>nm_street</name>
+      <label_es>Nombre Via</label_es>
+      <label_en>Street Name</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>nm_country</name>
+      <label_es>Pais</label_es>
+      <label_en>Pais</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>nm_state</name>
+      <label_es>Provincia</label_es>
+      <label_en>State/Region</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>zipcode</name>
+      <label_es>Codigo Postal</label_es>
+      <label_en>Zipcode</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>dt_modified</name>
+      <label_es>Fecha Modificacion</label_es>
+      <label_en>Date Modificacion</label_en>
+      <type>date</type>
+    </field>
+  </fields>
+
+  <columns>
+    <column default="yes"><name>nm_legal</name>
+      <label_es>Razon Social</label_es>
+      <label_en>Legal Name</label_en></column>
+    <column><name>nm_commercial</name>
+      <label_es>Nombre Comercial</label_es>
+      <label_en>Commercial Name</label_en></column>
+    <column default="yes"><name>id_legal</name>
+      <label_es>NIF</label_es>
+      <label_en>Legal Id</label_en></column>
+    <column default="yes"><name>id_sector</name>
+      <label_es>Sector</label_es>
+      <label_en>Sector</label_en></column>
+    <column default="yes"><name>id_status</name>
+      <label_es>Estado</label_es>
+      <label_en>Status</label_en></column>
+    <column default="yes"><name>id_ref</name>
+      <label_es>Referencia</label_es>
+      <label_en>Reference</label_en>
+      <type>varchar</type></column>
+    <column default="yes"><name>de_supplier</name>
+      <label_es>Descripcion</label_es>
+      <label_en>Description</label_en>
+      <type>varchar</type></column>
+    <column><name>gu_address</name>
+      <label_es>Id. Direccion</label_es>
+      <label_en>Address Id</label_en></column>
+    <column><name>ix_address</name>
+      <label_es>Indice Direccion</label_es>
+      <label_en>Address Index</label_en></column>
+    <column><name>tp_location</name>
+      <label_es>Tipo Direccion</label_es>
+      <label_en>Address Type</label_en></column>
+    <column default="yes"><name>tp_street</name>
+      <label_es>Tipo Via</label_es>
+      <label_en>Street Type</label_en></column>
+    <column default="yes"><name>nm_street</name>
+      <label_es>Nombre Via</label_es>
+      <label_en>Street Name</label_en></column>
+    <column><name>nu_street</name>
+      <label_es>Numero Via</label_es>
+      <label_en>Street Num</label_en></column>
+    <column><name>tx_addr1</name>
+      <label_es>Direccion Linea 1</label_es>
+      <label_en>Address Line 1</label_en></column>
+    <column><name>tx_addr2</name>
+      <label_es>Direccion Linea 2</label_es>
+      <label_en>Address Line 2</label_en></column>
+    <column default="yes"><name>zipcode</name>
+      <label_es>Cod. Postal</label_es>
+      <label_en>Zipcode</label_en></column>
+    <column><name>id_state</name>
+      <label_es>Id. Provincia/Estado</label_es>
+      <label_en>State Id.</label_en></column>
+    <column default="yes"><name>nm_state</name>
+      <label_es>Nombre Provincia/Estado</label_es>
+      <label_en>State Name</label_en></column>
+    <column default="yes"><name>mn_city</name>
+      <label_es>Ciudad</label_es>
+      <label_en>City</label_en></column>
+    <column><name>id_country</name>
+      <label_es>Id. Pais</label_es>
+      <label_en>Country Id.</label_en></column>
+    <column default="yes"><name>nm_country</name>
+      <label_es>Nombre Pais</label_es>
+      <label_en>Country Name</label_en></column>
+    <column default="yes"><name>work_phone</name>
+      <label_es>Telf. Centralita</label_es>
+      <label_en>Work Phone</label_en></column>
+    <column default="yes"><name>direct_phone</name>
+      <label_es>Telf. Directo</label_es>
+      <label_en>Direct Phone</label_en></column>
+    <column default="yes"><name>home_phone</name>
+      <label_es>Telf. Personal</label_es>
+      <label_en>personal Phone</label_en></column>
+    <column default="yes"><name>mov_phone</name>
+      <label_es>Telf. Movil</label_es>
+      <label_en>Mobile Phone</label_en></column>
+    <column><name>other_phone</name>
+      <label_es>Telf. Otro</label_es>
+      <label_en>Other Phone</label_en></column>
+    <column default="yes"><name>fax_phone</name>
+      <label_es>Fax</label_es>
+      <label_en>Fax</label_en></column>
+    <column><name>po_box</name>
+      <label_es>Aptdo. Correos</label_es>
+      <label_en>P.O. Box</label_en></column>
+    <column default="yes"><name>tx_email</name>
+      <label_es>E-Mail</label_es>
+      <label_en>e-mail</label_en></column>
+    <column default="yes"><name>url_addr</name>
+      <label_es>URL</label_es>
+      <label_en>URL</label_en></column>
+    <column default="yes"><name>contact_person</name>
+      <label_es>Persona Contacto</label_es>
+      <label_en>Contact Person</label_en></column>
+    <column><name>dt_modified</name>
+      <label_es>Fecha Modificacion</label_es>
+      <label_en>Date Modified</label_en>
+      <type>date</type></column>
+  </columns>
+
+  <sortable>
+    <by>
+      <name>nm_legal</name>
+      
+      <label_es>Razon Social</label_es>
+      
+      <label_en>Legal Name</label_en>
+    </by>
+    <by>
+      <name>id_legal</name>
+      
+      <label_es>NIF</label_es>
+      
+      <label_en>NIF</label_en>
+    </by>
+    <by>
+      <name>id_status</name>
+      
+      <label_es>Estado</label_es>
+      
+      <label_es>Status</label_es>
+    </by>
+  </sortable>
+</qbf>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl"?>
+<pageset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.hipergate.org/xslt/schemas/pageset.xsd" guid=":gu_pageset">
+  <microsite>:gu_microsite</microsite>
+  <font>Arial</font>
+  <color>rojo</color>
+  <pages>
+    <page guid=":gu_pagex">
+      <title><![CDATA[:page_title]]></title>
+      <container>c0a80146f5e499cbe0100038a0156ecd</container>
+      <blocks>
+	<block id="002">
+	  <metablock>MENU</metablock>
+	  <tag>MENU</tag>
+          <paragraphs>
+	    <paragraph id="REMOVABLE"></paragraph>
+	    <paragraph id="OPCION-01">
+	    <text><![CDATA[Home]]></text>
+	    <url>javascript:callPage("Home")</url>
+	    </paragraph>
+	  </paragraphs>
+	  <images>
+	    <image id="REMOVABLE"></image>
+	  </images>
+          <zone/>
+	</block>
+	<block id="001">
+	  <metablock>LOGOTIPO</metablock>
+	  <tag>LOGOTIPO</tag>
+          <paragraphs>
+	    <paragraph id="REMOVABLE"></paragraph>
+	  </paragraphs>
+	  <images>
+	    <image id="REMOVABLE"></image>
+	    <image id="LOGOTIPO">
+	    <path>http://images.hipergate.org/styles/Newsletter01/default_imagenarticulo.gif</path>
+	    <url>javascript:callPage("Home")</url>
+	    <alt>Logotipo</alt>
+	    <width>100</width>
+	    <height>50</height>
+	    </image>
+	  </images>
+          <zone/>
+	</block>
+      </blocks>
+    </page>
+  </pages>
+</pageset>

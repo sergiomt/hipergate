@@ -1,0 +1,76 @@
+<HTML xmlns="http://www.w3.org/1999/xhtml" xmlns:cur="urn:oasis:names:specification:ubl:schema:xsd:CurrencyCode-1.0" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-1.0" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-1.0">
+<HEAD>
+<META content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+<TITLE>[~Pedido~] 1000000000</TITLE>
+<STYLE type="text/css">
+<!--
+    BODY,TH,TD { font-family:verdana,arial,helvetica;font-size:9pt;color:#000; }
+  -->
+</STYLE>
+</HEAD>
+<BODY>
+<TABLE ALIGN="center" cellspacing="2" cellpadding="6" border="0" width="740">
+<TR>
+<TD width="90%" valign="top">
+<IMG src="../skins/xp/hglogopeq.jpg"/>
+</TD>
+<TD>
+<TABLE>
+<TR>
+<TD nowrap="true">Know Gate Ltd.<BR/>ST&nbsp;Wesleyan&nbsp;107<BR/>&nbsp;MA<BR/>United States</TD>
+</TR>
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD valign="top">
+<TABLE cellspacing="2" cellpadding="2" border="0">
+<TR>
+<TD>
+<B>[~N&ordm; de Pedido:~]</B>
+</TD>
+<TD>1000000000</TD>
+<TD/>
+</TR>
+<TR>
+<TD>
+<B>[~Fecha de Emisi&oacute;n:~]</B>
+</TD>
+<TD/>
+</TR>
+<TR>
+<TD>
+<B>[~Fecha de Vencimiento:~]</B>
+</TD>
+<TD>2005-09-30</TD>
+</TR>
+</TABLE>
+</TD>
+<TD valign="top">
+<TABLE>
+<TR>
+<TD nowrap="true">
+<B>[~Datos del cliente~]</B>
+<BR/>Paul Klein<BR/>ST&nbsp;Bulbury&nbsp;80<BR/>
+</TD>
+</TR>
+</TABLE>
+</TD>
+</TR>
+</TABLE>
+<TABLE ALIGN="center" cellspacing="0" cellpadding="4" border="1" width="740">
+<TR>
+<TH>[~Concepto~]</TH>
+<TH>[~Cantidad~]</TH>
+</TR>
+<TR>
+<TD width="90%">Tux Earrings</TD>
+<TD align="center">1</TD>
+</TR>
+<TR>
+<TD width="90%">Tux Pendant</TD>
+<TD align="center">1</TD>
+</TR>
+</TABLE>
+</BODY>
+</HTML>

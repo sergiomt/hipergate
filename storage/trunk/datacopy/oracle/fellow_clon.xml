@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATASTRUCT>
+  <ROWSETS>
+    <INIT>
+    </INIT>
+    <ROWSET>
+      <ACTION>
+        <FROM>K_FELLOWS</FROM>
+        <TO>K_FELLOWS</TO>
+        <WHERE>GU_FELLOW=? </WHERE>
+        <ERASE>GU_FELLOW=?</ERASE>
+        <FROM_PK>GU_FELLOW</FROM_PK>
+        <TO_PK>GU_FELLOW</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFERENCED">GU_FELLOW,GU_FELLOW</MAPPING>
+        <MAPPING>SYSDATE,DT_CREATED</MAPPING>
+        <MAPPING>SYSDATE,DT_MODIFIED</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+  </ROWSETS>
+</DATASTRUCT>

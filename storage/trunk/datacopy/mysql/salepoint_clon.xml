@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATASTRUCT>
+  <ROWSETS>
+    <INIT>
+    </INIT>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_addresses</FROM>
+        <TO>k_addresses</TO>
+        <WHERE>gu_address=?</WHERE>
+        <ERASE>gu_address=?</ERASE>
+        <FROM_PK>gu_address</FROM_PK>
+        <TO_PK>gu_address</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING>NOW(),dt_created</MAPPING>
+        <MAPPING>NOW(),dt_modified</MAPPING>
+        <MAPPING TRANSFORM="NEWGUID">gu_address,gu_address</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_sale_points</FROM>
+        <TO>k_sale_points</TO>
+        <WHERE>gu_sale_point=?</WHERE>
+        <ERASE>gu_sale_point=?</ERASE>
+        <FROM_PK>gu_sale_point</FROM_PK>
+        <TO_PK>gu_sale_point</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_addresses.gu_address)">gu_sale_point,gu_sale_point</MAPPING>
+        <MAPPING TRANSFORM="REFER(k_addresses.gu_address)">gu_address,gu_address</MAPPING>
+        <MAPPING>CONCAT(nm_sale_point,' (',CAST((SELECT COUNT(gu_sale_point) FROM k_sale_points) AS VARCHAR(11)),')'),nm_sale_point</MAPPING>
+        <MAPPING TRANSFORM="REFER(k_addresses.gu_address)">gu_address,gu_address</MAPPING>
+      </MAPPINGS>
+    </ROWSET>    
+  </ROWSETS>
+</DATASTRUCT>

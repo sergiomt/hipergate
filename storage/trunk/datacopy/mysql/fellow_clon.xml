@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATASTRUCT>
+  <ROWSETS>
+    <INIT>
+    </INIT>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_fellows</FROM>
+        <TO>k_fellows</TO>
+        <WHERE>gu_fellow=? </WHERE>
+        <ERASE>gu_fellow=?</ERASE>
+        <FROM_PK>gu_fellow</FROM_PK>
+        <TO_PK>gu_fellow</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFERENCED">gu_fellow,gu_fellow</MAPPING>
+        <MAPPING>NOW(),dt_created</MAPPING>
+        <MAPPING>NOW(),dt_modified</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+  </ROWSETS>
+</DATASTRUCT>

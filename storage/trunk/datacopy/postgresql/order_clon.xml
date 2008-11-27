@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATASTRUCT>
+  <ROWSETS>
+    <INIT>
+    </INIT>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_orders</FROM>
+        <TO>k_orders</TO>
+        <WHERE>gu_order=?</WHERE>
+        <ERASE>gu_order=?</ERASE>
+        <FROM_PK>gu_order</FROM_PK>
+        <TO_PK>gu_order</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="NEWGUID">gu_order,gu_order</MAPPING>
+        <MAPPING>{#PgOrder},pg_order</MAPPING>
+        <MAPPING>CURRENT_TIMESTAMP,dt_created</MAPPING>
+        <MAPPING>NULL,dt_modified</MAPPING>
+        <MAPPING>NULL,dt_invoiced</MAPPING>
+        <MAPPING>NULL,dt_printed</MAPPING>
+        <MAPPING>NULL,dt_payment</MAPPING>
+        <MAPPING>NULL,dt_cancel</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_order_lines</FROM>
+        <TO>k_order_lines</TO>
+        <WHERE>gu_order=?</WHERE>
+        <ERASE>gu_order=?</ERASE>
+        <FROM_PK>gu_order,pg_line</FROM_PK>
+        <TO_PK>gu_order,pg_line</TO_PK>        
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_orders.gu_order)">gu_order,gu_order</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+  </ROWSETS>
+</DATASTRUCT>

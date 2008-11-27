@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<qbf>
+  <title_es>Consulta de Tareas</title_es>
+  <title_en>Duties Query</title_en>
+  <title_fr>#fr#Duties Query</title_fr>
+  <title_de>#de#Duties Query</title_de>
+  <title_it>#it#Duties Query</title_it>
+  <title_ru>#ru#Duties Query</title_ru>
+  <title_pt>#pt#Duties Query</title_pt>
+  <title_cn>#zh#Duties Query</title_cn>
+  <title_tw>#zh#Duties Query</title_tw>
+  <method>post</method>
+  <action>../projtrack/duty_list.jsp?selected=4&amp;subselected=1</action>
+  <baseobject>v_duty_resource b</baseobject>
+  <basefilter>(b.gu_owner='${cookie.workarea}')</basefilter>
+  <fields>
+    <field><name>nm_duty</name>
+      <label_es>Nombre</label_es>
+      <label_en>Name</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>de_duty</name>
+      <label_es>Descripcion</label_es>
+      <label_en>Description</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>gu_project</name>
+      <label_es>Proyecto</label_es>
+      <label_en>Project</label_en>
+      <type>lookup</type><form>../projtrack/proj_tree_f.jsp?nm_table=void</form>
+    </field>
+    <field><name>od_priority</name>
+      <label_es>Prioridad</label_es>
+      <label_en>Priority</label_en>
+      <type>lookup</type><form>lookup_f.jsp?nm_table=k_duties_lookup</form>
+    </field>
+    <field><name>tx_status</name>
+      <label_es>Estado</label_es>
+      <label_en>Status</label_en>
+      <type>lookup</type><form>lookup_f.jsp?nm_table=k_duties_lookup</form>
+    </field>
+    <field><name>dt_start</name>
+      <label_es>Fecha Inicio</label_es>
+      <label_en>Date start</label_en>
+      <type>date</type>
+    </field>
+    <field><name>dt_end</name>
+      <label_es>Fecha Fin</label_es>
+      <label_en>Date End</label_en>
+      <type>date</type>
+    </field>
+    <field><name>nm_resource</name>
+      <label_es>Asignada a</label_es>
+      <label_en>Assigned to</label_en>
+      <type>lookup</type><form>lookup_f.jsp?nm_table=k_duties_lookup</form>
+    </field>
+    <field><name>pr_cost</name>
+      <label_es>Coste</label_es>
+      <label_en>Cost</label_en>
+      <type>integer</type>
+    </field>
+  </fields>
+  
+  <columns>
+    <column default="yes"><name>nm_duty</name>
+      <label_es>Nombre</label_es>
+      <label_en>Name</label_en></column>
+    <column default="no"><name>de_duty</name>
+      <label_es>Descripcion</label_es>
+      <label_en>Description</label_en></column>
+    <column default="yes"><name>nm_project</name>
+      <label_es>Proyecto</label_es>
+      <label_en>Project</label_en></column>
+    <column default="yes"><name>od_priority</name>
+      <label_es>Prioridad</label_es>
+      <label_en>Priority</label_en></column>
+    <column default="yes"><name>tx_status</name>
+      <label_es>Estado</label_es>
+      <label_en>Status</label_en></column>
+    <column default="yes"><name>dt_start</name>
+      <label_es>Fecha Inicio</label_es>
+      <label_en>Date start</label_en></column>
+    <column default="yes"><name>dt_end</name>
+      <label_es>Fecha Fin</label_es>
+      <label_en>Date End</label_en></column>
+    <column default="yes"><name>nm_resource</name>
+      <label_es>Asignada a</label_es>
+      <label_en>Assigned to</label_en></column>
+    <column default="yes"><name>pr_cost</name>
+      <label_es>Coste</label_es>
+      <label_en>Cost</label_en></column>
+  </columns>
+
+  <sortable>
+    <by>
+      <name>nm_duty</name>
+      
+      <label_es>Nombre</label_es>
+      
+      <label_en>Name</label_en>
+    </by>
+  </sortable>
+</qbf>

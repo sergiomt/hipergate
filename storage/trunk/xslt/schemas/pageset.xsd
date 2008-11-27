@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	<xs:element name="address">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="gu_address" type="xs:string"/>
+				<xs:element name="ix_address" type="xs:int"/>
+				<xs:element name="gu_workarea" type="xs:string"/>
+				<xs:element name="dt_created" type="xs:dateTime"/>
+				<xs:element name="bo_active" type="xs:short"/>
+				<xs:element name="dt_modified" type="xs:dateTime"/>
+				<xs:element name="gu_user" type="xs:string"/>
+				<xs:element name="tp_location" type="xs:string"/>
+				<xs:element name="nm_company" type="xs:string"/>
+				<xs:element name="tp_street" type="xs:string"/>
+				<xs:element name="nm_street" type="xs:string"/>
+				<xs:element name="nu_street" type="xs:string"/>
+				<xs:element name="tx_addr1" type="xs:string"/>
+				<xs:element name="tx_addr2" type="xs:string"/>
+				<xs:element name="id_country" type="xs:string"/>
+				<xs:element name="nm_country" type="xs:string"/>
+				<xs:element name="id_state" type="xs:string"/>
+				<xs:element name="nm_state" type="xs:string"/>
+				<xs:element name="mn_city" type="xs:string"/>
+				<xs:element name="zipcode" type="xs:string"/>
+				<xs:element name="work_phone" type="xs:string"/>
+				<xs:element name="direct_phone" type="xs:string"/>
+				<xs:element name="home_phone" type="xs:string"/>
+				<xs:element name="mov_phone" type="xs:string"/>
+				<xs:element name="fax_phone" type="xs:string"/>
+				<xs:element name="other_phone" type="xs:string"/>
+				<xs:element name="po_box" type="xs:string"/>
+				<xs:element name="tx_email" type="xs:string"/>
+				<xs:element name="tx_email_alt" type="xs:string"/>
+				<xs:element name="url_addr" type="xs:string"/>
+				<xs:element name="coord_x" type="xs:string"/>
+				<xs:element name="coord_y" type="xs:string"/>
+				<xs:element name="contact_person" type="xs:string"/>
+				<xs:element name="tx_salutation" type="xs:string"/>
+				<xs:element name="id_ref" type="xs:string"/>
+				<xs:element name="tx_remarks" type="xs:string"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="addresses">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="address" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="alt" type="xs:string" nillable="true"/>
+	<xs:element name="color" type="xs:string"/>
+	<xs:element name="container" type="xs:string"/>
+	<xs:element name="font" type="xs:string"/>
+	<xs:element name="height" type="xs:unsignedLong"/>
+	<xs:element name="metablock" type="xs:string"/>
+	<xs:element name="microsite" type="xs:string"/>
+	<xs:element name="path" type="xs:string"/>
+	<xs:element name="tag" type="xs:string"/>
+	<xs:element name="text" type="xs:string" nillable="true"/>
+	<xs:element name="title" type="xs:string"/>
+	<xs:element name="url" type="xs:string"/>
+	<xs:element name="width" type="xs:unsignedLong"/>
+	<xs:element name="zone" type="xs:string" nillable="true"/>
+	<xs:element name="image">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="path" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="url" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="alt" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="width" type="xs:unsignedLong" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="height" type="xs:unsignedLong" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="images">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="image" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="paragraph">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="text" minOccurs="0"/>
+				<xs:element ref="url" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="paragraphs">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="paragraph" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="block">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="metablock"/>
+				<xs:element ref="tag"/>
+				<xs:element ref="paragraphs" minOccurs="0"/>
+				<xs:element ref="images" minOccurs="0"/>
+				<xs:element ref="zone" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="blocks">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="block" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="page">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="title"/>
+				<xs:element ref="container"/>
+				<xs:element ref="blocks"/>
+			</xs:sequence>
+			<xs:attribute name="guid" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="pages">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="page" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="pageset">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="microsite"/>
+				<xs:element ref="font" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="color" minOccurs="0"/>
+				<xs:element ref="pages" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="company" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="catalog" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="addresses" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+			<xs:attribute name="guid" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
