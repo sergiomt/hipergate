@@ -23,7 +23,7 @@ CREATE INDEX i3_oportunities ON k_oportunities(tl_oportunity);
 CREATE INDEX i4_oportunities ON k_oportunities(dt_modified);
 CREATE INDEX i5_oportunities ON k_oportunities(dt_next_action);
 CREATE INDEX i6_oportunities ON k_oportunities(id_status);
-CREATE INDEX i7_oportunities ON k_oportunities(gu_oportunity);
+CREATE INDEX i7_oportunities ON k_oportunities(gu_campaign);
 
 CREATE INDEX i1_contacts_recent ON k_contacts_recent(gu_user);
 CREATE INDEX i2_contacts_recent ON k_contacts_recent(gu_workarea);
