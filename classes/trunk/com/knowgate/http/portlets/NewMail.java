@@ -126,26 +126,39 @@ public class NewMail extends GenericPortlet {
         JDCConnection oCon = null;
         try {
 	      
+	      SessionHandler oHnr;
+
           DBBind oDBB = (DBBind) getPortletContext().getAttribute("GlobalDBBind");
 	      
 	      oCon = oDBB.getConnection("NewMail");
-	      	
-	      SessionHandler oHnr = new SessionHandler(new MailAccount(oCon, sMailAccount));
+	      
+	      MailAccount oMacc = new MailAccount(oCon, sMailAccount);
+	      
+	      if (oMacc.load(oCon, sMailAccount))
+	        oHnr = new SessionHandler(oMacc);
+		  else
+		  	oHnr = null;
 
 		  oCon.close("NewMail");
 		  oCon=null;
 		  
-		  String[] aRecentXML = oHnr.listRecentMessages("INBOX", iMaxNew);
-	      if (null!=aRecentXML) {
-		    int nRecentXML = aRecentXML.length;
-		    sXML += "<messages total=\""+String.valueOf(nRecentXML)+"\" skip=\"0\">";
-		    for (int r=0; r<nRecentXML; r++)
-	      	  sXML += aRecentXML[r];
-	        sXML += "</messages>";
-	      } else {
-	        sXML += "<messages total=\"0\" skip=\"0\"/>";
-	      }// fi
-
+		  if (null!=oHnr) {
+		    String[] aRecentXML = oHnr.listRecentMessages("INBOX", iMaxNew);
+	        if (null!=aRecentXML) {
+		      int nRecentXML = aRecentXML.length;
+		      sXML += "<messages total=\""+String.valueOf(nRecentXML)+"\" skip=\"0\">";
+		      for (int r=0; r<nRecentXML; r++)
+	      	    sXML += aRecentXML[r];
+	          sXML += "</messages>";
+	        } else {
+	          sXML += "<messages total=\"0\" skip=\"0\"/>";
+	        }// fi
+		  } else {
+     		if (DebugFile.trace) {
+       		  DebugFile.writeln("Mail Account "+sMailAccount+" not found");
+     		}
+		      sXML += "<messages total=\"0\" skip=\"0\" />";
+		  }
         } catch (SQLException sqle) {
           if (oCon!=null) { try { oCon.close("NewMail"); oCon=null; } catch (SQLException ignore) {} }
           throw new PortletException(sqle.getMessage(), sqle);
