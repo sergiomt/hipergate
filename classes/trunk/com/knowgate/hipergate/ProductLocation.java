@@ -591,13 +591,19 @@ public class ProductLocation extends DBPersist {
       oRSet = oStmt.executeQuery();
       if (oRSet.next()) {
         oNextLoca = oRSet.getObject(1);
-        if (oRSet.wasNull())
+        if (oRSet.wasNull()) {
+          if (DebugFile.trace) DebugFile.writeln("Next pg_prod_locat was null, setting it to 1");
           put(DB.pg_prod_locat, new Integer(1));
-        else
+        }
+        else {
+          if (DebugFile.trace) DebugFile.writeln("Next pg_prod_locat is 1"+oNextLoca.toString());
           put(DB.pg_prod_locat, new Integer(oNextLoca.toString()));
+        }
       }
-      else
+      else {
         put(DB.pg_prod_locat, new Integer(1));
+      }
+
       oRSet.close();
       oStmt.close();
       oStmt = null;
