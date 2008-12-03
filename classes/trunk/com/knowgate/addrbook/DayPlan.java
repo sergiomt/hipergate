@@ -108,12 +108,36 @@ public class DayPlan {
   private DBSubset oMeetings;
   private Meeting oMeeting;
 
-  private final int MaxSlots = 8;   // Maximum allowed concurrent meetings per slot
-  private final int MaxSlices = 96; // Slices per day 96=24/4 -> slices of 15 mins.
+  private short MaxSlots = 8;   // Maximum allowed concurrent meetings per slot
+  private short MaxSlices = 96; // Slices per day 96=24/4 -> slices of 15 mins.
   private final int EmptySlot = -1;
   private final long SliceLapsus = (24*3600*1000)/MaxSlices;
 
+  /**
+   * <p>Default constructor</p>
+   * Creates a day plan with a maximun of eight concurrent meetings
+   * and the day divided in 96 slices of 15 minutes each
+   **/
   public DayPlan() {
+    oMeeting = new Meeting();
+    aMeetings = new int[MaxSlots][MaxSlices];
+    for (int slice=0; slice<MaxSlices; slice++)
+      for (int slot=0; slot<MaxSlots; slot++)
+        aMeetings[slot][slice] = EmptySlot;
+  } // DayPlan
+
+  // ----------------------------------------------------------
+
+  /**
+   * <p>Constructor</p>
+   * Creates a day plan dividing the day in 96 slices of 15 minutes each
+   * @param iMaxConcurMeetingsiMaxConcurMeetings short Maximum concurrent meetings
+   * @throws NegativeArraySizeException if iMaxConcurMeetings is less than one
+   */
+  public DayPlan(short iMaxConcurMeetings) throws NegativeArraySizeException {
+  	if (iMaxConcurMeetings<=0)
+  	  throw new NegativeArraySizeException ("DayPlan, maximum concurrent meetings may not be negative nor zero");
+  	MaxSlots = iMaxConcurMeetings;
     oMeeting = new Meeting();
     aMeetings = new int[MaxSlots][MaxSlices];
     for (int slice=0; slice<MaxSlices; slice++)
