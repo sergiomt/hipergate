@@ -60,6 +60,7 @@ import bsh.EvalError;
 import com.knowgate.debug.DebugFile;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.jdc.JDCConnection;
+import com.knowgate.hipergate.DBLanguages;
 
 /**
  * <p>hipergate Data Model Manager</p>
@@ -2787,6 +2788,45 @@ public class ModelManager {
 
   // ----------------------------------------------------------
 
+  public int fixTranslationColumns() throws SQLException {
+     String[] aTableLookUps = new String[]{"k_addresses_lookup","k_bank_accounts_lookup","k_bugs_lookup","k_companies_lookup","k_contacts_lookup","k_courses_lookup","k_datasheets_lookup","k_despatch_advices_lookup","k_duties_lookup","k_examples_lookup","k_fellows_lookup","k_invoices_lookup","k_meetings_lookup","k_oportunities_lookup","k_orders_lookup","k_pagesets_lookup","k_prod_fares_lookup","k_projects_lookup","k_rooms_lookup","k_sales_men_lookup","k_subjects_lookup","k_suppliers_lookup","k_thesauri_lookup","k_to_do_lookup","k_welcome_packs_lookup"};
+	 String[] aTrColLookUps = Gadgets.split(DBLanguages.getLookupTranslationsColumnList(),',');
+	 final int nTrColCount  = aTrColLookUps.length;
+	 int nFixes = 0;
+	 Statement oAltr = oConn.createStatement();
+	 Statement oStmt = oConn.createStatement();
+	 ResultSet oRSet;
+	 ResultSetMetaData oMDat;
+	 for (int t=0; t<aTableLookUps.length; t++) {
+	   try {
+	     oRSet = oStmt.executeQuery("SELECT * FROM " + aTableLookUps[t]+" WHERE 1=0");
+	   } catch (SQLException sqle) {
+	     oRSet = null;
+	   }
+	   if (null!=oRSet) {
+	     oMDat = oRSet.getMetaData();
+	     int nTbColCount = oMDat.getColumnCount();
+	     for (int tc=0; tc<nTrColCount; tc++) {
+	       boolean bFound = false;
+	       for (int tb=1; tb<=nTbColCount && !bFound; tb++) {
+	         bFound = oMDat.getColumnName(tb).equalsIgnoreCase(aTrColLookUps[tc]);
+	       } //next
+	       if (!bFound) {
+	         oAltr.execute("ALTER TABLE "+aTableLookUps[t]+" ADD "+aTrColLookUps[tc]+" "+VarChar[iDbms]+"(50) NULL");
+		     oStrLog.append("Added column " + aTrColLookUps[tc] + "to table " + aTableLookUps[t] + "\n");
+		     nFixes++;
+	       } // fi
+	     } // next
+	     oRSet.close();
+	   } // fi (oRSet)
+	 } // next
+	 oStmt.close();
+	 oAltr.close();
+	 return nFixes; 
+  } // fixTranslationColumns
+
+  // ----------------------------------------------------------
+
   private static void printUsage() {
     System.out.println("");
     System.out.println("Usage:\n");
@@ -2806,6 +2846,8 @@ public class ModelManager {
     System.out.println("domain_name: name of domain to create or drop");
     System.out.println("workarea_name: name of workarea to drop");
     System.out.println("verbose: show executed SQL");
+    System.out.println("Fixing missing translation columns");
+    System.out.println("ModelManager cnf_path fixtr\n");
   }
 
   // ----------------------------------------------------------
@@ -2827,15 +2869,17 @@ public class ModelManager {
    * java com.knowgate.hipergate.datamodel.ModelManager /etc/hipergate.cnf execute /tmp/statements.sql verbose<br>
    * Example for generating a SQL script for a table :<br>
    * java com.knowgate.hipergate.datamodel.ModelManager /etc/hipergate.cnf script k_lu_languages /tmp/langs.sql<br>
+   * Example for fixing missing translation columns :<br>
+   * java com.knowgate.hipergate.datamodel.ModelManager /etc/hipergate.cnf fixtr<br>
    */
   public static void main(String[] argv) {
     ModelManager oMan = new ModelManager();
     FileInputStream oInStrm;
     Properties oProps;
 
-    if (argv.length<3 || argv.length>6)
+    if (argv.length<2 || argv.length>6)
       printUsage();
-    else if (!argv[1].equals("create") && !argv[1].equals("drop") && !argv[1].equals("clone") && !argv[1].equals("execute") && !argv[1].equals("script") && !argv[1].equals("upgrade"))
+    else if (!argv[1].equals("create") && !argv[1].equals("drop") && !argv[1].equals("clone") && !argv[1].equals("execute") && !argv[1].equals("script") && !argv[1].equals("upgrade") && !argv[1].equals("fixtr"))
       printUsage();
     else if ((argv[1].equals("create") || argv[1].equals("drop")) && argv.length>5)
       printUsage();
@@ -2927,8 +2971,16 @@ public class ModelManager {
         else if (argv[1].equals("upgrade")) {
           oMan.upgrade(argv[2],argv[3], oProps);
         }
+        else if (argv[1].equals("fixtr")) {
+          int nFixes = oMan.fixTranslationColumns();
+          System.out.println(String.valueOf(nFixes)+" columns fixed");
+        }
 
         switch (argv.length) {
+          case 3:
+            if (argv[2].equals("verbose"))
+              System.out.println(oMan.oStrLog.toString());
+            break;
           case 4:
             if (argv[3].equals("verbose"))
               System.out.println(oMan.oStrLog.toString());
