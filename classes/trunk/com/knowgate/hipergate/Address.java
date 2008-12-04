@@ -43,6 +43,7 @@ import java.sql.PreparedStatement;
 import com.knowgate.debug.DebugFile;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
+import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.dataobjs.DBBind;
 import com.knowgate.dataobjs.DBPersist;
 import com.knowgate.dataobjs.DBSubset;
@@ -82,7 +83,7 @@ public class Address extends DBPersist {
 
   /**
    * <p>Load values set at table k_addresses</p>
-   * This method trims the value of id_country column
+   * This method trims the value of id_country column and loads the translated value for street type
    * @param oConn Database Connection
    * @param PKVals An Array with a single String containing the GUID of the Address to be loaded
    * @return <b>true</b> if Address was found, <b>false</b> otherwise.
@@ -91,16 +92,25 @@ public class Address extends DBPersist {
    */
 
   public boolean load(JDCConnection oConn, Object[] PKVals) throws SQLException {
+    String sIdCountry = null;
     boolean bRetVal = super.load(oConn, PKVals);
     if (bRetVal) {
       if (!isNull(DB.id_country)) {
-        String sIdCountry = getString(DB.id_country).trim();
+        sIdCountry = getString(DB.id_country).trim();
         AllVals.remove(DB.id_country);
         AllVals.put(DB.id_country, sIdCountry);
-      }
+
+        String sTpStreetTr = null;
+        try {
+      	  if (!isNull(DB.tp_street)) {
+            sTpStreetTr = DBCommand.queryStr(oConn, "SELECT "+DB.tr_+sIdCountry+" FROM "+DB.k_addresses_lookup+" WHERE "+DB.gu_owner+"='"+getString(DB.gu_workarea)+"' AND "+DB.id_section+"='tp_street' AND "+DB.vl_lookup+"'"+getString(DB.tp_street)+"'");
+      	  }
+        } catch (Exception ignore) { }
+        if (sTpStreetTr!=null) put(DB.tp_street+"_"+sIdCountry.toLowerCase(), sTpStreetTr);
+      } // id_country
     }
     return bRetVal;
-  }
+  } // load
 
   // ---------------------------------------------------------
 
@@ -200,6 +210,77 @@ public class Address extends DBPersist {
 
     return super.store (oConn);
   } // store()
+
+  // ---------------------------------------------------------
+
+  /**
+   * <p>Get Address as a single plain text line using the given locale</p>
+   * @param sCountryId 2 letters identifier for country locale.
+   * Currently format are supported for us, gb, uk, es, fr, and it
+   * @return String
+   * @since 4.0
+   */
+
+  public String toLocaleString(String sCountryId) {
+	StringBuffer oAddrLine = new StringBuffer(255);
+	if (null==sCountryId) sCountryId = "";
+	sCountryId = sCountryId.trim().toLowerCase();
+	if (sCountryId.equals("es") || sCountryId.equals("it")) {
+	  if (!isNull(DB.tp_street+"_"+sCountryId)) 
+	    oAddrLine.append(getString(DB.tp_street+"_"+sCountryId)+" ");
+	  if (!isNull(DB.nm_street)) 
+	    oAddrLine.append(getString(DB.nm_street)+" ");
+	  if (!isNull(DB.nu_street)) 
+	    oAddrLine.append(getString(DB.nu_street));
+	} else if (sCountryId.equals("us") || sCountryId.equals("gb")  || sCountryId.equals("uk")) {
+	  if (!isNull(DB.nu_street)) 
+	    oAddrLine.append(getString(DB.nu_street)+" ");
+	  if (!isNull(DB.nm_street)) 
+	    oAddrLine.append(getString(DB.nm_street)+" ");
+	  if (!isNull(DB.tp_street+"_"+sCountryId)) 
+	    oAddrLine.append(getString(DB.tp_street+"_"+sCountryId));
+	} else if (sCountryId.equals("fr")) {
+	  if (!isNull(DB.nu_street)) 
+	    oAddrLine.append(getString(DB.nu_street)+" ");
+	  if (!isNull(DB.tp_street+"_"+sCountryId)) 
+	    oAddrLine.append(getString(DB.tp_street+"_"+sCountryId)+" ");
+	  if (!isNull(DB.nm_street)) 
+	    oAddrLine.append(getString(DB.nm_street));
+	} else {
+	  if (!isNull(DB.nm_street)) 
+	    oAddrLine.append(getString(DB.nm_street)+" ");
+	  if (!isNull(DB.nu_street)) 
+	    oAddrLine.append(getString(DB.nu_street));
+	}// id_country
+
+	if (!isNull(DB.zipcode))
+	  oAddrLine.append(","+getString(DB.zipcode));
+
+	if (!isNull(DB.mn_city))
+	  oAddrLine.append(","+getString(DB.mn_city));
+
+	if (!isNull(DB.nm_state)) 
+	  oAddrLine.append(","+getString(DB.nm_state));
+
+	if (!isNull(DB.nm_country)) 
+	  oAddrLine.append(","+getString(DB.nm_country));
+
+	return oAddrLine.toString();
+  } // toLocaleString
+
+  // ---------------------------------------------------------
+
+  /**
+   * <p>Get Address as a single plain text line using country as locale</p>
+   * @return String
+   * @since 4.0
+   */
+
+  public String toLocaleString() {
+    return toLocaleString(getStringNull(DB.id_country,""));
+  } // toLocaleString
+
+  // ---------------------------------------------------------
 
   /**
    * <p>Get an XML dump for the DBPersist values</p>
