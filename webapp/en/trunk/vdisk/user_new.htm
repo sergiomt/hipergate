@@ -1,0 +1,135 @@
+
+<HTML>
+<HEAD>
+  <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <!--
+      var skin = getCookie("skin");
+      if (""==skin) skin="xp";
+      
+      document.write ('<LINK REL="stylesheet" TYPE="text/css" HREF="../skins/' + skin + '/styles.css">');
+    
+      function validate() {
+        var frm = window.document.forms[0];
+        var str;
+        
+        str = rtrim(frm.nm_user.value);
+	if (str.length==0) {
+	  alert ("Name is Mandatory");
+	  return false;
+	}
+	frm.nm_user.value = str;
+
+        str = rtrim(frm.tx_surname1.value);
+	if (str.length==0) {
+	  alert ("Surname/Legal Name is mandatory");
+	  return false;
+	}
+	frm.tx_surname1.value = str;
+
+        str = rtrim(frm.tx_nickname.value);
+	if (str.length==0) {
+	  alert ("User is Mandatory");
+	  return false;
+	}
+	frm.tx_nickname.value = str.toLowerCase();
+	
+	if(frm.tx_pwd.value!=frm.tx_pwd2.value) {
+	  alert ("Retyped password does not coincide with original one");
+	  return false;	
+	}
+
+        str = rtrim(frm.tx_main_email.value);
+	if (str.length==0) {
+	  alert ("Main e-mail is mandatory");
+	  return false;
+	}
+	frm.tx_main_email.value = str.toLowerCase();
+	
+	frm.tx_alt_email.value = rtrim(frm.tx_main_email.value.toLowerCase());
+	
+        frm.nm_company.value = frm.nm_company.value.toUpperCase();
+	frm.de_title.value = frm.de_title.value.toUpperCase();
+	
+        return true;
+      }
+      
+      function setContext() {
+        document.forms[0].value = getURLParam("context",window);
+      }
+      
+    //-->
+  </SCRIPT>   
+  <TITLE>hipergate :: New Users Registration</TITLE>    
+</HEAD>
+<BODY BGCOLOR="white" TOPMARGIN="0" LEFTMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0" onLoad="setContext()">
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
+  <!-- Tabla Principal, Toda la Pagina -->
+  <TABLE WIDTH="100%" BORDER="0" CELLSPACING="0" CELLPADDING="0">
+    <TR BGCOLOR="#034E7A">
+      <TD BGCOLOR="#034E7A" COLSPAN="2">
+        <IMG SRC="../images/images/logobanner.gif" BORDER="0" WIDTH="347" HEIGHT="60">
+      </TD>
+    </TR>
+    <TR>
+      <TD ALIGN="middle" VALIGN="middle">
+        <BR>
+        <FONT CLASS="title1">New Users Registration</FONT>
+        <BR>
+        <FORM NAME="frmNewUser" METHOD="post" ACTION="usernew_store.jsp" onSubmit="return validate();">
+	<INPUT TYPE="hidden" NAME="context" VALUE="">
+        <TABLE CLASS="formback">        
+          <TR><TD>
+            <TABLE WIDTH="100%" CLASS="formfront">
+              <TR>
+            	<TD ALIGN="right" WIDTH="150"><FONT CLASS="formstrong">Surname:</FONT></TD>
+            	<TD ALIGN="left" WIDTH="290"><INPUT TYPE="text" NAME="nm_user" MAXLENGTH="100" SIZE="32"></TD>
+              </TR>
+              <TR>
+            	<TD ALIGN="right" WIDTH="150"><FONT CLASS="formstrong">Name:</FONT></TD>
+            	<TD ALIGN="left" WIDTH="290"><INPUT TYPE="text" NAME="tx_surname1" MAXLENGTH="100" SIZE="32"></TD>
+              </TR>
+              <TR>
+            	<TD ALIGN="right" WIDTH="150"><FONT CLASS="formstrong">Username:</FONT></TD>
+            	<TD ALIGN="left" WIDTH="290"><INPUT TYPE="text" NAME="tx_nickname" MAXLENGTH="32" SIZE="32" STYLE="text-transform:lowercase"></TD>
+              </TR>              
+              <TR>
+            	<TD ALIGN="right" WIDTH="150"><FONT CLASS="formstrong">Password:</FONT></TD>
+            	<TD ALIGN="left" WIDTH="290"><INPUT TYPE="password" NAME="tx_pwd" MAXLENGTH="12" SIZE="32"></TD>
+              </TR>              
+              <TR>
+            	<TD ALIGN="right" WIDTH="150"><FONT CLASS="formstrong">Repeat Password:</FONT></TD>
+            	<TD ALIGN="left" WIDTH="290"><INPUT TYPE="password" NAME="tx_pwd2" MAXLENGTH="12" SIZE="32"></TD>
+              </TR>              
+              <TR>
+            	<TD ALIGN="right" WIDTH="150"><FONT CLASS="formstrong">Main e-mail:</FONT></TD>
+            	<TD ALIGN="left" WIDTH="290"><INPUT TYPE="text" NAME="tx_main_email" MAXLENGTH="100" SIZE="32" STYLE="text-transform:lowercase"></TD>
+              </TR>
+              <TR>
+            	<TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">Alternative e-mail:</FONT></TD>
+            	<TD ALIGN="left" WIDTH="290"><INPUT TYPE="text" NAME="tx_alt_email" MAXLENGTH="100" SIZE="32" STYLE="text-transform:lowercase"></TD>
+              </TR>
+              <TR>
+            	<TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">Company:</FONT></TD>
+            	<TD ALIGN="left" WIDTH="290"><INPUT TYPE="text" NAME="nm_company" MAXLENGTH="50" SIZE="32" STYLE="text-transform:uppercase"></TD>
+              </TR>
+              <TR>
+            	<TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">Position:</FONT></TD>
+            	<TD ALIGN="left" WIDTH="290"><INPUT TYPE="text" NAME="de_title" MAXLENGTH="50" SIZE="32" STYLE="text-transform:uppercase"></TD>
+              </TR>
+              <TR>
+            	<TD ALIGN="right" WIDTH="150"><INPUT TYPE="hidden" NAME="id_domain" VALUE="1024"></TD>
+            	<TD ALIGN="left" WIDTH="290"><INPUT TYPE="submit" CLASS="pushbutton" VALUE="Register"></TD>
+              </TR>
+            </TABLE>
+          </TD></TR>
+        </TABLE>
+        </FORM>
+      </TD>
+    </TR>
+  </TABLE>
+</BODY>
+</HTML>

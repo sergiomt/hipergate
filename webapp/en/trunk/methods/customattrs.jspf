@@ -1,0 +1,276 @@
+<%!
+  /**
+    * Paint User Defined Atrributes into a <FORM>
+    * @param oConn Database Connection
+    * @param oCache Reference to local cache peer object.
+    * @param sDomainId 
+    * @param sUserId
+    * @param iAppMAsk
+    * @param sTableName
+    * @param sTableDesc
+    * @param sWorkArea
+    * @param sLanguage
+    * @param sObjGUID
+  */
+  
+  static String paintAttributes (com.knowgate.jdc.JDCConnection oConn,
+  				 com.knowgate.cache.DistributedCachePeer oCache,
+  				 String sDomainId,
+  				 String sUserId,
+  				 int iAppMask,
+  				 String sTableName,
+  				 String sTableDesc,
+  				 String sWorkArea,
+  				 String sLanguage,
+  				 String sObjGUID) throws java.sql.SQLException {
+    final int Config=30;
+    int iRowFound;
+    int iAttrs = 0;
+    String sKey = sTableName + "#" + sLanguage + "[" + sWorkArea + "]";
+    String sAttrs = "";
+    int iVals = 0;
+    Object aObjPK[] = { sObjGUID };
+    com.knowgate.dataobjs.DBSubset oCustomFields = null;
+    com.knowgate.dataobjs.DBSubset oCustomValues = null;
+    Boolean oIsWorkAreaAdmin;
+        
+    // Read DBSubset from DBSubsets Cache
+    try {
+      oIsWorkAreaAdmin = (Boolean) oCache.get("[" + sUserId + ",admin]");
+    
+      oCustomFields = oCache.getDBSubset(sKey);
+      
+      // If required DBSubset is not in Cache, load it from DB and add to Cache
+      if (null==oCustomFields) {
+        
+        oCustomFields = new DBSubset(DB.k_lu_meta_attrs, DB.tr_ + sLanguage + "," + DB.tp_attr + "," + DB.id_section + "," + DB.max_len,
+      			   DB.gu_owner + "='" + sWorkArea + "' AND " + DB.nm_table + "='" + sTableName + "' ORDER BY " + DB.pg_attr, 10);
+        iAttrs = oCustomFields.load(oConn);
+        
+        oCache.putDBSubset (sTableName, sKey, oCustomFields);
+
+      } // fi()
+      else
+        iAttrs = oCustomFields.getRowCount();
+
+      if (null==oIsWorkAreaAdmin) {
+        oIsWorkAreaAdmin = new Boolean(com.knowgate.workareas.WorkArea.isAdmin(oConn, sWorkArea, sUserId));
+        oCache.put("[" + sUserId + ",admin]", oIsWorkAreaAdmin);
+      }
+    } catch (java.rmi.RemoteException e) {
+      /* TO DO: Add exception handling */
+      oIsWorkAreaAdmin = new Boolean(false);
+      sAttrs += e.getMessage() + "<BR>";
+      return sAttrs;
+    }
+          
+    if (oIsWorkAreaAdmin.booleanValue()) {
+        sAttrs += "<TR>\n";
+        sAttrs += "<TD><IMG SRC=\"../images/images/newfield.gif\" BORDER=\"0\" ALT=\"New User Defined Field\">&nbsp;<A HREF=\"../common/fldedit.jsp?id_domain=" + sDomainId + "&gu_workarea=" + sWorkArea + "&nm_table=" + sTableName + "&tx_table=" + sTableDesc + "\" CLASS=\"linkplain\">New field</A></TD>";
+        sAttrs += "<TD><IMG SRC=\"../images/images/delfield.gif\" BORDER=\"0\" ALT=\"Remove User Defined Fields\">&nbsp;<SELECT NAME=\"sel_delcustomfield\" CLASS=\"combomini\" STYLE=\"visibility:hidden\"><OPTION VALUE=\"\"></OPTION>";
+        for (int a=0; a<iAttrs; a++)
+          sAttrs += "<OPTION VALUE=\"" + oCustomFields.getString(2,a) + "\">" + oCustomFields.getString(0,a) + "</OPTION>";
+        sAttrs += "</SELECT>";         
+        sAttrs += "<A CLASS=\"linkplain\"";
+        sAttrs += "HREF=\"javascript:var frm=document.forms[0];if (frm.sel_delcustomfield.selectedIndex>0) window.location='../common/fldedit_delete.jsp?id_domain=" + sDomainId + "&gu_workarea=" + sWorkArea + "&nm_table=' + escape('" + sTableName + "') + '&tx_table=' + escape('" + sTableDesc + "') + '&field=' + getCombo (frm.sel_delcustomfield) + '&lang=" + sLanguage + "&urlback=' + escape(window.location.href);\""; 
+        sAttrs += ">Delete field</A></TD>";
+        sAttrs += "</TR>\n";
+        sAttrs += "<TR><TD COLSPAN=2><BR></TD></TR>\n";
+    }
+    else
+        sAttrs += "<INPUT TYPE=\"hidden\" NAME=\"sel_delcustomfield\">";
+    
+        
+    if (null!=sObjGUID)
+      if (sObjGUID.length()>0) {
+        oCustomValues = new DBSubset(sTableName, DB.nm_attr + "," + DBBind.Functions.ISNULL + "(" + DB.vl_attr + ",'')", DB.gu_object + "=?", 10);
+        iVals = oCustomValues.load(oConn, aObjPK);
+      }
+    // fi (sObjGUID)
+
+    sAttrs += "<INPUT TYPE='hidden' NAME='custom_attributes' VALUE='";
+    for (int a=0; a<iAttrs; a++) {
+      if (a>0) sAttrs += ","; 
+      sAttrs += oCustomFields.getString(2,a);
+    } 
+    sAttrs += "'>";
+        
+    for (int a=0; a<iAttrs; a++) {
+      sAttrs += "<TR>\n";
+      sAttrs += "  <TD ALIGN='right'><FONT CLASS='formplain'>" + oCustomFields.getString(0,a) + ":</FONT></TD>\n";
+      sAttrs += "  <TD ALIGN='left'>";
+      
+      switch (oCustomFields.getInt(1,a)) {
+        case 1: // INPUT TEXT
+          sAttrs += "    <INPUT TYPE='text' SIZE=30 NAME='" + oCustomFields.getString(2,a) + "' MAXLENGTH=" + String.valueOf(oCustomFields.getInt(3,a));
+          if (iVals>0) {
+            iRowFound = oCustomValues.find(0, oCustomFields.get(2,a));
+            if (iRowFound>=0) sAttrs += " VALUE=\"" + oCustomValues.getString(1,iRowFound) + "\"";
+          } // fi (iVals)
+          sAttrs += ">";
+          break;
+        case 2: // TEXTAREA
+          sAttrs += "    <TEXTAREA NAME='" + oCustomFields.getString(2,a) + ">";
+          if (iVals>0) {
+            iRowFound = oCustomValues.find(0, oCustomFields.get(2,a));
+            if (iRowFound>=0) sAttrs += oCustomValues.getString(1,iRowFound);
+          } // fi (iVals)          
+          sAttrs += "</TEXTAREA>\n";
+          break;     
+        case 3: // SELECT UNIQUE
+          sAttrs += "    <SELECT NAME='" + oCustomFields.getString(2,a) + "></SELECT>\n";
+          break;      
+        case 4: // SELECT MULTIPLE
+          sAttrs += "    <SELECT NAME='" + oCustomFields.getString(2,a) + " MULTIPLE></SELECT>\n";
+          break;      
+        case 5: // DATE
+          sAttrs += "    <INPUT TYPE='text' SIZE=8 NAME='" + oCustomFields.getString(2,a) + "' MAXLENGTH=" + String.valueOf(oCustomFields.getInt(3,a)) + ">\n";
+          break;      
+      }
+      sAttrs += "  </TD>";
+      sAttrs += "</TR>\n";
+    } // next(a)
+    
+    return sAttrs;    
+  } // paintAttributes()
+
+  // -------------------------------------------------------------------------------------------------------
+
+  /**
+    * Paint User Defined Atrributes into a <FORM> as hidden fields
+    * Usefull when a page must have 2 copies of the same attribute set in different layers,
+    * one layer used for data editing an another one containing a the <FORM> to be posted 
+  */
+  static String paintAttributesHidden (com.knowgate.jdc.JDCConnection oConn,
+  				       com.knowgate.cache.DistributedCachePeer oCache,
+  				       String sDomainId,
+  				       String sUserId,
+  				       int iAppMask,
+  				       String sTableName,
+  				       String sTableDesc,
+  				       String sWorkArea,
+  				       String sLanguage,
+  				       String sObjGUID) throws java.sql.SQLException {
+    final int Config=30;
+    int iRowFound;
+    int iAttrs = 0;
+    String sKey = sTableName + "#" + sLanguage + "[" + sWorkArea + "]";
+    String sAttrs = "";
+    int iVals = 0;
+    Object aObjPK[] = { sObjGUID };
+    com.knowgate.dataobjs.DBSubset oCustomFields = null;
+    com.knowgate.dataobjs.DBSubset oCustomValues = null;
+            
+    // Read DBSubset from DBSubsets Cache
+    try {
+      oCustomFields = oCache.getDBSubset(sKey);
+    
+      // If required DBSubset is not in Cache, load it from DB and add to Cache
+      if (null==oCustomFields) {
+        
+        oCustomFields = new DBSubset(DB.k_lu_meta_attrs, DB.tr_ + sLanguage + "," + DB.tp_attr + "," + DB.id_section + "," + DB.max_len,
+      			   DB.gu_owner + "='" + sWorkArea + "' AND " + DB.nm_table + "='" + sTableName + "' ORDER BY " + DB.pg_attr, 10);
+        iAttrs = oCustomFields.load(oConn);
+        oCache.putDBSubset (sTableName, sKey, oCustomFields);
+      } // fi()
+      else
+        iAttrs = oCustomFields.getRowCount();
+    } catch (java.rmi.RemoteException e) {
+      /* TO DO: Add exception handling */
+      sAttrs += e.getMessage() + "<BR>";
+      return sAttrs;
+    }
+           
+    if (null!=sObjGUID)
+      if (sObjGUID.length()>0) {
+        oCustomValues = new DBSubset(sTableName, DB.nm_attr + "," + DBBind.Functions.ISNULL + "(" + DB.vl_attr + ",'')", DB.gu_object + "=?", 10);
+        iVals = oCustomValues.load(oConn, aObjPK);
+      }
+    // fi (sObjGUID)
+
+    sAttrs += "<INPUT TYPE='hidden' NAME='custom_attributes' VALUE='";
+    for (int a=0; a<iAttrs; a++) {
+      if (a>0) sAttrs += ","; 
+      sAttrs += oCustomFields.getString(2,a);
+    } 
+    sAttrs += "'>";
+        
+    for (int a=0; a<iAttrs; a++) {
+
+          sAttrs += "    <INPUT TYPE='hidden' NAME='" + oCustomFields.getString(2,a) + "'";
+          if (iVals>0) {
+            iRowFound = oCustomValues.find(0, oCustomFields.get(2,a));
+            if (iRowFound>=0) sAttrs += " VALUE=\"" + oCustomValues.getString(1,iRowFound) + "\"";
+          } // fi (iVals)
+          sAttrs += ">";
+                
+    } // next(a)
+    
+    return sAttrs;    
+  } // paintAttributesHidden()
+    
+  // -------------------------------------------------------------------------------------------------------
+
+  /**
+    * Store user defined attributes for a register at database
+    * @param oReq ServletRequest containing parameters for atributes and a parameter named custom_attributes
+    *             containing the list of attribute named separated by commas.
+    * @param oConn Database Connection
+    * @param sTable Attributes table name
+    * @param sWrkA WorkArea GUID
+    * @param sObjPK Base Object Primary Key GUID
+  */  
+  static void storeAttributes ( javax.servlet.ServletRequest oReq,
+  				com.knowgate.cache.DistributedCachePeer oCache,
+                                com.knowgate.jdc.JDCConnection oConn,
+                                String sTable, String sWrkA, String sObjPK ) throws java.sql.SQLException {
+    
+    String sAttrSet = oReq.getParameter("custom_attributes");
+
+    java.sql.PreparedStatement oStmt;
+    int iAttrs;
+    String aAttrSet[];
+    String sValue;
+    String sKey = sTable + "#" + oReq.getLocale().getLanguage() + "[" + sWrkA + "]";
+
+    try {
+      oCache.expire (sKey);
+    } catch (java.rmi.RemoteException e) { }
+        
+    // Delete atributes prevously present at database
+
+    oStmt = oConn.prepareStatement("DELETE FROM " + sTable + " WHERE gu_object=?");
+    oStmt.setString(1, sObjPK);
+    oStmt.execute();
+    oStmt.close();
+
+    // Store new attributes
+    
+    if (null!=sAttrSet) {
+      aAttrSet = com.knowgate.misc.Gadgets.split(sAttrSet,',');
+      if (null!=aAttrSet)
+        iAttrs = aAttrSet.length;
+      else
+        iAttrs = 0;
+    }
+    else {
+      aAttrSet = null;
+      iAttrs = 0;
+    }
+      
+    oStmt = oConn.prepareStatement("INSERT INTO " + sTable + " (gu_object,nm_attr,vl_attr) VALUES(?,?,?)");
+    
+    for (int a=0; a<iAttrs; a++) {
+      sValue = oReq.getParameter(aAttrSet[a]);
+      if (null==sValue) sValue = "";
+      if (sValue.length()>0) {
+        oStmt.setString(1, sObjPK);
+        oStmt.setString(2, aAttrSet[a]);
+        oStmt.setString(3, sValue);
+        oStmt.execute();
+      } // fi()      
+    } // next()
+    
+    oStmt.close();
+  } // storeAttributes     
+%>

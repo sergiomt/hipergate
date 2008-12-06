@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//ES" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">  
+<!-- +---------------------------------------------+ -->
+<!-- | Marco principal de administracion de tienda | -->
+<!-- | (c) KnowGate 2001                           | -->
+<!-- +---------------------------------------------+ -->
+<HTML>
+  <HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+    <TITLE>hipergate :: Catalog Administration</TITLE>
+    <SCRIPT LANGUAGE="javascript" SRC="../javascript/getparam.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="true">
+    <!--
+      function setURL() {
+         globalnavigation.location = "../vdisk/global_menu.jsp?selected=" + (getURLParam("selected")==null ? "1" : getURLParam("selected")) + "&subselected=" + (getURLParam("subselected")==null ? "2" : getURLParam("subselected"));
+        shoptree.location = "shopjtree_f.jsp?gu_shop=" + getURLParam("gu_shop");
+      }
+    //-->
+    </SCRIPT>    
+
+  </HEAD>
+  <FRAMESET NAME="shoptop" ROWS="120,*" BORDER="0" FRAMEBORDER="0" onLoad="setURL()">
+    <FRAME NAME="globalnavigation" FRAMEBORDER="no" MARGINWIDTH="0" MARGINHEIGHT="0" NORESIZE>
+    <FRAMESET NAME="localnavigation" COLS="280,*" BORDER="0" FRAMEBORDER="0">
+      <FRAMESET NAME="shoptreeframe" ROWS="100%,*" BORDER="0" FRAMEBORDER="0">
+        <FRAME NAME="shoptree"  FRAMEBORDER="no" MARGINWIDTH="0" MARGINHEIGHT="0" NORESIZE>
+        <FRAME NAME="response" FRAMEBORDER="no" MARGINWIDTH="0" MARGINHEIGHT="0" NORESIZE SRC="../common/blank.htm">
+      </FRAMESET>
+      <FRAMESET NAME="msgsframe" ROWS="100%,*" BORDER="0" FRAMEBORDER="0">
+        <FRAME NAME="msgsadmin" FRAMEBORDER="no" MARGINWIDTH="0" MARGINHEIGHT="0" NORESIZE SRC="../common/blank.htm">
+        <FRAME NAME="msgsexec" FRAMEBORDER="no" MARGINWIDTH="0 marginheight=" NORESIZE SRC="../common/blank.htm">
+      </FRAMESET>
+    </FRAMESET>
+    <NOFRAMES>
+      <BODY>
+	<P>This page uses frames, but yur browser does handle them.</P>
+      </BODY>
+    </NOFRAMES>
+  </FRAMESET>
+</HTML>

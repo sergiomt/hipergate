@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//EN" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">  
+<HTML>
+  <HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+    <TITLE>hipergate :: Users & Groups Administration</TITLE>
+    <SCRIPT LANGUAGE="javascript" SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT LANGUAGE="javascript" SRC="../javascript/getparam.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="true">
+    <!--
+      function goURL() {
+        top.frames['globalnavigation'].document.location = "global_menu.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&hideminimenu";
+      }
+    //-->
+    </SCRIPT>    
+  </HEAD>
+  <FRAMESET NAME="usrtop" ROWS="90,*" BORDER="0" FRAMEBORDER="0" onLoad="goURL()">
+    <FRAME NAME="globalnavigation" FRAMEBORDER="no" MARGINWIDTH="0" MARGINHEIGHT="0" NORESIZE SRC="global_menu.jsp?selected=9&subselected=0&hideminimenu">
+    <FRAME NAME="localnavigation" FRAMEBORDER="no" MARGINWIDTH="0 marginheight=" NORESIZE SRC="usr_adm_f.htm">
+    <NOFRAMES>
+      <BODY>
+	<P>This page uses frames, but yur browser does handle them.</P>
+      </BODY>
+    </NOFRAMES>
+  </FRAMESET>
+</HTML>

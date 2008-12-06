@@ -1,0 +1,558 @@
+<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
+<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
+<%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
+<%
+/*
+  Copyright (C) 2003  Know Gate S.L. All rights reserved.
+                      C/Oña, 107 1º2 28050 Madrid (Spain)
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. The end-user documentation included with the redistribution,
+     if any, must include the following acknowledgment:
+     "This product includes software parts from hipergate
+     (http://www.hipergate.org/)."
+     Alternately, this acknowledgment may appear in the software itself,
+     if and wherever such third-party acknowledgments normally appear.
+
+  3. The name hipergate must not be used to endorse or promote products
+     derived from this software without prior written permission.
+     Products derived from this software may not be called hipergate,
+     nor may hipergate appear in their name, without prior written
+     permission.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+  You should have received a copy of hipergate License with this code;
+  if not, visit http://www.hipergate.org or mail to info@hipergate.org
+*/
+ 
+  response.addHeader ("Pragma", "no-cache");
+  response.addHeader ("cache-control", "no-store");
+  response.setIntHeader("Expires", 0);
+
+  final int MailwireApp=13;
+  final int WebBuilderApp=14;
+  final int SurveysApp=23;
+
+  // obtener el idioma del navegador cliente
+  String sLanguage = getNavigatorLanguage(request);
+
+  // Obtener el skin actual
+  String sSkin = getCookie(request, "skin", "default");
+
+  // Obtener el dominio y la workarea
+  String id_domain = getCookie(request,"domainid","");
+  String n_domain = getCookie(request,"domainnm",""); 
+  String gu_workarea = getCookie(request,"workarea",""); 
+  String sDocType = nullif(request.getParameter("doctype"),"newsletter");
+  
+  String sDocTypeFilter;  
+  if (sDocType.equals("newsletter"))
+     sDocTypeFilter = "m." + DB.id_app + "=" + String.valueOf(MailwireApp) + " AND ";
+  else if (sDocType.equals("survey"))
+     sDocTypeFilter = "m." + DB.id_app + "=" + String.valueOf(SurveysApp) + " AND ";
+  else
+     sDocTypeFilter = "m." + DB.id_app + "=" + String.valueOf(WebBuilderApp) + " AND ";
+    
+  String sFind = "";
+    
+  if (nullif(request.getParameter("find")).length()>0)
+    sFind += " AND (" + DB.nm_pageset + " " + DBBind.Functions.ILIKE + " '%" + request.getParameter("find") + "%' OR " + DB.tx_comments + " " + DBBind.Functions.ILIKE + " '%" + request.getParameter("find") + "%')";
+
+  if (nullif(request.getParameter("dt_start")).length()>0)
+    sFind += " AND " + DB.dt_created + "<={ d '" + request.getParameter("dt_start") + "'} ";
+  
+  if (nullif(request.getParameter("dt_end")).length()>0)
+    sFind += " AND " + DB.dt_created + ">={ d '" + request.getParameter("dt_end") + "'} ";
+
+  String sStorageRoot = Environment.getProfilePath(GlobalDBBind.getProfileName(),"storage");
+  
+  int iPageSetCount = 0;
+  DBSubset oPageSets = null;        
+  Object[] aFind = { '%' + sFind + '%' };
+  int iMaxRows;
+  int iSkip;
+  String sOrderBy;
+  int iOrderBy;  
+
+
+  if (request.getParameter("orderby")!=null)
+    sOrderBy = request.getParameter("orderby");
+  else
+    sOrderBy = "2 DESC";
+  
+  if ((sOrderBy.length()>0) && (sOrderBy.length()<3))
+    iOrderBy = Integer.parseInt(sOrderBy);
+  else
+    iOrderBy = 2;
+    
+  if (request.getParameter("maxrows")!=null)
+    iMaxRows = Integer.parseInt(request.getParameter("maxrows"));
+  else
+    iMaxRows = 1000;
+
+  if (request.getParameter("skip")!=null)
+    iSkip = Integer.parseInt(request.getParameter("skip"));      
+  else
+    iSkip = 0;
+
+  if (iSkip<0) iSkip = 0;
+
+  // Obtener una conexiÃ³nd el pool a bb.dd. (el nombre de la conexiÃ³n es arbitrario)
+  JDCConnection oConn = GlobalDBBind.getConnection("pageset_listing");  
+  String aStatus[];
+   
+  try {
+    // Si el filtro no existe devolver todos los registros
+    if (sFind.length()==0) {
+      oPageSets = new DBSubset (DB.k_pagesets + " p," + DB.k_microsites + " m ", 
+      				"p." + DB.gu_pageset + ",p." + DB.nm_pageset + ",p." + DB.tx_comments + ",p." + DB.path_data + ",p." + DB.dt_created + ",m." + DB.nm_microsite + ",p." + DB.id_status,
+      				"(p." + DB.gu_microsite + "=m." + DB.gu_microsite + " OR p." + DB.gu_microsite + " IS NULL) AND " + sDocTypeFilter + "p.gu_workarea='" + gu_workarea + "' ORDER BY " + sOrderBy, iMaxRows);
+      oPageSets.setMaxRows(iMaxRows);
+      iPageSetCount = oPageSets.load (oConn, iSkip);
+    }
+    else {
+      oPageSets = new DBSubset (DB.k_pagesets + " p," + DB.k_microsites + " m", 
+      				"p." + DB.gu_pageset + ",p." + DB.nm_pageset + ",p." + DB.tx_comments + ",p." + DB.path_data + ",p." + DB.dt_created + ",m." + DB.nm_microsite + ",p." + DB.id_status,
+      				"(p." + DB.gu_microsite + "=m." + DB.gu_microsite + " OR p." + DB.gu_microsite + " IS NULL) AND " + sDocTypeFilter + "p.gu_workarea='" + gu_workarea + "' " + sFind + " ORDER BY " + sOrderBy, iMaxRows);
+      oPageSets.setMaxRows(iMaxRows);
+      iPageSetCount = oPageSets.load (oConn, iSkip);    
+    }
+    
+    aStatus = new String[iPageSetCount];
+    
+    for (int ps=0; ps<iPageSetCount; ps++)
+      if (oPageSets.isNull(6,ps))
+        aStatus[ps] = "";
+      else
+        aStatus[ps] = DBLanguages.getLookUpTranslation((java.sql.Connection) oConn, "k_pagesets_lookup", gu_workarea , "id_status", sLanguage, oPageSets.getString(6,ps));
+    
+    oConn.close("pageset_listing"); 
+  }
+  catch (SQLException e) {  
+    oPageSets = null;
+    if (null!=oConn)
+      if (!oConn.isClosed())
+        oConn.close("pageset_listing");
+
+    if (com.knowgate.debug.DebugFile.trace) {
+      com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "SQLException", e.getMessage());
+    }
+    
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=../blank.htm"));
+    return;
+  }
+  oConn = null;  
+%>
+
+<HTML LANG="<% out.write(sLanguage); %>">
+<HEAD>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/datefuncs.js"></SCRIPT>  
+
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/dynapi/dynapi.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript">
+    DynAPI.setLibraryPath('../javascript/dynapi/lib/');
+    DynAPI.include('dynapi.api.*');
+  </SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript">
+    var menuLayer;
+    DynAPI.onLoad = function() { 
+      setCombos();
+      menuLayer = new DynLayer();
+      menuLayer.setWidth(160);
+      menuLayer.setVisible(true);
+      menuLayer.setHTML(rightMenuHTML);
+    }
+  </SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/dynapi/rightmenu.js"></SCRIPT>
+
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+    <!--
+    	var jsPageSetId;
+    	var jsPageSetName;
+    	
+        <%
+          // Escribir los nombres de PageSets en Arrays JavaScript
+          // Estos arrays se usan en las llamadas de borrado mÃºltiple.
+          
+          out.write("var jsPageSets = new Array(");
+            for (int i=0; i<iPageSetCount; i++) {
+              if (i>0) out.write(","); 
+              out.write("\"" + oPageSets.getString(0,i) + "\"");
+            }
+          out.write(");\n        ");
+        %>
+	// ----------------------------------------------------
+
+        function showCalendar(ctrl) {       
+          var dtnw = new Date();
+
+          window.open("../common/calendar.jsp?a=" + (dtnw.getFullYear()) + "&m=" + dtnw.getMonth() + "&c=" + ctrl, "", "toolbar=no,directories=no,menubar=no,resizable=no,width=171,height=195");
+        } // showCalendar()
+      
+	// ----------------------------------------------------
+	
+	function findRecords() {
+	  var frm = document.forms[0];
+	  var qry = "";
+	  var txt;
+	  
+	  txt = rtrim(frm.find.value);
+	  if (txt.indexOf("'")>=0 || txt.indexOf("%")>=0  || txt.indexOf(",")>=0  || txt.indexOf("&")>=0  || txt.indexOf("?")>=0 ) {
+	    alert ("Search string contains invalid characters");
+	    document.location.href = "pageset_listing.jsp?doctype="+ getURLParam("doctype") +"&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
+	    return false;
+	  }
+	  
+	  if (txt.length>0)
+	    qry += "&find=" + escape(txt);	  
+	  if (txt.length==0 && frm.dt_start.value.length==0 && frm.dt_end.value.length==0) {
+	    alert ("Must specify a search criteria");
+	    document.location.href = "pageset_listing.jsp?doctype="+ getURLParam("doctype") +"&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
+	    return false;
+	  }
+	  	  
+	  txt = frm.dt_start.value;
+	  if (txt.length>0)
+	    if (isDate(txt,"d"))
+	      qry += "&dt_start=" + txt;
+	    else {
+	      alert ("Invalid Start Date");
+	      document.location.href = "pageset_listing.jsp?doctype="+ getURLParam("doctype") +"&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
+	      return false;
+	    }
+	    
+	  txt = frm.dt_end.value;
+	  if (txt.length>0)
+	    if (isDate(txt,"d"))
+	      qry += "&dt_end=" + txt;
+	    else {
+	      alert ("Invalid End Date");
+	      document.location.href = "pageset_listing.jsp?doctype="+ getURLParam("doctype") +"&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
+	      return false;
+	    }
+		    	  
+	  document.location.href = "pageset_listing.jsp?doctype=<%=sDocType%>&id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + (getURLParam("orderby")!=null ? "&orderby="+request.getParameter("orderby") : "") + qry + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&maxrows=<%=iMaxRows%>&skip=<%=iSkip%>";
+	}
+	
+	// ----------------------------------------------------
+	
+	function sortBy(fld) {
+	  document.location = "pageset_listing.jsp?doctype=<%=sDocType%>&id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&orderby=" + fld + "&find=<%=sFind%>&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&maxrows=<%=iMaxRows%>&skip=<%=iSkip%>";
+	}
+
+        // ----------------------------------------------------
+        	
+	function createPageSet() {
+	    self.open("microsite_lookup_f.jsp?doctype=<%=sDocType%>&gu_workarea=<%=gu_workarea%>&id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&nm_table=k_microsites&doctype=<%=sDocType%>&id_language=<%=sLanguage%>&id_section=id_sector&tp_control=1&nm_control=gu_microsite&nm_coding=id_sector", "createpageset", "toolbar=no,directories=no,menubar=no,resizable=no,top=" + (screen.height-520)/2 + ",left=" + (screen.width-540)/2 + ",width=600,height=520");	  
+	} // createPageSet()
+
+        // ----------------------------------------------------
+        	
+	function changePageSet(jsPageSetId) {
+	    self.open("pageset_change.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>&doctype=<%=sDocType%>&gu_pageset=" + jsPageSetId, "changepageset", "toolbar=no,directories=no,menubar=no,resizable=no,top=" + (screen.height-420)/2 + ",left=" + (screen.width-540)/2 + ",width=600,height=420");	  
+	} // createPageSet()
+
+        // ----------------------------------------------------
+
+	function editProperties(jsPageSetId) {	  
+	  self.open ("pageset_edit.jsp?gu_pageset=" + jsPageSetId + "&gu_workarea=<%=gu_workarea%>&id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>"), "editpagesetproperties", "directories=no,toolbar=no,menubar=no,top=" + (screen.height-320)/2 + ",left=" + (screen.width-400)/2 + ",width=400,height=320");	  
+	} // editProperties()
+
+        // ----------------------------------------------------
+
+	function modifyPageSet(id,nm) {
+	  var w,h;
+	  
+	  switch (screen.width) {
+	    case 640:
+	      w="620";
+	      h="460";
+	      break;
+	    case 800:
+	      w="740";
+	      h="560";
+	      break;
+	    case 1024:
+	      w="960";
+	      h="700";
+	      break;
+	    case 1152:
+	      w="1024";
+	      h="768";
+	      break;
+	    case 1280:
+	      w="1152";
+	      h="960";
+	      break;
+	    default:
+	      w="740";
+	      h="560";
+	  }
+	  	    	      	    	  
+	  window.open ("wb_document.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_pageset=" + id + "&doctype=<%=sDocType%>", "editPageSet", "top=" + (screen.height-parseInt(h))/2 + ",left=" + (screen.width-parseInt(w))/2 + ",scrollbars=yes,directories=no,toolbar=no,menubar=no,status=yes,resizable=yes,width=" + w + ",height=" + h);
+	} // modifyPageSet
+
+        // ----------------------------------------------------
+
+	function previewPageSet(id,nm) {
+	  var w,h;
+	  
+	  switch (screen.width) {
+	    case 640:
+	      w="620";
+	      h="460";
+	      break;
+	    case 800:
+	      w="740";
+	      h="560";
+	      break;
+	    case 1024:
+	      w="960";
+	      h="700";
+	      break;
+	    case 1152:
+	      w="1024";
+	      h="768";
+	      break;
+	    case 1280:
+	      w="1152";
+	      h="960";
+	      break;
+	    default:
+	      w="740";
+	      h="560";
+	  }
+	  	    	      	    	  
+	  window.open ("wb_preview.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_pageset=" + id + "&doctype=<%=sDocType%>", "editPageSet", "top=" + (screen.height-parseInt(h))/2 + ",left=" + (screen.width-parseInt(w))/2 + ",scrollbars=yes,directories=no,toolbar=no,menubar=yes,width=" + w + ",height=" + h);
+	} // modifyPageSet
+
+        // ----------------------------------------------------
+
+	function selectList(gu_pageset) {
+	  var wEnvio = window.open("list_choose.jsp?gu_pageset=" +gu_pageset,"wEnvio","top=" + (screen.height-500)/2 + ",left=" + (screen.width-640)/2 + ",height=500,width=640,scrollbars=yes");
+	} // selectList
+
+        // ----------------------------------------------------
+	
+	function schedule()
+	{
+	  var i;
+	  var counter=0;
+	  var frm = document.forms[0];
+	  var chi = frm.checkeditems;
+	
+	  var offset = 0;
+          while (frm.elements[offset].type!="checkbox") offset++;
+	  
+	  for (i=0;i<jsPageSets.length; i++){
+            if (frm.elements[offset].checked) {
+              counter++;
+              chi.value = frm.elements[offset].name;
+            }
+            offset++;
+          } // next (i)
+                    
+          if (counter==0){
+           alert("You must select at least one document");
+           return (false);
+          }
+          
+          if (counter>1){
+           alert("You must select only one document");
+           return (false);
+          }
+	  	  
+	  var wEnvio = window.open("list_choose.jsp?gu_pageset=" + chi.value,"wEnvio","top=" + (screen.height-500)/2 + ",left=" + (screen.width-640)/2 + ",height=500,width=640,scrollbars=yes");
+	} // schedule
+	
+        // ----------------------------------------------------
+
+	function deletePageSets() {
+	  var i;
+	  var c;
+	  var frm = document.forms[0];
+	  var chi = frm.checkeditems;
+	  var offset = 0;
+	  
+	  c = 0;
+	  
+	  chi.value = "";
+	  
+	  while (frm.elements[offset].type!="checkbox") offset++;
+	  	  
+	  for (i=0; i<jsPageSets.length; i++){	    
+            if (frm.elements[offset].checked) {
+              c++;
+              chi.value += jsPageSets[i] + ",";
+            } // fi ()
+            offset++;
+          } // next
+	  
+	  if (chi.value.length>0) {
+	    if (window.confirm("You are about to delete" + String(c) + " documents. Are you sure you wish to continue?")) {	    
+	      chi.value = chi.value.substr(0,chi.value.length-1);
+              frm.submit();
+              return true;
+            }
+          } 
+          else {
+            alert('You must select at least one document');
+          } // fi()
+	} // deletePageSets()
+	
+        // ----------------------------------------------------
+
+    //-->    
+  </SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+    <!--
+	function setCombos() {
+	  var frm = document.forms[0];
+
+	  if (getURLParam("find")!=null)
+	    frm.find.value = getURLParam("find");
+
+	  if (getURLParam("dt_start")!=null)
+	    frm.dt_start.value = getURLParam("dt_start");
+
+	  if (getURLParam("dt_end")!=null)
+	    frm.dt_end.value = getURLParam("dt_end");
+	}
+	
+    //-->    
+  </SCRIPT>  
+<%
+  String sTitle = "";
+  
+  if (sDocType.equals("newsletter"))
+    sTitle="Newsletters";
+  else if (sDocType.equals("survey"))
+    sTitle="Questionnaires";  
+  else
+   sTitle = "WebSites";
+  
+%>
+  <TITLE>hipergate :: Edit &nbsp;<%=sTitle%></TITLE>
+</HEAD>
+<BODY  TOPMARGIN="0" MARGINHEIGHT="0" onClick="hideRightMenu()">
+    <%@ include file="../common/tabmenu.jspf" %>
+    <FORM METHOD="post" NAME="frmPageset" ID="frmPageset" ACTION="pageset_edit_delete.jsp">
+    <TABLE cellspacing="0" cellpadding="0" border="0" width="99%"><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">Edit &nbsp;<%=sTitle%></FONT></TD></TR></TABLE>
+    <TABLE CELLSPACING="2" CELLPADDING="2">
+        <TR><TD COLSPAN="<% if (sDocType.equals("newsletter")) out.write("6"); else out.write("4");%>" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
+        <TR>
+        <TD ALIGN="right" HEIGHT="16">&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
+        <TD ALIGN="left" VALIGN="middle"><A HREF="javascript:void(0)" onclick="createPageSet()" CLASS="linkplain">New</A></TD>
+        <TD ALIGN="right">&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
+        <TD ALIGN="left" HEIGHT="16"><A HREF="javascript:deletePageSets()" CLASS="linkplain">Delete</A></TD>
+<% if (sDocType.equals("newsletter")) { %>
+        <TD ALIGN="right">&nbsp;&nbsp;<IMG SRC="../images/images/jobs/sandclock.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Schedule"></TD>
+        <TD ALIGN="left" HEIGHT="16"><A HREF="javascript:void(0)" onclick="schedule();return false;" CLASS="linkplain">Schedule</A></TD>
+<% } %>
+      </TR>
+      <TR><TD COLSPAN="<% if (sDocType.equals("newsletter")) out.write("6"); else out.write("4");%>" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>      
+      <TR>
+        <TD COLSPAN="<% if (sDocType.equals("newsletter")) out.write("6"); else out.write("4");%>">
+	  <IMG SRC="../images/images/find16.gif" BORDER="0" ALT="Search">&nbsp;<FONT CLASS="textplain"><INPUT CLASS="combomini" TYPE="text" MAXLENGTH="30" NAME="find">&nbsp;&nbsp;between&nbsp;<INPUT TYPE="text" CLASS="combomini" MAXLENGTH="10" SIZE="10" NAME="dt_start"><A HREF="javascript:showCalendar('dt_start')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>&nbsp;&nbsp;and&nbsp;&nbsp;<INPUT CLASS="combomini" TYPE="text" MAXLENGTH="10" SIZE="10" NAME="dt_end"><A HREF="javascript:showCalendar('dt_end')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>&nbsp;</FONT><A HREF="javascript:findRecords()" CLASS="linkplain">Search</A>
+        </TD>
+      <TR>
+        <TD COLSPAN="<% if (sDocType.equals("newsletter")) out.write("6"); else out.write("4");%>">
+          <FONT CLASS="textplain"><B>View</B>&nbsp;<INPUT TYPE="radio" NAME="chk_doctype" <% if (sDocType.equals("newsletter")) out.write("CHECKED"); else out.write("onClick=\"window.document.location.href='pageset_listing.jsp?selected=' + getURLParam('selected') + '&subselected=' + getURLParam('subselected') + '&doctype=newsletter'\""); %>>Newsletters&nbsp;&nbsp;<INPUT TYPE="radio" NAME="chk_doctype" <% if (sDocType.equals("website")) out.write("CHECKED"); else out.write("onClick=\"window.document.location.href='pageset_listing.jsp?selected=' + getURLParam('selected') + '&subselected=' + getURLParam('subselected') + '&doctype=website'\""); %>>WebSites&nbsp;&nbsp;<INPUT TYPE="radio" NAME="chk_doctype" <% if (sDocType.equals("survey")) out.write("CHECKED"); else out.write("onClick=\"window.document.location.href='pageset_listing.jsp?selected=' + getURLParam('selected') + '&subselected=' + getURLParam('subselected') + '&doctype=survey'\""); %>>Questionnaires</FONT>
+        </TD>
+      <TR>
+    </TABLE>
+    <%
+    // Pintar los enlaces de siguiente y anterior
+    
+    String sTabIndicators = "selected=5&subselected=0&";
+
+    if (iSkip>0) // Si iSkip>0 entonces hay registros anteriores
+      out.write("<A HREF=\"pageset_listing.jsp?" + sTabIndicators + "doctype=" + sDocType + "&id_domain=" + id_domain + "&n_domain=" + n_domain + "&maxrows=" + String.valueOf(iMaxRows) + "&skip=" + String.valueOf(iSkip-iMaxRows)+ "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;" + String.valueOf(iMaxRows) + "&nbsp;Previous " + "</A>&nbsp;&nbsp;&nbsp;");
+    
+    if (!oPageSets.eof())
+      out.write("<A HREF=\"pageset_listing.jsp?" + sTabIndicators + "doctype=" + sDocType + "&id_domain=" + id_domain + "&n_domain=" + n_domain + "&maxrows=" + String.valueOf(iMaxRows) + "&skip=" + String.valueOf(iSkip+iMaxRows)+ "\" CLASS=\"linkplain\">Next " + String.valueOf(iMaxRows) + "&nbsp;&gt;&gt;</A>");
+    %>
+    <TABLE CELLSPACING="2" CELLPADDING="2">
+        <TR>
+         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="200px"><A HREF="javascript:sortBy(2);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;&nbsp;<B>Name</B></TD>
+         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="300px"><A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;<B>&nbsp;Description</B></TD>
+         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="80px"><A HREF="javascript:sortBy(5);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;<B>&nbsp;Create</B></TD>
+         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="100px">&nbsp;<B>&nbsp;Status</B></TD>
+         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;</TD>
+        </TR>
+<%
+	  String sCompId;
+	  for (int i=0; i<iPageSetCount; i++) {
+            
+            // Recupero la ruta al archivo
+            String sPathData = sStorageRoot + oPageSets.getStringNull(3,i,"");
+            int matchdoctype = -1;
+            // Si estoy listando monopagina
+            if (sDocType.equals("newsletter"))
+              // Si en la ruta aparece Mailwire es Newsletter
+              matchdoctype = sPathData.indexOf("Mailwire");
+            else // Si estoy listando multipagina
+              // Si en la ruta aparece WebBuilder es multipagina
+              matchdoctype = sPathData.indexOf("WebBuilder");
+            
+            // Si el registro corresponde a un documento que estoy listando
+            if (matchdoctype!=-1)
+            {
+             int counter = (i%2)+1;
+             sCompId = oPageSets.getString(0,i);
+             out.write ("<TR HEIGHT=\"14\">");
+             out.write ("<TD CLASS=\"strip" + counter + "\">");
+             out.write ("&nbsp;<A HREF=\"#\" oncontextmenu=\"jsPageSetId='" + sCompId + "'; jsPageSetName = '" + oPageSets.getString(1,i) + "'; return showRightMenu(event);\" onclick=\"modifyPageSet('" + sCompId + "','" + oPageSets.getString(1,i) + "')\" TITLE=\"Right click to see context menu\">");
+             out.write (oPageSets.getString(1,i));
+             out.write ("</A>");
+             out.write ("</TD>");
+             out.write ("<TD CLASS=\"strip" + counter + "\">");
+             out.write ("&nbsp;" + Gadgets.left(oPageSets.getStringNull(2,i,""), 60));
+             out.write ("</TD>");
+             out.write ("<TD ALIGN=\"middle\" CLASS=\"strip" + counter + "\">");
+             out.write ("&nbsp;" + oPageSets.getDateShort(4,i));
+             out.write ("</TD>");
+             out.write ("<TD CLASS=\"strip" + counter + "\">");
+             out.write ("&nbsp;" + aStatus[i]);
+             out.write ("</TD>");
+             out.write ("<TD CLASS=\"strip" + counter + "\" ALIGN=\"center\">");
+             out.write ("<INPUT VALUE=\"1\" TYPE=\"checkbox\" NAME=\"" + sCompId + "\">");
+             out.write ("</TD>");
+             out.write ("</TR>\n");
+            }
+          }
+	%>          	  
+      </TABLE>
+      <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
+      <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
+      <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
+      <INPUT TYPE="hidden" NAME="checkeditems" VALUE="">
+      <INPUT TYPE="hidden" NAME="doctype" VALUE="<%=sDocType%>">
+    </FORM>
+
+    <SCRIPT language="JavaScript" type="text/javascript">
+      addMenuOption("Edit","modifyPageSet(jsPageSetId,jsPageSetName)",1);
+      addMenuOption("Preview","previewPageSet(jsPageSetId,jsPageSetName)",0);
+      addMenuOption("Properties","changePageSet(jsPageSetId)",0);
+      <% if (sDocType.equals("newsletter")) { %>
+      addMenuSeparator();
+      addMenuOption("Schedule","selectList(jsPageSetId)",0);
+      <% } %>
+    </SCRIPT>
+</BODY>
+</HTML>
+<%@ include file="../methods/page_epilog.jspf" %>

@@ -1,0 +1,43 @@
+<%@ page import="java.util.Date,java.util.Properties,javax.mail.*,javax.mail.internet.*,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*"  %>
+<%! 
+  
+boolean sendMail(Properties oMail) throws java.io.UnsupportedEncodingException,javax.mail.MessagingException
+
+{
+  
+  
+  InternetAddress oSMTPAddress	= new InternetAddress();
+  Properties  oSMTPProps	= new Properties();
+  Session     oSMTPSession	= Session.getDefaultInstance(oSMTPProps, null);
+  MimeMessage oSMTPMessage	= new MimeMessage(oSMTPSession);
+  String sSMTPRecipientsTo[]	= com.knowgate.misc.Gadgets.split(oMail.getProperty("mail_to"),",");
+  String sSMTPRecipientsCC[]	= com.knowgate.misc.Gadgets.split(oMail.getProperty("mail_cc"),",");
+  String sSMTPRecipientsBCC[]	= com.knowgate.misc.Gadgets.split(oMail.getProperty("mail_bcc"),",");
+  
+  oSMTPAddress.setAddress(oMail.getProperty("mail_from_addr"));
+  oSMTPAddress.setPersonal(oMail.getProperty("mail_from_name"));
+  oSMTPMessage.setFrom(oSMTPAddress);
+  
+  oSMTPMessage.addRecipients(Message.RecipientType.TO,oMail.getProperty("mail_to"));
+  
+  oSMTPMessage.setSubject(oMail.getProperty("mail_subject"));
+  
+  Multipart oSMTPMultiPart = new MimeMultipart();
+  BodyPart oSMTPPart = new MimeBodyPart();
+  
+  oSMTPPart.setContent(oMail.getProperty("mail_body"),"text/html");
+  oSMTPMultiPart.addBodyPart(oSMTPPart);
+  
+  oSMTPMessage.setContent(oSMTPMultiPart);
+  oSMTPMessage.addHeader("X-Mailer","Hipergate");
+  //oSMTPMessage.addHeader("X-Origin-IP", request.getRemoteAddr());
+  Transport.send(oSMTPMessage);
+  //out.write("hola");
+  
+  return true;
+  
+
+  // Message.RecipientType.TO, Message.RecipientType.CC, Message.RecipientType.BCC 
+
+}  
+%>

@@ -1,0 +1,29 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//EN" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">
+<!-- +-------------------------------------------------+ -->
+<!-- | Marco de listado de mensajes de una categoría   | -->
+<!-- | (c) KnowGate 2003                               | -->
+<!-- +-------------------------------------------------+ -->  
+<HTML>
+  <HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+    <TITLE>hipergate :: Product Listing</TITLE>
+    <SCRIPT LANGUAGE="javascript" SRC="../javascript/getparam.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="true">
+    <!--
+      function goURL() {
+        this.frames['msgslist'].document.location = "item_list.jsp?gu_shop=" + getURLParam("gu_shop") + "&gu_category=" + getURLParam("gu_category") + "&tr_category=" + getURLParam("tr_category") + "&top_parent_cat=" + getURLParam("top_parent_cat") + "&gu_bundles_cat=" + getURLParam("gu_bundles_cat") + "&screen_width=" + String(screen.width) + "&void";
+      }
+    //-->
+    </SCRIPT>    
+  </HEAD>
+  <FRAMESET NAME="msgsframe" ROWS="*,2" onLoad="goURL()">
+    <FRAME NAME="msgslist" FRAMEBORDER="no" MARGINWIDTH="16" MARGINHEIGHT="0" >
+    <FRAME NAME="msgsexec" FRAMEBORDER="no" MARGINWIDTH="16" MARGINHEIGHT="2" SRC="../common/blank.htm">
+  </FRAMESET>
+  <NOFRAMES>
+    <BODY>
+      <P>This page uses frames, but yur browser does handle them.</P>
+    </BODY>
+  </NOFRAMES>
+</HTML>

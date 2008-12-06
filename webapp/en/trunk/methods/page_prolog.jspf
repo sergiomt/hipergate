@@ -1,0 +1,20 @@
+<%
+  String sUserIdCookiePrologValue = null;
+  
+  if (com.knowgate.debug.DebugFile.trace) {
+
+    Cookie aCookies[] = request.getCookies();
+    
+    if (null != aCookies) {
+      for (int c=0; c<aCookies.length; c++) {
+      	if (aCookies[c].getName().equals("userid")) {
+          sUserIdCookiePrologValue = java.net.URLDecoder.decode(aCookies[c].getValue(), "ISO8859_1");
+          break;
+        }
+      } // for
+      
+    } // fi
+      
+    com.knowgate.dataobjs.DBAudit.log ((short)0, "OJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "", "");
+  }
+%>

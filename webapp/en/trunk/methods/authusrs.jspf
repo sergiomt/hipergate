@@ -1,0 +1,602 @@
+<%!
+  /*
+     Copyright (C) 2003  Know Gate S.L. All rights reserved.
+                         C/Oña, 107 1º2 28050 Madrid (Spain)
+
+     Redistribution and use in source and binary forms, with or without
+     modification, are permitted provided that the following conditions
+     are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. The end-user documentation included with the redistribution,
+     if any, must include the following acknowledgment:
+     "This product includes software parts from hipergate
+     (http://www.hipergate.org/)."
+     Alternately, this acknowledgment may appear in the software itself,
+     if and wherever such third-party acknowledgments normally appear.
+
+  3. The name hipergate must not be used to endorse or promote products
+     derived from this software without prior written permission.
+     Products derived from this software may not be called hipergate,
+     nor may hipergate appear in their name, without prior written
+     permission.
+
+     This library is distributed in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+     You should have received a copy of hipergate License with this code;
+     if not, visit http://www.hipergate.org or mail to info@hipergate.org
+  */
+
+  // --------------------------------------------------------------------------
+
+  // From version 2.1 the user password is encrypted and not stored as clear text in cookies
+  // if you want to revert to behavior from v2.0 and prior, set ENCRYPT_ALGORITHM = com.knowgate.acl.ACL.PWD_CLEAR_TEXT
+  
+  // static final int ENCRYPT_ALGORITHM = com.knowgate.acl.ACL.PWD_DTIP_RC4_64;
+
+  static final int ENCRYPT_ALGORITHM = com.knowgate.acl.ACL.PWD_CLEAR_TEXT;
+  
+  // --------------------------------------------------------------------------
+
+  // Native authentication method is the default.
+  // You can also use LDAP or NTLM.
+  // See Programmer's Guide for more information.
+  
+  static final int AUTH_NATIVE = 1, AUTH_LDAP = 2, AUTH_NTLM = 4;
+
+  // --------------------------------------------------------------------------
+  
+  // Get a reference to application scope cache bean.
+  // The user's password is cached for avoiding repeated database accesses upon each page request.
+  // Since hipergate is stateless and does not use server side sessions,
+  // it is necessary to check user/password on each HTTP request.
+  
+  com.knowgate.cache.DistributedCachePeer getGlobalCacheReference(HttpServletRequest req, HttpServletResponse res)
+    throws ClassNotFoundException,InstantiationException,ServletException,java.rmi.RemoteException {
+
+    com.knowgate.cache.DistributedCachePeer PasswordCacheClient = null;
+
+    PageContext oPageContext = JspFactory.getDefaultFactory().getPageContext(this, req, res, null, false, 8192, true);
+    
+    if (null!=oPageContext) {
+      ServletContext oAppContext = oPageContext.getServletContext();
+
+      PasswordCacheClient = (com.knowgate.cache.DistributedCachePeer) oPageContext.getAttribute("GlobalCacheClient", PageContext.APPLICATION_SCOPE);
+
+      if (PasswordCacheClient == null){
+        synchronized (oAppContext) {
+          try {
+            PasswordCacheClient = (com.knowgate.cache.DistributedCachePeer) java.beans.Beans.instantiate(getClass().getClassLoader(), "com.knowgate.cache.DistributedCachePeer");
+          } catch (ClassNotFoundException exc) {
+              throw new InstantiationException(exc.getMessage());
+          } catch (Exception exc) {
+              throw new ServletException("Cannot create bean of class " + "com.knowgate.cache.DistributedCachePeer", exc);
+          }
+          if (oPageContext!=null && PasswordCacheClient!=null)
+            oPageContext.setAttribute("GlobalCacheClient", PasswordCacheClient, PageContext.APPLICATION_SCOPE);
+        } // synchronized
+      } // fi (PasswordCacheClient)
+    }
+    
+    return PasswordCacheClient;
+  } // getGlobalCacheReference
+
+  // --------------------------------------------------------------------------
+
+  short autenticateLDAPUser (com.knowgate.dataobjs.DBBind dbb, String sDomainNm, String sWorkAreaNm, String sUserCn, String sAuthStr) {
+    com.knowgate.ldap.LDAPModel oLdapImpl = null;
+
+    if (com.knowgate.acl.ACL.PWD_DTIP_RC4==ENCRYPT_ALGORITHM)
+      sAuthStr = com.knowgate.acl.ACL.RC4EnDeCrypt(sAuthStr);
+
+    short iStatus = 0;
+    
+    try {
+      if (com.knowgate.debug.DebugFile.trace) com.knowgate.debug.DebugFile.writeln("Class.forName(" + com.knowgate.misc.Environment.getProfileVar(dbb.getProfileName(), "ldapclass", "com.knowgate.ldap.LDAPNovell") + ")");
+  
+      Class oLdapCls = Class.forName(com.knowgate.misc.Environment.getProfileVar(dbb.getProfileName(), "ldapclass", "com.knowgate.ldap.LDAPNovell"));
+  
+      oLdapImpl = (com.knowgate.ldap.LDAPModel) oLdapCls.newInstance();
+  
+      oLdapImpl.connect(com.knowgate.misc.Environment.getProfileVar(dbb.getProfileName(), "ldapconnect"));
+    }
+    catch (com.knowgate.ldap.LDAPException ldpe) {
+      if (com.knowgate.debug.DebugFile.trace) com.knowgate.debug.DebugFile.writeln("<JSP:authusrs.jspf LDAPException " + ldpe.getMessage());
+      iStatus = -255; 
+    }
+    catch (java.lang.IllegalAccessException iae) {
+      if (com.knowgate.debug.DebugFile.trace) com.knowgate.debug.DebugFile.writeln("<JSP:authusrs.jspf IllegalAccessException " + iae.getMessage());
+      iStatus = -255; 
+    }
+    catch (java.lang.ClassNotFoundException cnfe) {
+      if (com.knowgate.debug.DebugFile.trace) com.knowgate.debug.DebugFile.writeln("<JSP:authusrs.jspf ClassNotFoundException " + cnfe.getMessage());
+      iStatus = -255; 
+    }
+    catch (java.lang.InstantiationException inse) {
+      if (com.knowgate.debug.DebugFile.trace) com.knowgate.debug.DebugFile.writeln("<JSP:authusrs.jspf InstantiationException " + inse.getMessage());
+      iStatus = -255; 
+    }
+
+    if (0==iStatus) {
+      try {
+        
+        // Open LDAP
+        oLdapImpl.bind("cn=" + sUserCn + ",dc=users,dc=" + sWorkAreaNm + ",dc=" + sDomainNm + ",dc=hipergate,dc=org", sAuthStr);
+
+	iStatus = 0;
+      }	      
+      catch (com.knowgate.ldap.LDAPException ldpe) {
+        if (com.knowgate.debug.DebugFile.trace) com.knowgate.debug.DebugFile.writeln("<JSP:authusrs.jspf LDAPException " + ldpe.getMessage());
+        iStatus = com.knowgate.ldap.LDAPModel.INVALID_PASSWORD; 
+      }
+	    	    
+      try {
+        oLdapImpl.disconnect();
+      }	      
+      catch (com.knowgate.ldap.LDAPException ldpe) {
+        if (com.knowgate.debug.DebugFile.trace) com.knowgate.debug.DebugFile.writeln("<JSP:authusrs.jspf LDAPException " + ldpe.getMessage());            
+      }
+    } // fi (0==iStatus)           
+
+    return iStatus;
+    
+  } // autenticateLDAPUser
+
+  // --------------------------------------------------------------------------
+  
+  short autenticateCookie (com.knowgate.dataobjs.DBBind dbb, HttpServletRequest req, HttpServletResponse res)
+    throws ClassNotFoundException,InstantiationException,ServletException,java.rmi.RemoteException,java.io.UnsupportedEncodingException {
+    
+    com.knowgate.jdc.JDCConnection oConn = null;
+    
+    if (com.knowgate.debug.DebugFile.trace) {
+      com.knowgate.debug.DebugFile.writeln("Begin autenticateCookie()");
+      com.knowgate.debug.DebugFile.incIdent();
+    }
+      
+    String sAuthMethod = com.knowgate.misc.Environment.getProfileVar(dbb.getProfileName(), "authmethod", "native").trim().toLowerCase();
+    
+    int AUTH_METHOD;
+    
+    if (sAuthMethod.equals("ldap"))
+      AUTH_METHOD = AUTH_LDAP;
+    else if (sAuthMethod.equals("ntlm"))
+      AUTH_METHOD = AUTH_NTLM;
+    else
+      AUTH_METHOD = AUTH_NATIVE;
+    
+       
+    // ****************************************************
+    // Get User GUID and authentication string from cookies
+    
+    short iStatus = -255;
+    String sDomainNm = getCookie (req, "domainnm", "");
+    String sWorkArea = getCookie (req, "workarea", "");
+    String sWorkAreaNm = getCookie (req, "workareanm", "");
+    String sUserId  = getCookie (req, "userid", "");
+    String sAuthStr = getCookie (req, "authstr", "");
+
+    if (sUserId.length()==0) {
+      com.knowgate.debug.DebugFile.writeln("user guid cookie not found");
+      com.knowgate.debug.DebugFile.decIdent();
+      return com.knowgate.acl.ACL.USER_NOT_FOUND;
+    }
+    else if (sDomainNm.length()==0) {
+      com.knowgate.debug.DebugFile.writeln("domain id cookie not found");
+      com.knowgate.debug.DebugFile.decIdent();
+      return com.knowgate.acl.ACL.DOMAIN_NOT_FOUND;
+    }
+    else if (sWorkArea.length()==0) {
+      com.knowgate.debug.DebugFile.writeln("workarea guid cookie not set");
+      com.knowgate.debug.DebugFile.decIdent();
+      return com.knowgate.acl.ACL.WORKAREA_NOT_SET;    
+    }
+  
+    // ************************************************************
+    // Get reference to local DistributedCachePeer application bean
+
+    com.knowgate.cache.DistributedCachePeer PasswordCacheClient = getGlobalCacheReference(req,res);
+    
+    // ************************************
+    // Get authentication string from cache
+    
+    String sPassword;
+    if (PasswordCacheClient!=null)
+      sPassword = PasswordCacheClient.getString("["+sUserId+",authstr]");
+    else
+      sPassword = null;
+    
+    if (com.knowgate.debug.DebugFile.trace)
+      if (sPassword == null)
+        com.knowgate.debug.DebugFile.writeln("password cache miss");
+      else
+        com.knowgate.debug.DebugFile.writeln("password cache hit");
+      
+    // *******************************************************
+    // If authentication string was not found at cache then
+    // retrieve it from table k_users by calling autenticate()
+    
+    if (null==sPassword) {
+
+      if (com.knowgate.debug.DebugFile.trace) com.knowgate.debug.DebugFile.writeln("AUTH_METHOD=" + String.valueOf(AUTH_METHOD));
+
+      switch (AUTH_METHOD) {
+
+        case AUTH_NATIVE:
+          oConn = null;
+          try {
+            oConn = dbb.getConnection("authuser");
+            if (null==oConn)
+              iStatus = -255;
+            else
+              iStatus = com.knowgate.acl.ACL.autenticate(oConn, sUserId, sAuthStr, ENCRYPT_ALGORITHM);
+
+              if (com.knowgate.debug.DebugFile.trace)
+                com.knowgate.debug.DebugFile.writeln("Given password "+sAuthStr+" does not match stored password for user "+sUserId);
+        
+            if (iStatus>=0 && sAuthStr!=null && PasswordCacheClient!=null)
+              PasswordCacheClient.put("["+sUserId+",authstr]", sAuthStr);
+          }
+          catch (java.sql.SQLException e) {
+            if (com.knowgate.debug.DebugFile.trace) com.knowgate.debug.DebugFile.writeln("<JSP:authusrs.jspf SQLException " + e.getMessage());
+            iStatus = -255; 
+          }
+          catch (java.rmi.RemoteException e) {
+            if (com.knowgate.debug.DebugFile.trace) com.knowgate.debug.DebugFile.writeln("<JSP:authusrs.jspf RemoteException " + e.getMessage());
+            iStatus = -255; 
+          }
+
+          try {
+            if (null!=oConn) oConn.close("authuser");
+          }
+          catch (java.sql.SQLException e) {
+            if (com.knowgate.debug.DebugFile.trace) com.knowgate.debug.DebugFile.writeln("<JSP:authusrs.jspf SQLException " + e.getMessage());          
+          }
+
+          oConn = null;
+          break;
+
+        case AUTH_LDAP:
+
+          iStatus = 0;
+	  String sCN = null;
+
+	  try {
+            oConn = dbb.getConnection("authuserldap");
+            sCN = com.knowgate.acl.ACLUser.getEmailFromId(oConn, sUserId);
+            oConn.close("authuserldap");
+          }
+          catch (java.sql.SQLException sqle) {
+            if (com.knowgate.debug.DebugFile.trace) com.knowgate.debug.DebugFile.writeln("<JSP:authusrs.jspf SQLException " + sqle.getMessage());
+            iStatus = -255; 
+          }
+
+	  if (0==iStatus)
+            iStatus = autenticateLDAPUser (dbb, sDomainNm, sWorkAreaNm, sCN, sAuthStr);
+ 
+          break;
+	}
+    }
+    else {
+      iStatus = (sPassword.equals(sAuthStr) ? (short)1 : com.knowgate.acl.ACL.INVALID_PASSWORD);
+      if (iStatus!=(short)1) {
+        if (com.knowgate.debug.DebugFile.trace)
+          com.knowgate.debug.DebugFile.writeln("Given password "+sAuthStr+" does not match cached password "+sPassword+" for user "+sUserId);
+	PasswordCacheClient.expire("["+sUserId+",authstr]");
+      } // fi (iStatus)
+    } // fi (sPassword)
+
+    if (com.knowgate.debug.DebugFile.trace) {
+      com.knowgate.debug.DebugFile.decIdent();
+      com.knowgate.debug.DebugFile.writeln("End autenticateCookie() : " +  String.valueOf(iStatus));
+    }
+    
+    return iStatus;
+  } // autenticateCookie
+
+  // --------------------------------------------------------------------------
+    
+  short verifyUserAccessRights (com.knowgate.dataobjs.DBBind dbb, HttpServletRequest req, HttpServletResponse res)
+    throws ClassNotFoundException,InstantiationException,ServletException,java.rmi.RemoteException,java.io.UnsupportedEncodingException {
+    short iStatus = (short) 0;
+    String sCookieWorkArea = getCookie (req, "workarea", "");
+    String sCookieUserId  = getCookie (req, "userid", "");
+    String sRequestedWorArea = req.getParameter("gu_workarea");
+    com.knowgate.jdc.JDCConnection oConn = null;
+
+	  try {
+      oConn = dbb.getConnection("verifyuseraccessrights");
+
+      if (null!=sCookieWorkArea && null!=sCookieUserId) {
+        if (!com.knowgate.workareas.WorkArea.isAnyRole(oConn, sCookieWorkArea, sCookieUserId)) iStatus = com.knowgate.acl.ACL.WORKAREA_ACCESS_DENIED;
+      }
+    
+      if (null!=sRequestedWorArea) {
+        if (!isDomainAdmin(getGlobalCacheReference(req, res), dbb, req, res)) {
+          if (!com.knowgate.workareas.WorkArea.isAnyRole(oConn, sRequestedWorArea, sCookieUserId)) iStatus = com.knowgate.acl.ACL.WORKAREA_ACCESS_DENIED;          
+        }
+      }
+
+      oConn.close("verifyuseraccessrights");
+      oConn = null;
+    }
+    catch (java.sql.SQLException sqle) {
+      if (com.knowgate.debug.DebugFile.trace) com.knowgate.debug.DebugFile.writeln("<JSP:authusrs.jspf SQLException " + sqle.getMessage());
+      iStatus = -255; 
+    }
+    return iStatus;
+  }
+  
+  // --------------------------------------------------------------------------
+    
+  short autenticateSession (com.knowgate.dataobjs.DBBind dbb, HttpServletRequest req, HttpServletResponse res)
+    throws ClassNotFoundException,InstantiationException,ServletException,java.rmi.RemoteException,
+           java.io.IOException,java.io.UnsupportedEncodingException {
+
+    if (com.knowgate.debug.DebugFile.trace) {
+      com.knowgate.debug.DebugFile.writeln("Begin autenticateSession()");
+      com.knowgate.debug.DebugFile.incIdent();
+    }
+    
+    short iStatus = autenticateCookie(dbb, req, res);
+    
+    if (iStatus>=0) iStatus = verifyUserAccessRights(dbb, req, res);
+
+     if (iStatus<(short)0)
+       if (iStatus==(short)-255)
+         res.sendRedirect (res.encodeRedirectUrl ("../common/errmsg.jsp?title=Internal Server Error&desc=The system cannot validate your session at the moment.&resume=_back"));
+       else {
+	 switch (iStatus) {
+	   case com.knowgate.acl.ACL.USER_NOT_FOUND :
+             res.sendRedirect (res.encodeRedirectUrl ("../common/errmsg.jsp?title=User not found&desc=User not found " + getCookie (req, "userid", "") + "&resume=_back"));
+	     break;
+	   case com.knowgate.acl.ACL.INVALID_PASSWORD:
+             res.sendRedirect (res.encodeRedirectUrl ("../common/errmsg.jsp?title=Invalid Password&desc=Your password is not valid&resume=_back"));
+	     break;
+	   case com.knowgate.acl.ACL.ACCOUNT_DEACTIVATED:
+             res.sendRedirect (res.encodeRedirectUrl ("../common/errmsg.jsp?title=Disabled Account&desc=Your account has been disabled&resume=_back"));
+	     break;
+	   case com.knowgate.acl.ACL.SESSION_EXPIRED:
+             res.sendRedirect (res.encodeRedirectUrl ("../common/errmsg.jsp?title=Session expired&desc=Session Expired. Maximum inactivity timeout reached&resume=_back"));
+	     break;
+	   case com.knowgate.acl.ACL.DOMAIN_NOT_FOUND:
+             res.sendRedirect (res.encodeRedirectUrl ("../common/errmsg.jsp?title=Domain not found&desc=Domain not found " + getCookie (req, "domainid", "") + "&resume=_back"));
+	     break;
+	   case com.knowgate.acl.ACL.WORKAREA_NOT_FOUND:
+             res.sendRedirect (res.encodeRedirectUrl ("../common/errmsg.jsp?title=Workarea not found&desc=Workarea not found " + getCookie (req, "workarea", "") + "&resume=_back"));
+	     break;
+	   case com.knowgate.acl.ACL.WORKAREA_NOT_SET:
+             res.sendRedirect (res.encodeRedirectUrl ("../common/errmsg.jsp?title=Workarea not set&desc=Workarea not set " + getCookie (req, "workarea", "") + "&resume=_back"));
+	     break;
+	   case com.knowgate.acl.ACL.WORKAREA_ACCESS_DENIED:
+             res.sendRedirect (res.encodeRedirectUrl ("../common/errmsg.jsp?title=Access to WorkArea is restricted&desc=Current user lacks of access rights to the designated WorkArea&resume=_back"));
+	     break;
+	   case com.knowgate.acl.ACL.ACCOUNT_CANCELLED:
+             res.sendRedirect (res.encodeRedirectUrl ("../common/errmsg.jsp?title=Cancelled Account&desc=Disabled User Account&resume=_back"));
+	     break;
+	   case com.knowgate.acl.ACL.PASSWORD_EXPIRED:
+             res.sendRedirect (res.encodeRedirectUrl ("../common/errmsg.jsp?title=Expired Password &desc=Your password has expired&resume=_back"));
+	     break;	
+	 } // end switch
+       } // fi
+
+     if (com.knowgate.debug.DebugFile.trace) {
+       com.knowgate.debug.DebugFile.decIdent();
+       com.knowgate.debug.DebugFile.writeln("End autenticateSession() : " +  String.valueOf(iStatus));
+     }
+            
+     return iStatus;
+  } // autenticateSession
+
+  // --------------------------------------------------------------------------
+
+  boolean isDomainGuest (com.knowgate.cache.DistributedCachePeer cch, com.knowgate.dataobjs.DBBind dbb, HttpServletRequest req, HttpServletResponse res)
+    throws ClassNotFoundException,InstantiationException,ServletException,java.sql.SQLException,java.rmi.RemoteException,java.io.UnsupportedEncodingException {
+
+    String sUserId  = getCookie (req, "userid", "");
+
+    if (sUserId.length()==0) return false;
+    
+    Boolean bGuest = cch.getBoolean("[" + sUserId + ",guest]");
+    
+    if (null==bGuest) {
+      com.knowgate.jdc.JDCConnection con = dbb.getConnection("is_domain_guest");
+
+      if (con!=null) {
+        try {      
+          bGuest = new Boolean(com.knowgate.workareas.WorkArea.isGuest(con, getCookie (req, "workarea", ""), sUserId));
+        }
+        catch (java.sql.SQLException sqle) {
+	  throw new java.sql.SQLException(sqle.getMessage());
+        }
+        finally {    
+          con.close("is_domain_guest");
+        }
+        cch.put ("[" + sUserId + ",guest]", bGuest);
+      }
+      else
+        throw new java.sql.SQLException("SQLException while getting connection from pool");
+    } // fi (bGuest)
+
+    return  bGuest.booleanValue();
+    
+  } // isDomainGuest
+
+  // --------------------------------------------------------------------------
+
+  boolean isDomainGuest (com.knowgate.dataobjs.DBBind dbb, HttpServletRequest req, HttpServletResponse res)
+    throws ClassNotFoundException,InstantiationException,ServletException,java.sql.SQLException,java.rmi.RemoteException,java.io.UnsupportedEncodingException {
+    com.knowgate.cache.DistributedCachePeer RoleCacheClient = getGlobalCacheReference(req,res);
+
+    String sUserId  = getCookie (req, "userid", "");
+
+    if (sUserId.length()==0) return false;
+
+    Boolean bGuest = null;
+    
+    if (RoleCacheClient!=null) bGuest = RoleCacheClient.getBoolean("[" + sUserId + ",guest]");
+    
+    if (null==bGuest) {
+      com.knowgate.jdc.JDCConnection con = dbb.getConnection("is_domain_guest");
+
+      if (con!=null) {
+        try {      
+          bGuest = new Boolean(com.knowgate.workareas.WorkArea.isGuest(con, getCookie (req, "workarea", ""), sUserId));
+        }
+        catch (java.sql.SQLException sqle) {
+	  throw new java.sql.SQLException(sqle.getMessage());
+        }
+        finally {    
+          con.close("is_domain_guest");
+        }
+        if (RoleCacheClient!=null) RoleCacheClient.put("[" + sUserId + ",guest]", bGuest);
+      }
+      else
+        throw new java.sql.SQLException("SQLException while getting connection from pool");
+    } // fi (bGuest)
+
+    if (null==bGuest)
+      return false;
+    else
+      return bGuest.booleanValue();
+
+  } // isDomainGuest
+
+  // --------------------------------------------------------------------------
+
+  boolean isDomainUser (com.knowgate.cache.DistributedCachePeer cch, com.knowgate.dataobjs.DBBind dbb, HttpServletRequest req, HttpServletResponse res)
+    throws ClassNotFoundException,InstantiationException,ServletException,java.sql.SQLException,java.rmi.RemoteException,java.io.UnsupportedEncodingException {
+
+    String sUserId  = getCookie (req, "userid", "");
+
+    if (sUserId.length()==0) return false;
+
+    Boolean bUser = cch.getBoolean("[" + sUserId + ",user]");
+    
+    if (null==bUser) {
+      com.knowgate.jdc.JDCConnection con = dbb.getConnection("is_domain_user");
+
+      if (con!=null) {
+        try {      
+          bUser = new Boolean(com.knowgate.workareas.WorkArea.isUser(con, getCookie (req, "workarea", ""), sUserId));
+        }
+        catch (java.sql.SQLException sqle) {
+	  throw new java.sql.SQLException(sqle.getMessage());
+        }
+        finally {    
+          con.close("is_domain_user");
+        }
+        cch.put ("[" + sUserId + ",user]", bUser);
+      }
+      else
+        throw new java.sql.SQLException("SQLException while getting connection from pool");
+    } // fi (bUser)
+
+    return  bUser.booleanValue();
+    
+  } // isDomainUser
+
+  // --------------------------------------------------------------------------
+
+  boolean isDomainPowerUser (com.knowgate.cache.DistributedCachePeer cch, com.knowgate.dataobjs.DBBind dbb, HttpServletRequest req, HttpServletResponse res)
+    throws ClassNotFoundException,InstantiationException,ServletException,java.sql.SQLException,java.rmi.RemoteException,java.io.UnsupportedEncodingException {
+
+    String sUserId  = getCookie (req, "userid", "");
+
+    if (sUserId.length()==0) return false;
+
+    Boolean bPowerUser = cch.getBoolean("[" + sUserId + ",powuser]");
+    
+    if (null==bPowerUser) {
+      com.knowgate.jdc.JDCConnection con = dbb.getConnection("is_domain_powuser");
+
+      if (con!=null) {
+        try {      
+          bPowerUser = new Boolean(com.knowgate.workareas.WorkArea.isPowerUser(con, getCookie (req, "workarea", ""), sUserId));
+        }
+        catch (java.sql.SQLException sqle) {
+	  throw new java.sql.SQLException(sqle.getMessage());
+        }
+        finally {    
+          con.close("is_domain_powuser");
+        }
+        cch.put ("[" + sUserId + ",powuser]", bPowerUser);
+      }
+      else
+        throw new java.sql.SQLException("SQLException while getting connection from pool");
+    } // fi (bPowerUser)
+
+    return  bPowerUser.booleanValue();
+    
+  } // isDomainPowerUser
+
+  // --------------------------------------------------------------------------
+
+  boolean isDomainAdmin (com.knowgate.cache.DistributedCachePeer cch, com.knowgate.dataobjs.DBBind dbb, HttpServletRequest req, HttpServletResponse res)
+    throws ClassNotFoundException,InstantiationException,ServletException,java.sql.SQLException,java.rmi.RemoteException,java.io.UnsupportedEncodingException {
+
+    String sUserId  = getCookie (req, "userid", "");
+
+    if (sUserId.length()==0) return false;
+
+    Boolean bAdmin = cch.getBoolean("[" + sUserId + ",admin]");
+    
+    if (null==bAdmin) {
+      com.knowgate.jdc.JDCConnection con = dbb.getConnection("is_domain_admin");
+
+      if (con!=null) {
+        try {      
+          bAdmin = new Boolean(com.knowgate.workareas.WorkArea.isAdmin(con, getCookie (req, "workarea", ""), sUserId));
+        }
+        catch (java.sql.SQLException sqle) {
+	  throw new java.sql.SQLException(sqle.getMessage());
+        }
+        finally {    
+          con.close("is_domain_admin");
+        }
+        cch.put ("[" + sUserId + ",admin]", bAdmin);
+      }
+      else
+        throw new java.sql.SQLException("SQLException while getting connection from pool");
+    } // fi (bAdmin)
+
+    return  bAdmin.booleanValue();
+    
+  } // isDomainAdmin
+
+  // --------------------------------------------------------------------------
+
+
+  String getWebmailLogin (com.knowgate.dataobjs.DBBind dbb, String usr) throws java.sql.SQLException {
+   
+    String wli;
+     
+    com.knowgate.jdc.JDCConnection con = dbb.getConnection("get_webmail_login");
+
+    java.sql.PreparedStatement stm = con.prepareStatement("SELECT tx_nickname FROM k_users WHERE gu_user=?");
+    
+    stm.setString (1, usr);
+    
+    java.sql.ResultSet rst = stm.executeQuery();
+    
+    if (rst.next())
+      wli = rst.getString(1);
+    else
+      wli = null;
+      
+    rst.close();
+    
+    stm.close();
+
+    con.close("get_webmail_login");
+    
+    return wli;
+  }
+
+  // --------------------------------------------------------------------------
+
+%>

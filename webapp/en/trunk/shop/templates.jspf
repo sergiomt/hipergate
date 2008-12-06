@@ -1,0 +1,23 @@
+<%!  
+  public static String getXSLTemplatePath(String sStorage, String sIdDomain, String sGuWorkArea, String sCatalog, String sFileName)
+    throws java.net.MalformedURLException, java.io.IOException, Exception {
+    final String sSep = java.io.File.separator;
+    String sPath = sStorage+"domains"+sSep+sIdDomain+sSep+"workareas"+sSep+sGuWorkArea+sSep+"apps"+sSep+"Shop"+sSep+sCatalog+sSep+"templates"+sSep+sFileName;
+    java.io.File oXslFile = new java.io.File(sPath);
+    if (oXslFile.exists()) {
+      return sPath;
+    } else {
+      com.knowgate.dfs.FileSystem oFS = new com.knowgate.dfs.FileSystem();
+      String sDefaultPath = sStorage+"xslt"+sSep+"templates"+sSep+"Shop"+sSep+sFileName;      
+      oXslFile = new java.io.File(sDefaultPath);      
+      if (oXslFile.exists()) {
+        oFS.mkdirs("file://"+sStorage+"domains"+sSep+sIdDomain+sSep+"workareas"+sSep+sGuWorkArea+sSep+"apps"+sSep+"Shop"+sSep+sCatalog+sSep+"templates");
+        oFS.copy ("file://"+sDefaultPath, "file://"+sPath);
+        return sPath;
+      } else {
+        return null;
+      }
+    }
+  }
+
+%>

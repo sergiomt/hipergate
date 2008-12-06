@@ -1,0 +1,1 @@
+<jsp:useBean id="GlobalDBBind" scope="application" class="com.knowgate.dataobjs.DBBind"/><% request.setCharacterEncoding("UTF-8"); %>

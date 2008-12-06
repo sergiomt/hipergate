@@ -1,0 +1,29 @@
+<%!
+  static int getClientIP (HttpServletRequest req) {
+    String sIP = req.getRemoteAddr();
+    int iIP;
+    int iDot1;
+    int iDot2;
+    
+    try {
+      iDot1 = sIP.indexOf(".", 0);
+      iIP  = Integer.parseInt(sIP.substring(0,iDot1)) << 24;
+
+      iDot2 = sIP.indexOf(".", ++iDot1);    
+      iIP += Integer.parseInt(sIP.substring(iDot1,iDot2)) << 16;
+      iDot1 = iDot2;
+
+      iDot2 = sIP.indexOf(".", ++iDot1);    
+      iIP += Integer.parseInt(sIP.substring(iDot1,iDot2)) << 8;
+
+      iIP += Integer.parseInt(sIP.substring(++iDot2));
+    } catch (StringIndexOutOfBoundsException siob) {
+      iIP = 0;
+    }
+    return iIP;
+  }
+  
+  static String getIPFromInt(int ip) {
+    return String.valueOf(ip>>24)+"."+String.valueOf((ip>>16)&255)+"."+String.valueOf((ip>>8)&255)+"."+String.valueOf(ip&255);
+  }
+%>

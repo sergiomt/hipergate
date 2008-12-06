@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//ES" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">  
+<!-- +--------------------------------------------------+ -->
+<!-- | Marco principal de administracion de categorias  | -->
+<!-- | (c) KnowGate 2001                                | -->
+<!-- +--------------------------------------------------+ -->
+<HTML>
+  <HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+    <TITLE>hipergate :: Category Administration</TITLE>
+    <SCRIPT LANGUAGE="javascript" SRC="../javascript/getparam.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="true">
+    <!--
+      function goURL() {
+        this.frames['globalnavigation'].document.location = "global_menu.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&hideminimenu";
+      }
+    //-->
+    </SCRIPT>    
+
+  </HEAD>
+  <FRAMESET NAME="cattop" ROWS="90,*" BORDER="0" FRAMEBORDER="0" onLoad="goURL()">
+    <FRAME NAME="globalnavigation" FRAMEBORDER="no" MARGINWIDTH="0" MARGINHEIGHT="0" NORESIZE>
+    <FRAMESET NAME="localnavigation" COLS="300,*" BORDER="0" FRAMEBORDER="0">
+      <FRAMESET NAME="cdipuframe" ROWS="100%,*" BORDER="0" FRAMEBORDER="0">
+        <FRAME NAME="catdipu"  FRAMEBORDER="no" MARGINWIDTH="0" MARGINHEIGHT="0" NORESIZE SRC="catdipu3x.jsp" TARGET="cadmframe">
+        <FRAME NAME="response" FRAMEBORDER="no" MARGINWIDTH="0" MARGINHEIGHT="0" NORESIZE SRC="../common/blank.htm">
+      </FRAMESET>
+      <FRAMESET NAME="cadmframe" ROWS="90%,*" BORDER="0" FRAMEBORDER="0">
+        <FRAME NAME="catadmin" FRAMEBORDER="no" MARGINWIDTH="0" MARGINHEIGHT="0" NORESIZE SRC="catprehome.jsp">
+        <FRAME NAME="catexec" FRAMEBORDER="no" MARGINWIDTH="0 marginheight=" NORESIZE SRC="../common/blank.htm">
+      </FRAMESET>
+    </FRAMESET>
+    <NOFRAMES>
+      <BODY>
+	<P>This page uses frames, but yur browser does handle them.</P>
+      </BODY>
+    </NOFRAMES>
+  </FRAMESET>
+</HTML>

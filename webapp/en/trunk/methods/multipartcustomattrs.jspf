@@ -1,0 +1,53 @@
+<%!
+
+  static void storeAttributes (com.oreilly.servlet.MultipartRequest oReq,
+  			       com.knowgate.cache.DistributedCachePeer oCache,
+  			       java.sql.Connection oConn, String sTable, String sWrkA, String sObjPK)
+    throws java.sql.SQLException {
+    
+    String sAttrSet = oReq.getParameter("custom_attributes");
+
+    java.sql.PreparedStatement oStmt;
+    int iAttrs;
+    String aAttrSet[];
+    String sValue;
+     
+    // Remove previous attributes from DB
+
+    oStmt = oConn.prepareStatement("DELETE FROM " + sTable + " WHERE gu_object=?");
+    oStmt.setString(1, sObjPK);
+    oStmt.execute();
+    oStmt.close();
+
+    // Store new attributes
+    
+    if (null!=sAttrSet) {
+      aAttrSet = com.knowgate.misc.Gadgets.split(sAttrSet,',');
+      if (null!=aAttrSet)
+        iAttrs = aAttrSet.length;
+      else
+        iAttrs = 0;
+    }
+    else {
+      aAttrSet = null;
+      iAttrs = 0;
+    }
+      
+    oStmt = oConn.prepareStatement("INSERT INTO " + sTable + " (gu_object,gu_workarea,nm_attr,vl_attr) VALUES(?,?,?,?)");
+    
+    for (int a=0; a<iAttrs; a++) {
+      sValue = oReq.getParameter(aAttrSet[a]);
+      if (null==sValue) sValue = "";
+      if (sValue.length()>0) {
+        oStmt.setString(1, sObjPK);
+        oStmt.setString(2, sWrkA);
+        oStmt.setString(3, aAttrSet[a]);
+        oStmt.setString(4, sValue);
+        oStmt.execute();
+      } // fi()      
+    } // next()
+    
+    oStmt.close();
+  } // storeAttributes 
+    
+%>

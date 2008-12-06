@@ -1,0 +1,26 @@
+<%!
+
+public void loadRequest(javax.servlet.ServletRequest r, java.util.Properties p) {
+  java.util.Enumeration e = r.getParameterNames();
+  Object n;
+    while (e.hasMoreElements()) {
+      n = e.nextElement();
+      p.put(n, r.getParameter((String) n));
+    } // wend()
+} // loadRequest()
+
+public void loadRequestNull(javax.servlet.ServletRequest r, java.util.Properties p, String sDefaultVal) {
+  java.util.Enumeration e = r.getParameterNames();
+  Object n;
+    while (e.hasMoreElements()) {
+      n = e.nextElement();
+      if ( null != r.getParameter((String) n) )
+      	p.put(n, r.getParameter((String) n));
+      else
+      	p.put(n, sDefaultVal);
+    } // wend()
+} // loadRequest()
+
+
+
+%>

@@ -1,0 +1,62 @@
+<%!
+
+public static String getHTMLSelectProject(com.knowgate.jdc.JDCConnection oCon1, String sWorkAreaId, String sCustomerId, String sStatusId)
+  throws java.sql.SQLException {
+  Project oPrj = new Project();
+  DBSubset oPrjChlds = null;
+  int iPrjChlds = 0;
+  StringBuffer oProjCombo = new StringBuffer();
+  com.knowgate.dataobjs.DBSubset oTopLevel;
+  
+  if (null==sCustomerId) {  
+    if (null==sStatusId) {
+      oTopLevel = new DBSubset(DB.k_projects, DB.gu_project + "," + DB.nm_project,
+      	  	                   DB.gu_owner + "=? AND " + DB.id_parent + " IS NULL ORDER BY " + DB.nm_project, 10);
+      oTopLevel.load(oCon1, new Object[]{sWorkAreaId});
+    } else {
+      oTopLevel = new DBSubset(DB.k_projects, DB.gu_project + "," + DB.nm_project,
+      	  	                   DB.gu_owner + "=? AND " + DB.id_status + "=? AND " + DB.id_parent + " IS NULL ORDER BY " + DB.nm_project, 10);
+      oTopLevel.load(oCon1, new Object[]{sWorkAreaId,sStatusId});    
+    }
+  } else {
+    if (null==sStatusId) {
+      oTopLevel = new DBSubset(DB.k_projects, DB.gu_project + "," + DB.nm_project,
+      	  	                   DB.gu_owner + "=? AND (" + DB.gu_company + "=? OR " + DB.gu_contact + "=? OR " + DB.gu_user+ "=?) AND " + DB.id_parent + " IS NULL ORDER BY " + DB.nm_project, 10);
+      oTopLevel.load(oCon1, new Object[]{sWorkAreaId,sCustomerId,sCustomerId,sCustomerId});   
+    } else {
+      oTopLevel = new DBSubset(DB.k_projects, DB.gu_project + "," + DB.nm_project,
+      	  	                   DB.gu_owner + "=? AND (" + DB.gu_company + "=? OR " + DB.gu_contact + "=? OR " + DB.gu_user+ "=?) AND " + DB.id_status + "=? AND " + DB.id_parent + " IS NULL ORDER BY " + DB.nm_project, 10);
+      oTopLevel.load(oCon1, new Object[]{sWorkAreaId,sCustomerId,sCustomerId,sCustomerId,sStatusId});
+    }
+  } 
+  for (int t=0; t<oTopLevel.getRowCount(); t++) {
+     oPrj.replace(DB.gu_project, oTopLevel.getString(0,t));
+     oPrjChlds = oPrj.getAllChilds(oCon1);
+     iPrjChlds = oPrjChlds.getRowCount();
+     oProjCombo.append ("                      ");
+     oProjCombo.append ("<OPTION VALUE=\"" + oTopLevel.getString(0,t) + "\">" + oTopLevel.getString(1,t) + "</OPTION>");
+     for (int p=0;p<iPrjChlds; p++) {
+       if (oPrjChlds.getInt(2,p)>1) {
+         // Project GUIDs as values
+         if ((null==sCustomerId && null==sStatusId) ||
+             (null==sCustomerId && oPrjChlds.getStringNull(DB.id_status,p,"").equals(sStatusId)) ||
+             ((oPrjChlds.getStringNull(DB.gu_company,p,"").equals(sCustomerId) || oPrjChlds.getStringNull(DB.gu_contact,p,"").equals(sCustomerId) || oPrjChlds.getStringNull(DB.gu_user,p,"").equals(sCustomerId)) && null==sStatusId)) {
+           oProjCombo.append ("<OPTION VALUE=\"" + oPrjChlds.getString(0,p) + "\">");         
+           // Indent project names
+           for (int s=1;s<oPrjChlds.getInt(2,p); s++) oProjCombo.append("&nbsp;&nbsp;&nbsp;&nbsp;");
+             // Project names
+             oProjCombo.append (oPrjChlds.getString(1,p));
+           oProjCombo.append ("</OPTION>");
+         }
+       } // fi (od_level>1)
+     } // next (p)
+     oProjCombo.append ("\n");
+  } // next (t)
+  return oProjCombo.toString();
+}
+
+public static String getHTMLSelectProject(com.knowgate.jdc.JDCConnection oCon1, String sWorkAreaId) throws java.sql.SQLException {
+  return getHTMLSelectProject(oCon1, sWorkAreaId, null, null);
+}
+
+%>

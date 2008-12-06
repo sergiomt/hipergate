@@ -1,0 +1,120 @@
+<HTML>
+<HEAD>
+<TITLE>hipergate :: Import Addresses</TITLE>
+<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/layer.js"></SCRIPT>
+<SCRIPT LANGUAGE="VBScript" TYPE="text/vbscript" SRC="../javascript/wabfunctions.vbs"></SCRIPT>
+<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+ <!--
+
+ //----------------------------------------------------------------------------
+
+ var WAB_state = 0;
+
+ var w = 0;
+
+ //----------------------------------------------------------------------------
+
+ function showName(name) {
+   setInnerHTML("lab1",name);  
+ }
+
+ //----------------------------------------------------------------------------
+
+ function resetProBar()  {
+  w = 0;
+
+  hideLayer("proBar1");
+  hideLayer("proBar2");
+  
+  setInnerHTML("lab1","");
+ }
+
+ //----------------------------------------------------------------------------
+
+ function showProBar()  {
+  showLayer("proBar1");
+  showLayer("proBar2");
+ }
+ 
+ //----------------------------------------------------------------------------
+ 
+ function incProBar(n) {
+  if (n <= 100)
+    document.all.proBar2.style.width = String(n) + "px";
+ }
+
+ //----------------------------------------------------------------------------
+
+ function executeWAB() {
+   if (WAB_SelectedEntry() == -1) {
+    incProBar((100*WAB_SelectedEntry())/WAB_Total());
+    WAB_Stop();
+    alert("Windows Address Book import done successfully");
+    resetProBar();
+    top.opener.document.location.href = "../crm/contact_listing.jsp?selected=2&subselected=1&screen_width=" + screen.width;
+    top.close();
+   }
+   else {
+     incProBar ((100*WAB_SelectedEntry())/WAB_Total());
+     showName(WAB_Get("Name")+"  "+String(WAB_SelectedEntry())+"/"+String(WAB_Total()));
+     top.frames[1].document.location.href = "wabprocess.jsp?" + WAB_URL();
+   }
+ }
+
+ //----------------------------------------------------------------------------
+ 
+ function loadWAB() { 
+  resetProBar();
+  showProBar();
+  WAB_Start();
+  
+  executeWAB();
+  WAB_state = 1;
+ }
+ 
+ //----------------------------------------------------------------------------
+ 
+ function stopWAB() {
+  WAB_Stop();
+  resetProBar();
+  top.frames[1].location.href = "wabload.html?getentry=0";
+  WAB_state = 0;
+ }
+ 
+ 
+ //----------------------------------------------------------------------------
+ 
+ function cancel() {
+  WAB_Stop();
+  top.frames[1].location.href = "wabload.html?getentry=0";
+  alert("WAB import cancelled by user");
+  top.opener.document.location = "../crm/contact_listing.jsp?selected=2&subselected=1&screen_width=" + screen.width;
+  top.close();
+ }
+ 
+ //----------------------------------------------------------------------------
+
+//-->
+</SCRIPT>
+</HEAD>
+<BODY TOPMARGIN="0" onload="resetProBar();">
+<OBJECT ID="WabAPI" NAME="WabAPI" CLASSID="CLSID:F16CA487-020F-4541-A714-792F7A60AEEF" CODEBASE="warjo.cab" WIDTH="0" HEIGHT="0"></OBJECT>
+
+<CENTER>
+<TABLE><TR><TD CLASS="striptitle"><FONT CLASS="title1">Import Windows Address Book</FONT></TD></TR></TABLE>  
+<BR>
+<DIV class="textsmall" align="justify">Click Import for loading all your Windows Address Book entries into hipergate.</DIV>
+<BR>
+<DIV ALIGN="LEFT" ID="proBar1" STYLE="background-color:white;width:100px;height:14px;padding:2px;font-size:6pt;border-style:solid;border-color:#000000;border-width:1px;">
+<DIV ALIGN="LEFT" ID="proBar2" STYLE="background-color:#8080FF;width:0px;height:10px;font-size:6pt"></DIV>
+</DIV>
+<DIV ALIGN="CENTER" ID="lab1" STYLE="background-color:white;width:280px;height:10px;font-family:Arial,Helvetica,sans-serif;font-size:10pt"></DIV>
+<BR><FORM>
+<INPUT CLASS="pushbutton" TYPE="BUTTON" VALUE="Import" onclick="if (0==WAB_state) loadWAB();">
+<INPUT CLASS="closebutton" TYPE="BUTTON" VALUE="Cancel" onclick="if (1==WAB_state) cancel(); else top.close();">
+</FORM>
+</CENTER>
+</BODY>
+</HTML>

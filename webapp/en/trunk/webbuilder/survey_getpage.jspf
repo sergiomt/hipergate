@@ -1,0 +1,56 @@
+<%  
+  String sStorage = Environment.getProfilePath(GlobalDBBind.getProfileName(), "storage");
+
+  GlobalCacheClient.expireAll();
+  
+  oPage = (SurveyPage) GlobalCacheClient.get("[page,"+gu_pageset+","+pg_page+"]");
+
+  if (null==oPage) {
+    try {
+      oConn = GlobalDBBind.getConnection("surveypage");
+    
+      oSrvy = new Survey(oConn, gu_pageset);
+      
+      oPage = oSrvy.getPage(oConn, iPgPage, sStorage, "UTF-8");
+      
+      if (null==oPage)
+        throw new NullPointerException("Page " + String.valueOf(iPgPage) + " not found for pageset " + gu_pageset);
+        
+      oConn.close("surveypage");
+    }
+    catch (SQLException e) {  
+      if (oConn!=null) { if (!oConn.isClosed()) { oConn.close("surveypage"); } }
+      oConn = null;
+      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));
+    }
+    catch (FileNotFoundException e) {  
+      if (oConn!=null) { if (!oConn.isClosed()) { oConn.close("surveypage"); } }
+      oConn = null;
+      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=FileNotFoundException&desc=" + e.getMessage()+" "+sStorage+Gadgets.chomp(oSrvy.getStringNull(DB.path_data,""),File.separator)+oSrvy.getStringNull(DB.nm_pageset,"")+pg_page+".xml&resume=_back"));
+    }
+    catch (IOException e) {  
+      if (oConn!=null) { if (!oConn.isClosed()) { oConn.close("surveypage"); } }
+      oConn = null;
+      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=IOException&desc=" + e.getMessage()+" "+sStorage+Gadgets.chomp(oSrvy.getStringNull(DB.path_data,""),File.separator)+oSrvy.getStringNull(DB.nm_pageset,"")+pg_page+".xml&resume=_back"));
+    }
+    catch (JiBXException e) {  
+      if (oConn!=null) { if (!oConn.isClosed()) { oConn.close("surveypage"); } }
+      oConn = null;
+      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=JiBXException&desc=" + e.getMessage() + "&resume=_back"));
+    }
+    catch (NullPointerException e) {  
+      if (oConn!=null) { if (!oConn.isClosed()) { oConn.close("surveypage"); } }
+      oConn = null;
+      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=" + e.getMessage() + "&resume=_back"));
+    }
+    
+    if (null==oConn) return;    
+    oConn=null;
+
+    if (null!=oPage) {
+      GlobalCacheClient.put("[page,"+gu_pageset+","+pg_page+"]", oPage);
+    }    
+  } else {
+    oSrvy = oPage.getSurvey();
+  }
+%>

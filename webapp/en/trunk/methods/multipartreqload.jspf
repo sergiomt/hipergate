@@ -1,0 +1,94 @@
+<%!
+/*
+Requiere:
+	java.util.Iterator,java.math.BigDecimal,java.sql.Types.*,java.util.Date,java.text.SimpleDateFormat
+*/
+
+
+public void loadRequest(com.knowgate.jdc.JDCConnection j, com.oreilly.servlet.MultipartRequest r, DBPersist p)
+  throws java.text.ParseException, java.sql.SQLException
+  {
+  java.util.Iterator i = p.getTable(j).getColumns().iterator();
+  com.knowgate.dataobjs.DBColumn c;
+  String n,s;
+  String aDt[];
+      
+  while (i.hasNext())
+    {
+    c = (com.knowgate.dataobjs.DBColumn) i.next();
+    n = c.getName();
+    s = r.getParameter(n);
+
+    if (null!=s)
+      {
+
+      /*
+      if (r.getCharacterEncoding()==null) {
+        try { s = new String(s.getBytes("8859_1"),"UTF8"); }
+        catch (java.io.UnsupportedEncodingException neverthrown) {}
+      } 
+      */     
+
+      s = s.trim();
+      
+      if (s.length()>0)
+        {
+
+        switch(c.getSqlType())
+          {
+          case java.sql.Types.INTEGER:          
+            p.replace(n, new Integer(s));
+            break;
+
+          case java.sql.Types.SMALLINT:
+            p.replace(n, new Short(s));
+            break;
+
+          case java.sql.Types.DOUBLE:
+          case java.sql.Types.REAL:
+            p.replace(n, new Double(s.replace(',','.')));
+            break;        
+
+          case java.sql.Types.FLOAT:
+            p.replace(n, new Float(s.replace(',','.')));
+            break;
+
+          case java.sql.Types.NUMERIC:
+          case java.sql.Types.DECIMAL:
+            p.replace(n, new java.math.BigDecimal(s.replace(',','.')));
+            break;          
+
+	  case java.sql.Types.DATE:
+	    if (s.length()>10) s = s.substring(0,10);
+	    aDt = com.knowgate.misc.Gadgets.split(s,'-');
+	    p.replace(n, new java.util.Date(Integer.parseInt(aDt[0])-1900,Integer.parseInt(aDt[1])-1,Integer.parseInt(aDt[2])));
+	    break;
+	    	    
+    	  case java.sql.Types.TIMESTAMP:
+            if (s.length()==10) {
+	      aDt = com.knowgate.misc.Gadgets.split(s,'-');            
+	      p.replace(n, new java.sql.Timestamp(new java.util.Date(Integer.parseInt(aDt[0])-1900,Integer.parseInt(aDt[1])-1,Integer.parseInt(aDt[2])).getTime()));
+            }
+            else {
+              java.text.SimpleDateFormat oDateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+              p.replace(n, new java.sql.Timestamp(oDateFormat.parse(s).getTime()));
+            }
+	    break;
+
+    	  case 1111: // PostgreSQL INTERVAL
+	    try { p.put(n, s, 1111); } catch (java.io.FileNotFoundException neverthrown) {}
+	  break;
+	    
+          default:
+            try {
+              p.put(n, s, c.getSqlType());
+            } catch (java.io.FileNotFoundException ioe) { /* never thrown */ }
+          } // end switch
+        } // fi (s!="")
+        else {
+          if (!p.isNull(n)) p.replace(n, null);
+        }        
+      } // fi (s!=null)
+    } // wend
+  }
+%>

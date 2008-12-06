@@ -1,0 +1,52 @@
+<%
+  com.knowgate.http.portlets.HipergatePortletConfig GlobalPortletConfig = null;
+
+  synchronized (application) {
+
+    GlobalPortletConfig = (com.knowgate.http.portlets.HipergatePortletConfig) pageContext.getAttribute("GlobalPortletConfig", PageContext.APPLICATION_SCOPE);
+
+    if (GlobalPortletConfig == null) {
+      try {
+        GlobalPortletConfig = (com.knowgate.http.portlets.HipergatePortletConfig) java.beans.Beans.instantiate(this.getClass().getClassLoader(), "com.knowgate.http.portlets.HipergatePortletConfig");
+      } catch (ClassNotFoundException exc) {
+        throw new InstantiationException(exc.getMessage());
+      } catch (Exception exc) {
+        throw new ServletException("Cannot create bean of class com.knowgate.http.portlets.HipergatePortletConfig " + exc.getMessage(), exc);
+      }
+
+      GlobalPortletConfig.getPortletContext().setAttribute("GlobalDBBind", GlobalDBBind);
+      
+      pageContext.setAttribute("GlobalPortletConfig", GlobalPortletConfig, PageContext.APPLICATION_SCOPE);
+      
+    } // fi (GlobalPortletContext)
+  } // synchronized (application)
+
+  java.util.Properties EnvPros = com.knowgate.misc.Environment.getProfile(GlobalDBBind.getProfileName());
+    
+  if (null==EnvPros.getProperty("imageserver")) {
+    String sDefImgSrv = request.getRequestURI();
+    sDefImgSrv = sDefImgSrv.substring(0,sDefImgSrv.lastIndexOf("/"));
+    sDefImgSrv = sDefImgSrv.substring(0,sDefImgSrv.lastIndexOf("/")) + "/images";
+      
+    EnvPros.setProperty("imageserver", sDefImgSrv);
+  }
+
+  Cookie aCookies[] = request.getCookies();
+  String sName;
+    
+  if (null != aCookies)
+    for (int c=0; c<aCookies.length; c++) {
+      sName = aCookies[c].getName(); 
+      if (sName.equals("domainid"))
+          EnvPros.put("domain", java.net.URLDecoder.decode(aCookies[c].getValue(), COOKIE_ENCODING));
+      if (sName.equals("workarea"))
+          EnvPros.put("workarea", java.net.URLDecoder.decode(aCookies[c].getValue(), COOKIE_ENCODING));
+    }
+ 
+  com.knowgate.http.portlets.HipergateRenderRequest  portletRequest = new com.knowgate.http.portlets.HipergateRenderRequest(request);
+
+  portletRequest.setProperties (EnvPros);
+
+  com.knowgate.http.portlets.HipergateRenderResponse portletResponse = new com.knowgate.http.portlets.HipergateRenderResponse(response);
+
+%>

@@ -1,0 +1,56 @@
+<%!
+  public static void SummaryInfo(JDCConnection oCon, String sProductId, ProductLocation oLocat, ProductAttribute oAttribs, ProductKeyword oKeyws, String sFilePath) throws IOException, FileNotFoundException, SQLException {
+
+    Class SummaryInfo;
+    
+    try {
+      SummaryInfo = Class.forName("org.apache.poi.hpsf.SummaryInformation");
+    }
+    catch (ClassNotFoundException cnf) {
+      SummaryInfo = null;
+    }
+    
+    if (null==SummaryInfo) return;
+    
+    org.apache.poi.hpsf.SummaryInformation oInfo;
+    OLEDocument oOLEDoc = new OLEDocument();
+    
+    try {    
+      oOLEDoc.read(sFilePath);
+      oInfo = oOLEDoc.getSummaryInformation();
+    }
+    catch (IOException ioe) {
+      oInfo = null;
+    }
+    
+    String sKeywords;
+
+    if (null!=oInfo) {
+      oLocat.put(DB.tag_prod_locat, Gadgets.left(oInfo.getComments(),254));
+      oLocat.put(DB.de_prod_locat, Gadgets.left(oInfo.getTitle(),100));
+
+      oAttribs.put(DB.gu_product, sProductId);
+      oAttribs.put(DB.author, Gadgets.left(oInfo.getAuthor(),50));
+      oAttribs.put(DB.subject, Gadgets.left(oInfo.getSubject(),100));
+      oAttribs.put(DB.vs_stamp, Gadgets.left(oInfo.getRevNumber(),16));
+      oAttribs.put(DB.pages, oInfo.getPageCount());
+      oAttribs.put(DB.words, oInfo.getWordCount());
+      oAttribs.store(oCon);
+      
+      sKeywords = oInfo.getKeywords();
+      if (null!=sKeywords) {
+        sKeywords = sKeywords.trim();
+        if (sKeywords.length()>0) {
+          sKeywords = Gadgets.ASCIIEncode(sKeywords.toUpperCase());
+          
+          oKeyws.put(DB.gu_product, sProductId);      
+          oKeyws.put(DB.tx_keywords, Gadgets.left(sKeywords,8000));
+          oKeyws.store(oCon);
+	}
+      }
+            
+      oInfo = null;
+      oOLEDoc = null;  
+    } // fi (SummaryInformation)
+  }
+%>

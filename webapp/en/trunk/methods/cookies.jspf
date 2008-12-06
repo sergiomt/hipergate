@@ -1,0 +1,181 @@
+<%!
+  /*
+     Copyright (C) 2003  Know Gate S.L. All rights reserved.
+                         C/Oña, 107 1º2 28050 Madrid (Spain)
+
+     Redistribution and use in source and binary forms, with or without
+     modification, are permitted provided that the following conditions
+     are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. The end-user documentation included with the redistribution,
+     if any, must include the following acknowledgment:
+     "This product includes software parts from hipergate
+     (http://www.hipergate.org/)."
+     Alternately, this acknowledgment may appear in the software itself,
+     if and wherever such third-party acknowledgments normally appear.
+
+  3. The name hipergate must not be used to endorse or promote products
+     derived from this software without prior written permission.
+     Products derived from this software may not be called hipergate,
+     nor may hipergate appear in their name, without prior written
+     permission.
+
+     This library is distributed in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+     You should have received a copy of hipergate License with this code;
+     if not, visit http://www.hipergate.org or mail to info@hipergate.org
+  */
+
+  // --------------------------------------------------------------------------
+
+  final static String COOKIE_ENCODING = "ISO8859_1";
+
+  // --------------------------------------------------------------------------
+  
+  static java.text.SimpleDateFormat localeDateFormat (String sWorkAreaGuid, com.knowgate.cache.DistributedCachePeer oCache, com.knowgate.dataobjs.DBBind oDbb) {
+    String sDateFmt = "yyyy-MM-dd";
+    /*
+    com.knowgate.jdc.JDCConnection oCon = null;
+    try {
+      if (oCache!=null)
+        sDateFmt = oCache.getString("["+sWorkAreaGuid+",shortdate]");
+      if (null==sDateFmt) {
+        oCon = oDbb.getConnection("localeDateFormat");
+        com.knowgate.workareas.WorkArea.getDateFormat((java.sql.Connection) oCon, sWorkAreaGuid);
+    } catch (Exception xcpt) {
+      sDateFmt = "yyyy-MM-dd";
+    } finally {
+      if (null!=oCon) oCon.close();
+    }
+    return sDateFmt;
+    */
+    return new java.text.SimpleDateFormat("dd/MM/yyyy");
+  } // localeDateFormat
+    
+  // --------------------------------------------------------------------------
+  
+  static String getNavigatorLanguage (HttpServletRequest req) {
+    String sLang = req.getLocale().getLanguage();
+    
+    if (sLang.startsWith("es"))
+      return "es";
+    else if (sLang.startsWith("it"))
+      return "it";    
+    else if (sLang.startsWith("de"))
+      return "de";    
+    else if (sLang.startsWith("fr"))
+      return "fr";    
+    else
+      return "en";
+      
+  } // getNavigatorLanguage
+
+  // --------------------------------------------------------------------------
+  
+  static String getCookie (HttpServletRequest req, String sName, String sDefault)
+    throws java.io.UnsupportedEncodingException {
+    Cookie aCookies[] = req.getCookies();
+    String sValue = sDefault;
+    
+    if (null != aCookies)
+      for (int c=0; c<aCookies.length; c++) {
+      	if (aCookies[c].getName().equals(sName)) {
+          sValue = aCookies[c].getValue();
+          if (null!=sValue) {
+            sValue = java.net.URLDecoder.decode(sValue, COOKIE_ENCODING);          
+            break;
+          }
+        }
+      }
+      
+    return sValue;
+    
+  } // getCookie()
+
+  // --------------------------------------------------------------------------
+
+  static String dumpCookies(HttpServletRequest req)
+    throws java.io.UnsupportedEncodingException {
+    Cookie aCookies[] = req.getCookies();
+    String sCookies = "";
+    
+    if (aCookies!=null)
+      for (int c=0; c<aCookies.length; c++)
+        sCookies += aCookies[c].getName() + "=" + java.net.URLDecoder.decode(aCookies[c].getValue(), COOKIE_ENCODING) + ";<BR>";
+    
+    return sCookies;
+  
+  } // dumpCookies
+
+  // --------------------------------------------------------------------------
+
+%><%
+
+  String  SESSION_PROFILE = null;
+  String  SESSION_SKIN = null;
+  String  SESSION_USER = null;
+  Integer SESSION_DOMAIN = null;
+  String  SESSION_WORKAREA = null;
+  String  SESSION_FACE = null;
+  String  SESSION_SHOP = null;
+  int     SESSION_APPMASK = 0;
+
+  Cookie ALL_SESSION_COOKIES[] = request.getCookies();
+    
+  if (null != ALL_SESSION_COOKIES) {
+    com.knowgate.dataobjs.DBBind GlobalDBBindBean = null;
+    for (int iCookieIndex=0; iCookieIndex<ALL_SESSION_COOKIES.length; iCookieIndex++) {
+      if (ALL_SESSION_COOKIES[iCookieIndex].getName().equals("profilenm")) {
+        SESSION_PROFILE = ALL_SESSION_COOKIES[iCookieIndex].getValue();
+        if (null!=SESSION_PROFILE) SESSION_PROFILE = java.net.URLDecoder.decode(SESSION_PROFILE, COOKIE_ENCODING);
+        break;
+      } // fi
+    } // next
+    if (null==SESSION_PROFILE) {
+      synchronized (application) {
+        GlobalDBBindBean = (com.knowgate.dataobjs.DBBind) pageContext.getAttribute("GlobalDBBind", PageContext.APPLICATION_SCOPE);
+        if (GlobalDBBindBean != null) {
+          SESSION_PROFILE = GlobalDBBindBean.getProfileName();
+        } // fi
+      } // synchronized
+    } // fi
+    for (int iCookieIndex=0; iCookieIndex<ALL_SESSION_COOKIES.length; iCookieIndex++) {
+      String sCurrentCookieName = ALL_SESSION_COOKIES[iCookieIndex].getName();
+      if (sCurrentCookieName.equals("domainid")) {
+        try {
+          SESSION_DOMAIN = new Integer (ALL_SESSION_COOKIES[iCookieIndex].getValue());
+          if (null==SESSION_DOMAIN && GlobalDBBindBean!=null) SESSION_DOMAIN = new Integer (com.knowgate.misc.Environment.getProfileVar(GlobalDBBindBean.getProfileName(),"domainid"));
+        } catch (NumberFormatException nfe) { }
+      } else if (sCurrentCookieName.equals("workarea")) {
+        SESSION_WORKAREA = ALL_SESSION_COOKIES[iCookieIndex].getValue();
+        if (null==SESSION_WORKAREA && GlobalDBBindBean!=null) SESSION_WORKAREA = com.knowgate.misc.Environment.getProfileVar(GlobalDBBindBean.getProfileName(),"workarea");
+        if (null!=SESSION_WORKAREA) SESSION_WORKAREA = java.net.URLDecoder.decode(SESSION_WORKAREA, COOKIE_ENCODING);      
+      } else if (sCurrentCookieName.equals("appmask")) {
+        try {
+          SESSION_APPMASK = Integer.parseInt(ALL_SESSION_COOKIES[iCookieIndex].getValue());
+        } catch (NumberFormatException nfe) { }
+      } else if (sCurrentCookieName.equals("userid")) {
+        SESSION_USER = ALL_SESSION_COOKIES[iCookieIndex].getValue();
+        if (null==SESSION_USER && GlobalDBBindBean!=null) SESSION_USER = com.knowgate.misc.Environment.getProfileVar(GlobalDBBindBean.getProfileName(),"userid");
+        if (null!=SESSION_USER) SESSION_USER = java.net.URLDecoder.decode(SESSION_USER, COOKIE_ENCODING);      
+      } else if (sCurrentCookieName.equals("skin")) {
+        SESSION_SKIN = ALL_SESSION_COOKIES[iCookieIndex].getValue();
+        if (null==SESSION_SKIN && GlobalDBBindBean!=null) SESSION_SKIN = com.knowgate.misc.Environment.getProfileVar(GlobalDBBindBean.getProfileName(),"skin");
+        if (null!=SESSION_SKIN) SESSION_SKIN = java.net.URLDecoder.decode(SESSION_SKIN, COOKIE_ENCODING);      
+      } else if (sCurrentCookieName.equals("face")) {
+        SESSION_FACE = ALL_SESSION_COOKIES[iCookieIndex].getValue();
+        if (null==SESSION_FACE && GlobalDBBindBean!=null) SESSION_FACE = com.knowgate.misc.Environment.getProfileVar(GlobalDBBindBean.getProfileName(),"face");
+        if (null!=SESSION_FACE) SESSION_FACE = java.net.URLDecoder.decode(SESSION_FACE, COOKIE_ENCODING);      
+      } else if (sCurrentCookieName.equals("shopid")) {
+        SESSION_SHOP = ALL_SESSION_COOKIES[iCookieIndex].getValue();
+        if (null==SESSION_SHOP && GlobalDBBindBean!=null) SESSION_FACE = com.knowgate.misc.Environment.getProfileVar(GlobalDBBindBean.getProfileName(),"shopid");
+        if (null!=SESSION_SHOP) SESSION_SHOP = java.net.URLDecoder.decode(SESSION_SHOP, COOKIE_ENCODING);      
+      }
+    } // next
+  } // fi
+%>

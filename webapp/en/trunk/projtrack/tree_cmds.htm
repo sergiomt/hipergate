@@ -1,0 +1,32 @@
+<HTML>
+<HEAD>
+  <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <!--
+      function selectValue() {
+        var frm = window.document.forms[0];
+
+        var nm_control = getURLParam("nm_control", self);
+        var nm_coding = getURLParam("nm_coding", self);
+        	
+        eval("window.parent.opener.document.forms[0]." + nm_control + ".value='" + frm.ctrl.value + "'");
+        eval("window.parent.opener.document.forms[0]." + nm_coding + ".value='" + frm.code.value + "'");        
+        
+        window.parent.close();
+      }
+          
+    //-->
+  </SCRIPT>   
+</HEAD>
+<BODY  TOPMARGIN="4" MARGINHEIGHT="4">
+  <FORM>
+    <CENTER>
+    <INPUT TYPE="hidden" NAME="ctrl"><INPUT TYPE="hidden" NAME="code">    
+    <INPUT TYPE="button" CLASS="pushbutton" VALUE="Select" STYLE="width:90" onClick="selectValue()">&nbsp;&nbsp;<INPUT TYPE="button" CLASS="closebutton" VALUE="Cancel" STYLE="width:90" onClick="window.parent.close()">
+    </CENTER>
+  </FORM>
+</BODY>
+</HTML>

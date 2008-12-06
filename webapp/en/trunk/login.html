@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- hipergate © 2003-2007 KnowGate -->
+<head>
+  <meta name="robots" content="noindex,nofollow">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>hipergate :: Start Session</title>
+  <link rel=stylesheet type=text/css HREF=./skins/xp/styles.css>
+  <script language="JavaScript" type="text/javascript" src="javascript/cookies.js"></script>
+  <script language="JavaScript" type="text/javascript" src="javascript/trim.js"></script>
+  <script language="JavaScript" type="text/javascript" src="javascript/email.js"></script>
+  <script language="JavaScript" type="text/javascript" defer="defer">  
+    <!--
+      // To switch the whole application to another skin,
+      // modify this JavaScript variable :
+      var skin = "xp";
+
+      //document.write ("<LINK REL=stylesheet TYPE=text/css HREF=./skins/"+skin+"/styles.css>");
+      
+      // ----------------------------------------------------------------------
+      
+      function onLoadComplete() {
+        document.form1.nickname.focus();   
+        document.form1.skin.value = skin;
+        document.getElementById('loginbox').style.backgroundImage = "url(./skins/"+skin+"/log/loginbox_bg.gif)";
+      }
+
+      // ----------------------------------------------------------------------
+
+    //-->
+  </script>
+  <script language="JavaScript" type="text/javascript" defer="defer">  
+    <!--
+      function validate() {
+        var frm = window.document.forms[0];
+        
+        if (frm.nickname.value=="") {
+          alert ("The e-mail may not be empty");
+          return false;
+        }
+
+        if (!check_email(frm.nickname.value)) {
+          alert ("e-mail address is not valid");
+          return false;
+        }
+
+        if (ltrim(frm.pwd_text.value)=="") {
+          alert ("Password may not be empty");
+          return false;
+        }
+          
+        // This cookie is used for detecting whether or not the client browser
+        // accepts session cookies. NickCookie is set in this page and later
+        // readed by login_check. If the cookie cannot be readed by login_check
+        // (NickCookie!=nickname) then that means that client has disabled cookies
+
+	      var dt1Min = new Date();
+			  dt1Min.setTime(dt1Min.getTime()+60000);	// Give cookie 1 minute lifetime
+        setCookie ("NickCookie",frm.nickname.value, dt1Min);
+
+	      // Erase previous user id	        
+        setCookie ("userid","");
+        setCookie ("authstr","");
+        
+        return true;
+      }      
+    //-->
+  </script>
+</head>
+<body text="black" leftmargin="0" topmargin="30" marginwidth="0" marginheight="30" onLoad="onLoadComplete()">
+  <br>
+  <form name="form1" method="post" action="common/login_chk.jsp" onSubmit="return validate()">
+    <input type="hidden" name="context" value="nativelogin">
+    <input type="hidden" name="skin">
+    <table summary="Login Box" id="loginbox" width="480" height="320" align="center" cellspacing="0" cellpadding="0">
+      <tr height="120">
+     	  <td rowspan="4" width="56"></td>
+     	  <td colspan="2"></td>
+      </tr>    	
+      <tr height="28">
+     	  <td class="login">
+          E-mail
+			  </td>
+     	  <td>
+          <input type="text" name="nickname" class="box" size="40" maxlength="100" value="administrator@hipergate-test.com">
+			  </td>
+      </tr>
+      <tr height="28">
+     	  <td class="login">
+          Password
+			  </td>
+     	  <td>
+          <input type="text" name="pwd_text" class="box" maxlength="30" size="10" value="TEST">
+          &nbsp;
+				  <a class="login" href="#" onclick="window.open('common/pwd_request.jsp','requestpassword','directories=no,toolbar=no,menubar=no,width=440,height=200')">Retrieve Password</a>
+        </td>
+      </tr>    	
+      <tr height="16">
+     	  <td></td>
+     	  <td valign="top">
+			    <input type="submit" value="Enter" accesskey="e">
+        </td>
+      </tr>    	
+      <tr height="80">
+     	  <td colspan="3"></td>
+      </tr>    	
+    </table>
+    <br/><br/>
+    <table summary="Default Passwords" align="center">
+      <tr>
+        <td colspan="2"><font class="aplicacion"><b>Passwords for the development version are:</b></font></td>
+      </tr>
+      <tr>
+        <td><font class="aplicacion">administrator@hipergate-test.com</font></td>
+        <td><font class="aplicacion">TEST</font></td>
+      </tr>
+      <tr>
+        <td><font class="aplicacion">administrator@hipergate-demo.com</font></td>
+        <td><font class="aplicacion">DEMO</font></td>
+      </tr>
+      <tr>
+        <td><font class="aplicacion">administrator@hipergate-real.com</font></td>
+        <td><font class="aplicacion">REAL</font></td>
+      </tr>
+      <tr>
+        <td><font class="aplicacion">administrator@hipergate-system.com</font></td>
+        <td><font class="aplicacion">hipergate</font></td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <font class="aplicacion">for changing them go to Configuration menu option<br>
+          and the edit users administrator, superuser, user and guest<br>
+          one by one for each WorkArea<br></font>
+        </td>
+      </tr>
+    </table>
+  </form>
+</body>
+</html>

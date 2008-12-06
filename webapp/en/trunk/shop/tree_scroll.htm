@@ -1,0 +1,70 @@
+<HTML>
+<HEAD>
+  <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <!--  
+    // ----------------------------------------------------------------
+        
+    function createCategory() {                       	
+      window.open ("catedit.jsp?id_domain=" + getURLParam("id_domain") + "&id_user=" + getURLParam("id_user") + "&top_parent_cat=" + getURLParam("top_parent_cat") + "&id_parent_cat=" + parent.cmds.document.forms[0].code.value, "editshopcategory", "directories=no,toolbar=no,menubar=no,width=480,height=420");
+    } // createCategory()
+
+    // ----------------------------------------------------------------
+        
+    function editCategory() {
+      var id_cat = parent.cmds.document.forms[0].code.value;
+      
+      if (id_cat.length==0)
+        alert ("A category to be edited must be selected first");
+      else if (id_cat==getURLParam("gu_bundles_cat"))
+        alert ("Packages may noy be edited, please chose another category");
+      else                           	
+        window.open ("catedit.jsp?id_domain=" + getURLParam("id_domain") + "&id_user=" + getURLParam("id_user") + "&id_category=" + id_cat + "&top_parent_cat=" + getURLParam("top_parent_cat"), "editshopcategory", "directories=no,toolbar=no,menubar=no,width=480,height=420");
+    } // editCategory()
+
+
+    // ----------------------------------------------------------------
+        
+    function deleteCategory() {
+      var id_cat = parent.cmds.document.forms[0].code.value;
+            
+      if (id_cat.length==0) {
+        alert ("You must first select a Category to be deleted");
+      } else if (id_cat==getURLParam("gu_bundles_cat")) {
+        alert ("It is not allowed to remove packages category");
+      } else if (window.confirm("Are you sure you want to delete category&nbsp;" + parent.cmds.document.forms[0].ctrl.value + " and all the products it contains?")) {
+        parent.parent.msgsadmin.location = "../common/blank.htm";
+        parent.parent.msgsexec.location = "catedit_del.jsp?id_domain=" + getURLParam("id_domain") + "&checkeditems=" + id_cat + "&id_user=" + getURLParam("id_user") + "&top_parent_cat=" + getURLParam("top_parent_cat");
+      }
+    } // deleteCategory()
+    
+    //-->
+  </SCRIPT>
+</HEAD>
+<BODY >
+      <TABLE CELLSPACING="2" CELLPADDING="2" WIDTH="100%">
+      <TR><TD COLSPAN="6" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
+      <TR>
+        <TD ALIGN="right" ><IMG SRC="../images/images/newfolder16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Category"></TD>
+        <TD ALIGN="left" VALIGN="center"><A HREF="#" onclick="createCategory()" CLASS="linkplain" TITLE="New Category">New</A></TD>
+        <TD ALIGN="right" ><IMG SRC="../images/images/folderoptions.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Edit Category"></TD>
+        <TD ALIGN="left" VALIGN="center"><A HREF="#" onclick="editCategory()" CLASS="linkplain" TITLE="Edit Category">Edit</A></TD>
+        <TD ALIGN="right"><IMG SRC="../images/images/deletefolder.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete Category"></TD>
+        <TD ALIGN="left" ><A HREF="#" onClick="deleteCategory();"  CLASS="linkplain" TITLE="Delete Category">Delete</A></TD>
+      </TR>
+      <TR>
+        <TD></TD>
+        <TD COLSPAN="5">
+          <A HREF="#" onclick="window.parent.parent.msgsadmin.location.href='cat_fastedit.jsp?gu_shop=' + getURLParam('gu_shop') + '&top_parent_cat=' + getURLParam('top_parent_cat')" CLASS="linkplain" TITLE="Fast Edit">Fast Edit</A>
+        </TD>
+      </TR>
+      <TR><TD COLSPAN="6" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
+      </TABLE>
+  <!--
+  <IMG SRC="img/p4x4.gif" HEIGHT=4 WIDTH=28 BORDER=0><A HREF="world.htm" target="world"><IMG SRC="img/gohome.gif" BORDER=0 ALT="Go to main page"></A><IMG SRC="img/p4x4.gif" HEIGHT=4 WIDTH=132 BORDER=0><A HREF="javascript:void(0)" onMouseOver="parent.pabajo()"  onMouseOut="parent.parar()"><IMG SRC="img/scroll_down.gif" BORDER="0"></A><A HREF="javascript:void(0)" onMouseOver="parent.parriba()" onMouseOut="parent.parar()"><IMG SRC="img/scroll_up.gif" BORDER="0"></A>
+  -->
+</BODY>
+</HTML>
