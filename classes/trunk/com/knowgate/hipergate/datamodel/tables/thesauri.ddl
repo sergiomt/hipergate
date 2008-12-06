@@ -238,4 +238,4 @@ CREATE TABLE k_distances_cache
   coord_y   FLOAT NULL,  
   CONSTRAINT pk_distances_cache PRIMARY KEY (lo_from,lo_to)  
 )
-
+GO;
