@@ -1,0 +1,455 @@
+<%
+  final int BugTracker=10,DutyManager=11,ProjectManager=12,Mailwire=13,WebBuilder=14,VirtualDisk=15,Sales=16,CollaborativeTools=17,MarketingTools=18,Directory=19,Shop=20,Hipermail=21,Training=22,Surveys=23,Config=30;
+
+  final int iTabWidth = 80;
+  int iActive = 0;
+  int t;
+  
+  com.knowgate.jdc.JDCConnection oTabMenuConn = null;
+  
+  // ********************************************
+  // Read parameters from session kept in cookies
+  
+  String sTabMenuUser = getCookie (request, "userid", null);
+  String sTabMenuWrkA = getCookie (request, "workarea", null);
+  String sTabMenuDom  = getCookie (request, "domainid", null);
+  String sPathLogo    = getCookie (request, "path_logo", "");
+  String sMenuSkin    = getCookie(request, "skin", "xp");
+  int iAppMask = Integer.parseInt(getCookie(request, "appmask", "0"));
+
+  if (com.knowgate.debug.DebugFile.trace)
+    com.knowgate.debug.DebugFile.writeln("<JSP:tabmenu.jspf userid="+sTabMenuUser+" workarea="+sTabMenuWrkA+" domain="+sTabMenuDom);
+    
+  // ****************************************
+  // Read other parameters from hipergate.cnf
+
+  String sMailIncoming= com.knowgate.misc.Environment.getProfileVar(GlobalDBBind.getProfileName(), "mail.incoming");
+  String sMailOutgoing= com.knowgate.misc.Environment.getProfileVar(GlobalDBBind.getProfileName(), "mail.outgoing");
+
+  // ***************************************************************
+  // Compose /workareas HTTP base path for getting top logo base URL
+  
+  String sReqURI = request.getRequestURI();
+  sReqURI = sReqURI.substring(0,sReqURI.lastIndexOf("/"));
+  sReqURI = sReqURI.substring(0,sReqURI.lastIndexOf("/"));  
+  String sDefWrkArGet = sReqURI + "/workareas";
+  
+  String sWrkAGet = com.knowgate.misc.Environment.getProfileVar(GlobalDBBind.getProfileName(), "workareasget", sDefWrkArGet);
+  if (!sWrkAGet.endsWith("/")) sWrkAGet += "/";
+
+  String sServletPath = request.getRealPath(request.getServletPath());
+  sServletPath = sServletPath.substring(0,sServletPath.lastIndexOf(java.io.File.separator));
+  sServletPath = sServletPath.substring(0,sServletPath.lastIndexOf(java.io.File.separator));
+  String sConfDir = sServletPath + java.io.File.separator + "conf" + java.io.File.separator;
+  
+  // ***************************************************************************************
+  // Compose servlet base path for getting /conf directory where topmenu.xml file is located
+
+  // ***************************************************
+  // Get top menu definition from cache or from XML file
+  
+  com.knowgate.hipergate.Menu oTopMenu = (com.knowgate.hipergate.Menu) GlobalCacheClient.get("topmenu");
+  
+  if (null==oTopMenu) {
+    try {
+      oTopMenu = com.knowgate.hipergate.Menu.parse(sConfDir+"topmenu.xml", "UTF-8");
+    } catch (org.jibx.runtime.JiBXException jibx) {
+       out.write("<h2>"+jibx.getMessage()+"</h2>");
+       out.write("<a href=\"https://sourceforge.net/forum/forum.php?thread_id=1408318&forum_id=432686\"><b>More info</b></a><br><br>");
+       out.write(com.knowgate.misc.Gadgets.replace(com.knowgate.debug.StackTraceUtil.getStackTrace(jibx),"\n","<br>"));
+       out.write("</BODY></HTML>");
+       return;
+    }
+    if (null==oTopMenu) GlobalCacheClient.put("topmenu",oTopMenu);
+  }
+
+  // ************************************************************************************************************
+  // If application permissions mask is missing but userid and workarea are not then retrive it from the database
+    
+  if (iAppMask==0 && sTabMenuUser!=null && sTabMenuWrkA!=null) {
+
+    com.knowgate.jdc.JDCConnection oAppMaskConn = null;
+
+    try {
+      oAppMaskConn = GlobalDBBind.getConnection("appmaskmenu");
+      iAppMask  = com.knowgate.workareas.WorkArea.getUserAppMask(oAppMaskConn, sTabMenuWrkA, sTabMenuUser);
+      oAppMaskConn.close("appmaskmenu");
+
+      if (com.knowgate.debug.DebugFile.trace)
+        com.knowgate.debug.DebugFile.writeln("<JSP:tabmenu.jspf appmask="+String.valueOf(iAppMask));
+    }
+    catch (java.sql.SQLException sqle) {
+      if (com.knowgate.debug.DebugFile.trace)
+        com.knowgate.debug.DebugFile.writeln("<JSP:tabmenu.jspf SQLException "+sqle.getMessage());
+      if (null!=oAppMaskConn)
+        if (!oAppMaskConn.isClosed())
+          oAppMaskConn.close("appmaskmenu");
+    }
+
+    oAppMaskConn = null;
+    
+  } // fi (iAppMask==0 && sTabMenuUser!=null && sTabMenuWrkA!=null))
+
+  // ***********************************************************
+  // Get Selected and SubSelected indexes of current menu option  
+  
+  int Selected, SubSelected;
+  boolean bIsWorkAreaMenuAdmin, bIsWorkAreaMenuOwner;
+  
+  if (request.getParameter("selected")!=null) {
+    try {
+      Selected = Integer.parseInt(request.getParameter("selected"));
+    }
+    catch (NumberFormatException nfe) { Selected = 0; }
+  }
+  else {
+    Selected = 0;
+  }
+  
+  if (request.getParameter("subselected")!=null) {
+    try {
+      SubSelected = Integer.parseInt(request.getParameter("subselected"));
+    }
+    catch (NumberFormatException nfe) { SubSelected = 0; }
+  }
+  else {
+    SubSelected = 0;
+  }
+
+  // ****************************************************************************************************** 
+  // Retrive from the global cache whether or not user has administrator or owner role for current WorkArea
+  
+  Object oIsAdmin = GlobalCacheClient.get("[" + sTabMenuUser + ",admin]");
+  Object oIsOwner = GlobalCacheClient.get("[" + sTabMenuUser + ",owner]");
+
+  // **************************************************************
+  // If the information is not cache then re-read from the database
+
+  if (null==oIsAdmin || null==oIsOwner) {    
+    com.knowgate.acl.ACLUser oTabMenuUsr = new ACLUser();
+    
+    try {
+      oTabMenuUsr.put(com.knowgate.dataobjs.DB.id_domain, Integer.parseInt(sTabMenuDom));
+    }
+    catch (NumberFormatException nfe) {
+      if (com.knowgate.debug.DebugFile.trace)
+        com.knowgate.debug.DebugFile.writeln("<JSP:tabmenu.jspf NumberFormatException at tabmenu.jspf domainid cookie is " + sTabMenuDom);
+      throw new NumberFormatException ("NumberFormatException cookie " + sTabMenuDom + " is not a valid domain integer identifier maybe you have disabled session cookies");
+    }
+    
+    oTabMenuUsr.put(com.knowgate.dataobjs.DB.gu_user, sTabMenuUser);
+  
+    oTabMenuConn = GlobalDBBind.getConnection("tabmenu");  
+    bIsWorkAreaMenuAdmin = oTabMenuUsr.isDomainAdmin(oTabMenuConn);
+    bIsWorkAreaMenuOwner = com.knowgate.workareas.WorkArea.isAdmin(oTabMenuConn, sTabMenuWrkA, sTabMenuUser);
+  
+    oTabMenuConn.close("tabmenu");
+    oTabMenuConn = null;
+  
+    oTabMenuUsr = null;
+    
+    try {
+      if (null==oIsAdmin) {
+        oIsAdmin = new Boolean(bIsWorkAreaMenuAdmin);
+        GlobalCacheClient.put("[" + sTabMenuUser + ",admin]", oIsAdmin);
+      }
+    } catch (IllegalStateException ise) {
+      if (com.knowgate.debug.DebugFile.trace)
+        com.knowgate.debug.DebugFile.writeln("<JSP:tabmenu.jspf IllegalStateException " + "[" + sTabMenuUser + ",admin] " + ise.getMessage());
+    }
+    
+    if (com.knowgate.debug.DebugFile.trace)
+      com.knowgate.debug.DebugFile.writeln("<JSP:tabmenu.jspf is admin " + String.valueOf(((Boolean)oIsAdmin).booleanValue()));
+
+    try {
+      if (null==oIsOwner) {        
+        oIsOwner = new Boolean(bIsWorkAreaMenuOwner);    
+        GlobalCacheClient.put("[" + sTabMenuUser + ",owner]", oIsOwner);
+      }
+    } catch (IllegalStateException ise) {
+      if (com.knowgate.debug.DebugFile.trace)
+        com.knowgate.debug.DebugFile.writeln("<JSP:tabmenu.jspf IllegalStateException " + "[" + sTabMenuUser + ",owner] " + ise.getMessage());
+    }
+
+    if (com.knowgate.debug.DebugFile.trace)
+      com.knowgate.debug.DebugFile.writeln("<JSP:tabmenu.jspf is owner " + String.valueOf(((Boolean)oIsOwner).booleanValue()));
+
+  } // fi (null==oIsAdmin || null==oIsOwner)
+  
+  // End re-reading user roles from the database
+  // *******************************************
+  
+  bIsWorkAreaMenuAdmin = ((Boolean)oIsAdmin).booleanValue();
+  bIsWorkAreaMenuOwner = ((Boolean)oIsOwner).booleanValue();      
+  boolean bMailEnabled = ((sMailIncoming!=null) && (sMailOutgoing!=null)) && ((iAppMask & (1<<Hipermail))!=0);
+  int iOptions = oTopMenu.countSubOptions();
+  
+  // *******************************************************
+  // If there is no logged user or it has been lost
+  // Then deactivate all menu options as a security measure.
+
+  if (null!=sTabMenuUser) {
+    oTopMenu.setAccessFor(iAppMask, bIsWorkAreaMenuAdmin, bIsWorkAreaMenuOwner);
+  }
+
+  iActive =  oTopMenu.countAccesibleSubOptions();
+  
+  // *******************************************************
+  
+  if (!oTopMenu.getAccess(iOptions-1)) iOptions--;
+  
+  StringBuffer sOptsBuffer;
+  String sOptions = GlobalCacheClient.getString("[" + sTabMenuUser + ",options," + String.valueOf(Selected) + "]");
+      
+  if (sOptions==null) {
+    sOptsBuffer = new StringBuffer();
+    
+    for (t=0; t<iOptions; t++)
+     if (oTopMenu.getAccess(t)) {
+       sOptsBuffer.append("  <td width=\"68\" align=\"center\" class=\""+ (t==Selected ? "menu4" : "menu3") + "\"><a target=\"_top\" href=\"" + oTopMenu.getOption(t).getHRef() + "\" class=\"opcion\">" + oTopMenu.getOption(t).getTitle() + "</a></td>");
+       if (t<iOptions-1) {
+         sOptsBuffer.append("  <td width=\"5\" background=\"../images/images/tabmenu/opcion_ab.gif\" class=\"menu6\"></td>");
+       } // fi()
+   } // fi (oTopMenu.getAccess(t))
+   // next (t)
+
+   sOptions = sOptsBuffer.toString();
+   if (sOptions!=null)
+     GlobalCacheClient.put("[" + sTabMenuUser + ",options," + String.valueOf(Selected) + "]", sOptions);    
+  } // fi (sOptions)
+
+  String sSubOptions = GlobalCacheClient.getString("[" + sTabMenuUser + ",suboptions," + String.valueOf(Selected) + "," + String.valueOf(SubSelected) + "]");
+  
+  if (sSubOptions==null) {
+    sOptsBuffer = new StringBuffer();
+
+      if (oTopMenu.getAccess(Selected)) {
+        com.knowgate.hipergate.MenuOption oCurrentOption = oTopMenu.getOption(Selected); 
+        int iSubOptsCount = oCurrentOption.countSubOptions(); 
+        for (t=0; t<iSubOptsCount; t++)  {
+          sOptsBuffer.append("<td width=\"8\" class=\"menu5\"><img alt=\"transp.gif\" style=\"display:block\" src=\"../images/images/tabmenu/transp.gif\" width=\"8\" height=\"1\"></td>");
+          sOptsBuffer.append("<td align=\"center\" nowrap class=\"menu5\">");
+          
+          if (oCurrentOption.getSubOption(t).hasAccess(iAppMask, bIsWorkAreaMenuAdmin, bIsWorkAreaMenuOwner)) {
+            if (t==SubSelected) {
+              sOptsBuffer.append("<img alt=\"uarehere.gif\" src=\"../images/images/tabmenu/uarehere.gif\" width=\"8\" height=\"8\" border=\"0\" oncontextmenu=\"return false;\">");
+              sOptsBuffer.append("<font class=\"actual\">&nbsp;" + oCurrentOption.getSubOption(t).getTitle() + "</font>");
+            }
+            else if (oCurrentOption.getSubOption(t).getHRef().length()>0) {
+              sOptsBuffer.append("          <a target=\"_top\" href=\"" + oCurrentOption.getSubOption(t).getHRef() + "\" class=\"opcion\">" + oCurrentOption.getSubOption(t).getTitle() + "</a>");
+            }
+          } // fi getOption(t).hasAccess(iAppMask))
+          
+          sOptsBuffer.append("</td>"); 
+          sOptsBuffer.append("<td width=\"4\" class=\"menu5\"><img alt=\"transp.gif\" style=\"display:block\" src=\"../images/images/tabmenu/transp.gif\" width=\"4\" height=\"1\"></td>");
+          if (t<oCurrentOption.countSubOptions()-1) {
+            sOptsBuffer.append("<td width=\"8\" class=\"menu5\"><img alt=\"transp.gif\" style=\"display:block\" src=\"../images/images/tabmenu/transp.gif\" width=\"8\" height=\"1\"></td>");
+            sOptsBuffer.append("<td width=\"1\" bgcolor=\"#666666\"><img alt=\"transp.gif\" style=\"display:block\" src=\"../images/images/tabmenu/transp.gif\" width=\"1\" height=\"1\"></td>");
+          } // fi ()
+        } // next()
+    
+        sSubOptions = sOptsBuffer.toString();
+        if (sSubOptions!=null)
+          GlobalCacheClient.put("[" + sTabMenuUser + ",suboptions," + String.valueOf(Selected) + "," + String.valueOf(SubSelected) + "]", sSubOptions);    
+      } 
+      else {
+        sSubOptions = "";
+      } // fi (Mask[Selected])
+  } // fi (sSubOptions)  
+  
+  // ************************************
+  // Display Days Left for Trial Accounts
+    
+  String sDaysLeft = "";
+
+  Object oIsTrial = GlobalCacheClient.get("[" + sTabMenuUser + ",trial]");
+  int iDaysLeft = 2147483647;
+      
+  if (null!=oIsTrial) {
+    if (((Boolean)oIsTrial).booleanValue()) {
+    
+      try {
+	      oTabMenuConn = GlobalDBBind.getConnection("daysleft");
+    	  iDaysLeft = com.knowgate.billing.Account.daysLeft(oTabMenuConn, getCookie(request, "idaccount", ""));
+    	  oTabMenuConn.close("daysleft");
+      }
+      catch (SQLException sqle) {
+    	if (null!=oTabMenuConn)
+    	  if (!oTabMenuConn.isClosed())
+    	  oTabMenuConn.close("daysleft");
+      }
+    
+      sDaysLeft = "<a href=\"../register/customer_new.jsp\"><img alt=\"subscribe.gif\" hspace=5 align=\"absmiddle\" src=\"../skins/";
+      sDaysLeft += sMenuSkin;
+      sDaysLeft += "/subscribe.gif\" border=\"0\"></a><a href=\"../register/customer_new.jsp\" class=\"actual\">";
+      sDaysLeft += "<b>LEFT&nbsp;" + String.valueOf(iDaysLeft) + " DAYS</b></a>";
+
+    } // fi(oIsTrial==true)
+  } // fi (oIsTrial!=null)
+
+  // End Display Days Left
+  // *********************
+  
+  if ((request.getParameter("hideminimenu")==null ? true : false)) { %>
+<table summary="Mini ToolBar" width="100%" cellspacing="0" cellpadding="3" border="0">
+  <tr>
+    <td align="left">
+    	<table summary="Left Logo">
+    	<tr><td>
+<% if (sPathLogo.length()==0)  	
+    	out.write("<a href=\"#\" title=\"Home Page\"><img alt=\"Company Logo\" src=\"../skins/" + sMenuSkin + "/hglogopeq.jpg\" border=\"0\"></a>");
+   else
+    	out.write("<a href=\"#\" title=\"Home Page\"><img alt=\"Company Logo\" src=\"" + sWrkAGet + sTabMenuWrkA + "/" + sPathLogo + "\" border=\"0\"></a>");
+%>
+	</td><td align=""left>
+    	<%
+    	out.write("<FONT CLASS=\"textsmall\">"+getCookie(request, "usernm", "")+"</FONT>");
+    	out.write("<FONT CLASS=\"textsmall\">"+"&nbsp;&nbsp;"+sDaysLeft+"</FONT>");
+    	%>
+    	</td></tr>
+    	</table>
+    </td>
+    
+<!-- For adding an autologin box uncomment this HTML fragment and modify JSP code
+    <td>
+    if (isDomainGuest (GlobalDBBind, request, response) {
+      <form method="post" action="/common/login_chk.jsp">
+        e-mail:&nbsp;<input type="text" name="nickname" class="box" size="30" maxlength="100" value="administrator@hipergate-test.com">
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        password:&nbsp;<input type="text" name="pwd_text" class="box" maxlength="30" size="30" value="TEST">
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="submit" value="Login">
+      </form>
+    }
+    </td>
+-->    
+
+    <td align="right" valign="top">
+      <table summary="Top Right Mini Menu" width="248px" cellspacing="0" cellpadding="0" border="0">
+      <!-- Linea de arriba menu superior derecho -->
+      <tr>
+        <!-- col 1 -->
+        <td width="3"><img alt="esq1.gif" style="display:block" src="../images/images/tabmenu/esq1.gif" width="3" height="3" border="0"></td>
+        <td width="24" background="../images/images/tabmenu/opcion1.gif"><img style="display:block" src="../images/images/spacer.gif" height="3" width="3"></td>
+        <td width="70" background="../images/images/tabmenu/opcion1.gif"><img style="display:block" src="../images/images/spacer.gif" height="3" width="3"></td>
+        <td width="5"><img style="display:block" src="../images/images/tabmenu/opcion_med.gif" width="5" height="3" border="0"></td>
+        <!-- col 2 -->
+        <td width="24" background="../images/images/tabmenu/opcion1.gif"><img style="display:block" src="../images/images/spacer.gif" height="3" width="3"></td>
+        <td width="70" background="../images/images/tabmenu/opcion1.gif"><img style="display:block" src="../images/images/spacer.gif" height="3" width="3"></td>
+        <td width="5"><img style="display:block" src="../images/images/tabmenu/opcion_med.gif" width="5" height="3" border="0"></td>
+        <!-- col 3 -->
+        <td width="24" background="../images/images/tabmenu/opcion1.gif"><img style="display:block" src="../images/images/spacer.gif" height="3" width="3"></td>
+        <td width="100" background="../images/images/tabmenu/opcion1.gif"><img style="display:block" src="../images/images/spacer.gif" height="3" width="3"></td>
+        <td width="3"><img style="display:block" src="../images/images/tabmenu/esq2.gif" width="3" height="3" border="0"></td>
+      </tr>
+      <!-- Linea del medio menu superior derecho -->
+      <tr>
+        <!-- linea izquierda -->
+        <td width="3" background="../images/images/tabmenu/opcion_a.gif" class="menu1"><img style="display:block" src="../images/images/tabmenu/transp.gif" width="3" height="1"></td>
+        <!-- col 1 -->
+        <td width="24" align="top" class="menu1"><img src="../images/images/tabmenu/query.gif" width="24" height="22" border="0"></td>
+        <td background="../images/images/tabmenu/menubtnback.gif" width="70" align="center" class="menu1">&nbsp;<a href="javascript:void(0)" onclick="window.open('../common/qbf_list.jsp','qbflist','directories=no,toolbar=no,menubar=no,width=420,height=560,scrollbars=yes');" class="opcion">Queries</a>&nbsp;</td>
+        <td width="5" background="../images/images/tabmenu/opcion_ab.gif" class="menu1"></td>
+        <!-- col 2 -->
+        <td width="24" align="top" class="menu1"><img src="../images/images/tabmenu/help.gif" width="24" height="22" border="0"></td>
+        <td background="../images/images/tabmenu/menubtnback.gif" width="70" align="center" class="menu1">&nbsp;<a href="../help/index_en.html" class="opcion" target="_top">Help</a>&nbsp;</td>
+        <td width="5" background="../images/images/tabmenu/opcion_ab.gif" class="menu1"></td>
+        <!-- col 3 -->
+        <td width="24" align="top" class="menu1"><img src="../images/images/tabmenu/disconnect.gif" width="24" height="22" border="0"></td>
+        <td background="../images/images/tabmenu/menubtnback.gif" width="100" align="center" class="menu1">&nbsp;<a href="../common/logout.jsp" target="_top" class="opcion">Disconnect</a>&nbsp;</td>
+        <!-- linea derecha -->
+        <td width="3" background="../images/images/tabmenu/opcion_b.gif" class="menu1"><img style="display:block" src="../images/images/tabmenu/transp.gif" width="3" height="1"></td>
+      </tr>
+      <!-- Linea de abajo del menu superior derecho -->
+      <tr>
+        <!-- col 1 -->
+        <td width="3"><img style="display:block" src="../images/images/tabmenu/esq3.gif" width="3" height="3" border="0"></td>
+        <td width="24" class="opcion" background="../images/images/tabmenu/opcion2.gif"><img style="display:block" src="../images/images/spacer.gif" height="3" width="3"></td>
+        <td width="70" class="opcion" background="../images/images/tabmenu/opcion2.gif"><img style="display:block" src="../images/images/spacer.gif" height="3" width="3"></td>
+        <td width="5"><img style="display:block" src="../images/images/tabmenu/opcion_medb.gif" width="5" height="3" border="0"></td>
+        <!-- col 2 -->
+        <td width="24" class="opcion" background="../images/images/tabmenu/opcion2.gif"><img style="display:block" src="../images/images/spacer.gif" height="3" width="3"></td>
+        <td width="70" class="opcion" background="../images/images/tabmenu/opcion2.gif"><img style="display:block" src="../images/images/spacer.gif" height="3" width="3"></td>
+        <td width="5"><img style="display:block" src="../images/images/tabmenu/opcion_medb.gif" width="5" height="3" border="0"></td>
+        <!-- col 3 -->
+        <td width="24" class="opcion" background="../images/images/tabmenu/opcion2.gif"><img style="display:block" src="../images/images/spacer.gif" height="3" width="3"></td>
+        <td width="100" class="opcion" background="../images/images/tabmenu/opcion2.gif"><img style="display:block" src="../images/images/spacer.gif" height="3" width="3"></td>
+        <td width="3"><img style="display:block" src="../images/images/tabmenu/esq4.gif" width="3" height="3" border="0"></td>
+      </tr>
+      <!-- fin tabla menu -->
+      </table>
+    </td>
+  </tr>
+</table>
+<% } %>
+<!-- Main tabbed menu -->
+<table summary="Main Navigation Bar" width="<%=iTabWidth*iActive%>" cellspacing="0" cellpadding="0" border="0">
+<tr>
+  <td width="3" height="3"><img style="display:block" src="../images/images/tabmenu/esq1.gif" width="3" height="3" border="0"></td>
+<% for (t=0; t<iOptions; t++)
+     if (oTopMenu.getAccess(t)) {
+       out.write("  <td nowrap=\"nowrap\" width=\"68\" height=\"3\" class=\"menu6\" background=\"../images/images/tabmenu/opcion1.gif\"><img style=\"display:block\" src=\"../images/images/spacer.gif\" height=\"3\" width=\"3\"></td>");
+       if (t<iOptions-1) {
+         out.write("  <td nowrap=\"nowrap\" width=\"5\" height=\"3\" class=\"menu6\"><img style=\"display:block\" src=\"../images/images/tabmenu/opcion_med.gif\" width=\"5\" height=\"3\" border=\"0\"></td>");
+       } // fi(t<iOptions-1)
+   } // fi (oTopMenu.getAccess(t))
+   // next()
+%>
+  <td width="3" height="3" class="menu2"><img style="display:block" src="../images/images/tabmenu/esq2.gif" width="3" height="3" border="0"></td>
+</tr>
+<tr>
+  <td width="3" background="../images/images/tabmenu/opcion_a.gif" class="menu6"></td>
+<% out.write(sOptions);%>
+  <td width="3" background="../images/images/tabmenu/opcion_b.gif" class="menu6"></td>
+</tr>
+<tr>
+  <td width="3" height="3"><img style="display:block" src="../images/images/tabmenu/esq3.gif" width="3" height="3" border="0"></td>
+<% for (t=0; t<iOptions; t++)
+     if (oTopMenu.getAccess(t)) {
+       if (t==Selected)
+         out.write("<td width=\"68\" height=\"3\" class=\"menu6\"></td>");
+       else
+         out.write("<td width=\"68\" height=\"3\" class=\"menu6\" background=\"../images/images/tabmenu/opcion2.gif\"><img style=\"display:block\" src=\"../images/images/spacer.gif\" height=\"3\" width=\"3\"></td>");
+       if (t<iOptions-1) {
+         if (t==Selected-1)
+           out.write("<td width=\"5\" height=\"3\" class=\"menu6\"><img style=\"display:block\" src=\"../images/images/tabmenu/opcion_medb_izq.gif\" width=\"5\" height=\"3\" border=\"0\"></td>");
+         else if (t==Selected)
+           out.write("<td width=\"5\" height=\"3\" class=\"menu6\"><img style=\"display:block\" src=\"../images/images/tabmenu/opcion_medb_der.gif\" width=\"5\" height=\"3\" border=\"0\"></td>");
+         else
+           out.write("<td width=\"5\" height=\"3\" class=\"menu6\"><img style=\"display:block\" src=\"../images/images/tabmenu/opcion_medb.gif\" width=\"5\" height=\"3\" border=\"0\"></td>");
+       } // fi(t<iOptions-1)
+     } // fi (oTopMenu.getAccess(t))
+  // next()
+%>
+  <td width="3" height="3"><img style="display:block" src="../images/images/tabmenu/esq4.gif" width="3" height="3" border="0"></td>
+</tr>
+</table>
+
+<table summary="Submenu bar" width="<%=iTabWidth*iActive%>" cellspacing="0" cellpadding="0" border="0">
+  <tr> 
+    <td width="3" height="3"><img style="display:block" src="../images/images/tabmenu/esq1.gif" width="3" height="3" border="0"></td>
+    <td class="menu7"><img style="display:block" src="../images/images/spacer.gif" height="1" width="1"></td>
+    <td width="3" height="3" class="menu8"><img style="display:block" src="../images/images/tabmenu/esq2.gif" width="3" height="3" border="0"></td>
+  </tr>
+
+  <tr> 
+    <td width="3" background="../images/images/tabmenu/opcion_a.gif" class="menu2"><img style="display:block" src="../images/images/tabmenu/transp.gif" width="3" height="1"></td>
+    <td>
+      <table width="100%" cellspacing="0" cellpadding="0" border="0"><tr>
+<% out.write (sSubOptions); %>
+        <td width="100%" class="menu8"></td>
+      </tr></table>
+    </td>
+    <td width="3" background="../images/images/tabmenu/opcion_b.gif" class="menu2"><img style="display:block" src="../images/images/tabmenu/transp.gif" width="3" height="1"></td>
+  </tr>
+  <tr> 
+    <td width="3" height="3"><img style="display:block" src="../images/images/tabmenu/esq3.gif" width="3" height="3" border="0"></td>
+    <td class="menu2" background="../images/images/tabmenu/opcion2.gif"></td>
+    <td width="3" height="3"><img style="display:block" src="../images/images/tabmenu/esq4.gif" width="3" height="3" border="0"></td>
+  </tr>
+</table> 
+<%
+  if (getCookie(request,"tour","0").equals("1")) {
+    out.write("<SCRIPT language=\"JavaScript\" src=\"/demo/tour_js.jsp?width="+(iTabWidth*iActive)+"&selected="+Selected+"&subselected="+SubSelected+"\"></SCRIPT>");
+  }
+%>

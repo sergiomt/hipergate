@@ -1,0 +1,49 @@
+<%@page pageEncoding="UTF-8"%>
+    <table summary="Topmost row" width="100%" cellspacing="0" cellpadding="0" border="0">
+      <tr>
+        <td align="left"><a href="../index.html" title="Home page"><img src="../skins/<%=sSkin%>/hglogopeq.jpg" border="0"></a></td>
+        <td align="right">
+          <table summary="Top right menu" height="28px" cellspacing="0" cellpadding="0" border="0">
+          <!-- Linea de arriba menu superior derecho -->
+          <tr height="3">
+            <!-- col 1 -->
+            <td width="3"  height="3"><img src="../images/images/tabmenu/esq1.gif" width="3" height="3" border="0"></td>
+            <td width="24" height="3" background="../images/images/tabmenu/opcion1.gif"><img src="../images/images/spacer.gif" width="24" height="3" border="0" alt=""></td>
+            <td width="64" height="3" background="../images/images/tabmenu/opcion1.gif"><img src="../images/images/spacer.gif" width="64" height="3" border="0" alt=""></td>
+            <td width="5"  height="3"><img src="../images/images/tabmenu/opcion_med.gif" width="5" height="3" border="0"></td>
+            <!-- col 2 -->
+            <td width="24" height="3" background="../images/images/tabmenu/opcion1.gif"><img src="../images/images/spacer.gif" width="24" height="3" border="0" alt=""></td>
+            <td width="120" height="3" background="../images/images/tabmenu/opcion1.gif"><img src="../images/images/spacer.gif" width="120" height="3" border="0" alt=""></td>
+            <td width="3" height="3"><img src="../images/images/tabmenu/esq2.gif" width="3" height="3" border="0"></td>
+          </tr>
+          <!-- Linea del medio menu superior derecho -->
+          <tr height="22">
+            <!-- linea izquierda -->
+            <td width="3" background="../images/images/tabmenu/opcion_a.gif" class="menu1"><img src="../images/images/tabmenu/transp.gif" width="3" height="1"></td>
+            <!-- col 1 -->
+            <td width="24" align="top" class="menu1"><img src="../images/images/tabmenu/kgicon.gif" width="24" height="22" border="0"></td>
+            <td width="64" align="center" class="menu1"><a href="../common/desktop.jsp" class="opcion" target="_top" title="Main Menu">Menu</a></td>
+            <td width="5" background="../images/images/tabmenu/opcion_ab.gif" class="menu1"></td>
+            <!-- col 2 -->
+            <td width="24" align="top" class="menu1"><img src="../images/images/tabmenu/disconnect.gif" width="24" height="22" border="0"></td>
+            <td width="120" align="center" class="menu1"><a href="../common/logout.jsp" target="_top" class="opcion" title="Disconnect">Disconnect</a></td>
+            <!-- linea derecha -->
+            <td width="3" background="../images/images/tabmenu/opcion_b.gif" class="menu1"><img src="../images/images/tabmenu/transp.gif" width="3" height="1"></td>
+          </tr>
+          <!-- Linea de abajo del menu superior derecho -->
+          <tr height="3">
+            <!-- col 1 -->
+            <td width="3"  height="3"><img src="../images/images/tabmenu/esq3.gif" width="3" height="3" border="0"></td>
+            <td width="24" height="3" background="../images/images/tabmenu/opcion2.gif"><img src="../images/images/spacer.gif" width="24" height="3" border="0" alt=""></td>
+            <td width="64" height="3" background="../images/images/tabmenu/opcion2.gif"><img src="../images/images/spacer.gif" width="64" height="3" border="0" alt=""></td>
+            <td width="5"  height="3"><img src="../images/images/tabmenu/opcion_medb.gif" width="5" height="3" border="0"></td>
+            <!-- col 2 -->
+            <td width="24" height="3" background="../images/images/tabmenu/opcion2.gif"><img src="../images/images/spacer.gif" width="24" height="3" border="0" alt=""></td>
+            <td width="120" height="3" background="../images/images/tabmenu/opcion2.gif"><img src="../images/images/spacer.gif" width="120" height="3" border="0" alt=""></td>
+            <td width="3"  height="3"><img src="../images/images/tabmenu/esq4.gif" width="3" height="3" border="0"></td>
+          </tr>
+          </table>
+          <!-- fin tabla menu -->
+        </td>  
+      </tr>
+    </table>

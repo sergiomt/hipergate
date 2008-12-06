@@ -1,0 +1,23 @@
+<%!
+
+    public static String quote (String sTxContent) {
+    
+        if (null==sTxContent) return "";
+        
+        int iLen = sTxContent.length();
+        StringBuffer oQuote = new StringBuffer(sTxContent.length()+100);
+        for (int c=0; c<iLen; c++) {
+          char cAt = sTxContent.charAt(c);
+          if (cAt=='"')
+            oQuote.append("\\\"");
+          else if (cAt=='\r')
+            oQuote.append("\\r");
+          else if (cAt=='\n')
+            oQuote.append("\\n");
+          else
+            oQuote.append(cAt);                    
+        }
+        return oQuote.toString();  
+    }
+
+%>

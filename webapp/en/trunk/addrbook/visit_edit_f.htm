@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//ES" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">  
+<!-- +-----------------------------------------------------+ -->
+<!-- | Marco principal de edición de visitas de vendedores | -->
+<!-- | (c) KnowGate 2005                                   | -->
+<!-- +-----------------------------------------------------+ -->
+<HTML>
+  <HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+    <TITLE>hipergate :: Edit Activity</TITLE>
+    <SCRIPT LANGUAGE="javascript" SRC="../javascript/getparam.js"></SCRIPT>
+    <SCRIPT LANGUAGE="javascript" SRC="../javascript/trim.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="true">
+    <!--
+      function setURL() {  
+        meettext.location = "visit_edit1.jsp?id_domain=" + getURLParam("id_domain") + "&n_domain=" + escape(getURLParam("n_domain")) + "&gu_workarea=" + getURLParam("gu_workarea") + "&gu_sales_man=" + getURLParam("gu_sales_man") + (getURLParam("gu_contact")==null ? "" : "&gu_contact="+getURLParam("gu_contact"));
+      }
+    //-->
+    </SCRIPT>
+  </HEAD>
+  <FRAMESET NAME="meetingtop" ROWS="100%,*" BORDER="0" FRAMEBORDER="0" onLoad="setURL()">
+    <FRAME NAME="meettext" FRAMEBORDER="no" MARGINWIDTH="8" MARGINHEIGHT="0" NORESIZE>
+    <FRAME NAME="meetexec" FRAMEBORDER="no" MARGINWIDTH="8 marginheight=" NORESIZE>
+  </FRAMESET>
+  <NOFRAMES>
+      <BODY>
+	<P>This page use frames, but your web browser does not handle them</P>
+      </BODY>
+  </NOFRAMES>
+</HTML>

@@ -1,0 +1,122 @@
+<%
+  final int Sales=16;
+
+  if (autenticateSession(GlobalDBBind, request, response)<0) return;
+  
+  response.addHeader ("Pragma", "no-cache");
+  response.addHeader ("cache-control", "no-store");
+  response.setIntHeader("Expires", 0);
+
+  String sSkin = getCookie(request, "skin", "xp");
+  String sLanguage = getNavigatorLanguage(request);
+  String sFace = nullif(request.getParameter("face"),getCookie(request,"face","crm"));
+  int iAppMask = Integer.parseInt(getCookie(request, "appmask", "0"));
+
+  String id_user = getCookie (request, "userid", null);  
+  String id_domain = request.getParameter("id_domain");
+  String n_domain = request.getParameter("n_domain");
+  String gu_workarea = request.getParameter("gu_workarea");
+  String gu_meeting = nullif(request.getParameter("gu_meeting"));
+  String nm_room = nullif(request.getParameter("nm_room"));
+  String gu_fellow = nullif(request.getParameter("gu_fellow"));
+  String gu_contact = nullif(request.getParameter("gu_contact"));
+  boolean bo_private = false;
+  
+  String dt_start = null;
+  String dt_end = null;
+  String tm_hour = request.getParameter("hour");
+  Meeting oMeet;
+  MemberAddress oMbrAddr = null;
+  DBSubset oFellows, oContacts, oBookedRooms=null;
+  String sFellows="", sContacts="", sRoomTypesLookUp="", sMeetingLocationsLookUp="";
+
+  DBSubset oRooms = GlobalCacheClient.getDBSubset("k_rooms.nm_room[" + gu_workarea + "]");
+  int iRooms = 0;
+  DBSubset oRecentUsers = null;
+  
+  int iRecentUsers = 0;  
+  StringBuffer sRecentList = new StringBuffer(800);
+  
+  boolean bIsGuest = true;
+
+  JDCConnection oConn = null;
+  ACLUser oCreator = new ACLUser();
+    
+  try {
+
+    oConn = GlobalDBBind.getConnection("meetingedit");
+    
+    bIsGuest = isDomainGuest (GlobalCacheClient, GlobalDBBind, request, response);
+
+      oRecentUsers = new DBSubset (DB.k_meetings+" m, "+DB.k_x_meeting_fellow+" f",
+  				   "DISTINCT(f."+DB.gu_fellow+")",
+  				   "m."+DB.gu_meeting+"="+"f."+DB.gu_meeting+" AND m."+DB.gu_fellow+"=?", 20);
+      iRecentUsers = oRecentUsers.load(oConn, new Object[]{gu_fellow});    
+      if (iRecentUsers>0) {
+        sRecentList.append("'"+oRecentUsers.getString(0,0)+"'");
+      }
+      for (int r=1; r<iRecentUsers; r++) {
+        sRecentList.append(",'"+oRecentUsers.getString(0,r)+"'");
+      }
+
+    if (gu_meeting.length()==0) {
+      oMeet = new Meeting();
+      dt_end = dt_start = nullif(request.getParameter("date"), DBBind.escape(new Date(), "shortDate"));
+    }
+    else {
+      oMeet = new Meeting(oConn, gu_meeting);
+      gu_fellow = oMeet.getString(DB.gu_fellow);
+      dt_start = oMeet.getDateFormated(DB.dt_start,"yyyy-MM-dd");
+      dt_end = oMeet.getDateFormated(DB.dt_end,"yyyy-MM-dd");
+      bo_private = (oMeet.getShort(DB.bo_private)!=(short)0);
+      oFellows = oMeet.getFellows(oConn);
+      for (int f=0; f< oFellows.getRowCount(); f++)
+        sFellows+="<OPTION VALUE=\"" + oFellows.getString(0,f) + "\" "+(oFellows.getRowCount()==1 ? "SELECTED" : "")+">" + oFellows.getStringNull(1,f,"") + " " + oFellows.getStringNull(2,f,"") + "</OPTION>";
+      oContacts = oMeet.getContacts(oConn);      
+      for (int c=0; c<oContacts.getRowCount(); c++)
+        sContacts+="<OPTION VALUE=\"" + oContacts.getString(0,c) + "\">" + oContacts.getStringNull(1,c,"") + " " + oContacts.getStringNull(2,c,"") + "</OPTION>";
+      oBookedRooms = oMeet.getRooms(oConn);
+      if (oMeet.isNull(DB.gu_writer))
+        oCreator.load(oConn, new Object[]{oMeet.getString(DB.gu_fellow)});
+      else
+        oCreator.load(oConn, new Object[]{oMeet.getString(DB.gu_writer)});      
+      if (!oMeet.isNull(DB.gu_address)) {
+        oMbrAddr = new MemberAddress();
+        oMbrAddr.load(oConn, oMeet.getString(DB.gu_address));
+      }
+    }
+
+    if (null==oRooms) {
+      oRooms = new DBSubset (DB.k_rooms,
+       			     DB.nm_room + "," + DB.tx_company + "," + DB.tx_location + "," + DB.tp_room + "," + DB.tx_comments,
+      			     DB.bo_available + "=1 AND " + DB.gu_workarea + "='" + gu_workarea + "' ORDER BY 4,1", 50);
+      
+      iRooms = oRooms.load (oConn);
+            
+      GlobalCacheClient.putDBSubset("k_rooms", "k_rooms.nm_room[" + gu_workarea + "]", oRooms);           
+    } // fi(oRooms)
+    else {
+      iRooms = oRooms.getRowCount();
+    }
+    
+    if (sFace.equals("healthcare")) {
+      sRoomTypesLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_rooms_lookup, gu_workarea, DB.tp_room, sLanguage);
+      sMeetingLocationsLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_meetings_lookup, gu_workarea, DB.gu_address, sLanguage);
+    }    
+  }
+  catch (SQLException e) {  
+    oMeet = null;
+    if (oConn!=null)
+      if (!oConn.isClosed()) oConn.close("meetingedit");
+
+    oConn=null;
+    
+    if (com.knowgate.debug.DebugFile.trace) {      
+      com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "SQLException", e.getMessage());
+    }
+     
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_close"));
+  }
+  
+  if (null==oConn) return;
+%>

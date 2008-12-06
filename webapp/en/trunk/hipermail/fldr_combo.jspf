@@ -1,0 +1,40 @@
+<%!
+  public static void paintFolders (JDCConnection oConn, String sParentGuid, String sLanguage, String sLevel, StringBuffer oOutBuffer)
+    throws java.sql.SQLException {
+      String sLabel;
+      DBSubset oSubfolders = new DBSubset (DB.k_categories + " c, " + DB.k_cat_tree + " t",
+      				           DB.gu_category + "," + DB.nm_category,
+      				           "c."+DB.gu_category+"=t."+DB.gu_child_cat + " AND t."+DB.gu_parent_cat+"=?", 10);
+      int iSubfolders = oSubfolders.load(oConn, new Object[]{sParentGuid});
+      
+      for (int f=0; f<iSubfolders; f++) {
+        java.sql.PreparedStatement oStmt = oConn.prepareStatement("SELECT " + DB.tr_category + " FROM " + DB.k_cat_labels + " WHERE " + DB.gu_category + "=? AND " + DB.id_language + "=?");
+        oStmt.setString (1, oSubfolders.getString(0,f));
+        oStmt.setString (2, sLanguage);
+        java.sql.ResultSet oRSet = oStmt.executeQuery();
+        if (oRSet.next())
+          sLabel = oRSet.getString(1);
+        else
+          sLabel = null;
+        oRSet.close();
+        if (null==sLabel) {
+          oStmt.setString (2, "en");
+          oRSet = oStmt.executeQuery();
+          if (oRSet.next())
+            sLabel = oRSet.getString(1);
+          else
+            sLabel = null;
+          oRSet.close();
+          if (null==sLabel) {
+	    sLabel = oSubfolders.getString(1,f);
+	  }
+        }
+        oStmt.close();
+        
+        if (!oSubfolders.getString(1,f).endsWith("_inbox") && !oSubfolders.getString(1,f).endsWith("_outbox"))
+          oOutBuffer.append("<OPTION VALUE=\"" + oSubfolders.getString(0,f) + "\">" + sLevel + sLabel + "</OPTION>");
+        
+        paintFolders (oConn, oSubfolders.getString(0,f), sLanguage, sLevel+"&nbsp;&nbsp;&nbsp;&nbsp;", oOutBuffer);
+      } // next
+    }
+%>

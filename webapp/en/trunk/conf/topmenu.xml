@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menu>
+  <options>
+    <option name="start">
+      <mask/><title><![CDATA[Home]]></title><href>../common/desktop.jsp?selected=0&amp;subselected=0</href><forbid/>
+      <suboptions>
+          <option name="home">
+            <mask/><title><![CDATA[Main Page]]></title><href>../common/desktop.jsp?selected=0&amp;subselected=0</href><forbid/>
+            <suboptions/>
+          </option>
+          <option name="pwdman">
+            <mask>24</mask><title><![CDATA[Passwords Manager]]></title><href>../pwdman/pwdmanhome.jsp?selected=0&amp;subselected=1</href><forbid/>
+            <suboptions/>
+          </option>
+      </suboptions>
+    </option>
+    <option name="collabtools">
+      <mask>17</mask><title><![CDATA[Collaborative Tools]]></title><href>../addrbook/adrbkhome.jsp?selected=1&amp;subselected=-1</href><forbid/>
+      <suboptions>
+          <option name="hipermail">
+            <mask>21</mask><title><![CDATA[Mail]]></title><href>../hipermail/mail_top_f.htm?selected=1&amp;subselected=0</href><forbid><![CDATA[javascript:alert('The WebMail is disabled')]]></forbid>
+            <suboptions/>
+          </option>
+          <option name="calendar">
+            <mask/><title><![CDATA[Calendar]]></title><href>../addrbook/schedule.jsp?selected=1&amp;subselected=1</href><forbid/>
+            <suboptions/>
+          </option>
+          <option name="forum">
+            <mask/><title><![CDATA[Forum]]></title><href>../forums/forums_top_f.htm?selected=1&amp;subselected=2</href><forbid/>
+            <suboptions/>
+          </option>
+          <option name="directory">
+            <mask/><title><![CDATA[Directory]]></title><href>../addrbook/fellow_listing.jsp?selected=1&amp;subselected=3</href><forbid/>
+            <suboptions/>
+          </option>
+          <option name="resources">
+            <mask>owner</mask><title><![CDATA[Resources]]></title><href>../addrbook/room_listing.jsp?selected=1&amp;subselected=4</href><forbid><![CDATA[javascript:alert('You are not allowed to edit shared resources')]]></forbid>
+            <suboptions/>
+          </option>
+          <option name="calls">
+            <mask/><title><![CDATA[Calls]]></title><href>../addrbook/phonecall_listing.jsp?selected=1&amp;subselected=5</href><forbid/>
+            <suboptions/>
+          </option>
+          <option name="worktime">
+            <mask/><title><![CDATA[Timetables]]></title><href>../addrbook/workcalendar_list.jsp?selected=1&amp;subselected=6</href><forbid/>
+            <suboptions/>
+          </option>
+      </suboptions>
+
+    </option>
+    <option name="crm">
+      <mask>16</mask><title><![CDATA[Contact Management]]></title><href>../crm/crmhome.jsp?selected=2&amp;subselected=-1</href><forbid/>
+      <suboptions>
+          <option name="companies">
+            <mask/><title><![CDATA[Companies]]></title><href>../crm/company_listing_f.jsp?selected=2&amp;subselected=0</href><forbid/>
+            <suboptions/>
+          </option>
+          <option name="individuals">
+            <mask/><title><![CDATA[Individuals]]></title><href>../crm/contact_listing_f.jsp?selected=2&amp;subselected=1</href><forbid/>
+            <suboptions/>
+          </option>
+          <option name="leads">
+            <mask/><title><![CDATA[Opportunities]]></title><href>../crm/oportunity_listing_f.jsp?selected=2&amp;subselected=2</href><forbid/>
+            <suboptions/>
+          </option>
+          <option name="lists">
+            <mask/><title><![CDATA[Lists]]></title><href>../crm/list_listing_f.jsp?selected=2&amp;subselected=3</href><forbid/>
+            <suboptions/>
+          </option>
+          <option name="salesmen">
+            <mask/><title><![CDATA[Sellers]]></title><href>../crm/salesmen_listing.jsp?selected=2&amp;subselected=4</href><forbid/>
+            <suboptions/>
+          </option>
+          <option name="suppliers">
+            <mask/><title><![CDATA[Suppliers]]></title><href>../crm/suppliers_listing.jsp?selected=2&amp;subselected=5</href><forbid/>
+            <suboptions/>
+          </option>
+      </suboptions>
+    </option>
+    <option name="campaigns">
+      <mask>18</mask><title><![CDATA[Marketing]]></title><href>../marketing/campaign_list.jsp?selected=3&amp;subselected=0</href><forbid/>
+      <suboptions>
+          <option name="campaigns">
+            <mask/><title><![CDATA[Campaigns]]></title><href>../marketing/campaign_list.jsp?selected=3&amp;subselected=0</href><forbid/>
+          </option>      
+      </suboptions>
+    </option>
+    <option name="projtrack">
+      <mask>10,11,12</mask><title><![CDATA[Project Management]]></title><href>../projtrack/bug_manager.jsp?selected=4&amp;subselected=-1</href><forbid/>
+      <suboptions>
+          <option name="projects">
+            <mask>12</mask><title><![CDATA[Projects]]></title><href>../projtrack/project_listing.jsp?selected=4&amp;subselected=0</href><forbid><![CDATA[javascript:alert('Your privileges level does not allow you to edit projects')]]></forbid>
+            <suboptions/>
+          </option>
+          <option name="duties_by_project">
+            <mask>11</mask><title><![CDATA[Duties by Projects]]></title><href>../projtrack/duty_list.jsp?selected=4&amp;subselected=1</href><forbid><![CDATA[javascript:alert('Your privileges level does not allow you to edit duties')]]></forbid>
+            <suboptions/>
+          </option>
+          <option name="duties_by_resource">
+            <mask>11</mask><title><![CDATA[Duties by Resource]]></title><href>../projtrack/duty_resource.jsp?selected=4&amp;subselected=2</href><forbid><![CDATA[javascript:alert('Your privileges level does not allow you to edit duties')]]></forbid>
+            <suboptions/>
+          </option>
+          <option name="duties_entry">
+            <mask>11</mask><title><![CDATA[Work Reports]]></title><href>../projtrack/duty_entry.jsp?selected=4&amp;subselected=3</href><forbid><![CDATA[javascript:alert('Your privileges level does not allow you to edit duties')]]></forbid>
+            <suboptions/>
+          </option>
+          <option name="bugs">
+            <mask>10</mask><title><![CDATA[Incidents]]></title><href>../projtrack/bug_list.jsp?selected=4&amp;subselected=4</href><forbid><![CDATA[javascript:alert('Your privileges level does not allow you to edit incidents')]]></forbid>
+            <suboptions/>
+          </option>
+      </suboptions>
+    </option>
+    <option name="webbuilder">
+      <mask>14</mask><title><![CDATA[Content production]]></title><href>../webbuilder/wbhome.jsp?selected=5&amp;subselected=-1</href><forbid/>
+      <suboptions>
+          <option name="webdocs">
+            <mask/><title><![CDATA[Documents]]></title><href>../webbuilder/pageset_listing.jsp?selected=5&amp;subselected=0&amp;doctype=newsletter</href><forbid/>
+            <suboptions/>
+          </option>
+          <option name="webimgs">
+            <mask/><title><![CDATA[Images]]></title><href>../webbuilder/image_listing.jsp?selected=5&amp;subselected=1</href><forbid/>
+            <suboptions/>
+          </option>
+          <option name="webjobs">
+            <mask/><title><![CDATA[Scheduled jobs]]></title><href>../jobs/job_list.jsp?orderby=5&amp;selected=5&amp;subselected=2&amp;list_title=Docs.Distribution&amp;id_command=MAIL</href><forbid/>
+            <suboptions/>
+          </option>
+          <option name="webxslt">
+            <mask/><title><![CDATA[Templates]]></title><href>../webbuilder/microsite_listing.jsp?selected=5&amp;subselected=3</href><forbid/>
+            <suboptions/>
+          </option>
+      </suboptions>
+    </option>
+    <option name="vlibrary">
+      <mask>15</mask><title><![CDATA[Corporate Library]]></title><href>../vdisk/cat_top_f.htm?selected=6&amp;subselected=0</href><forbid/>
+      <suboptions>
+          <option name="vdisk">
+            <mask/><title><![CDATA[Directory]]></title><href>../vdisk/cat_top_f.htm?selected=6&amp;subselected=0</href><forbid/>
+            <suboptions/>
+          </option>
+          <option name="wiki">
+            <mask/><title><![CDATA[Directory]]></title><href>../wiki/wiki_top_f.htm?selected=6&amp;subselected=1</href><forbid/>
+            <suboptions/>
+          </option>
+      </suboptions>
+    </option>
+    <option name="shop">
+      <mask>20</mask><title><![CDATA[Shop]]></title><href>../shop/shophome.jsp?selected=7&amp;subselected=-1</href><forbid/>
+      <suboptions>
+          <option name="catalogs">
+            <mask/><title><![CDATA[Catalogs]]></title><href>../shop/shophome.jsp?selected=7&amp;subselected=0</href><forbid/>
+            <suboptions/>
+          </option>
+          <option name="orders">
+            <mask/><title><![CDATA[Orders]]></title><href>../shop/order_list.jsp?selected=7&amp;subselected=1</href><forbid/>
+            <suboptions/>
+          </option>
+          <option name="advices">
+            <mask/><title><![CDATA[Despatch Advices]]></title><href>../shop/despatch_list.jsp?selected=7&amp;subselected=2</href><forbid/>
+            <suboptions/>
+          </option>
+          <option name="invoices">
+            <mask/><title><![CDATA[Invoices]]></title><href>../shop/invoice_list.jsp?selected=7&amp;subselected=3</href><forbid/>
+            <suboptions/>
+          </option>
+          <option name="salepoints">
+            <mask>admin</mask><title><![CDATA[Sale Points]]></title><href>../shop/salepoint_listing.jsp?selected=7&amp;subselected=4</href><forbid/>
+            <suboptions/>
+          </option>
+<!--
+          <option name="warehouses">
+            <mask>admin</mask><title><![CDATA[Warehouses]]></title><href>../shop/warehouse_listing.jsp?selected=7&amp;subselected=5</href><forbid/>
+            <suboptions/>
+          </option>
+-->
+          <option name="shopxslt">
+            <mask>admin</mask><title><![CDATA[Templates]]></title><href>../shop/doc_templates.jsp?selected=7&amp;subselected=6</href><forbid/>
+            <suboptions/>
+          </option>
+      </suboptions>
+    </option>
+    <option name="training">
+      <mask>22</mask><title><![CDATA[Training]]></title><href>../training/courses_listing.jsp?selected=8&amp;subselected=-1</href><forbid/>
+      <suboptions>
+          <option name="courses">
+            <mask/><title><![CDATA[Formative Catalog]]></title><href>../training/courses_listing.jsp?selected=8&amp;subselected=0</href><forbid/>
+            <suboptions/>
+          </option>
+          <option name="subjects">
+            <mask/><title><![CDATA[Subjects]]></title><href>../training/subjects_listing.jsp?selected=8&amp;subselected=1</href><forbid/>
+            <suboptions/>
+          </option>
+          <option name="academiccourses">
+            <mask/><title><![CDATA[Courses]]></title><href>../training/acourses_listing.jsp?selected=8&amp;subselected=2</href><forbid/>
+            <suboptions/>
+          </option>
+          <option name="alumni">
+            <mask/><title><![CDATA[Students]]></title><href>../training/alumni_listing_f.jsp?selected=8&amp;subselected=3&amp;field=nm_course&amp;find=</href><forbid/>
+            <suboptions/>
+          </option>
+          <option name="absentisms">
+            <mask/><title><![CDATA[Absentisms]]></title><href>../training/absents_listing.jsp?selected=8&amp;subselected=4</href><forbid/>
+            <suboptions/>
+          </option>
+      </suboptions>
+    </option>
+    <option name="configuration">
+      <mask>admin</mask><title><![CDATA[Configuration]]></title><href>../vdisk/usr_top_f.htm?selected=9&amp;subselected=0</href><forbid/>
+      <suboptions>
+  	  <option name="security">
+            <mask/><title><![CDATA[Security]]></title><href>../vdisk/usr_top_f.htm?selected=9&amp;subselected=0</href><forbid/>
+            <suboptions/>
+          </option>
+  	  <option name="connections">
+            <mask/><title><![CDATA[Connections]]></title><href>../admin/connectionpool.jsp?selected=9&amp;subselected=1</href><forbid/>
+            <suboptions/>
+          </option>
+  	  <option name="cache">
+            <mask/><title><![CDATA[Cache]]></title><href>../admin/cache.jsp?selected=9&amp;subselected=2</href><forbid/>
+            <suboptions/>
+          </option>
+  	  <option name="cookies">
+            <mask/><title><![CDATA[Cookies]]></title><href>../admin/viewcookies.html?selected=9&amp;subselected=3</href><forbid/>
+            <suboptions/>
+          </option>
+  	  <option name="environment">
+            <mask/><title><![CDATA[Environment]]></title><href>../admin/environment.jsp?selected=9&amp;subselected=4</href><forbid/>
+            <suboptions/>
+          </option>
+  	  <option name="jobs">
+            <mask/><title><![CDATA[Batches]]></title><href>../jobs/job_list.jsp?orderby=5&amp;selected=9&amp;subselected=5</href><forbid/>
+            <suboptions/>
+          </option>
+  	  <option name="lookups">
+            <mask/><title><![CDATA[Lookups]]></title><href>../admin/lookups.jsp</href><forbid/>
+            <suboptions/>
+          </option>
+  	  <option name="SQL">
+            <mask/><title><![CDATA[SQL]]></title><href>../admin/sql.htm</href><forbid/>
+            <suboptions/>
+          </option>
+      </suboptions>
+    </option>
+  </options>
+</menu>

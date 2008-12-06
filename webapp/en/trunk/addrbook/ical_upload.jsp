@@ -1,0 +1,95 @@
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><% 
+/*
+  Form for editing a DBPersist subclass object.
+  
+  Copyright (C) 2003  Know Gate S.L. All rights reserved.
+                      C/Oña, 107 1º2 28050 Madrid (Spain)
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. The end-user documentation included with the redistribution,
+     if any, must include the following acknowledgment:
+     "This product includes software parts from hipergate
+     (http://www.hipergate.org/)."
+     Alternately, this acknowledgment may appear in the software itself,
+     if and wherever such third-party acknowledgments normally appear.
+
+  3. The name hipergate must not be used to endorse or promote products
+     derived from this software without prior written permission.
+     Products derived from this software may not be called hipergate,
+     nor may hipergate appear in their name, without prior written
+     permission.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+  You should have received a copy of hipergate License with this code;
+  if not, visit http://www.hipergate.org or mail to info@hipergate.org
+*/
+    
+  if (autenticateSession(GlobalDBBind, request, response)<0) return;
+  
+  response.addHeader ("Pragma", "no-cache");
+  response.addHeader ("cache-control", "no-store");
+  response.setIntHeader("Expires", 0);
+
+  String sSkin = getCookie(request, "skin", "default");
+  String sLanguage = getNavigatorLanguage(request);  
+%>
+<HTML LANG="<% out.write(sLanguage); %>">
+<HEAD>
+  <TITLE>hipergate :: Load Calendar</TITLE>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
+    <!--
+
+      function validate() {
+        var frm = window.document.forms[0];
+        
+        if (frm.icalfile.value.length==0) {
+          alert ("iCalendar file is required");
+          return false;
+        }
+        return true;
+      } // validate;
+    //-->
+  </SCRIPT>
+</HEAD>
+<BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()">
+  <TABLE WIDTH="100%">
+    <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Load Calendar</FONT></TD></TR>
+  </TABLE>  
+  <FORM ENCTYPE="multipart/form-data" METHOD="post" ACTION="ical_store.jsp" onSubmit="return validate()">
+
+    <TABLE CLASS="formback">
+      <TR><TD>
+        <TABLE WIDTH="100%" CLASS="formfront">
+          <TR>
+            <TD ALIGN="right" NOWRAP><FONT CLASS="formstrong">iCalendar File</FONT></TD>
+            <TD ALIGN="left"><INPUT TYPE="file" NAME="icalfile" SIZE="40" ></TD>
+          </TR>
+          <TR>
+            <TD COLSPAN="2"><HR></TD>
+          </TR>
+          <TR>
+    	    <TD COLSPAN="2" ALIGN="center">
+              <INPUT TYPE="submit" ACCESSKEY="l" VALUE="Load" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+l">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+    	      <BR><BR>
+    	    </TD>
+    	  </TR>            
+        </TABLE>
+      </TD></TR>
+    </TABLE>                 
+  </FORM>
+</BODY>
+</HTML>

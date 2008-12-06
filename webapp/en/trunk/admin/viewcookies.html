@@ -1,0 +1,57 @@
+<HTML>
+  <HEAD>
+    <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache">
+    <META HTTP-EQUIV="Pragma" CONTENT="no-cache">  
+    <TITLE>hipergate :: Show Cookies</TITLE>
+    <LINK REL="stylesheet" TYPE="text/css" HREF="../skins/xp/styles.css">
+    <SCRIPT LANGUAGE="javascript" SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+      <!--      
+        function displayCookies() {
+          var frm=document.forms[0];
+          
+          frm.domainid.value = getCookie("domainid");
+          frm.domainnm.value = getCookie("domainnm");
+          frm.skin.value = getCookie("skin");
+          frm.userid.value = getCookie("userid");
+          frm.authstr.value = getCookie("authstr");
+          frm.workarea.value = getCookie("workarea");                          
+          frm.appmask.value = getCookie("appmask");
+          frm.face.value = getCookie("face");         
+	}
+
+        function deleteCookies() {
+	  	  
+	  deleteCookie ("domainid");
+	  deleteCookie ("domainnm");
+	  deleteCookie ("workarea");
+	  deleteCookie ("path_logo");
+	  deleteCookie ("skin");
+	  deleteCookie ("userid");
+	  deleteCookie ("authstr");
+	  deleteCookie ("appmask");
+	  deleteCookie ("idaccount"); 
+	  deleteCookie ("face"); 
+	}
+	
+      //-->
+    </SCRIPT>
+  </HEAD>
+  <BODY onLoad="displayCookies()" >
+    <FORM>
+      <TABLE CELLSPACING="4" CELLPADDING="4">
+      <TR><TD CLASS="formplain">Domain Id.</TD><TD><INPUT TYPE="text" NAME="domainid"></TD></TR>
+      <TR><TD CLASS="formplain">Domain Nm.</TD><TD><INPUT TYPE="text" NAME="domainnm"></TD></TR>
+      <TR><TD CLASS="formplain">User Id.</TD><TD><INPUT TYPE="text" NAME="userid" SIZE="36"></TD></TR>
+      <TR><TD CLASS="formplain">Auth Str.</TD><TD><INPUT TYPE="text" NAME="authstr"></TD></TR>
+      <TR><TD CLASS="formplain">Skin.</TD><TD><INPUT TYPE="text" NAME="skin"></TD></TR>
+      <TR><TD CLASS="formplain">Face</TD><TD><INPUT TYPE="text" NAME="face"></TD></TR>
+      <TR><TD CLASS="formplain">Workarea.</TD><TD><INPUT TYPE="text" NAME="workarea" SIZE="36"></TD></TR>
+      <TR><TD CLASS="formplain">App. Mask</TD><TD><INPUT TYPE="text" NAME="appmask"></TD></TR>
+      </TABLE>
+      <INPUT CLASS="pushbutton" TYPE="button" VALUE="Back" onclick="window.history.back()">
+      &nbsp;&nbsp;
+      <INPUT CLASS="pushbutton" TYPE="button" VALUE="Delete All" onclick="deleteCookies()">
+    </FORM>
+  </BODY>
+</HTML>

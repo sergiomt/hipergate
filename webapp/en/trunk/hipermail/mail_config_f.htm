@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//EN" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">  
+<!-- +--------------------------------------------------+ -->
+<!-- | Marco principal de administracion de hipermail   | -->
+<!-- | (c) KnowGate 2004-2006                           | -->
+<!-- +--------------------------------------------------+ -->
+<HTML>
+  <HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+    <TITLE>hipergate :: WebMail</TITLE>
+    <SCRIPT LANGUAGE="javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  </HEAD>
+  <FRAMESET NAME="mailtop" ROWS="80,*" BORDER="0" FRAMEBORDER="0">
+    <FRAME NAME="hipernavigation" FRAMEBORDER="no" MARGINHEIGHT="4" NORESIZE SRC="../vdisk/global_menu.jsp?selected=1&subselected=0&hideminimenu">
+    <FRAMESET NAME="mailnavigation" COLS="200,*">
+      <FRAMESET NAME="foldersframe" ROWS="100%,*">
+        <FRAME NAME="foldersshow" MARGINWIDTH="0" MARGINHEIGHT="0" SRC="folderjtree_f.jsp" TARGET="listframe" SCROLLING="no">
+        <FRAME NAME="foldershide" MARGINWIDTH="0" MARGINHEIGHT="0" SRC="../common/blank.htm">
+      </FRAMESET>
+      <FRAMESET NAME="listframe" ROWS="*,100">
+        <FRAME NAME="listshow" MARGINWIDTH="0" MARGINHEIGHT="0" SRC="account_edit.jsp">
+        <FRAME NAME="listhide" SRC="../common/blank.htm">
+      </FRAMESET>
+    </FRAMESET>
+    <NOFRAMES>
+      <BODY>
+	<P>This page use frames, but your web browser does not handle them</P>
+      </BODY>
+    </NOFRAMES>
+  </FRAMESET>
+</HTML>

@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//EN" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">
+<!-- +-------------------------------------------+ -->
+<!-- | Marco de listado de mensajes de un foro   | -->
+<!-- | (c) KnowGate 2003                         | -->
+<!-- +-------------------------------------------+ -->  
+<HTML>
+  <HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+    <TITLE>hipergate :: Message Listing</TITLE>
+    <SCRIPT LANGUAGE="javascript" SRC="../javascript/getparam.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="true">
+    <!--
+      function setURL() {
+        msgslist.document.location = "msg_list.jsp?gu_newsgrp=" + getURLParam("gu_newsgrp") + "&nm_newsgrp=" + getURLParam("nm_newsgrp") + "&screen_width=" + String(screen.width) + "&void";
+      }
+    //-->
+    </SCRIPT>    
+  </HEAD>
+  <FRAMESET NAME="msgsframe" ROWS="*,100" onLoad="setURL()">
+    <FRAME NAME="msgslist" FRAMEBORDER="no" MARGINWIDTH="16" MARGINHEIGHT="0" >
+    <FRAME NAME="msgsexec" MARGINWIDTH="16" MARGINHEIGHT="16" SRC="../common/blank.htm">
+  </FRAMESET>
+  <NOFRAMES>
+    <BODY>
+      <P>This page uses frames, but yur browser does handle them.</P>
+    </BODY>
+  </NOFRAMES>
+</HTML>

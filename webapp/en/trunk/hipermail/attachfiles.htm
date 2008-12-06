@@ -1,0 +1,69 @@
+<HTML>
+  <HEAD>
+    <META http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <TITLE>Attach Files</TITLE>
+    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
+  </HEAD>
+  <BODY  onload="document.forms[0].gu_mimemsg.value=getURLParam('gu_mimemsg');document.forms[0].id_message.value=getURLParam('id_message');">
+    <TABLE WIDTH="100%">
+      <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
+      <TR><TD CLASS="striptitle"><FONT CLASS="title1">Attach Files</FONT></TD></TR>
+    </TABLE>  
+    
+    <FORM ENCTYPE="multipart/form-data" METHOD="post" ACTION="attachfiles_store.jsp">
+      <INPUT TYPE="hidden" NAME="gu_mimemsg">
+      <INPUT TYPE="hidden" NAME="id_message">
+
+      <TABLE CLASS="formback" ALIGN="center">
+        <TR><TD CLASS="formfront">
+          <TABLE WIDTH="100%">      
+            <TR>
+              <TD><FONT CLASS="formstrong">File 1</FONT></TD>
+              <TD><INPUT TYPE="file" NAME="file1" SIZE="50" CLASS="combomini"></TD>          
+            </TR>
+            <TR>
+              <TD><FONT CLASS="formstrong">File 2</FONT></TD>
+              <TD><INPUT TYPE="file" NAME="file2" SIZE="50" CLASS="combomini"></TD>          
+            </TR>
+            <TR>
+              <TD><FONT CLASS="formstrong">File 3</FONT></TD>
+              <TD><INPUT TYPE="file" NAME="file3" SIZE="50" CLASS="combomini"></TD>          
+            </TR>
+            <TR>
+              <TD><FONT CLASS="formstrong">File 4</FONT></TD>
+              <TD><INPUT TYPE="file" NAME="file4" SIZE="50" CLASS="combomini"></TD>          
+            </TR>
+            <TR>
+              <TD><FONT CLASS="formstrong">File 5</FONT></TD>
+              <TD><INPUT TYPE="file" NAME="file5" SIZE="50" CLASS="combomini"></TD>          
+            </TR>
+            <TR>
+              <TD><FONT CLASS="formstrong">File 6</FONT></TD>
+              <TD><INPUT TYPE="file" NAME="file6" SIZE="50" CLASS="combomini"></TD>          
+            </TR>
+            <TR>
+              <TD><FONT CLASS="formstrong">File 7</FONT></TD>
+              <TD><INPUT TYPE="file" NAME="file7" SIZE="50" CLASS="combomini"></TD>          
+            </TR>
+            <TR>
+              <TD><FONT CLASS="formstrong">File 8</FONT></TD>
+              <TD><INPUT TYPE="file" NAME="file8" SIZE="50" CLASS="combomini"></TD>          
+            </TR>
+            <TR>
+              <TD><FONT CLASS="formstrong">File 9</FONT></TD>
+              <TD><INPUT TYPE="file" NAME="file9" SIZE="50" CLASS="combomini"></TD>          
+            </TR>
+          </TABLE>
+        </TD></TR>
+      </TABLE>
+      <BR>
+      <CENTER>
+        <INPUT TYPE="submit" CLASS="pushbutton" VALUE="Attach">
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <INPUT TYPE="button" CLASS="closebutton" VALUE="Cancel" onclick="window.close()">
+      </CENTER>
+    </FORM>
+  </BODY>
+</HTML>

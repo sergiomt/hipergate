@@ -1,0 +1,56 @@
+<HTML>
+<HEAD><TITLE>hipergate :: Autologin and Redirect</TITLE>
+<SCRIPT LANGUAGE="javascript" TYPE="text/javascript" SRC="javascript/cookies.js"></SCRIPT>
+
+<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <!--
+  function redir() {
+    var dtInf = new Date(2020, 11, 30, 0, 0, 0, 0);
+                      
+    setCookie ("profilenm","hipergate",dtInf);
+
+		// Values from k_domains table
+    setCookie ("domainid","2051",dtInf);
+    setCookie ("domainnm","REAL",dtInf);
+
+		// Values from k_users table
+    setCookie ("userid","5911c98711446fb97b4100066f9490bb");
+    setCookie ("authstr","REAL");
+    setCookie ("workarea","5911c98711446fb97a4100062f9a6fa7");
+    setCookie ("workareanm","real_default");
+    
+    // This value leave it always to C
+    setCookie ("idaccount","C"); 
+    
+    // Set one bit of app mask for each application according to the
+    // value of id_app column at k_apps table, for enabling all the
+    // applications set appmask to 2147483647
+    setCookie ("appmask","0");
+		
+    setCookie ("skin","xp",dtInf);
+    setCookie ("face","crm",dtInf);
+
+  	document.location = "/desktop.jsp";
+  }
+  //-->
+</SCRIPT>
+</HEAD>
+<BODY onload="redir()"> </BODY></HTML>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

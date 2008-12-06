@@ -1,0 +1,53 @@
+<%
+    if (bCreateMeeting && ((iAppMask & (1<<CollabTools))!=0)) {
+      SimpleDateFormat oFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      PreparedStatement oMeet = oConn.prepareStatement("SELECT m." + DB.gu_meeting + " FROM " + DB.k_meetings + " m," + DB.k_x_meeting_contact + " c WHERE m." + DB.gu_meeting + "=c." + DB.gu_meeting + " AND m." + DB.tp_meeting + "='followup' AND c." + DB.gu_contact + "=? AND m." + DB.gu_fellow + "=? AND m." + DB.dt_start + " BETWEEN ? AND ?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+      oMeet.setString(1, gu_contact);
+      oMeet.setString(2, id_user);
+      oMeet.setTimestamp(3, new Timestamp(oFmt.parse(dt_next_action+" 00:00:00").getTime()));
+      oMeet.setTimestamp(4, new Timestamp(oFmt.parse(dt_next_action+" 23:59:59").getTime()));
+      oRSet = oMeet.executeQuery();
+      if (oRSet.next())
+        gu_meeting = oRSet.getString(1);
+      else
+        gu_meeting = null;
+      oRSet.close();
+      oMeet.close();
+      
+      if (null==gu_meeting) {
+        gu_meeting = Gadgets.generateUUID();
+        oMeet = oConn.prepareStatement("INSERT INTO " + DB.k_meetings + " (" + DB.gu_meeting + "," + DB.gu_workarea + "," + DB.id_domain + "," + DB.gu_fellow + "," + DB.dt_start + "," + DB.dt_end + "," + DB.bo_private + "," + DB.df_before + "," + DB.tp_meeting + "," + DB.tx_meeting + "," + DB.de_meeting + "," + DB.gu_writer + ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+        oMeet.setString(1,gu_meeting);
+        oMeet.setString(2,gu_workarea);
+        oMeet.setInt(3,Integer.parseInt(id_domain));
+        oMeet.setString(4,id_user);
+        oMeet.setTimestamp(5,new Timestamp(oFmt.parse(dt_next_action+" 09:00:00").getTime()));
+        oMeet.setTimestamp(6,new Timestamp(oFmt.parse(dt_next_action+" 10:00:00").getTime()));        
+        oMeet.setShort(7, (short) 1);
+        oMeet.setInt(8, -1);
+        oMeet.setString(9, "followup");
+        oMeet.setString(10, Gadgets.left(request.getParameter("tl_oportunity"),100));
+        oMeet.setString(11, request.getParameter("tx_note"));
+        oMeet.setString(12, id_user);
+        oMeet.executeUpdate();
+        oMeet.close();
+
+        Meeting oMee = new Meeting(oConn, gu_meeting);
+        HipergatePortletConfig.touch(oConn, gu_contact, "com.knowgate.http.portlets.CalendarTab", gu_workarea);
+    	oMee.setAttendant(oConn, gu_contact);
+    	oMee.setAttendant(oConn, id_user);
+	
+      } else {
+        oMeet = oConn.prepareStatement("UPDATE " + DB.k_meetings + " SET " + DB.dt_modified + "=?," + DB.dt_start + "=?," + DB.dt_end + "=?," + DB.tx_meeting+"=?,"+DB.de_meeting+"=? WHERE "+DB.gu_meeting+"=?");
+        oMeet.setTimestamp(1,new Timestamp(new Date().getTime()));
+        oMeet.setTimestamp(2,new Timestamp(oFmt.parse(dt_next_action+" 09:00:00").getTime()));
+        oMeet.setTimestamp(3,new Timestamp(oFmt.parse(dt_next_action+" 10:00:00").getTime()));
+        oMeet.setString(4, Gadgets.left(request.getParameter("tl_oportunity"),100));
+        oMeet.setString(5, request.getParameter("tx_note"));
+        oMeet.setString(6,gu_meeting);
+        oMeet.executeUpdate();
+        oMeet.close();
+        
+      }
+    } // fi (bCreateMeeting)
+%>

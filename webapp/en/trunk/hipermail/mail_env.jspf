@@ -1,0 +1,41 @@
+<%
+  String id_domain = getCookie(request, "domainid", "");  
+  String gu_workarea = getCookie (request, "workarea", null);
+  String id_user = getCookie (request, "userid", null);
+  String gu_account = nullif(request.getParameter("gu_account"),getCookie(request,"mail_account","").trim());
+
+  String tx_pwd = (String) GlobalCacheClient.get("[" + id_user + ",mailpwd]");
+  if (null==tx_pwd) {
+    tx_pwd = ACL.encript(getCookie (request, "authstr", ""), ENCRYPT_ALGORITHM);
+    GlobalCacheClient.put ("[" + id_user + ",mailpwd]", tx_pwd);
+  }
+
+  String sProfile = GlobalDBBind.getProfileName();
+  String sMBoxDir = DBStore.MBoxDirectory(sProfile,Integer.parseInt(id_domain),gu_workarea);
+
+  MailAccount oMacc = null;
+  
+  if (gu_account.length()>0)
+    oMacc = (MailAccount) GlobalCacheClient.get("["+gu_account+"]");
+  else
+    oMacc = (MailAccount) GlobalCacheClient.get("["+id_user+",defaultaccount]");
+  
+  if (null==oMacc) {
+    JDCConnection oMailEnvConn = null;
+    try {
+      oMailEnvConn = GlobalDBBind.getConnection("msg_env");
+      if (gu_account.length()>0) {
+        oMacc = new MailAccount(oMailEnvConn, gu_account);
+        GlobalCacheClient.put("["+gu_account+"]", oMacc);
+      } else {
+        oMacc = MailAccount.forUser(oMailEnvConn, id_user, Environment.getProfile(sProfile));
+        if (null!=oMacc) GlobalCacheClient.put("["+id_user+",defaultaccount]", oMacc);
+      }
+      oMailEnvConn.close("msg_env");
+      oMailEnvConn=null;
+    }
+    catch (Exception e) {  
+      if (oMailEnvConn!=null) { try { if (!oMailEnvConn.isClosed()) oMailEnvConn.close("msg_env"); } catch (Exception ignore) {} }
+    }
+  } // fi (oMacc)
+%>

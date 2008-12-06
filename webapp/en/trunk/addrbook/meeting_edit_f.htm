@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//ES" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">  
+<!-- +--------------------------------------------------+ -->
+<!-- | Marco principal de edición de actividades        | -->
+<!-- | (c) KnowGate 2001                                | -->
+<!-- +--------------------------------------------------+ -->
+<HTML>
+  <HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+    <TITLE>hipergate :: Edit Activity.</TITLE>
+    <SCRIPT LANGUAGE="javascript" SRC="../javascript/getparam.js"></SCRIPT>
+    <SCRIPT LANGUAGE="javascript" SRC="../javascript/trim.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="true">
+    <!--
+      function setURL() {
+        var today = getURLParam("date");
+        var hour = getURLParam("hour");
+        var ampgu = getURLParam("gu_meeting");
+        var ampfe = getURLParam("gu_fellow");
+        var ampcn = getURLParam("gu_contact");
+        var ampro = getURLParam("nm_room");
+        
+        if (today!=null)
+          if (today!="null")
+            today = "&date=" + rtrim(today);
+          else
+            today = "";
+        else
+            today = "";
+
+        if (hour!=null)
+          if (hour!="null")
+            hour = "&hour=" + rtrim(hour);
+          else
+            hour = "";
+        else
+            hour = "";
+  
+        if (ampro!=null)
+          if (ampro!="null")
+            ampro = "&nm_room=" + ampro;
+          else
+            ampro = "";
+        else
+            ampro = "";
+        
+        if (ampgu!=null)
+          if (ampgu!="null")
+            ampgu = "&gu_meeting=" + ampgu;
+          else
+            ampgu = "";
+        else
+            ampgu = "";
+
+        if (ampcn!=null)
+          if (ampcn!="null")
+            ampcn = "&gu_contact=" + ampcn;
+          else
+            ampcn = "";
+        else
+            ampcn = "";
+  
+        ampfe = "&gu_fellow=" + ampfe;
+                  
+        meettext.location = "meeting_edit.jsp?id_domain=" + getURLParam("id_domain") + "&n_domain=" + escape(getURLParam("n_domain")) + "&gu_workarea=" + getURLParam("gu_workarea") + ampgu + ampfe + ampcn + ampro + today + hour;
+      }
+    //-->
+    </SCRIPT>
+  </HEAD>
+  <FRAMESET NAME="meetingtop" ROWS="100%,*" BORDER="0" FRAMEBORDER="0" onLoad="setURL()">
+    <FRAME NAME="meettext" FRAMEBORDER="no" MARGINWIDTH="8" MARGINHEIGHT="0" NORESIZE>
+    <FRAME NAME="meetexec" FRAMEBORDER="no" MARGINWIDTH="8 marginheight=" NORESIZE>
+  </FRAMESET>
+  <NOFRAMES>
+      <BODY>
+	<P>This page uses frames, but yur browser does handle them.</P>
+      </BODY>
+  </NOFRAMES>
+</HTML>

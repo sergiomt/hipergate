@@ -1,0 +1,22 @@
+<%
+    if (sCorporateAccount.equals(Account.getUserAccountType(oConn, getCookie(request, "userid", "")))) {
+      oFellowList = GlobalCacheClient.getDBSubset("k_fellows.id_domain[" + id_domain + "]");
+      if (null==oFellowList) {
+        oFellowList = new DBSubset(DB.k_fellows, DB.gu_fellow + "," + DB.tx_name + "," + DB.tx_surname, DB.id_domain + "=" + id_domain + " ORDER BY 2,3", 100);
+    	iFellowCount = oFellowList.load(oConn);
+    	GlobalCacheClient.putDBSubset("k_fellows", "k_fellows.id_domain[" + id_domain + "]", oFellowList);
+      }
+      else
+        iFellowCount = oFellowList.getRowCount();
+    }
+    else {
+      oFellowList = GlobalCacheClient.getDBSubset("k_fellows.gu_workarea[" + gu_workarea + "]");
+      if (null==oFellowList) {
+        oFellowList = new DBSubset(DB.k_fellows, DB.gu_fellow + "," + DB.tx_name + "," + DB.tx_surname, DB.gu_workarea + "='" + gu_workarea + "' ORDER BY 2,3", 100);
+    	iFellowCount = oFellowList.load(oConn);    
+    	GlobalCacheClient.putDBSubset("k_fellows", "k_fellows.gu_workarea[" + gu_workarea + "]", oFellowList);
+      }
+      else
+        iFellowCount = oFellowList.getRowCount();
+    }
+%>
