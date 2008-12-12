@@ -16,4 +16,5 @@
   <jsp:param name="n_domain" value="<%=Gadgets.URLEncode(request.getParameter(\"n_domain\"))%>" />
   <jsp:param name="gu_contact" value="<%=nullif(request.getParameter(\"gu_contact\"))%>" />
   <jsp:param name="gu_company" value="<%=nullif(request.getParameter(\"gu_company\"))%>" />
+  <jsp:param name="noreload" value="<%=nullif(request.getParameter(\"noreload\"),\"0\")%>" />
 </jsp:forward>

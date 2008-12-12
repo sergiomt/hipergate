@@ -160,7 +160,6 @@
       function callCenterPerformance() { 
 	      var frm = document.forms[0];
 	
-	
       	if (frm.dt_day1.value.length==0) {
           alert ("You must specify an start up date");
       	  return false;
@@ -181,8 +180,8 @@
       	  return false;
       	}
 
-      	window.open("../crm/phonecall_report.jsp?dt_from=" + frm.dt_day1.value + "&dt_to=" + frm.dt_dayn.value);
-      }
+      	document.location = "../crm/phonecall_report.jsp?gu_workarea=<%=getCookie(request, "workarea", "")%>&dt_from=" + frm.dt_day1.value + "&dt_to=" + frm.dt_dayn.value;
+      } // callCenterPerformance
 
       // ----------------------------------------------------------------------
 

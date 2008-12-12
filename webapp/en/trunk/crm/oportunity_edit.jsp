@@ -459,10 +459,10 @@
                   out.write (" (" + de_list + ")");
 	        else {
                   if (!oCont.isNull(DB.tx_surname) || !oCont.isNull(DB.tx_name))
-                    out.write (" <A HREF=\"contact_edit.jsp?id_domain="+id_domain+"&n_domain=" + Gadgets.URLEncode(n_domain) + "&gu_contact=" + gu_contact + "\" onclick=\"modifyContact()\">" + oCont.getStringNull(DB.tx_name,"") + " " + oCont.getStringNull(DB.tx_surname,"")+"</A>");
+                    out.write (" <A HREF=\"contact_edit.jsp?id_domain="+id_domain+"&n_domain=" + Gadgets.URLEncode(n_domain) + "&gu_contact=" + gu_contact + "&noreload=1\" onclick=\"modifyContact()\">" + oCont.getStringNull(DB.tx_name,"") + " " + oCont.getStringNull(DB.tx_surname,"")+"</A>");
 
                   if (!oComp.isNull(DB.nm_legal))
-                    out.write (" (<A HREF=\"company_edit.jsp?id_domain="+ id_domain + "&n_domain=" + Gadgets.URLEncode(n_domain) + "&gu_company=" + gu_company + "&n_company=" + Gadgets.URLEncode(oComp.getString(DB.nm_legal)) + "&gu_workarea=" + gu_workarea + "\">" + oComp.getString(DB.nm_legal) + "</A>)");
+                    out.write (" (<A HREF=\"company_edit.jsp?id_domain="+ id_domain + "&n_domain=" + Gadgets.URLEncode(n_domain) + "&gu_company=" + gu_company + "&n_company=" + Gadgets.URLEncode(oComp.getString(DB.nm_legal)) + "&gu_workarea=" + gu_workarea + "&noreload=1\">" + oComp.getString(DB.nm_legal) + "</A>)");
                 }
               %>
               </I>
