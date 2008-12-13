@@ -475,7 +475,7 @@
                  else if (!bIsAdmin && !oMeeting.getString(DB.gu_fellow).equals(getCookie(request, "userid", "")))
                    out.write("<FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"#\" onClick=\"alert('It is not allowed to delete activities not created by you')\" TITLE=\"Delete\">x</A>]</FONT></TD>\n");
                  else
-                   out.write("<FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"javascript:deleteMeeting('" + oMeeting.getString(DB.gu_meeting) + "','" + oMeeting.getStringNull(DB.tx_meeting,"Sin titulo") + "')\" TITLE=\"Delete\">x</A>]</FONT></TD>\n");
+                   out.write("<FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"javascript:deleteMeeting('" + oMeeting.getString(DB.gu_meeting) + "','" + oMeeting.getStringNull(DB.tx_meeting,"Untitled").replace((char)39,'´') + "')\" TITLE=\"Delete\">x</A>]</FONT></TD>\n");
 
              } // fi (bItsMe || bo_private==0)
            }
@@ -519,7 +519,7 @@
         out.write("addMenuOption(\"Delete\",\"alert('It is not allowed to delete activities not created by you')\",0);\n    addMenuSeparator();\n");
         out.write("addMenuOption(\"Repeat\",\"alert('It is not allowed to repeat activities not created by you')\",0);\n    addMenuSeparator();\n");
       } else {
-        out.write("addMenuOption(\"Delete\",\"deleteMeeting(jsMeetId)\",0);\n    addMenuSeparator();\n");
+        out.write("addMenuOption(\"Delete\",\"deleteMeeting(jsMeetId,\"\")\",0);\n    addMenuSeparator();\n");
         out.write("addMenuOption(\"Repeat\",\"repeatMeeting(jsMeetId)\",0);\n    addMenuSeparator();\n");
       }
     }

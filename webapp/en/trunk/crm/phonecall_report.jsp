@@ -46,6 +46,7 @@
   String gu_workarea = nullif(request.getParameter("gu_workarea"), getCookie (request, "workarea", null));
   Timestamp dt_from = new Timestamp(oFmt.parse(request.getParameter("dt_from")+" 00:00:00").getTime());
   Timestamp dt_to = new Timestamp(oFmt.parse(request.getParameter("dt_to")+" 23:59:59").getTime());
+  String gu_campaign = nullif(request.getParameter("gu_campaign"));
     
   JDCConnection oConn = null;
   PreparedStatement oStmt = null;
@@ -57,7 +58,10 @@
   
   try {
     oConn = GlobalDBBind.getConnection(PAGE_NAME);
-    oStmt = oConn.prepareStatement("SELECT "+DB.tp_phonecall+","+"COUNT("+DB.tp_phonecall+") FROM "+DB.k_phone_calls+" WHERE "+DB.gu_workarea+"=? AND "+DB.dt_start+" BETWEEN ? AND ? GROUP BY "+DB.tp_phonecall);
+    if (gu_campaign.length()==0)
+      oStmt = oConn.prepareStatement("SELECT "+DB.tp_phonecall+","+"COUNT("+DB.tp_phonecall+") FROM "+DB.k_phone_calls+" WHERE "+DB.gu_workarea+"=? AND "+DB.dt_start+" BETWEEN ? AND ? GROUP BY "+DB.tp_phonecall);
+	  else
+      oStmt = oConn.prepareStatement("SELECT p."+DB.tp_phonecall+","+"COUNT(p."+DB.tp_phonecall+") FROM "+DB.k_phone_calls+" p,"+DB.k_oportunities +" o WHERE p."+DB.gu_oportunity+"=o."+DB.gu_oportunity+" AND o."+DB.gu_campaign+"='"+gu_campaign+"' AND p."+DB.gu_workarea+"=? AND p."+DB.dt_start+" BETWEEN ? AND ? GROUP BY "+DB.tp_phonecall);
 	  oStmt.setString(1, gu_workarea);
 	  oStmt.setTimestamp(2, dt_from);
 	  oStmt.setTimestamp(3, dt_to);
@@ -74,7 +78,10 @@
 	  oRSet.close();
 	  oStmt.close();
 	  
-    oStmt = oConn.prepareStatement("SELECT o."+DB.id_status+",COUNT(o."+DB.gu_oportunity+") FROM "+DB.k_oportunities+" o WHERE EXISTS (SELECT NULL FROM "+DB.k_phone_calls+" p WHERE p."+DB.gu_oportunity+"=o."+DB.gu_oportunity+" AND p."+DB.gu_workarea+"=? AND p."+DB.dt_start+" BETWEEN ? AND ?) GROUP BY "+DB.id_status);
+    if (gu_campaign.length()==0)
+      oStmt = oConn.prepareStatement("SELECT o."+DB.id_status+",COUNT(o."+DB.gu_oportunity+") FROM "+DB.k_oportunities+" o WHERE EXISTS (SELECT NULL FROM "+DB.k_phone_calls+" p WHERE p."+DB.gu_oportunity+"=o."+DB.gu_oportunity+" AND p."+DB.gu_workarea+"=? AND p."+DB.dt_start+" BETWEEN ? AND ?) GROUP BY "+DB.id_status);
+	  else
+      oStmt = oConn.prepareStatement("SELECT o."+DB.id_status+",COUNT(o."+DB.gu_oportunity+") FROM "+DB.k_oportunities+" o WHERE o."+DB.gu_campaign+"='"+gu_campaign+"' AND EXISTS (SELECT NULL FROM "+DB.k_phone_calls+" p WHERE p."+DB.gu_oportunity+"=o."+DB.gu_oportunity+" AND p."+DB.gu_workarea+"=? AND p."+DB.dt_start+" BETWEEN ? AND ?) GROUP BY "+DB.id_status);
 	  oStmt.setString(1, gu_workarea);
 	  oStmt.setTimestamp(2, dt_from);
 	  oStmt.setTimestamp(3, dt_to);
@@ -122,7 +129,7 @@
     <TR><TD CLASS="textstrong" COLSPAN="2">[~Llamadas~]</TD></TR>
     <TR><TD CLASS="textplain">[~Llamadas enviadas~]</TD><TD CLASS="textplain"><% out.write(String.valueOf(nSent)); %></TD></TR>
     <TR><TD CLASS="textplain">[~Llamadas recibidas~]</TD><TD CLASS="textplain"><% out.write(String.valueOf(nReceived)); %></TD></TR>
-    <TR><TD CLASS="textplain">[~Media por oportunidad~]</TD><TD CLASS="textplain"><% out.write(String.valueOf(((float)(nSent+nReceived))/(float)nOprts)); %></TD></TR>
+    <TR><TD CLASS="textplain">[~Media por oportunidad~]</TD><TD CLASS="textplain"><% if (nOprts==0) out.write("0"); else out.write(String.valueOf(((int)(100f*(nSent+nReceived))/(float)nOprts)/100f)); %></TD></TR>
   </TABLE>
   <BR/>
   <TABLE SUMMARY="By Status" BORDER="1">

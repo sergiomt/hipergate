@@ -400,7 +400,7 @@
 	      int nMeets = aMeetings.length;
 	      for (int m=0; m<nMeets; m++) {
 	        Meeting oMeet = aMeetings[m];
-	        out.write("<FONT CLASS=\"textsmall\">"+(0==m ? "" : "<BR>")+oMeet.getHour()+":"+oMeet.getMinute()+"-"+oMeet.getHourEnd()+":"+oMeet.getMinuteEnd()+"&nbsp;<A CLASS=\"linksmall\" TITLE=\""+oMeet.getStringNull(DB.de_meeting,"").replace('\n',' ').replace('\r',' ')+"\" HREF=\"#\" onclick=\"modifyMeeting('"+oMeet.getString(DB.gu_meeting)+"'); return false;\">"+oMeet.getStringNull(DB.tx_meeting,"")+"</A></FONT><FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"javascript:deleteMeeting('" + oMeet.getString(DB.gu_meeting) + "','" + oMeet.getStringNull(DB.tx_meeting,"Sin titulo") + "')\" TITLE=\"Delete\">x</A>]</FONT>");
+	        out.write("<FONT CLASS=\"textsmall\">"+(0==m ? "" : "<BR>")+oMeet.getHour()+":"+oMeet.getMinute()+"-"+oMeet.getHourEnd()+":"+oMeet.getMinuteEnd()+"&nbsp;<A CLASS=\"linksmall\" TITLE=\""+oMeet.getStringNull(DB.de_meeting,"").replace('\n',' ').replace('\r',' ')+"\" HREF=\"#\" onclick=\"modifyMeeting('"+oMeet.getString(DB.gu_meeting)+"'); return false;\">"+oMeet.getStringNull(DB.tx_meeting,"")+"</A></FONT><FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"javascript:deleteMeeting('" + oMeet.getString(DB.gu_meeting) + "','" + oMeet.getStringNull(DB.tx_meeting,"[~Sin titulo~]").replace((char)39,'´') + "')\" TITLE=\"Delete\">x</A>]</FONT>");
 	      } // next
 	    } else {
               out.write("<TD CLASS=\""+aHolidays[d]+"tableborder\" WIDTH=\"100px\" HEIGHT=\"100px\">"); 
@@ -418,7 +418,7 @@
 	      int nMeets = aMeetings.length;
 	      for (int m=0; m<nMeets; m++) {
 	        Meeting oMeet = aMeetings[m];
-	        out.write("<FONT CLASS=\"textsmall\">"+(0==m ? "" : "<BR>")+oMeet.getHour()+":"+oMeet.getMinute()+"-"+oMeet.getHourEnd()+":"+oMeet.getMinuteEnd()+"&nbsp;<A CLASS=\"linksmall\" TITLE=\""+oMeet.getStringNull(DB.de_meeting,"").replace('\n',' ').replace('\r',' ')+"\" HREF=\"#\" onclick=\"modifyMeeting('"+oMeet.getString(DB.gu_meeting)+"'); return false;\">"+oMeet.getStringNull(DB.tx_meeting,"")+"</A></FONT><FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"javascript:deleteMeeting('" + oMeet.getString(DB.gu_meeting) + "','" + oMeet.getStringNull(DB.tx_meeting,"Sin titulo") + "')\" TITLE=\"Delete\">x</A>]</FONT>");
+	        out.write("<FONT CLASS=\"textsmall\">"+(0==m ? "" : "<BR>")+oMeet.getHour()+":"+oMeet.getMinute()+"-"+oMeet.getHourEnd()+":"+oMeet.getMinuteEnd()+"&nbsp;<A CLASS=\"linksmall\" TITLE=\""+oMeet.getStringNull(DB.de_meeting,"").replace('\n',' ').replace('\r',' ')+"\" HREF=\"#\" onclick=\"modifyMeeting('"+oMeet.getString(DB.gu_meeting)+"'); return false;\">"+oMeet.getStringNull(DB.tx_meeting,"")+"</A></FONT><FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"javascript:deleteMeeting('" + oMeet.getString(DB.gu_meeting) + "','" + oMeet.getStringNull(DB.tx_meeting,"[~Sin titulo~]").replace((char)39,'´') + "')\" TITLE=\"Delete\">x</A>]</FONT>");
 	      } // next
 	    } else {
               out.write("<TD CLASS=\""+aHolidays[d]+"tableborder\" WIDTH=\"100px\" HEIGHT=\"100px\">");
@@ -429,9 +429,9 @@
       </TABLE>
     </FORM>
 </BODY>
-</HTML>
-<%
+</HTML><%
+
   oConn.close("weekschedule"); 
   oConn = null;
-%>
-<%@ include file="../methods/page_epilog.jspf" %>
+  
+%><%@ include file="../methods/page_epilog.jspf" %>

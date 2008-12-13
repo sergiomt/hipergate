@@ -374,7 +374,7 @@
                  		  else if (!bIsAdmin && !oMeetings.getString(DB.gu_fellow,iLastMeeting).equals(getCookie(request, "userid", "")))
                         out.write("<FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"#\" onClick=\"alert('It is not allowed to delete activities not created by you')\" TITLE=\"Delete\">x</A>]</FONT><BR>\n");
                  		  else
-                   		  out.write("<FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"javascript:deleteMeeting('" + oMeetings.getString(DB.gu_meeting,iLastMeeting) + "','" + oMeetings.getStringNull(DB.tx_meeting,iLastMeeting,"Sin titulo") + "','"+String.valueOf(oMeetings.getDate(1,iLastMeeting).getDate())+"')\" TITLE=\"Delete\">x</A>]</FONT><BR>\n");
+                   		  out.write("<FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"javascript:deleteMeeting('" + oMeetings.getString(DB.gu_meeting,iLastMeeting) + "','" + oMeetings.getStringNull(DB.tx_meeting,iLastMeeting,"[~Sin titulo~]").replace((char)39,'´') + "','"+String.valueOf(oMeetings.getDate(1,iLastMeeting).getDate())+"')\" TITLE=\"Delete\">x</A>]</FONT><BR>\n");
                     } else {
                       out.write ("<FONT CLASS=\"textsmall\">" + DBBind.escape(oMeetings.getDate(1,iLastMeeting),"shortTime") + "</FONT><IMG SRC=\"../images/images/addrbook/smalllock.gif\" BORDER=\"0\"><BR>");
                     }

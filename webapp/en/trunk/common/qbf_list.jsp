@@ -41,7 +41,9 @@
   
   DBSubset oRootPrjs = new DBSubset(DB.k_projects, DB.gu_project+","+DB.nm_project, DB.gu_owner+"=? AND " + DB.id_parent + " IS NULL ORDER BY 2", 100);
   int iRootPrjs = 0;
-  
+  DBSubset oCampaigns = new DBSubset(DB.k_campaigns, DB.gu_campaign+","+DB.nm_campaign, DB.bo_active+"<>0 AND "+DB.gu_workarea+"=? ORDER BY 2", 10);
+  int iCampaigns = 0;
+
   int iDBMS = JDCConnection.DBMS_GENERIC;
   
   try {    
@@ -52,6 +54,10 @@
     iRootPrjs = oRootPrjs.load(oConn, new Object[]{getCookie(request, "workarea", "")});
 
     if (iDBMS==JDCConnection.DBMS_MSSQL) sSchema=oConn.getSchemaName()+".";
+
+    if ((iAppMask & (1<<MarketingTools))!=0) {
+      iCampaigns = oCampaigns.load(oConn, new Object[]{getCookie(request, "workarea", "")});
+    }
     
     oConn.close("qbf_list");
   }
@@ -180,7 +186,7 @@
       	  return false;
       	}
 
-      	document.location = "../crm/phonecall_report.jsp?gu_workarea=<%=getCookie(request, "workarea", "")%>&dt_from=" + frm.dt_day1.value + "&dt_to=" + frm.dt_dayn.value;
+      	document.location = "../crm/phonecall_report.jsp?gu_workarea=<%=getCookie(request, "workarea", "")%>&dt_from=" + frm.dt_day1.value + "&dt_to=" + frm.dt_dayn.value + "&gu_campaign=" + frm.gu_campaign.value;
       } // callCenterPerformance
 
       // ----------------------------------------------------------------------
@@ -235,26 +241,27 @@
       // ----------------------------------------------------------------------
 
       function costsByProject() { 
-	var frm = document.forms[0];
+	      var frm = document.forms[0];
         
         if (frm.sel_project.options.selectedIndex<=0) {
           alert ("You must select a project");
           return false;
         }
         
-	var project;
+	      var project;
 
-	project = " AND e.gu_rootprj='" + getCombo(frm.sel_project) + "' ";
+	      project = " AND e.gu_rootprj='" + getCombo(frm.sel_project) + "' ";
 	
-	window.open("/servlet/HttpQueryServlet?queryspec=projects&where=" + escape(project)+"&orderby=e.od_level&showas"+(frm.showas[0].checked ? "XLS" : "CSV")+"&columnlist="+escape("b.nm_project,<%=sSchema%>k_sp_prj_cost(b.gu_project),b.dt_start,b.dt_end,b.de_project"));
-      }      
+	      window.open("/servlet/HttpQueryServlet?queryspec=projects&where=" + escape(project)+"&orderby=e.od_level&showas"+(frm.showas[0].checked ? "XLS" : "CSV")+"&columnlist="+escape("b.nm_project,<%=sSchema%>k_sp_prj_cost(b.gu_project),b.dt_start,b.dt_end,b.de_project"));
+      }
 
     //-->
     </SCRIPT>
   </HEAD>
   <BODY >
   <FORM>
-  <TABLE WIDTH="100%"><TR><TD CLASS="striptitle"><FONT CLASS="title1">Queries</FONT></TD></TR></TABLE>  
+  <INPUT TYPE="hidden" NAME="gu_campaign" VALUE="">
+  <TABLE WIDTH="100%" SUMMARY="Title"><TR><TD CLASS="striptitle"><FONT CLASS="title1">Queries</FONT></TD></TR></TABLE>  
   <BR>
 <% if ((iAppMask & (1<<Sales))!=0) { %>
     <FONT CLASS="textplain"><B>Contact Management</B></FONT>
@@ -287,12 +294,17 @@
     </TABLE>
     <TABLE SUMMARY="Call-Center Performance">
       <TR>
-        <TD ROWSPAN="2"><IMG SRC="../images/images/spacer.gif" WIDTH="8" HEIGHT="1"></TD>
+        <TD ROWSPAN="3"><IMG SRC="../images/images/spacer.gif" WIDTH="8" HEIGHT="1"></TD>
         <TD><A CLASS="linksmall" HREF="#" onclick="callCenterPerformance()">[~Efectividad del telemarketing~]</A></TD>
       </TR>
       <TR>
         <TD><FONT CLASS="textsmall">from</A>&nbsp;<INPUT TYPE="text" NAME="dt_day1" CLASS="combomini" SIZE="12" MAXLENGTH="10">&nbsp;&nbsp;&nbsp;until&nbsp;<INPUT TYPE="text" NAME="dt_dayn" CLASS="combomini" SIZE="12" MAXLENGTH="10">&nbsp;<A HREF="javascript:showCalendar('dt_dayn')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A></TD>
       </TR>
+<% if ((iAppMask & (1<<MarketingTools))!=0 && iCampaigns>0) { %>
+      <TR>
+        <TD><FONT CLASS="textsmall">[~campa&ntilde;a~]</A>&nbsp;<SELECT NAME="sel_campaign" CLASS="combomini" onchange="document.forms[0].gu_campaign.value=this.options[this.selectedIndex].value"><OPTION VALUE=""></OPTION><% for (int c=0; c<iCampaigns; c++) { out.write("<OPTION VALUE=\""+oCampaigns.getString(0,c)+"\">"+oCampaigns.getString(1,c)+"</OPTION>"); } %></SELECT></TD>
+      </TR>
+<% } %>
     </TABLE>
 
     <HR>

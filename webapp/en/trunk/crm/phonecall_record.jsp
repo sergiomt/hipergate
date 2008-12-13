@@ -1,7 +1,6 @@
 <%@ page import="java.util.Date,java.util.HashMap,java.util.ListIterator,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.DBLanguages,com.knowgate.crm.Contact,com.knowgate.misc.Gadgets,com.knowgate.crm.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
-<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
-<% 
+<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
 /*
   Copyright (C) 2008  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -35,6 +34,8 @@
 */
     
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
+  
+  final boolean ENABLE_ONGOING_CALLS_HANDLING = false;
   
   String sSkin = getCookie(request, "skin", "xp");
 
@@ -84,7 +85,10 @@
 	      gu_oportunity = oOprs.getString(0,0);
 	      gu_contact = oOprs.getString(1,0);
 	  	  sIdPrevStatus = nullif(DBCommand.queryStr(oConn, "SELECT "+DB.id_status+" FROM "+DB.k_oportunities+" WHERE "+DB.gu_oportunity+"='"+gu_oportunity+"'"));
-	      DBCommand.executeUpdate(oConn, "UPDATE "+DB.k_oportunities+" SET "+DB.id_status+"='ENCURSO' WHERE "+DB.gu_oportunity+"='"+gu_oportunity+"' AND "+DB.gu_workarea+"='"+gu_workarea+"'");
+				
+				if (ENABLE_ONGOING_CALLS_HANDLING) {
+	        DBCommand.executeUpdate(oConn, "UPDATE "+DB.k_oportunities+" SET "+DB.id_status+"='ENCURSO' WHERE "+DB.gu_oportunity+"='"+gu_oportunity+"' AND "+DB.gu_workarea+"='"+gu_workarea+"'");
+	      }
 	    } else {
         oConn.close("phonecall_record");
         if (com.knowgate.debug.DebugFile.trace) com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "", "");
@@ -94,7 +98,9 @@
 	    nm_campaign = nullif(DBCommand.queryStr(oConn, "SELECT "+DB.nm_campaign+" FROM "+DB.k_campaigns+" WHERE "+DB.gu_campaign+"='"+gu_campaign+"'"));
 	  } else {
 	  	sIdPrevStatus = nullif(DBCommand.queryStr(oConn, "SELECT "+DB.id_status+" FROM "+DB.k_oportunities+" WHERE "+DB.gu_oportunity+"='"+gu_oportunity+"'"));
-	    DBCommand.executeUpdate(oConn, "UPDATE "+DB.k_oportunities+" SET "+DB.id_status+"='ENCURSO' WHERE "+DB.gu_oportunity+"='"+gu_oportunity+"' AND "+DB.gu_workarea+"='"+gu_workarea+"'");
+		  if (ENABLE_ONGOING_CALLS_HANDLING) {
+	      DBCommand.executeUpdate(oConn, "UPDATE "+DB.k_oportunities+" SET "+DB.id_status+"='ENCURSO' WHERE "+DB.gu_oportunity+"='"+gu_oportunity+"' AND "+DB.gu_workarea+"='"+gu_workarea+"'");
+	    }
 	  }
 
     oCont.load(oConn, gu_contact);
@@ -279,7 +285,7 @@
     //-->
   </SCRIPT>    
 </HEAD>
-<BODY TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()" onUnLoad="<% if (sIdPrevStatus!=null) { out.write("req=createXMLHttpRequest(); req.open('GET','phonecall_status_update.jsp?gu_oportunity="+gu_oportunity+"&id_status="+sIdPrevStatus+"',true); req.send(null);"); } %>">
+<BODY TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()" onUnLoad="<% if (sIdPrevStatus!=null && ENABLE_ONGOING_CALLS_HANDLING) { out.write("req=createXMLHttpRequest(); req.open('GET','phonecall_status_update.jsp?gu_oportunity="+gu_oportunity+"&id_status="+sIdPrevStatus+"',true); req.send(null);"); } %>">
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
     <TR><TD CLASS="striptitle"><FONT CLASS="title1">New Call</FONT></TD></TR>
@@ -399,7 +405,7 @@
           <TR>          	
     	    <TD COLSPAN="2" ALIGN="center" CLASS="formplain">
               <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.parent.close()">
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="<% if (sIdPrevStatus!=null && ENABLE_ONGOING_CALLS_HANDLING) { out.write("req=createXMLHttpRequest(); req.open('GET','phonecall_status_update.jsp?gu_oportunity="+gu_oportunity+"&id_status="+(sIdPrevStatus.equals("ENCURSO") ? "PTE_LLAMAR" : sIdPrevStatus)+"',true); req.send(null);"); } %> window.parent.close()">
     	      <BR>
     	    </TD>
     	  </TR>            
