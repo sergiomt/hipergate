@@ -43,25 +43,24 @@
   final int WebBuilderApp=14;
   final int SurveysApp=23;
 
-  // obtener el idioma del navegador cliente
   String sLanguage = getNavigatorLanguage(request);
 
-  // Obtener el skin actual
-  String sSkin = getCookie(request, "skin", "default");
+  String sSkin = getCookie(request, "skin", "xp");
 
-  // Obtener el dominio y la workarea
   String id_domain = getCookie(request,"domainid","");
   String n_domain = getCookie(request,"domainnm",""); 
   String gu_workarea = getCookie(request,"workarea",""); 
   String sDocType = nullif(request.getParameter("doctype"),"newsletter");
   
-  String sDocTypeFilter;  
+  String sDocTypeFilter;
   if (sDocType.equals("newsletter"))
      sDocTypeFilter = "m." + DB.id_app + "=" + String.valueOf(MailwireApp) + " AND ";
   else if (sDocType.equals("survey"))
      sDocTypeFilter = "m." + DB.id_app + "=" + String.valueOf(SurveysApp) + " AND ";
   else
      sDocTypeFilter = "m." + DB.id_app + "=" + String.valueOf(WebBuilderApp) + " AND ";
+
+  String sLangFilter = nullif(request.getParameter("id_language")).length()==0 ? "" : "p."+DB.id_language+"='"+request.getParameter("id_language")+"' AND ";
     
   String sFind = "";
     
@@ -77,13 +76,16 @@
   String sStorageRoot = Environment.getProfilePath(GlobalDBBind.getProfileName(),"storage");
   
   int iPageSetCount = 0;
-  DBSubset oPageSets = null;        
+  DBSubset oPageSets = null;
+  DBSubset oLanguages = new DBSubset(DB.k_lu_languages+" l",
+  											"l."+DB.id_language+","+(GlobalDBBind.getDBTable(DB.k_lu_languages).getColumnByName(DB.tr_lang_+sLanguage)==null ? "l."+DB.tr_lang_en : DBBind.Functions.ISNULL+"(l."+DB.tr_lang_+sLanguage+",l."+DB.tr_lang_en+")"),
+                        "EXISTS (SELECT NULL FROM "+DB.k_pagesets+" p WHERE p."+DB.gu_workarea+"=? AND p."+DB.id_language+"=l."+DB.id_language+") ORDER BY 2", 50);
+  int iLangsCount = 0;
   Object[] aFind = { '%' + sFind + '%' };
   int iMaxRows;
   int iSkip;
   String sOrderBy;
   int iOrderBy;  
-
 
   if (request.getParameter("orderby")!=null)
     sOrderBy = request.getParameter("orderby");
@@ -107,23 +109,24 @@
 
   if (iSkip<0) iSkip = 0;
 
-  // Obtener una conexiÃ³nd el pool a bb.dd. (el nombre de la conexiÃ³n es arbitrario)
   JDCConnection oConn = GlobalDBBind.getConnection("pageset_listing");  
   String aStatus[];
    
   try {
-    // Si el filtro no existe devolver todos los registros
+  
+    iLangsCount = oLanguages.load(oConn, new Object[]{gu_workarea});
+    
     if (sFind.length()==0) {
       oPageSets = new DBSubset (DB.k_pagesets + " p," + DB.k_microsites + " m ", 
       				"p." + DB.gu_pageset + ",p." + DB.nm_pageset + ",p." + DB.tx_comments + ",p." + DB.path_data + ",p." + DB.dt_created + ",m." + DB.nm_microsite + ",p." + DB.id_status,
-      				"(p." + DB.gu_microsite + "=m." + DB.gu_microsite + " OR p." + DB.gu_microsite + " IS NULL) AND " + sDocTypeFilter + "p.gu_workarea='" + gu_workarea + "' ORDER BY " + sOrderBy, iMaxRows);
+      				"(p." + DB.gu_microsite + "=m." + DB.gu_microsite + " OR p." + DB.gu_microsite + " IS NULL) AND " + sDocTypeFilter + sLangFilter + "p.gu_workarea='" + gu_workarea + "' ORDER BY " + sOrderBy, iMaxRows);
       oPageSets.setMaxRows(iMaxRows);
       iPageSetCount = oPageSets.load (oConn, iSkip);
     }
     else {
       oPageSets = new DBSubset (DB.k_pagesets + " p," + DB.k_microsites + " m", 
       				"p." + DB.gu_pageset + ",p." + DB.nm_pageset + ",p." + DB.tx_comments + ",p." + DB.path_data + ",p." + DB.dt_created + ",m." + DB.nm_microsite + ",p." + DB.id_status,
-      				"(p." + DB.gu_microsite + "=m." + DB.gu_microsite + " OR p." + DB.gu_microsite + " IS NULL) AND " + sDocTypeFilter + "p.gu_workarea='" + gu_workarea + "' " + sFind + " ORDER BY " + sOrderBy, iMaxRows);
+      				"(p." + DB.gu_microsite + "=m." + DB.gu_microsite + " OR p." + DB.gu_microsite + " IS NULL) AND " + sDocTypeFilter + sLangFilter + "p.gu_workarea='" + gu_workarea + "' " + sFind + " ORDER BY " + sOrderBy, iMaxRows);
       oPageSets.setMaxRows(iMaxRows);
       iPageSetCount = oPageSets.load (oConn, iSkip);    
     }
@@ -134,7 +137,7 @@
       if (oPageSets.isNull(6,ps))
         aStatus[ps] = "";
       else
-        aStatus[ps] = DBLanguages.getLookUpTranslation((java.sql.Connection) oConn, "k_pagesets_lookup", gu_workarea , "id_status", sLanguage, oPageSets.getString(6,ps));
+        aStatus[ps] = DBLanguages.getLookUpTranslation((java.sql.Connection) oConn, DB.k_pagesets_lookup, gu_workarea , "id_status", sLanguage, oPageSets.getString(6,ps));
     
     oConn.close("pageset_listing"); 
   }
@@ -156,18 +159,18 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/datefuncs.js"></SCRIPT>  
-
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/dynapi/dynapi.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript">
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/dynapi.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     DynAPI.setLibraryPath('../javascript/dynapi/lib/');
     DynAPI.include('dynapi.api.*');
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript">
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" >
     var menuLayer;
     DynAPI.onLoad = function() { 
       setCombos();
@@ -177,8 +180,7 @@
       menuLayer.setHTML(rightMenuHTML);
     }
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/dynapi/rightmenu.js"></SCRIPT>
-
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/rightmenu.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
     	var jsPageSetId;
@@ -213,15 +215,16 @@
 	  txt = rtrim(frm.find.value);
 	  if (txt.indexOf("'")>=0 || txt.indexOf("%")>=0  || txt.indexOf(",")>=0  || txt.indexOf("&")>=0  || txt.indexOf("?")>=0 ) {
 	    alert ("Search string contains invalid characters");
-	    document.location.href = "pageset_listing.jsp?doctype="+ getURLParam("doctype") +"&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
+	    document.location = "pageset_listing.jsp?doctype="+ getURLParam("doctype") + "&id_language=" + getCombo(frm.id_language) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
 	    return false;
 	  }
 	  
 	  if (txt.length>0)
-	    qry += "&find=" + escape(txt);	  
-	  if (txt.length==0 && frm.dt_start.value.length==0 && frm.dt_end.value.length==0) {
+	    qry += "&find=" + escape(txt);
+	    
+	  if (txt.length==0 && frm.dt_start.value.length==0 && frm.dt_end.value.length==0 && frm.id_language.selectedIndex<=0) {
 	    alert ("Must specify a search criteria");
-	    document.location.href = "pageset_listing.jsp?doctype="+ getURLParam("doctype") +"&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
+	    document.location = "pageset_listing.jsp?doctype="+ getURLParam("doctype") + "&id_language=" + getCombo(frm.id_language) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
 	    return false;
 	  }
 	  	  
@@ -231,7 +234,7 @@
 	      qry += "&dt_start=" + txt;
 	    else {
 	      alert ("Invalid Start Date");
-	      document.location.href = "pageset_listing.jsp?doctype="+ getURLParam("doctype") +"&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
+	      document.location = "pageset_listing.jsp?doctype="+ getURLParam("doctype") + "&id_language=" + getCombo(frm.id_language) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
 	      return false;
 	    }
 	    
@@ -241,12 +244,12 @@
 	      qry += "&dt_end=" + txt;
 	    else {
 	      alert ("Invalid End Date");
-	      document.location.href = "pageset_listing.jsp?doctype="+ getURLParam("doctype") +"&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
+	      document.location = "pageset_listing.jsp?doctype="+ getURLParam("doctype") + "&id_language=" + getCombo(frm.id_language) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
 	      return false;
 	    }
 		    	  
-	  document.location.href = "pageset_listing.jsp?doctype=<%=sDocType%>&id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + (getURLParam("orderby")!=null ? "&orderby="+request.getParameter("orderby") : "") + qry + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&maxrows=<%=iMaxRows%>&skip=<%=iSkip%>";
-	}
+	  document.location = "pageset_listing.jsp?doctype=<%=sDocType%>&id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + (getURLParam("orderby")!=null ? "&orderby="+request.getParameter("orderby") : "") + qry + "&id_language=" + getCombo(frm.id_language) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&maxrows=<%=iMaxRows%>&skip=<%=iSkip%>";
+	} // findRecords
 	
 	// ----------------------------------------------------
 	
@@ -431,6 +434,9 @@
 
 	  if (getURLParam("dt_end")!=null)
 	    frm.dt_end.value = getURLParam("dt_end");
+
+	  if (getURLParam("id_language")!=null)
+	    setCombo(frm.id_language,getURLParam("id_language"));
 	}
 	
     //-->    
@@ -467,7 +473,9 @@
       <TR><TD COLSPAN="<% if (sDocType.equals("newsletter")) out.write("6"); else out.write("4");%>" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>      
       <TR>
         <TD COLSPAN="<% if (sDocType.equals("newsletter")) out.write("6"); else out.write("4");%>">
-	  <IMG SRC="../images/images/find16.gif" BORDER="0" ALT="Search">&nbsp;<FONT CLASS="textplain"><INPUT CLASS="combomini" TYPE="text" MAXLENGTH="30" NAME="find">&nbsp;&nbsp;between&nbsp;<INPUT TYPE="text" CLASS="combomini" MAXLENGTH="10" SIZE="10" NAME="dt_start"><A HREF="javascript:showCalendar('dt_start')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>&nbsp;&nbsp;and&nbsp;&nbsp;<INPUT CLASS="combomini" TYPE="text" MAXLENGTH="10" SIZE="10" NAME="dt_end"><A HREF="javascript:showCalendar('dt_end')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>&nbsp;</FONT><A HREF="javascript:findRecords()" CLASS="linkplain">Search</A>
+	        <IMG SRC="../images/images/find16.gif" BORDER="0" ALT="Search">&nbsp;<FONT CLASS="textplain"><INPUT CLASS="combomini" TYPE="text" MAXLENGTH="30" NAME="find">&nbsp;&nbsp;between&nbsp;<INPUT TYPE="text" CLASS="combomini" MAXLENGTH="10" SIZE="10" NAME="dt_start">&nbsp;<A HREF="javascript:showCalendar('dt_start')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>&nbsp;&nbsp;and&nbsp;&nbsp;<INPUT CLASS="combomini" TYPE="text" MAXLENGTH="10" SIZE="10" NAME="dt_end">&nbsp;<A HREF="javascript:showCalendar('dt_end')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>&nbsp;</FONT>
+	        &nbsp;&nbsp;<FONT CLASS="textplain">[~Idioma~]</FONT>&nbsp;<SELECT NAME="id_language" CLASS="combomini"><OPTION VALUE=""></OPTION><% for (int l=0; l<iLangsCount; l++) out.write("<OPTION VALUE=\""+oLanguages.getString(0,l)+"\">"+oLanguages.getString(1,l)+"</OPTION>"); %></SELECT>
+	        &nbsp;&nbsp;<A HREF="javascript:findRecords()" CLASS="linkplain">Search</A>
         </TD>
       <TR>
         <TD COLSPAN="<% if (sDocType.equals("newsletter")) out.write("6"); else out.write("4");%>">
@@ -490,14 +498,14 @@
         <TR>
          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="200px"><A HREF="javascript:sortBy(2);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;&nbsp;<B>Name</B></TD>
          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="300px"><A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;<B>&nbsp;Description</B></TD>
-         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="80px"><A HREF="javascript:sortBy(5);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;<B>&nbsp;Create</B></TD>
+         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="96px"><A HREF="javascript:sortBy(5);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;<B>&nbsp;Create</B></TD>
          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="100px">&nbsp;<B>&nbsp;Status</B></TD>
          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;</TD>
         </TR>
 <%
 	  String sCompId;
 	  for (int i=0; i<iPageSetCount; i++) {
-            
+
             // Recupero la ruta al archivo
             String sPathData = sStorageRoot + oPageSets.getStringNull(3,i,"");
             int matchdoctype = -1;

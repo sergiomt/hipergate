@@ -59,7 +59,7 @@
 
   String sUrl = "pageset_listing.jsp?selected=5&subselected=0&doctype=" + sDocType;  
 
-  PageSetDB oObj = new PageSetDB();
+  PageSetDB oPgSt = new PageSetDB();
    
   JDCConnection oConn = null;  
   
@@ -67,13 +67,13 @@
 
     oConn = GlobalDBBind.getConnection("pageset_edit_store");  
 
-    if (gu_pageset.length()>0) oObj.put("gu_pageset", gu_pageset);
+    if (gu_pageset.length()>0) oPgSt.put("gu_pageset", gu_pageset);
 
-    loadRequest(oConn, request, oObj);
+    loadRequest(oConn, request, oPgSt);
 
     oConn.setAutoCommit (false);
 
-    oObj.store(oConn);
+    oPgSt.store(oConn);
 
     // Guardar XML preparado
   
@@ -96,7 +96,7 @@
         
     sTemplateData = oFS.readfilestr(sDataTemplateFile, "UTF-8");
   
-    sTemplateData = Gadgets.replace (sTemplateData, ":gu_pageset", oObj.getString(DB.gu_pageset));
+    sTemplateData = Gadgets.replace (sTemplateData, ":gu_pageset", oPgSt.getString(DB.gu_pageset));
     sTemplateData = Gadgets.replace (sTemplateData, ":gu_microsite", gu_microsite);
     sTemplateData = Gadgets.replace (sTemplateData, ":gu_pagex", Gadgets.generateUUID());
     sTemplateData = Gadgets.replace (sTemplateData, ":page_title", sDocType.equals("newsletter") ? request.getParameter("nm_pageset") : "Home");

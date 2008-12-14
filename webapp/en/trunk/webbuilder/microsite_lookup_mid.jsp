@@ -171,14 +171,14 @@
 %>
 <!-- +-----------------------+ -->
 <!-- | Lista de Plantillas   | -->
-<!-- | © KnowGate 2003       | -->
+<!-- | © KnowGate 2003-2008  | -->
 <!-- +-----------------------+ -->
 <HTML>
   <HEAD>
     <TITLE>hipergate ::</TITLE>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
       <!--
       var counter = 0;
@@ -195,15 +195,15 @@
          for (i=0;i<frm.tipo_msite.length;i++) {
           if (frm.tipo_msite[i].checked) 
            myString = frm.tipo_msite[i].value;
-	 }
-
-	splitString = myString.split(",");
-	
-	nmstr = splitString[0];
-	vlstr = splitString[1];
-	hdstr = splitString[2];
-	
-	frm.nm_microsite.value = nmstr;
+      	 } // next
+      
+      	splitString = myString.split(",");
+      	
+      	nmstr = splitString[0];
+      	vlstr = splitString[1];
+      	hdstr = splitString[2];
+      	
+      	frm.nm_microsite.value = nmstr;
         frm.path_metadata.value = hdstr;
         frm.gu_microsite.value = vlstr;
         
@@ -213,7 +213,7 @@
         frm.nm_pageset.value = frm.nm_pageset.value.replace("$",frm.nm_microsite.value);
         frm.path_data.value = frm.path_data.value.replace("$",frm.nm_microsite.value);
                 
-        frm.submit();
+        if (validate()) frm.submit();
       }
 
       //-----------------------------------------------------------------------
@@ -302,10 +302,15 @@
       
       function validate() {
       
-        if (document.forms[0].tx_comments.value.length>255) {
+        var frm = document.forms[0];
+         
+        if (frm.tx_comments.value.length>255) {
           alert ("Comments may not be longer than 255 characters");
           return false;
         }
+
+        frm.id_language.value = getCombo(frm.sel_language);
+
         return true;
       }
       
