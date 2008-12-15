@@ -38,6 +38,7 @@ INSERT INTO k_classes VALUES(64,'Absentism');
 INSERT INTO k_classes VALUES(65,'AcademicCourseBooking');
 INSERT INTO k_classes VALUES(70,'Microsite');
 INSERT INTO k_classes VALUES(71,'PageSet');
+INSERT INTO k_classes VALUES(72,'Page');
 INSERT INTO k_classes VALUES(80,'Project');
 INSERT INTO k_classes VALUES(81,'Duty');
 INSERT INTO k_classes VALUES(82,'Bug');
