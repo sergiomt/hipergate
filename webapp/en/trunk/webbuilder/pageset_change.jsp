@@ -53,11 +53,11 @@
   
   String sStorage = Environment.getProfilePath(GlobalDBBind.getProfileName(),"storage");
   
+  PageDB oPage = null;
   PageSetDB oPagSet = null;
   MicrositeDB oMSite = null;
   
-  String sStatusLookUp = "";
-  
+  String sStatusLookUp = "", sPathPublish = "";  
   String sSelLang = null;
   
   JDCConnection oConn = null;  
@@ -70,6 +70,11 @@
      
     oPagSet = new PageSetDB(oConn, gu_pageset);
     oMSite = new MicrositeDB(oConn, oPagSet.getString(DB.gu_microsite));
+	  
+	  if (oMSite.getShort(DB.tp_microsite)==MicrositeDB.TYPE_XSL) {
+	    oPage = oPagSet.getFirstPage(oConn);
+	    if (null!=oPage) sPathPublish = oPage.getStringNull(DB.path_publish,"");
+	  }
 
     sStatusLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, "k_pagesets_lookup", gu_workarea, DB.id_status, sLanguage);
 
@@ -124,15 +129,15 @@
       function validate() {
         var frm = window.document.forms[0];
 
-	if (frm.nm_pageset.value.length==0) {
-	  alert ("El nombre es obligatrio");
-	  return false;
-	}
-	
-	if (frm.tx_comments.value.length>255) {
-	  alert ("Los comentarios no pueden superar los 254 caracteres");
-	  return false;
-	}
+      	if (frm.nm_pageset.value.length==0) {
+      	  alert ("El nombre es obligatrio");
+      	  return false;
+      	}
+      	
+      	if (frm.tx_comments.value.length>255) {
+      	  alert ("Los comentarios no pueden superar los 254 caracteres");
+      	  return false;
+      	}
 	        
         return true;
       } // validate;
@@ -166,6 +171,7 @@
     <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
     <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
     <INPUT TYPE="hidden" NAME="gu_pageset" VALUE="<%=gu_pageset%>">
+    <INPUT TYPE="hidden" NAME="gu_page" VALUE="<%=(oPage==null ? "" : oPage.getString(DB.gu_page))%>">
     <INPUT TYPE="hidden" NAME="gu_microsite" VALUE="<%=oMSite.getString(DB.gu_microsite)%>">
     <INPUT TYPE="hidden" NAME="path_data" VALUE="<%=oPagSet.getString(DB.path_data)%>">
 
@@ -199,6 +205,14 @@
               <SELECT NAME="sel_language"><% out.write(sSelLang); %></SELECT>
             </TD>
           </TR>
+<% if (oMSite.getShort(DB.tp_microsite)==MicrositeDB.TYPE_XSL) { %>
+          <TR>
+            <TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">[~Publicar en:~]</FONT></TD>
+            <TD ALIGN="left" WIDTH="400">
+              <INPUT TYPE="text" NAME="path_publish" SIZE="50" MAXLENGTH="254" VALUE="<%=sPathPublish%>">
+            </TD>
+          </TR>
+<% } %>
           <TR>
             <TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">Description:</FONT></TD>
             <TD ALIGN="left" WIDTH="400">

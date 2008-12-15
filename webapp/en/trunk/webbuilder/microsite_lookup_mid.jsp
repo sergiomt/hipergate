@@ -212,7 +212,14 @@
         
         frm.nm_pageset.value = frm.nm_pageset.value.replace("$",frm.nm_microsite.value);
         frm.path_data.value = frm.path_data.value.replace("$",frm.nm_microsite.value);
-                
+      
+      	if (frm.doctype.value=="newsletter")
+      	  frm.tp_microsite.value = "1";
+      	else if (frm.doctype.value=="website")
+      	  frm.tp_microsite.value = "2";
+      	else if (frm.doctype.value=="survey")
+      	  frm.tp_microsite.value = "4";
+
         if (validate()) frm.submit();
       }
 
@@ -327,6 +334,7 @@
     <INPUT TYPE="hidden" NAME="vs_stamp" VALUE="1.0.0">
     <INPUT TYPE="hidden" NAME="gu_pageset" VALUE="<%=Gadgets.generateUUID()%>">
     <INPUT TYPE="hidden" NAME="gu_microsite" VALUE="xxxx">
+    <INPUT TYPE="hidden" NAME="tp_microsite" VALUE="1">
     <INPUT TYPE="hidden" NAME="nm_microsite" VALUE="xxxx">
     <INPUT TYPE="hidden" NAME="path_metadata" VALUE="xxxx">
     <INPUT TYPE="hidden" NAME="path_data" VALUE="xxxx">

@@ -49,6 +49,18 @@
   String sDataTemplateFile;
   String sTemplateData;
 
+  String sAppDir;
+  
+  if (sDocType.equals("newsletter")) {
+    sAppDir = "Mailwire";
+  } else if (sDocType.equals("website")) {
+    sAppDir = "WebBuilder";
+  } else if (sDocType.equals("survey")) {
+    sAppDir = "Surveys";  
+  } else {
+    sAppDir = "Other";
+  }
+
   if (DebugFile.trace) {
     DebugFile.writeln("<JSP: storage=" + sStorage);
     DebugFile.writeln("<JSP: path_data=" + sDataFile);
@@ -77,7 +89,7 @@
 
     // Guardar XML preparado
   
-    oFS.mkstorpath (Integer.parseInt(id_domain), gu_workarea, "apps" + sSep + "Mailwire" + sSep + "data");
+    oFS.mkstorpath (Integer.parseInt(id_domain), gu_workarea, "apps" + sSep + sAppDir + sSep + "data");
     
     // Almacenar Home
       

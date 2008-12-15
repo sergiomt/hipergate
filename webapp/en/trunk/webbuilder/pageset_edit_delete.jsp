@@ -35,7 +35,6 @@
 
   //Recuperar parametros generales
   String id_domain = getCookie(request,"domainid","");
-  String n_domain = request.getParameter("n_domain");
   String gu_workarea = request.getParameter("gu_workarea");
   String sStorage = Environment.getProfilePath(GlobalDBBind.getProfileName(),"storage");
 
@@ -48,7 +47,7 @@
   String sShellDir = Environment.getProfileVar(GlobalDBBind.getProfileName(), "shelldir", sStorage + File.separator + "shell");
   
   String sDocType = request.getParameter("doctype");
-  String sUrl = "pageset_listing.jsp?selected=5&subselected=0&doctype=" + sDocType;  
+  String sUrl = "pageset_listing.jsp?selected="+request.getParameter("selected")+"&subselected="+request.getParameter("subselected")+"&doctype=" + sDocType;  
   String nm_pageset;
   String sXMLFilePage;
   String sHTMLDirPage;
@@ -60,9 +59,7 @@
   else
    sHTMLPath = new String(sEnvWorkPut + File.separator + gu_workarea + File.separator + "apps" + File.separator + "WebBuilder" + File.separator + "html");
   
-  
-  //Inicializaciones
-  //if (autenticateSession(GlobalDBBind, request, response)<0) return;
+  if (autenticateSession(GlobalDBBind, request, response)<0) return;
   
   String id_user = getCookie (request, "userid", null);
   JDCConnection oCon = null;
@@ -75,7 +72,7 @@
   String a_items[] = Gadgets.split(chkItems, ',');
   
   try {
-    oCon = GlobalDBBind.getConnection("pagesets_delete");
+    oCon = GlobalDBBind.getConnection("pageset_edit_delete");
     oCon.setAutoCommit (false);
     
     for (int i=0;i<a_items.length;i++) {
@@ -91,23 +88,24 @@
         // Eliminar registro de pageset
         oPageSetDB.delete(oCon);
 
+        // Eliminación diferida de archivos y directorios del pageset
+
         oFs.mkdirs("file://" + sShellDir);
       
-        // Eliminar archivos y directorios con la newsletter correspondiente al pageset
         oFs.delete("file://" + sXMLFilePage);
         oFs.delete("file://" + sHTMLDirPage, sShellDir + "/cleanup.txt");
       } // fi
     } // next
   
-    //Ejecutar commit y liberar conexión
+    // Ejecutar commit y liberar conexión
     oCon.commit();
-    oCon.close("pagesets_delete");
+    oCon.close("pageset_edit_delete");
   }
   catch (SQLException sqle) {
     if (oCon!=null)
       if (!oCon.isClosed()) {
         if (oCon.getAutoCommit()) oCon.rollback();
-        oCon.close("wb_document");
+        oCon.close("pageset_edit_delete");
       }
     oCon = null;
 
@@ -121,7 +119,7 @@
     if (oCon!=null)
       if (!oCon.isClosed()) {
         if (oCon.getAutoCommit()) oCon.rollback();
-        oCon.close("wb_document");
+        oCon.close("pageset_edit_delete");
       }
     oCon = null;
 
@@ -135,7 +133,7 @@
     if (oCon!=null)
       if (!oCon.isClosed()) {
         if (oCon.getAutoCommit()) oCon.rollback();
-        oCon.close("wb_document");
+        oCon.close("pageset_edit_delete");
       }      
     oCon = null;
 
@@ -157,7 +155,7 @@
       com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "", "");
   }
 
-  //Recargar listado
+  // Recargar listado
   response.sendRedirect(sUrl);
-%>
-<%@ include file="../methods/page_epilog.jspf" %>
+  
+%><%@ include file="../methods/page_epilog.jspf" %>

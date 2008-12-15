@@ -47,12 +47,15 @@
   
   if (sDocType.equals("newsletter")) {
     sAppDir = "Mailwire";
-  }
-  else {
+  } else if (sDocType.equals("website")) {
     sAppDir = "WebBuilder";
-  } 
+  } else if (sDocType.equals("survey")) {
+    sAppDir = "Surveys";  
+  } else {
+    sAppDir = "Other";
+  }
 
-  Properties UserProperties = new Properties();      
+  Properties UserProperties = new Properties();
   UserProperties.put("domain",   id_domain);
   UserProperties.put("workarea", gu_workarea);
   UserProperties.put("pageset",  gu_pageset);

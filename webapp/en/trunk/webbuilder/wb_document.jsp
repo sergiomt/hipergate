@@ -1,4 +1,4 @@
-<%@ page import="java.net.MalformedURLException,java.util.HashMap,org.w3c.dom.DOMException,com.knowgate.debug.DebugFile,java.util.Vector,java.io.BufferedOutputStream,java.io.OutputStreamWriter,java.io.FileOutputStream,java.io.FileNotFoundException,java.io.IOException,java.io.File,java.util.Properties,java.net.URLDecoder,java.sql.Statement,java.sql.ResultSet,java.sql.ResultSetMetaData,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBAudit,com.knowgate.dfs.FileSystem,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.acl.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*,javax.xml.transform.Transformer,javax.xml.transform.OutputKeys,javax.xml.transform.TransformerException,javax.xml.transform.TransformerConfigurationException" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.MalformedURLException,java.util.HashMap,org.xml.sax.SAXParseException,org.w3c.dom.DOMException,com.knowgate.debug.DebugFile,com.knowgate.debug.StackTraceUtil,java.util.Vector,java.io.BufferedOutputStream,java.io.OutputStreamWriter,java.io.FileOutputStream,java.io.FileNotFoundException,java.io.IOException,java.io.File,java.util.Properties,java.net.URLDecoder,java.sql.Statement,java.sql.ResultSet,java.sql.ResultSetMetaData,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBAudit,com.knowgate.dfs.FileSystem,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.acl.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*,javax.xml.transform.Transformer,javax.xml.transform.OutputKeys,javax.xml.transform.TransformerException,javax.xml.transform.TransformerConfigurationException" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <%!
   static String back (String sPath) {
@@ -115,7 +115,7 @@
   String sURLRoot       = request.getRealPath(request.getServletPath());
          sURLRoot       = sURLRoot.substring(0,sURLRoot.lastIndexOf(sSep)) + "/../";
 
-  String sStorageRoot 	= Environment.getProfilePath(GlobalDBBind.getProfileName(), "storage");
+  String sStorageRoot = Environment.getProfilePath(GlobalDBBind.getProfileName(), "storage");
   String sEnvWorkGet	= Environment.getProfileVar(GlobalDBBind.getProfileName() , "workareasget", sDefWrkArGet);
   String sEnvWorkPut	= Environment.getProfileVar(GlobalDBBind.getProfileName() , "workareasput", sDefWrkArPut);
  
@@ -124,16 +124,16 @@
   String sURLEdit 	 = sEnvWorkGet + "/" + gu_workarea + "/apps/" + sAppDir + "/html/" + gu_pageset + "/";
   String sIntegradorPath = sWebRoot + "/javascript/integrador.js";
 
-  // Declaración de instancias
   String sFilePageSet=null, sFileTemplate=null, sCompanyGUID=null, sParamName=null, sParamsQry=null, sSQL=null, sQueryString="?offset=0&limit=1000";
 
   JDCConnection oConn = null;
-
+  PageSetDB oPageSetDB = null;
+  
   try {
 
     oConn = GlobalDBBind.getConnection("wb_document");
     
-    PageSetDB oPageSetDB = new PageSetDB(oConn, gu_pageset);
+    oPageSetDB = new PageSetDB(oConn, gu_pageset);
 
     sFilePageSet = sStorageRoot + back(oPageSetDB.getString(DB.path_data));
     sFileTemplate = sStorageRoot + back(oPageSetDB.getString(DB.path_metadata));
@@ -142,8 +142,6 @@
 
     if (sCompanyGUID!=null)
       PageSet.mergeCompanyInfo (oConn, sFilePageSet, sCompanyGUID);
-      
-    oPageSetDB = null;
   
     oConn.close("wb_document");
 
@@ -161,8 +159,7 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + sqle.getMessage() + "&resume=_close"));       
   }
 
-  if (null==oConn) return;
-  
+  if (null==oConn) return;  
   oConn = null;  
   
   File oFileDir;
@@ -208,6 +205,19 @@
     }
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=PageSet IllegalAccessException&desc=" + iae.getMessage() + "<BR>" + sFileTemplate + "<BR>" + sFilePageSet + "&resume=_close")); 
   }
+  catch (SAXParseException spe) {
+    oPageSet = null;
+    String sTrace = StackTraceUtil.getStackTrace(spe);
+    if (null==sTrace)
+      sTrace = "";
+    else
+      sTrace = Gadgets.split(sTrace,'\n')[0];
+    if (DebugFile.trace) {
+      DebugFile.writeln("<wb_document.jsp: SAXParseException " + spe.getMessage() + " " + sTrace);
+      DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "SAXParseException", spe.getMessage());
+    }
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SAXParseException&desc=" + spe.getClass().getName() + "<BR>" + sFileTemplate + "<BR>" + sFilePageSet +"<BR>" + sTrace + "&resume=_close")); 
+  }  
   catch (Exception xcpt) {
     oPageSet = null;
     if (DebugFile.trace) {
@@ -216,36 +226,19 @@
     }
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=PageSet Exception&desc=" + xcpt.getClass().getName() + "<BR>" + sFileTemplate + "<BR>" + sFilePageSet + "&resume=_close")); 
   }
-
   if (null==oPageSet) return;
 
   if (DebugFile.trace) DebugFile.writeln("<JSP: Vector vPages = oPageSet.pages();>");
 
   Vector vPages = oPageSet.pages();
-
-  if (null==sPageId) sPageId = ((Page) vPages.elementAt(0)).guid();
+  oPage = (Page) vPages.elementAt(0);
+  
+  if (null==sPageId) sPageId = oPage.guid();
       
-  String sSelPageOptions = "";
+  String sPageTitle, sPageGUID, sSelPageOptions = "";
   
   try {
-    if (!sDocType.equals("newsletter")) {
-      
-      String sPageTitle, sPageGUID;
-      
-      int iSize = vPages.size();
 
-      for (int p=0; p<iSize; p++) {
-        
-        oPage = (Page) vPages.elementAt(p);
-        
-        sPageGUID  = oPage.guid();
-        sPageTitle = oPage.getTitle();     
-        
-        sSelPageOptions += "<option value=\"" + sPageGUID + "\"" + (sPageId.equals(sPageGUID) ? " selected" : "") + ">" + sPageTitle;     
-      } // next    
-    
-    } // fi (sDocType!="newsletter")
-    
     Properties EnvironmentProperties = Environment.getProfile(GlobalDBBind.getProfileName());
     
     if (null==EnvironmentProperties.getProperty("imageserver")) {
@@ -263,7 +256,33 @@
         
     oPage = oPageSet.buildPageForEdit(sPageId, sStorageRoot, sOutputPathEdit,
     			              sURLRoot + sIntegrador, sMenuPath,
-    			              sIntegradorPath, sSelPageOptions, EnvironmentProperties, UserProperties);  
+    			              sIntegradorPath, sSelPageOptions, EnvironmentProperties, UserProperties);
+
+    if (sDocType.equals("newsletter")) {
+      
+      oConn = GlobalDBBind.getConnection("wb_document_newsletter");
+      oPageSetDB.setPage(oConn, sPageId, 1, oPage.getTitle(), oPage.filePath());
+      oConn.close("wb_document_newsletter");
+      
+    } else {
+      int iSize = vPages.size();
+
+      oConn = GlobalDBBind.getConnection("wb_document_page");
+
+      for (int p=0; p<iSize; p++) {
+        
+        oPage = (Page) vPages.elementAt(p);
+        
+        sPageGUID  = oPage.guid();
+        sPageTitle = oPage.getTitle();
+
+        oPageSetDB.setPage(oConn, sPageGUID, p+1, sPageTitle, oPage.filePath());
+        
+        sSelPageOptions += "<option value=\"" + sPageGUID + "\"" + (sPageId.equals(sPageGUID) ? " selected" : "") + ">" + sPageTitle;     
+      } // next    
+
+      oConn.close("wb_document_page");
+    } // fi (sDocType=="newsletter")  
   }
   catch (MalformedURLException badurl) {
     oPageSet = null;
@@ -313,7 +332,6 @@
     }
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=" + npex.getMessage() + "<BR>" + sStorageRoot + "<BR>" + sOutputPathEdit + "&resume=_close"));
   }
-
   if (null==oPageSet) return;
       
   // Redirección a la página renderizada

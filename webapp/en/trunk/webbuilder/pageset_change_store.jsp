@@ -1,4 +1,4 @@
-<%@ page import="com.knowgate.dataxslt.db.PageSetDB,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.knowgate.dataxslt.db.PageSetDB,com.knowgate.dataxslt.db.PageDB,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %>
 <%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %>
 <%
@@ -39,6 +39,8 @@
   String id_domain = request.getParameter("id_domain");
   String n_domain = request.getParameter("n_domain");
   String gu_workarea = request.getParameter("gu_workarea");
+  String gu_page = request.getParameter("gu_page");
+  String path_publish = request.getParameter("path_publish");
   String id_user = getCookie (request, "userid", null);
   
   String gu_pageset = request.getParameter("gu_pageset");
@@ -57,6 +59,15 @@
     oPgDb.store(oConn);
 
     DBAudit.log(oConn, PageSetDB.ClassId, sOpCode, id_user, oPgDb.getString(DB.gu_pageset), null, 0, 0, oPgDb.getString(DB.nm_pageset), null);
+
+		if (path_publish!=null && gu_page.length()>0) {
+		  PageDB oPage = new PageDB();
+		  if (oPage.load(oConn, new Object[]{gu_page})) {
+		    oPage.replace(DB.path_publish, path_publish);
+		    oPage.store(oConn);
+        DBAudit.log(oConn, PageDB.ClassId, "MSPG", id_user, DB.gu_page, null, 0, 0, path_publish, null);
+		  } // fi
+		} // fi
     
     oConn.commit();
     oConn.close("pageset_change_store");

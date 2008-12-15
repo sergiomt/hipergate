@@ -406,8 +406,9 @@
           } // next
 	  
 	  if (chi.value.length>0) {
-	    if (window.confirm("You are about to delete" + String(c) + " documents. Are you sure you wish to continue?")) {	    
+	    if (window.confirm("You are about to delete " + String(c) + "  documents. Are you sure you wish to continue?")) {	    
 	      chi.value = chi.value.substr(0,chi.value.length-1);
+              frm.action = "pageset_edit_delete.jsp";
               frm.submit();
               return true;
             }
@@ -416,6 +417,42 @@
             alert('You must select at least one document');
           } // fi()
 	} // deletePageSets()
+
+        // ----------------------------------------------------
+
+	function publish() {
+	  var i;
+	  var c;
+	  var frm = document.forms[0];
+	  var chi = frm.checkeditems;
+	  var offset = 0;
+	  
+	  c = 0;
+	  
+	  chi.value = "";
+	  
+	  while (frm.elements[offset].type!="checkbox") offset++;
+	  	  
+	  for (i=0; i<jsPageSets.length; i++){	    
+            if (frm.elements[offset].checked) {
+              c++;
+              chi.value += jsPageSets[i] + ",";
+            } // fi ()
+            offset++;
+          } // next
+	  
+	  if (chi.value.length>0) {
+	    if (window.confirm("[~Está a punto de publicar ~] " + String(c) + "  documents. Are you sure you wish to continue?")) {	    
+	      chi.value = chi.value.substr(0,chi.value.length-1);
+              frm.action = "pageset_edit_publish.jsp";
+              frm.submit();
+              return true;
+            }
+          } 
+          else {
+            alert('You must select at least one document');
+          } // fi()
+	} // publish()
 	
         // ----------------------------------------------------
 
@@ -456,29 +493,33 @@
 </HEAD>
 <BODY  TOPMARGIN="0" MARGINHEIGHT="0" onClick="hideRightMenu()">
     <%@ include file="../common/tabmenu.jspf" %>
-    <FORM METHOD="post" NAME="frmPageset" ID="frmPageset" ACTION="pageset_edit_delete.jsp">
-    <TABLE cellspacing="0" cellpadding="0" border="0" width="99%"><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">Edit &nbsp;<%=sTitle%></FONT></TD></TR></TABLE>
-    <TABLE CELLSPACING="2" CELLPADDING="2">
-        <TR><TD COLSPAN="<% if (sDocType.equals("newsletter")) out.write("6"); else out.write("4");%>" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
+    <FORM METHOD="post" NAME="frmPageset" ID="frmPageset">
+    <INPUT TYPE="hidden" NAME="selected" VALUE="<%=request.getParameter("selected")%>">
+    <INPUT TYPE="hidden" NAME="subselected" VALUE="<%=request.getParameter("subselected")%>">
+    <TABLE SUMMARY="Title" CELLSPACING="0" CELLPADDING="0" BORDER="0" WIDTH="99%"><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">Edit &nbsp;<%=sTitle%></FONT></TD></TR></TABLE>
+    <TABLE SUMMARY="New & Delete" CELLSPACING="2" CELLPADDING="2">
+        <TR><TD COLSPAN="<% if (sDocType.equals("newsletter")) out.write("8"); else out.write("6");%>" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
         <TR>
         <TD ALIGN="right" HEIGHT="16">&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
         <TD ALIGN="left" VALIGN="middle"><A HREF="javascript:void(0)" onclick="createPageSet()" CLASS="linkplain">New</A></TD>
         <TD ALIGN="right">&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
         <TD ALIGN="left" HEIGHT="16"><A HREF="javascript:deletePageSets()" CLASS="linkplain">Delete</A></TD>
+        <TD ALIGN="right">&nbsp;&nbsp;<IMG SRC="../images/images/copyfiles.gif" WIDTH="24" HEIGHT="16" BORDER="0" ALT="[~Publicar~]"></TD>
+        <TD ALIGN="left" HEIGHT="16"><A HREF="javascript:void(0)" onclick="publish();return false;" CLASS="linkplain">[~Publicar~]</A></TD>
 <% if (sDocType.equals("newsletter")) { %>
         <TD ALIGN="right">&nbsp;&nbsp;<IMG SRC="../images/images/jobs/sandclock.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Schedule"></TD>
         <TD ALIGN="left" HEIGHT="16"><A HREF="javascript:void(0)" onclick="schedule();return false;" CLASS="linkplain">Schedule</A></TD>
 <% } %>
       </TR>
-      <TR><TD COLSPAN="<% if (sDocType.equals("newsletter")) out.write("6"); else out.write("4");%>" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>      
+      <TR><TD COLSPAN="<% if (sDocType.equals("newsletter")) out.write("8"); else out.write("6");%>" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>      
       <TR>
-        <TD COLSPAN="<% if (sDocType.equals("newsletter")) out.write("6"); else out.write("4");%>">
+        <TD COLSPAN="<% if (sDocType.equals("newsletter")) out.write("8"); else out.write("6");%>">
 	        <IMG SRC="../images/images/find16.gif" BORDER="0" ALT="Search">&nbsp;<FONT CLASS="textplain"><INPUT CLASS="combomini" TYPE="text" MAXLENGTH="30" NAME="find">&nbsp;&nbsp;between&nbsp;<INPUT TYPE="text" CLASS="combomini" MAXLENGTH="10" SIZE="10" NAME="dt_start">&nbsp;<A HREF="javascript:showCalendar('dt_start')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>&nbsp;&nbsp;and&nbsp;&nbsp;<INPUT CLASS="combomini" TYPE="text" MAXLENGTH="10" SIZE="10" NAME="dt_end">&nbsp;<A HREF="javascript:showCalendar('dt_end')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>&nbsp;</FONT>
 	        &nbsp;&nbsp;<FONT CLASS="textplain">[~Idioma~]</FONT>&nbsp;<SELECT NAME="id_language" CLASS="combomini"><OPTION VALUE=""></OPTION><% for (int l=0; l<iLangsCount; l++) out.write("<OPTION VALUE=\""+oLanguages.getString(0,l)+"\">"+oLanguages.getString(1,l)+"</OPTION>"); %></SELECT>
 	        &nbsp;&nbsp;<A HREF="javascript:findRecords()" CLASS="linkplain">Search</A>
         </TD>
       <TR>
-        <TD COLSPAN="<% if (sDocType.equals("newsletter")) out.write("6"); else out.write("4");%>">
+        <TD COLSPAN="<% if (sDocType.equals("newsletter")) out.write("8"); else out.write("6");%>">
           <FONT CLASS="textplain"><B>View</B>&nbsp;<INPUT TYPE="radio" NAME="chk_doctype" <% if (sDocType.equals("newsletter")) out.write("CHECKED"); else out.write("onClick=\"window.document.location.href='pageset_listing.jsp?selected=' + getURLParam('selected') + '&subselected=' + getURLParam('subselected') + '&doctype=newsletter'\""); %>>Newsletters&nbsp;&nbsp;<INPUT TYPE="radio" NAME="chk_doctype" <% if (sDocType.equals("website")) out.write("CHECKED"); else out.write("onClick=\"window.document.location.href='pageset_listing.jsp?selected=' + getURLParam('selected') + '&subselected=' + getURLParam('subselected') + '&doctype=website'\""); %>>WebSites&nbsp;&nbsp;<INPUT TYPE="radio" NAME="chk_doctype" <% if (sDocType.equals("survey")) out.write("CHECKED"); else out.write("onClick=\"window.document.location.href='pageset_listing.jsp?selected=' + getURLParam('selected') + '&subselected=' + getURLParam('subselected') + '&doctype=survey'\""); %>>Questionnaires</FONT>
         </TD>
       <TR>
