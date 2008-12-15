@@ -621,6 +621,7 @@ public final class DB {
   public static final String pg_page = "pg_page";
   public static final String tl_page = "tl_page";
   public static final String path_page = "path_page";
+  public static final String path_publish = "path_publish";
   public static final String nm_page = "nm_page";
   public static final String nm_zone = "nm_zone";
 
@@ -675,6 +676,8 @@ public final class DB {
   public static final String tr_lang_cs = "tr_lang_cs";
   public static final String tr_lang_uk = "tr_lang_uk";
   public static final String tr_lang_no = "tr_lang_no";
+  public static final String tr_lang_ko = "tr_lang_ko";
+  public static final String tr_lang_vn = "tr_lang_vn";
 
   public static final String xprotocol = "xprotocol";
   public static final String xport = "xport";
