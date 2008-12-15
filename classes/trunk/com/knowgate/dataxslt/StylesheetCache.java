@@ -170,9 +170,8 @@ public class StylesheetCache {
       sKey = (String) myIterator.next();
       sVal = oProps.getProperty(sKey);
 
-      if (DebugFile.trace) {
-        DebugFile.writeln("set param_" + sKey + " = " + sVal);
-      }
+      // if (DebugFile.trace) DebugFile.writeln("set param_" + sKey + " = " + sVal);
+
       oXSL.setParameter("param_" + sKey, sVal);
     } // wend()
 

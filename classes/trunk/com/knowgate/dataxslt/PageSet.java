@@ -567,7 +567,7 @@ public class PageSet extends DOMDocument {
    * @throws TransformerConfigurationException
    */
   public Vector buildSite(String sBasePath, String sOutputPath, Properties oEnvironmentProps, Properties oUserProps)
-      throws IOException, DOMException, TransformerException, TransformerConfigurationException {
+      throws FileNotFoundException,IOException, DOMException, TransformerException, TransformerConfigurationException {
 
     Transformer oTransformer;
     StreamResult oStreamResult;
@@ -582,7 +582,7 @@ public class PageSet extends DOMDocument {
     if (DebugFile.trace) {
       lElapsed = System.currentTimeMillis();
 
-      DebugFile.writeln("Begin PageSet.BuildSite(" + sBasePath + "," + sOutputPath + "...)");
+      DebugFile.writeln("Begin PageSet.buildSite(" + sBasePath + "," + sOutputPath + "...)");
       DebugFile.incIdent();
     }
 
@@ -652,6 +652,14 @@ public class PageSet extends DOMDocument {
 
         oTransformer.setParameter("param_page", ((Page)(vPages.get(c))).getTitle());
         oTransformer.transform(oStreamSrcXML, oStreamResult);
+
+		if (!new File(oCurrentPage.filePath()).exists()) {
+          if (DebugFile.trace) {
+            DebugFile.writeln("FileNotFoundException: PageSet.buildSite() could not create file "+oCurrentPage.filePath());
+            DebugFile.decIdent();
+          }
+		  throw new FileNotFoundException("PageSet.buildSite() could not create file "+oCurrentPage.filePath());
+		} // fi (exists())
       }
       catch (TransformerConfigurationException e) {
         oLastXcpt = e;
