@@ -195,7 +195,7 @@ public class MicrositeDB extends DBPersist {
 
   public static final short ClassId = 70;
 
-  public static short TYPE_XSL = 1;
-  public static short TYPE_HTML = 2;
-  public static short TYPE_SURVEY = 4;
+  public static final short TYPE_XSL = 1;
+  public static final short TYPE_HTML = 2;
+  public static final short TYPE_SURVEY = 4;
 }

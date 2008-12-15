@@ -48,6 +48,7 @@ import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBBind;
 import com.knowgate.dataobjs.DBPersist;
+import com.knowgate.dataobjs.DBSubset;
 import com.knowgate.misc.Gadgets;
 
 /**
@@ -413,6 +414,54 @@ public class PageSetDB extends DBPersist {
 
   // ----------------------------------------------------------
 
+  /**
+   * First Page of this PageSet
+   * @param oConn Database Connection
+   * @return PageDB object or <b>null</b> if this PageSet has no pages at k_pageset_pages table
+   * @throws SQLException
+   */
+  public PageDB getFirstPage(JDCConnection oConn) throws SQLException {
+    PageDB oPage = new PageDB();
+    DBSubset oPages = new DBSubset (DB.k_pageset_pages,oPage.getTable(oConn).getColumnsStr(),
+    								DB.gu_pageset+"=? ORDER BY "+DB.pg_page, 1);
+    oPages.setMaxRows(1);			
+    int nPages = oPages.load(oConn, new Object[]{getString(DB.gu_pageset)});
+    if (0==nPages) {
+      oPage = null;
+    } else {
+      oPage.putAll(oPages.getRowAsMap(0));
+    }
+    return oPage;
+  } // getFirstPage
+
+  // ----------------------------------------------------------
+
+  /**
+   * Pages of this PageSet
+   * @param oConn Database Connection
+   * @return Array of PageDB objects or <b>null</b> if this PageSet has no pages at k_pageset_pages table
+   * @throws SQLException
+   */
+  public PageDB[] getPages(JDCConnection oConn) throws SQLException {
+    PageDB[] aPages;
+    PageDB oPage = new PageDB();
+    DBSubset oPages = new DBSubset (DB.k_pageset_pages,oPage.getTable(oConn).getColumnsStr(),
+    								DB.gu_pageset+"=? ORDER BY "+DB.pg_page, 10);
+    int nPages = oPages.load(oConn, new Object[]{getString(DB.gu_pageset)});
+    if (0==nPages) {
+      aPages = null;
+    } else {
+      aPages = new PageDB[nPages];
+      for (int p=0; p<nPages; p++) {
+		aPages[p] = new PageDB();
+		aPages[p].putAll(oPages.getRowAsMap(p));
+      } // next
+    }
+    return aPages;
+  } // getPages
+
+  // ----------------------------------------------------------
+  
   public static boolean delete(JDCConnection oConn, String sPageSetGUID) throws SQLException {
     PageSetDB oPGDB = new PageSetDB(oConn, sPageSetGUID);
     return oPGDB.delete(oConn);
