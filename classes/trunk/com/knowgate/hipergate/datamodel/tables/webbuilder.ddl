@@ -76,6 +76,7 @@ dt_created   DATETIME     DEFAULT CURRENT_TIMESTAMP,
 dt_modified  DATETIME         NULL,
 tl_page      VARCHAR(255)     NULL,
 path_page    VARCHAR(254)     NULL,
+path_publish VARCHAR(254)     NULL,
 
 CONSTRAINT pk_pageset_pages PRIMARY KEY(gu_page),
 CONSTRAINT u1_pageset_pages UNIQUE(gu_pageset,pg_page)
