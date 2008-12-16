@@ -13,7 +13,7 @@
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
       function setURL() {
-        contactslist.location = "oportunity_listing.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&show=oportunities&skip=<%=nullif(request.getParameter("skip"),"0")%>&field=" + escape("<%=nullif(request.getParameter("field"))%>") + "&find=" + escape("<%=nullif(request.getParameter("find"))%>") + "&gu_contact=<%=nullif(request.getParameter("gu_contact"))%>" +"&gu_campaign=<%=nullif(request.getParameter("gu_campaign"))%>" + "&id_status=" + escape("<%=nullif(request.getParameter("id_status"))%>") + "&where=" + escape("<%=nullif(request.getParameter("where"))%>") + "<%=(nullif(request.getParameter("orderby")).length()>0 ? "&orderby=" + request.getParameter("orderby") : "")%>";
+        contactslist.location = "oportunity_listing.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&show=oportunities&skip=<%=nullif(request.getParameter("skip"),"0")%>&field=" + escape("<%=nullif(request.getParameter("field"))%>") + "&find=" + escape("<%=nullif(request.getParameter("find"))%>") + "&gu_contact=<%=nullif(request.getParameter("gu_contact"))%>" +"&gu_campaign=<%=nullif(request.getParameter("gu_campaign"))%>" + "&id_status=" + escape("<%=nullif(request.getParameter("id_status"))%>") + "&gu_sales_man=<%=nullif(request.getParameter("gu_sales_man"))%>&where=" + escape("<%=nullif(request.getParameter("where"))%>") + "<%=(nullif(request.getParameter("orderby")).length()>0 ? "&orderby=" + request.getParameter("orderby") : "")%>";
       }
     //-->
     </SCRIPT>    

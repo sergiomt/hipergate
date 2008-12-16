@@ -347,6 +347,7 @@
           setCombo(frm.sel_status,"<%=oComp.getStringNull(DB.id_status,"")%>");
           setCombo(frm.sel_typecompany,"<%=oComp.getStringNull(DB.tp_company,"")%>");
           setCombo(frm.id_fare,"<%=oComp.getStringNull(DB.id_fare,"")%>");
+          setCombo(frm.gu_sales_man,"<%=oComp.getStringNull(DB.gu_sales_man,"")%>");
         }
 
       //-->     

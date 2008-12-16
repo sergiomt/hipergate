@@ -78,50 +78,53 @@
       RecentlyUsed oRecent;
       DBPersist oItem;
       
+      oConn.setAutoCommit(true);
+
       if (sLinkTable.equals(DB.k_x_company_addr)) {
 
         oRecent = new RecentlyUsed (DB.k_companies_recent, 10, DB.gu_company, DB.gu_user);
 
-	oItem = new DBPersist (DB.k_companies_recent, "RecentCompany");
+	      oItem = new DBPersist (DB.k_companies_recent, "RecentCompany");
 
-	oItem.put (DB.gu_company, sLinkValue);
-	oItem.put (DB.gu_user, gu_user);
-	oItem.put (DB.gu_workarea, gu_workarea);
-	oItem.put (DB.nm_company, nullif(request.getParameter("nm_company")));
-	if (oAddr.getItemMap().containsKey(DB.work_phone))
-	  oItem.put (DB.work_phone, oAddr.get(DB.work_phone));
-	if (oAddr.getItemMap().containsKey(DB.tx_email))
-	  oItem.put (DB.tx_email, oAddr.get(DB.tx_email));
-	  
-	oRecent.add (oConn, oItem);
+      	oItem.put (DB.gu_company, sLinkValue);
+      	oItem.put (DB.gu_user, gu_user);
+      	oItem.put (DB.gu_workarea, gu_workarea);
+      	oItem.put (DB.nm_company, nullif(request.getParameter("nm_company")));
+      	if (oAddr.getItemMap().containsKey(DB.work_phone))
+      	  oItem.put (DB.work_phone, oAddr.get(DB.work_phone));
+      	if (oAddr.getItemMap().containsKey(DB.tx_email))
+      	  oItem.put (DB.tx_email, oAddr.get(DB.tx_email));
+      	  
+      	oRecent.add (oConn, oItem);
       }
       else if (sLinkTable.equals(DB.k_x_contact_addr)) {
         
         oRecent = new RecentlyUsed (DB.k_contacts_recent, 10, DB.gu_contact, DB.gu_user);
 
-	oItem = new DBPersist (DB.k_contacts_recent, "RecentContact");
-	
-	DBPersist oCont = new DBPersist (DB.k_contacts, "Contact");
-	oCont.load (oConn, new Object[]{sLinkValue});
-	
-	oItem.put (DB.gu_contact, oCont.getString(DB.gu_contact));
-	oItem.put (DB.full_name, oCont.getStringNull(DB.tx_name,"") + " " + oCont.getStringNull(DB.tx_surname,""));
-	oItem.put (DB.gu_user, gu_user);
-	oItem.put (DB.gu_workarea, gu_workarea);
-	oItem.put (DB.nm_company, nullif(request.getParameter("nm_company")));
-
-	if (oAddr.getItemMap().containsKey(DB.work_phone))
-	  oItem.put (DB.work_phone, oAddr.get(DB.work_phone));
-
-	if (oAddr.getItemMap().containsKey(DB.tx_email))
-	  oItem.put (DB.tx_email, oAddr.get(DB.tx_email));
-	  
-	oRecent.add (oConn, oItem);
+      	oItem = new DBPersist (DB.k_contacts_recent, "RecentContact");
+      	
+      	DBPersist oCont = new DBPersist (DB.k_contacts, "Contact");
+      	oCont.load (oConn, new Object[]{sLinkValue});
+      	
+      	oItem.put (DB.gu_contact, oCont.getString(DB.gu_contact));
+      	oItem.put (DB.full_name, oCont.getStringNull(DB.tx_name,"") + " " + oCont.getStringNull(DB.tx_surname,""));
+      	oItem.put (DB.gu_user, gu_user);
+      	oItem.put (DB.gu_workarea, gu_workarea);
+      	oItem.put (DB.nm_company, nullif(request.getParameter("nm_company")));
+      
+      	if (oAddr.getItemMap().containsKey(DB.work_phone))
+      	  oItem.put (DB.work_phone, oAddr.get(DB.work_phone));
+      
+      	if (oAddr.getItemMap().containsKey(DB.tx_email))
+      	  oItem.put (DB.tx_email, oAddr.get(DB.tx_email));
+      	  
+      	oRecent.add (oConn, oItem);
       }
     }
-    else
+    else {
       oAddr = new Address();
-    
+    }
+
     if (nullif(request.getParameter("nm_company")).length()>0)
       nm_company = request.getParameter("nm_company");
     else
@@ -135,7 +138,7 @@
     
     oConn.close("addr_edit");
   }
-  catch (SQLException e) {  
+  catch (NullPointerException e) {  
     if (oConn!=null)
       if (!oConn.isClosed()) oConn.close("addr_edit");
     response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=../blank.htm"));  

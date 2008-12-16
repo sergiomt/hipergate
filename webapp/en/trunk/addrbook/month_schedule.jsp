@@ -302,7 +302,7 @@
 	    </TD>
             <TD NOWRAP>
               <SELECT NAME="sel_month" CLASS="combomini"><OPTION VALUE="0">January</OPTION><OPTION VALUE="1">February</OPTION><OPTION VALUE="2">March</OPTION><OPTION VALUE="3">April</OPTION><OPTION VALUE="4">May</OPTION><OPTION VALUE="5">June</OPTION><OPTION VALUE="6">July</OPTION><OPTION VALUE="7">August</OPTION><OPTION VALUE="8">September</OPTION><OPTION VALUE="9">October</OPTION><OPTION VALUE="10">November</OPTION><OPTION VALUE="11">December</OPTION></SELECT>
-              <SELECT NAME="sel_year" CLASS="combomini"><OPTION VALUE="103">2003</OPTION><OPTION VALUE="104">2004</OPTION><OPTION VALUE="105">2005</OPTION><OPTION VALUE="106">2006</OPTION><OPTION VALUE="107">2007</OPTION><OPTION VALUE="108">2008</OPTION><OPTION VALUE="109">2009</OPTION><OPTION VALUE="110">2010</OPTION></SELECT>
+              <SELECT NAME="sel_year" CLASS="combomini"><OPTION VALUE="108">2008</OPTION><OPTION VALUE="109">2009</OPTION><OPTION VALUE="110">2010</OPTION><OPTION VALUE="111">2011</OPTION><OPTION VALUE="112">2012</OPTION><OPTION VALUE="113">2013</OPTION><OPTION VALUE="114">2014</OPTION></SELECT>
               &nbsp;<A CLASS="linkplain" HREF="javascript:window.location='month_schedule.jsp?id_domain=' + getURLParam('id_domain') + '&gu_workarea=' + getURLParam('gu_workarea') + '&gu_fellow=' + getCombo(document.forms[0].sel_fellow) + '&selected=' + getURLParam('selected') + '&subselected=' + getURLParam('subselected') + '&year=' + getCombo(document.forms[0].sel_year) + '&month=' + getCombo(document.forms[0].sel_month) + '&screen_width=' + screen.width;">View other month</A>
             </TD>
           </TR>
@@ -371,7 +371,7 @@
                		  if (bItsMe)
                       if (bIsGuest && !bIsAdmin)
                         out.write("<FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"#\" onClick=\"alert('Your credential level as Guest does not allow you to perform this action')\" TITLE=\"Delete\">x</A>]</FONT><BR>\n");
-                 		  else if (!bIsAdmin && !oMeetings.getString(DB.gu_fellow,iLastMeeting).equals(getCookie(request, "userid", "")))
+                 		  else if (!bIsAdmin && !oMeetings.getString(0,iLastMeeting).equals(getCookie(request, "userid", "")))
                         out.write("<FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"#\" onClick=\"alert('It is not allowed to delete activities not created by you')\" TITLE=\"Delete\">x</A>]</FONT><BR>\n");
                  		  else
                    		  out.write("<FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"javascript:deleteMeeting('" + oMeetings.getString(DB.gu_meeting,iLastMeeting) + "','" + oMeetings.getStringNull(DB.tx_meeting,iLastMeeting,"[~Sin titulo~]").replace((char)39,'´') + "','"+String.valueOf(oMeetings.getDate(1,iLastMeeting).getDate())+"')\" TITLE=\"Delete\">x</A>]</FONT><BR>\n");

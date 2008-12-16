@@ -1,9 +1,6 @@
-<%@ page import="java.net.URLDecoder,java.util.HashMap,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/dbbind.jsp" %>
-<jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
-<%@ include file="../methods/cookies.jspf" %>
-<%@ include file="../methods/authusrs.jspf" %>
-<%
+<%@ page import="java.net.URLDecoder,java.util.HashMap,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %>
+<jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -102,7 +99,7 @@
     // Si el filtro no existe devolver todos los registros
     if (sFind.length()==0) {
       oAddresses = new DBSubset (DB.k_addresses + " a," + sLinkTable + " x",
-      				 "a." + DB.gu_address + ",a." + DB.tp_location + ",a." + DB.nm_street + ",a." + DB.mn_city + ",a." + DB.tx_email + ",a." + DB.work_phone + ",a." + DB.direct_phone + ",a." + DB.direct_phone + ",a." + DB.home_phone + ",a." + DB.mov_phone,
+      				 "a." + DB.gu_address + ",a." + DB.tp_location + ",a." + DB.nm_street + ",a." + DB.mn_city + ",a." + DB.tx_email + ",a." + DB.work_phone + ",a." + DB.direct_phone + ",a." + DB.direct_phone + ",a." + DB.home_phone + ",a." + DB.mov_phone + ",a." + DB.nm_company,
       				 "x." + sLinkField + "='" + sLinkValue + "' AND a." + DB.gu_address + "=x." + DB.gu_address + " AND a." + DB.gu_workarea + "='" + gu_workarea + "' ORDER BY " + sOrderBy, iMaxRows);      				 
       oAddresses.setMaxRows(iMaxRows);
       iAddressCount = oAddresses.load (oConn, iSkip);
@@ -185,8 +182,8 @@
 	
         // ----------------------------------------------------
 
-	function modifyAddress(id) {
-          self.open("../common/addr_edit_f.jsp?gu_address=" + id + "&nm_company=" + escape("<%=nm_company%>") + "&linktable=" + getURLParam("linktable") + "&linkfield=" + getURLParam("linkfield") + "&linkvalue=" + getURLParam("linkvalue"), "editcompaddr", "toolbar=no,directories=no,menubar=no,resizable=no,width=700,height=" + (screen.height<=600 ? "520" : "640"));
+	function modifyAddress(id,nm) {
+          self.open("../common/addr_edit_f.jsp?gu_address=" + id + "&nm_company=" + nm + "&linktable=" + getURLParam("linktable") + "&linkfield=" + getURLParam("linkfield") + "&linkvalue=" + getURLParam("linkvalue"), "editcompaddr", "toolbar=no,directories=no,menubar=no,resizable=no,width=700,height=" + (screen.height<=600 ? "520" : "640"));
 	}	
 	
     //-->    
@@ -248,6 +245,7 @@
 	  String sAddrSt;
 	  String sAddrCt;
 	  String sAddrEm;
+	  String sAddrCm;
 	  Object oAddrPh;
 
 	  for (int i=0; i<iAddressCount; i++) {
@@ -261,10 +259,11 @@
             oAddrPh = null;
             for (int c=5; c<=9 && null==oAddrPh; c++)
               oAddrPh = oAddresses.get(c,i);
-            
+            sAddrCm = oAddresses.getStringNull(10,i,"");
+             
             out.write ("<TR HEIGHT=\"14\">");
             out.write ("<TD CLASS=\"tabletd\">&nbsp;" + sAddrTp + "</TD>");
-            out.write ("<TD CLASS=\"tabletd\">&nbsp;<A HREF=\"#\" onclick=\"modifyAddress('" + sAddrId + "')\" TITLE=\"Edit this address\">" + sAddrSt + "</A></TD>");
+            out.write ("<TD CLASS=\"tabletd\">&nbsp;<A HREF=\"#\" onclick=\"modifyAddress('" + sAddrId + "','"+Gadgets.URLEncode(sAddrCm)+"')\" TITLE=\"Edit this address\">" + sAddrSt + "</A></TD>");
             out.write ("<TD CLASS=\"tabletd\">&nbsp;" + sAddrCt + "</TD>");
             out.write ("<TD CLASS=\"tabletd\">&nbsp;" + sAddrEm + "</TD>");
             out.write ("<TD CLASS=\"tabletd\">&nbsp;" + (oAddrPh==null ? "" : oAddrPh) + "</TD>");

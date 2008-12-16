@@ -366,6 +366,15 @@
 	    }
 <% } %>
 
+		  if (frm.chk_fellow.checked && frm.nm_user.value.length==0) {
+        alert ("[~El nombre del usuario es obligatorio~]");
+        return false;			  		  	
+		  }
+		  if (frm.chk_fellow.checked && frm.tx_surname1.value.length==0) {
+        alert ("[~El apellido del usuario es obligatorio~]");
+        return false;			  		  	
+		  }
+
       frm.tx_main_email.value = txt.toLowerCase();
 
       if (frm.sel_workarea.options.selectedIndex>=0)

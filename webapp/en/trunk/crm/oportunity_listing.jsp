@@ -1,4 +1,4 @@
-<%@ page import="java.util.HashMap,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.HashMap,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -56,12 +56,15 @@
   String sField = nullif(request.getParameter("field")).trim();      
   String sFind = nullif(request.getParameter("find")); 
   String sCampaignId = nullif(request.getParameter("gu_campaign"));
+  String sSalesManId = nullif(request.getParameter("gu_sales_man"));
 
   String sCampaignsLookUp = "";
   String sStatusLookUp = "";
+  String sSalesMenLookUp = "";
   HashMap oStatusLookUp = null;
   int iOportunityCount = 0;
   
+  DBSubset oSalesMen = null;
   DBSubset oOportunities = null;
   DBSubset oCampaigns = new DBSubset (DB.k_campaigns, DB.gu_campaign+","+DB.nm_campaign+","+DB.bo_active, DB.gu_workarea+"=?",100);
   String sOrderBy;
@@ -111,15 +114,40 @@
   JDCConnection oConn = null;  
 
   boolean bIsGuest = true;
+  boolean bIsAdmin = false;
     
   try {
   
     bIsGuest = isDomainGuest (GlobalCacheClient, GlobalDBBind, request, response);
-    
+    bIsAdmin = isDomainAdmin (GlobalCacheClient, GlobalDBBind, request, response);
+
     oConn = GlobalDBBind.getConnection("oportunitylisting");
 
     sStatusLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_oportunities_lookup, gu_workarea, DB.id_status, sLanguage);
     oStatusLookUp = DBLanguages.getLookUpMap(oConn, DB.k_oportunities_lookup, gu_workarea, DB.id_status, sLanguage);
+
+    sSalesMenLookUp = GlobalCacheClient.getString("k_sales_men["+gu_workarea+"]");
+    if (null==sSalesMenLookUp) {
+      oSalesMen = new DBSubset(DB.k_sales_men+" m,"+DB.k_users+" u","m."+DB.gu_sales_man+",u."+DB.nm_user+",u."+DB.tx_surname1+",u."+DB.tx_surname2,
+      																	"m."+DB.gu_sales_man+"=u."+DB.gu_user+" AND m."+DB.gu_workarea+"=? ORDER BY 2,3,4", 100);
+      int nSalesMen = oSalesMen.load(oConn,new Object[]{gu_workarea});
+      StringBuffer oMenBuff = new StringBuffer(100*(nSalesMen+1));
+      for (int m=0; m<nSalesMen; m++) {
+        oMenBuff.append("<OPTION VALUE=\"");
+        oMenBuff.append(oSalesMen.getString(0,m));
+        oMenBuff.append("\">");
+        oMenBuff.append(oSalesMen.getStringNull(1,m,""));
+        oMenBuff.append(" ");
+        oMenBuff.append(oSalesMen.getStringNull(2,m,""));
+        oMenBuff.append(" ");
+        oMenBuff.append(oSalesMen.getStringNull(3,m,""));
+        oMenBuff.append("</OPTION>");
+      } // next
+      sSalesMenLookUp = oMenBuff.toString();
+      GlobalCacheClient.put("k_sales_men["+gu_workarea+"]", sSalesMenLookUp);
+      oMenBuff = null;
+      oSalesMen = null;
+    } // fi
 
     int nCampaigns = oCampaigns.load(oConn, new Object[]{gu_workarea});
     for (int c=0; c<nCampaigns; c++) {
@@ -143,6 +171,7 @@
       				 DB.gu_workarea + "='" + gu_workarea + "' AND (" + sPrivate + ") " +
       				 (sStatusId.length()>0 ? " AND "+DB.id_status+"='"+sStatusId+"' " : "") +
       				 (sCampaignId.length()>0 ? " AND "+DB.gu_campaign+"='"+sCampaignId+"' " : "") +
+      				 (sSalesManId.length()>0 ? " AND (EXISTS (SELECT NULL FROM "+DB.k_contacts+" c WHERE c."+DB.gu_sales_man+"='"+sSalesManId+"' AND c."+DB.gu_contact+"=b."+DB.gu_contact+") OR EXISTS (SELECT NULL FROM "+DB.k_companies+" k WHERE k."+DB.gu_sales_man+"='"+sSalesManId+"' AND k."+DB.gu_company+"=b."+DB.gu_company+")) " : "") + 
       				 (iOrderBy>0 ? " ORDER BY " + sOrderBy + ",10 DESC" : " ORDER BY 10 DESC"), iMaxRows);     				       
       oOportunities.setMaxRows(iMaxRows);      
       iOportunityCount = oOportunities.load (oConn, iSkip);
@@ -157,6 +186,7 @@
       				                        DB.dt_next_action + " BETWEEN " + DBBind.escape(oDtFmt.parse(sFind+" 00:00:00"),"ts") + " AND " + DBBind.escape(oDtFmt.parse(sFind+" 23:59:59"),"ts") + " " +
       				                        (sStatusId.length()>0 ? " AND "+DB.id_status+"='"+sStatusId+"' " : "") +
 																			(sCampaignId.length()>0 ? " AND "+DB.gu_campaign+"='"+sCampaignId+"' " : "") +
+      				 												(sSalesManId.length()>0 ? " AND (EXISTS (SELECT NULL FROM "+DB.k_contacts+" c WHERE c."+DB.gu_sales_man+"='"+sSalesManId+"' AND c."+DB.gu_contact+"=b."+DB.gu_contact+") OR EXISTS (SELECT NULL FROM "+DB.k_companies+" k WHERE k."+DB.gu_sales_man+"='"+sSalesManId+"' AND k."+DB.gu_company+"=b."+DB.gu_company+")) " : "") + 
       				                        (iOrderBy>0 ? " ORDER BY " + sOrderBy + ",10 DESC" : " ORDER BY 10 DESC"), iMaxRows);
           			 
         oOportunities.setMaxRows(iMaxRows);
@@ -170,6 +200,7 @@
       				                          DB.gu_campaign + "=? " +      				                          
       				                          (sStatusId.length()>0 ? " AND "+DB.id_status+"='"+sStatusId+"' " : "") +
 																			  (sCampaignId.length()>0 ? " AND "+DB.gu_campaign+"='"+sCampaignId+"' " : "") +      				                          
+      				 												  (sSalesManId.length()>0 ? " AND (EXISTS (SELECT NULL FROM "+DB.k_contacts+" c WHERE c."+DB.gu_sales_man+"='"+sSalesManId+"' AND c."+DB.gu_contact+"=b."+DB.gu_contact+") OR EXISTS (SELECT NULL FROM "+DB.k_companies+" k WHERE k."+DB.gu_sales_man+"='"+sSalesManId+"' AND k."+DB.gu_company+"=b."+DB.gu_company+")) " : "") + 
       				                          (iOrderBy>0 ? " ORDER BY " + sOrderBy + ",10 DESC" : " ORDER BY 10 DESC"), iMaxRows);
           oOportunities.setMaxRows(iMaxRows);
           iOportunityCount = oOportunities.load (oConn,new Object[]{oCampaigns.get(0,iCampaign)},iSkip);
@@ -183,6 +214,7 @@
       				                        sField + " " + DBBind.Functions.ILIKE + " ? " +
       				                        (sStatusId.length()>0 ? " AND "+DB.id_status+"='"+sStatusId+"' " : "") +
 																			(sCampaignId.length()>0 ? " AND "+DB.gu_campaign+"='"+sCampaignId+"' " : "") +      				                        
+      				 												(sSalesManId.length()>0 ? " AND (EXISTS (SELECT NULL FROM "+DB.k_contacts+" c WHERE c."+DB.gu_sales_man+"='"+sSalesManId+"' AND c."+DB.gu_contact+"=b."+DB.gu_contact+") OR EXISTS (SELECT NULL FROM "+DB.k_companies+" k WHERE k."+DB.gu_sales_man+"='"+sSalesManId+"' AND k."+DB.gu_company+"=b."+DB.gu_company+")) " : "") + 
       				                        (iOrderBy>0 ? " ORDER BY " + sOrderBy + ",10 DESC" : " ORDER BY 10 DESC"), iMaxRows);          			 
         oOportunities.setMaxRows(iMaxRows);
         Object[] aFind = { '%' + sFind + '%' };
@@ -296,7 +328,7 @@
 	  	frm.find.focus();
 	  	return false;
 	  }
-	  window.location="oportunity_listing_f.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=<%=sOrderBy%>&field=" + getCombo(frm.sel_searched) + "&find=" + escape(frm.find.value) + "&id_status=" + getCombo(frm.sel_status) + <% if (bCampaignsEnabled) out.write("\"&gu_campaign=\" + getCombo(frm.sel_campaign) + "); %> "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");	
+	  window.parent.location = "oportunity_listing_f.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=<%=sOrderBy%>&field=" + getCombo(frm.sel_searched) + "&find=" + escape(frm.find.value) + "&id_status=" + getCombo(frm.sel_status) + <% if (bCampaignsEnabled) out.write("\"&gu_campaign=\" + getCombo(frm.sel_campaign) + "); if (bIsAdmin && sSalesMenLookUp.length()>0) out.write("\"&gu_sales_man=\" + getCombo(frm.sel_salesman) + "); %> "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");	
 	} // findOportunity()
 	
 	// ----------------------------------------------------
@@ -308,7 +340,7 @@
 	  	frm.find.focus();
 	  	return false;
 	  }
-	  document.location = "oportunity_listing_f.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=" + fld + "&field=<%=sField%>&find=<%=sFind%>" + "&id_status=" + getCombo(frm.sel_status) + <% if (bCampaignsEnabled) out.write("\"&gu_campaign=\" + getCombo(frm.sel_campaign) + "); %> "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
+	  window.parent.location = "oportunity_listing_f.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=" + fld + "&field=<%=sField%>&find=<%=sFind%>" + "&id_status=" + getCombo(frm.sel_status) + <% if (bCampaignsEnabled) out.write("\"&gu_campaign=\" + getCombo(frm.sel_campaign) + "); if (bIsAdmin && sSalesMenLookUp.length()>0) out.write("\"&gu_sales_man=\" + getCombo(frm.sel_salesman) + "); %> "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
 	} // sortBy
 
 	// ----------------------------------------------------
@@ -326,6 +358,18 @@
         window.open("phonecall_record.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>&gu_user=" + getCookie("userid") + "&gu_oportunity=" + op + "&gu_contact=" + cn + "&gu_campaign=" + cp, "recordphonecall", "directories=no,toolbar=no,menubar=no,width=660,height=660");
 <% } %>        
       } // addPhoneCall
+
+        // ----------------------------------------------------
+
+  function modifyContact(id) {
+	  self.open ("contact_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_contact=" + id, "editcontact", "directories=no,toolbar=no,scrollbars=yes,menubar=no,width=660,height=660");
+	}	
+
+        // ----------------------------------------------------
+
+	function modifyCompany(id,nm) {
+	  self.open ("company_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_company=" + id + "&n_company=" + nm + "&gu_workarea=<%=gu_workarea%>", "editcompany", "directories=no,scrollbars=yes,toolbar=no,menubar=no,width=660,height=660");
+	}	
 
         // ----------------------------------------------------
 	
@@ -385,8 +429,11 @@
     setCombo(frm.sel_status, getURLParam("id_status"))
 <% if (bCampaignsEnabled) { %>
     setCombo(frm.sel_campaign, getURLParam("gu_campaign"));
+<% }
+   if (bIsAdmin && sSalesMenLookUp.length()>0) { %>
+    setCombo(frm.sel_salesman, getURLParam("gu_sales_man"));
 <% } %>	    
-	} // setCombos()
+   	} // setCombos()
     //-->    
   </SCRIPT>
     
@@ -410,57 +457,67 @@
       <INPUT TYPE="hidden" NAME="skip" VALUE="<%=String.valueOf(iSkip)%>">      
       <INPUT TYPE="hidden" NAME="checkeditems">
       <INPUT TYPE="hidden" NAME="where" VALUE="<%=sWhere%>">
-      <TABLE CELLSPACING="2" CELLPADDING="2">
-        <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
+
+      <TABLE SUMMARY="Search Options" CELLSPACING="2" CELLPADDING="2">
+        <TR><TD COLSPAN="6" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
         <TR>
 <% if (sContactId.length()>0 || sCompanyId.length()>0) {%>
           <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Opportunity"></TD>
           <TD><A HREF="#" onclick="createOportunity('<%=sContactId%>','<%=sCompanyId%>');return false;" CLASS="linkplain">New</A></TD>        
 <% } else { %>
           <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Opportunity"></TD>
-          <TD><A HREF="#" onclick="newOportunity()" CLASS="linkplain">New</A></TD>
+          <TD ALIGN="left"><A HREF="#" onclick="newOportunity()" CLASS="linkplain">New</A></TD>
 <% } %>
-	        <TD><SELECT NAME="sel_searched" CLASS="combomini" onchange="if (this.options[this.selectedIndex].value=='<%=DB.dt_next_action%>' && document.forms[0].find.value.length==0) document.forms[0].find.value=dateToString(new Date(),'d')"><OPTION VALUE="<%=DB.tl_oportunity%>">Title<OPTION VALUE="<%=DB.tx_contact%>">Contact<OPTION VALUE="<%=DB.tx_company%>">Company<OPTION VALUE="<%=DB.dt_next_action%>">Next Action</SELECT></TD>
-	        <TD><INPUT TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>"></TD>
-          <TD COLSPAN="4"><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;Show&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;results&nbsp;</FONT></TD>        
-        </TR>
-        <TR>
-          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete Opportunity"></TD>
-          <TD>
+          <TD WIDTH="18"><IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete Opportunity"></TD>
+          <TD ALIGN="left">
 <% if (bIsGuest) { %>
             <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">Delete</A>
 <% } else { %>
             <A HREF="#" onclick="deleteOportunities();return false;" CLASS="linkplain">Delete</A>
 <% } %>
           </TD>
-          <TD><FONT CLASS="textplain">Status</FONT></TD>
-          <TD><SELECT NAME="sel_status" CLASS="combomini"><OPTION VALUE=""></OPTION><%=sStatusLookUp%></SELECT>
-          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Search"></TD>
-	        <TD><A HREF="#" onclick="findOportunity();return false;" CLASS="linkplain" TITLE="Find Opportunity">Search</A></TD>
-          <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard Find Filter"></TD>
-          <TD><A HREF="#" onclick="document.forms[0].sel_status.selectedIndex=0;document.forms[0].sel_searched.selectedIndex=0;document.forms[0].find.value='';findOportunity();return false;" CLASS="linkplain" TITLE="Discard Find Filter">Discard</A></TD>
+          <TD></TD>
+        </TR>
+			  <TR>
+          <TD></TD>
+	        <TD><SELECT NAME="sel_searched" CLASS="combomini" onchange="if (this.options[this.selectedIndex].value=='<%=DB.dt_next_action%>' && document.forms[0].find.value.length==0) document.forms[0].find.value=dateToString(new Date(),'d')"><OPTION VALUE="<%=DB.tl_oportunity%>">Title<OPTION VALUE="<%=DB.tx_contact%>">Contact<OPTION VALUE="<%=DB.tx_company%>">Company<OPTION VALUE="<%=DB.dt_next_action%>">Next Action</SELECT></TD>
+	        <TD COLSPAN="2"><INPUT TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>"></TD>
+          <TD ALIGN="right"><FONT CLASS="textplain">Status&nbsp;</FONT></TD>
+          <TD><SELECT NAME="sel_status" CLASS="combomini"><OPTION VALUE=""></OPTION><%=sStatusLookUp%></SELECT></TD>
         </TR>
 <% if (bCampaignsEnabled) { %>
         <TR>
-          <TD COLSPAN="2"></TD>
+          <TD></TD>
           <TD><FONT CLASS="textplain">Campaign</FONT></TD>
-          <TD><SELECT NAME="sel_campaign" CLASS="combomini"><OPTION VALUE=""></OPTION><%=sCampaignsLookUp%></SELECT>
-          <TD COLSPAN="4"></TD>
+          <TD COLSPAN="4"><SELECT NAME="sel_campaign" CLASS="combomini"><OPTION VALUE=""></OPTION><%=sCampaignsLookUp%></SELECT>
         </TR>
 <% } %>
-        <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
+<% if (bIsAdmin && sSalesMenLookUp.length()>0) { %>
         <TR>
-          <TD COLSPAN="8">
-            <INPUT TYPE="radio" NAME="private" <% if (iPrivate!=0) out.write("CHECKED"); else out.write("onClick=\"reloadPrivate(1);\""); %>>&nbsp;<FONT CLASS="textplain">View private opportunities only</FONT>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <INPUT TYPE="radio" NAME="private" <% if (iPrivate==0) out.write("CHECKED"); else out.write("onClick=\"reloadPrivate(0);\""); %>>&nbsp;<FONT CLASS="textplain">View Public & Private Opportunities</FONT>
-          </TD>
+          <TD></TD>
+          <TD><FONT CLASS="textplain">[~Vendedor~]</FONT></TD>
+          <TD COLSPAN="4"><SELECT NAME="sel_salesman" CLASS="combomini"><OPTION VALUE=""></OPTION><%=sSalesMenLookUp%></SELECT>
         </TR>
-        <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
+<% } %>
+        <TR>
+          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Search"></TD>
+	        <TD><A HREF="#" onclick="findOportunity();return false;" CLASS="linkplain" TITLE="Find Opportunity">Search</A></TD>
+          <TD VALIGN="bottom"><IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard Find Filter"></TD>
+          <TD><A HREF="#" onclick="document.forms[0].sel_status.selectedIndex=0;document.forms[0].sel_searched.selectedIndex=0;document.forms[0].find.value='';<% if (bIsAdmin && sSalesMenLookUp.length()>0) { %>document.forms[0].sel_salesman.selectedIndex=0;<% } %>findOportunity();return false;" CLASS="linkplain" TITLE="Discard Find Filter">Discard</A></TD>
+          <TD ALIGN="right" CLASS="textplain">Show&nbsp;</TD>
+          <TD><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;results&nbsp;</FONT></TD>        
+        </TR>
+        <TR><TD COLSPAN="6" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
+        <TR>
+          <TD ALIGN="right"><INPUT TYPE="radio" NAME="private" <% if (iPrivate!=0) out.write("CHECKED"); else out.write("onClick=\"reloadPrivate(1);\""); %>></TD>
+          <TD COLSPAN="3" CLASS="textplain">View private opportunities only</TD>          
+          <TD ALIGN="left" COLSPAN="2" CLASS="textplain"><INPUT TYPE="radio" NAME="private" <% if (iPrivate==0) out.write("CHECKED"); else out.write("onClick=\"reloadPrivate(0);\""); %>>&nbsp;View Public & Private Opportunities</TD>
+        </TR>
+        <TR><TD COLSPAN="6" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
           <TD>&nbsp;&nbsp;<IMG SRC="../images/images/addrbook/telephone16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Llamada~]"></TD>
-          <TD COLSPAN="7"><A HREF="#" onclick="if (document.forms[0].sel_campaign.selectedIndex<=0) { alert('[~Debe seleccionar previamente la campaña sobre la cual generar la llamada~]'); document.forms[0].sel_campaign.focus(); } else { addPhoneCall('','',getCombo(document.forms[0].sel_campaign)); } return false;" CLASS="linkplain">[~Generar llamada para un contacto elegido automáticamente~]</A></TD>
+          <TD COLSPAN="5"><A HREF="#" oncontextmenu="return false;" onclick="if (document.forms[0].sel_campaign.selectedIndex<=0) { alert('[~Debe seleccionar previamente la campaña sobre la cual generar la llamada~]'); document.forms[0].sel_campaign.focus(); } else { addPhoneCall('','',getCombo(document.forms[0].sel_campaign)); } return false;" CLASS="linkplain">[~Generar llamada para un contacto elegido automáticamente~]</A></TD>
 			  </TR>
-        <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
+        <TR><TD COLSPAN="6" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       </TABLE>
       <%
    
@@ -527,7 +584,7 @@
 	  <TD CLASS="striplv<%=sOpLv%>">&nbsp;<%=sOpSt%>&nbsp;</TD>
 	  <TD CLASS="striplv<%=sOpLv%>">&nbsp;<A HREF="#" oncontextmenu="jsOportunityId='<%=sOpId%>'; jsOportunityTl='<%=sOpTl%>'; jsContactId='<%=sOpCn%>'; jsCompanyId='<%=sOpCm%>'; return showRightMenu(event);" onmouseover="window.status='Editar Oportunidad'; return true;" onmouseout="window.status='';" onclick="modifyOportunity('<%=sOpId%>','<%=sOpCn%>','<%=sOpCm%>')" TITLE="Click Right Mouse Button for Context Menu"><%=sOpTl%></A></TD>
 	  <TD CLASS="striplv<%=sOpLv%>">&nbsp;<%=sOpCp%></TD>
-	  <TD CLASS="striplv<%=sOpLv%>">&nbsp;<%=sOpCl%></TD>
+	  <TD CLASS="striplv<%=sOpLv%>">&nbsp;<A HREF="#" CLASS="linkplain" oncontextmenu="return false;" onclick="<%=(sOpCn.length()>0 ? "modifyContact('"+sOpCn+"')" : "modifyCompany('"+sOpCm+"','"+Gadgets.URLEncode(sOpCl)+"'))")%>"><%=sOpCl%></A></TD>
 	  <TD CLASS="striplv<%=sOpLv%>" ALIGN="right">&nbsp;<%=sOpRv%></TD>
 	  <TD CLASS="striplv<%=sOpLv%>" ALIGN="right">&nbsp;<%=sOpDt%>&nbsp;</TD>
 	  <TD CLASS="striplv<%=sOpLv%>" WIDTH="20" ><INPUT TYPE="checkbox" VALUE="<%=sOpId%>"></TD>

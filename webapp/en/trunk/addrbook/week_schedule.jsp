@@ -327,7 +327,7 @@
 	  } // fi
 
 	  if (null!=aLocationAddresses) {
-	    sClassName = String.valueOf(Fellow.ClassId);
+	    sClassName = String.valueOf(Address.ClassId);
 	    out.write("<OPTGROUP LABEL=\"Addresses\">");
             for (int a=0; a<aLocationAddresses.length; a++) {
 	      if (sLanguage.startsWith("es"))
