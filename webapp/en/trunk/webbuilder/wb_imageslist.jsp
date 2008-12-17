@@ -173,7 +173,7 @@
           	contador++;
               }
            if (contador==0)
-             alert("Must check at least one image");
+             alert("[~Debe seleccionar al menos una imagen~]");
            else
              document.location="images_delete.jsp?checkeditems=" + lista;
       }       
@@ -194,7 +194,7 @@
        
     //-->    
   </SCRIPT> 
-  <TITLE>hipergate :: Available Images</TITLE>
+  <TITLE>hipergate :: [~Imágenes disponibles~]</TITLE>
 </head>
 <body  TOPMARGIN="0" MARGINHEIGHT="0" onLoad="paintThumbs()">
 <table cellspacing="0" cellpadding="0" border="0" width="99%">
@@ -203,22 +203,22 @@
 <img src="<%=sURLRoot%>/skins/<%=sSkin%>/hglogopeq.jpg" border="0">
 </td>
 <td align="right">
-<input type="button" onclick="window.opener.focus();window.close();" class="closebutton" value="Close">
+<input type="button" onclick="window.opener.focus();window.close();" class="closebutton" value="[~Cerrar~]">
 </td>
 </tr>
 <tr>
 <td colspan="2" valign="center" bgcolor="#cccccc">
-<span class="title1">Available Images</span>
+<span class="title1">[~Im&aacute;genes disponibles~]</span>
 </td>
 </tr>
 </table>
 <TABLE CELLSPACING="2" CELLPADDING="2">
   <TR><TD COLSPAN="4" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
   <TR>
-    <TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Image"></TD>
-    <TD ALIGN="LEFT" VALIGN="middle"><A HREF="#" onclick="uploadImage()" CLASS="linkplain">New Image</A></TD>
-    <TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Remove images"></TD>
-    <TD ALIGN="LEFT"VALIGN="middle"><A HREF="javascript:if (window.confirm('When images are removed, they will stop appearing at documents that use them. Are you sure?')) deleteImages()" CLASS="linkplain">Remove images</A></TD>
+    <TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nueva imagen~]"></TD>
+    <TD ALIGN="LEFT" VALIGN="middle"><A HREF="#" onclick="uploadImage()" CLASS="linkplain">[~Nueva imagen~]</A></TD>
+    <TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar imágenes~]"></TD>
+    <TD ALIGN="LEFT"VALIGN="middle"><A HREF="javascript:if (window.confirm('[~Cuando elimina imagenes, estas dejaran de aparecer en las newsletter que las utilicen. ¿Esta seguro?~]')) deleteImages()" CLASS="linkplain">[~Eliminar imágenes~]</A></TD>
   </TR>
   <TR><TD COLSPAN="4" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
 </TABLE>

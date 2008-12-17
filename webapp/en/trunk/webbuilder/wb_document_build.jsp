@@ -179,7 +179,7 @@
   }  
 %>
 <HTML>
-<HEAD><TITLE>Wait...</TITLE></HEAD>
+<HEAD><TITLE>[~Espere~]...</TITLE></HEAD>
 <BODY onLoad="document.forms[0].submit()">
   <FORM METHOD="post" ACTION="../jobs/job_store.jsp" TARGET="_top">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=nullif(request.getParameter("id_domain"))%>">

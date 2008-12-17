@@ -91,7 +91,7 @@
   
     oFS.mkstorpath (Integer.parseInt(id_domain), gu_workarea, "apps" + sSep + sAppDir + sSep + "data");
     
-    // Almacenar Home
+    // Almacenar Home/Index
       
     Microsite msite = MicrositeFactory.getInstance(sMetaFile);
   
@@ -100,28 +100,30 @@
     if (oContainer==null)
      throw new NullPointerException("Cannot find container(0) on microsite metadata");
      
-  
     if (sDocType.equals("newsletter"))
       sDataTemplateFile = Gadgets.replace(sMetaFile,".xml", ".datatemplate.xml");
     else
       sDataTemplateFile = Gadgets.replace(sMetaFile,".xml", "_" + oContainer.name() + ".datatemplate.xml");
-        
+  
+    if (!oFS.exists("file://"+sDataTemplateFile))
+      throw new FileNotFoundException ("Required file not found "+sDataTemplateFile);
+      
     sTemplateData = oFS.readfilestr(sDataTemplateFile, "UTF-8");
   
     sTemplateData = Gadgets.replace (sTemplateData, ":gu_pageset", oPgSt.getString(DB.gu_pageset));
     sTemplateData = Gadgets.replace (sTemplateData, ":gu_microsite", gu_microsite);
     sTemplateData = Gadgets.replace (sTemplateData, ":gu_pagex", Gadgets.generateUUID());
-    sTemplateData = Gadgets.replace (sTemplateData, ":page_title", sDocType.equals("newsletter") ? request.getParameter("nm_pageset") : "Home");
+    sTemplateData = Gadgets.replace (sTemplateData, ":page_title", sDocType.equals("newsletter") ? request.getParameter("nm_pageset") : "Index");
     sTemplateData = Gadgets.replace (sTemplateData, ":gu_container", oContainer.guid());
   
     if (sDocType.equals("website"))
       sTemplateData = Gadgets.replace (sTemplateData, ":gu_pageres", Gadgets.generateUUID());
-  
+      
     oFS.writefilestr (sStorage + sDataFile, sTemplateData, "UTF-8");
     
     File oDataFile = new File(sStorage + sDataFile);
     if (!oDataFile.exists()) {
-      throw new IOException("File Creation Failed "+sStorage + sDataFile+"Check the valueof workareasput at hipergate.cnf and to permissions on the directory to which it points");
+      throw new IOException("[~No fue posible crear el archivo~] "+sStorage + sDataFile+"[~Revise el valor de la propiedad workareasput en hipergate.cnf y los permisos sobre el directorio al que apunta~]");
     }
     
     oConn.commit();
@@ -140,6 +142,20 @@
     }
         
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_back"));
+  }
+  catch (FileNotFoundException e) {  
+    if (oConn!=null)
+      if (!oConn.isClosed()) {
+        if (oConn.getAutoCommit()) oConn.rollback();
+        oConn.close("pageset_edit_store");      
+      }
+    oConn = null;
+
+    if (com.knowgate.debug.DebugFile.trace) {
+      com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "FileNotFoundException", e.getMessage());
+    }
+
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getMessage() + "&resume=_back"));
   }
   catch (IOException e) {  
     if (oConn!=null)
@@ -205,11 +221,11 @@
 %>
 <html>
 <head>
-  <TITLE>Wait...</TITLE>
+  <TITLE>[~Espere~]...</TITLE>
   <script>
     <!--
       window.top.opener.location = "<%=sUrl%>";
-      window.top.location="wb_file_upload.jsp?caller=newdocument&title=" + escape("<%=sTitle%>") + "&dir=";
+      window.top.location="wb_file_upload.jsp?caller=newdocument&gu_pageset=<%=oPgSt.getString(DB.gu_pageset)%>&doctype=<%=sDocType%>&title=" + escape("<%=sTitle%>") + "&dir=";
     //-->
   </script>
 </head>

@@ -102,7 +102,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: Edit Document Properties</TITLE>
+  <TITLE>hipergate :: [~Editar Propiedades de Documento~]</TITLE>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -158,13 +158,13 @@
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()">
   <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Actualizar~]"> [~Actualizar~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="[~Imprimir~]"> [~Imprimir~]</SPAN>
   </DIV></DIV>
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Edit Document Properties</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Editar Propiedades de Documento~]</FONT></TD></TR>
   </TABLE>  
   <FORM NAME="" METHOD="post" ACTION="pageset_change_store.jsp" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
@@ -179,27 +179,27 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right" WIDTH="150"><FONT CLASS="formstrong">Name:</FONT></TD>
+            <TD ALIGN="right" WIDTH="150"><FONT CLASS="formstrong">[~Nombre:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="400"><INPUT TYPE="text" NAME="nm_pageset" MAXLENGTH="100" SIZE="50" VALUE="<%=oPagSet.getString(DB.nm_pageset)%>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="150"><FONT CLASS="formstrong">Document Type:</FONT></TD>
+            <TD ALIGN="right" WIDTH="150"><FONT CLASS="formstrong">[~Tipo Documento:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="400"><FONT CLASS="formplain"><%=oMSite.getString(DB.nm_microsite)%></FONT></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">Status:</FONT></TD>
+            <TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">[~Estado:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="400">
               <INPUT TYPE="hidden" NAME="id_status" MAXLENGTH="30" VALUE="<%=oPagSet.getStringNull(DB.id_status,"")%>">
               <SELECT NAME="sel_status"><OPTION VALUE=""></OPTION><%=sStatusLookUp%></SELECT>&nbsp;
-              <A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Status List"></A>
+              <A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Estados~]"></A>
             </TD>
           </TR>                    
           <TR>
-            <TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">Version:</FONT></TD>
+            <TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">[~Versi&oacute;n:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="400"><INPUT TYPE="text" NAME="vs_stamp" MAXLENGTH="16" SIZE="16" VALUE="<%=oPagSet.getStringNull(DB.vs_stamp,"")%>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">Language:</FONT></TD>
+            <TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">[~Idioma:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="400">
               <INPUT TYPE="hidden" NAME="id_language" VALUE="<%=oPagSet.getString(DB.id_language)%>">
               <SELECT NAME="sel_language"><% out.write(sSelLang); %></SELECT>
@@ -214,7 +214,7 @@
           </TR>
 <% } %>
           <TR>
-            <TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">Description:</FONT></TD>
+            <TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">[~Descripci&oacute;n:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="400">
               <TEXTAREA ROWS="4" COLS="30" NAME="tx_comments"><% if (!oPagSet.isNull(DB.tx_comments)) out.write(oPagSet.getString(DB.tx_comments)); %></TEXTAREA>
             </TD>
@@ -225,11 +225,11 @@
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('Your credential level as Guest does not allow you to perform this action')">
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
 <% } else { %>
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">
 <% } %>
-    	      &nbsp;&nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+    	      &nbsp;&nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>
     	    </TD>	            
         </TABLE>

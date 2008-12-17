@@ -1,6 +1,6 @@
 <%@ page import="java.net.MalformedURLException,java.util.HashMap,org.xml.sax.SAXParseException,org.w3c.dom.DOMException,com.knowgate.debug.DebugFile,com.knowgate.debug.StackTraceUtil,java.util.Vector,java.io.BufferedOutputStream,java.io.OutputStreamWriter,java.io.FileOutputStream,java.io.FileNotFoundException,java.io.IOException,java.io.File,java.util.Properties,java.net.URLDecoder,java.sql.Statement,java.sql.ResultSet,java.sql.ResultSetMetaData,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBAudit,com.knowgate.dfs.FileSystem,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.acl.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*,javax.xml.transform.Transformer,javax.xml.transform.OutputKeys,javax.xml.transform.TransformerException,javax.xml.transform.TransformerConfigurationException" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
-<%!
+<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%!
+
   static String back (String sPath) {
     String sRetVal;
 
@@ -22,8 +22,7 @@
     }      
     return sRetVal;
   }
-%>
-<%
+%><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -69,6 +68,7 @@
   String sPage = nullif(request.getParameter("page"));
   String sPageId = request.getParameter("gu_page");
   String sMedia;
+  String sTitle_;
   Page oPage = null;
   Transformer oTransformer;
   FileSystem oFS = new FileSystem();
@@ -218,6 +218,7 @@
     }
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SAXParseException&desc=" + spe.getClass().getName() + "<BR>" + sFileTemplate + "<BR>" + sFilePageSet +"<BR>" + sTrace + "&resume=_close")); 
   }  
+  /*
   catch (Exception xcpt) {
     oPageSet = null;
     if (DebugFile.trace) {
@@ -226,6 +227,7 @@
     }
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=PageSet Exception&desc=" + xcpt.getClass().getName() + "<BR>" + sFileTemplate + "<BR>" + sFilePageSet + "&resume=_close")); 
   }
+  */
   if (null==oPageSet) return;
 
   if (DebugFile.trace) DebugFile.writeln("<JSP: Vector vPages = oPageSet.pages();>");
@@ -254,11 +256,11 @@
       DebugFile.writeln("<JSP: PageSet.buildPageForEdit(" + sPageId + "," + sStorageRoot + "," + sOutputPathEdit + "," + sURLRoot + sIntegrador + "," + sMenuPath + "," + sIntegradorPath + "," + sSelPageOptions + ", ...);>" );
     }
         
-    oPage = oPageSet.buildPageForEdit(sPageId, sStorageRoot, sOutputPathEdit,
-    			              sURLRoot + sIntegrador, sMenuPath,
-    			              sIntegradorPath, sSelPageOptions, EnvironmentProperties, UserProperties);
-
     if (sDocType.equals("newsletter")) {
+
+      oPage = oPageSet.buildPageForEdit(sPageId, sStorageRoot, sOutputPathEdit,
+    			                              sURLRoot + sIntegrador, sMenuPath,
+    			                              sIntegradorPath, sSelPageOptions, EnvironmentProperties, UserProperties);
       
       oConn = GlobalDBBind.getConnection("wb_document_newsletter");
       oPageSetDB.setPage(oConn, sPageId, 1, oPage.getTitle(), oPage.filePath());
@@ -269,16 +271,20 @@
 
       oConn = GlobalDBBind.getConnection("wb_document_page");
 
-      for (int p=0; p<iSize; p++) {
-        
-        oPage = (Page) vPages.elementAt(p);
-        
+      for (int p=0; p<iSize; p++) {        
+        oPage = (Page) vPages.elementAt(p);        
         sPageGUID  = oPage.guid();
         sPageTitle = oPage.getTitle();
-
+        sSelPageOptions += "<option value=\"" + sPageGUID + "\"" + (sPageId.equals(sPageGUID) ? " selected" : "") + ">" + sPageTitle;             
+      } // next    
+      for (int p=0; p<iSize; p++) {        
+        oPage = (Page) vPages.elementAt(p);        
+        sPageGUID  = oPage.guid();
+        sPageTitle = oPage.getTitle();
+        oPage = oPageSet.buildPageForEdit(sPageGUID, sStorageRoot, sOutputPathEdit,
+    			                                sURLRoot + sIntegrador, sMenuPath,
+    			                                sIntegradorPath, sSelPageOptions, EnvironmentProperties, UserProperties);
         oPageSetDB.setPage(oConn, sPageGUID, p+1, sPageTitle, oPage.filePath());
-        
-        sSelPageOptions += "<option value=\"" + sPageGUID + "\"" + (sPageId.equals(sPageGUID) ? " selected" : "") + ">" + sPageTitle;     
       } // next    
 
       oConn.close("wb_document_page");
@@ -300,13 +306,21 @@
     }
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=DOMException&desc=" + dome.getMessage() + "<BR>" + sStorageRoot + "<BR>" + sOutputPathEdit + "&resume=_close"));
   }
+  catch (FileNotFoundException fnf) {
+    oPageSet = null;
+    if (DebugFile.trace) {
+      DebugFile.writeln("<wb_document.jsp: FileNotFoundException " + fnf.getMessage());
+      DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "FileNotFoundException", fnf.getMessage());
+    }
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=IOException&desc=" + fnf.getMessage() + "<BR><B>storage</B>:" + sStorageRoot + "<BR><B>outputpath</B>:" + sOutputPathEdit + "&resume=_close")); 
+  }
   catch (IOException ioe) {
     oPageSet = null;
     if (DebugFile.trace) {
       DebugFile.writeln("<wb_document.jsp: IOException " + ioe.getMessage());
       DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "IOException", ioe.getMessage());
     }
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=IOException&desc=" + ioe.getMessage() + "<BR>" + sStorageRoot + "<BR>" + sOutputPathEdit + "&resume=_close")); 
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=IOException&desc=" + ioe.getMessage() + "<BR><B>storage</B>:" + sStorageRoot + "<BR><B>outputpath</B>:" + sOutputPathEdit + "&resume=_close")); 
   }
   catch (TransformerConfigurationException tcxc) {
     oPageSet = null;
@@ -345,15 +359,17 @@
     else
       sMedia = sMedia.substring(sMedia.indexOf('/')+1);
 
+		sTitle_ = ((Page) vPages.elementAt(0)).getTitle().replace(' ', '_');
+		
     if (DebugFile.trace) {
-      DebugFile.writeln("<JSP: response.encodeRedirectUrl (" + sURLEdit + oPage.getTitle().replace(' ', '_') + "_." + sMedia + ");>");
+      DebugFile.writeln("<JSP: response.encodeRedirectUrl (" + sURLEdit + sTitle_ + "_." + sMedia + ");>");
       DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "", "");
     }
 
-    if (!oFS.exists(request.getScheme()+"://"+request.getServerName()+":"+String.valueOf(request.getServerPort()) + sURLEdit + oPage.getTitle().replace(' ', '_') + "_." + sMedia)) {
-      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=UrlNotFoundException&desc=Template could not be opened please check the value of workareasget at hipergate.cnf&resume=_close"));
+    if (!oFS.exists(request.getScheme()+"://"+request.getServerName()+":"+String.valueOf(request.getServerPort()) + sURLEdit + sTitle_ + "_." + sMedia)) {
+      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=UrlNotFoundException&desc="+Gadgets.URLEncode(request.getScheme()+"://"+request.getServerName()+":"+String.valueOf(request.getServerPort()) + sURLEdit + sTitle_ + "_." + sMedia)+"<BR/>[~No fue posible abrir la pagina de edicion de plantilla por favor revise el valor de la propiedad workareasget en hipergate.cnf~]&resume=_close"));
     } else {
-      response.sendRedirect (response.encodeRedirectUrl (sURLEdit + oPage.getTitle().replace(' ', '_') + "_." + sMedia));  
+      response.sendRedirect (response.encodeRedirectUrl (sURLEdit + sTitle_ + "_." + sMedia));  
     }
   }
   else {
@@ -365,6 +381,8 @@
       sMedia = "html";
     else
       sMedia = sMedia.substring(sMedia.indexOf('/')+1);
+
+    sTitle_ = sPage.replace(' ', '_');
 
     sParamsQry = oPage.getContainer().parameters();
 
@@ -398,7 +416,7 @@
     	  
     	    if (oRSet.getString(1).equals(request.getParameter(sParamName))) oParamBuffer.append(" SELECTED");
     	  
-    	    oParamBuffer.append(">Page " + String.valueOf(++p) + "</OPTION>");
+    	    oParamBuffer.append(">[~Pagina~] " + String.valueOf(++p) + "</OPTION>");
     	  } // wend
 
 	      if (0!=p) {
@@ -421,10 +439,10 @@
       } // catch
 
       if (oParamBuffer.length()>0) {
-        String sHTML = oFS.readfilestr (sOutputPathEdit + oPage.getTitle().replace(' ','_') + "_." + sMedia, "UTF-8");
+        String sHTML = oFS.readfilestr (sOutputPathEdit + sTitle_ + "_." + sMedia, "UTF-8");
         int iNav = sHTML.indexOf("<!--navigation-->");
         
-        FileOutputStream oOutStrm = new FileOutputStream (sOutputPathEdit + oPage.getTitle().replace(' ','_') + "_." + sMedia);
+        FileOutputStream oOutStrm = new FileOutputStream (sOutputPathEdit + sTitle_ + "_." + sMedia);
         BufferedOutputStream oBFStrm = new BufferedOutputStream(oOutStrm, sHTML.length()+2048);
         OutputStreamWriter oWriter = new OutputStreamWriter(oBFStrm, "UTF-8");
         oWriter.write(sHTML.substring(0,iNav));
@@ -437,14 +455,14 @@
     } // fi (oPageSet.parameters())
     
     if (com.knowgate.debug.DebugFile.trace) {
-      DebugFile.writeln("<JSP: response.encodeRedirectUrl (" + sURLEdit + sPage + "_." + sMedia + sQueryString + ");>");
+      DebugFile.writeln("<JSP: response.encodeRedirectUrl (" + sURLEdit + sTitle_ + "_." + sMedia + sQueryString + ");>");
       DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "", "");
     }
 
-    if (!oFS.exists(request.getScheme()+"://"+request.getServerName()+":"+String.valueOf(request.getServerPort()) + sURLEdit + sPage + "_." + sMedia + sQueryString)) {
-      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=UrlNotFoundException&desc=Template could not be opened please check the value of workareasget at hipergate.cnf&resume=_close"));
+    if (!oFS.exists(request.getScheme()+"://"+request.getServerName()+":"+String.valueOf(request.getServerPort()) + sURLEdit + sTitle_ + "_." + sMedia + sQueryString)) {
+      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=UrlNotFoundException&desc="+Gadgets.URLEncode(request.getScheme()+"://"+request.getServerName()+":"+String.valueOf(request.getServerPort()) + sURLEdit + sPage + "_." + sMedia + sQueryString)+"<BR/>[~No fue posible abrir la pagina de edicion de plantilla por favor revise el valor de la propiedad workareasget en hipergate.cnf~]&resume=_close"));
     } else {
-      response.sendRedirect (response.encodeRedirectUrl (sURLEdit + sPage + "_." + sMedia + sQueryString));
+      response.sendRedirect (response.encodeRedirectUrl (sURLEdit + sTitle_ + "_." + sMedia + sQueryString));
     }
   }
 %>

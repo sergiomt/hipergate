@@ -69,7 +69,7 @@
   oConn.close("images_delete");
   oConn = null;
 %>
-<HTML><HEAD><TITLE>Wait...</TITLE>
+<HTML><HEAD><TITLE>[~Espere~]...</TITLE>
 <script>
 history.back();
 </script>

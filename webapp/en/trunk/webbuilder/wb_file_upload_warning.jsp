@@ -75,7 +75,7 @@
     document.location='<%=request.getParameter("url")%>';
   }
 </script>
-<TITLE>hipergate :: Load Images</TITLE>
+<TITLE>hipergate :: [~Cargar Im&aacute;genes~]</TITLE>
 </head>
 <body  TOPMARGIN="0" MARGINHEIGHT="0">
 <table cellspacing="0" cellpadding="0" border="0" width="99%">
@@ -86,16 +86,16 @@
 </tr>
 <tr>
 <td class="striptitle">
-<span class="title1">Warning</span>
+<span class="title1">[~Advertencia~]</span>
 </td>
 </tr>
 </table>  
-<div class="formplain">To avoid further warnings, click on Always Trust checkbox and click on YesYou will see a window like this. </div>
+<div class="formplain">[~A continuación se mostrará una pantalla como esta. Para evitar futuras advertencias, seleccione la casilla Confiar siempre en el contenido de... y haga click en Si.~]</div>
 <br>
 <center><img src="../images/images/appletfile-warning.jpg" width="400" height="321" border="0"></center>
 <br>
 <center>
-<input class="pushbutton" type="submit" value="Continue" onClick="continueLoad()">
+<input class="pushbutton" type="submit" value="[~Continuar~]" onClick="continueLoad()">
 </center>
 </body>
 </html>

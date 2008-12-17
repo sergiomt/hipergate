@@ -103,7 +103,7 @@
       	w2.document.write("<html>"); w2.document.write("\n");
       	w2.document.write("<head>"); w2.document.write("\n");
       	w2.document.write("<TITLE>"); w2.document.write("\n");
-      	w2.document.write("View image(" + pictureName + ")"); w2.document.write("\n");
+      	w2.document.write("[~Ver imagen ~](" + pictureName + ")"); w2.document.write("\n");
       	w2.document.write("</TITLE>"); w2.document.write("\n");
       	w2.document.write("</head>"); w2.document.write("\n");
       	w2.document.write("<body topmargin=0 marginheight=0 leftmargin=0>"); w2.document.write("\n");
@@ -159,7 +159,7 @@
               }
               
            if (contador==0)
-             alert("Must check at least one image");
+             alert("[~Debe seleccionar al menos una imagen~]");
            else {
              document.forms[0].checkeditems.value = lista;
              document.forms[0].submit();
@@ -182,22 +182,22 @@
       
     //-->    
   </SCRIPT> 
-  <TITLE>hipergate :: Available Images</TITLE>
+  <TITLE>hipergate :: [~Imágenes disponibles~]</TITLE>
 </head>
 <body  TOPMARGIN="0" MARGINHEIGHT="0" onLoad="paintThumbs()">
 <%@ include file="../common/tabmenu.jspf" %>
 <form name="frmDeleteImages" id="frmDeleteImages" method="post" action="images_delete.jsp">
 <input type="hidden" name="checkeditems">
-<table cellspacing="0" cellpadding="0" border="0" width="99%"><tr><td colspan="2" valign="center" class="striptitle"><font class="title1">Available Images</font></td></tr></table>
+<table cellspacing="0" cellpadding="0" border="0" width="99%"><tr><td colspan="2" valign="center" class="striptitle"><font class="title1">[~Im&aacute;genes disponibles~]</font></td></tr></table>
 <TABLE CELLSPACING="2" CELLPADDING="2">
 <TR>
 <TR><TD COLSPAN="6" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
-<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Image"></TD>
-<TD ALIGN="LEFT" VALIGN="middle"><A HREF="#" onclick="uploadImage()" CLASS="linkplain">New Image</A></TD>
-<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Remove images"></TD>
-<TD  ALIGN="LEFT"VALIGN="middle"><A HREF="javascript:if (window.confirm('When images are removed, they will stop appearing at documents that use them. Are you sure?')) deleteImages()" CLASS="linkplain">Remove images</A></TD>
-<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/selall16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Select all"></TD>
-<TD  ALIGN="LEFT"VALIGN="middle"><A HREF="#" onclick="selectAll()" CLASS="linkplain">Select all</A></TD>
+<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nueva imagen~]"></TD>
+<TD ALIGN="LEFT" VALIGN="middle"><A HREF="#" onclick="uploadImage()" CLASS="linkplain">[~Nueva imagen~]</A></TD>
+<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar imágenes~]"></TD>
+<TD  ALIGN="LEFT"VALIGN="middle"><A HREF="javascript:if (window.confirm('[~Cuando elimina imagenes, estas dejaran de aparecer en las newsletter que las utilicen. ¿Esta seguro?~]')) deleteImages()" CLASS="linkplain">[~Eliminar imágenes~]</A></TD>
+<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/selall16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Seleccionar todas~]"></TD>
+<TD  ALIGN="LEFT"VALIGN="middle"><A HREF="#" onclick="selectAll()" CLASS="linkplain">[~Seleccionar todas~]</A></TD>
 <TR><TD COLSPAN="6" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
 </TR>
 </TABLE>

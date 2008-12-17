@@ -4,7 +4,7 @@
 <%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <html>
 <head>
-<TITLE>hipergate :: Remove</TITLE>
+<TITLE>hipergate :: [~Eliminar Bloques~]</TITLE>
 <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
 <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
 <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascrip">
@@ -15,7 +15,7 @@
 </head>
 <body>
 <br><br><br>
-<center><span class="formstrong">Removing blocks. Please Wait...</span></center>
+<center><span class="formstrong">[~Eliminando bloques. Espere, por favor...~]</span></center>
 </body>
 <%
 
@@ -83,7 +83,7 @@
 <script language="JavaScript" type="text/javascript">
   <!--
 <% if (bIsGuest) { %>
-     alert("Your credential level as Guest does not allow you to perform this action");
+     alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
 <% } %>
   window.open("wb_document.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_pageset=<%=gu_pageset%>&doctype=<%=sDocType%>" , "editPageSet");
   window.close();

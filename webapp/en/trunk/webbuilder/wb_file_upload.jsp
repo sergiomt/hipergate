@@ -56,7 +56,7 @@
 %>
 <html>
 <head>
-  <TITLE>hipergate :: Load Images</TITLE>
+  <TITLE>hipergate :: [~Cargar Im&aacute;genes~]</TITLE>
   <style type="text/css">
       .sBox {
         width:300px;
@@ -194,8 +194,8 @@
 <body  TOPMARGIN="0" MARGINHEIGHT="0" onLoad="fu_poll()">
 <% if (request.getParameter("caller")!=null) { %>
     <TABLE width="100%"BORDER="0" CELLSPACING="0" CELLPADDING="2">
-      <TR width="100%" VALIGN="middle"><TD align="left" CLASS="striptitle"><FONT CLASS="title1">New&nbsp;<%=sTitle%></FONT></TD><TD ALIGN="right" CLASS="striptitle"><FONT CLASS="title1">Step 2 of 2</font></TD></TR>
-      <TR><TD colspan="2" class="formplain"><p ALIGN="justify">This window allows you to upload files to the server. Click on the Add button to select the files to upload and click on the Finish button to send them</p></TD></TR>
+      <TR width="100%" VALIGN="middle"><TD align="left" CLASS="striptitle"><FONT CLASS="title1">[~Creaci&oacute;n de ~]<%=sTitle%></FONT></TD><TD ALIGN="right" CLASS="striptitle"><FONT CLASS="title1">[~Paso 2 de 2~]</font></TD></TR>
+      <TR><TD colspan="2" class="formplain"><p ALIGN="justify">[~Esta pantalla le permite subir imagenes al servidor. Para seleccionarlas pulse sobre Añadir. Cuando no quiera subir más pulse Terminar. Si no desea cargar imagenes en el servidor pulse directamente Terminar.~]</p></TD></TR>
     </TABLE>
 <% }
    else 
@@ -205,26 +205,26 @@
 <table cellspacing="0" cellpadding="0" border="0" width="99%">
 <tr>
 <td class="striptitle">
-<span class="title1">Upload images to server</span>
+<span class="title1">[~Cargar Im&aacute;genes en el Servidor~]</span>
 </td>
 </tr>
 </table>  
 <% } %>
 <!-- The form tag must contain correct action and onsubmit attributes -->
-<form action="wb_file_upload_store.jsp" name="form1" id="form1" onsubmit="return processUpload(this)">
+<form action="wb_file_upload_store.jsp?gu_pageset=<%=request.getParameter("gu_pageset")%>&doctype=<%=request.getParameter("doctype")%>" method="get" name="form1" id="form1" onsubmit="return processUpload(this)">
   <SELECT name="f_list" class="sBox" size="8" multiple="multiple"></SELECT>
   <BR>
-  <SPAN class="cmdDiv"><A class="actLink" href="javascript:;" onClick="fu_add()">Add</A></SPAN>
-  <SPAN class="cmdDiv"><A class="actLink" href="javascript:;" onClick="fu_rem()">Remove</A></SPAN>
-  <SPAN class="cmdDiv"><A class="actLink" href="javascript:;" onClick="fu_remAll()">Delete all</A></SPAN>
+  <SPAN class="cmdDiv"><A class="actLink" href="javascript:;" onClick="fu_add()">[~Añadir~]</A></SPAN>
+  <SPAN class="cmdDiv"><A class="actLink" href="javascript:;" onClick="fu_rem()">[~Quitar~]</A></SPAN>
+  <SPAN class="cmdDiv"><A class="actLink" href="javascript:;" onClick="fu_remAll()">[~Borrar Todos~]</A></SPAN>
 <p>
-<span class="strip1">Comments:</span>
+<span class="strip1">[~Comentarios:~]</span>
 <br>
 <textarea name="TEXTAREA1" rows="4" cols="50"></textarea>
 <br>
 <br>
 <center>
-<input class="pushbutton" type="submit" value="Finish">
+<input class="pushbutton" type="submit" value="[~Terminar~]">
 </center>
 </p>
 </form>
@@ -234,7 +234,7 @@
 
 <applet code="com/infomentum/appletfile/FileUpload.class" archive="../applets/FileUpload.jar" codebase="../applets" width="1" height="1" name="FileUpload" MAYSCRIPT VIEWASTEXT id="Applet1">
   <PARAM name="bgColor"	  	  value="#FF0000">
-  <PARAM name="browseTitle"	  value="Select files">
+  <PARAM name="browseTitle"	  value="[~Seleccione sus archivos~]">
   <PARAM name="cabbase" 	  value="../applets/FileUpload.cab">
   <PARAM name="fileMask"          value="*.gif,*.png,*.jpg,*.jpeg">
   <PARAM name="errorLimit"	  value="0">

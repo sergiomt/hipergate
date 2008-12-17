@@ -76,7 +76,7 @@
         com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "IOException", "File size exceeds maximum allowed of " + String.valueOf(iMaxUpload/1024));
       }
 
-      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=File too big&desc=File length exceed maximum allowed " + String.valueOf(iMaxUpload/1024) + "Kb&resume=_back"));
+      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Archivo demasiado grande~]&desc=[~La longuitud del archivo excede el maximo permitido~] " + String.valueOf(iMaxUpload/1024) + "Kb&resume=_back"));
       return;
     }
     else {
@@ -170,7 +170,7 @@
       com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "NullPointerException", npe.getMessage());
     }
 
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=Archive Format invalid&resume=_close"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=[~El formato del archivo grafico no es valido~]&resume=_close"));
   }
 
   
@@ -180,11 +180,43 @@
 %>
 <HTML>
 <HEAD>
-<TITLE>Wait...</TITLE>
+<TITLE>[~Espere~]...</TITLE>
 <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
   <!--
-  window.opener.document.location.reload();
-  window.close();
+	  var w,h;
+	  
+	  switch (screen.width) {
+	    case 640:
+	      w="620";
+	      h="460";
+	      break;
+	    case 800:
+	      w="740";
+	      h="560";
+	      break;
+	    case 1024:
+	      w="960";
+	      h="700";
+	      break;
+	    case 1152:
+	      w="1024";
+	      h="768";
+	      break;
+	    case 1280:
+	      w="1152";
+	      h="960";
+	      break;
+	    default:
+	      w="740";
+	      h="560";
+	  }
+
+    window.opener.document.location.reload();
+	  	    	      	    	  
+	  window.open ("wb_document.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_pageset=<%=request.getParameter("gu_pageset")%>&doctype=<%=request.getParameter("doctype")%>",
+	               "editPageSet", "top=" + (screen.height-parseInt(h))/2 + ",left=" + (screen.width-parseInt(w))/2 + ",scrollbars=yes,directories=no,toolbar=no,menubar=no,status=yes,resizable=yes,width=" + w + ",height=" + h);
+
+    window.close();
   //-->
 </SCRIPT>
 </HEAD>
