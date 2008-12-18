@@ -47,13 +47,13 @@
   <HEAD>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-    <TITLE>hipergate :: [~Creación de ~]<%=sTitle%> [~Paso 1 de 2~]</TITLE>
+    <TITLE>hipergate :: New<%=sTitle%> Step 1 of 2</TITLE>
   </HEAD>
   <!-- -->
   <BODY  LEFTMARGIN="4" TOPMARGIN="4" SCROLL="no">
     <TABLE width="100%"BORDER="0" CELLSPACING="0" CELLPADDING="2">
-      <TR width="100%" VALIGN="middle"><TD align="left" CLASS="striptitle"><FONT CLASS="title1">[~Creaci&oacute;n de ~]<%=sTitle%></FONT></TD><TD ALIGN="right" CLASS="striptitle"><FONT CLASS="title1">[~Paso 1 de 2~]</font></TD></TR>
-      <TR><TD ALIGN="left" colspan="2" class="formplain">[~Seleccione el tipo de documento y el idioma, e introduzca sus comentarios si lo desea.~]&nbsp;[~Para avanzar al pr&oacute;ximo paso haga click sobre el bot&oacute;n Siguiente.~]</TD></TR>
+      <TR width="100%" VALIGN="middle"><TD align="left" CLASS="striptitle"><FONT CLASS="title1">New&nbsp;<%=sTitle%></FONT></TD><TD ALIGN="right" CLASS="striptitle"><FONT CLASS="title1">Step 1 of 2</font></TD></TR>
+      <TR><TD ALIGN="left" colspan="2" class="formplain">Choose the document type and language and enter your comments&nbsp;To proceed to the next step, click on the Next button</TD></TR>
     </TABLE>
   </BODY>
 </HTML>

@@ -85,12 +85,12 @@
     }
   //-->
   </SCRIPT>
-  <TITLE>hipergate :: [~Gestión de Contenidos~]</TITLE>
+  <TITLE>hipergate :: Content Management</TITLE>
 </HEAD>
 <BODY  TOPMARGIN="0" MARGINHEIGHT="0">
 <%@ include file="../common/tabmenu.jspf" %>
 <FORM>
-<TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Gesti&oacute;n de Contenidos~]</FONT></TD></TR></TABLE>
+<TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">Content Management</FONT></TD></TR></TABLE>
   <TABLE WIDTH="<%=iTabWidth*iActive%>" CELLSPACING="0" CELLPADDING="0" BORDER="0">
     <!-- Espacio entre la barra de título y la tabla -->
     <TR>
@@ -107,7 +107,7 @@
 	  </TR>
           <TR>
       	    <TD CLASS="subtitle"></TD>
-      	    <TD CLASS="subtitle" ALIGN="left" VALIGN="middle" BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif"><IMG SRC="../images/images/3x3puntos.gif" BORDER="0">[~Documentos HTML~]</TD>
+      	    <TD CLASS="subtitle" ALIGN="left" VALIGN="middle" BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif"><IMG SRC="../images/images/3x3puntos.gif" BORDER="0">HTML Documents</TD>
           </TR>
         </TABLE>
       </TD>
@@ -126,26 +126,26 @@
         <TABLE CELLSPACING="8" BORDER="0">
           <TR>
             <TD VALIGN="top">
-              <IMG SRC="../images/images/webbuilder/newnewsletter.gif" BORDER="0" ALT="[~Documentos HTML~]">
+              <IMG SRC="../images/images/webbuilder/newnewsletter.gif" BORDER="0" ALT="HTML Documents">
             </TD>
             <TD>
-              <A CLASS="linkplain" HREF="pageset_listing.jsp?selected=5&subselected=0&doctype=newsletter">[~Ver Documentos~]</A>
+              <A CLASS="linkplain" HREF="pageset_listing.jsp?selected=5&subselected=0&doctype=newsletter">View Documents</A>
               <BR>
-              <A CLASS="linkplain" HREF="javascript:createNewsletter()">[~Nuevo Documento~]</A>
+              <A CLASS="linkplain" HREF="javascript:createNewsletter()">New Document</A>
               <BR>
-              <FONT CLASS="textsmall">[~Desde este enlace puede crear y componer un nuevo Documento para enviar a una Lista de Individuos.<BR>Los documentos se componen insertando textos e im&aacute;genes en una plantilla que luego se env&iacute;a a una Lista de Distribuci&oacute;n.~]<BR><BR></FONT>
+              <FONT CLASS="textsmall">From this link you may create and compose a new document for being sent to a list of Individuals.<BR>Documents are composed by inserting texts and images on a template that is later sent to a distribution list.<BR><BR></FONT>
             </TD>
           </TR>
 	  <TR>
             <TD>
-              <IMG SRC="../images/images/webbuilder/newwebsite.gif" BORDER="0" ALT="[~WebSites~]">
+              <IMG SRC="../images/images/webbuilder/newwebsite.gif" BORDER="0" ALT="WebSites">
             </TD>
             <TD>
-              <A CLASS="linkplain" HREF="pageset_listing.jsp?selected=5&subselected=0&doctype=website">[~Ver Websites~]</A>
+              <A CLASS="linkplain" HREF="pageset_listing.jsp?selected=5&subselected=0&doctype=website">View Websites</A>
               <BR>
-              <A CLASS="linkplain" HREF="javascript:createWebsite()">[~Nuevo Website~]</A>
+              <A CLASS="linkplain" HREF="javascript:createWebsite()">New Website</A>
               <BR>
-              <FONT CLASS="textsmall">[~Seleccione esta opci&oacute;n para crear un nuevo sitio web multi-p&aacute;gina.<BR>Los websites pueden contener un men&uacute; de navegaci&oacute;n interno y enlaces a recursos externos.~]<BR></FONT>
+              <FONT CLASS="textsmall">Click here for creating a new website.<BR></FONT>
             </TD>
 	  </TR>	  
         </TABLE>
@@ -173,7 +173,7 @@
 	  </TR>
           <TR>
       	    <TD CLASS="subtitle"></TD>
-      	    <TD CLASS="subtitle" ALIGN="left" VALIGN="middle" BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif"><IMG SRC="../images/images/3x3puntos.gif" BORDER="0">[~Im&aacute;genes y Archivos~]</TD>
+      	    <TD CLASS="subtitle" ALIGN="left" VALIGN="middle" BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif"><IMG SRC="../images/images/3x3puntos.gif" BORDER="0">Images and Files</TD>
           </TR>
         </TABLE>
       </TD>
@@ -192,27 +192,27 @@
         <TABLE CELLSPACING="8" BORDER="0">
           <TR>
             <TD VALIGN="top">
-              <IMG SRC="../images/images/webbuilder/uploadimages.gif" BORDER="0" ALT="[~Imágenes y Archivos~]">
+              <IMG SRC="../images/images/webbuilder/uploadimages.gif" BORDER="0" ALT="Images and Files">
             </TD>
             <TD>
 <% if (bIsGuest) { %>
-              <A CLASS="linkplain" HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">[~Pre-cargar Im&aacute;genes~]</A>
+              <A CLASS="linkplain" HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')">Pre-load images</A>
 <% } else { %>
-              <A CLASS="linkplain" HREF="javascript:uploadImage()">[~Pre-cargar Im&aacute;genes~]</A>
+              <A CLASS="linkplain" HREF="javascript:uploadImage()">Pre-load images</A>
 <% } %>
               <BR>
-              <FONT CLASS="textsmall">[~Desde este enlace puede pre-cargar im&aacute;genes que estar&aacute;n disponibles de forma m&aacute;s r&aacute;pida<BR>cuando est&eacute; componiendo su Newsletter o Website.~]<BR></FONT>
+              <FONT CLASS="textsmall">From this option you may pre-load images that will be more easily available when coposing a Document.<BR></FONT>
             </TD>
           </TR>
 <!-- No hay aun precarga de archivos
           <TR>
             <TD VALIGN="top">
-              <IMG SRC="../images/images/webbuilder/uploadfiles.gif" BORDER="0" ALT="[~Cargar Archivos~]">
+              <IMG SRC="../images/images/webbuilder/uploadfiles.gif" BORDER="0" ALT="Load Files">
             </TD>
             <TD>
-              <A CLASS="linkplain" HREF="javascript:void(0)">[~Pre-cargar Archivos Adjuntos~]</A>
+              <A CLASS="linkplain" HREF="javascript:void(0)">Pre-load attached files</A>
               <BR>
-              <FONT CLASS="textsmall">[~Desde este enlace puede cargar los archivos adjuntos que aparecer&aacute;n como enlaces en<BR>la Newsletter o WebSite.~]<BR></FONT>
+              <FONT CLASS="textsmall">From this option you may load files that wil be shown as links in the Newsletter or Website.<BR></FONT>
             </TD>
           </TR>
 -->

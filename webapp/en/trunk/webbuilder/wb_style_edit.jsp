@@ -83,7 +83,7 @@
 %>
 <html>
 <head>
-<TITLE>hipergate :: [~Seleccionar estilos~]</TITLE>
+<TITLE>hipergate :: Select styles</TITLE>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -105,9 +105,9 @@
 </head>
 <BODY  TOPMARGIN="4" MARGINHEIGHT="0" onload="loadOptions('<%=color%>','<%=font%>')">  
   <CENTER>
-  <TABLE BORDER="0" CELLSPACINGH="0" CELLPADDING="0"><TR><TD WIDTH="560" CLASS="striptitle"><FONT CLASS="title1">[~Seleccionar estilos~]</FONT></TD></TR></TABLE>
+  <TABLE BORDER="0" CELLSPACINGH="0" CELLPADDING="0"><TR><TD WIDTH="560" CLASS="striptitle"><FONT CLASS="title1">Select styles</FONT></TD></TR></TABLE>
 <br>
-<span class="textsmall">[~Seleccione la gama crom&aacute;tica y el tipo de fuente para los textos...~]</span><br><br>
+<span class="textsmall">Select color and font for texts.</span><br><br>
 <form name="frmSelStyle" action="wb_style_persist.jsp" method="get">
 <input type="hidden" name="file_template" value="<%=file_template%>">
 <input type="hidden" name="file_pageset" value="<%=file_pageset%>">
@@ -115,12 +115,12 @@
 <input type="hidden" name="gu_workarea" value="<%=gu_workarea%>">
 <input type="hidden" name="doctype" value="<%=request.getParameter("doctype")%>">
 <table border="0" cellspacing="0" cellpadding="0">
-<tr><td class="textplain">[~Color~]</td><td>&nbsp;&nbsp;&nbsp;</td><td class="textplain">[~Fuente~]</td></tr>
+<tr><td class="textplain">Color</td><td>&nbsp;&nbsp;&nbsp;</td><td class="textplain">Font</td></tr>
 <tr><td><%=comboColor%></td>
 <td>&nbsp;&nbsp;&nbsp;</td>
 <td><%=comboFont%></td>
 </tr>
-<tr><td colspan="3" align="center"><br><br><input class="pushbutton" type="submit" name="btnSubmit" value="[~Guardar~]"></td></tr>
+<tr><td colspan="3" align="center"><br><br><input class="pushbutton" type="submit" name="btnSubmit" value="Save"></td></tr>
 </table>
 </select>
 </form>

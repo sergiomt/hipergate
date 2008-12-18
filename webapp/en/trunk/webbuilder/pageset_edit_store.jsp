@@ -123,7 +123,7 @@
     
     File oDataFile = new File(sStorage + sDataFile);
     if (!oDataFile.exists()) {
-      throw new IOException("[~No fue posible crear el archivo~] "+sStorage + sDataFile+"[~Revise el valor de la propiedad workareasput en hipergate.cnf y los permisos sobre el directorio al que apunta~]");
+      throw new IOException("File Creation Failed "+sStorage + sDataFile+"Check the valueof workareasput at hipergate.cnf and to permissions on the directory to which it points");
     }
     
     oConn.commit();

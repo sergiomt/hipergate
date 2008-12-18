@@ -47,13 +47,12 @@ function addNewBlock()
 
 function activateBlock(id)
 {
-	eval("background=document.getElementById('" + id + "').style.backgroundColor;");
-	eval("document.getElementById('" + id + "').style.backgroundColor='#FFC511';");
+  eval("if (document.getElementById('"+id+"')) document.getElementById('"+id+"').style.backgroundColor=background;");
 }
 
 function deactivateBlock(id)
 {
-	eval("document.getElementById('" + id + "').style.backgroundColor=background;");
+  eval("if (document.getElementById('"+id+"')) document.getElementById('"+id+"').style.backgroundColor=background;");
 }
 
 function deleteCheckedBlocks()

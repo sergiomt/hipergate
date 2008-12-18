@@ -96,7 +96,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: [~Editar Microsite~]</TITLE>
+  <TITLE>hipergate :: Edit Microsite</TITLE>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -115,14 +115,14 @@
         var frm = window.document.forms[0];
 
 	if (hasForbiddenChars(frm.nm_microsite.value)) {
-	  alert ("[~El nombre del microsite contiene caracteres no permitidos~]");
+	  alert ("Microsite name contains forbidden characters");
 	  return false;
 	}
 
 <% if (oMSite.isNull(DB.tp_microsite)) { %>
 	
 	if (frm.sel_type.selectedIndex<=0) {
-	  alert ("[~El tipo de microsite es obligatorio~]");
+	  alert ("Microsite type is required");
 	  return false;	
 	}
 	
@@ -168,7 +168,7 @@
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()">
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Editar Microsite~]</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Edit Microsite</FONT></TD></TR>
   </TABLE>
   <FORM ACTION="microsite_edit_store.jsp" METHOD="post" ENCTYPE="multipart/form-data" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
@@ -180,19 +180,19 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">[~Nombre:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">Name:</FONT></TD>
             <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="nm_microsite" MAXLENGTH="128" SIZE="30" VALUE="<%=nm_microsite%>"></TD>
           </TR>
 <% if (oMSite.isNull(DB.tp_microsite)) { %>
           <TR>
-            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">[~Tipo:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">Type:</FONT></TD>
             <TD ALIGN="left" WIDTH="370">              
-              <SELECT NAME="sel_type"><OPTION VALUE=""></OPTION><OPTION VALUE="1">[~Newsletter~]</OPTION><OPTION VALUE="2">[~WebSite~]</OPTION><OPTION VALUE="4">[~Cuestionario~]</OPTION></SELECT>
+              <SELECT NAME="sel_type"><OPTION VALUE=""></OPTION><OPTION VALUE="1">Newsletter</OPTION><OPTION VALUE="2">WebSite</OPTION><OPTION VALUE="4">Questionnaire</OPTION></SELECT>
             </TD>
           </TR>
 <% } %>
           <TR>
-            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">[~Definici&oacute;n:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">Definition:</FONT></TD>
             <TD ALIGN="left" WIDTH="370"><INPUT TYPE="file" NAME="path_metadata" SIZE="30"></TD>
           </TR>
           <TR>
@@ -214,7 +214,7 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">[~Datos:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">Data</FONT></TD>
             <TD ALIGN="left" WIDTH="370"><INPUT TYPE="file" NAME="path_defdata" SIZE="30"></TD>
           </TR>
           <TR>
@@ -229,7 +229,7 @@
 %>          </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">[~Plantilla:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">Template</FONT></TD>
             <TD ALIGN="left" WIDTH="370"><INPUT TYPE="file" NAME="path_template" SIZE="30"></TD>
           </TR>
           <TR>
@@ -244,7 +244,7 @@
 %>          </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">[~Vista Previa:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">Preview:</FONT></TD>
             <TD ALIGN="left" WIDTH="370"><INPUT TYPE="file" NAME="path_thumbnail" SIZE="30"></TD>
           </TR>
           <TR>
@@ -263,8 +263,8 @@
           </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>
     	    </TD>
     	  </TR>            

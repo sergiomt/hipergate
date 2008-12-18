@@ -29,14 +29,14 @@ function setFocus() {
 }
 function goPage() {
   var x=document.all.selPage.options[document.all.selPage.selectedIndex].text;
-  document.location.href="../../../../../../webbuilder/wb_document.jsp?gu_workarea="+frmLstBlocks.gu_workarea.value+"&gu_pageset="+frmLstBlocks.gu_pageset.value+"&doctype=website&gu_page=" + document.all.selPage.options[document.all.selPage.selectedIndex].value + "&page="+x.replace(" ","_");
+  document.location = "../../../../../../webbuilder/wb_document.jsp?gu_workarea="+frmLstBlocks.gu_workarea.value+"&gu_pageset="+frmLstBlocks.gu_pageset.value+"&doctype=website&gu_page=" + document.all.selPage.options[document.all.selPage.selectedIndex].value + "&page="+x.replace(" ","_");
 }
 function goPageN(nm,id) {
   var x=document.all.selPage.options[document.all.selPage.selectedIndex].text;
-  document.location.href="../../../../../../webbuilder/wb_document.jsp?gu_workarea="+frmLstBlocks.gu_workarea.value+"&gu_pageset="+frmLstBlocks.gu_pageset.value+"&doctype=website&gu_page=" + document.all.selPage.options[document.all.selPage.selectedIndex].value + "&page="+x.replace(" ","_")+"&"+nm+"="+id;
+  document.location = "../../../../../../webbuilder/wb_document.jsp?gu_workarea="+frmLstBlocks.gu_workarea.value+"&gu_pageset="+frmLstBlocks.gu_pageset.value+"&doctype=website&gu_page=" + document.all.selPage.options[document.all.selPage.selectedIndex].value + "&page="+x.replace(" ","_")+"&"+nm+"="+id;
 }
 function reload() {
-  var lastLocation=document.location;document.location=lastLocation;
+  var lastLocation = document.location;document.location=lastLocation;
 }
 function changeStyles() {
   var sPage=new String("../../../../../../webbuilder/wb_style_edit.jsp?doctype=website&file_template="+frmLstBlocks.file_template.value+"&file_pageset="+frmLstBlocks.file_pageset.value+"&gu_microsite="+frmLstBlocks.gu_microsite.value+"&gu_workarea="+frmLstBlocks.gu_workarea.value+"&gu_pageset="+frmLstBlocks.gu_pageset.value+"&gu_page="+frmLstBlocks.gu_page.value+"&file_pageset="+frmLstBlocks.file_pageset.value);ç
@@ -55,11 +55,10 @@ function addNewBlock() {
   self.setTimeout('setFocus()', 1000);
 }
 function activateBlock(id) {
-  eval("background=document.all."+id+".style.backgroundColor;");
-  eval("document.all."+id+".style.backgroundColor='#FFC511';");
+  eval("if (document.getElementById('"+id+"')) { background=document.getElementById('"+id+"').style.backgroundColor; document.getElementById('"+id+"').style.backgroundColor='#FFC511'; }");
 }
 function deactivateBlock(id) {
-  eval("document.all."+id+".style.backgroundColor=background;");
+  eval("if (document.getElementById('"+id+"')) document.getElementById('"+id+"').style.backgroundColor=background;");
 }
 function deleteCheckedBlocks(){
   var fnd=0;

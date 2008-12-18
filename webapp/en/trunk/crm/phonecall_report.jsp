@@ -47,6 +47,7 @@
   Timestamp dt_from = new Timestamp(oFmt.parse(request.getParameter("dt_from")+" 00:00:00").getTime());
   Timestamp dt_to = new Timestamp(oFmt.parse(request.getParameter("dt_to")+" 23:59:59").getTime());
   String gu_campaign = nullif(request.getParameter("gu_campaign"));
+  String nm_campaign = null;
     
   JDCConnection oConn = null;
   PreparedStatement oStmt = null;
@@ -80,8 +81,10 @@
 	  
     if (gu_campaign.length()==0)
       oStmt = oConn.prepareStatement("SELECT o."+DB.id_status+",COUNT(o."+DB.gu_oportunity+") FROM "+DB.k_oportunities+" o WHERE EXISTS (SELECT NULL FROM "+DB.k_phone_calls+" p WHERE p."+DB.gu_oportunity+"=o."+DB.gu_oportunity+" AND p."+DB.gu_workarea+"=? AND p."+DB.dt_start+" BETWEEN ? AND ?) GROUP BY "+DB.id_status);
-	  else
+	  else {
+      nm_campaign = DBCommand.queryStr(oConn, "SELECT "+DB.nm_campaign+" FROM "+DB.k_campaigns+" WHERE "+DB.gu_campaign+"='"+gu_campaign+"'");
       oStmt = oConn.prepareStatement("SELECT o."+DB.id_status+",COUNT(o."+DB.gu_oportunity+") FROM "+DB.k_oportunities+" o WHERE o."+DB.gu_campaign+"='"+gu_campaign+"' AND EXISTS (SELECT NULL FROM "+DB.k_phone_calls+" p WHERE p."+DB.gu_oportunity+"=o."+DB.gu_oportunity+" AND p."+DB.gu_workarea+"=? AND p."+DB.dt_start+" BETWEEN ? AND ?) GROUP BY "+DB.id_status);
+	  }
 	  oStmt.setString(1, gu_workarea);
 	  oStmt.setTimestamp(2, dt_from);
 	  oStmt.setTimestamp(3, dt_to);

@@ -367,7 +367,7 @@
     }
 
     if (!oFS.exists(request.getScheme()+"://"+request.getServerName()+":"+String.valueOf(request.getServerPort()) + sURLEdit + sTitle_ + "_." + sMedia)) {
-      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=UrlNotFoundException&desc="+Gadgets.URLEncode(request.getScheme()+"://"+request.getServerName()+":"+String.valueOf(request.getServerPort()) + sURLEdit + sTitle_ + "_." + sMedia)+"<BR/>[~No fue posible abrir la pagina de edicion de plantilla por favor revise el valor de la propiedad workareasget en hipergate.cnf~]&resume=_close"));
+      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=UrlNotFoundException&desc="+Gadgets.URLEncode(request.getScheme()+"://"+request.getServerName()+":"+String.valueOf(request.getServerPort()) + sURLEdit + sTitle_ + "_." + sMedia)+"<BR/>Template could not be opened please check the value of workareasget at hipergate.cnf&resume=_close"));
     } else {
       response.sendRedirect (response.encodeRedirectUrl (sURLEdit + sTitle_ + "_." + sMedia));  
     }
@@ -416,7 +416,7 @@
     	  
     	    if (oRSet.getString(1).equals(request.getParameter(sParamName))) oParamBuffer.append(" SELECTED");
     	  
-    	    oParamBuffer.append(">[~Pagina~] " + String.valueOf(++p) + "</OPTION>");
+    	    oParamBuffer.append(">Page " + String.valueOf(++p) + "</OPTION>");
     	  } // wend
 
 	      if (0!=p) {
@@ -460,7 +460,7 @@
     }
 
     if (!oFS.exists(request.getScheme()+"://"+request.getServerName()+":"+String.valueOf(request.getServerPort()) + sURLEdit + sTitle_ + "_." + sMedia + sQueryString)) {
-      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=UrlNotFoundException&desc="+Gadgets.URLEncode(request.getScheme()+"://"+request.getServerName()+":"+String.valueOf(request.getServerPort()) + sURLEdit + sPage + "_." + sMedia + sQueryString)+"<BR/>[~No fue posible abrir la pagina de edicion de plantilla por favor revise el valor de la propiedad workareasget en hipergate.cnf~]&resume=_close"));
+      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=UrlNotFoundException&desc="+Gadgets.URLEncode(request.getScheme()+"://"+request.getServerName()+":"+String.valueOf(request.getServerPort()) + sURLEdit + sPage + "_." + sMedia + sQueryString)+"<BR/>Template could not be opened please check the value of workareasget at hipergate.cnf&resume=_close"));
     } else {
       response.sendRedirect (response.encodeRedirectUrl (sURLEdit + sTitle_ + "_." + sMedia + sQueryString));
     }

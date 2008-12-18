@@ -45,8 +45,8 @@
   String nm_control = request.getParameter("nm_control");
   String nm_coding = request.getParameter("nm_coding");
   String ix_form = nullif(request.getParameter("ix_form"),"0");
+  String tx_sought = nullif(request.getParameter("sought"));
   String nm_input;
-  
   
   if (null==nm_control) {
     response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Error&desc=No value was set for control field at base form "+nm_table+"("+nm_coding+")&resume=_close"));
@@ -65,23 +65,26 @@
 %>
 <!-- +-----------------------+ -->
 <!-- | Listado de Referencia | -->
-<!-- | ¨ KnowGate 2003-2005  | -->
+<!-- | ¨ KnowGate 2003-2008  | -->
 <!-- +-----------------------+ -->
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
     <TITLE>hipergate :: Reference Listing</TITLE>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript1.2" SRC="../javascript/combobox.js"></SCRIPT>    
-    <SCRIPT LANGUAGE="JavaScript1.2" SRC="../javascript/findit.js"></SCRIPT> 
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>    
+    <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" SRC="../javascript/findit.js"></SCRIPT> 
+    <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
       <!--
-            
+      var eof;
+
       function choose(vlstr,nmstr) {
         var prnt = window.parent;
-	var frm = prnt.opener.document.forms[<%=ix_form%>];
-	var opt;	
+	      var frm = prnt.opener.document.forms[<%=ix_form%>];
+			  var opt;	
         <% 
              
            if (tp_control.equals("1"))
@@ -106,13 +109,47 @@
              out.write("        frm." + nm_coding + ".value = vlstr;\n");
         %>        
         prnt.close();
-      }      
+      }
+
+      function findSubstring() {
+			  var frm = document.forms[0];
+			  var col;
+			  
+			  if (frm.sought.value.length==0) {
+			    alert ("[~Debe especificar las primeras letras de palabra buscada~]");
+			    frm.sought.focus();
+			    return false;
+			  }
+			  if (hasForbiddenChars(frm.sought.value)) {
+			    alert ("[~La palabra contiene caracteres no permitidos en la búsqueda~]");
+			    frm.sought.focus();
+			    return false;
+			  }
+
+				if (eof) {
+          findit(frm.sought.value);
+        } else {
+			    col = frm.nm_control.value.indexOf(" AS ")>0 ? frm.nm_control.value.substring(frm.nm_control.value.indexOf(" AS ")+4) : frm.nm_control.value;
+			    if (col=="nm_company" || col=="nm_legal" || col=="nm_commercial")
+			      frm.where.value =  " (<%=DB.nm_legal%> <%=DBBind.Functions.ILIKE%> '" + frm.sought.value + "%' OR <%=DB.nm_commercial%> <%=DBBind.Functions.ILIKE%> '" + frm.sought.value + "%') ";
+			    else if (col.trim().endsWith("tx_contact"))
+			      frm.where.value =  " (<%=DB.tx_name%> <%=DBBind.Functions.ILIKE%> '" + frm.sought.value + "%' OR <%=DB.tx_surname%> <%=DBBind.Functions.ILIKE%> '" + frm.sought.value + "%') ";
+					else
+			      frm.where.value = col + " LIKE '" + frm.sought.value + "%'";
+				  frm.submit();
+			  }
+      } // findSubstring
       //-->
     </SCRIPT>
   </HEAD>
   <BODY SCROLLING="yes" TOPMARGIN="4" MARGINHEIGHT="4" LEFTMARGIN="4" RIGHTMARGIN="4">
-    <FORM>
-      <IMG SRC="../images/images/find16.gif">&nbsp;<INPUT TYPE="text" MAXLENGTH="50" NAME="sought">&nbsp;<A CLASS="linkplain" HREF="javascript:findit(document.forms[0].sought.value);">Search</A>
+    <FORM METHOD="get" ACTION="reference.jsp">
+			<INPUT TYPE="hidden" NAME="nm_table" VALUE="<%=nm_table%>">
+			<INPUT TYPE="hidden" NAME="tp_control" VALUE="<%=tp_control%>">
+			<INPUT TYPE="hidden" NAME="nm_control" VALUE="<%=nm_control%>">
+			<INPUT TYPE="hidden" NAME="nm_coding" VALUE="<%=nm_coding%>">
+			<INPUT TYPE="hidden" NAME="where">
+      <IMG SRC="../images/images/find16.gif">&nbsp;<INPUT TYPE="text" MAXLENGTH="50" NAME="sought" VALUE="<%=tx_sought%>">&nbsp;<A CLASS="linkplain" HREF="#" onclick="findSubstring()">Search</A>
     </FORM>
     <TABLE WIDTH="100%" BORDER="0" CELLSPACING="0" CELLPADDING="0">
 <%  
@@ -169,8 +206,14 @@
     out.write("<BR>");
     if (iSkip>0) // If iSkip>0 then we have prev items
       out.write("            <A HREF=\"reference.jsp?nm_table=" + nm_table + "&tp_control=" + tp_control + "&nm_control=" + nm_control + "&nm_coding=" + nm_coding + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&where=" + Gadgets.URLEncode(sWhere) + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;<B>Previous</B>" + "</A>&nbsp;&nbsp;&nbsp;");    
-    if (!oLookup.eof())
+    if (oLookup.eof()) {
+   	  out.write("            <SCRIPT TYPE=\"text/javascript\">eof=true;</SCRIPT>\n");
+    } else {
+   	  out.write("            <SCRIPT TYPE=\"text/javascript\">eof=false;</SCRIPT>\n");
       out.write("            <A HREF=\"reference.jsp?nm_table=" + nm_table + "&tp_control=" + tp_control + "&nm_control=" + nm_control + "&nm_coding=" + nm_coding + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&where=" + Gadgets.URLEncode(sWhere) + "\" CLASS=\"linkplain\">&nbsp;<B>Next</B>" + "&nbsp;&nbsp;&gt;&gt;</A>");
+    }
+   } else {
+   	 out.write("            <SCRIPT TYPE=\"text/javascript\">eof=true;</SCRIPT>\n");
    }
 %>
     <FORM>

@@ -251,7 +251,7 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="200"><FONT CLASS="formplain">[~Provincia:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="200"><FONT CLASS="formplain">State:</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver provincias~]"></A>&nbsp;<SELECT CLASS="combomini" NAME="sel_state"></SELECT>
               <INPUT TYPE="hidden" NAME="id_state" MAXLENGTH="16" VALUE="<%=oInfo.getStringNull(DB.id_state,"")%>">

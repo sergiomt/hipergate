@@ -96,7 +96,7 @@
 %>
 <HTML>
 <HEAD>
-<TITLE>hipergate :: [~Tipos de bloque~]</TITLE>
+<TITLE>hipergate :: Block Types</TITLE>
 <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
 <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
 <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
@@ -110,7 +110,7 @@
 </HEAD>
 <BODY  TOPMARGIN="0" MARGINHEIGHT="0" onclose="window.opener.setNull()">
 <table cellspacing="0" cellpadding="0" border="0" width="98%">
-  <tr><td valign="top" align="center" width="100%" >&nbsp;<img src="<% out.write(sURLRoot); %>/skins/<% out.write(sSkin); %>/hglogopeq.jpg" border="0"></td></tr><tr><td valign="center" align="center"  width="100%"><span class="title1">&nbsp;[~Tipos de bloque~]</span></td></tr><tr><td>&nbsp;</td></tr>
+  <tr><td valign="top" align="center" width="100%" >&nbsp;<img src="<% out.write(sURLRoot); %>/skins/<% out.write(sSkin); %>/hglogopeq.jpg" border="0"></td></tr><tr><td valign="center" align="center"  width="100%"><span class="title1">&nbsp;Block Types</span></td></tr><tr><td>&nbsp;</td></tr>
 <%
 
   int iMetaBlockCount = oMetablocks.size();
@@ -136,7 +136,7 @@
        out.write("</a>");
      }
      else {
-       out.write("<span title=\"[~Ya se alcanzó el máximo de bloques permitidos de este tipo~]\">");
+       out.write("<span title=\"Maximum blocks for this type was reached\">");
        out.write(oCurMetaBlock.name());
        out.write("</span>");
      }
