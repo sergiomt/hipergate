@@ -3,7 +3,7 @@
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <TITLE>hipergate :: Company Lookup</TITLE>
+    <TITLE>hipergate :: [~B&uacute;squeda de Compa&ntilde;&iacute;as~]</TITLE>
   </HEAD>
   <FRAMESET NAME="companieslookp" ROWS="90,*" BORDER="0">
     <FRAME NAME="companiesbrowse" MARGINWIDTH="0" MARGINHEIGHT="0" SRC="company_lookup_top.htm?id_section=<%=nullif(request.getParameter("id_section")%>&nm_assigned=<%=nullif(request.getParameter("nm_assigned")%>&nm_control=<%=nullif(request.getParameter("nm_control")%>&nm_coding=<%=nullif(request.getParameter("nm_coding")%>">
@@ -11,7 +11,7 @@
     </FRAMESET>
     <NOFRAMES>
       <BODY>
-	<P>This page contains frames, but your browser doesn't support them</P>
+	<P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
       </BODY>
     </NOFRAMES>
   </FRAMESET>

@@ -194,7 +194,7 @@
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/datefuncs.js"></SCRIPT>        
-  <TITLE>hipergate :: Edit Company</TITLE>
+  <TITLE>hipergate :: [~Editar Compa&ntilde;&iacute;a~]</TITLE>
   <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
       <!--        
       
@@ -286,12 +286,12 @@
 
 	
 	if (ltrim(frm.nm_legal.value)=="") {
-	  alert ("Legal name is mandatory");
+	  alert ("[~4La Razón Social es obligatoria~]");
 	  return false;
 	}
 
 	if (frm.nm_legal.value.indexOf("'")>0 || frm.nm_legal.value.indexOf("¡")>0 || frm.nm_legal.value.indexOf("?")>0 || frm.nm_legal.value.indexOf('"')>0 || frm.nm_legal.value.indexOf("\\")>0 || frm.nm_legal.value.indexOf("/")>0 || frm.nm_legal.value.indexOf("*")>0 || frm.nm_legal.value.indexOf("`")>0 || frm.nm_legal.value.indexOf("´")>0 || frm.nm_legal.value.indexOf("¨")>0 || frm.nm_legal.value.indexOf('^')>0) {
-	  alert ("Legal name contains forbidden characters");
+	  alert ("[~La Razón Social contiene caracteres no permitidos~]");
 	  return false;	  
 	}
 	
@@ -300,23 +300,23 @@
 	txt = frm.nu_employees.value;
 	for (var c=0; c<txt.length; c++)
 	  if (txt.charCodeAt(c)<48 || txt.charCodeAt(c)>57) {
-	    alert ("Head count must be an integer quantity");
+	    alert ("[~El numero de empleados debe ser una cantidad entera~]");
 	    return false;
 	  }
 	
 	txt = frm.im_revenue.value;
 	if (txt.length>0 && isNaN(txt)) {
-	    alert ("Billing is not valid");
+	    alert ("[~La facturación no es valida~]");
 	    return false;	
 	}
 
         if (!isDate(frm.dt_founded.value, "d") && frm.dt_founded.value.length>0) {
-	  alert ("Date founded is not valid");
+	  alert ("[~La fecha de constitucion no es válida~]");
 	  return false;
 	}
 	
 	if (frm.de_company.value.length>254) {
-	  alert ("Company description must not be longer than 254 characters");
+	  alert ("[~La descripción de la compañía no puede superar los 254 caracteres~]");
 	  return false;
 	}
 
@@ -410,11 +410,11 @@
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onload="setCombos()">
 <FORM NAME="fixedAttrs" METHOD="post" ACTION="company_edit_store.jsp" onSubmit="return validate()">
   <DIV class="cxMnu1" style="width:<%=(gu_company.length()>0 && bIsAdmin ? "4" : "3")%>20px"><DIV class="cxMnu2">
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Actualizar~]"> [~Actualizar~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="[~Imprimir~]"> [~Imprimir~]</SPAN>
 <% if (gu_company.length()>0 && bIsAdmin) { %>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="document.location='company_security.jsp?id_domain=<%=id_domain%>&gu_company=<%=gu_company%>'"><IMG src="../images/images/crm/padlock16.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Security"> Security</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="document.location='company_security.jsp?id_domain=<%=id_domain%>&gu_company=<%=gu_company%>'"><IMG src="../images/images/crm/padlock16.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="[~Seguridad~]"> [~Seguridad~]</SPAN>
 <% } %>
   </DIV></DIV>
 <% if (gu_company.length()>0) { %>
@@ -423,18 +423,18 @@
     <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
     <TR>
       <TD VALIGN="middle"><IMG SRC="../images/images/theworld16.gif" WIDTH="16" HEIGHT="16" BORDER="0"></TD>
-      <TD VALIGN="middle"><A HREF="javascript:viewAddrs()" CLASS="linkplain">Addresses</A></TD>
+      <TD VALIGN="middle"><A HREF="javascript:viewAddrs()" CLASS="linkplain">[~Direcciones~]</A></TD>
       <TD VALIGN="middle"><IMG SRC="../images/images/contactos.gif" WIDTH="20" HEIGHT="16" BORDER="0"></TD>
-      <TD VALIGN="middle"><A HREF="#" onclick="viewContacts()" CLASS="linkplain">Contacts</A></TD>
+      <TD VALIGN="middle"><A HREF="#" onclick="viewContacts()" CLASS="linkplain">[~Contactos~]</A></TD>
 <% if (gu_company.length()>0) { %>
       <TD VALIGN="middle"><IMG SRC="../images/images/bankacc.gif" WIDTH="17" HEIGHT="17" BORDER="0"></TD>
-      <TD VALIGN="middle"><A HREF="javascript:viewBankAccounts()" CLASS="linkplain">Bank Account</A></TD>
+      <TD VALIGN="middle"><A HREF="javascript:viewBankAccounts()" CLASS="linkplain">[~Cuentas Bancarias~]</A></TD>
 <% } else { %>
       <TD COLSPAN="2"></TD>
 <% } %>
 <% if (((iAppMask & (1<<Shop))!=0) && (gu_company.length()>0)) { %>
       <TD VALIGN="middle"><IMG SRC="../images/images/crm/history16.gif" WIDTH="16" HEIGHT="16" BORDER="0"></TD>
-      <TD VALIGN="middle"><A HREF="#" onclick="viewSalesHistory()" CLASS="linkplain">Order History</A></TD>
+      <TD VALIGN="middle"><A HREF="#" onclick="viewSalesHistory()" CLASS="linkplain">[~Hist&oacute;rico de Pedidos~]</A></TD>
 <% } else { %>
       <TD COLSPAN="2"></TD>
 <% } %>
@@ -455,63 +455,63 @@
       <TR><TD>
         <TABLE ALIGN="center">
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Legal Name:</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">[~Raz&oacute;n Social:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="nm_legal" MAXLENGTH="50" SIZE="40" STYLE="text-transform:uppercase" VALUE="<%=oComp.getStringNull(DB.nm_legal,"")%>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Commercial Name:</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">[~Nombre Comercial:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="nm_commercial" MAXLENGTH="50" SIZE="40" VALUE="<%=oComp.getStringNull(DB.nm_commercial,"")%>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Sector:</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Sector:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
-              <INPUT TYPE="text" NAME="nm_sector" MAXLENGTH="32" SIZE="40" VALUE="<%=nm_sector%>" TABINDEX="-1" onfocus="document.forms[0].sel_status.focus()">&nbsp;<A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Sectors List"></A>&nbsp;&nbsp;<A HREF="#" onclick="document.forms[0].nm_sector.value='';document.forms[0].id_sector.value='';"><IMG SRC="../images/images/delete.gif" WIDTH="13" HEIGHT="13" BORDER="0" ALT="Unassign Sector"></A>
+              <INPUT TYPE="text" NAME="nm_sector" MAXLENGTH="32" SIZE="40" VALUE="<%=nm_sector%>" TABINDEX="-1" onfocus="document.forms[0].sel_status.focus()">&nbsp;<A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Sectores~]"></A>&nbsp;&nbsp;<A HREF="#" onclick="document.forms[0].nm_sector.value='';document.forms[0].id_sector.value='';"><IMG SRC="../images/images/delete.gif" WIDTH="13" HEIGHT="13" BORDER="0" ALT="[~Desasignar Sector~]"></A>
               <INPUT TYPE="hidden" NAME="id_sector" VALUE="<%=oComp.getStringNull(DB.id_sector,"")%>">
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Legal Id:</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~NIF:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
               <INPUT TYPE="text" NAME="id_legal" MAXLENGTH="16" SIZE="10" VALUE="<%=oComp.getStringNull(DB.id_legal,"")%>">
-	             &nbsp;&nbsp;&nbsp;<FONT CLASS="formplain">Your Reference:</FONT>&nbsp;
+	             &nbsp;&nbsp;&nbsp;<FONT CLASS="formplain">[~Referencia:~]</FONT>&nbsp;
               <INPUT TYPE="text" NAME="id_ref" MAXLENGTH="50" SIZE="15" VALUE="<%=oComp.getStringNull(DB.id_ref,"")%>">
             </TD>
           </TR>          
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Company Type:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="hidden" NAME="tp_company" MAXLENGTH="30" SIZE="20" VALUE="<%=oComp.getStringNull(DB.tp_company,"")%>"><SELECT NAME="sel_typecompany"><OPTION VALUE=""></OPTION><%=sTypeLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Company Types"></A>
-            &nbsp;&nbsp;&nbsp;<FONT CLASS="formplain">Status:</FONT>&nbsp;<SELECT NAME="sel_status"><OPTION VALUE=""></OPTION><%=sStatusLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Status List"></A>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Tipo Compa&ntilde;&iacute;a:~]</FONT></TD>
+            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="hidden" NAME="tp_company" MAXLENGTH="30" SIZE="20" VALUE="<%=oComp.getStringNull(DB.tp_company,"")%>"><SELECT NAME="sel_typecompany"><OPTION VALUE=""></OPTION><%=sTypeLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Tipos de Compañía~]"></A>
+            &nbsp;&nbsp;&nbsp;<FONT CLASS="formplain">[~Estado:~]</FONT>&nbsp;<SELECT NAME="sel_status"><OPTION VALUE=""></OPTION><%=sStatusLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Estados~]"></A>
             <INPUT TYPE="hidden" NAME="id_status" VALUE="<%=oComp.getStringNull(DB.id_status,"")%>">
             </TD>
           </TR>          
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Billing:</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Facturaci&oacute;n:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
               <INPUT TYPE="text" NAME="im_revenue" MAXLENGTH="11" SIZE="10" VALUE="<%=oComp.getStringNull(DB.im_revenue,"")%>">
-              &nbsp;&nbsp;&nbsp;<FONT CLASS="formplain">Head Count:</FONT>&nbsp;
+              &nbsp;&nbsp;&nbsp;<FONT CLASS="formplain">[~N&uacute;m. Empleados:~]</FONT>&nbsp;
               <INPUT TYPE="text" NAME="nu_employees" MAXLENGTH="9" SIZE="10" VALUE="<%=oComp.getStringNull(DB.nu_employees,"")%>">
             </TD>
           </TR>          
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Date Founded:</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Fecha Constituci&oacute;n:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
               <INPUT TYPE="text" NAME="dt_founded" MAXLENGTH="10" SIZE="10" VALUE="<%=nullif(oComp.getDateFormated(DB.dt_founded,"yyyy-MM-dd"))%>">
-              <A HREF="javascript:showCalendar('dt_founded')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
+              <A HREF="javascript:showCalendar('dt_founded')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>
             </TD>
           </TR>
 <% if ((iAppMask & (1<<Directory))!=0) { %>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Category</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Categor&iacute;a:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
               <INPUT TYPE="hidden" NAME="id_category" VALUE="<%=sIdCategory%>">
               <INPUT TYPE="text" NAME="tr_category" MAXLENGTH="30" SIZE="34" onfocus="document.forms[0].de_company.focus();" TABINDEX="-1" VALUE="<%=sTrCategory%>">&nbsp;
-              <A HREF="#" onclick="selectCategory()" CLASS="formplain"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Change Category"></A>
+              <A HREF="#" onclick="selectCategory()" CLASS="formplain"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Cambiar Categoría~]"></A>
             </TD>
           </TR>
 <% } %>
 <% if ((iAppMask & (1<<Shop))!=0) { %>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Product Families:</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Familias de Productos:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
               <INPUT TYPE="hidden" NAME="tx_prods" VALUE="<% out.write(sIdCategory); %>">
 	      <SELECT NAME="sel_prods" SIZE="5" MULTIPLE><% out.write(sProdFamilies.toString()); %></SELECT>
@@ -519,16 +519,16 @@
           </TR>
 <% } %>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Fare:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370"><SELECT NAME="id_fare"><OPTION VALUE=""></OPTION><%=sFareLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Fares List"></A></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Tarifa:~]</FONT></TD>
+            <TD ALIGN="left" WIDTH="370"><SELECT NAME="id_fare"><OPTION VALUE=""></OPTION><%=sFareLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Tarifas~]"></A></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Salesman:</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Vendedor:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="370"><SELECT NAME="gu_sales_man"><OPTION VALUE=""></OPTION><%=sSalesMen%></SELECT></TD>
           </TR>
           <TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Description:</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Descripci&oacute;n:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="370"><TEXTAREA NAME="de_company" ROWS="3" COLS="40"><% out.write(oComp.getStringNull(DB.de_company,"")); %></TEXTAREA></TD>
           </TR>
           <TR>
@@ -536,20 +536,20 @@
   	  </TR>          
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Close" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cerrar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	    </TD>	            
 	  </TR>
         </TABLE>
       </TD></TR>
     </TABLE>                 
   </DIV>
-  <DIV onclick="selectTab(0)" id="p1tab0" class="tab" style="background-color:#eee; height:26px; left:0px; top:0px; z-index:2"><SPAN onmouseover="this.style.cursor='hand';" onmouseout="this.style.cursor='auto';">Fixed Fields</SPAN></DIV>
+  <DIV onclick="selectTab(0)" id="p1tab0" class="tab" style="background-color:#eee; height:26px; left:0px; top:0px; z-index:2"><SPAN onmouseover="this.style.cursor='hand';" onmouseout="this.style.cursor='auto';">[~Campos Fijos~]</SPAN></DIV>
   <DIV id="p1panel1" class="panel" style="background-color:#ddd;z-index:1">
     <TABLE WIDTH="100%">
       <TR><TD>
         <TABLE ALIGN="center">  
-  	   <% if (oConn!=null) out.write(paintAttributes (oConn, GlobalCacheClient, id_domain, id_user, iAppMask, DB.k_companies_attrs, "Companies", gu_workarea, sLanguage, gu_company)); %>
+  	   <% if (oConn!=null) out.write(paintAttributes (oConn, GlobalCacheClient, id_domain, id_user, iAppMask, DB.k_companies_attrs, "[~Compa&ntilde;&iacute;as~]", gu_workarea, sLanguage, gu_company)); %>
         </TABLE>
       </TD></TR>
       <TR>
@@ -558,16 +558,16 @@
       <TR>
     	<TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>
-          <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('Your credential level as Guest does not allow you to perform this action')">&nbsp;&nbsp;&nbsp;
+          <INPUT TYPE="button" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">&nbsp;&nbsp;&nbsp;
 <% } else { %>
-          <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
+          <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
 <% } %>
-          <INPUT TYPE="button" ACCESSKEY="c" VALUE="Close" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+          <INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cerrar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	</TD>	            
        </TR>
     </TABLE>    
   </DIV>
-  <DIV onclick="selectTab(1)" id="p1tab1" class="tab" style="width:240px; background-color:#ddd; height:26px; left:180px; top:0px; z-index:1"><SPAN onmouseover="this.style.cursor='hand';" onmouseout="this.style.cursor='auto';">Defined by User</SPAN></DIV>
+  <DIV onclick="selectTab(1)" id="p1tab1" class="tab" style="width:240px; background-color:#ddd; height:26px; left:180px; top:0px; z-index:1"><SPAN onmouseover="this.style.cursor='hand';" onmouseout="this.style.cursor='auto';">[~Definidos por el Usuario~]</SPAN></DIV>
   </DIV>  
 </FORM>
 </BODY>

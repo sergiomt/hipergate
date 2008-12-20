@@ -187,7 +187,7 @@
 
 <HTML>
 <HEAD>
-  <TITLE>hipergate :: Company Listing</TITLE>
+  <TITLE>hipergate :: [~Listado de Compa&ntilde;&iacute;as~]</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
@@ -241,7 +241,7 @@
 	  var frm = document.forms[0];
 	  var chi = frm.checkeditems;	 
 
-	  if (window.confirm("Are you sure you want to delete selected companies?")) {
+	  if (window.confirm("[~¿Está seguro de que desea eliminar las compañías seleccionadas?~]")) {
 	  
 	    chi.value = "";
             frm.action = "company_edit_delete.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
@@ -329,7 +329,7 @@
       
       function createProject(id,nm) {
 <% if (bIsGuest) { %>
-        alert("Your credential level as Guest does not allow you to perform this action");
+        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
 <% } else { %>
         window.open("prj_create.jsp?gu_workarea=<%=gu_workarea%>&gu_company=" + id, "addproject", "directories=no,toolbar=no,menubar=no,width=540,height=280");       
 <% } %>
@@ -362,7 +362,7 @@
       
       function clone() {
 <% if (bIsGuest) { %>
-        alert ("Your credential level as Guest does not allow you to perform this action");
+        alert ("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
 <% } else { %>              
         winclone = window.open ("../common/clone.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&datastruct=company_clon&gu_instance=" + jsCompanyId +"&opcode=CCOM&classid=91", null, "directories=no,toolbar=no,menubar=no,width=320,height=200");                
         intervalId = setInterval ("findCloned()", 100);
@@ -386,7 +386,7 @@
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onClick="hideRightMenu()">
     <%@ include file="../common/tabmenu.jspf" %>
     <FORM METHOD="post" onSubmit="findCompany();return false;">
-      <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">Company Listing</FONT></TD></TR></TABLE>  
+      <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Listado de Compa&ntilde;&iacute;as~]</FONT></TD></TR></TABLE>  
       <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
       <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
       <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
@@ -397,32 +397,32 @@
       <TABLE CELLSPACING="2" CELLPADDING="2">
         <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>      
         <TR VALIGN="middle">
-        <TD>&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Company"></TD>
+        <TD>&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nueva Compañía~]"></TD>
         <TD VALIGN="middle">
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain" TITLE="New Company">New</A>
+          <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain" TITLE="[~Nueva Compañía~]">[~Nueva~]</A>
 <% } else { %>
-          <A HREF="#" onclick="createCompany()" CLASS="linkplain" TITLE="New Company">New</A>
+          <A HREF="#" onclick="createCompany()" CLASS="linkplain" TITLE="[~Nueva Compañía~]">[~Nueva~]</A>
 <% } %>
         </TD>
-        <TD VALIGN="middle">&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete Company"></TD>
+        <TD VALIGN="middle">&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar Compañía~]"></TD>
         <TD VALIGN="middle">
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain" TITLE="Delete Company">Delete</A>
+          <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain" TITLE="[~Eliminar Compañía~]">[~Eliminar~]</A>
 <% } else { %>
-          <A HREF="javascript:deleteCompanies()" CLASS="linkplain" TITLE="Delete Company">Delete</A>
+          <A HREF="javascript:deleteCompanies()" CLASS="linkplain" TITLE="[~Eliminar Compañía~]">[~Eliminar~]</A>
 <% } %>
         </TD>
-        <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Find Company"></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Buscar Compañía~]"></TD>
         <TD VALIGN="middle">
-          <SELECT NAME="sel_searched" CLASS="combomini"><OPTION VALUE="<%=DB.nm_legal%>">Legal Name<OPTION VALUE="<%=DB.nm_commercial%>">Commercial Name<OPTION VALUE="<%=DB.id_sector%>">Sector<OPTION VALUE="<%=DB.id_legal%>">Legal Id<OPTION VALUE="<%=DB.id_status%>">Status<OPTION VALUE="<%=DB.id_ref%>">Reference</SELECT>
+          <SELECT NAME="sel_searched" CLASS="combomini"><OPTION VALUE="<%=DB.nm_legal%>">[~Razon Social~]<OPTION VALUE="<%=DB.nm_commercial%>">[~Nombre Comercial~]<OPTION VALUE="<%=DB.id_sector%>">[~Sector~]<OPTION VALUE="<%=DB.id_legal%>">[~NIF~]<OPTION VALUE="<%=DB.id_status%>">[~Estado~]<OPTION VALUE="<%=DB.id_ref%>">[~Referencia~]</SELECT>
           <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>">
-	  &nbsp;<A HREF="#" onclick="findCompany();return false;" CLASS="linkplain" TITLE="Find Company">Search</A>	  
+	  &nbsp;<A HREF="#" onclick="findCompany();return false;" CLASS="linkplain" TITLE="[~Buscar Compañía~]">[~Buscar~]</A>	  
         </TD>
-        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard find filter"></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="[~Descartar búsqueda~]"></TD>
         <TD VALIGN="bottom">
-          <A HREF="#" onclick="document.forms[0].find.value='';findCompany();return false;" CLASS="linkplain" TITLE="Discard find filter">Discard</A>
-          <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;Show&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;results&nbsp;</FONT>
+          <A HREF="#" onclick="document.forms[0].find.value='';findCompany();return false;" CLASS="linkplain" TITLE="[~Descartar búsqueda~]">[~Descartar~]</A>
+          <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;[~Mostrar~]&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;[~resultados~]&nbsp;</FONT>
         </TD>
       </TR>
       <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR></TABLE>
@@ -433,30 +433,30 @@
     	  // [~//Pintar los enlaces de siguiente y anterior~]
     
           if (iSkip>0)
-            out.write("            <A HREF=\"company_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
+            out.write("            <A HREF=\"company_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;[~Anteriores~]" + "</A>&nbsp;&nbsp;&nbsp;");
     
           if (!oCompanies.eof())
-            out.write("            <A HREF=\"company_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
+            out.write("            <A HREF=\"company_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">[~Siguientes~]&nbsp;&gt;&gt;</A>");
 %>
           </TD>
           <TD COLSPAN="3" ALIGN="right">
-	    <FONT CLASS="textplain">Predefined queries</FONT>&nbsp;<SELECT NAME="sel_query" CLASS="combomini"><OPTION VALUE=""></OPTION><% for (int q=0; q<iQueries; q++) out.write("<OPTION VALUE=\"" + oQueries.getString(0,q) + "\">" + oQueries.getString(1,q) + "</OPTION>"); %></SELECT>&nbsp;<A HREF="#" onClick="runQuery()" CLASS="linkplain">Query</A>
+	    <FONT CLASS="textplain">[~Consultas predefinidas~]</FONT>&nbsp;<SELECT NAME="sel_query" CLASS="combomini"><OPTION VALUE=""></OPTION><% for (int q=0; q<iQueries; q++) out.write("<OPTION VALUE=\"" + oQueries.getString(0,q) + "\">" + oQueries.getString(1,q) + "</OPTION>"); %></SELECT>&nbsp;<A HREF="#" onClick="runQuery()" CLASS="linkplain">[~Consultar~]</A>
           </TD>
           <TD>
 <% if (bIsGuest) { %>
             <IMG SRC="../images/images/spacer.gif" WIDTH="1" HEIGHT="22" BORDER="0">
 <% } else { %>
-            <A HREF="../common/qbf.jsp?queryspec=companies" TARGET="_top" TITLE="New Query"><IMG SRC="../images/images/newqry16.gif" WIDTH="22" HEIGHT="18" VSPACE="2" BORDER="0" ALT="New Query"></A>&nbsp;
+            <A HREF="../common/qbf.jsp?queryspec=companies" TARGET="_top" TITLE="[~Crear Nueva Consulta~]"><IMG SRC="../images/images/newqry16.gif" WIDTH="22" HEIGHT="18" VSPACE="2" BORDER="0" ALT="[~Crear Nueva Consulta~]"></A>&nbsp;
 <% } %>
           </TD>          
         </TR>
         <TR>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;</TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="<%=String.valueOf(floor(340f*fScreenRatio))%>">&nbsp;<A HREF="javascript:sortBy(2);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" TITLE="Order by this field" ALT="Order by this field"></A>&nbsp;<B>Legal Name</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="<%=String.valueOf(floor(160f*fScreenRatio))%>">&nbsp;<A HREF="javascript:sortBy(4);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==4 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" TITLE="Order by this field" ALT="Order by this field"></A><B>&nbsp;Sector</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="80">&nbsp;<A HREF="javascript:sortBy(5);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ?  "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" TITLE="Order by this field" ALT="Order by this field"></A><B>&nbsp;Legal Id</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="120">&nbsp;<A HREF="javascript:sortBy(6);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==6 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" TITLE="Order by this field" ALT="Order by this field"></A><B>&nbsp;Status</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Seleccionar todos"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select all"></A></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="<%=String.valueOf(floor(340f*fScreenRatio))%>">&nbsp;<A HREF="javascript:sortBy(2);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" TITLE="[~Ordenar por este campo~]" ALT="[~Ordenar por este campo~]"></A>&nbsp;<B>[~Raz&oacute;n Social~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="<%=String.valueOf(floor(160f*fScreenRatio))%>">&nbsp;<A HREF="javascript:sortBy(4);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==4 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" TITLE="[~Ordenar por este campo~]" ALT="[~Ordenar por este campo~]"></A><B>&nbsp;[~Sector~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="80">&nbsp;<A HREF="javascript:sortBy(5);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ?  "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" TITLE="[~Ordenar por este campo~]" ALT="[~Ordenar por este campo~]"></A><B>&nbsp;[~NIF~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="120">&nbsp;<A HREF="javascript:sortBy(6);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==6 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" TITLE="[~Ordenar por este campo~]" ALT="[~Ordenar por este campo~]"></A><B>&nbsp;[~Estado~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Seleccionar todos"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="[~Seleccionar todos~]"></A></TD>
         </TR>
 <%
 	  String sCompId, sCompNm, sCompDe, sCompSc, sCompLg;
@@ -479,8 +479,8 @@
             if (!sCompId.equals("00000000000000000000000000000000")) {
 %>                        
             <TR HEIGHT="14">
-              <TD CLASS="strip<%=(i%2)+1%>"><A HREF="#" onContextMenu="return false;" onClick='hideDiv();viewAddrs(event,"<%=sCompId%>","<%=sCompDe%>");return false'><IMG SRC="../images/images/theworld16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Click for viewing addresses"></A></TD>
-              <TD CLASS="strip<%=(i%2)+1%>">&nbsp;<A HREF="javascript:;" oncontextmenu="jsCompanyId='<%=sCompId%>'; jsCompanyNm='<%=oCompanies.getString(1,i)%>'; return showRightMenu(event)" onmouseover="window.status='Edit Company'; return true;" onmouseout="window.status=''; return true;" onclick="modifyCompany('<%=sCompId%>','<%=sCompNm%>')" TITLE="Click Right Mouse Button for Context Menu"><%=sCompNm%></A></TD>
+              <TD CLASS="strip<%=(i%2)+1%>"><A HREF="#" onContextMenu="return false;" onClick='hideDiv();viewAddrs(event,"<%=sCompId%>","<%=sCompDe%>");return false'><IMG SRC="../images/images/theworld16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Click para ver direcciones~]"></A></TD>
+              <TD CLASS="strip<%=(i%2)+1%>">&nbsp;<A HREF="javascript:;" oncontextmenu="jsCompanyId='<%=sCompId%>'; jsCompanyNm='<%=oCompanies.getString(1,i)%>'; return showRightMenu(event)" onmouseover="window.status='[~Editar Compa&ntilde;&iacute;a~]'; return true;" onmouseout="window.status=''; return true;" onclick="modifyCompany('<%=sCompId%>','<%=sCompNm%>')" TITLE="[~Bot&oacute;n Derecho para Ver Men&uacute; Contextual~]"><%=sCompNm%></A></TD>
               <TD CLASS="strip<%=(i%2)+1%>">&nbsp;<%=sCompSc%></TD>
               <TD CLASS="strip<%=(i%2)+1%>">&nbsp;<%=sCompLg%></TD>
               <TD CLASS="strip<%=(i%2)+1%>">&nbsp;<%=sCompSt%></TD>
@@ -493,10 +493,10 @@
     	  // [~//Pintar los enlaces de siguiente y anterior~]
     
           if (iSkip>0)
-            out.write("            <A HREF=\"company_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
+            out.write("            <A HREF=\"company_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;[~Anteriores~]" + "</A>&nbsp;&nbsp;&nbsp;");
     
           if (!oCompanies.eof())
-            out.write("            <A HREF=\"company_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
+            out.write("            <A HREF=\"company_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">[~Siguientes~]&nbsp;&gt;&gt;</A>");
 %>
           </TD>
         </TR>
@@ -505,16 +505,16 @@
     
     <IFRAME name="addrIFrame" src="../common/blank.htm" width="0" height="0" border="0" frameborder="0"></IFRAME>
     <SCRIPT language="JavaScript" type="text/javascript">
-      addMenuOption("Open","modifyCompany(jsCompanyId, jsCompanyNm)",1);
-      addMenuOption("Duplicate","clone()",0);
+      addMenuOption("[~Abrir~]","modifyCompany(jsCompanyId, jsCompanyNm)",1);
+      addMenuOption("[~Duplicar~]","clone()",0);
       addMenuSeparator();
-      addMenuOption("View Individuals","listContacts()",0);
-      addMenuOption("View Addresses","listAddresses()",0);
+      addMenuOption("[~Ver Individuos~]","listContacts()",0);
+      addMenuOption("[~Ver Direcciones~]","listAddresses()",0);
       <% if ((iAppMask & (1<<ProjectManager))!=0) { %>
         addMenuSeparator();
-        addMenuOption("Show Incident","listBugs()",0);
-        addMenuOption("New project","createProject(jsCompanyId, jsCompanyNm)",0);
-        addMenuOption("View Projects","listProjects()",0);
+        addMenuOption("[~Ver Incidencias~]","listBugs()",0);
+        addMenuOption("[~Crear Proyecto~]","createProject(jsCompanyId, jsCompanyNm)",0);
+        addMenuOption("[~Ver proyectos~]","listProjects()",0);
       <% } %>
     </SCRIPT>
   </BODY>

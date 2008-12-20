@@ -160,7 +160,7 @@
 	  var frm = document.forms[0];
 	  var chi = frm.checkeditems;
 	  	  
-	  if (window.confirm("Are you sure that you want to delete the selected attached files?")) {
+	  if (window.confirm("[~¿Está seguro de que desea eliminar los archivos adjuntos seleccionados?~]")) {
 	  	  
 	    chi.value = "";	  	  
 	    frm.action = "attach_edit_delete.jsp";
@@ -239,7 +239,7 @@
   <!----------- END ALLWEBMENUS CODE ----------->
   <BR><BR><BR>
     <FORM METHOD="post">
-      <TABLE><TR><TD CLASS="striptitle"><FONT CLASS="title1">Attached files of <%=full_name%></FONT></TD></TR></TABLE>  
+      <TABLE><TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Archivos Adjuntos de~] <%=full_name%></FONT></TD></TR></TABLE>  
       <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
       <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
       <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
@@ -254,21 +254,21 @@
         <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Nuevo"></TD>
         <TD VALIGN="middle">
 <% if (bIsGuest) { %>
-         <A HREF="#" onclick="alert('Your credential leveoes not allow you to perform this actionl as Guest d')" CLASS="linkplain">New</A>
+         <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Nuevo~]</A>
 <% } else { %>
-         <A HREF="#" onclick="addAttachment()" CLASS="linkplain">New</A>
+         <A HREF="#" onclick="addAttachment()" CLASS="linkplain">[~Nuevo~]</A>
 <% } %>
         </TD>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar~]"></TD>
         <TD>
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert('Your credential leveoes not allow you to perform this actionl as Guest d')" CLASS="linkplain">Delete</A>
+          <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Eliminar~]</A>
 <% } else { %>
-          <A HREF="javascript:deleteAttachments()" CLASS="linkplain">Delete</A>
+          <A HREF="javascript:deleteAttachments()" CLASS="linkplain">[~Eliminar~]</A>
 <% } %>
         </TD>
         <TD VALIGN="bottom">
-          <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;Show&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;files&nbsp;</FONT>
+          <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;[~Mostrar~]&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;[~archivos~]&nbsp;</FONT>
         </TD>
         </TR>
       <TR><TD COLSPAN="5" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>      
@@ -280,18 +280,18 @@
     	    // Pintar los enlaces de siguiente y anterior
     
           if (iSkip>0) // //Si iSkip>0 entonces hay registros anteriores
-            out.write("            <A HREF=\"attach_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&gu_contact="+gu_contact+"&skip=" + String.valueOf(iSkip-iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
+            out.write("            <A HREF=\"attach_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&gu_contact="+gu_contact+"&skip=" + String.valueOf(iSkip-iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;[~Anteriores~]" + "</A>&nbsp;&nbsp;&nbsp;");
     
           if (!oAttachLocats.eof())
-            out.write("            <A HREF=\"attach_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&gu_contact="+gu_contact+"&skip=" + String.valueOf(iSkip+iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
+            out.write("            <A HREF=\"attach_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&gu_contact="+gu_contact+"&skip=" + String.valueOf(iSkip+iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "\" CLASS=\"linkplain\">[~Siguientes~]&nbsp;&gt;&gt;</A>");
 %>
           </TD>
         </TR>
         <TR>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;</TD>
-          <TD CLASS="tableheader" WIDTH="400" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(2);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;<B>Name</B></TD>
-          <TD CLASS="tableheader" WIDTH="100" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(5);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;<B>Date</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Select all"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select all"></A></TD></TR>
+          <TD CLASS="tableheader" WIDTH="400" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(2);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este campo~]"></A>&nbsp;<B>[~Nombre~]</B></TD>
+          <TD CLASS="tableheader" WIDTH="100" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(5);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este campo~]"></A>&nbsp;<B>[~Fecha~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="[~Seleccionar todos~]"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="[~Seleccionar todos~]"></A></TD></TR>
 <%
 	  String sInstId, sInstLn, sInstNm, sInstDt;
 	  int iInstPg;	  
@@ -306,7 +306,7 @@
             iInstPg = oAttachLocats.getInt(5,i);
 %>            
             <TR HEIGHT="14">
-              <TD CLASS="strip<%=((i%2)+1)%>"><A HREF="../servlet/HttpBinaryServlet?id_product=<%=sInstId%>&id_user=<%=id_user%>" onContextMenu="return false;"><IMG SRC="../images/images/download.gif" BORDER="0" ALT="Download/Open <%=sInstLn%>"></A></TD>            
+              <TD CLASS="strip<%=((i%2)+1)%>"><A HREF="../servlet/HttpBinaryServlet?id_product=<%=sInstId%>&id_user=<%=id_user%>" onContextMenu="return false;"><IMG SRC="../images/images/download.gif" BORDER="0" ALT="[~Descargar/Abrir~] <%=sInstLn%>"></A></TD>            
               <TD CLASS="strip<%=((i%2)+1)%>">&nbsp;<A HREF="#" onclick="modifyAttachment('<%=sInstId%>',<%=String.valueOf(iInstPg)%>,'<%=sInstNm %>')" ><%=sInstNm %></A></TD>
               <TD CLASS="strip<%=((i%2)+1)%>" ALIGN="right"><%=sInstDt%></TD>
               <TD CLASS="strip<%=((i%2)+1)%>" ALIGN="center"><INPUT VALUE="1" TYPE="checkbox" NAME="<%=sInstId+"_"+String.valueOf(iInstPg)%>"></TD>

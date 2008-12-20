@@ -121,7 +121,7 @@
 %>
 <HTML>
 <HEAD>
-  <TITLE>Wait...</TITLE>
+  <TITLE>[~Espere~]...</TITLE>
   <SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>
     <!--    
     if ("<%=noreload%>"=="0")

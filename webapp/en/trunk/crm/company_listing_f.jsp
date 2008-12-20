@@ -3,7 +3,7 @@
  <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <TITLE>hipergate :: Company Listing</TITLE>
+    <TITLE>hipergate :: [~Listado de Compa&ntilde;&iacute;as~]</TITLE>
     <SCRIPT language="JavaScript">
       function setURL() {
         this.frames["companieslist"].document.location = "company_listing.jsp?selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>&screen_width=" + screen.width + "&field=<%=nullif(request.getParameter("field"),"")%>&find=<%=com.knowgate.misc.Gadgets.URLEncode(nullif(request.getParameter("find"),""))%>&where=<%=com.knowgate.misc.Gadgets.URLEncode(nullif(request.getParameter("where"),""))%>&query=<%=com.knowgate.misc.Gadgets.URLEncode(nullif(request.getParameter("gu_query"),""))%>&orderby=<%=com.knowgate.misc.Gadgets.URLEncode(nullif(request.getParameter("orderby"),"0"))%>";
@@ -16,7 +16,7 @@
   </FRAMESET>
   <NOFRAMES>
     <BODY>
-      <P>This page use frames, but your web browser does not handle them</P>
+      <P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
     </BODY>
   </NOFRAMES>
 </HTML>

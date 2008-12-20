@@ -98,19 +98,19 @@
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>   
-  <TITLE>hipergate :: Attach File</TITLE>
+  <TITLE>hipergate :: [~Adjuntar Archivo~]</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
   <!--
     function validate() {
       var frm = document.forms[0];
 
       if (frm.localfile.value.length==0) {
-        alert ("Must specify a local file");
+        alert ("[~Debe especificar un archivo local~]");
         return false;      
       }
       
       if (frm.nm_product.value.length==0) {
-        alert ("Must specify a name for file");
+        alert ("[~Debe especificar un nombre para el archivo~]");
         return false;
       }
       
@@ -149,7 +149,7 @@
 </HEAD>
 
 <BODY  SCROLL="no" TOPMARGIN="4" MARGINHEIGHT="4" onLoad="setCombos()">
-  <TABLE WIDTH="460"><TR><TD CLASS="striptitle"><FONT CLASS="title1">Attach File<%=sContactFullName%></FONT></TD></TR></TABLE>
+  <TABLE WIDTH="460"><TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Adjuntar Archivo~]<%=sContactFullName%></FONT></TD></TR></TABLE>
   <FORM NAME="linkedit" ENCTYPE="multipart/form-data" METHOD="post" ACTION="attach_edit_store.jsp" onsubmit="return validate()">
     <INPUT TYPE="hidden" NAME="gu_owner" VALUE="<%=id_user%>">
     <INPUT TYPE="hidden" NAME="id_user" VALUE="<%=id_user%>">
@@ -161,32 +161,32 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right" WIDTH="130"><FONT CLASS="formstrong">Document Name:</FONT></TD>
+            <TD ALIGN="right" WIDTH="130"><FONT CLASS="formstrong">[~Nombre del Documento:~]</FONT></TD>
             <TD WIDTH="310"><INPUT TYPE="text" NAME="nm_product" MAXLENGTH="50" SIZE="34" VALUE="<% out.write(nm_product); %>"></TD>
           </TR>  
           <TR>
-            <TD ALIGN="right" VALIGN="top" WIDTH="130"><FONT CLASS="formstrong">File:</FONT></TD>
+            <TD ALIGN="right" VALIGN="top" WIDTH="130"><FONT CLASS="formstrong">[~Archivo:~]</FONT></TD>
             <TD BGCOLOR="#E5E5E5" WIDTH="310">
               <INPUT TYPE="FILE" NAME="localfile" MAXLENGTH="254" SIZE="24" onchange="setDocTitle()">
             </TD>
           </TR>  
 <% if (id_product.length()>0) { %> 
           <TR>
-            <TD ALIGN="right" VALIGN="top" WIDTH="130"><FONT CLASS="textsmall">Current File:</FONT></TD>
+            <TD ALIGN="right" VALIGN="top" WIDTH="130"><FONT CLASS="textsmall">[~Archivo actual:~]</FONT></TD>
 	    <TD BGCOLOR="#E5E5E5" ALIGN="left">
 	      <FONT CLASS="textsmall"><%=xfile%></FONT>
-	      <A HREF="../servlet/HttpBinaryServlet?id_product=<%=id_product%>"><IMG SRC="../images/images/download.gif" WIDTH="20" HEIGHT="16" BORDER="0" ALT="Open/Download Document"></A>
-	      <A HREF="../servlet/HttpBinaryServlet?id_product=<%=id_product%>" CLASS="formstrong">Download</A></TD>
+	      <A HREF="../servlet/HttpBinaryServlet?id_product=<%=id_product%>"><IMG SRC="../images/images/download.gif" WIDTH="20" HEIGHT="16" BORDER="0" ALT="[~Abrir/Descargar Documento~]"></A>
+	      <A HREF="../servlet/HttpBinaryServlet?id_product=<%=id_product%>" CLASS="formstrong">[~Descargar~]</A></TD>
 	  </TR>
 <% } %>
           <TR>
-            <TD ALIGN="right" WIDTH="130"><FONT CLASS="formplain">Language:</FONT></TD>            
+            <TD ALIGN="right" WIDTH="130"><FONT CLASS="formplain">[~Idioma:~]</FONT></TD>            
             <TD WIDTH="310">
 	      <INPUT TYPE="hidden" NAME="id_language">
               <SELECT NAME="sel_language"><OPTION VALUE="" SELECTED><% out.write (sSelLang); %></SELECT></TD>
           </TR>  
           <TR>
-            <TD ALIGN="right" WIDTH="130"><FONT CLASS="formplain">Description:</FONT></TD>
+            <TD ALIGN="right" WIDTH="130"><FONT CLASS="formplain">[~Descripci&oacute;n:~]</FONT></TD>
             <TD WIDTH="310"><TEXTAREA NAME="de_product" COLS="32" ROWS="3"><% out.write(de_product); %></TEXTAREA></TD>
           </TR>
           <TR>
@@ -196,11 +196,11 @@
     	    <TD WIDTH="130">&nbsp;</TD>
     	    <TD WIDTH="310">
       	      <% if (id_product.length()==0) { %>
-                <INPUT TYPE="submit" ACCESSKEY="a" VALUE="New" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+a">&nbsp;&nbsp;
+                <INPUT TYPE="submit" ACCESSKEY="a" VALUE="[~Nuevo~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+a">&nbsp;&nbsp;
               <% } else { %>
-                <INPUT TYPE="submit" ACCESSKEY="m" VALUE="Modify" CLASS="pushbutton" TITLE="ALT+m">&nbsp;&nbsp;
+                <INPUT TYPE="submit" ACCESSKEY="m" VALUE="[~Modificar~]" CLASS="pushbutton" TITLE="ALT+m">&nbsp;&nbsp;
       	      <% } %>
-	      <INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onClick="self.close()">
+	      <INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onClick="self.close()">
     	      <BR><BR>
     	    </TD>	    
           </TR>           

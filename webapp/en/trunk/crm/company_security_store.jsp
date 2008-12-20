@@ -5,7 +5,7 @@
   boolean bIsAdmin = isDomainAdmin (GlobalCacheClient, GlobalDBBind, request, response);
 
   if (!bIsAdmin) {
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SecurityException&desc=Having administrator role is required for editing company access restrictions&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SecurityException&desc=[~Administrator role is required for editing company access restrictions~]&resume=_back"));
     return;
   }
 
