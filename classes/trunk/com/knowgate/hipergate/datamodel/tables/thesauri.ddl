@@ -136,7 +136,10 @@ CREATE TABLE k_addresses
     id_ref         VARCHAR(50)  NULL,
     tx_remarks     VARCHAR(254) NULL,
 
-    CONSTRAINT pk_address PRIMARY KEY (gu_address)
+    CONSTRAINT pk_address PRIMARY KEY (gu_address),
+    CONSTRAINT c1_address CHECK ((id_country<>'es' AND id_country<>'fr' AND id_country<>'de') OR (LENGTH(zipcode)=5 OR zipcode IS NULL)),
+    CONSTRAINT c2_address CHECK (id_country<>'us' OR (LENGTH(zipcode) BETWEEN 5 AND 10 OR zipcode IS NULL)),
+    CONSTRAINT c3_address CHECK (id_country<>'cn' OR (LENGTH(zipcode)=6 OR zipcode IS NULL))
 )
 GO;
 

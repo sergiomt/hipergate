@@ -2778,6 +2778,11 @@ public class ModelManager {
         executeBulk("upgrade/" + sDbms + "/300-400.ddl", BULK_PLSQL);
         if (iDbms==DBMS_ORACLE) recompileOrcl();
       }
+      else if (sOldVersion.equals("400") &&
+               sNewVersion.equals("500")) {
+        executeBulk("upgrade/" + sDbms + "/400-500.ddl", BULK_PLSQL);
+        if (iDbms==DBMS_ORACLE) recompileOrcl();
+      }
       else
         throw new SQLException ("ERROR: ModelManager.upgrade() Source or Target version not recognized.");
 

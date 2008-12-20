@@ -695,18 +695,20 @@ public class PageSet extends DOMDocument {
                                String sSelPageOptions,
                                Properties oEnvironmentProps, Properties oUserProps)
 
-    throws IOException, DOMException, TransformerException,
+    throws FileNotFoundException, IOException, DOMException, TransformerException,
            TransformerConfigurationException, MalformedURLException {
 
     Transformer oTransformer;
     StreamResult oStreamResult;
     StreamSource oStreamSrcXML;
     StringWriter oStrWritter;
+    File oXMLFile,oXSLFile;
     InputStream oXMLStream = null;
     String sTransformed;
     StringBuffer oPostTransform;
     String sKey;
     String sMedia;
+    String sXSLFile;
     Object sVal;
     Page oCurrentPage;
 
@@ -750,12 +752,17 @@ public class PageSet extends DOMDocument {
     if (DebugFile.trace)
       DebugFile.writeln("new FileInputStream(" + (sURI.startsWith("file://") ? sURI.substring(7) : sURI) + ")");
 
-
     // Para cada contenedor (página) realizar la transformación XSLT
 
       oCurrentPage = this.page(sPageGUID);
 
-      oXMLStream = new FileInputStream(sURI.startsWith("file://") ? sURI.substring(7) : sURI);
+	  oXMLFile = new File (sURI.startsWith("file://") ? sURI.substring(7) : sURI);
+	  if (!oXMLFile.exists()) {
+        if (DebugFile.trace) DebugFile.decIdent(); 
+	  	throw new FileNotFoundException("PageSet.buildPageForEdit() File not found "+sURI);
+	  }
+
+      oXMLStream = new FileInputStream(oXMLFile);
       oStreamSrcXML = new StreamSource(oXMLStream);
 
       // Asignar cada stream de salida a su stream temporal
@@ -766,7 +773,14 @@ public class PageSet extends DOMDocument {
       try {
 
         // Obtener la hoja de estilo desde el cache
-        oTransformer = StylesheetCache.newTransformer(sBasePath + "xslt" + sSep + "templates" + sSep + oMSite.name() + sSep + oCurrentPage.template());
+        sXSLFile = sBasePath + "xslt" + sSep + "templates" + sSep + oMSite.name() + sSep + oCurrentPage.template();
+	    oXSLFile = new File (sXSLFile);
+	    if (!oXSLFile.exists()) {
+          if (DebugFile.trace) DebugFile.decIdent(); 
+	  	  throw new FileNotFoundException("PageSet.buildPageForEdit() File not found "+sXSLFile+" maybe there is a mismatch between the microsite name and the directory name where it is placed, or between the template name and the actual .xsl file name");
+	    }
+
+        oTransformer = StylesheetCache.newTransformer(sXSLFile);
 
         sMedia = oTransformer.getOutputProperty(OutputKeys.MEDIA_TYPE);
 

@@ -801,6 +801,7 @@ public final class DB {
   public static final String tx_company = "tx_company";
   public static final String tx_user = "tx_user";
   public static final String dt_next_action = "dt_next_action";
+  public static final String dt_last_call = "dt_last_call";
   public static final String tp_origin = "tp_origin";
   public static final String tx_cause = "tx_cause";
   public static final String id_objetive = "id_objetive";

@@ -24,7 +24,7 @@ BEGIN
   DECLARE ContactId CHAR(32);
   DECLARE CompanyId CHAR(32);
   DECLARE Done INT DEFAULT 0;
-  DECLARE Users CURSOR FOR SELECT gu_user FROM k_users WHERE id_domain = DomainId AND (tx_main_email = EMailTx OR EXISTS (SELECT a.gu_user FROM k_user_mail a WHERE a.gu_user=u.gu_user AND a.tx_main_email=EMailTx));
+  DECLARE Users CURSOR FOR SELECT gu_user FROM k_users u WHERE id_domain = DomainId AND (tx_main_email = EMailTx OR EXISTS (SELECT a.gu_user FROM k_user_mail a WHERE a.gu_user=u.gu_user AND a.tx_main_email=EMailTx));
   DECLARE Contacts CURSOR FOR SELECT gu_company,gu_contact FROM k_member_address WHERE gu_workarea = WorkAreaId AND tx_email = EMailTx;
   DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET Done=1;
 
