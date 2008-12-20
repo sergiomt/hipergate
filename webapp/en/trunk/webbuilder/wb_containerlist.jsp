@@ -96,7 +96,7 @@
 %>
 <html>
 <head>
-<TITLE>hipergate :: New Page</TITLE>
+<TITLE>hipergate :: [~Nueva p&aacute;gina~]</TITLE>
 <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
 <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
 <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
@@ -114,11 +114,11 @@
 <center>
 <table cellspacing="0" cellpadding="0" border="0" width="70%">
 <tr width="80%"><td colspan="2" valign="top" align="center" width="70%" >&nbsp;<img src="<%=sURLRoot%>/skins/xp/hglogopeq.jpg" border="0"></td></tr>
-<tr><td colspan="2" valign="center" align="center"  width="100%" class="title1">&nbsp;New Page</td></tr>
+<tr><td colspan="2" valign="center" align="center"  width="100%" class="title1">&nbsp;[~Nueva p&aacute;gina~]</td></tr>
 <tr><td colspan="2">&nbsp;</td></tr>
-<tr><td colspan="2" class="formplain"><p align="justify">Choose a name for the new page and click on the container type to base the page on.</p></td></tr>
+<tr><td colspan="2" class="formplain"><p align="justify">[~Elija un nombre para la nueva p&aacute;gina y haga click sobre el tipo de contenedor que desea utilizar como base.~]</p></td></tr>
 <tr><td colspan="2">&nbsp;</td></tr>
-<tr><td class="formstrong">Name:&nbsp;&nbsp;</td><td class="formplain"><input size="16" type="text" name="nm_page" id="nm_page"></td></tr>
+<tr><td class="formstrong">[~Nombre:~]&nbsp;&nbsp;</td><td class="formplain"><input size="16" type="text" name="nm_page" id="nm_page"></td></tr>
 <tr><td colspan="2">&nbsp;</td></tr>
 <% 
   for (int i=0; i<oContainers.size(); i++){
@@ -129,7 +129,7 @@
      out.print("<tr>");
      out.print("<td colspan=\"2\" class=\"strip" + counter + "\" width=\"80%\">");
      out.print("<a href=\"javascript:createPage('" + oCurContainer.name() + "')\">");
-     out.print("New Page " + oCurContainer.name());
+     out.print("[~Crear pagina ~] " + oCurContainer.name());
      out.print("</a>");
      out.print("</td>");
      out.print("</tr>");

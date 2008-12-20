@@ -59,10 +59,10 @@
 <HTML><HEAD><TITLE>Wait...</TITLE>
 <%  
   if (sPageName.equals("Home"))
-    out.write("<script>alert('It is not permitted to remove Home Page, as it is the start navigation point of the website.');</script>");
+    out.write("<script>alert('[~No esta permitido eliminar la pagina Home, ya que es el punto de entrada para la navegacion de la web.~]');</script>");
   else
    if (sPageName.equals("Recursos"))
-     out.write("<script>alert('It is not permitted to remove Resources Page.');</script>");
+     out.write("<script>alert('[~No esta permitido eliminar la pagina Recursos, ya que es un agregador de recursos comunes a toda la web.~]');</script>");
   else
    if (sPageName.equals("Index"))
      out.write("<script>alert('[~No esta permitido eliminar la pagina Inicial, ya que es el punto de entrada para la navegacion de la web.~]');</script>");

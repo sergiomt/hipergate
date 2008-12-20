@@ -65,7 +65,7 @@
       com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "DOMException", "Container " + request.getParameter("nm_container") + " not found");
     }
 
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=DOMException&desc=Container not found " + request.getParameter("nm_container") + "&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=DOMException&desc=[~No se encontro el contenedor~] " + request.getParameter("nm_container") + "&resume=_back"));
     return;
   }
   
@@ -90,7 +90,7 @@
       com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "StringIndexOutOfBoundsException", sior.getMessage());
     }
     
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=StringIndexOutOfBoundsException&desc=XML document is not valid " + sDataTemplateFile + "&resume=_back"));   
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=StringIndexOutOfBoundsException&desc=[~El documento XML no es valido~] " + sDataTemplateFile + "&resume=_back"));   
   }
   
   if (null==sTemplateData) return;

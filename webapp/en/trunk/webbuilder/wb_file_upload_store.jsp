@@ -76,7 +76,7 @@
         com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "IOException", "File size exceeds maximum allowed of " + String.valueOf(iMaxUpload/1024));
       }
 
-      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=File too big&desc=File length exceed maximum allowed " + String.valueOf(iMaxUpload/1024) + "Kb&resume=_back"));
+      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Archivo demasiado grande~]&desc=[~La longuitud del archivo excede el maximo permitido~] " + String.valueOf(iMaxUpload/1024) + "Kb&resume=_back"));
       return;
     }
     else {
@@ -170,7 +170,7 @@
       com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "NullPointerException", npe.getMessage());
     }
 
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=Archive Format invalid&resume=_close"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=[~El formato del archivo grafico no es valido~]&resume=_close"));
   }
 
   
@@ -180,7 +180,7 @@
 %>
 <HTML>
 <HEAD>
-<TITLE>Wait...</TITLE>
+<TITLE>[~Espere~]...</TITLE>
 <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
   <!--
 	  var w,h;
