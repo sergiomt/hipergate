@@ -51,7 +51,7 @@
 <HTML>
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-<TITLE>hipergate :: New&nbsp;<%=sTitle%></TITLE>
+<TITLE>hipergate :: [~Creaci&oacute;n de ~]<%=sTitle%></TITLE>
 </HEAD>
 <FRAMESET NAME="lookuptop" ROWS="74,*,48" BORDER="0" FRAMEBORDER="0">
 <FRAME NAME="lookupup" FRAMEBORDER="no" MARGINWIDTH="0 MARGINHEIGHT="0" NORESIZE SRC="microsite_lookup_up.jsp<%=sQryStr%>">

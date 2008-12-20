@@ -50,6 +50,7 @@
   JDCConnection oConn = GlobalDBBind.getConnection("pageset_change_store");  
   
   PageSetDB oPgDb = new PageSetDB();
+  PageDB oPage;
   
   try {
     loadRequest(oConn, request, oPgDb);
@@ -61,12 +62,20 @@
     DBAudit.log(oConn, PageSetDB.ClassId, sOpCode, id_user, oPgDb.getString(DB.gu_pageset), null, 0, 0, oPgDb.getString(DB.nm_pageset), null);
 
 		if (path_publish!=null && gu_page.length()>0) {
-		  PageDB oPage = new PageDB();
+		  oPage = new PageDB();
 		  if (oPage.load(oConn, new Object[]{gu_page})) {
 		    oPage.replace(DB.path_publish, path_publish);
 		    oPage.store(oConn);
         DBAudit.log(oConn, PageDB.ClassId, "MSPG", id_user, DB.gu_page, null, 0, 0, path_publish, null);
 		  } // fi
+		} else {
+			PageDB[] aPages = oPgDb.getPages(oConn);
+      for (int p=0; p<aPages.length; p++) {
+        oPage = aPages[p];
+		    oPage.replace(DB.path_publish, request.getParameter("path_publish_"+String.valueOf(oPage.getInt(DB.pg_page))));
+		    oPage.store(oConn);
+        DBAudit.log(oConn, PageDB.ClassId, "MSPG", id_user, DB.gu_page, null, 0, 0, oPage.getStringNull(DB.path_publish,""), null);
+      } // next		  
 		} // fi
     
     oConn.commit();

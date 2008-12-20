@@ -214,7 +214,7 @@
 	  
 	  txt = rtrim(frm.find.value);
 	  if (txt.indexOf("'")>=0 || txt.indexOf("%")>=0  || txt.indexOf(",")>=0  || txt.indexOf("&")>=0  || txt.indexOf("?")>=0 ) {
-	    alert ("Search string contains invalid characters");
+	    alert ("[~El texto a buscar contiene caracteres no válidos~]");
 	    document.location = "pageset_listing.jsp?doctype="+ getURLParam("doctype") + "&id_language=" + getCombo(frm.id_language) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
 	    return false;
 	  }
@@ -223,7 +223,7 @@
 	    qry += "&find=" + escape(txt);
 	    
 	  if (txt.length==0 && frm.dt_start.value.length==0 && frm.dt_end.value.length==0 && frm.id_language.selectedIndex<=0) {
-	    alert ("Must specify a search criteria");
+	    alert ("[~Debe especificar al menos un criterio de búsqueda~]");
 	    document.location = "pageset_listing.jsp?doctype="+ getURLParam("doctype") + "&id_language=" + getCombo(frm.id_language) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
 	    return false;
 	  }
@@ -233,7 +233,7 @@
 	    if (isDate(txt,"d"))
 	      qry += "&dt_start=" + txt;
 	    else {
-	      alert ("Invalid Start Date");
+	      alert ("[~La fecha de inicio no es válida~]");
 	      document.location = "pageset_listing.jsp?doctype="+ getURLParam("doctype") + "&id_language=" + getCombo(frm.id_language) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
 	      return false;
 	    }
@@ -243,7 +243,7 @@
 	    if (isDate(txt,"d"))
 	      qry += "&dt_end=" + txt;
 	    else {
-	      alert ("Invalid End Date");
+	      alert ("[~La fecha de fin no es válida~]");
 	      document.location = "pageset_listing.jsp?doctype="+ getURLParam("doctype") + "&id_language=" + getCombo(frm.id_language) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
 	      return false;
 	    }
@@ -266,7 +266,7 @@
         // ----------------------------------------------------
         	
 	function changePageSet(jsPageSetId) {
-	    self.open("pageset_change.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>&doctype=<%=sDocType%>&gu_pageset=" + jsPageSetId, "changepageset", "toolbar=no,directories=no,menubar=no,resizable=no,top=" + (screen.height-420)/2 + ",left=" + (screen.width-540)/2 + ",width=600,height=420");	  
+	    self.open("pageset_change.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>&doctype=<%=sDocType%>&gu_pageset=" + jsPageSetId, "changepageset", "toolbar=no,directories=no,menubar=no,scrollbars=yes,resizable=yes,top=" + (screen.height-520)/2 + ",left=" + (screen.width-540)/2 + ",width=600,height=520");	  
 	} // createPageSet()
 
         // ----------------------------------------------------
@@ -370,12 +370,12 @@
           } // next (i)
                     
           if (counter==0){
-           alert("You must select at least one document");
+           alert("[~Debe seleccionar un documento~]");
            return (false);
           }
           
           if (counter>1){
-           alert("You must select only one document");
+           alert("[~Debe seleccionar sólo un documento~]");
            return (false);
           }
 	  	  
@@ -406,7 +406,7 @@
           } // next
 	  
 	  if (chi.value.length>0) {
-	    if (window.confirm("You are about to delete " + String(c) + "  documents. Are you sure you wish to continue?")) {	    
+	    if (window.confirm("[~Está a punto de eliminar ~] " + String(c) + " [~ documentos ¿Está seguro de que desea continuar?~]")) {	    
 	      chi.value = chi.value.substr(0,chi.value.length-1);
               frm.action = "pageset_edit_delete.jsp";
               frm.submit();
@@ -414,7 +414,7 @@
             }
           } 
           else {
-            alert('You must select at least one document');
+            alert('[~Debe seleccionar al menos un documento.~]');
           } // fi()
 	} // deletePageSets()
 
@@ -442,7 +442,7 @@
           } // next
 	  
 	  if (chi.value.length>0) {
-	    if (window.confirm("[~Está a punto de publicar ~] " + String(c) + "  documents. Are you sure you wish to continue?")) {	    
+	    if (window.confirm("[~Está a punto de publicar ~] " + String(c) + " [~ documentos ¿Está seguro de que desea continuar?~]")) {	    
 	      chi.value = chi.value.substr(0,chi.value.length-1);
               frm.action = "pageset_edit_publish.jsp";
               frm.submit();
@@ -450,7 +450,7 @@
             }
           } 
           else {
-            alert('You must select at least one document');
+            alert('[~Debe seleccionar al menos un documento.~]');
           } // fi()
 	} // publish()
 	
@@ -482,45 +482,45 @@
   String sTitle = "";
   
   if (sDocType.equals("newsletter"))
-    sTitle="Newsletters";
+    sTitle="[~Newsletters~]";
   else if (sDocType.equals("survey"))
-    sTitle="Questionnaires";  
+    sTitle="[~Cuestionarios~]";  
   else
-   sTitle = "WebSites";
+   sTitle = "[~WebSites~]";
   
 %>
-  <TITLE>hipergate :: Edit &nbsp;<%=sTitle%></TITLE>
+  <TITLE>hipergate :: [~Edici&oacute;n de ~]&nbsp;<%=sTitle%></TITLE>
 </HEAD>
 <BODY  TOPMARGIN="0" MARGINHEIGHT="0" onClick="hideRightMenu()">
     <%@ include file="../common/tabmenu.jspf" %>
     <FORM METHOD="post" NAME="frmPageset" ID="frmPageset">
     <INPUT TYPE="hidden" NAME="selected" VALUE="<%=request.getParameter("selected")%>">
     <INPUT TYPE="hidden" NAME="subselected" VALUE="<%=request.getParameter("subselected")%>">
-    <TABLE SUMMARY="Title" CELLSPACING="0" CELLPADDING="0" BORDER="0" WIDTH="99%"><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">Edit &nbsp;<%=sTitle%></FONT></TD></TR></TABLE>
+    <TABLE SUMMARY="Title" CELLSPACING="0" CELLPADDING="0" BORDER="0" WIDTH="99%"><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Edici&oacute;n de ~]&nbsp;<%=sTitle%></FONT></TD></TR></TABLE>
     <TABLE SUMMARY="New & Delete" CELLSPACING="2" CELLPADDING="2">
         <TR><TD COLSPAN="<% if (sDocType.equals("newsletter")) out.write("8"); else out.write("6");%>" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
         <TR>
-        <TD ALIGN="right" HEIGHT="16">&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
-        <TD ALIGN="left" VALIGN="middle"><A HREF="javascript:void(0)" onclick="createPageSet()" CLASS="linkplain">New</A></TD>
-        <TD ALIGN="right">&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
-        <TD ALIGN="left" HEIGHT="16"><A HREF="javascript:deletePageSets()" CLASS="linkplain">Delete</A></TD>
+        <TD ALIGN="right" HEIGHT="16">&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nuevo~]"></TD>
+        <TD ALIGN="left" VALIGN="middle"><A HREF="javascript:void(0)" onclick="createPageSet()" CLASS="linkplain">[~Nuevo~]</A></TD>
+        <TD ALIGN="right">&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar~]"></TD>
+        <TD ALIGN="left" HEIGHT="16"><A HREF="javascript:deletePageSets()" CLASS="linkplain">[~Eliminar~]</A></TD>
         <TD ALIGN="right">&nbsp;&nbsp;<IMG SRC="../images/images/copyfiles.gif" WIDTH="24" HEIGHT="16" BORDER="0" ALT="[~Publicar~]"></TD>
         <TD ALIGN="left" HEIGHT="16"><A HREF="javascript:void(0)" onclick="publish();return false;" CLASS="linkplain">[~Publicar~]</A></TD>
 <% if (sDocType.equals("newsletter")) { %>
-        <TD ALIGN="right">&nbsp;&nbsp;<IMG SRC="../images/images/jobs/sandclock.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Schedule"></TD>
-        <TD ALIGN="left" HEIGHT="16"><A HREF="javascript:void(0)" onclick="schedule();return false;" CLASS="linkplain">Schedule</A></TD>
+        <TD ALIGN="right">&nbsp;&nbsp;<IMG SRC="../images/images/jobs/sandclock.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Programar env&iacute;o~]"></TD>
+        <TD ALIGN="left" HEIGHT="16"><A HREF="javascript:void(0)" onclick="schedule();return false;" CLASS="linkplain">[~Programar env&iacute;o~]</A></TD>
 <% } %>
       </TR>
       <TR><TD COLSPAN="<% if (sDocType.equals("newsletter")) out.write("8"); else out.write("6");%>" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>      
       <TR>
         <TD COLSPAN="<% if (sDocType.equals("newsletter")) out.write("8"); else out.write("6");%>">
-	        <IMG SRC="../images/images/find16.gif" BORDER="0" ALT="Search">&nbsp;<FONT CLASS="textplain"><INPUT CLASS="combomini" TYPE="text" MAXLENGTH="30" NAME="find">&nbsp;&nbsp;between&nbsp;<INPUT TYPE="text" CLASS="combomini" MAXLENGTH="10" SIZE="10" NAME="dt_start">&nbsp;<A HREF="javascript:showCalendar('dt_start')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>&nbsp;&nbsp;and&nbsp;&nbsp;<INPUT CLASS="combomini" TYPE="text" MAXLENGTH="10" SIZE="10" NAME="dt_end">&nbsp;<A HREF="javascript:showCalendar('dt_end')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>&nbsp;</FONT>
+	        <IMG SRC="../images/images/find16.gif" BORDER="0" ALT="[~Buscar~]">&nbsp;<FONT CLASS="textplain"><INPUT CLASS="combomini" TYPE="text" MAXLENGTH="30" NAME="find">&nbsp;&nbsp;[~entre~]&nbsp;<INPUT TYPE="text" CLASS="combomini" MAXLENGTH="10" SIZE="10" NAME="dt_start">&nbsp;<A HREF="javascript:showCalendar('dt_start')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>&nbsp;&nbsp;[~y~]&nbsp;&nbsp;<INPUT CLASS="combomini" TYPE="text" MAXLENGTH="10" SIZE="10" NAME="dt_end">&nbsp;<A HREF="javascript:showCalendar('dt_end')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>&nbsp;</FONT>
 	        &nbsp;&nbsp;<FONT CLASS="textplain">[~Idioma~]</FONT>&nbsp;<SELECT NAME="id_language" CLASS="combomini"><OPTION VALUE=""></OPTION><% for (int l=0; l<iLangsCount; l++) out.write("<OPTION VALUE=\""+oLanguages.getString(0,l)+"\">"+oLanguages.getString(1,l)+"</OPTION>"); %></SELECT>
-	        &nbsp;&nbsp;<A HREF="javascript:findRecords()" CLASS="linkplain">Search</A>
+	        &nbsp;&nbsp;<A HREF="javascript:findRecords()" CLASS="linkplain">[~Buscar~]</A>
         </TD>
       <TR>
         <TD COLSPAN="<% if (sDocType.equals("newsletter")) out.write("8"); else out.write("6");%>">
-          <FONT CLASS="textplain"><B>View</B>&nbsp;<INPUT TYPE="radio" NAME="chk_doctype" <% if (sDocType.equals("newsletter")) out.write("CHECKED"); else out.write("onClick=\"window.document.location.href='pageset_listing.jsp?selected=' + getURLParam('selected') + '&subselected=' + getURLParam('subselected') + '&doctype=newsletter'\""); %>>Newsletters&nbsp;&nbsp;<INPUT TYPE="radio" NAME="chk_doctype" <% if (sDocType.equals("website")) out.write("CHECKED"); else out.write("onClick=\"window.document.location.href='pageset_listing.jsp?selected=' + getURLParam('selected') + '&subselected=' + getURLParam('subselected') + '&doctype=website'\""); %>>WebSites&nbsp;&nbsp;<INPUT TYPE="radio" NAME="chk_doctype" <% if (sDocType.equals("survey")) out.write("CHECKED"); else out.write("onClick=\"window.document.location.href='pageset_listing.jsp?selected=' + getURLParam('selected') + '&subselected=' + getURLParam('subselected') + '&doctype=survey'\""); %>>Questionnaires</FONT>
+          <FONT CLASS="textplain"><B>[~Ver~]</B>&nbsp;<INPUT TYPE="radio" NAME="chk_doctype" <% if (sDocType.equals("newsletter")) out.write("CHECKED"); else out.write("onClick=\"window.document.location.href='pageset_listing.jsp?selected=' + getURLParam('selected') + '&subselected=' + getURLParam('subselected') + '&doctype=newsletter'\""); %>>[~Newsletters~]&nbsp;&nbsp;<INPUT TYPE="radio" NAME="chk_doctype" <% if (sDocType.equals("website")) out.write("CHECKED"); else out.write("onClick=\"window.document.location.href='pageset_listing.jsp?selected=' + getURLParam('selected') + '&subselected=' + getURLParam('subselected') + '&doctype=website'\""); %>>[~WebSites~]&nbsp;&nbsp;<INPUT TYPE="radio" NAME="chk_doctype" <% if (sDocType.equals("survey")) out.write("CHECKED"); else out.write("onClick=\"window.document.location.href='pageset_listing.jsp?selected=' + getURLParam('selected') + '&subselected=' + getURLParam('subselected') + '&doctype=survey'\""); %>>[~Cuestionarios~]</FONT>
         </TD>
       <TR>
     </TABLE>
@@ -530,17 +530,17 @@
     String sTabIndicators = "selected=5&subselected=0&";
 
     if (iSkip>0) // Si iSkip>0 entonces hay registros anteriores
-      out.write("<A HREF=\"pageset_listing.jsp?" + sTabIndicators + "doctype=" + sDocType + "&id_domain=" + id_domain + "&n_domain=" + n_domain + "&maxrows=" + String.valueOf(iMaxRows) + "&skip=" + String.valueOf(iSkip-iMaxRows)+ "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;" + String.valueOf(iMaxRows) + "&nbsp;Previous " + "</A>&nbsp;&nbsp;&nbsp;");
+      out.write("<A HREF=\"pageset_listing.jsp?" + sTabIndicators + "doctype=" + sDocType + "&id_domain=" + id_domain + "&n_domain=" + n_domain + "&maxrows=" + String.valueOf(iMaxRows) + "&skip=" + String.valueOf(iSkip-iMaxRows)+ "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;" + String.valueOf(iMaxRows) + "&nbsp;[~Anteriores~] " + "</A>&nbsp;&nbsp;&nbsp;");
     
     if (!oPageSets.eof())
-      out.write("<A HREF=\"pageset_listing.jsp?" + sTabIndicators + "doctype=" + sDocType + "&id_domain=" + id_domain + "&n_domain=" + n_domain + "&maxrows=" + String.valueOf(iMaxRows) + "&skip=" + String.valueOf(iSkip+iMaxRows)+ "\" CLASS=\"linkplain\">Next " + String.valueOf(iMaxRows) + "&nbsp;&gt;&gt;</A>");
+      out.write("<A HREF=\"pageset_listing.jsp?" + sTabIndicators + "doctype=" + sDocType + "&id_domain=" + id_domain + "&n_domain=" + n_domain + "&maxrows=" + String.valueOf(iMaxRows) + "&skip=" + String.valueOf(iSkip+iMaxRows)+ "\" CLASS=\"linkplain\">[~Siguientes~] " + String.valueOf(iMaxRows) + "&nbsp;&gt;&gt;</A>");
     %>
     <TABLE CELLSPACING="2" CELLPADDING="2">
         <TR>
-         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="200px"><A HREF="javascript:sortBy(2);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;&nbsp;<B>Name</B></TD>
-         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="300px"><A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;<B>&nbsp;Description</B></TD>
-         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="96px"><A HREF="javascript:sortBy(5);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;<B>&nbsp;Create</B></TD>
-         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="100px">&nbsp;<B>&nbsp;Status</B></TD>
+         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="200px"><A HREF="javascript:sortBy(2);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este campo~]"></A>&nbsp;&nbsp;<B>[~Nombre~]</B></TD>
+         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="300px"><A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este campo~]"></A>&nbsp;<B>&nbsp;[~Descripci&oacute;n~]</B></TD>
+         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="96px"><A HREF="javascript:sortBy(5);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este campo~]"></A>&nbsp;<B>&nbsp;[~Creaci&oacute;n~]</B></TD>
+         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="100px">&nbsp;<B>&nbsp;[~Estado~]</B></TD>
          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;</TD>
         </TR>
 <%
@@ -565,7 +565,7 @@
              sCompId = oPageSets.getString(0,i);
              out.write ("<TR HEIGHT=\"14\">");
              out.write ("<TD CLASS=\"strip" + counter + "\">");
-             out.write ("&nbsp;<A HREF=\"#\" oncontextmenu=\"jsPageSetId='" + sCompId + "'; jsPageSetName = '" + oPageSets.getString(1,i) + "'; return showRightMenu(event);\" onclick=\"modifyPageSet('" + sCompId + "','" + oPageSets.getString(1,i) + "')\" TITLE=\"Right click to see context menu\">");
+             out.write ("&nbsp;<A HREF=\"#\" oncontextmenu=\"jsPageSetId='" + sCompId + "'; jsPageSetName = '" + oPageSets.getString(1,i) + "'; return showRightMenu(event);\" onclick=\"modifyPageSet('" + sCompId + "','" + oPageSets.getString(1,i) + "')\" TITLE=\"[~Pulse el bot&oacute;n derecho del rat&oacute;n para ver el menu contextual.~]\">");
              out.write (oPageSets.getString(1,i));
              out.write ("</A>");
              out.write ("</TD>");
@@ -594,12 +594,12 @@
     </FORM>
 
     <SCRIPT language="JavaScript" type="text/javascript">
-      addMenuOption("Edit","modifyPageSet(jsPageSetId,jsPageSetName)",1);
-      addMenuOption("Preview","previewPageSet(jsPageSetId,jsPageSetName)",0);
-      addMenuOption("Properties","changePageSet(jsPageSetId)",0);
+      addMenuOption("[~Editar~]","modifyPageSet(jsPageSetId,jsPageSetName)",1);
+      addMenuOption("[~Vista Previa~]","previewPageSet(jsPageSetId,jsPageSetName)",0);
+      addMenuOption("[~Propiedades~]","changePageSet(jsPageSetId)",0);
       <% if (sDocType.equals("newsletter")) { %>
       addMenuSeparator();
-      addMenuOption("Schedule","selectList(jsPageSetId)",0);
+      addMenuOption("[~Programar Env&iacute;o~]","selectList(jsPageSetId)",0);
       <% } %>
     </SCRIPT>
 </BODY>

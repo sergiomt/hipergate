@@ -125,12 +125,12 @@
 	}
     //-->    
   </SCRIPT>
-  <TITLE>hipergate :: Schedule Task (1/2)</TITLE>
+  <TITLE>hipergate :: [~Programar Tarea (1/2)~]</TITLE>
 </HEAD>
 <BODY >
   <TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" WIDTH="1" HEIGHT="8" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Schedule Task: Select Distribution List</FONT></TD><TD CLASS="striptitle" align="right"><FONT CLASS="title1">(1 of 2)</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Programar Tarea: seleccionar lista de distribuci&oacute;n~]</FONT></TD><TD CLASS="striptitle" align="right"><FONT CLASS="title1">[~(1 de 2)~]</FONT></TD></TR>
   </TABLE>  
   <BR>
   <FONT CLASS="textplain">[~Seleccione una lista de distribución como destino del envío.~]</FONT>
@@ -138,16 +138,16 @@
       <TABLE WIDTH="100%" CELLSPACING="2" CELLPADDING="2">
         <TR><TD COLSPAN="2" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
         <TR>
-          <TD WIDTH="18px"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New List"></TD>
-          <TD ALIGN="left" VALIGN="middle"><A HREF="#" onclick="createList();" CLASS="linkplain" TITLE="New List">New Distribution List</A></TD>
+          <TD WIDTH="18px"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nueva Lista~]"></TD>
+          <TD ALIGN="left" VALIGN="middle"><A HREF="#" onclick="createList();" CLASS="linkplain" TITLE="[~Nueva Lista~]">[~Nueva Lista de Distribuci&oacute;n~]</A></TD>
         </TR>
         <TR><TD COLSPAN="2" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       </TABLE>  
      <TABLE WIDTH="100%" BORDER="0">
         <TR>
           <TD CLASS="tableheader" WIDTH="20px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="#" oncontextmenu="return false;"></A>&nbsp;<B>List</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="#" oncontextmenu="return false;"></A>&nbsp;<B>Description</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="#" oncontextmenu="return false;"></A>&nbsp;<B>[~Lista~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="#" oncontextmenu="return false;"></A>&nbsp;<B>[~Descripci&oacute;n~]</B></TD>
         </TR>
 <%
 	  String sInstId;
@@ -156,15 +156,15 @@
 %>            
             <TR>
               <TD HEIGHT="14" CLASS="tabletd"><INPUT TYPE="checkbox" VALUE="<%=sInstId%>"></TD>
-              <TD HEIGHT="14" CLASS="tabletd">&nbsp;<A HREF="#" onclick="modifyList('<%=sInstId%>','<%=Gadgets.URLEncode(oLists.getStringNull(3,i,""))%>')" TITLE="Edit List"><%=oLists.getStringNull(3,i,"(no subject)")%></A></TD>
+              <TD HEIGHT="14" CLASS="tabletd">&nbsp;<A HREF="#" onclick="modifyList('<%=sInstId%>','<%=Gadgets.URLEncode(oLists.getStringNull(3,i,""))%>')" TITLE="[~Editar Lista~]"><%=oLists.getStringNull(3,i,"[~(sin asunto)~]")%></A></TD>
               <TD HEIGHT="14" CLASS="tabletd">&nbsp;<%=oLists.getStringNull(4,i,"")%></TD>
             </TR>
 <%        } // next(i) %>          	  
       </TABLE>
       <HR>
       <CENTER>
-      <INPUT TYPE="button" CLASS="closebutton" ACCESSKEY="c" TITLE="ALT+c" VALUE="Cancel" onClick="window.close()">
-      <INPUT TYPE="button" CLASS="pushbutton" ACCESSKEY="n" TITLE="ALT+n" VALUE="Next >>" onClick="programJob()">
+      <INPUT TYPE="button" CLASS="closebutton" ACCESSKEY="c" TITLE="ALT+c" VALUE="[~Cancelar~]" onClick="window.close()">
+      <INPUT TYPE="button" CLASS="pushbutton" ACCESSKEY="n" TITLE="ALT+n" VALUE="[~Siguiente~] >>" onClick="programJob()">
       </CENTER>
   </FORM>
 </BODY>
