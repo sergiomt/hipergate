@@ -44,7 +44,8 @@
   String n_domain = request.getParameter("n_domain");
   String gu_workarea = request.getParameter("gu_workarea");
   String gu_company = request.getParameter("gu_company");
-  
+  String gu_oportunity = request.getParameter("gu_oportunity");
+
   String id_user = getCookie (request, "userid", null);
   
   PhoneCall oPhn = new PhoneCall();
@@ -100,6 +101,10 @@
     
     oPhn.put(DB.contact_person, (oCnt.getStringNull(DB.tx_name,"")+" "+oCnt.getStringNull(DB.tx_surname,"")).trim());
     oPhn.store(oConn);
+
+		if (gu_oportunity!=null) {
+		  DBCommand.executeUpdate(oConn, "UPDATE "+DB.k_oportunities+" SET "+DB.dt_last_call+"=(SELECT MAX("+DB.dt_start+") FROM "+DB.k_phone_calls+" WHERE "+DB.gu_phonecall+"='"+oPhn.getString(DB.gu_phonecall)+"') WHERE "+DB.gu_oportunity+"='"+gu_oportunity+"'");
+		}
 
     DBAudit.log(oConn, PhoneCall.ClassId, "NPHN", id_user, oPhn.getString(DB.gu_phonecall), request.getParameter("gu_contact"), 0, 0, null, null);
     

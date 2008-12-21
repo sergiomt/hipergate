@@ -87,7 +87,7 @@
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: List of calls for oportunity</TITLE>
+  <TITLE>hipergate :: [~Listado de llamadas para una oportunidad~]</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
@@ -98,32 +98,32 @@
 </HEAD>
 <BODY TOPMARGIN="8" MARGINHEIGHT="8">
   <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Actualizar~]"> [~Actualizar~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="[~Imprimir~]"> [~Imprimir~]</SPAN>
   </DIV></DIV>
   <TABLE SUMMARY="Title" WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">List of calls for oportunity</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Listado de llamadas para una oportunidad~]</FONT></TD></TR>
   </TABLE>
   <BR/>
   <% if (!bIsGuest) { %>
-    <IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Call">&nbsp;<A CLASS="linkplain" HREF="phonecall_record.jsp?id_domain=<%=id_domain%>&n_domain=<%=Gadgets.URLEncode(n_domain)%>&gu_workarea=<%=gu_workarea%>&gu_user=<%=id_user%>&gu_oportunity=<%=gu_oportunity%>&gu_contact=<%=gu_contact%>">New Call</A>
+    <IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nueva Llamada~]">&nbsp;<A CLASS="linkplain" HREF="phonecall_record.jsp?id_domain=<%=id_domain%>&n_domain=<%=Gadgets.URLEncode(n_domain)%>&gu_workarea=<%=gu_workarea%>&gu_user=<%=id_user%>&gu_oportunity=<%=gu_oportunity%>&gu_contact=<%=gu_contact%>">[~Nueva Llamada~]</A>
   <% } %>
   <BR/><BR/>
   <TABLE SUMMARY="Calls List" CELLSPACING="1" CELLPADDING="2">
     <TR>
       <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"></TD>
-      <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>Number</B></TD>
-      <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>Date</B></TD>
+      <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>[~N&uacute;mero~]</B></TD>
+      <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>[~Fecha~]</B></TD>
       <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"></TD>
       <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"></TD>
-      <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>Comments</B></TD>
+      <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>[~Comentarios~]</B></TD>
     </TR>
 <% for (int i=0; i<nCalls; i++) {
     String sStrip = String.valueOf((i%2)+1); %>
     <TR HEIGHT="16">
-      <TD CLASS="strip<% out.write (sStrip); %>" WIDTH="20" ALIGN="center"><IMG SRC="../images/images/addrbook/<% out.write(oCalls.getString(1,i).equals("R") ? "callin.gif" : "callout.gif"); %>" BORDER="0" ALT="<% out.write(oCalls.getString(1,i).equals("R") ? "Received Call" : "Sent Call"); %>"></TD>
+      <TD CLASS="strip<% out.write (sStrip); %>" WIDTH="20" ALIGN="center"><IMG SRC="../images/images/addrbook/<% out.write(oCalls.getString(1,i).equals("R") ? "callin.gif" : "callout.gif"); %>" BORDER="0" ALT="<% out.write(oCalls.getString(1,i).equals("R") ? "[~Llamada Recibida~]" : "[~Llamada Enviada~]"); %>"></TD>
       <TD CLASS="strip<% out.write (sStrip); %>"><% out.write(oCalls.getString(8,i)); %></TD>
       <TD CLASS="strip<% out.write (sStrip); %>"><% out.write(oCalls.getDateTime(3,i)); %></TD>
       <TD CLASS="strip<% out.write (sStrip); %>"><% if (!oCalls.isNull(5,i)) { ACLUser oUsr = (ACLUser) oUsers.get(oCalls.get(5,i)); out.write(oUsr.getStringNull(DB.nm_user,"")+" "+oUsr.getStringNull(DB.tx_surname1,"")+" "+oUsr.getStringNull(DB.tx_surname2,"")); } %></TD>
@@ -133,6 +133,6 @@
 <% } %>
   </TABLE>
   <BR/><BR/>
-  <FORM><INPUT TYPE="button" ACCESSKEY="c" VALUE="Close" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()"></FORM>
+  <FORM><INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cerrar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()"></FORM>
 </BODY>
 </HTML>

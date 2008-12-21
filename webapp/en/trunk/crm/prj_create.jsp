@@ -103,7 +103,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>Create Project for&nbsp;<%=nullif(full_name,nm_company)%></TITLE>
+  <TITLE>[~Crear Proyecto para~]&nbsp;<%=nullif(full_name,nm_company)%></TITLE>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
@@ -132,22 +132,22 @@
         var frm = window.document.forms[0];
 
 	if (frm.de_project.value.length>1000) {
-	  alert ("Project description cannot exceed 1000 characters");
+	  alert ("[~La descripción del proyecto debe tener un máximo de 1000 caracteres~]");
 	  return false;
 	}
 
 	if (frm.sel_project.options.selectedIndex<0) {
-	  alert ("YYou must choose a template for the Project");
+	  alert ("[~Debe seleccionar una plantilla de proyecto~]");
 	  return false;
 	}
 		  
 	if (frm.sel_project.options.selectedIndex>0 && frm.nm_project.value==getCombo(frm.sel_project)) {
-	  alert ("Name of the new project cannot be the same as its template");
+	  alert ("[~El nombre del nuevo proyecto no puede ser el mismo que el del proyecto plantilla~]");
 	  return false;
 	}
 
 	if (frm.sel_project.options.selectedIndex>0 && frm.nm_project.value.length==0) {
-	  alert ("Project Name is mandatory");
+	  alert ("[~El nombre del nuevo proyecto es obligatorio~]");
 	  return false;
 	}
 
@@ -166,7 +166,7 @@
 <BODY >
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Create Project for&nbsp;<%=nullif(full_name,nullif(nm_company,de_list))%></FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Crear Proyecto para~]&nbsp;<%=nullif(full_name,nullif(nm_company,de_list))%></FONT></TD></TR>
   </TABLE>
   <FORM METHOD="post" ACTION="prj_create_store.jsp" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
@@ -180,21 +180,21 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right"><FONT CLASS="formplain">Project Template</FONT></TD>
-            <TD ALIGN="left"><SELECT NAME="sel_project" STYLE="width:370px" onchange="suggestNewName()"><OPTION VALUE="">(none)</OPTION><% for (int p=0; p<iTemplateProjs; p++) out.write("<OPTION VALUE=\"" + oTemplateProjs.getString(0,p) + "\">" + oTemplateProjs.getString(1,p) + "</OPTION>"); %></SELECT></TD>
+            <TD ALIGN="right"><FONT CLASS="formplain">[~Plantilla de Proyecto~]</FONT></TD>
+            <TD ALIGN="left"><SELECT NAME="sel_project" STYLE="width:370px" onchange="suggestNewName()"><OPTION VALUE="">[~(ninguna)~]</OPTION><% for (int p=0; p<iTemplateProjs; p++) out.write("<OPTION VALUE=\"" + oTemplateProjs.getString(0,p) + "\">" + oTemplateProjs.getString(1,p) + "</OPTION>"); %></SELECT></TD>
           </TR>
           <TR>
-            <TD ALIGN="right"><FONT CLASS="formplain">New name</FONT></TD>
+            <TD ALIGN="right"><FONT CLASS="formplain">[~Nuevo Nombre~]</FONT></TD>
             <TD ALIGN="left"><INPUT TYPE="text" NAME="nm_project" MAXLENGTH="50" STYLE="width:360px"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" VALIGN="top"><FONT CLASS="formplain">Description</FONT></TD>
+            <TD ALIGN="right" VALIGN="top"><FONT CLASS="formplain">[~Descripci&oacute;n~]</FONT></TD>
             <TD><TEXTAREA NAME="de_project" ROWS="5" STYLE="font-family:Arial;font-size:9pt;width:360px"></TEXTAREA></TD>
           </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Create" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Crear~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>
     	    </TD>
     	  </TR>            
