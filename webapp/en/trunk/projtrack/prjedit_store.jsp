@@ -54,6 +54,7 @@
   String de_project = request.getParameter("de_project");
   String gu_company = nullif(request.getParameter("gu_company"));
   String gu_contact = nullif(request.getParameter("gu_contact"));
+  String gu_user = nullif(request.getParameter("gu_user"));
   
   Timestamp dt_start;
   Timestamp dt_end;
@@ -93,8 +94,8 @@
       oRSet = oStmt.executeQuery();
     
       if (oRSet.next()) {
-        out.write ("<HTML><HEAD><TITLE>Wait...</TITLE><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>");
-        out.write ("alert('Another Project with the same name already exists');"); 
+        out.write ("<HTML><HEAD><TITLE>[~Wait...~]</TITLE><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>");
+        out.write ("alert('[~Ya existe otro proyecto con el mismo Nombre bajo el mismo Padre~]');"); 
         out.write ("window.opener.location.reload();");
         out.write ("window.history.back();");  
         out.write ("<" + "/SCRIPT" +"></HEAD></HTML>");
@@ -119,6 +120,7 @@
     if (null!=de_project) oPrj.put(DB.de_project, de_project);
     if (gu_company.length()>0) oPrj.put(DB.gu_company, gu_company);
     if (gu_contact.length()>0) oPrj.put(DB.gu_contact, gu_contact);
+    if (gu_user.length()>0) oPrj.put(DB.gu_user, gu_user);
     if (id_ref.length()>0) oPrj.put(DB.id_ref, id_ref);
         
     oCon1.setAutoCommit (false);
@@ -176,7 +178,7 @@
   oCon1 = null;
   
   if (!bAlreadyExists) {    
-    out.write ("<HTML><HEAD><TITLE>Wait...</TITLE><" + "SCRIPT LANGUAGE='JavaScript1.2' TYPE='text/javascript'>");
+    out.write ("<HTML><HEAD><TITLE>[~Espere~]...</TITLE><" + "SCRIPT LANGUAGE='JavaScript1.2' TYPE='text/javascript'>");
 
     if (nullif(request.getParameter("is_subproject")).equals("1"))
       out.write ("window.document.location.href = 'prj_edit.jsp?gu_project="+oPrj.getString(DB.gu_project)+"&n_project="+Gadgets.URLEncode(oPrj.getString(DB.nm_project))+"&standalone=1';");

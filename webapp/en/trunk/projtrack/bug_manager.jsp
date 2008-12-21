@@ -7,7 +7,7 @@
 
 %><HTML>
   <HEAD>
-    <TITLE>hipergate :: Project Management</TITLE>
+    <TITLE>hipergate :: [~Gesti&oacute;n de Proyectos~]</TITLE>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>  
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -97,7 +97,7 @@
   <BODY  TOPMARGIN="0" MARGINHEIGHT="0">
   <%@ include file="../common/tabmenu.jspf" %>
   <FORM>
-  <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">Project Management</FONT></TD></TR></TABLE>  
+  <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Gesti&oacute;n de Proyectos~]</FONT></TD></TR></TABLE>  
   <TABLE>
     <TR>
       <TD VALIGN="top">
@@ -117,7 +117,7 @@
       	          <TD ROWSPAN="2" CLASS="subtitle" ALIGN="right"><IMG SRC="../skins/<%=sSkin%>/tab/angle45_24x24.gif" WIDTH="24" HEIGHT="24" BORDER="0"></TD>
       	        </TR>
                 <TR>
-            	  <TD BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" COLSPAN="2" CLASS="subtitle" ALIGN="left" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">Projects</TD>
+            	  <TD BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" COLSPAN="2" CLASS="subtitle" ALIGN="left" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">[~Proyectos~]</TD>
                 </TR>
               </TABLE>
             </TD>
@@ -136,22 +136,22 @@
               <TABLE CELLSPACING="8" BORDER="0">
                 <TR>
                   <TD ROWSPAN="2">
-                    <A HREF="project_listing.jsp?selected=4&subselected=0"><IMG SRC="../images/images/projtrack/projects.gif" BORDER="0" ALT="Projects"></A>
+                    <A HREF="project_listing.jsp?selected=4&subselected=0"><IMG SRC="../images/images/projtrack/projects.gif" BORDER="0" ALT="[~Proyectos~]"></A>
                   </TD>
                   <TD>
         	      <INPUT TYPE="text" NAME="nm_project" MAXLENGTH="50" STYLE="text-transform:uppercase">            
                   </TD>
                   <TD>
-                    <A HREF="javascript:searchProject();" CLASS="linkplain">Find Project</A>
+                    <A HREF="javascript:searchProject();" CLASS="linkplain">[~Buscar Proyecto~]</A>
                   </TD>
                 </TR>
       	  <TR>
                   <TD></TD>
                   <TD>
       <% if (bIsGuest) { %>
-                    <A HREF="#" onclick="alert ('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New Project</A>
+                    <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Nuevo Proyecto~]</A>
       <% } else { %>            
-                    <A HREF="#" onclick="newProject()" CLASS="linkplain">New Project</A>
+                    <A HREF="#" onclick="newProject()" CLASS="linkplain">[~Nuevo Proyecto~]</A>
       <% } %>
                   </TD>
       	  </TR>	  
@@ -186,7 +186,7 @@
       	    <TD ROWSPAN="2" CLASS="subtitle" ALIGN="right"><IMG SRC="../skins/<%=sSkin%>/tab/angle45_22x22.gif" WIDTH="22" HEIGHT="22" BORDER="0"></TD>
       	  </TR>
                 <TR>
-            	  <TD BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" CLASS="subtitle" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" HEIGHT="1" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">Tasks</TD>
+            	  <TD BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" CLASS="subtitle" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" HEIGHT="1" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">[~Tareas~]</TD>
                 </TR>
               </TABLE>
             </TD>
@@ -205,22 +205,22 @@
               <TABLE CELLSPACING="8" BORDER="0">
                 <TR>
                   <TD ROWSPAN="2">
-                    <A HREF="duty_list.jsp?selected=4&subselected=1"><IMG SRC="../images/images/projtrack/duties.gif" BORDER="0" ALT="Tasks"></A>
+                    <A HREF="duty_list.jsp?selected=4&subselected=1"><IMG SRC="../images/images/projtrack/duties.gif" BORDER="0" ALT="[~Tareas~]"></A>
                   </TD>
                   <TD>
         	      <INPUT TYPE="text" NAME="nm_duty" MAXLENGTH="50" STYLE="text-transform:uppercase">
                   </TD>
                   <TD>
-                    <A HREF="javascript:searchDuty();" CLASS="linkplain">Find Duty</A>
+                    <A HREF="javascript:searchDuty();" CLASS="linkplain">[~Buscar Tarea~]</A>
                   </TD>
                 </TR>
       	  <TR>
                   <TD></TD>
                   <TD>
       <% if (bIsGuest) { %>
-                    <A HREF="#" onclick="alert ('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New Duty</A>
+                    <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Nueva Tarea~]</A>
       <% } else { %>
-                    <A HREF="#" onclick="newDuty()" CLASS="linkplain">New Duty</A>
+                    <A HREF="#" onclick="newDuty()" CLASS="linkplain">[~Nueva Tarea~]</A>
       <% } %>
                   </TD>
       	  </TR>	  
@@ -250,7 +250,7 @@
       	    <TD ROWSPAN="2" CLASS="subtitle" ALIGN="right"><IMG SRC="../skins/<%=sSkin%>/tab/angle45_22x22.gif" WIDTH="22" HEIGHT="22" BORDER="0"></TD>
       	  </TR>
                 <TR>
-            	  <TD BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" CLASS="subtitle" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" HEIGHT="1" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">Incidents</TD>
+            	  <TD BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" CLASS="subtitle" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" HEIGHT="1" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">[~Incidencias~]</TD>
                 </TR>
               </TABLE>
             </TD>
@@ -269,22 +269,22 @@
               <TABLE CELLSPACING="8" BORDER="0">
                 <TR>
                   <TD ROWSPAN="2">
-                    <A HREF="bug_list.jsp?selected=4&subselected=2"><IMG SRC="../images/images/projtrack/bugs.gif" BORDER="0" ALT="Incidents"></A>
+                    <A HREF="bug_list.jsp?selected=4&subselected=2"><IMG SRC="../images/images/projtrack/bugs.gif" BORDER="0" ALT="[~Incidencias~]"></A>
                   </TD>
                   <TD>
         	      <INPUT TYPE="text" NAME="nm_bug" MAXLENGTH="50" STYLE="text-transform:uppercase">
                   </TD>
                   <TD>
-      	      <A HREF="javascript:searchBug();" CLASS="linkplain">Find Incident</A>
+      	      <A HREF="javascript:searchBug();" CLASS="linkplain">[~Buscar Incidencia~]</A>
       	    </TD>
                 </TR>
       	  <TR>
                   <TD></TD>
                   <TD>
       <% if (bIsGuest) { %>
-                    <A HREF="#" onclick="alert ('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New Incident</A>
+                    <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Nueva Incidencia~]</A>
       <% } else { %>            
-                    <A HREF="#" onclick="reportBug()" CLASS="linkplain">New Incident</A>
+                    <A HREF="#" onclick="reportBug()" CLASS="linkplain">[~Nueva Incidencia~]</A>
       <% } %>
                   </TD>
       	  </TR>	  
@@ -325,7 +325,7 @@
       	          <TD ROWSPAN="2" CLASS="subtitle" ALIGN="right"><IMG SRC="../skins/<%=sSkin%>/tab/angle45_24x24.gif" WIDTH="24" HEIGHT="24" BORDER="0"></TD>
       	        </TR>
                 <TR>
-            	  <TD BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" COLSPAN="2" CLASS="subtitle" ALIGN="left" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">My Duties</TD>
+            	  <TD BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" COLSPAN="2" CLASS="subtitle" ALIGN="left" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">[~Mis Tareas~]</TD>
                 </TR>
               </TABLE>
             </TD>
@@ -362,7 +362,7 @@
     iDuties = oDuties.load(oCon1, new Object[]{oToday00,oToday24,sTabMenuUser,sTabMenuUser});
 
 	  if (iDuties>0) {
-      out.write("&nbsp;&nbsp;<FONT CLASS=\"textstrong\">To do today<BR></FONT>");
+      out.write("&nbsp;&nbsp;<FONT CLASS=\"textstrong\">[~Para hoy~]<BR></FONT>");
       for (int d=0; d<iDuties; d++) {
         out.write("&nbsp;&nbsp;<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"editDuty('" + oDuties.getString(0,d) + "')\">" + oDuties.getString(1,d) + "</A>");
 			  if (!sTabMenuUser.equals(oDuties.getString(2,d)))
@@ -379,7 +379,7 @@
     iDuties = oDuties.load(oCon1, new Object[]{oToday00,oToday24,sTabMenuUser});
 
 	  if (iDuties>0) {
-      out.write("&nbsp;&nbsp;<FONT CLASS=\"textstrong\">Assigned to me<BR></FONT>");
+      out.write("&nbsp;&nbsp;<FONT CLASS=\"textstrong\">[~Asignadas a mi~]<BR></FONT>");
       for (int d=0; d<iDuties; d++) {
         out.write("&nbsp;&nbsp;<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"editDuty('" + oDuties.getString(0,d) + "')\">" + oDuties.getString(1,d) + "</A><BR>");
       }
@@ -392,11 +392,11 @@
     oDuties.setMaxRows(5);
     iDuties = oDuties.load(oCon1, new Object[]{oToday00,oToday24,oToday24,sTabMenuUser,sTabMenuUser});
 
-    out.write("&nbsp;&nbsp;<FONT CLASS=\"textstrong\">Assigned by me<BR></FONT>");
+    out.write("&nbsp;&nbsp;<FONT CLASS=\"textstrong\">[~Asignadas por mi~]<BR></FONT>");
 
 	  if (iDuties>0) {
       for (int d=0; d<iDuties; d++) {
-        out.write("&nbsp;&nbsp;" + (oDuties.getStringNull(3,d,"").equals("ENESPERA") ? "<A HREF=\"#\" TITLE=\"Waiting Duty\"><IMG SRC=\"../images/images/projtrack/l_timer_off.gif\" WIDTH=\"16\" HEIGHT=\"15\" ALT=\"Waiting Duty\" BORDER=\"0\"></A>&nbsp;" : "") + "<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"editDuty('" + oDuties.getString(0,d) + "')\">" + oDuties.getString(1,d) + "</A>&nbsp;<FONT CLASS=\"textsmall\">("+DBLanguages.getLookUpTranslation(oCon1, DB.k_duties_lookup, sTabMenuWrkA, DB.nm_resource, getNavigatorLanguage(request), oDuties.getString(2,d))+")</FONT><BR>");
+        out.write("&nbsp;&nbsp;" + (oDuties.getStringNull(3,d,"").equals("ENESPERA") ? "<A HREF=\"#\" TITLE=\"[~Tarea en espera~]\"><IMG SRC=\"../images/images/projtrack/l_timer_off.gif\" WIDTH=\"16\" HEIGHT=\"15\" ALT=\"[~Tarea en espera~]\" BORDER=\"0\"></A>&nbsp;" : "") + "<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"editDuty('" + oDuties.getString(0,d) + "')\">" + oDuties.getString(1,d) + "</A>&nbsp;<FONT CLASS=\"textsmall\">("+DBLanguages.getLookUpTranslation(oCon1, DB.k_duties_lookup, sTabMenuWrkA, DB.nm_resource, getNavigatorLanguage(request), oDuties.getString(2,d))+")</FONT><BR>");
       }
 	  }
     oDuties = new DBSubset (DB.k_duties + " d," + DB.k_x_duty_resource + " x",
@@ -408,7 +408,7 @@
 
 	  if (iDuties>0) {
       for (int d=0; d<iDuties; d++) {
-        out.write("&nbsp;&nbsp;<A HREF=\"#\" TITLE=\"Delayed Duty\"><IMG SRC=\"../images/images/projtrack/l_clock.gif\" WIDTH=\"16\" HEIGHT=\"15\" ALT=\"Delayed Duty\" BORDER=\"0\"></A>&nbsp;<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"editDuty('" + oDuties.getString(0,d) + "')\">" + oDuties.getString(1,d) + "</A>&nbsp;<FONT CLASS=\"textsmall\">("+DBLanguages.getLookUpTranslation(oCon1, DB.k_duties_lookup, sTabMenuWrkA, DB.nm_resource, getNavigatorLanguage(request), oDuties.getString(2,d))+")</FONT><BR>");
+        out.write("&nbsp;&nbsp;<A HREF=\"#\" TITLE=\"[~Tarea Retrasada~]\"><IMG SRC=\"../images/images/projtrack/l_clock.gif\" WIDTH=\"16\" HEIGHT=\"15\" ALT=\"[~Tarea Retrasada~]\" BORDER=\"0\"></A>&nbsp;<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"editDuty('" + oDuties.getString(0,d) + "')\">" + oDuties.getString(1,d) + "</A>&nbsp;<FONT CLASS=\"textsmall\">("+DBLanguages.getLookUpTranslation(oCon1, DB.k_duties_lookup, sTabMenuWrkA, DB.nm_resource, getNavigatorLanguage(request), oDuties.getString(2,d))+")</FONT><BR>");
       }
 	  }
 
@@ -420,7 +420,7 @@
     iDuties = oDuties.load(oCon1, new Object[]{sTabMenuUser});
 
 	  if (iDuties>0) {
-      out.write("&nbsp;&nbsp;<FONT CLASS=\"textstrong\">Recent changes<BR></FONT>");
+      out.write("&nbsp;&nbsp;<FONT CLASS=\"textstrong\">[~Cambios recientes~]<BR></FONT>");
       for (int d=0; d<iDuties; d++) {
         out.write("&nbsp;&nbsp;<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"editDuty('" + oDuties.getString(0,d) + "')\">" + oDuties.getString(1,d) + "</A>&nbsp;<FONT CLASS=\"textsmall\">("+DBLanguages.getLookUpTranslation(oCon1, DB.k_duties_lookup, sTabMenuWrkA, DB.tx_status, getNavigatorLanguage(request), oDuties.getString(2,d))+")</FONT><BR>");
       }
@@ -466,7 +466,7 @@
       	    <TD ROWSPAN="2" CLASS="subtitle" ALIGN="right"><IMG SRC="../skins/<%=sSkin%>/tab/angle45_22x22.gif" WIDTH="22" HEIGHT="22" BORDER="0"></TD>
       	  </TR>
                 <TR>
-            	  <TD BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" CLASS="subtitle" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" HEIGHT="1" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">My Incidents</TD>
+            	  <TD BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" CLASS="subtitle" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" HEIGHT="1" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">[~Mis incidencias~]</TD>
                 </TR>
               </TABLE>
             </TD>

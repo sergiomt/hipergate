@@ -3,7 +3,7 @@
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <TITLE>Project Snapshot</TITLE>
+    <TITLE>[~Instantánea de Proyecto~]</TITLE>
   </HEAD>
   <FRAMESET NAME="prjsnapshotframe" ROWS="30,*" BORDER="0" FRAMEBORDER="0">
     <FRAME NAME="prjsnapshotctrl" FRAMEBORDER="no" MARGINWIDTH="16" MARGINHEIGHT="0" NORESIZE src="prj_snapshot_header.jsp?gu_snapshot=<%=request.getParameter("gu_snapshot")%>">
@@ -11,7 +11,7 @@
   </FRAMESET>
   <NOFRAMES>
     <BODY>
-      <P>This page uses frames but your browser does not allow them</P>
+      <P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
     </BODY>
   </NOFRAMES>
 </HTML>

@@ -119,7 +119,7 @@
 %>
 <HTML LANG="<%=sLanguage%>">
   <HEAD>
-    <TITLE>hipergate :: List of duties by resource</TITLE>
+    <TITLE>hipergate :: [~Listado de tareas por recurso~]</TITLE>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -150,7 +150,7 @@
       
       function deleteDuties() {
         var frm = document.forms[0];
-        if (confirm("Are you sure that you want  to delete the selected duties?")) {
+        if (confirm("[~¿Está seguro de que desea eliminar las tareas seleccionadas?~]")) {
           frm.action = "dutyedit_delete.jsp";
           frm.submit();
         } // fi(confirm)
@@ -164,11 +164,11 @@
     	  var chi = frm.checkeditems;
     	  	  
     	  if (frm.sel_new_status.selectedIndex<=0 && frm.sel_new_priority.selectedIndex<=0 && frm.sel_new_completed.selectedIndex<=0 && frm.sel_new_resource.selectedIndex<=0) {
-    	    alert ("An attribute to be updated must be selected");
+    	    alert ("[~Debe seleccionar un atributo a actualizar~]");
     	    return false;
     	  }
 
-    	  if (window.confirm("Are you sure that you want to update the selected duties?")) {
+    	  if (window.confirm("[~Esta seguro de que desea actualizar las tareas seleccionadas?~]")) {
 
 	        chi.value = "";
 	        frm.action = "dutyedit_update.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
@@ -214,26 +214,26 @@
     <INPUT TYPE="hidden" NAME="checkeditems" VALUE="">
     <INPUT TYPE="hidden" NAME="nm_resource" VALUE="">
 
-    <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">List of duties by resource</FONT></TD></TR></TABLE>
+    <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Listado de tareas por recurso~]</FONT></TD></TR></TABLE>
     <TABLE SUMMARY="Create and Delete Options" CELLSPACING="0" CELLPADDING="2">
-      <TR><TD CLASS="textplain">Projects Filter&nbsp;<SELECT NAME="projectfilter" onchange="document.forms[0].submit()"><OPTION VALUE="">All Projects</OPTION><OPTION VALUE="p.id_status='ABIERTO'" SELECTED>Open projects only</OPTION><OPTGROUP LABEL="Only the Project "><% for (int p=0; p<iProjects; p++) out.write("<OPTION VALUE=\"p.gu_project='"+oProjects.getString(0,p)+"'\">"+oProjects.getString(1,p)+"</OPTION>"); %></OPTGROUP></SELECT></TD></TR>
+      <TR><TD CLASS="textplain">[~Filtro de Proyectos~]&nbsp;<SELECT NAME="projectfilter" onchange="document.forms[0].submit()"><OPTION VALUE="">[~Todos los proyectos~]</OPTION><OPTION VALUE="p.id_status='ABIERTO'" SELECTED>[~Sólo los proyectos abiertos~]</OPTION><OPTGROUP LABEL="[~Sólo el proyecto~]"><% for (int p=0; p<iProjects; p++) out.write("<OPTION VALUE=\"p.gu_project='"+oProjects.getString(0,p)+"'\">"+oProjects.getString(1,p)+"</OPTION>"); %></OPTGROUP></SELECT></TD></TR>
       <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       <TR>
         <TD COLSPAN="8" ALIGN="left">
           <IMG SRC="../images/images/new16x16.gif" BORDER="0">&nbsp;
 <% if (bIsGuest) { %>
-          <A HREF="#" onClick="alert ('Your proviledge level as guest does not allow you to perform this action')" CLASS="linkplain">Create Duty</A>
+          <A HREF="#" onClick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Crear Tarea~]</A>
 <% } else { %>
-          <A HREF="#" onClick="window.open('duty_new.jsp', 'newduty', 'menubar=no,toolbar=no,width=780,height=' + (screen.height<=600 ? '520' : '640'))" CLASS="linkplain">Create Duty</A>
+          <A HREF="#" onClick="window.open('duty_new.jsp', 'newduty', 'menubar=no,toolbar=no,width=780,height=' + (screen.height<=600 ? '520' : '640'))" CLASS="linkplain">[~Crear Tarea~]</A>
 <% } %>
           &nbsp;&nbsp;&nbsp;&nbsp;
-          <IMG SRC="../images/images/refresh.gif" BORDER="0">&nbsp;<A HREF="#" onClick="document.forms[0].submit()" CLASS="linkplain">Update</A>
+          <IMG SRC="../images/images/refresh.gif" BORDER="0">&nbsp;<A HREF="#" onClick="document.forms[0].submit()" CLASS="linkplain">[~Actualizar~]</A>
 	  &nbsp;&nbsp;&nbsp;&nbsp;
           <IMG SRC="../images/images/papelera.gif" BORDER="0">&nbsp;
 <% if (bIsGuest) { %>
-          <A HREF="#" onClick="alert ('Your proviledge level as guest does not allow you to perform this action')" CLASS="linkplain">Delete selected duties</A>
+          <A HREF="#" onClick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Eliminar Tareas Seleccionadas~]</A>
 <% } else { %>
-          <A HREF="javascript:deleteDuties()" CLASS="linkplain">Delete selected duties</A>
+          <A HREF="javascript:deleteDuties()" CLASS="linkplain">[~Eliminar Tareas Seleccionadas~]</A>
 <% } %>
         </TD>
       </TR>
@@ -250,11 +250,11 @@
     
     String sLastProj = "";
     
-    out.write("        	  <TR><TD COLSPAN=\"2\" CLASS=\"textstrong\">My Duties</TD></TR>");
+    out.write("        	  <TR><TD COLSPAN=\"2\" CLASS=\"textstrong\">[~Mis Tareas~]</TD></TR>");
     for (int d=0; d<nDuties; d++) {      
       if (!sLastProj.equals(oMyOwnDuties.getString(0,d))) {
         sLastProj = oMyOwnDuties.getString(0,d);
-        out.write("<TR><TD COLSPAN=\"2\" CLASS=\"textstrong\">Project&nbsp;"+sLastProj+"</TD></TR>");
+        out.write("<TR><TD COLSPAN=\"2\" CLASS=\"textstrong\">[~Proyecto~]&nbsp;"+sLastProj+"</TD></TR>");
       }
       out.write("<TR><TD CLASS=\"textplain\">&nbsp;&nbsp;");
       if (!oMyOwnDuties.isNull(2,d)) out.write(String.valueOf(oMyOwnDuties.getShort(2,d))+"&nbsp;");
@@ -276,7 +276,7 @@
       for (int d=0; d<nDuties; d++) {      
         if (!sLastProj.equals(oByMeDuties.getString(0,d))) {
           sLastProj = oByMeDuties.getString(0,d);
-          out.write("<TR><TD COLSPAN=\"2\" CLASS=\"textstrong\">Project&nbsp;"+sLastProj+"</TD></TR>");
+          out.write("<TR><TD COLSPAN=\"2\" CLASS=\"textstrong\">[~Proyecto~]&nbsp;"+sLastProj+"</TD></TR>");
         }
         out.write("<TR><TD CLASS=\"textplain\">&nbsp;&nbsp;");
         if (!oByMeDuties.isNull(2,d)) out.write(String.valueOf(oByMeDuties.getShort(2,d))+"&nbsp;");
@@ -298,28 +298,28 @@
 	        <TABLE BORDER="0" SUMMARY="Massive Update">
             <TR><TD COLSPAN="3" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
 	          <TR>
-	            <TD CLASS="textsmall" COLSPAN="3">&nbsp;&nbsp;&nbsp;&nbsp;<B>Massive update options:</B></TD>
+	            <TD CLASS="textsmall" COLSPAN="3">&nbsp;&nbsp;&nbsp;&nbsp;<B>[~Opciones de cambio masivo:~]</B></TD>
 	          </TR>
 	          <TR>
-	            <TD CLASS="textsmall">&nbsp;&nbsp;&nbsp;&nbsp;Change to&nbsp;Status&nbsp;</TD>
+	            <TD CLASS="textsmall">&nbsp;&nbsp;&nbsp;&nbsp;[~Cambiar a~]&nbsp;[~Estado~]&nbsp;</TD>
 	            <TD CLASS="textsmall">
-	              <SELECT CLASS="combomini" NAME="sel_new_status"><OPTION VALUE=""></OPTION><%=sStatusLookUp%></SELECT>&nbsp;&nbsp;Priority<SELECT CLASS="combomini" NAME="sel_new_priority"><OPTION VALUE=""></OPTION><%=sPriorityLookUp%></SELECT>
+	              <SELECT CLASS="combomini" NAME="sel_new_status"><OPTION VALUE=""></OPTION><%=sStatusLookUp%></SELECT>&nbsp;&nbsp;[~Prioridad~]<SELECT CLASS="combomini" NAME="sel_new_priority"><OPTION VALUE=""></OPTION><%=sPriorityLookUp%></SELECT>
 	            </TD>
               <TD CLASS="textsmall">
                 &nbsp;&nbsp;
-                <FONT >Completed:&nbsp;<SELECT CLASS="combomini" NAME="sel_new_completed"><OPTION VALUE=""></OPTION><% for (int c=0;c<=100;c+=10) out.write("<OPTION VALUE=\""+String.valueOf(c)+"\">"+String.valueOf(c)+"%</OPTION>"); %></SELECT>
+                <FONT >[~Completado~]:&nbsp;<SELECT CLASS="combomini" NAME="sel_new_completed"><OPTION VALUE=""></OPTION><% for (int c=0;c<=100;c+=10) out.write("<OPTION VALUE=\""+String.valueOf(c)+"\">"+String.valueOf(c)+"%</OPTION>"); %></SELECT>
 	            </TD>
 	          </TR>
 	          <TR>
 	            <TD CLASS="textsmall">
-	              &nbsp;&nbsp;&nbsp;&nbsp;Assign to &nbsp;
+	              &nbsp;&nbsp;&nbsp;&nbsp;[~Asignar a~]&nbsp;
 	            </TD>
 	            <TD>
 	              <SELECT CLASS="combomini" NAME="sel_new_resource" onchange="setCombo(document.forms[0].sel_resource,this.options[this.selectedIndex].value);document.forms[0].nm_resource.value=this.options[this.selectedIndex].value;"><OPTION VALUE=""></OPTION><%=sResourceLookUp%></SELECT>
-	              &nbsp;<A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Add resources"></A>
+	              &nbsp;<A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Agregar recursos~]"></A>
 	            </TD>
 	            <TD COLSPAN="2" ALIGN="right">
-                <A HREF="javascript:updateDuties()" CLASS="linkplain">Change</A>
+                <A HREF="javascript:updateDuties()" CLASS="linkplain">[~Cambiar~]</A>
 	            </TD>
 	          </TR>
 	        </TABLE>

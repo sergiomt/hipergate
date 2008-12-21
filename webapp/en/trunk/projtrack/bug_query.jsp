@@ -37,7 +37,7 @@
 %>
 <HTML>
   <HEAD>
-    <TITLE>hipergate :: Search Incidents</TITLE>
+    <TITLE>hipergate :: [~Consulta de Incidencias~]</TITLE>
     <SCRIPT LANGUAGE="JavaScript1.2" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript1.2" SRC="../javascript/combobox.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript1.2" SRC="../javascript/layer.js"></SCRIPT>
@@ -54,7 +54,7 @@
 
       function filterOperators(odctrl) {
         var operators = new Array("=","<>",">","<","S","C","N","M");
-        var names_es = new Array("Equal to","Not equal","Greater than","Less than","Starts with&nbsp;","Contains","Is NULL","Is not NULL");
+        var names_es = new Array("[~Igual a~]","[~Distinto de~]","[~Mayor que~]","[~Menor que~]","[~Empieza por~]","[~Contiene~]","[~Es Nulo~]","[~Es No Nulo~]");
 	var fld;
 	var opts;
 	var nOpers;
@@ -202,25 +202,25 @@
         cod = frm.code1.value;
 
         if (val.length==0) {
-            alert ("Must specify a value to be searched at least for the first condition");
+            alert ("[~Debe especificar un valor de búsqueda al menos para la primera condición~]");
             return false;
           }
                   
         if (cmb=="pg_bug")
           if (isNaN(val)) {
-            alert ("Incident number is not valid");
+            alert ("[~El número de incidencia no es válido~]");
             return false;
           }
 
         if (cmb=="od_priority")
           if (isNaN(cod)) {
-            alert ("Priority is not valid");
+            alert ("[~El valor de la Prioridad en el campo 1 no es valido~]");
             return false;
           }
             
         if (cmb=="od_severity")
           if (isNaN(cod)) {
-            alert ("Severity is not valid");
+            alert ("[~El valor de la Severidad en el campo 1 no es valido~]");
             return false;
           }
                 
@@ -231,7 +231,7 @@
         
         if (cmb=="dt_created" || cmb=="dt_closed")
           if (!isDate(val,"d")) {
-            alert ("Date for field 1 is not valid, use format yyyy-mm-dd");
+            alert ("[~La fecha del campo 1 no es válida, use el formato yyyy-mm-dd~]");
             return false;
           }
           else
@@ -251,13 +251,13 @@
 
             if (cmb=="pg_bug")
               if (isNaN(val)) {
-                alert ("Incident number is not valid");
+                alert ("[~El número de incidencia no es válido~]");
                 return false;
             }
 
             if (cmb=="od_priority")
               if (isNaN(cod)) {
-                alert ("Priority is not valid");
+                alert ("[~El valor de la Prioridad en el campo 2 no es valido~]");
                 return false;
               }
               else
@@ -265,7 +265,7 @@
                         
             if (cmb=="od_severity")
               if (isNaN(cod)) {
-                alert ("Severity is not valid");
+                alert ("[~El valor de la Severidad en el campo 2 no es valido~]");
                 return false;
               }
               else
@@ -278,7 +278,7 @@
 
             if (cmb=="dt_created" || cmb=="dt_closed")
               if (!isDate(val,"d")) {
-                alert ("Date for field 2 is not valid, use format yyyy-mm-dd");
+                alert ("[~La fecha del campo 2 no es válida, use el formato yyyy-mm-dd~]");
                 return false;
               }
               else
@@ -297,13 +297,13 @@
 
               if (cmb=="pg_bug")
                 if (isNaN(val)) {
-                  alert ("Incident number is not valid");
+                  alert ("[~El número de incidencia no es válido~]");
                   return false;
                 }
 
               if (cmb=="od_priority")
                 if (isNaN(cod)) {
-                  alert ("Priority is not valid");
+                  alert ("[~El valor de la Prioridad en el campo 3 no es valido~]");
                   return false;
                 }
                 else
@@ -311,7 +311,7 @@
                   
               if (cmb=="od_severity")
                 if (isNaN(cod)) {
-                  alert ("Severity is not valid");
+                  alert ("[~El valor de la Severidad en el campo 3 no es valido~]");
                   return false;
                 }
                 else
@@ -324,7 +324,7 @@
 
               if (cmb=="dt_created" || cmb=="dt_closed")
                 if (!isDate(val,"d")) {
-                  alert ("Date for field 3 is not valid, use format yyyy-mm-dd");
+                  alert ("[~La fecha del campo 3 no es válida, use el formato yyyy-mm-dd~]");
                   return false;
                 }
                 else
@@ -347,35 +347,35 @@
   <BODY  TOPMARGIN="0" MARGINHEIGHT="0">
     <%@ include file="../common/header.jspf" %>
     <FORM METHOD="post" ACTION="bug_list.jsp" onSubmit="return validate()">
-      <TABLE><TR><TD WIDTH="420px" CLASS="striptitle"><FONT CLASS="title1">Search Incidents</FONT></TD></TR></TABLE>
+      <TABLE><TR><TD WIDTH="420px" CLASS="striptitle"><FONT CLASS="title1">[~Consulta de Incidencias~]</FONT></TD></TR></TABLE>
       <INPUT TYPE="hidden" NAME="where">
       <TABLE BORDER="0">
         <TR>
           <TD>
             <SELECT NAME="field1" onClick="showLookUp(1)">
-              <OPTION VALUE="tl_bug">Subject</OPTION>
-              <OPTION VALUE="nm_project">Project</OPTION>
-              <OPTION VALUE="od_severity">Severity</OPTION>
-              <OPTION VALUE="od_priority">Priority</OPTION>
-              <OPTION VALUE="tx_status">Status</OPTION>
-              <OPTION VALUE="dt_created">Date Reported</OPTION>
-              <OPTION VALUE="dt_closed">Date Corrected</OPTION>
-              <OPTION VALUE="pg_bug">Ref. Number</OPTION>
-              <OPTION VALUE="nm_reporter">Reported by</OPTION>
-              <OPTION VALUE="nm_assigned">Assigned to&nbsp;</OPTION>
-              <OPTION VALUE="tx_bug_brief">Description</OPTION>
+              <OPTION VALUE="tl_bug">[~Asunto~]</OPTION>
+              <OPTION VALUE="nm_project">[~Proyecto~]</OPTION>
+              <OPTION VALUE="od_severity">[~Severidad~]</OPTION>
+              <OPTION VALUE="od_priority">[~Prioridad~]</OPTION>
+              <OPTION VALUE="tx_status">[~Estado~]</OPTION>
+              <OPTION VALUE="dt_created">[~Fecha Reporte~]</OPTION>
+              <OPTION VALUE="dt_closed">[~Fecha Correcion~]</OPTION>
+              <OPTION VALUE="pg_bug">[~N&uacute;mero Ref.~]</OPTION>
+              <OPTION VALUE="nm_reporter">[~Reportado por~]</OPTION>
+              <OPTION VALUE="nm_assigned">[~Asignado a~]</OPTION>
+              <OPTION VALUE="tx_bug_brief">[~Descripci&oacute;n~]</OPTION>
             </SELECT>
           </TD>
           <TD>
             <SELECT NAME="operator1" STYLE="width:100">
-              <OPTION VALUE="=">Equal to</OPTION>
-              <OPTION VALUE="<>">Not equal</OPTION>
-              <OPTION VALUE=">">Greater than</OPTION>
-              <OPTION VALUE="<">Less than</OPTION>
-              <OPTION VALUE="S">Starts with&nbsp;</OPTION>
-              <OPTION VALUE="C">Contains</OPTION>
-              <OPTION VALUE="N">Is NULL</OPTION>
-              <OPTION VALUE="M">Is not NULL</OPTION>
+              <OPTION VALUE="=">[~Igual a~]</OPTION>
+              <OPTION VALUE="<>">[~Distinto de~]</OPTION>
+              <OPTION VALUE=">">[~Mayor que~]</OPTION>
+              <OPTION VALUE="<">[~Menor que~]</OPTION>
+              <OPTION VALUE="S">[~Empieza por~]</OPTION>
+              <OPTION VALUE="C">[~Contiene~]</OPTION>
+              <OPTION VALUE="N">[~Es Nulo~]</OPTION>
+              <OPTION VALUE="M">[~Es No Nulo~]</OPTION>
             </SELECT>
           </TD>
           <TD>
@@ -383,7 +383,7 @@
             <DIV ID="val1txt" STYLE="position:relative;visibility:visible"><INPUT TYPE="text" NAME="value1" onChange="document.forms[0].code1.value=''"></DIV>
           </TD>
           <TD>
-            <DIV ID="lookup1" STYLE="position:relative;visibility:hidden"><A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Values List"></A></DIV>           
+            <DIV ID="lookup1" STYLE="position:relative;visibility:hidden"><A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Valores~]"></A></DIV>           
           </TD>
         </TR>
         <TR>        
@@ -399,27 +399,27 @@
         <TR>
           <TD>
             <SELECT NAME="field2" onClick="showLookUp(2)">
-              <OPTION VALUE="tl_bug">Subject</OPTION>
-              <OPTION VALUE="nm_project">Project</OPTION>
-              <OPTION VALUE="od_severity">Severity</OPTION>
-              <OPTION VALUE="od_priority">Priority</OPTION>
-              <OPTION VALUE="tx_status">Status</OPTION>
-              <OPTION VALUE="dt_created">Date Reported</OPTION>
-              <OPTION VALUE="dt_closed">Date Corrected</OPTION>
-              <OPTION VALUE="pg_bug">Ref. Number</OPTION>
-              <OPTION VALUE="nm_reporter">Reported by</OPTION>
-              <OPTION VALUE="nm_assigned">Assigned to&nbsp;</OPTION>
-              <OPTION VALUE="tx_bug_brief">Description</OPTION>
+              <OPTION VALUE="tl_bug">[~Asunto~]</OPTION>
+              <OPTION VALUE="nm_project">[~Proyecto~]</OPTION>
+              <OPTION VALUE="od_severity">[~Severidad~]</OPTION>
+              <OPTION VALUE="od_priority">[~Prioridad~]</OPTION>
+              <OPTION VALUE="tx_status">[~Estado~]</OPTION>
+              <OPTION VALUE="dt_created">[~Fecha Reporte~]</OPTION>
+              <OPTION VALUE="dt_closed">[~Fecha Correcion~]</OPTION>
+              <OPTION VALUE="pg_bug">[~N&uacute;mero Ref.~]</OPTION>
+              <OPTION VALUE="nm_reporter">[~Reportado por~]</OPTION>
+              <OPTION VALUE="nm_assigned">[~Asignado a~]</OPTION>
+              <OPTION VALUE="tx_bug_brief">[~Descripci&oacute;n~]</OPTION>
             </SELECT>
           </TD>
           <TD>    
             <SELECT NAME="operator2" STYLE="width:100">
-              <OPTION VALUE="=">Equal to</OPTION>
-              <OPTION VALUE="<>">Not equal</OPTION>
-              <OPTION VALUE=">">Greater than</OPTION>
-              <OPTION VALUE="<">Less than</OPTION>
-              <OPTION VALUE="S">Starts with&nbsp;</OPTION>
-              <OPTION VALUE="C">Contains</OPTION>
+              <OPTION VALUE="=">[~Igual a~]</OPTION>
+              <OPTION VALUE="<>">[~Distinto de~]</OPTION>
+              <OPTION VALUE=">">[~Mayor que~]</OPTION>
+              <OPTION VALUE="<">[~Menor que~]</OPTION>
+              <OPTION VALUE="S">[~Empieza por~]</OPTION>
+              <OPTION VALUE="C">[~Contiene~]</OPTION>
             </SELECT>
           </TD>
           <TD>
@@ -427,7 +427,7 @@
             <DIV ID="val2txt" STYLE="position:relative;visibility:visible"><INPUT TYPE="text" NAME="value2" onChange="document.forms[0].code2.value=''"></DIV>
           </TD>
           <TD VALIGN="middle">
-            <DIV ID="lookup2" STYLE="position:relative;visibility:hidden"><A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Values List"></A></DIV>
+            <DIV ID="lookup2" STYLE="position:relative;visibility:hidden"><A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Valores~]"></A></DIV>
           </TD>
         </TR>
         <TR>
@@ -443,27 +443,27 @@
         <TR>
           <TD>
             <SELECT NAME="field3" onClick="showLookUp(3)">
-              <OPTION VALUE="tl_bug">Subject</OPTION>
-              <OPTION VALUE="nm_project">Project</OPTION>
-              <OPTION VALUE="od_severity">Severity</OPTION>
-              <OPTION VALUE="od_priority">Priority</OPTION>
-              <OPTION VALUE="tx_status">Status</OPTION>
-              <OPTION VALUE="dt_created">Date Reported</OPTION>
-              <OPTION VALUE="dt_closed">Date Corrected</OPTION>
-              <OPTION VALUE="pg_bug">Ref. Number</OPTION>
-              <OPTION VALUE="nm_reporter">Reported by</OPTION>
-              <OPTION VALUE="nm_assigned">Assigned to&nbsp;</OPTION>
-              <OPTION VALUE="tx_bug_brief">Description</OPTION>
+              <OPTION VALUE="tl_bug">[~Asunto~]</OPTION>
+              <OPTION VALUE="nm_project">[~Proyecto~]</OPTION>
+              <OPTION VALUE="od_severity">[~Severidad~]</OPTION>
+              <OPTION VALUE="od_priority">[~Prioridad~]</OPTION>
+              <OPTION VALUE="tx_status">[~Estado~]</OPTION>
+              <OPTION VALUE="dt_created">[~Fecha Reporte~]</OPTION>
+              <OPTION VALUE="dt_closed">[~Fecha Correcion~]</OPTION>
+              <OPTION VALUE="pg_bug">[~N&uacute;mero Ref.~]</OPTION>
+              <OPTION VALUE="nm_reporter">[~Reportado por~]</OPTION>
+              <OPTION VALUE="nm_assigned">[~Asignado a~]</OPTION>
+              <OPTION VALUE="tx_bug_brief">[~Descripci&oacute;n~]</OPTION>
             </SELECT>
           </TD>
           <TD>          
             <SELECT NAME="operator3" STYLE="width:100">
-              <OPTION VALUE="=">Equal to</OPTION>
-              <OPTION VALUE="<>">Not equal</OPTION>
-              <OPTION VALUE=">">Greater than</OPTION>
-              <OPTION VALUE="<">Less than</OPTION>
-              <OPTION VALUE="S">Starts with&nbsp;</OPTION>
-              <OPTION VALUE="C">Contains</OPTION>
+              <OPTION VALUE="=">[~Igual a~]</OPTION>
+              <OPTION VALUE="<>">[~Distinto de~]</OPTION>
+              <OPTION VALUE=">">[~Mayor que~]</OPTION>
+              <OPTION VALUE="<">[~Menor que~]</OPTION>
+              <OPTION VALUE="S">[~Empieza por~]</OPTION>
+              <OPTION VALUE="C">[~Contiene~]</OPTION>
             </SELECT>
           </TD>
           <TD>
@@ -471,12 +471,12 @@
             <DIV ID="val2txt" STYLE="position:relative;visibility:visible"><INPUT TYPE="text" NAME="value3" onChange="document.forms[0].code3.value=''"></DIV>
           </TD>
           <TD>
-            <DIV ID="lookup3" STYLE="position:relative;visibility:hidden"><A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Values List"></A></DIV>          
+            <DIV ID="lookup3" STYLE="position:relative;visibility:hidden"><A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Valores~]"></A></DIV>          
           </TD>
         </TR>
       </TABLE>
       <BR>
-      <INPUT TYPE="submit" ACCESSKEY="q" TITLE="ALT+q" VALUE="Query" CLASS="pushbutton">      
+      <INPUT TYPE="submit" ACCESSKEY="q" TITLE="ALT+q" VALUE="[~Consultar~]" CLASS="pushbutton">      
     </FORM>
   </BODY>
 </HTML>

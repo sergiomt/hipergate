@@ -63,9 +63,9 @@
     oConn.close("prjedit_delete");
 
     if (request.getParameter("is_standalone").equals("1"))
-      out.write("<HTML><HEAD><TITLE>Wait...</TITLE><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>self.close();<" + "/SCRIPT" +"></HEAD></HTML>"); 
+      out.write("<HTML><HEAD><TITLE>[~Espere~]...</TITLE><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>self.close();<" + "/SCRIPT" +"></HEAD></HTML>"); 
     else if (request.getParameter("selected")!=null)
-      out.write("<HTML><HEAD><TITLE>Wait...</TITLE><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>window.document.location='project_listing.jsp?selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "'<" + "/SCRIPT" +"></HEAD></HTML>"); 
+      out.write("<HTML><HEAD><TITLE>[~Espere~]...</TITLE><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>window.document.location='project_listing.jsp?selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "'<" + "/SCRIPT" +"></HEAD></HTML>"); 
     else
       response.sendRedirect (response.encodeRedirectUrl ("proj_nav_f.jsp"));
   }

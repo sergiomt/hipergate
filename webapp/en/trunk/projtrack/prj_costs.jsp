@@ -52,7 +52,7 @@
 %>
 <HTML>
 <HEAD>
-  <TITLE>hipergate :: Edit project costs</TITLE>
+  <TITLE>hipergate :: [~Editar costes de proyecto~]</TITLE>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
@@ -108,11 +108,11 @@
       function filterByDate() {
         var frm = document.forms[0];
         if (!isDate(frm.dt_from.value,"d") && frm.dt_from.value.length>0) {
-          alert ("Invalid Start Date");
+          alert ("[~La fecha de inicio no es válida~]");
 	  return;
         }
         if (!isDate(frm.dt_to.value,"d") && frm.dt_to.value.length>0) {
-          alert ("Invalid End Date");
+          alert ("[~La fecha de fin no es válida~]");
 	  return;
         }
         document.location.href = "prj_costs.jsp?gu_project=<%=gu_project%>" + (frm.dt_from.value.length>0 ? "&dt_from="+frm.dt_from.value : "") + (frm.dt_to.value.length>0 ? "&dt_to="+frm.dt_to.value : "");
@@ -126,7 +126,7 @@
         var len = frm0.elements.length;
         var sub;
         
-        if (window.confirm("Are you sure that you want to delete selected duties and costs?")) {
+        if (window.confirm("[~¿Está seguro de que desea eliminar las tareas y costes seleccionados?~]")) {
           frm1.duties.value = "";
           frm1.costs.value = "";        
           for (var e=0; e<len; e++) {
@@ -162,11 +162,11 @@
         var len = frm.elements.length;
         var sub;
         if (!isDate(frm.dt_from.value,"d") && frm.dt_from.value.length>0) {
-          alert ("Invalid Start Date");
+          alert ("[~La fecha de inicio no es válida~]");
 	  return false;
         }
         if (!isDate(frm.dt_to.value,"d") && frm.dt_to.value.length>0) {
-          alert ("Invalid End Date");
+          alert ("[~La fecha de fin no es válida~]");
 	  return false;
         }
         for (var e=0; e<len; e++) {
@@ -174,7 +174,7 @@
           if (sub=="duty_" || sub=="cost_") {
             if (frm.elements[e].value.length==0) frm.elements[e].value = "0";
             if (isNaN(Number(frm.elements[e].value))) {
-              alert ("Cost is not valid");
+              alert ("[~El coste no es válido~]");
               frm.elements[e].focus();
               return false;
             } // fi
@@ -196,27 +196,27 @@
     oProj.load(oConn, new Object[]{gu_project}); %>
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Edit Project Costs&nbsp;<%=oProj.getString(DB.nm_project)%></FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Editar costes del proyecto~]&nbsp;<%=oProj.getString(DB.nm_project)%></FONT></TD></TR>
   </TABLE>
   <TABLE CELLSPACING="0" CELLPADDING="2">      
     <TR><TD COLSPAN="7" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
     <TR>
-      <TD COLSPAN="2" CLASS="textplain">Filter between</TD>
+      <TD COLSPAN="2" CLASS="textplain">[~Filtrar entre~]</TD>
       <TD><INPUT TYPE="text" NAME="dt_from" MAXLENGTH="10" SIZE="12" CLASS="combomini" VALUE="<%=nullif(dt_from)%>"></TD>
-      <TD><A HREF="javascript:showCalendar('dt_from')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Start date"></A></TD>
-      <TD CLASS="textplain">and</TD>
+      <TD><A HREF="javascript:showCalendar('dt_from')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Fecha de Inicio~]"></A></TD>
+      <TD CLASS="textplain">[~y~]</TD>
       <TD><INPUT TYPE="text" NAME="dt_to" MAXLENGTH="10" SIZE="12" CLASS="combomini" VALUE="<%=nullif(dt_to)%>"></TD>
-      <TD><A HREF="javascript:showCalendar('dt_to')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="End date"></A></TD>
+      <TD><A HREF="javascript:showCalendar('dt_to')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Fecha de Fin~]"></A></TD>
     </TR>
     <TR>
       <TD><IMG SRC="../images/images/search16x16.gif" BORDER="0"></TD>
-      <TD><A HREF="javascript:filterByDate()" CLASS="linkplain">Filter</A></TD>
-      <TD COLSPAN="5"><IMG SRC="../images/images/undosearch16x16.gif" BORDER="0">&nbsp;<A HREF="prj_costs.jsp?gu_project=<%=gu_project%>" CLASS="linkplain">Discard Filter</A></TD>
+      <TD><A HREF="javascript:filterByDate()" CLASS="linkplain">[~Filtrar~]</A></TD>
+      <TD COLSPAN="5"><IMG SRC="../images/images/undosearch16x16.gif" BORDER="0">&nbsp;<A HREF="prj_costs.jsp?gu_project=<%=gu_project%>" CLASS="linkplain">[~Deshacer Filtro~]</A></TD>
     </TR>
     <TR>
       <TD><IMG SRC="../images/images/delete.gif" WIDTH="13" HEIGHT="13" BORDER="0"></TD>
-      <TD COLSPAN="4"><A HREF="javascript:deleteSelected()" CLASS="linkplain">Delete selected costs</A></TD>
-      <TD COLSPAN="2" ALIGN="right"><INPUT TYPE="submit" CLASS="minibutton" VALUE="Save" ACCESSKEY="s" TITLE="Alt+s"></TD>
+      <TD COLSPAN="4"><A HREF="javascript:deleteSelected()" CLASS="linkplain">[~Eliminar costes seleccionados~]</A></TD>
+      <TD COLSPAN="2" ALIGN="right"><INPUT TYPE="submit" CLASS="minibutton" VALUE="[~Guardar~]" ACCESSKEY="s" TITLE="Alt+s"></TD>
     </TR>
     <TR><TD COLSPAN="7" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
   </TABLE>
@@ -243,7 +243,7 @@
       oDuties.setString(1, sPrj);
       oRSet = oDuties.executeQuery();
       out.write("    <TABLE BORDER=\"0\">\n");
-      out.write("      <TR><TD><IMG SRC=../images/images/spacer.gif BORDER=0 HEIGHT=1 WIDTH="+String.valueOf(10*(iLevel-1)+16)+"></TD><TD><FONT CLASS=\"textplain\"><B>Duties</B></FONT></TD><TD><FONT CLASS=\"textplain\"><B>Date</B></FONT></TD><TD><FONT CLASS=\"textplain\"><B>Cost</B></FONT></TD><TD></TD><TD></TD></TR>\n");
+      out.write("      <TR><TD><IMG SRC=../images/images/spacer.gif BORDER=0 HEIGHT=1 WIDTH="+String.valueOf(10*(iLevel-1)+16)+"></TD><TD><FONT CLASS=\"textplain\"><B>[~Tareas~]</B></FONT></TD><TD><FONT CLASS=\"textplain\"><B>[~Fecha~]</B></FONT></TD><TD><FONT CLASS=\"textplain\"><B>[~Coste~]</B></FONT></TD><TD></TD><TD></TD></TR>\n");
       
       while (oRSet.next()) {
         sStrip = String.valueOf((iStrip%2)+1);
@@ -252,25 +252,25 @@
         if (iDate>=iFrom && iDate<=iTo) {
           fCost = oRSet.getFloat(3);
           if (oRSet.wasNull()) {
-            out.write("      <TR><TD><IMG SRC=../images/images/spacer.gif BORDER=0 HEIGHT=1 WIDTH="+String.valueOf(10*(iLevel-1)+16)+"></TD><TD CLASS=\"strip"+sStrip+"\"><FONT CLASS=\"textplain\">"+oRSet.getString(2)+"</FONT></TD><TD CLASS=\"strip"+sStrip+"\">"+Sdt.format(oDate)+"</TD><TD CLASS=\"strip"+sStrip+"\"><INPUT CLASS=\"combomini\" TYPE=\"text\" SIZE=\"8\" NAME=\"duty_cost_"+oRSet.getString(1)+"\" VALUE=\"0\"></TD><TD CLASS=\"strip"+sStrip+"\"><A CLASS=\"linksmall\" HREF=\"#\" onclick=\"editDuty('"+oRSet.getString(1)+"')\">Edit</A></TD><TD><INPUT TYPE=\"checkbox\" NAME=\"chk_duty_"+oRSet.getString(1)+"\"></TD></TR>\n");
+            out.write("      <TR><TD><IMG SRC=../images/images/spacer.gif BORDER=0 HEIGHT=1 WIDTH="+String.valueOf(10*(iLevel-1)+16)+"></TD><TD CLASS=\"strip"+sStrip+"\"><FONT CLASS=\"textplain\">"+oRSet.getString(2)+"</FONT></TD><TD CLASS=\"strip"+sStrip+"\">"+Sdt.format(oDate)+"</TD><TD CLASS=\"strip"+sStrip+"\"><INPUT CLASS=\"combomini\" TYPE=\"text\" SIZE=\"8\" NAME=\"duty_cost_"+oRSet.getString(1)+"\" VALUE=\"0\"></TD><TD CLASS=\"strip"+sStrip+"\"><A CLASS=\"linksmall\" HREF=\"#\" onclick=\"editDuty('"+oRSet.getString(1)+"')\">[~Editar~]</A></TD><TD><INPUT TYPE=\"checkbox\" NAME=\"chk_duty_"+oRSet.getString(1)+"\"></TD></TR>\n");
           } else {
-            out.write("      <TR><TD><IMG SRC=../images/images/spacer.gif BORDER=0 HEIGHT=1 WIDTH="+String.valueOf(10*(iLevel-1)+16)+"></TD><TD CLASS=\"strip"+sStrip+"\"><FONT CLASS=\"textplain\">"+oRSet.getString(2)+"</FONT></TD><TD CLASS=\"strip"+sStrip+"\">"+Sdt.format(oDate)+"</TD><TD CLASS=\"strip"+sStrip+"\"><INPUT CLASS=\"combomini\" TYPE=\"text\" SIZE=\"8\" NAME=\"duty_cost_"+oRSet.getString(1)+"\" VALUE=\""+Fmt.format(fCost)+"\"></TD><TD CLASS=\"strip"+sStrip+"\"><A CLASS=\"linksmall\" HREF=\"#\" onclick=\"editDuty('"+oRSet.getString(1)+"')\">Edit</A></TD><TD><INPUT TYPE=\"checkbox\" NAME=\"chk_duty_"+oRSet.getString(1)+"\"><TD></TD></TR>\n");
+            out.write("      <TR><TD><IMG SRC=../images/images/spacer.gif BORDER=0 HEIGHT=1 WIDTH="+String.valueOf(10*(iLevel-1)+16)+"></TD><TD CLASS=\"strip"+sStrip+"\"><FONT CLASS=\"textplain\">"+oRSet.getString(2)+"</FONT></TD><TD CLASS=\"strip"+sStrip+"\">"+Sdt.format(oDate)+"</TD><TD CLASS=\"strip"+sStrip+"\"><INPUT CLASS=\"combomini\" TYPE=\"text\" SIZE=\"8\" NAME=\"duty_cost_"+oRSet.getString(1)+"\" VALUE=\""+Fmt.format(fCost)+"\"></TD><TD CLASS=\"strip"+sStrip+"\"><A CLASS=\"linksmall\" HREF=\"#\" onclick=\"editDuty('"+oRSet.getString(1)+"')\">[~Editar~]</A></TD><TD><INPUT TYPE=\"checkbox\" NAME=\"chk_duty_"+oRSet.getString(1)+"\"><TD></TD></TR>\n");
             fSubTotal += fCost;
           }
           iStrip++;
         } // fi (iDate between iFrom and iTo)
       } // wend
       oRSet.close();
-      out.write("      <TR><TD><IMG SRC=../images/images/spacer.gif BORDER=0 HEIGHT=1 WIDTH="+String.valueOf(10*(iLevel-1)+16)+"></TD><TD><A HREF=\"#\" CLASS=\"linkplain\" onclick=\"createDuty('"+sPrj+"')\">New Task</A></TD><TD></TD></TD><TD></TD></TR>\n");
+      out.write("      <TR><TD><IMG SRC=../images/images/spacer.gif BORDER=0 HEIGHT=1 WIDTH="+String.valueOf(10*(iLevel-1)+16)+"></TD><TD><A HREF=\"#\" CLASS=\"linkplain\" onclick=\"createDuty('"+sPrj+"')\">[~Nueva Tarea~]</A></TD><TD></TD></TD><TD></TD></TR>\n");
 
       oCosts.setString(1, sPrj);
       oRSet = oCosts.executeQuery();
       while (oRSet.next()) {
         if (!sTpCost.equals(oRSet.getString(2))) {
           if (oRSet.wasNull())
-            out.write("      <TR><TD><IMG SRC=../images/images/spacer.gif BORDER=0 HEIGHT=1 WIDTH="+String.valueOf(10*(iLevel-1)+16)+"></TD><TD><FONT CLASS=\"textplain\"><B>Other Costs</B></FONT></TD><TD><FONT CLASS=\"textplain\"><B></B></FONT></TD><TD></TD><TD></TD></TR>\n");
+            out.write("      <TR><TD><IMG SRC=../images/images/spacer.gif BORDER=0 HEIGHT=1 WIDTH="+String.valueOf(10*(iLevel-1)+16)+"></TD><TD><FONT CLASS=\"textplain\"><B>[~Otros costes~]</B></FONT></TD><TD><FONT CLASS=\"textplain\"><B></B></FONT></TD><TD></TD><TD></TD></TR>\n");
 	  else
-            out.write("      <TR><TD><IMG SRC=../images/images/spacer.gif BORDER=0 HEIGHT=1 WIDTH="+String.valueOf(10*(iLevel-1)+16)+"></TD><TD><FONT CLASS=\"textplain\"><B>"+oTypes.get(oRSet.getString(2))+"</B></FONT></TD><TD><FONT CLASS=\"textplain\"><B>Date</B></FONT></TD><TD><FONT CLASS=\"textplain\"><B>Cost</B></FONT></TD><TD></TD><TD></TD></TR>\n");	            
+            out.write("      <TR><TD><IMG SRC=../images/images/spacer.gif BORDER=0 HEIGHT=1 WIDTH="+String.valueOf(10*(iLevel-1)+16)+"></TD><TD><FONT CLASS=\"textplain\"><B>"+oTypes.get(oRSet.getString(2))+"</B></FONT></TD><TD><FONT CLASS=\"textplain\"><B>[~Fecha~]</B></FONT></TD><TD><FONT CLASS=\"textplain\"><B>[~Coste~]</B></FONT></TD><TD></TD><TD></TD></TR>\n");	            
         }
         sStrip = String.valueOf((iStrip%2)+1);
         oDate = bestDate(oRSet.getDate(5),oRSet.getDate(6),oRSet.getDate(7));
@@ -278,17 +278,17 @@
         if (iDate>=iFrom && iDate<=iTo) {
           fCost = oRSet.getFloat(4);
           if (oRSet.wasNull()) {
-            out.write("      <TR><TD><IMG SRC=../images/images/spacer.gif BORDER=0 HEIGHT=1 WIDTH="+String.valueOf(10*(iLevel-1)+16)+"></TD><TD CLASS=\"strip"+sStrip+"\"><FONT CLASS=\"textplain\">"+oRSet.getString(3)+"</FONT></TD><TD CLASS=\"strip"+sStrip+"\">"+Sdt.format(oDate)+"</TD><TD CLASS=\"strip"+sStrip+"\"><INPUT CLASS=\"combomini\" TYPE=\"text\" SIZE=\"8\" NAME=\"cost_cost_"+oRSet.getString(1)+"\" VALUE=\"0\"></TD><TD CLASS=\"strip"+sStrip+"\"><A CLASS=\"linksmall\" HREF=\"#\" onclick=\"editCost('"+sPrj+"','"+oRSet.getString(1)+"')\">Edit</A></TD><TD><INPUT TYPE=\"checkbox\" NAME=\"chk_cost_"+oRSet.getString(1)+"\"></TD></TR>\n");
+            out.write("      <TR><TD><IMG SRC=../images/images/spacer.gif BORDER=0 HEIGHT=1 WIDTH="+String.valueOf(10*(iLevel-1)+16)+"></TD><TD CLASS=\"strip"+sStrip+"\"><FONT CLASS=\"textplain\">"+oRSet.getString(3)+"</FONT></TD><TD CLASS=\"strip"+sStrip+"\">"+Sdt.format(oDate)+"</TD><TD CLASS=\"strip"+sStrip+"\"><INPUT CLASS=\"combomini\" TYPE=\"text\" SIZE=\"8\" NAME=\"cost_cost_"+oRSet.getString(1)+"\" VALUE=\"0\"></TD><TD CLASS=\"strip"+sStrip+"\"><A CLASS=\"linksmall\" HREF=\"#\" onclick=\"editCost('"+sPrj+"','"+oRSet.getString(1)+"')\">[~Editar~]</A></TD><TD><INPUT TYPE=\"checkbox\" NAME=\"chk_cost_"+oRSet.getString(1)+"\"></TD></TR>\n");
           } else {
-            out.write("      <TR><TD><IMG SRC=../images/images/spacer.gif BORDER=0 HEIGHT=1 WIDTH="+String.valueOf(10*(iLevel-1)+16)+"></TD><TD CLASS=\"strip"+sStrip+"\"><FONT CLASS=\"textplain\">"+oRSet.getString(3)+"</FONT></TD><TD CLASS=\"strip"+sStrip+"\">"+Sdt.format(oDate)+"</TD><TD CLASS=\"strip"+sStrip+"\"><INPUT CLASS=\"combomini\" TYPE=\"text\" SIZE=\"8\" NAME=\"cost_cost_"+oRSet.getString(1)+"\" VALUE=\""+Fmt.format(oRSet.getFloat(4))+"\"></TD><TD CLASS=\"strip"+sStrip+"\"><A CLASS=\"linksmall\" HREF=\"#\" onclick=\"editCost('"+sPrj+"','"+oRSet.getString(1)+"')\">Edit</A></TD><TD><INPUT TYPE=\"checkbox\" NAME=\"chk_cost_"+oRSet.getString(1)+"\"><TD></TD></TR>\n");
+            out.write("      <TR><TD><IMG SRC=../images/images/spacer.gif BORDER=0 HEIGHT=1 WIDTH="+String.valueOf(10*(iLevel-1)+16)+"></TD><TD CLASS=\"strip"+sStrip+"\"><FONT CLASS=\"textplain\">"+oRSet.getString(3)+"</FONT></TD><TD CLASS=\"strip"+sStrip+"\">"+Sdt.format(oDate)+"</TD><TD CLASS=\"strip"+sStrip+"\"><INPUT CLASS=\"combomini\" TYPE=\"text\" SIZE=\"8\" NAME=\"cost_cost_"+oRSet.getString(1)+"\" VALUE=\""+Fmt.format(oRSet.getFloat(4))+"\"></TD><TD CLASS=\"strip"+sStrip+"\"><A CLASS=\"linksmall\" HREF=\"#\" onclick=\"editCost('"+sPrj+"','"+oRSet.getString(1)+"')\">[~Editar~]</A></TD><TD><INPUT TYPE=\"checkbox\" NAME=\"chk_cost_"+oRSet.getString(1)+"\"><TD></TD></TR>\n");
             fSubTotal += fCost;
           }
           iStrip++;
         } // fi (iDate between iFrom and iTo)          
       } // wend
       oRSet.close();
-      out.write("      <TR><TD><IMG SRC=../images/images/spacer.gif BORDER=0 HEIGHT=1 WIDTH="+String.valueOf(10*(iLevel-1)+16)+"></TD><TD><A HREF=\"#\" CLASS=\"linkplain\" onclick=\"createCost('"+sPrj+"')\">New Cost</A></TD><TD></TD></TD><TD></TD></TR>\n");
-      out.write("      <TR><TD><IMG SRC=../images/images/spacer.gif BORDER=0 HEIGHT=1 WIDTH="+String.valueOf(10*(iLevel-1)+16)+"></TD><TD ALIGN=\"right\"><FONT CLASS=\"textplain\"><B>Subtotal</B></FONT></TD><TD><FONT CLASS=\"textplain\"><B>"+Fmt.format(fSubTotal)+"</B></FONT></TD></TD><TD></TD></TR>\n");
+      out.write("      <TR><TD><IMG SRC=../images/images/spacer.gif BORDER=0 HEIGHT=1 WIDTH="+String.valueOf(10*(iLevel-1)+16)+"></TD><TD><A HREF=\"#\" CLASS=\"linkplain\" onclick=\"createCost('"+sPrj+"')\">[~Nuevo Coste~]</A></TD><TD></TD></TD><TD></TD></TR>\n");
+      out.write("      <TR><TD><IMG SRC=../images/images/spacer.gif BORDER=0 HEIGHT=1 WIDTH="+String.valueOf(10*(iLevel-1)+16)+"></TD><TD ALIGN=\"right\"><FONT CLASS=\"textplain\"><B>[~Subtotal~]</B></FONT></TD><TD><FONT CLASS=\"textplain\"><B>"+Fmt.format(fSubTotal)+"</B></FONT></TD></TD><TD></TD></TR>\n");
       out.write("    </TABLE>\n");
       iDivNest++;
       fGrandTotal += fSubTotal;

@@ -108,7 +108,7 @@
 %>
 <HTML LANG="<%=sLanguage%>">
   <HEAD>
-    <TITLE>hipergate :: Work Reports</TITLE>
+    <TITLE>hipergate :: [~Partes de trabajo~]</TITLE>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
@@ -157,34 +157,34 @@
     <INPUT TYPE="hidden" NAME="selected" VALUE="<%=nullif(request.getParameter("selected"),"4")%>">
     <INPUT TYPE="hidden" NAME="subselected" VALUE="<%=nullif(request.getParameter("subselected"),"3")%>">
 
-    <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">Work Reports</FONT></TD></TR></TABLE>
+    <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Partes de trabajo~]</FONT></TD></TR></TABLE>
     <TABLE SUMMARY="Project" CELLSPACING="0" CELLPADDING="2">
       <TR>
-        <TD CLASS="textplain">Project</TD>
+        <TD CLASS="textplain">[~Proyecto~]</TD>
         <TD><SELECT NAME="gu_project" onchange="document.location='duty_entry_list.jsp?selected='+getURLParam('selected')+'&subselected='+getURLParam('subselected')+'<%=(bIsAdmin ? "" : "&gu_writer="+sUserId)%>&gu_project='+this.options[this.selectedIndex].value"><OPTION VALUE=""></OPTION><%=oProjectsSelect.toString()%></SELECT></TD>
       </TR>
 <% if (bIsAdmin) { %>
       <TR>
-        <TD CLASS="textplain">Written by</TD>
+        <TD CLASS="textplain">[~Redactor~]</TD>
         <TD><SELECT NAME="gu_writer" onchange="document.location='duty_entry_list.jsp?selected='+getURLParam('selected')+'&subselected='+getURLParam('subselected')+'&gu_writer='+this.options[this.selectedIndex].value"><OPTION VALUE=""></OPTION><%=oWritersSelect.toString()%></SELECT></TD>
       </TR>
 <% } %>
       <TR>
-        <TD CLASS="textplain">Date</TD>
+        <TD CLASS="textplain">[~Fecha~]</TD>
         <TD><SELECT NAME="dt_created" onchange="document.location='duty_entry_list.jsp?selected='+getURLParam('selected')+'&subselected='+getURLParam('subselected')+'<%=(bIsAdmin ? "" : "&gu_writer="+sUserId)%>&dt_created='+this.options[this.selectedIndex].value"><OPTION VALUE=""></OPTION><%=oDatesSelect.toString()%></SELECT></TD>
       </TR>
       <TR>
         <TD ALIGN="right"><IMG SRC="../images/images/new16x16.gif" BORDER="0"></TD>
-        <TD><A HREF="duty_entry.jsp?selected=<%=nullif(request.getParameter("selected"),"4")%>&subselected=<%=nullif(request.getParameter("subselected"),"3")%>" CLASS="linkplain">New Work Report</A></TD>
+        <TD><A HREF="duty_entry.jsp?selected=<%=nullif(request.getParameter("selected"),"4")%>&subselected=<%=nullif(request.getParameter("subselected"),"3")%>" CLASS="linkplain">[~Nuevo Parte~]</A></TD>
       </TR>
       <TR><TD COLSPAN="2" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
     </TABLE>
     <TABLE SUMMARY="WorkReports List" CELLSPACING="1" CELLPADDING="0">
       <TR>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Work Report</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Written by</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Date</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Select All"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select All"></A></TD></TR>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Parte~]</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Redactor~]</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Fecha~]</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="[~Seleccionar todos~]"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="[~Seleccionar todos~]"></A></TD></TR>
       </TR>
 <%
    for (int i=0; i<iWorkReports; i++) {

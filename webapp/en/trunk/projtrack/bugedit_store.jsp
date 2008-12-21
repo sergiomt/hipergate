@@ -271,7 +271,7 @@
       com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, oReq.getServletPath(), "", 0, "", "SQLException", e.getMessage());
     }
           
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Database access error&desc=" + e.getLocalizedMessage() + "&resume=_back"));    
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Error de Acceso a la Base de Datos~]&desc=" + e.getLocalizedMessage() + "&resume=_back"));    
   }
   catch (IOException e) {
     if (null!=oCon1)
@@ -285,7 +285,7 @@
       com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, oReq.getServletPath(), "", 0, "", "IOException", e.getMessage());
     }
     
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=File access error&desc=" + e.getLocalizedMessage() + "&resume=_back"));    
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Error de Acceso a Archivo~]&desc=" + e.getLocalizedMessage() + "&resume=_back"));    
   }
   
   if (null==oCon1) return;
@@ -296,7 +296,7 @@
     out.write ("<HTML><HEAD><TITLE>Wait...</TITLE><META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\"><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>");
   
     if (sOpCode.equals("NBUG"))
-      out.write ("alert('Thanks for using the incident reporting system. Your report has been assigned number&nbsp;" + String.valueOf(iPgBug) + ". From now on, you may consult the status of your incident from find and listing pages');");
+      out.write ("alert('[~Gracias por usar el sistema de reporte de incidencias. Se le ha asignado el numero de incidencia ~]" + String.valueOf(iPgBug) + ". [~A partir de ahora puede consultar el estado de su incidencia desde las opciones de búsqueda y listado~]');");
   
     out.write ("window.opener.location.reload();");
   
@@ -306,7 +306,7 @@
 
     if (null==gu_bug && null!=oReq.getParameter("chk_send_mail")) {
       msg = new MailMessage(Environment.getProfileVar(GlobalDBBind.getProfileName(),"mail.outgoing"));
-      msg.from("hipergate incidents support");
+      msg.from("[~Soporte a incidencias hipergate~]");
       msg.to(tx_rep_mail);
       msg.setHeader("Return-Path", "noreply@hipergate.com");
       msg.setHeader("MIME-Version","1.0");
@@ -314,7 +314,7 @@
       msg.setHeader("Content-Transfer-Encoding","8bit");
       
       msg.setSubject("Confirmacion " + String.valueOf(iPgBug) + ": " + tl_bug);
-      msg.getPrintStream().println("Thanks for using the incident reporting system. Your report has been acknowledged and the support team will review it in brief.");
+      msg.getPrintStream().println("[~Gracias por usar el sistema de reporte de incidencias. Hemos recibido su informe y nuestro equipo tecnico la revisara en breve.~]");
       msg.sendAndClose();
       
       msg = null;

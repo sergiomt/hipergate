@@ -3,7 +3,7 @@
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <TITLE>Work Report</TITLE>
+    <TITLE>[~Parte de Trabajo~]</TITLE>
   </HEAD>
   <FRAMESET NAME="workreportframe" ROWS="30,*" BORDER="0" FRAMEBORDER="0">
     <FRAME NAME="workreportctrl" FRAMEBORDER="no" MARGINWIDTH="16" MARGINHEIGHT="0" NORESIZE src="duties_workreport_header.jsp?gu_workreport=<%=request.getParameter("gu_workreport")%>">
@@ -11,7 +11,7 @@
   </FRAMESET>
   <NOFRAMES>
     <BODY>
-      <P>This page uses frames but your browser does not allow them</P>
+      <P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
     </BODY>
   </NOFRAMES>
 </HTML>

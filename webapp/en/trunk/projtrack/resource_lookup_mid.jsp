@@ -180,13 +180,13 @@
       out.write ("<TD CLASS=\"strip" + String.valueOf(iOdPos%2+1) + "\"><A HREF='javascript:choose(\"" + sGu + "\",\""+ sTr + "\")' CLASS='linkplain'>" + sTr + "<A></TD><TD CLASS=\"strip" + String.valueOf(iOdPos%2+1) + "\">");
       
       if ((iAppMask & (1<<Sales))!=0 && oContacts.contains(sGu)) {
-			  out.write ("<A HREF=# onclick=\"viewContact('"+sGu+"')\"><IMG SRC=\"../images/images/viewtxt.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"View Contact\"></A>");
+			  out.write ("<A HREF=# onclick=\"viewContact('"+sGu+"')\"><IMG SRC=\"../images/images/viewtxt.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"[~Ver Contacto~]\"></A>");
       } else if ((iAppMask & (1<<Sales))!=0 && oCompanies.contains(sGu)) {
-			  out.write ("<A HREF=# onclick=\"viewCompany('"+sGu+"','"+sTr.replace((char)39,'´')+"')\"><IMG SRC=\"../images/images/viewtxt.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"View Company\"></A>");
+			  out.write ("<A HREF=# onclick=\"viewCompany('"+sGu+"','"+sTr.replace((char)39,'´')+"')\"><IMG SRC=\"../images/images/viewtxt.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"[~Ver Compañía~]\"></A>");
       } else if ((iAppMask & (1<<CollaborativeTools))!=0 && oFellows.contains(sGu)) {
-			  out.write ("<A HREF=# onclick=\"viewFellow('"+sGu+"')\"><IMG SRC=\"../images/images/viewtxt.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"View Employee\"></A>");
+			  out.write ("<A HREF=# onclick=\"viewFellow('"+sGu+"')\"><IMG SRC=\"../images/images/viewtxt.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"[~Ver Empleado~]\"></A>");
       } else if (bIsAdmin && oUsers.contains(sGu)) {
-			  out.write ("<A HREF=# onclick=\"viewUser('"+sGu+"')\"><IMG SRC=\"../images/images/viewtxt.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"View User\"></A>");
+			  out.write ("<A HREF=# onclick=\"viewUser('"+sGu+"')\"><IMG SRC=\"../images/images/viewtxt.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"[~Ver Usuario~]\"></A>");
       }      
       out.write ("</TD></TR>\n");
     } // next (i)

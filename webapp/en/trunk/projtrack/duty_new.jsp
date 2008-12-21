@@ -82,7 +82,7 @@
 %>
 <HTML>
   <HEAD>
-    <TITLE>hipergate :: New Duty</TITLE>
+    <TITLE>hipergate :: [~Crear Tarea~]</TITLE>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
@@ -136,7 +136,7 @@
 	var dtEnd;
 	
 	if (rtrim(frm.nm_duty.value)=="") {
-	  alert ("Duty name is mandatory");
+	  alert ("[~El nombre de la tarea es obligatorio~]");
 	  return false;
 	}
 		
@@ -145,11 +145,11 @@
           if (prj[n].selected) npj++;
 
 	if (npj==0) {
-	  alert ("Must select a Project");
+	  alert ("[~Debe seleccionar un proyecto~]");
 	  return false;
 	}
 	else if (npj>1) {
-	  alert ("Must select only one Project");
+	  alert ("[~Debe seleccionar un único proyecto~]");
 	  return false;
 	}	
 	else (npj==1)
@@ -157,7 +157,7 @@
 	  
 	frm.od_priority.value = getCombo(frm.sel_priority);
 	if (frm.od_priority.value == ''){
-	  alert ("Must Assign a priority");
+	  alert ("[~Debe asignar una prioridad~]");
 	  return false;
 	}	
 
@@ -165,28 +165,28 @@
 
 	frm.tx_status.value = getCombo(frm.sel_status);
 	if (frm.tx_status.value == ''){
-	  alert ("Must assign a status");
+	  alert ("[~Debe asignar un estado~]");
 	  return false;
 	}	
 	
 	frm.pct_complete.value = getCombo(frm.sel_pct_complete);
 	
 	if (!isIntValue(frm.pr_cost.value)) {
-	  alert ("Cost must be an integer quantity");
+	  alert ("[~El coste debe ser una cantidad numérica entera~]");
 	  return false;
 	}
 	
 	str = frm.dt_start.value;
 	
 	if (str.length>0 && !isDate(str, "d")) {
-	  alert ("Start date is not valid");
+	  alert ("[~La fecha de inicio no es válida~]");
 	  return false;
 	}
 	
 	str = frm.dt_end.value;
 
 	if (str.length>0 && !isDate(str, "d")) {
-	  alert ("End date is not valid");
+	  alert ("[~La fecha de fin no es válida~]");
 	  return false;
 	}
 
@@ -196,7 +196,7 @@
 	  dtStart = new Date(parseInt(aStart[0]), parseInt(parseFloat(aStart[1]))-1, parseInt(parseFloat(aStart[2])));
 	  dtEnd = new Date(parseInt(aEnd[0]), parseInt(aEnd[1])-1, parseInt(aEnd[2]));
 	  if (dtStart>dtEnd) {
-	    alert ("Start date must be previous to end date");
+	    alert ("[~La fecha de inicio debe ser anterior a la fecha de fin~]");
 	    return false;
 	  }
 	}
@@ -207,12 +207,12 @@
 	    frm.nm_resource.value += (0==r ? res[r].value : "," + res[r].value);
 	
 	if (frm.de_duty.value.length>2000) {
-	  alert ("Description must not be longer than 2000 characters");
+	  alert ("[~La descripci&oacute;n no debe exceder los 2000 caracteres~]");
 	  return false;
 	}
 
 	if (frm.tx_comments.value.length>1000) {
-	  alert ("Comments may not be longer than 1000 characters");
+	  alert ("[~Los comentarios no deben exceder los 1000 caracteres~]");
 	  return false;
 	}
 	
@@ -229,7 +229,7 @@
   </HEAD>
   <BODY  TOPMARGIN="4" MARGINHEIGHT="4" onLoad="setCombos()">    
     <FORM NAME="frmNewProject" ENCTYPE="multipart/form-data" METHOD="post" ACTION="dutyedit_store.jsp" onSubmit="return validate()">
-      <TABLE WIDTH="100%"><TR><TD CLASS="striptitle"><FONT CLASS="title1">New Duty</FONT></TD></TR></TABLE>  
+      <TABLE WIDTH="100%"><TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Crear Tarea~]</FONT></TD></TR></TABLE>  
       <INPUT TYPE="hidden" NAME="is_new" VALUE="1">
       <INPUT TYPE="hidden" NAME="gu_writer" VALUE="<%=sUserId%>">
       <INPUT TYPE="hidden" NAME="tp_duty" VALUE="">
@@ -240,19 +240,19 @@
             <TABLE SUMMARY="Proyecto" CLASS="formfront">
               <TR>
                 <TD VALIGN="top" CLASS="formplain">
-								  <INPUT TYPE="radio" NAME="viewallmine" VALUE="true" <% out.write(bShowOnlyMyProjects ? "CHECKED" : ""); %> onclick="document.location='duty_new.jsp?bo_showonlymine=true&bo_showonlyopen='+getCheckedValue(document.forms[0].viewonlyopen)">&nbsp;View only my projects
+								  <INPUT TYPE="radio" NAME="viewallmine" VALUE="true" <% out.write(bShowOnlyMyProjects ? "CHECKED" : ""); %> onclick="document.location='duty_new.jsp?bo_showonlymine=true&bo_showonlyopen='+getCheckedValue(document.forms[0].viewonlyopen)">&nbsp;[~Ver s&oacute;lo mis proyectos~]
 								  <BR/>
-								  <INPUT TYPE="radio" NAME="viewallmine" VALUE="false" <% out.write(bShowOnlyMyProjects ? "" : "CHECKED"); %> onclick="document.location='duty_new.jsp?bo_showonlymine=false&bo_showonlyopen='+getCheckedValue(document.forms[0].viewonlyopen)">&nbsp;View all projects
+								  <INPUT TYPE="radio" NAME="viewallmine" VALUE="false" <% out.write(bShowOnlyMyProjects ? "" : "CHECKED"); %> onclick="document.location='duty_new.jsp?bo_showonlymine=false&bo_showonlyopen='+getCheckedValue(document.forms[0].viewonlyopen)">&nbsp;[~Ver todos los proyectos~]
 								  <BR/><BR/>
-								  <INPUT TYPE="radio" NAME="viewonlyopen" VALUE="true" <% out.write(bShowOnlyOpenProjects ? "CHECKED" : ""); %> onclick="document.location='duty_new.jsp?bo_showonlyopen=true&bo_showonlyopen='+getCheckedValue(document.forms[0].viewallmine)">&nbsp;View open projects only
+								  <INPUT TYPE="radio" NAME="viewonlyopen" VALUE="true" <% out.write(bShowOnlyOpenProjects ? "CHECKED" : ""); %> onclick="document.location='duty_new.jsp?bo_showonlyopen=true&bo_showonlyopen='+getCheckedValue(document.forms[0].viewallmine)">&nbsp;[~Ver s&oacute;lo proyectos abiertos~]
 								  <BR/>
-								  <INPUT TYPE="radio" NAME="viewonlyopen" VALUE="false" <% out.write(bShowOnlyOpenProjects ? "" : "CHECKED"); %> onclick="document.location='duty_new.jsp?bo_showonlyopen=false&bo_showonlyopen='+getCheckedValue(document.forms[0].viewallmine)">&nbsp;View projects on any state
+								  <INPUT TYPE="radio" NAME="viewonlyopen" VALUE="false" <% out.write(bShowOnlyOpenProjects ? "" : "CHECKED"); %> onclick="document.location='duty_new.jsp?bo_showonlyopen=false&bo_showonlyopen='+getCheckedValue(document.forms[0].viewallmine)">&nbsp;[~Ver proyectos en cualquier estado~]
 
                 </TD>
               </TR>
               <TR>
                 <TD VALIGN="top">
-                  <FONT CLASS="formstrong">Project</FONT><BR>                  
+                  <FONT CLASS="formstrong">[~Proyecto~]</FONT><BR>                  
                   <INPUT TYPE="hidden" NAME="gu_project">
                   <SELECT NAME="sel_project" SIZE="22" STYLE="width:256" MULTIPLE><%=sProjCombo%></SELECT>
                 </TD>
@@ -260,7 +260,7 @@
             </TABLE>
           </TD>          
           <TD VALIGN="top" CLASS="formfront">
-	    <TABLE SUMMARY="Maintenance Data">
+	    <TABLE SUMMARY="[~Datos de Mantenimiento~]">
               <TR>
                 <TD ALIGN="right"></TD>
                 <TD>
@@ -268,38 +268,38 @@
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formstrong">Name</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formstrong">[~Nombre~]</FONT></TD>
                 <TD>
                   <INPUT TYPE="text" MAXLENGTH="50" SIZE="36" NAME="nm_duty">
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">Type</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">[~Tipo~]</FONT></TD>
                 <TD>
-                  <SELECT NAME="sel_tp_duty"><%=sTypesLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View duty types"></A>
+                  <SELECT NAME="sel_tp_duty"><%=sTypesLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver tipos de tareas~]"></A>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">Scheduled Date</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">[~Fecha Prevista~]</FONT></TD>
                 <TD>
                   <INPUT TYPE="text" MAXLENGTH="10" SIZE="9" NAME="dt_scheduled" VALUE="<% out.write(oSimpleDate.format(new Date())); %>">&nbsp;&nbsp;
-                  <A HREF="javascript:showCalendar('dt_scheduled')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
+                  <A HREF="javascript:showCalendar('dt_scheduled')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>
 		</TD>
 	      </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">Start Date</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">[~Fecha Inicio~]</FONT></TD>
                 <TD>
                   <INPUT TYPE="text" MAXLENGTH="10" SIZE="9" NAME="dt_start" VALUE="<% out.write(oSimpleDate.format(new Date())); %>">&nbsp;&nbsp;
-                  <A HREF="javascript:showCalendar('dt_start')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
+                  <A HREF="javascript:showCalendar('dt_start')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>
 		  &nbsp;
-		  <FONT CLASS="formplain">End Date</FONT>
+		  <FONT CLASS="formplain">[~Fecha Fin~]</FONT>
 		  &nbsp;
                   <INPUT TYPE="text" MAXLENGTH="10" SIZE="9" NAME="dt_end">&nbsp;&nbsp;
-                  <A HREF="javascript:showCalendar('dt_end')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
+                  <A HREF="javascript:showCalendar('dt_end')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>
                 </TD>
               </TR>
 			  <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">Percentage Completed</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">[~Porcentaje Completado~]</FONT></TD>
                 <TD>
                   <INPUT TYPE="hidden" NAME="pct_complete" VALUE="0">
 				  <SELECT NAME="sel_pct_complete">
@@ -309,54 +309,54 @@
 				  </select>
 				  &nbsp;&nbsp;
 		  &nbsp;&nbsp;&nbsp;&nbsp;
-		  <FONT CLASS="formplain">Cost (¤)</FONT>
+		  <FONT CLASS="formplain">[~Coste ( <b>¤</b> )~]</FONT>
 		  &nbsp;
                  <INPUT TYPE="text" MAXLENGTH="10" SIZE="9" NAME="pr_cost" onkeypress="return acceptOnlyNumbers();" VALUE="0">&nbsp;&nbsp;
                   
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">Priority</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">[~Prioridad~]</FONT></TD>
                 <TD>
                   <INPUT TYPE="hidden" NAME="od_priority" VALUE="4">
                   <SELECT NAME="sel_priority"><OPTION VALUE=""></OPTION><%=sPriorityLookUp%></SELECT>
 <% if (1025==iDomainId || true) { %>
-                  <A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Values List"></A>
+                  <A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Valores~]"></A>
 <% } %>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">Status</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">[~Estado~]</FONT></TD>
                 <TD>
                   <INPUT TYPE="hidden" NAME="tx_status" VALUE="">
                   <SELECT NAME="sel_status"><OPTION VALUE=""></OPTION><%=sStatusLookUp%></SELECT>
 <% if (1025==iDomainId) { %>
-                  <A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Values List"></A>
+                  <A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Valores~]"></A>
 <% } %>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">Assigned to&nbsp;</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">[~Asignada a~]</FONT></TD>
                 <TD VALIGN="middle">
                   <INPUT TYPE="hidden" NAME="nm_resource" VALUE="">
                   <SELECT NAME="sel_resources" MULTIPLE><OPTION VALUE=""></OPTION><%=sResourceLookUp%></SELECT>
-                  <A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" VSPACE="20" ALT="View Values List"></A>
+                  <A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" VSPACE="20" ALT="[~Ver Lista de Valores~]"></A>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right" VALIGN="top"><FONT CLASS="formplain">Description</FONT></TD>
+                <TD ALIGN="right" VALIGN="top"><FONT CLASS="formplain">[~Descripci&oacute;n~]</FONT></TD>
                 <TD>
                   <TEXTAREA NAME="de_duty" ROWS="4" COLS="36"></TEXTAREA>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right" VALIGN="top"><FONT CLASS="formplain">Comments</FONT></TD>
+                <TD ALIGN="right" VALIGN="top"><FONT CLASS="formplain">[~Comentarios~]</FONT></TD>
                 <TD>
                   <TEXTAREA NAME="tx_comments" ROWS="3" COLS="36"></TEXTAREA>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right" VALIGN="top"><FONT CLASS="formplain">Attached File</FONT></TD>
+                <TD ALIGN="right" VALIGN="top"><FONT CLASS="formplain">[~Archivo Adjunto~]</FONT></TD>
                 <TD>
                   <INPUT TYPE="file" NAME="dutyfile1_<%=sUserId%>" SIZE="26">
                 </TD>
@@ -365,15 +365,15 @@
                 <TD ALIGN="right" VALIGN="top">
                   <INPUT TYPE="checkbox" NAME="chk_notify" VALUE="1">
                 <TD>
-		  <FONT CLASS="formplain">Notify resources by mail</FONT>
+		  <FONT CLASS="formplain">[~Notificar a los asignados por e-mail~]</FONT>
                 </TD>
               </TR>              
               <TR>
                 <TD ALIGN="right"></TD>
                 <TD>
-                  <BR><INPUT TYPE="submit" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="Save">
+                  <BR><INPUT TYPE="submit" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="[~Guardar~]">
                   &nbsp;&nbsp;&nbsp;
-                  <INPUT TYPE="button" CLASS="closebutton" STYLE="WIDTH:80" VALUE="Close" onClick="javascript:window.close()">
+                  <INPUT TYPE="button" CLASS="closebutton" STYLE="WIDTH:80" VALUE="[~Cerrar~]" onClick="javascript:window.close()">
                 </TD>
               </TR>              
             </TABLE>

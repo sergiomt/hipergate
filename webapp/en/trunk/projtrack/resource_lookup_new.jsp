@@ -70,7 +70,7 @@
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: Add resource</TITLE>
+  <TITLE>hipergate :: [~A&ntilde;adir recurso~]</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -86,7 +86,7 @@
         var frm = window.document.forms[0];
 
 			  if (frm.vl_lookup.value.length==0) {
-			    alert ("No valid resource has been specified");
+			    alert ("[~No se ha especificado ningún recurso válido~]");
 			    return false;	
 			  }
 
@@ -100,7 +100,7 @@
 <BODY TOPMARGIN="8" MARGINHEIGHT="8">
   <TABLE WIDTH="100%" SUMMARY="Form Title">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Add resource</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~A&ntilde;adir recurso~]</FONT></TD></TR>
   </TABLE>  
   <FORM METHOD="post" ACTION="../common/lookup_store.jsp" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=sWorkArea%>">
@@ -120,34 +120,34 @@
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
             <TD ALIGN="right" WIDTH="90"></TD>
-            <TD ALIGN="left" WIDTH="370" CLASS="formstrong">What kind of resource must be added?</TD>
+            <TD ALIGN="left" WIDTH="370" CLASS="formstrong">[~&iquest;Qu&eacute; tipo de recurso desea añadir?~]</TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90"><INPUT TYPE="radio" NAME="tp_resource" VALUE="0" CHECKED></TD>
-            <TD ALIGN="left" WIDTH="370" CLASS="formplain">A user</TD>
+            <TD ALIGN="left" WIDTH="370" CLASS="formplain">[~Un usuario de la aplicaci&oacute;n~]</TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90"><INPUT TYPE="radio" NAME="tp_resource" VALUE="1"></TD>
-            <TD ALIGN="left" WIDTH="370" CLASS="formplain">An employee</TD>
+            <TD ALIGN="left" WIDTH="370" CLASS="formplain">[~Un empleado del directorio~]</TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90"><INPUT TYPE="radio" NAME="tp_resource" VALUE="2"></TD>
-            <TD ALIGN="left" WIDTH="370" CLASS="formplain">An external contact</TD>
+            <TD ALIGN="left" WIDTH="370" CLASS="formplain">[~Un individuo externo~]</TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90"><INPUT TYPE="radio" NAME="tp_resource" VALUE="3"></TD>
-            <TD ALIGN="left" WIDTH="370" CLASS="formplain">An external company</TD>
+            <TD ALIGN="left" WIDTH="370" CLASS="formplain">[~Una compa&ntilde;&iacute;a externa~]</TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90"><INPUT TYPE="radio" NAME="tp_resource" VALUE="4"></TD>
-            <TD ALIGN="left" WIDTH="370" CLASS="formplain">A supplier</TD>
+            <TD ALIGN="left" WIDTH="370" CLASS="formplain">[~Un proveedor~]</TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90"><INPUT TYPE="radio" NAME="tp_other" onclick="document.location='../common/lookup_new.jsp<%=sQryStr%>'"></TD>
-            <TD ALIGN="left" WIDTH="370" CLASS="formplain">Other</TD>
+            <TD ALIGN="left" WIDTH="370" CLASS="formplain">[~Otro tipo de recurso~]</TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90" CLASS="formstrong">Name</TD>
+            <TD ALIGN="right" WIDTH="90" CLASS="formstrong">[~Nombre~]</TD>
             <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="nm_resource"></TD>
           </TR>
           <TR>
@@ -155,8 +155,8 @@
           </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onClick="window.parent.lookupup.location.href='resource_lookup_up.jsp<%=sQryStr%>';window.history.back();">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onClick="window.parent.lookupup.location.href='resource_lookup_up.jsp<%=sQryStr%>';window.history.back();">
     	      <BR><BR>
     	    </TD>
     	  </TR>            

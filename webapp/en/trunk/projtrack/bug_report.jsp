@@ -147,7 +147,7 @@
 
 <HTML>
   <HEAD>
-    <TITLE>hipergate :: Incident Listing</TITLE>
+    <TITLE>hipergate :: [~Listado de Incidencias~]</TITLE>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   </HEAD>
@@ -155,7 +155,7 @@
   <!-- Black and white page (printer friendly styles) -->
   
   <BODY BGCOLOR="white">
-    <FONT FACE="Arial" SIZE="4" COLOR="black"><B>Incident Listing</B></FONT>
+    <FONT FACE="Arial" SIZE="4" COLOR="black"><B>[~Listado de Incidencias~]</B></FONT>
     <BR><BR>
     <TABLE CELLSPACING="0" CELLPADDING="2">      
       <%
@@ -180,8 +180,8 @@
         %>
         <TD><FONT CLASS="textplain"><%=oBugs.getString(5,r)%></FONT></TD>
         <TD><FONT CLASS="textsmall"><%=oSimpleDate.format((Date) oBugs.get(6,r))%></FONT></TD>
-        <TD><FONT CLASS="textsmall"><%=(oBugs.get(7,r)==null ? "PENDING" : "CORREGIDO")%></FONT></TD>
-        <TD><FONT CLASS="textsmall">PRIORITY <%=oBugs.getInt(2,r)%></FONT></TD>
+        <TD><FONT CLASS="textsmall"><%=(oBugs.get(7,r)==null ? "[~PENDIENTE~]" : "[~CORREGIDO~]")%></FONT></TD>
+        <TD><FONT CLASS="textsmall">[~PRIORIDAD~] <%=oBugs.getInt(2,r)%></FONT></TD>
         <TD><% if (bIsAdmin) out.write("<FONT CLASS=\"textsmall\">"+oBugs.getString(8,r)+"</FONT>"); %></TD>
       </TR>
       <TR>

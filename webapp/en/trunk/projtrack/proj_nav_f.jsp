@@ -73,7 +73,7 @@
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <TITLE>hipergate :: Project Tree</TITLE>
+    <TITLE>hipergate :: [~&Aacute;rbol de Proyectos~]</TITLE>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
@@ -96,7 +96,7 @@
     var treeMenuHiFg       = "#FFFF00";        // Color for selected item text.
     var treeMenuFont       = "Arial,Helvetica"; // Text font face.
     var treeMenuFontSize   = 2;                    // Text font size.
-    var treeMenuRoot       = "PROJECTS"; // Text for the menu root.
+    var treeMenuRoot       = "[~PROYECTOS~]"; // Text for the menu root.
     var treeMenuFolders    = 1;                    // Sets display of '+' and '-' icons.
     var treeMenuAltText    = false;                 // Use menu item text for icon image ALT text.
 
@@ -232,7 +232,7 @@
   </FRAMESET>  
 <NOFRAMES>
   <BODY>
-    <P>This page use frames, but your web browser does not handle them</P>
+    <P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
   </BODY>
 </NOFRAMES>
 <HTML>

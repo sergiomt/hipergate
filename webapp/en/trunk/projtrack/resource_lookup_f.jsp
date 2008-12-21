@@ -45,7 +45,7 @@
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <TITLE>hipergate :: Select resource</TITLE>
+    <TITLE>hipergate :: [~Seleccionar recurso~]</TITLE>
   </HEAD>
   <FRAMESET NAME="lookuptop" ROWS="80,*,48" BORDER="0" FRAMEBORDER="0">
     <FRAME NAME="lookupup" FRAMEBORDER="no" MARGINWIDTH="0 MARGINHEIGHT="0" NORESIZE SRC="resource_lookup_up.jsp<%=sQryStr%>">
@@ -53,7 +53,7 @@
     <FRAME NAME="lookupdown" FRAMEBORDER="no" MARGINWIDTH="0 MARGINHEIGHT="0" NORESIZE SRC="../common/lookup_down.jsp">
     <NOFRAMES>
       <BODY>
-        <P>This page uses frames but your browser does not support them</P>
+        <P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
       </BODY>
     </NOFRAMES>
   </FRAMESET>

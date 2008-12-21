@@ -75,7 +75,7 @@
       // ------------------------------------------------------
       
       function deleteSelected() {
-        if (confirm("Are you sure that you want to delete the selected resources?"))
+        if (confirm("[~¿Está seguro de que desea borrar los recursos seleccionados?~]"))
           window.parent.lookupmid.document.forms[0].submit();
       } // deleteSelected()
             
@@ -92,7 +92,7 @@
           <IMG SRC="../images/images/booknew16.gif" WIDTH="16" HEIGHT="16" BORDER="0">
         </TD>
         <TD>        
-          <A HREF="resource_lookup_new.jsp<%=sQryStr%>" onClick="javascript:window.location.href='../blank.htm';" TARGET="lookupmid" CLASS="linkplain">Add</A>
+          <A HREF="resource_lookup_new.jsp<%=sQryStr%>" onClick="javascript:window.location.href='../blank.htm';" TARGET="lookupmid" CLASS="linkplain">[~A&ntilde;adir~]</A>
         </TD>
         <TD>
           <IMG SRC="../images/images/spacer.gif" WIDTH="16" HEIGHT="16" BORDER="0">
@@ -101,7 +101,7 @@
           <IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0">
         </TD>
         <TD>
-          <A HREF="javascript:deleteSelected();" CLASS="linkplain">Delete</A>
+          <A HREF="javascript:deleteSelected();" CLASS="linkplain">[~Borrar~]</A>
         </TD>
         <TD>
           <IMG SRC="../images/images/spacer.gif" WIDTH="16" HEIGHT="16" BORDER="0">
@@ -110,7 +110,7 @@
           <IMG SRC="../images/images/selall16.gif" WIDTH="16" HEIGHT="16" BORDER="0">        
         </TD>
         <TD>
-          <A HREF="javascript:selectAll();" CLASS="linkplain">Select All</A>        
+          <A HREF="javascript:selectAll();" CLASS="linkplain">[~Seleccionar Todo~]</A>        
         </TD>
       </TR>
       <TR valign="middle">
@@ -119,7 +119,7 @@
         </TD>
         <TD valign="middle" colspan="7">        
 	  <INPUT CLASS="combomini" TYPE="text" NAME="search">&nbsp;
-          <A HREF="#" onClick="top.frames['lookupmid'].findit(document.forms[0].search.value);" CLASS="linkplain">Search</A>
+          <A HREF="#" onClick="top.frames['lookupmid'].findit(document.forms[0].search.value);" CLASS="linkplain">[~Buscar~]</A>
 	</TD>
       </TR>
       </FORM>

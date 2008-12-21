@@ -290,7 +290,7 @@
       SMTPMessage oMsg = new SMTPMessage(oHndlr.getSession());
       oMsg.setHeader("Content-Transfert-Encoding", "8Bit");
       oMsg.setFrom(new InternetAddress(oMacc.getString(DB.tx_main_email),oMacc.getString(DB.tl_account)));
-      oMsg.setSubject(MimeUtility.encodeText("New Duty "+nm_duty));
+      oMsg.setSubject(MimeUtility.encodeText("[~New Duty~] "+nm_duty));
       oMsg.setText(nullif(de_duty)+"\n\n"+nullif(tx_comments), "utf-8");
       if (null!=od_priority) {
         switch ((int) od_priority.shortValue()) {

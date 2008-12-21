@@ -154,7 +154,7 @@
 %>
 <HTML LANG="<%=sLanguage%>">
   <HEAD>
-    <TITLE>hipergate :: Work Reports / Duties recently added</TITLE>
+    <TITLE>hipergate :: [~Partes de trabajo~] / [~Tareas dadas de alta~]</TITLE>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
@@ -180,31 +180,31 @@
     <INPUT TYPE="hidden" NAME="subselected" VALUE="<%=nullif(request.getParameter("subselected"),"3")%>">
     <INPUT TYPE="hidden" NAME="nm_resource" VALUE="<%=sUserId%>">
 
-    <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">Work Reports / Duties recently added</FONT></TD></TR></TABLE>
+    <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Partes de trabajo~] / [~Tareas dadas de alta~]</FONT></TD></TR></TABLE>
     <TABLE SUMMARY="Project" CELLSPACING="0" CELLPADDING="2">
-      <TR><TD CLASS="textplain" COLSPAN="4">Project&nbsp;<%=oPrj.getString(DB.nm_project)%></TD></TR>
+      <TR><TD CLASS="textplain" COLSPAN="4">[~Proyecto~]&nbsp;<%=oPrj.getString(DB.nm_project)%></TD></TR>
       <TR>
       	<TD><IMG SRC="../images/images/new16x16.gif" BORDER="0"></TD>
-				<TD><A HREF="duty_entry.jsp?selected=<%=nullif(request.getParameter("selected"),"4")%>&subselected=<%=nullif(request.getParameter("subselected"),"3")%>" CLASS="linkplain">Enter more duties</A>&nbsp;&nbsp;&nbsp;&nbsp;
+				<TD><A HREF="duty_entry.jsp?selected=<%=nullif(request.getParameter("selected"),"4")%>&subselected=<%=nullif(request.getParameter("subselected"),"3")%>" CLASS="linkplain">[~Dar de alta m&aacute;s tareas~]</A>&nbsp;&nbsp;&nbsp;&nbsp;
       	<TD COLSPAN="2"></TD>
 		  </TR>
       <TR>
       	<TD><IMG SRC="../images/images/printer16x16.gif" BORDER="0" ALT="Printable Version"></TD>
-      	<TD><A HREF="duties_workreport_preview.jsp?gu_workreport=<%=oDwr1.getString(DB.gu_workreport)%>" target="_blank" CLASS="linkplain">Print friendly version</A></TD>
+      	<TD><A HREF="duties_workreport_preview.jsp?gu_workreport=<%=oDwr1.getString(DB.gu_workreport)%>" target="_blank" CLASS="linkplain">[~Versi&oacute;n imprimible~]</A></TD>
       	<TD><IMG SRC="../images/images/crm/history16.gif" BORDER="0" ALT="Other WorkReports"></TD>
-				<% out.write("<TD><A HREF=\"duty_entry_list.jsp?gu_project="+request.getParameter("gu_project")+"&selected="+nullif(request.getParameter("selected"),"4")+"&subselected="+nullif(request.getParameter("subselected"),"3")+(bIsAdmin ? "" : "&gu_writer="+sUserId)+"\" CLASS=\"linkplain\">Listing of other work reports from the same project</A></TD>"); %>
+				<% out.write("<TD><A HREF=\"duty_entry_list.jsp?gu_project="+request.getParameter("gu_project")+"&selected="+nullif(request.getParameter("selected"),"4")+"&subselected="+nullif(request.getParameter("subselected"),"3")+(bIsAdmin ? "" : "&gu_writer="+sUserId)+"\" CLASS=\"linkplain\">[~Listado de otros partes del mismo proyecto~]</A></TD>"); %>
 		  </TR>
       <TR><TD COLSPAN="4" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
     </TABLE>
     
     <TABLE SUMMARY="Newly Added Duties" CELLSPACING="1" CELLPADDING="0">
       <TR>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Duty Name</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Start</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>End</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Cost/hours</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Status</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Completed</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Nombre de la tarea~]</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Inicio~]</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Fin~]</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Coste/Horas~]</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Estado~]</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Completado~]</B></TD>
       </TR>
 <% out.write(sDutiesDataTable); %>
     </TABLE>

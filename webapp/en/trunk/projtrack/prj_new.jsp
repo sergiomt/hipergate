@@ -86,7 +86,7 @@
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <TITLE>hipergate :: New Project</TITLE>
+    <TITLE>hipergate :: [~Nuevo Proyecto~]</TITLE>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
@@ -127,7 +127,7 @@
             break;
           case 3:
             if (frm.gu_company.value=="")
-              alert ("To assign a Contact select a Company First");
+              alert ("[~Para asignar un contacto primero debe seleccionar una compañía~]");
             else
               window.open("../common/reference.jsp?nm_table=k_contacts&tp_control=1&nm_control=" + "tx_name%2B%27%20%27%2Btx_surname%20AS%20tx_contact" + "&nm_coding=gu_contact&where=" + escape("gu_company='" + frm.gu_company.value + "'"), "", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
             break;
@@ -155,12 +155,12 @@
 	var dtEnd;
 	
 	if (rtrim(frm.nm_project.value)=="") {
-	  alert ("Project name is mandatory");
+	  alert ("[~El nombre del proyecto es obligatorio~]");
 	  return false;
 	}
 
 	if (frm.nm_project.value.indexOf("'")>=0 || frm.nm_project.value.indexOf('"')>=0 || frm.nm_project.value.indexOf(";")>=0 || frm.nm_project.value.indexOf(",")>=0 || frm.nm_project.value.indexOf("|")>=0) {
-	  alert ("The project name contains invalid characters");
+	  alert ("[~El nombre del proyecto contiene caracteres no permitidos~]");
 	  return false;	
 	}
 
@@ -169,7 +169,7 @@
           if (prj[n].selected) npj++;
 	
 	if (npj>1) {
-	  alert ("Must select a unique parent Project");
+	  alert ("[~Debe seleccionar un único proyecto padre~]");
 	  return false;
 	}
 	else if (npj==1)
@@ -180,14 +180,14 @@
 	str = frm.dt_start.value;
 	
 	if (str.length>0 && !isDate(str, "d")) {
-	  alert ("Start date is not valid");
+	  alert ("[~La fecha de inicio no es válida~]");
 	  return false;
 	}
 	
 	str = frm.dt_end.value;
 
 	if (str.length>0 && !isDate(str, "d")) {
-	  alert ("End date is not valid");
+	  alert ("[~La fecha de fin no es válida~]");
 	  return false;
 	}
 
@@ -197,13 +197,13 @@
 	  dtStart = new Date(parseInt(aStart[0]), parseInt(parseFloat(aStart[1]))-1, parseInt(parseFloat(aStart[2])));
 	  dtEnd = new Date(parseInt(aEnd[0]), parseInt(parseFloat(aEnd[1]))-1, parseInt(parseFloat(aEnd[2])));
 	  if (dtStart>dtEnd) {
-	    alert ("Start date must be previous to end date");
+	    alert ("[~La fecha de inicio debe ser anterior a la fecha de fin~]");
 	    return false;
 	  }
 	}
 	
 	if (frm.de_project.value.length>1000) {
-	  alert ("Description must not be longer than 1000 characters");
+	  alert ("[~La descripci&oacute;n no debe exceder los 1000 caracteres~]");
 	  return false;
 	}
 
@@ -229,7 +229,7 @@
     </SCRIPT>
   </HEAD>
   <BODY >
-    <TABLE WIDTH="98%"><TR><TD CLASS="striptitle"><FONT CLASS="title1">New Project</FONT></TD></TR></TABLE>       
+    <TABLE WIDTH="98%"><TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Nuevo Proyecto~]</FONT></TD></TR></TABLE>       
     <BR>
     <FORM NAME="frmNewProject" METHOD="post" ACTION="prjedit_store.jsp" onSubmit="return validate()">
       <INPUT TYPE="hidden" NAME="is_new" VALUE="1">
@@ -246,28 +246,28 @@
                 <TD>
                   <TABLE>
                     <TR>
-                      <TD COLSPAN="2"><FONT CLASS="formstrong">View</FONT></TD>                      
+                      <TD COLSPAN="2"><FONT CLASS="formstrong">[~Ver~]</FONT></TD>                      
                       <TD><INPUT TYPE="radio" NAME="status" onclick="filter('')" <%=(sStatus.length()==0 ? "CHECKED" : "")%>></TD>
-                      <TD><FONT CLASS="formplain">All</FONT></TD>
+                      <TD><FONT CLASS="formplain">[~Todos~]</FONT></TD>
                     </TR>
                     <TR>
                       <TD><INPUT TYPE="radio" NAME="status" onclick="filter('ABIERTO')" <%=(sStatus.equals("ABIERTO") ? "CHECKED" : "")%>></TD>
-                      <TD><FONT CLASS="formplain">Open</FONT></TD>
+                      <TD><FONT CLASS="formplain">[~Abiertos~]</FONT></TD>
                       <TD><INPUT TYPE="radio" NAME="status" onclick="filter('CERRADO')" <%=(sStatus.equals("CERRADO") ? "CHECKED" : "")%>></TD>
-                      <TD><FONT CLASS="formplain">Closed</FONT></TD>
+                      <TD><FONT CLASS="formplain">[~Cerrados~]</FONT></TD>
                     </TR>
                     <TR>
                       <TD><INPUT TYPE="radio" NAME="status" onclick="filter('SUSPENDIDO')" <%=(sStatus.equals("SUSPENDIDO") ? "CHECKED" : "")%>></TD>
-                      <TD><FONT CLASS="formplain">Suspended</FONT></TD>
+                      <TD><FONT CLASS="formplain">[~Suspendidos~]</FONT></TD>
                       <TD><INPUT TYPE="radio" NAME="status" onclick="filter('CANCELADO')" <%=(sStatus.equals("CANCELADO") ? "CHECKED" : "")%>></TD>
-                      <TD><FONT CLASS="formplain">Cancelled</FONT></TD>
+                      <TD><FONT CLASS="formplain">[~Cancelados~]</FONT></TD>
                     </TR>
                   </TABLE>
                 </TD>
               </TR>
               <TR>
                 <TD>
-                  <FONT CLASS="formstrong">Parent Project</FONT><BR>
+                  <FONT CLASS="formstrong">[~Proyecto Padre~]</FONT><BR>
                   <INPUT TYPE="hidden" NAME="id_parent">
                   <SELECT NAME="sel_project" SIZE="18" STYLE="width:256" MULTIPLE>
                     <%
@@ -301,7 +301,7 @@
             </TABLE>
           </TD>          
           <TD VALIGN="top" CLASS="formfront">
-	    <TABLE SUMMARY="Maintenance Data">
+	    <TABLE SUMMARY="[~Datos de Mantenimiento~]">
               <TR>
                 <TD ALIGN="right"></TD>
                 <TD>
@@ -309,69 +309,69 @@
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formstrong">Name</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formstrong">[~Nombre~]</FONT></TD>
                 <TD>
                   <INPUT TYPE="text" MAXLENGTH="50" SIZE="30" NAME="nm_project" VALUE="<% out.write(nullif(request.getParameter("nm_project"))); %>">
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">Start</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">[~Inicio~]</FONT></TD>
                 <TD>
                   <INPUT TYPE="text" MAXLENGTH="10" SIZE="10" NAME="dt_start" VALUE="<% out.write(oSimpleDate.format(new Date())); %>">&nbsp;&nbsp;
-                  <A HREF="javascript:showCalendar('dt_start')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
+                  <A HREF="javascript:showCalendar('dt_start')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>
                   <IMG SRC="../images/images/spacer.gif" WIDTH="8" HEIGHT="1" BORDER="0">
-                  <FONT CLASS="formplain">End</FONT>
+                  <FONT CLASS="formplain">[~Fin~]</FONT>
                   <INPUT TYPE="text" MAXLENGTH="10" SIZE="10" NAME="dt_end">&nbsp;&nbsp;
-                  <A HREF="javascript:showCalendar('dt_end')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
+                  <A HREF="javascript:showCalendar('dt_end')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">Reference</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">[~Referencia~]</FONT></TD>
                 <TD>
                   <INPUT TYPE="text" MAXLENGTH="50" SIZE="20" NAME="id_ref">
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">Status</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">[~Estado~]</FONT></TD>
                 <TD>
                   <INPUT TYPE="hidden" MAXLENGTH="16" NAME="id_status">
                   <SELECT NAME="sel_status"><OPTION VALUE=""></OPTION><%=sStatusLookUp%></SELECT>
-                  &nbsp;&nbsp;<A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Status List"></A>
+                  &nbsp;&nbsp;<A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Estados~]"></A>
                 </TD>
               </TR>              
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">Department</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">[~Departamento~]</FONT></TD>
                 <TD>
                   <INPUT TYPE="hidden" NAME="id_dept" VALUE="">
                   <SELECT NAME="sel_dept"><OPTION VALUE=""></OPTION><%=sDeptsLookUp%></SELECT>
-                  <A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Values List"></A>
+                  <A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Valores~]"></A>
                 </TD>
               </TR>
 <% if ((iAppMask & (1<<Sales))!=0) { %>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">Company</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">[~Compa&ntilde;&iacute;a~]</FONT></TD>
                 <TD>
                   <INPUT TYPE="text" SIZE="34" NAME="nm_legal" TABINDEX="-1" onkeypress="return false;" VALUE="<%=nm_legal%>">
-                  &nbsp;&nbsp;<A HREF="javascript:reference(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Companies List"></A>
+                  &nbsp;&nbsp;<A HREF="javascript:reference(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Compa&ntilde;&iacute;as~]"></A>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">Contact</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">[~Contacto~]</FONT></TD>
                 <TD>
                   <INPUT TYPE="text" SIZE="34" NAME="tx_contact" VALUE="<%=tx_contact%>" onkeypress="return false;">
-                  &nbsp;&nbsp;<A HREF="javascript:reference(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Contacts List"></A>
+                  &nbsp;&nbsp;<A HREF="javascript:reference(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Contactos~]"></A>
                 </TD>
               </TR>
 <% } %>              
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">Owner</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">[~Propietario~]</FONT></TD>
                 <TD>
                   <INPUT TYPE="text" SIZE="34" NAME="tx_user" VALUE="<%=tx_user%>" onkeypress="return false;">
-                  &nbsp;&nbsp;<A HREF="javascript:reference(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View list of users"></A>
+                  &nbsp;&nbsp;<A HREF="javascript:reference(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Usuarios~]"></A>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right" VALIGN="top"><FONT CLASS="formplain">Description</FONT></TD>
+                <TD ALIGN="right" VALIGN="top"><FONT CLASS="formplain">[~Descripci&oacute;n~]</FONT></TD>
                 <TD>
                   <TEXTAREA NAME="de_project" ROWS="6" COLS="34"><% out.write(nullif(request.getParameter("de_project"))); %></TEXTAREA>
                 </TD>
@@ -379,9 +379,9 @@
               <TR>
                 <TD ALIGN="right"></TD>
                 <TD>
-                  <BR><INPUT TYPE="submit" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="Save">
+                  <BR><INPUT TYPE="submit" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="[~Guardar~]">
                   &nbsp;&nbsp;&nbsp;
-                  <INPUT TYPE="button" CLASS="closebutton" STYLE="WIDTH:80" VALUE="Close" onClick="javascript:window.close()">
+                  <INPUT TYPE="button" CLASS="closebutton" STYLE="WIDTH:80" VALUE="[~Cerrar~]" onClick="javascript:window.close()">
                 </TD>
               </TR>              
             </TABLE>

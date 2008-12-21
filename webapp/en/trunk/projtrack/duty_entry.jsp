@@ -105,7 +105,7 @@
 %>
 <HTML LANG="<%=sLanguage%>">
   <HEAD>
-    <TITLE>hipergate :: Work Reports / Duty Entry</TITLE>
+    <TITLE>hipergate :: [~Partes de trabajo~] / [~Alta de Tareas~]</TITLE>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
@@ -117,7 +117,7 @@
       <!--
         function chkActivProj() {
           if (document.forms[0].gu_project.selectedIndex<=0) {
-				    alert ("A project to which associate the duties is required");
+				    alert ("[~Debe seleccionar un proyecto al cual imputar las nuevas tareas~]");
 						document.forms[0].gu_project.focus();
 						return false;
           } else {
@@ -146,7 +146,7 @@
           if (!chkActivProj()) return false;
           
           if (frm.de_workreport.value.length>2000) {
-            alert ("Work Report briefing may not exceed 2000 characters");
+            alert ("[~El resumen del parte no puede exceder los 2000 caracteres~]");
 						frm.de_workreport.focus();            
 						return false;
           }
@@ -155,29 +155,29 @@
             var s = String(i);
             if (frm.elements["nm_duty"+s].value.length>0) {
               if (frm.elements["dt_start"+s].value.length>0 && !isDate(frm.elements["dt_start"+s].value,"d")) {
-						    alert ("The date format must be yyyy-mm-dd");
+						    alert ("[~El formato de la fecha debe ser aaaa-mm-dd~]");
 						    frm.elements["dt_start"+s].focus();
 						    return false;
               }
               if (frm.elements["dt_end"+s].value.length>0 && !isDate(frm.elements["dt_end"+s].value,"d")) {
-						    alert ("The date format must be yyyy-mm-dd");
+						    alert ("[~El formato de la fecha debe ser aaaa-mm-dd~]");
 						    frm.elements["dt_end"+s].focus();
 						    return false;
               }
               if (isDate(frm.elements["dt_start"+s].value,"d") && isDate(frm.elements["dt_end"+s].value,"d") &&
                   parseDate(frm.elements["dt_end"+s].value,"d")<parseDate(frm.elements["dt_start"+s].value,"d")) {
-						      alert ("End date must be later than start date");
+						      alert ("[~La fecha de fin debe ser posterior a la de inicio~]");
 						      frm.elements["dt_end"+s].focus();
 						      return false;                  
 						  }
 						  if (frm.elements["pr_cost"+s].value.length>0 && !isFloatValue(frm.elements["pr_cost"+s].value)) {
-						      alert ("The cost/hours is not a valid figure");
+						      alert ("[~El coste/horas no es una cantidad numérica válida~]");
 						      frm.elements["dt_end"+s].focus();
 						      return false;                  						  	
 						  }
             } else if (frm.elements["dt_start"+s].value.length>0  || frm.elements["dt_end"+s].value.length>0 ||
             					 frm.elements["sel_type"+s].selectedIndex>0 || frm.elements["sel_status"+s].selectedIndex>0) {
-						  alert ("Duty description is required");
+						  alert ("[~La descripción de la tarea es obligatoria~]");
 						  frm.elements["nm_duty"+s].focus();
 						  return false;
             }
@@ -196,25 +196,25 @@
     <INPUT TYPE="hidden" NAME="nu_duties" VALUE="<%=String.valueOf(NU_DUTIES+iOpenDuties)%>">
     <INPUT TYPE="hidden" NAME="gu_workreport" VALUE="<%=Gadgets.generateUUID()%>">
 
-    <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">Work Reports / Duty Entry</FONT></TD></TR></TABLE>
+    <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Partes de trabajo~] / [~Alta de Tareas~]</FONT></TD></TR></TABLE>
     <TABLE SUMMARY="Project" CELLSPACING="0" CELLPADDING="2">
       <TR>
-        <TD CLASS="textplain">Project&nbsp;<SELECT NAME="gu_project" onchange="document.location='duty_entry.jsp?selected='+getURLParam('selected')+'&subselected='+getURLParam('subselected')+'&gu_project='+this.options[this.selectedIndex].value"><OPTION VALUE=""></OPTION><OPTGROUP LABEL="My Open projects"></OPTION><% for (int p=0; p<iMyOpenProjects; p++) out.write("<OPTION VALUE=\""+oMyOpenProjects.getString(0,p)+"\">"+oMyOpenProjects.getString(1,p)+"</OPTION>"); %> %><OPTGROUP LABEL="All Open Projects"><% for (int p=0; p<iOpenProjects; p++) out.write("<OPTION VALUE=\""+oOpenProjects.getString(0,p)+"\">"+oOpenProjects.getString(1,p)+"</OPTION>"); %></OPTGROUP></SELECT></TD>
-        <TD><% if (gu_project.length()>0) out.write("<A HREF=\"duty_entry_list.jsp?gu_project="+gu_project+"&selected="+nullif(request.getParameter("selected"),"4")+"&subselected="+nullif(request.getParameter("subselected"),"3")+(bIsAdmin ? "" : "&gu_writer="+sUserId)+"\" CLASS=\"linkplain\">List of previous work reports</A>"); %></TD>
+        <TD CLASS="textplain">[~Proyecto~]&nbsp;<SELECT NAME="gu_project" onchange="document.location='duty_entry.jsp?selected='+getURLParam('selected')+'&subselected='+getURLParam('subselected')+'&gu_project='+this.options[this.selectedIndex].value"><OPTION VALUE=""></OPTION><OPTGROUP LABEL="[~Mis proyectos abiertos~]"></OPTION><% for (int p=0; p<iMyOpenProjects; p++) out.write("<OPTION VALUE=\""+oMyOpenProjects.getString(0,p)+"\">"+oMyOpenProjects.getString(1,p)+"</OPTION>"); %> %><OPTGROUP LABEL="[~Todos los proyectos abiertos~]"><% for (int p=0; p<iOpenProjects; p++) out.write("<OPTION VALUE=\""+oOpenProjects.getString(0,p)+"\">"+oOpenProjects.getString(1,p)+"</OPTION>"); %></OPTGROUP></SELECT></TD>
+        <TD><% if (gu_project.length()>0) out.write("<A HREF=\"duty_entry_list.jsp?gu_project="+gu_project+"&selected="+nullif(request.getParameter("selected"),"4")+"&subselected="+nullif(request.getParameter("subselected"),"3")+(bIsAdmin ? "" : "&gu_writer="+sUserId)+"\" CLASS=\"linkplain\">[~Listado de partes anteriores~]</A>"); %></TD>
       </TR>
       <TR><TD COLSPAN="2" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
     </TABLE>
 <% if (gu_project.length()>0) { %>   
     <TABLE SUMMARY="New Duties" CELLSPACING="1" CELLPADDING="0">
       <TR>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Type</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Duty Name</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Start</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>End</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Cost/Hours</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Status</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Completed</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Additional Comments</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Tipo~]</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Nombre de la tarea~]</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Inicio~]</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Fin~]</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Coste/Horas~]</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Estado~]</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Completado~]</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Comentarios adicionales~]</B></TD>
       </TR>
 <% String s;
    for (int i=0; i<iOpenDuties; i++) {
@@ -247,11 +247,11 @@
       </TR>
 <% } %>
       <TR>
-        <TD COLSPAN="2" VALIGN="top" ALIGN="right" CLASS="textstrong">Briefing and Notes</TD>
+        <TD COLSPAN="2" VALIGN="top" ALIGN="right" CLASS="textstrong">[~Resumen y notas generales~]</TD>
         <TD COLSPAN="6" ALIGN="left"><TEXTAREA NAME="de_workreport" ROWS="6" COLS="80"></TEXTAREA></TD>
       </TR>
       <TR>
-        <TD COLSPAN="8" ALIGN="center"><BR><INPUT TYPE="submit" CLASS="pushbutton" VALUE="Save"></TD>
+        <TD COLSPAN="8" ALIGN="center"><BR><INPUT TYPE="submit" CLASS="pushbutton" VALUE="[~Guardar~]"></TD>
       </TR>
     </TABLE>
 <% } %>   

@@ -70,7 +70,7 @@
 <HEAD>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <TITLE>hipergate :: Project Tree</TITLE>
+    <TITLE>hipergate :: [~&Aacute;rbol de Proyectos~]</TITLE>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
@@ -209,7 +209,7 @@
 </FRAMESET>
 <NOFRAMES>
   <BODY>
-    <P>This page use frames, but your web browser does not handle them</P>
+    <P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
   </BODY>
 </NOFRAMES>
 <HTML>
