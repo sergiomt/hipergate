@@ -275,7 +275,7 @@
 %>
 <HTML>
 <HEAD>
-  <TITLE>hipergate :: Save Address</TITLE>
+  <TITLE>hipergate :: [~Guardar Direcci&oacute;n~]</TITLE>
   <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript">
     <!--      
       if ("<%=noreload%>"=="0") {

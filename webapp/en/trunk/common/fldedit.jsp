@@ -40,7 +40,7 @@
 
   String sVoid = "";
   if (null==request.getParameter("id_domain") || sVoid.equals(request.getParameter("id_domain"))) {
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Domain not found&desc=Security domain not found&resume=_close"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Dominio no encontrado~]&desc=[~Imposible encontrar el dominio de seguridad~]&resume=_close"));
     return;
   }
     
@@ -59,9 +59,9 @@
   String id_section = nullif(request.getParameter("id_section"));
   String tx_table = nullif(request.getParameter("tx_table"));
   
-  String sHeadStrip = "Edit user defined field for&nbsp;" + tx_table;
+  String sHeadStrip = "[~Editar campo definido por el usuario para ~]" + tx_table;
   String sButtonList = "\"newreg\",\"delreg\",\"left2\",\"left\",\"right\",\"right2\"";
-  String sButtonTips = "\"New translated label\",\"Delete translated label\",\"Go to first label\",\"Previous label\",\"Next label\",\"Go to last label\"";
+  String sButtonTips = "\"[~Nueva etiqueta traducida~]\",\"[~Eliminar etiqueta traducida~]\",\"[~Ir a la primera etiqueta~]\",\"[~Etiqueta anterior~]\",\"[~Etiqueta siguiente~]\",\"[~Ir a la ultima etiqueta~]\"";
   DBSubset   oName = null; // Nombres traducidos (etiquetas)
   Object     oFld;  // Variable intermedia
   JDCConnection oConn; // Conexion con la BB.DD.
@@ -186,12 +186,12 @@
       var alias = frm.id_section.value;
       
       if (alias.length==0) {
-        alert ("Field name is mandatory");
+        alert ("[~El nombre del campo es obligatorio~]");
         return false;        
       }
       
       if (alias.indexOf(" ")>=0 || alias.indexOf(";")>=0 || alias.indexOf(",")>=0 || alias.indexOf(".")>=0 || alias.indexOf("?")>=0 || alias.indexOf("$")>=0 || alias.indexOf("%")>=0 || alias.indexOf("/")>=0 || alias.indexOf("¿")>=0 || alias.indexOf("`")>=0) {
-        alert ("Field name contains invalid characters");
+        alert ("[~El nombre del campo contiene caracteres no permitidos~]");
         return false;        
       }
       else
@@ -200,16 +200,16 @@
       txt = frm.max_len.value;
       for (var c=0; c<txt.length; c++)
         if (txt.charCodeAt(c)<48 || txt.charCodeAt(c)>57) {
-	  alert ("Field length must be an integer quantity");
+	  alert ("[~La longitud del campo debe ser una cantidad entera sin puntos ni comas decimales~]");
 	  return false;
 	} // fi
       if (parseInt(txt)>250) {
-        alert ("Field max length must not be longer than 250 characters");
+        alert ("[~La longitud maxima de un campo no debe exceder los 250 caracteres~]");
 	return false;
       }
 
       if (aName.length==0) {
-        alert ("Must specify at least one Translated Label");
+        alert ("[~Debe especificar el menos una etiqueta de traduccion~]");
 	return false;
       }
       	        
@@ -217,7 +217,7 @@
         if (aName[n][0].length>0)
           eval ("frm.tr_" + aName[n][0] + ".value='" + aName[n][1] + "'");
         else {
-          alert ("Labels cannot ve empty strings");
+          alert ("[~Las etiquetas no pueden ser cadenas vacias~]");
 	  return false;          
         }        
       }
@@ -360,11 +360,11 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right" WIDTH="150" CLASS="formstrong" NOWRAP>Field name:</TD>
+            <TD ALIGN="right" WIDTH="150" CLASS="formstrong" NOWRAP>[~Nombre del Campo:~]</TD>
             <TD ALIGN="left" WIDTH="290"><INPUT TYPE="text" NAME="id_section" MAXLENGTH="30" SIZE="34" VALUE="<% out.write(id_section); %>" STYLE="text-transform:lowercase"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="150" CLASS="formstrong" NOWRAP>Max. Length:</TD>
+            <TD ALIGN="right" WIDTH="150" CLASS="formstrong" NOWRAP>[~Longitud M&aacute;xima:~]</TD>
             <TD ALIGN="left" WIDTH="290"><INPUT TYPE="text" NAME="max_len" MAXLENGTH="3" SIZE="4" VALUE="100"></TD>
           </TR>
 
@@ -372,7 +372,7 @@
             <TD COLSPAN="2">
               <TABLE ALIGN="center" WIDTH="92%" BACKGROUND="../skins/<%=sSkin%>/fondoc.gif">
                 <TR><TD>
-		  <SPAN CLASS="lightshadow" STYLE="position:relative;top:-8;left:0;width:48;height=23;" TITLE="Labels are Category titles shown for each language."><FONT CLASS="formstrong"><BIG>LABELS</BIG></FONT></SPAN>
+		  <SPAN CLASS="lightshadow" STYLE="position:relative;top:-8;left:0;width:48;height=23;" TITLE="[~Las etiquetas son los titulares de las categorias que se visualizan en cada idioma.~]"><FONT CLASS="formstrong"><BIG>[~ETIQUETAS~]</BIG></FONT></SPAN>
 		  <IMG SRC="../images/images/spacer.gif" WIDTH="24" HEIGHT="23" BORDER="0" oncontextmenu="return false;">
 		  <%
 		    String[] aButtonList = Gadgets.split(sButtonList,',');
@@ -398,10 +398,10 @@
             	    <TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
             	      <TR>            	      
             	        <TD><FONT CLASS="formstrong">Idioma:</FONT></TD>
-            	        <TD>&nbsp;&nbsp;&nbsp;<FONT CLASS="formstrong">Text for Label:</FONT></TD>            	      
+            	        <TD>&nbsp;&nbsp;&nbsp;<FONT CLASS="formstrong">[~Texto de la Etiqueta:~]</FONT></TD>            	      
             	      </TR>  
             	      <TR>
-            	        <TD><SELECT NAME="sel_language" onchange="changeName()"><OPTION VALUE="" SELECTED><OPTION VALUE="es">Spanish</OPTION><OPTION VALUE="en">English</OPTION><OPTION VALUE="fr">French</OPTION><OPTION VALUE="it">Italian</OPTION><OPTION VALUE="de">German</OPTION><OPTION VALUE="pt">Portuguese</OPTION><OPTION VALUE="ru">Russian</OPTION><OPTION VALUE="cn">Traditional Chinese</OPTION><OPTION VALUE="tw">Simplified Chinese</OPTION><OPTION VALUE="ja">Japanese</OPTION><OPTION VALUE="fi">Finnish</OPTION><OPTION VALUE="ca">Catalan</OPTION><OPTION VALUE="eu">Euskera</OPTION></SELECT></TD>
+            	        <TD><SELECT NAME="sel_language" onchange="changeName()"><OPTION VALUE="" SELECTED><OPTION VALUE="es">[~Espa&ntilde;ol~]</OPTION><OPTION VALUE="en">[~Ingl&eacute;s~]</OPTION><OPTION VALUE="fr">[~Franc&eacute;s~]</OPTION><OPTION VALUE="it">[~Italiano~]</OPTION><OPTION VALUE="de">[~Alem&aacute;n~]</OPTION><OPTION VALUE="pt">[~Portugu&eacute;s~]</OPTION><OPTION VALUE="ru">[~Ruso~]</OPTION><OPTION VALUE="cn">[~Chino Tradicional~]</OPTION><OPTION VALUE="tw">[~Chino Simplificado~]</OPTION><OPTION VALUE="ja">[~Japon&eacute;s~]</OPTION><OPTION VALUE="fi">[~Finland&eacute;s~]</OPTION><OPTION VALUE="ca">[~Catal&aacute;n~]</OPTION><OPTION VALUE="eu">[~Euskera~]</OPTION></SELECT></TD>
 		        <TD>&nbsp;&nbsp;&nbsp;<INPUT TYPE="text" NAME="tr_category" MAXLENGTH="30" SIZE="34" VALUE="" onblur="changeName()" onchange="changeName()" onkeypress="changeName()"></TD>
 		      </TR>
 		    </TABLE>
@@ -416,8 +416,8 @@
           <TR>
     	    <TD WIDTH="150">&nbsp;</TD>
     	    <TD WIDTH="290">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>
     	    </TD>	    
           </TR>           

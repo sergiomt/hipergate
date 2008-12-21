@@ -14,7 +14,7 @@
   
   <BODY >
     <FORM>
-    <CENTER><INPUT TYPE="button" CLASS="closebutton" VALUE="Close Window" onClick="window.parent.close()"></CENTER>
+    <CENTER><INPUT TYPE="button" CLASS="closebutton" VALUE="[~Cerrar Ventana~]" onClick="window.parent.close()"></CENTER>
     </FORM>
   </BODY>
 </HTML>

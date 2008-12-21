@@ -97,7 +97,7 @@
         oConn.setAutoCommit (false);
 
 	if (bAlreadyExists)
-	  throw new SQLException ("Term already exists");
+	  throw new SQLException ("[~El termino ya existe~]");
 
 	if (gu_synonym.length()==0)
 	  gu_term = oThes.createRootTerm (oConn, tx_term, tx_term2, de_term, id_language, id_scope, Integer.parseInt(id_domain), gu_workarea);
@@ -127,7 +127,7 @@
         oConn.setAutoCommit (false);
 
 	if (bAlreadyExists)
-	  throw new SQLException ("Term already exists");
+	  throw new SQLException ("[~El termino ya existe~]");
 
 	if (gu_synonym.length()==0)
   	  gu_term = oThes.createTerm (oConn, gu_parent, tx_term, tx_term2, de_term, id_language, id_scope, Integer.parseInt(id_domain));

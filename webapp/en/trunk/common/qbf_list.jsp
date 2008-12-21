@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -38,6 +38,7 @@
 
   JDCConnection oConn = null;
   String sSchema = "";
+  String sToday = new java.text.SimpleDateFormat("yyyy-MM-dd").format(new Date());
   
   DBSubset oRootPrjs = new DBSubset(DB.k_projects, DB.gu_project+","+DB.nm_project, DB.gu_owner+"=? AND " + DB.id_parent + " IS NULL ORDER BY 2", 100);
   int iRootPrjs = 0;
@@ -74,7 +75,7 @@
 %>
 <HTML>
   <HEAD>
-    <TITLE>hipergate :: Queries</TITLE>
+    <TITLE>hipergate :: [~Consultas~]</TITLE>
     <SCRIPT LANGUAGE="JavaScript1.2" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript1.2" SRC="../javascript/setskin.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript1.2" SRC="../javascript/datefuncs.js"></SCRIPT>
@@ -108,7 +109,7 @@
         
         if (qry=="won") {
           if (frm.dt_won.value.length>0 && !isDate(frm.dt_won.value,"d")) {
-            alert ("Invalid Date");
+            alert ("[~La fecha no es valida~]");
 	    return false;
           }
           else if (frm.dt_won.value.length==0)
@@ -118,7 +119,7 @@
         }
         else if (qry=="lost") {
           if (frm.dt_lost.value.length>0 && !isDate(frm.dt_lost.value,"d")) {
-            alert ("Invalid Date");
+            alert ("[~La fecha no es valida~]");
 	    return false;
           }
           else if (frm.dt_lost.value.length==0)
@@ -135,22 +136,22 @@
 	
 	
 	if (frm.dt_start.value.length==0) {
-          alert ("You must specify an start up date");
+          alert ("[~Debe especificar una fecha de inicio~]");
 	  return false;
 	}
 
 	if (frm.dt_end.value.length==0) {
-          alert ("You must specify an end date");
+          alert ("[~Debe especificar una fecha de fin~]");
 	  return false;
 	}
         
         if (!isDate(frm.dt_start.value,"d")) {
-	  alert ("Invalid Date");
+	  alert ("[~La fecha no es valida~]");
 	  return false;
 	}
 
         if (!isDate(frm.dt_end.value,"d")) {
-	  alert ("Invalid Date");
+	  alert ("[~La fecha no es valida~]");
 	  return false;
 	}
 
@@ -166,27 +167,25 @@
       function callCenterPerformance() { 
 	      var frm = document.forms[0];
 	
-      	if (frm.dt_day1.value.length==0) {
-          alert ("You must specify an start up date");
-      	  return false;
-      	}
       
       	if (frm.dt_dayn.value.length==0) {
-          alert ("You must specify an end date");
+          alert ("[~Debe especificar una fecha de fin~]");
       	  return false;
       	}
               
-        if (!isDate(frm.dt_day1.value,"d")) {
-      	  alert ("Invalid Date");
+        if (frm.dt_day1.value.length>0 && !isDate(frm.dt_day1.value,"d")) {
+      	  alert ("[~La fecha no es valida~]");
+      	  frm.dt_day1.focus();
       	  return false;
       	}
       
         if (!isDate(frm.dt_dayn.value,"d")) {
-      	  alert ("Invalid Date");
+      	  alert ("[~La fecha no es valida~]");
+      	  frm.dt_dayn.focus();
       	  return false;
       	}
 
-      	document.location = "../crm/phonecall_report.jsp?gu_workarea=<%=getCookie(request, "workarea", "")%>&dt_from=" + frm.dt_day1.value + "&dt_to=" + frm.dt_dayn.value + "&gu_campaign=" + frm.gu_campaign.value;
+      	document.location = "../crm/phonecall_report.jsp?gu_workarea=<%=getCookie(request, "workarea", "")%>" + (frm.dt_day1.value.length>0 ? "&dt_from="+frm.dt_day1.value : "") + "&dt_to=" + frm.dt_dayn.value + "&gu_campaign=" + frm.gu_campaign.value;
       } // callCenterPerformance
 
       // ----------------------------------------------------------------------
@@ -197,14 +196,14 @@
         frm.dt_start.value = rtrim(frm.dt_start.value);
         
         if (!isDate(frm.dt_from.value,"d") && frm.dt_from.value.length>0) {
-	  alert ("Invalid Date");
+	  alert ("[~La fecha no es valida~]");
 	  return false;
 	}
 
 	frm.dt_to.value = rtrim(frm.dt_to.value);
 	
         if (!isDate(frm.dt_to.value,"d") && frm.dt_to.value.length>0) {
-	  alert ("Invalid Date");
+	  alert ("[~La fecha no es valida~]");
 	  return false;
 	}
 	
@@ -244,7 +243,7 @@
 	      var frm = document.forms[0];
         
         if (frm.sel_project.options.selectedIndex<=0) {
-          alert ("You must select a project");
+          alert ("[~Debe seleccionar un proyecto~]");
           return false;
         }
         
@@ -261,34 +260,34 @@
   <BODY >
   <FORM>
   <INPUT TYPE="hidden" NAME="gu_campaign" VALUE="">
-  <TABLE WIDTH="100%" SUMMARY="Title"><TR><TD CLASS="striptitle"><FONT CLASS="title1">Queries</FONT></TD></TR></TABLE>  
+  <TABLE WIDTH="100%" SUMMARY="Title"><TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Consultas~]</FONT></TD></TR></TABLE>  
   <BR>
 <% if ((iAppMask & (1<<Sales))!=0) { %>
-    <FONT CLASS="textplain"><B>Contact Management</B></FONT>
+    <FONT CLASS="textplain"><B>[~Gesti&oacute;n de Contactos~]</B></FONT>
     <BR>
-    <A CLASS="linkplain" HREF="javascript:openQueryForm('contacts')">Individuals</A>
+    <A CLASS="linkplain" HREF="javascript:openQueryForm('contacts')">[~Individuos~]</A>
     <BR>
-    <A CLASS="linkplain" HREF="javascript:openQueryForm('companies')">Companies</A>
+    <A CLASS="linkplain" HREF="javascript:openQueryForm('companies')">[~Compa&ntilde;&iacute;as~]</A>
     <BR>
-    <A CLASS="linkplain" HREF="javascript:openQueryForm('oportunities')">Oportunities</A>
+    <A CLASS="linkplain" HREF="javascript:openQueryForm('oportunities')">[~Oportunidades~]</A>
     <BR>
     <TABLE SUMMARY=Sales Forecast"">
       <TR>
         <TD ROWSPAN="3"><IMG SRC="../images/images/spacer.gif" WIDTH="8" HEIGHT="1"></TD>
-        <TD COLSPAN="2"><A CLASS="linksmall" HREF="../crm/rp_salesforecast.jsp" TARGET="_blank">Sales Forecast</A></TD>
+        <TD COLSPAN="2"><A CLASS="linksmall" HREF="../crm/rp_salesforecast.jsp" TARGET="_blank">[~Previsi&oacute;n de Ventas~]</A></TD>
       </TR>
       <TR>
-        <TD><A CLASS="linksmall" HREF="#" onclick="openExcelSheet('won')">Won</A></TD>
+        <TD><A CLASS="linksmall" HREF="#" onclick="openExcelSheet('won')">[~Ganadas~]</A></TD>
         <TD>
-          <FONT CLASS="textsmall">&nbsp;from&nbsp;</FONT><INPUT TYPE="text" NAME="dt_won" CLASS="combomini" SIZE="12" MAXLENGTH="10">
-          <FONT CLASS="textsmall">&nbsp;</FONT><A HREF="javascript:showCalendar('dt_won')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
+          <FONT CLASS="textsmall">&nbsp;[~desde~]&nbsp;</FONT><INPUT TYPE="text" NAME="dt_won" CLASS="combomini" SIZE="12" MAXLENGTH="10">
+          <FONT CLASS="textsmall">&nbsp;</FONT><A HREF="javascript:showCalendar('dt_won')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>
         </TD>
       </TR>
       <TR>
-        <TD><A CLASS="linksmall" HREF="#" onclick="openExcelSheet('lost')">Lost</A></TD>
+        <TD><A CLASS="linksmall" HREF="#" onclick="openExcelSheet('lost')">[~Perdidas~]</A></TD>
         <TD>
-          <FONT CLASS="textsmall">&nbsp;from&nbsp;</FONT><INPUT TYPE="text" NAME="dt_lost" CLASS="combomini" SIZE="12" MAXLENGTH="10">
-          <FONT CLASS="textsmall">&nbsp;</FONT><A HREF="javascript:showCalendar('dt_lost')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
+          <FONT CLASS="textsmall">&nbsp;[~desde~]&nbsp;</FONT><INPUT TYPE="text" NAME="dt_lost" CLASS="combomini" SIZE="12" MAXLENGTH="10">
+          <FONT CLASS="textsmall">&nbsp;</FONT><A HREF="javascript:showCalendar('dt_lost')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>
         </TD>
       </TR>
     </TABLE>
@@ -298,7 +297,7 @@
         <TD><A CLASS="linksmall" HREF="#" onclick="callCenterPerformance()">[~Efectividad del telemarketing~]</A></TD>
       </TR>
       <TR>
-        <TD><FONT CLASS="textsmall">from</A>&nbsp;<INPUT TYPE="text" NAME="dt_day1" CLASS="combomini" SIZE="12" MAXLENGTH="10">&nbsp;&nbsp;&nbsp;until&nbsp;<INPUT TYPE="text" NAME="dt_dayn" CLASS="combomini" SIZE="12" MAXLENGTH="10">&nbsp;<A HREF="javascript:showCalendar('dt_dayn')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A></TD>
+        <TD><FONT CLASS="textsmall">[~desde~]</A>&nbsp;<INPUT TYPE="text" NAME="dt_day1" CLASS="combomini" SIZE="12" MAXLENGTH="10">&nbsp;&nbsp;&nbsp;[~hasta~]&nbsp;<INPUT TYPE="text" NAME="dt_dayn" CLASS="combomini" SIZE="12" MAXLENGTH="10" VALUE="<%=sToday%>">&nbsp;<A HREF="javascript:showCalendar('dt_dayn')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A></TD>
       </TR>
 <% if ((iAppMask & (1<<MarketingTools))!=0 && iCampaigns>0) { %>
       <TR>
@@ -311,36 +310,36 @@
 <% } %>
 
 <% if ((iAppMask & (1<<ProjectManager))!=0) { %>
-    <FONT CLASS="textplain"><B>Project Management</B></FONT>
+    <FONT CLASS="textplain"><B>[~Gesti&oacute;n de Proyectos~]</B></FONT>
     <BR>
-    <A CLASS="linkplain" HREF="javascript:openQueryForm('duties')">Duties</A>
+    <A CLASS="linkplain" HREF="javascript:openQueryForm('duties')">[~Tareas~]</A>
     <BR>
     <TABLE SUMMARY="Duties by person">
       <TR>
         <TD ROWSPAN="2"><IMG SRC="../images/images/spacer.gif" WIDTH="8" HEIGHT="1"></TD>
-        <TD><A CLASS="linksmall" HREF="#" onclick="dutiesByPerson()">Duties by person</A></TD>
+        <TD><A CLASS="linksmall" HREF="#" onclick="dutiesByPerson()">[~Tareas por persona~]</A></TD>
       </TR>
       <TR>
-        <TD><FONT CLASS="textsmall">from</A>&nbsp;<INPUT TYPE="text" NAME="dt_start" CLASS="combomini" SIZE="12" MAXLENGTH="10">&nbsp;&nbsp;&nbsp;until&nbsp;<INPUT TYPE="text" NAME="dt_end" CLASS="combomini" SIZE="12" MAXLENGTH="10">&nbsp;<A HREF="javascript:showCalendar('dt_end')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A></TD>
+        <TD><FONT CLASS="textsmall">[~desde~]</A>&nbsp;<INPUT TYPE="text" NAME="dt_start" CLASS="combomini" SIZE="12" MAXLENGTH="10">&nbsp;&nbsp;&nbsp;[~hasta~]&nbsp;<INPUT TYPE="text" NAME="dt_end" CLASS="combomini" SIZE="12" MAXLENGTH="10">&nbsp;<A HREF="javascript:showCalendar('dt_end')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A></TD>
       </TR>
     </TABLE>
-    <A CLASS="linkplain" HREF="javascript:openQueryForm('bugs')">Incidents</A>
+    <A CLASS="linkplain" HREF="javascript:openQueryForm('bugs')">[~Incidencias~]</A>
     <BR>
-    <A CLASS="linkplain" HREF="javascript:openQueryForm('duties')">Costs</A>
+    <A CLASS="linkplain" HREF="javascript:openQueryForm('duties')">[~Costes~]</A>
     <BR>
     <TABLE>
       <TR>
         <TD ROWSPAN="4"><IMG SRC="../images/images/spacer.gif" WIDTH="8" HEIGHT="1"></TD>
-        <TD><A CLASS="linksmall" HREF="#" onclick="costsByPerson()">Costs by person</A>&nbsp;&nbsp;&nbsp;&nbsp;<A CLASS="linksmall" HREF="#" onclick="costsByProject()">Costs by project</A></TD>
+        <TD><A CLASS="linksmall" HREF="#" onclick="costsByPerson()">[~Costes por Persona~]</A>&nbsp;&nbsp;&nbsp;&nbsp;<A CLASS="linksmall" HREF="#" onclick="costsByProject()">[~Costes por Proyecto~]</A></TD>
       </TR>
       <TR>
-        <TD><FONT CLASS="textsmall">from</A>&nbsp;<INPUT TYPE="text" NAME="dt_from" CLASS="combomini" SIZE="12" MAXLENGTH="10">&nbsp;&nbsp;&nbsp;until&nbsp;<INPUT TYPE="text" NAME="dt_to" CLASS="combomini" SIZE="12" MAXLENGTH="10">&nbsp;<A HREF="javascript:showCalendar('dt_to')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A></TD>
+        <TD><FONT CLASS="textsmall">[~desde~]</A>&nbsp;<INPUT TYPE="text" NAME="dt_from" CLASS="combomini" SIZE="12" MAXLENGTH="10">&nbsp;&nbsp;&nbsp;[~hasta~]&nbsp;<INPUT TYPE="text" NAME="dt_to" CLASS="combomini" SIZE="12" MAXLENGTH="10">&nbsp;<A HREF="javascript:showCalendar('dt_to')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A></TD>
       </TR>
       <TR>
-        <TD><FONT CLASS="textsmall">Project&nbsp;<SELECT CLASS="combomini" NAME="sel_project"><OPTION VALUE=""></OPTION><% for (int p=0; p<iRootPrjs; p++) out.write("<OPTION VALUE=\""+oRootPrjs.getString(0,p)+"\">"+oRootPrjs.getString(1,p)+"</OPTION>"); %></SELECT></TD>
+        <TD><FONT CLASS="textsmall">[~Proyecto~]&nbsp;<SELECT CLASS="combomini" NAME="sel_project"><OPTION VALUE=""></OPTION><% for (int p=0; p<iRootPrjs; p++) out.write("<OPTION VALUE=\""+oRootPrjs.getString(0,p)+"\">"+oRootPrjs.getString(1,p)+"</OPTION>"); %></SELECT></TD>
       </TR>
       <TR>
-        <TD><FONT CLASS="textsmall">Show as&nbsp;<INPUT NAME="showas" TYPE="radio" VALUE="XLS" CHECKED>&nbsp;Excel&nbsp;&nbsp;&nbsp;&nbsp;<INPUT NAME="showas" TYPE="radio" VALUE="CSV">&nbsp;Delimited text</FONT></TD>
+        <TD><FONT CLASS="textsmall">[~Mostrar como~]&nbsp;<INPUT NAME="showas" TYPE="radio" VALUE="XLS" CHECKED>&nbsp;Excel&nbsp;&nbsp;&nbsp;&nbsp;<INPUT NAME="showas" TYPE="radio" VALUE="CSV">&nbsp;[~Texto delimitado~]</FONT></TD>
       </TR>
     </TABLE>
     <BR>
@@ -348,19 +347,19 @@
 <% } %>
 
 <% if ((iAppMask & (1<<CollaborativeTools))!=0) { %>
-    <FONT CLASS="textplain"><B>Collaborative Tools</B></FONT>
+    <FONT CLASS="textplain"><B>[~Herramientas Colaborativas~]</B></FONT>
     <BR>
-    <A CLASS="linkplain" HREF="javascript:openQueryForm('fellows')">Employees</A>
+    <A CLASS="linkplain" HREF="javascript:openQueryForm('fellows')">[~Compa&ntilde;eros~]</A>
     <BR>
     <HR>
 <% } %>
 
 <% if ((iAppMask & (1<<Shop))!=0) { %>
-    <FONT CLASS="textplain"><B>Shop</B></FONT>
+    <FONT CLASS="textplain"><B>[~Tienda~]</B></FONT>
     <BR>
-    <A CLASS="linkplain" HREF="javascript:openQueryForm('items')">Products</A>
+    <A CLASS="linkplain" HREF="javascript:openQueryForm('items')">[~Productos~]</A>
     <BR>
-    <A CLASS="linkplain" HREF="javascript:openQueryForm('orders')">Orders</A>
+    <A CLASS="linkplain" HREF="javascript:openQueryForm('orders')">[~Pedidos~]</A>
     <BR>    
     <HR>
 <% } %>

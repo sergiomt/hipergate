@@ -83,16 +83,16 @@
     oConn = null;
     
     if (1==iErrorLevel)
-      response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?resume=_back&title=Duplicated Entry&desc=Another entry with the same value already exists"));
+      response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?resume=_back&title=[~Dato duplicado~]&desc=[~Ya existe otro registro con el mismo valor que intento insertar~]"));
     else if (2==iErrorLevel)
-      response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?resume=_back&title=Duplicated Entry&desc=Another entry with the same description already exists"));    
+      response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?resume=_back&title=[~Dato duplicado~]&desc=[~Ya existe otro registro con la misma descripcion que intento insertar~]"));    
   }
   catch (SQLException e) {
     if (oConn!=null)
       if (!oConn.isClosed())
         oConn.close("lookup_store1");
     oConn = null;
-    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?resume=_back&title=Database Access Error&desc=" + e.getLocalizedMessage()));
+    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?resume=_back&title=[~Error de Acceso a la Base de Datos~]&desc=" + e.getLocalizedMessage()));
     return;
   }
   

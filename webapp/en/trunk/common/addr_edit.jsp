@@ -148,7 +148,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML LANG="<%=sLanguage.toUpperCase()%>">
 <HEAD>
-  <TITLE>hipergate :: Edit Address</TITLE>
+  <TITLE>hipergate :: [~Editar Direcci&oacute;n~]</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -174,7 +174,7 @@
             if (frm.sel_country.options.selectedIndex>0)
               window.open("../common/lookup_f.jsp?nm_table=k_addresses_lookup&id_language=" + getUserLanguage() + "&id_section=" + getCombo(frm.sel_country) + "&tp_control=2&nm_control=sel_state&nm_coding=id_state", "lookupaddrstate", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
             else
-              alert ("You must select a Country before choosing a State");
+              alert ("[~Debe seleccionar un Pais antes de poder escoger la Provincia o Estado~]");
             break;
           case 5:
             window.open("../common/lookup_f.jsp?nm_table=k_addresses_lookup&id_language=" + getUserLanguage() + "&id_section=tx_salutation&tp_control=2&nm_control=sel_salutation&nm_coding=tx_salutation", "lookupaddrsalutation", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
@@ -212,14 +212,14 @@
       	var txt;
       	
       	if(frm.tx_remarks.value.length>254) {
-      	  alert("Comments may not be longer than 254 characters");
+      	  alert("[~La longuitud de los comentarios no puede exceder 254 carateres~]");
       	  return false;
       	}
       
       	txt = ltrim(rtrim(frm.tx_email.value));
       	if (txt.length>0)
       	  if (!check_email(txt)) {
-      	    alert ("e-mail address is not valid");
+      	    alert ("[~La direccion de email de contacto no es valida~]");
       	    return false;
           }
       	frm.tx_email.value = txt.toLowerCase();
@@ -255,7 +255,7 @@
       	frm.mn_city.value = frm.mn_city.value.toUpperCase();
       	
       	if (frm.id_country.value=="es" && frm.zipcode.value.length!=0 && frm.zipcode.value.length!=5) {
-      	    alert("Zipcode must have 5 characters");
+      	    alert("[~El código postal debe tener 5 cifras~]");
       	    return false;
       	}
       	
@@ -292,7 +292,7 @@
     </SCRIPT>  
 </HEAD>
 <BODY TOPMARGIN="8" LEFTMARGIN="8" MARGINHEIGHT="8" onload="setCombos()">
-   <TABLE><TR><TD CLASS="striptitle"><FONT CLASS="title1">Edit Address<%=(nm_company.length()>0 ? " of&nbsp;" + nm_company : "")%></FONT></TD></TR></TABLE>
+   <TABLE><TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Editar Direcci&oacute;n~]<%=(nm_company.length()>0 ? "[~ de ~]" + nm_company : "")%></FONT></TD></TR></TABLE>
   <BR>
   <FORM NAME="editaddr" METHOD="post" ACTION="addr_edit_store.jsp" onsubmit="return validate()">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
@@ -312,15 +312,15 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Address Type</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Tipo de Direcci&oacute;n:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="0" BORDER="0"><TR>
                 <TD ALIGN="left">
-                  <A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View address types"></A>&nbsp;<SELECT CLASS="combomini" NAME="sel_location"><OPTION VALUE=""></OPTION><%=sLocationLookUp%></SELECT>          
+                  <A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Tipos de Direcci&oacute;n~]"></A>&nbsp;<SELECT CLASS="combomini" NAME="sel_location"><OPTION VALUE=""></OPTION><%=sLocationLookUp%></SELECT>          
                   <INPUT TYPE="hidden" NAME="tp_location" VALUE="<%=oAddr.getStringNull(DB.tp_location,"")%>">
                 </TD>
                 <TD ALIGN="right">
-                  <FONT CLASS="formplain">Company</FONT>
+                  <FONT CLASS="formplain">[~Compa&ntilde;&iacute;a:~]</FONT>
                   &nbsp;
                   <INPUT TYPE="text" NAME="nm_company" MAXLENGTH="50" SIZE="20" VALUE="<%=nm_company%>">
                 </TD>
@@ -330,14 +330,14 @@
 <% if (sLanguage.equalsIgnoreCase("es") || sLanguage.equalsIgnoreCase("it")) { %>
           <TR>
             <TD ALIGN="right" WIDTH="140">
-              <A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View street types"></A>&nbsp;
+              <A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Tipos de V&iacute;a~]"></A>&nbsp;
               <SELECT CLASS="combomini" NAME="sel_street"><OPTION VALUE=""></OPTION><%=sStreetLookUp%></SELECT>
             </TD>
             <TD ALIGN="left" WIDTH="460">
               <INPUT TYPE="hidden" NAME="tp_street" VALUE="<%=oAddr.getStringNull(DB.tp_street,"")%>">
               <INPUT TYPE="text" NAME="nm_street" MAXLENGTH="100" SIZE="40" VALUE="<%=oAddr.getStringNull(DB.nm_street,"")%>">             
               &nbsp;&nbsp;
-              <FONT CLASS="formplain">Num.</FONT>&nbsp;<INPUT TYPE="text" NAME="nu_street" MAXLENGTH="16" SIZE="4" VALUE="<%=oAddr.getStringNull(DB.nu_street,"")%>">
+              <FONT CLASS="formplain">[~N&uacute;m.~]</FONT>&nbsp;<INPUT TYPE="text" NAME="nu_street" MAXLENGTH="16" SIZE="4" VALUE="<%=oAddr.getStringNull(DB.nu_street,"")%>">
 <% if (!oAddr.isNull(DB.nm_street) && !oAddr.isNull(DB.mn_city)) { %>
 							&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="showGoogleMap()">[~Mapa~]</A>
             </TD>
@@ -348,11 +348,11 @@
 <% } else if (sLanguage.equalsIgnoreCase("fr")) { %>
           <TR>
             <TD ALIGN="right" WIDTH="140">
-	            <FONT CLASS="formplain">Num.</FONT>&nbsp;
+	            <FONT CLASS="formplain">[~N&uacute;m.~]</FONT>&nbsp;
             </TD>
             <TD ALIGN="left" WIDTH="460">
               <INPUT TYPE="hidden" NAME="tp_street" VALUE="<%=oAddr.getStringNull(DB.tp_street,"")%>">
-              <A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View street types"></A>              
+              <A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Tipos de V&iacute;a~]"></A>              
               <INPUT TYPE="text" NAME="nu_street" MAXLENGTH="16" SIZE="4" VALUE="<%=oAddr.getStringNull(DB.nu_street,"")%>">
               <SELECT CLASS="combomini" NAME="sel_street"><OPTION VALUE=""></OPTION><%=sStreetLookUp%></SELECT>
               <INPUT TYPE="text" NAME="nm_street" MAXLENGTH="100" SIZE="40" VALUE="<%=oAddr.getStringNull(DB.nm_street,"")%>">
@@ -364,14 +364,14 @@
 <% } else { %>
           <TR>
             <TD ALIGN="right" WIDTH="140">
-	            <FONT CLASS="formplain">Num.</FONT>&nbsp;
+	            <FONT CLASS="formplain">[~N&uacute;m.~]</FONT>&nbsp;
             </TD>
             <TD ALIGN="left" WIDTH="460">
               <INPUT TYPE="text" NAME="nu_street" MAXLENGTH="16" SIZE="4" VALUE="<%=oAddr.getStringNull(DB.nu_street,"")%>">
               <INPUT TYPE="text" NAME="nm_street" MAXLENGTH="100" SIZE="40" VALUE="<%=oAddr.getStringNull(DB.nm_street,"")%>">
               <INPUT TYPE="hidden" NAME="tp_street" VALUE="<%=oAddr.getStringNull(DB.tp_street,"")%>">
               <SELECT CLASS="combomini" NAME="sel_street"><OPTION VALUE=""></OPTION><%=sStreetLookUp%></SELECT>
-              <A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View street types"></A>              
+              <A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Tipos de V&iacute;a~]"></A>              
 <% if (!oAddr.isNull(DB.nm_street) && !oAddr.isNull(DB.mn_city)) { %>
 							&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="showGoogleMap()">[~Mapa~]</A>
             </TD>
@@ -381,16 +381,16 @@
           </TR>
 <% } %>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Flat</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Esc/Piso:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <INPUT TYPE="text" NAME="tx_addr1" MAXLENGTH="100" SIZE="10" VALUE="<%=oAddr.getStringNull(DB.tx_addr1,"")%>">
               &nbsp;&nbsp;
-              <FONT CLASS="formplain">Rest:</FONT>&nbsp;
+              <FONT CLASS="formplain">[~Resto:~]</FONT>&nbsp;
               <INPUT TYPE="text" NAME="tx_addr2" MAXLENGTH="100" SIZE="32" VALUE="<%=oAddr.getStringNull(DB.tx_addr2,"")%>">              
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Country:</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Pais:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
 	            <SELECT CLASS="combomini" NAME="sel_country" onchange="loadstates()"><OPTION VALUE=""></OPTION><%=sCountriesLookUp%></SELECT>
               <INPUT TYPE="hidden" NAME="id_country" VALUE="<%=oAddr.getStringNull(DB.id_country,"").trim()%>">
@@ -398,106 +398,106 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">State/Region:</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Provincia/Estado:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
-              <A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View states"></A>&nbsp;<SELECT CLASS="combomini" NAME="sel_state"></SELECT>
+              <A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver provincias~]"></A>&nbsp;<SELECT CLASS="combomini" NAME="sel_state"></SELECT>
               <INPUT TYPE="hidden" NAME="id_state" MAXLENGTH="16" VALUE="<%=oAddr.getStringNull(DB.id_state,"")%>">
               <INPUT TYPE="hidden" NAME="nm_state" MAXLENGTH="30" VALUE="<%=oAddr.getStringNull(DB.nm_state,"")%>">
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">City:</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Ciudad:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <INPUT TYPE="text" NAME="mn_city" STYLE="text-transform:uppercase" MAXLENGTH="50" SIZE="30" VALUE="<%=oAddr.getStringNull(DB.mn_city,"")%>">
               &nbsp;&nbsp;
-              <FONT CLASS="formplain">Zipcode:</FONT>
+              <FONT CLASS="formplain">[~C&oacute;d Postal:~]</FONT>
               &nbsp;
               <INPUT TYPE="text" NAME="zipcode" MAXLENGTH="30" SIZE="5" VALUE="<%=oAddr.getStringNull(DB.zipcode,"")%>">
             </TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="140">
-              <FONT CLASS="formplain">Telephones</FONT>
+              <FONT CLASS="formplain">[~Tel&eacute;fonos:~]</FONT>
             </TD>
             <TD ALIGN="left" WIDTH="460">
               <TABLE CLASS="formback">
                 <TR>
-                  <TD><FONT CLASS="textsmall">Main</FONT></TD>
+                  <TD><FONT CLASS="textsmall">[~Centralita~]</FONT></TD>
                   <TD><INPUT TYPE="text" NAME="work_phone" MAXLENGTH="16" SIZE="10" VALUE="<%=oAddr.getStringNull(DB.work_phone,"")%>"></TD>
                   <TD>&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-                  <TD><FONT CLASS="textsmall">Direct</FONT></TD>
+                  <TD><FONT CLASS="textsmall">[~Directo~]</FONT></TD>
                   <TD><INPUT TYPE="text" NAME="direct_phone" MAXLENGTH="16" SIZE="10" VALUE="<%=oAddr.getStringNull(DB.direct_phone,"")%>"></TD>
                 </TR>
                 <TR>
-                  <TD><FONT CLASS="textsmall">Personnel</FONT></TD>
+                  <TD><FONT CLASS="textsmall">[~Personal~]</FONT></TD>
                   <TD><INPUT TYPE="text" NAME="home_phone" MAXLENGTH="16" SIZE="10" VALUE="<%=oAddr.getStringNull(DB.home_phone,"")%>"></TD>              
                   <TD>&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-                  <TD><FONT CLASS="textsmall">Mobile</FONT></TD>
+                  <TD><FONT CLASS="textsmall">[~M&oacute;vil~]</FONT></TD>
                   <TD><INPUT TYPE="text" NAME="mov_phone" MAXLENGTH="16" SIZE="10" VALUE="<%=oAddr.getStringNull(DB.mov_phone,"")%>"></TD>
                   <TD>&nbsp;&nbsp;&nbsp;&nbsp;</TD>
                 </TR>
                 <TR>                
-                  <TD><FONT CLASS="textsmall">Fax</FONT></TD>
+                  <TD><FONT CLASS="textsmall">[~Fax~]</FONT></TD>
                   <TD><INPUT TYPE="text" NAME="fax_phone" MAXLENGTH="16" SIZE="10" VALUE="<%=oAddr.getStringNull(DB.fax_phone,"")%>"></TD>
                   <TD>&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-                  <TD><FONT CLASS="textsmall">Other</FONT></TD>
+                  <TD><FONT CLASS="textsmall">[~Otro~]</FONT></TD>
                   <TD><INPUT TYPE="text" NAME="other_phone" MAXLENGTH="16" SIZE="10" VALUE="<%=oAddr.getStringNull(DB.other_phone,"")%>"></TD>
                 </TR>
               </TABLE>
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">e-mail:</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~e-mail:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="460"><INPUT TYPE="text" NAME="tx_email" STYLE="text-transform:lowercase" MAXLENGTH="100" SIZE="42" VALUE="<%=oAddr.getStringNull(DB.tx_email,"")%>">
 <% 	    if (!oAddr.isNull(DB.tx_email))
-                 out.write ("            &nbsp;<A HREF=\"mailto:" + oAddr.getString(DB.tx_email) + "\" TITLE=\"Send e-mail\"><IMG SRC=\"../images/images/mailto16x16.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"Send e-mail\"></A>");
+                 out.write ("            &nbsp;<A HREF=\"mailto:" + oAddr.getString(DB.tx_email) + "\" TITLE=\"[~Enviar e-mail~]\"><IMG SRC=\"../images/images/mailto16x16.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"[~Enviar e-mail~]\"></A>");
 %>
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">URL:</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~URL:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="460"><INPUT TYPE="text" NAME="url_addr" MAXLENGTH="254" SIZE="42" VALUE="<%=oAddr.getStringNull(DB.url_addr,"")%>">
 <% 	    if (!oAddr.isNull(DB.url_addr)) {
 	      String sURL = oAddr.getString(DB.url_addr).toLowerCase();
 	      if (sURL.startsWith("http:") || sURL.startsWith("https:"))
-                 out.write ("            &nbsp;<A HREF=\"" + oAddr.getString(DB.url_addr) + "\" TARGET=\"_blank\" TITLE=\"Browse web site in new window\"><IMG SRC=\"../images/images/navigate16x16.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"Browse web site in new window\"></A>");
+                 out.write ("            &nbsp;<A HREF=\"" + oAddr.getString(DB.url_addr) + "\" TARGET=\"_blank\" TITLE=\"[~Ver sitio web en ventana nueva~]\"><IMG SRC=\"../images/images/navigate16x16.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"[~Ver sitio web en ventana nueva~]\"></A>");
 	      else
-                 out.write ("            &nbsp;<A HREF=\"http://" + oAddr.getString(DB.url_addr) + "\" TARGET=\"_blank\" TITLE=\"Browse web site in new window\"><IMG SRC=\"../images/images/navigate16x16.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"Browse web site in new window\"></A>");	      
+                 out.write ("            &nbsp;<A HREF=\"http://" + oAddr.getString(DB.url_addr) + "\" TARGET=\"_blank\" TITLE=\"[~Ver sitio web en ventana nueva~]\"><IMG SRC=\"../images/images/navigate16x16.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"[~Ver sitio web en ventana nueva~]\"></A>");	      
 	    }
 %>
             
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Contact Person:</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Persona Contacto:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
-              <A HREF="javascript:lookup(5)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Salutations"></A>&nbsp;
+              <A HREF="javascript:lookup(5)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Saludos~]"></A>&nbsp;
               <SELECT CLASS="combomini" NAME="sel_salutation"><OPTION VALUE=""></OPTION><%=sSalutationLookUp%></SELECT>&nbsp;
               <INPUT TYPE="hidden" NAME="tx_salutation" VALUE="<%=oAddr.getStringNull(DB.tx_salutation,"")%>">
               <INPUT TYPE="text" NAME="contact_person" MAXLENGTH="254" SIZE="32" VALUE="<%=oAddr.getStringNull(DB.contact_person,"")%>">
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">e-mail Contact:</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~e-mail Contacto:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <INPUT TYPE="text" NAME="tx_email_alt" STYLE="text-tansform:lowercase" MAXLENGTH="100" SIZE="42" VALUE="<%=oAddr.getStringNull("tx_email_alt","")%>">
 <% 	    if (!oAddr.isNull("tx_email_alt"))
-                 out.write ("            &nbsp;<A HREF=\"mailto:" + oAddr.getString("tx_email_alt") + "\" TITLE=\"Send e-mail\"><IMG SRC=\"../images/images/mailto16x16.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"Enviar e-mail\"></A>");
+                 out.write ("            &nbsp;<A HREF=\"mailto:" + oAddr.getString("tx_email_alt") + "\" TITLE=\"[~Enviar e-mail~]\"><IMG SRC=\"../images/images/mailto16x16.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"Enviar e-mail\"></A>");
 %>
             </TD>
           </TR>          
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Comments:</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Comentarios:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="460"><TEXTAREA NAME="tx_remarks" ROWS="2" COLS="40"><%=oAddr.getStringNull(DB.tx_remarks,"")%></TEXTAREA></TD>
           </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('Your credential level as Guest does not allow you to perform this action')">&nbsp;&nbsp;&nbsp;
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">&nbsp;&nbsp;&nbsp;
 <% } else { %>
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
 <% } %>
-              <INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.parent.close()">
+              <INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.parent.close()">
     	      <BR><BR>
     	    </TD>	            
         </TABLE>

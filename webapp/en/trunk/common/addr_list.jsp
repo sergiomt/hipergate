@@ -125,7 +125,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: Address Listing</TITLE>
+  <TITLE>hipergate :: [~Lista de Direcciones~]</TITLE>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -159,7 +159,7 @@
 	  var frm = document.forms[0];
 	  var chi = frm.checkeditems;
 	  	  
-	  if (window.confirm("Are you sure you want to delete selected addresses?")) {
+	  if (window.confirm("[~¿Está seguro de que desea eliminar las direcciones seleccionadas?~]")) {
 	  	  
 	    chi.value = "";	  	  
 	    frm.action = "addr_edit_delete.jsp";
@@ -193,13 +193,13 @@
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8">
   <FORM METHOD="post">
   <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Actualizar~]"> [~Actualizar~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="[~Imprimir~]"> [~Imprimir~]</SPAN>
   </DIV></DIV>
       <TABLE WIDTH="95%">
         <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4"></TD></TR>
-        <TR><TD CLASS="striptitle"><FONT CLASS="title1">Address Listing&nbsp;<%=(null!=request.getParameter("nm_company") ? " of&nbsp;" + request.getParameter("nm_company") : "")%></FONT></TD></TR>
+        <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Lista de Direcciones ~]<%=(null!=request.getParameter("nm_company") ? "[~ de ~]" + request.getParameter("nm_company") : "")%></FONT></TD></TR>
       </TABLE>
       <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
       <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
@@ -208,35 +208,35 @@
       <TABLE CELLSPACING="2" CELLPADDING="2">
         <TR><TD COLSPAN="7" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
         <TR>
-          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
+          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nueva~]"></TD>
           <TD VALIGN="middle">
 <% if (bIsGuest) { %>
-            <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New</A>
+            <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Nueva~]</A>
 <% } else { %>
-            <A HREF="#" onclick="createAddress()" CLASS="linkplain">New</A>
+            <A HREF="#" onclick="createAddress()" CLASS="linkplain">[~Nueva~]</A>
 <% } %>
           </TD>
-          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
+          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar~]"></TD>
           <TD>
 <% if (bIsGuest) { %>
-            <A HREF="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">Delete</A>
+            <A HREF="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Eliminar~]</A>
 <% } else { %>
-            <A HREF="javascript:deleteAddresses()" CLASS="linkplain">Delete</A>
+            <A HREF="javascript:deleteAddresses()" CLASS="linkplain">[~Eliminar~]</A>
 <% } %>
           </TD>
-          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Search"></TD>
+          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Buscar~]"></TD>
           <TD><INPUT TYPE="text" NAME="find" MAXLENGTH="50"></TD>
-          <TD><A HREF="#" onclick="findit(document.forms[0].find.value)" CLASS="linkplain">Search</A></TD>
+          <TD><A HREF="#" onclick="findit(document.forms[0].find.value)" CLASS="linkplain">[~Buscar~]</A></TD>
          </TR>
         <TR><TD COLSPAN="7" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>      
       </TABLE>
       <TABLE CELLSPACING="1" CELLPADDING="0">
         <TR>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Type</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>&nbsp;Location</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>&nbsp;City</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>&nbsp;e-mail</B></TD>                    
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>&nbsp;Telephone</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Tipo~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>&nbsp;[~Ubicaci&oacute;n~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>&nbsp;[~Ciudad~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>&nbsp;[~e-mail~]</B></TD>                    
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>&nbsp;[~Tel&eacute;fono~]</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp</TD>
         </TR>
 	<%
@@ -255,7 +255,7 @@
             sAddrSt = oAddresses.getStringNull(2,i,"* N/A *");
             sAddrCt = oAddresses.getStringNull(3,i,"");
             sAddrEm = oAddresses.getStringNull(4,i,"");
-            if (sAddrEm.length()>0) sAddrEm = "<A HREF=\"mailto:" + sAddrEm + "\" TITLE=\"Send Message\">" + sAddrEm + "</A>";
+            if (sAddrEm.length()>0) sAddrEm = "<A HREF=\"mailto:" + sAddrEm + "\" TITLE=\"[~Enviar mensaje~]\">" + sAddrEm + "</A>";
             oAddrPh = null;
             for (int c=5; c<=9 && null==oAddrPh; c++)
               oAddrPh = oAddresses.get(c,i);
@@ -263,7 +263,7 @@
              
             out.write ("<TR HEIGHT=\"14\">");
             out.write ("<TD CLASS=\"tabletd\">&nbsp;" + sAddrTp + "</TD>");
-            out.write ("<TD CLASS=\"tabletd\">&nbsp;<A HREF=\"#\" onclick=\"modifyAddress('" + sAddrId + "','"+Gadgets.URLEncode(sAddrCm)+"')\" TITLE=\"Edit this address\">" + sAddrSt + "</A></TD>");
+            out.write ("<TD CLASS=\"tabletd\">&nbsp;<A HREF=\"#\" onclick=\"modifyAddress('" + sAddrId + "','"+Gadgets.URLEncode(sAddrCm)+"')\" TITLE=\"[~Editar esta Direcci&oacute;n~]\">" + sAddrSt + "</A></TD>");
             out.write ("<TD CLASS=\"tabletd\">&nbsp;" + sAddrCt + "</TD>");
             out.write ("<TD CLASS=\"tabletd\">&nbsp;" + sAddrEm + "</TD>");
             out.write ("<TD CLASS=\"tabletd\">&nbsp;" + (oAddrPh==null ? "" : oAddrPh) + "</TD>");
@@ -273,16 +273,16 @@
 	%>          	  
       </TABLE>
       <BR>
-      <CENTER><INPUT TYPE="button" CLASS="closebutton" VALUE="Close Window" onClick="self.close()"></CENTER>      
+      <CENTER><INPUT TYPE="button" CLASS="closebutton" VALUE="[~Cerrar Ventana~]" onClick="self.close()"></CENTER>      
     </FORM>
     <%
     // Pintar los enlaces de siguiente y anterior
     
     if (iSkip>0) // Si iSkip>0 entonces hay registros anteriores
-      out.write("<A HREF=\"addr_list.jsp?linktable=" + sLinkTable + "&linkfield=" + sLinkField + "&linkvalue=" + sLinkValue + "&maxrows=" + String.valueOf(iMaxRows) + "&skip=" + String.valueOf(iSkip-iMaxRows)+ "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;" + String.valueOf(iMaxRows) + "&nbsp;Previous " + "</A>&nbsp;&nbsp;&nbsp;");
+      out.write("<A HREF=\"addr_list.jsp?linktable=" + sLinkTable + "&linkfield=" + sLinkField + "&linkvalue=" + sLinkValue + "&maxrows=" + String.valueOf(iMaxRows) + "&skip=" + String.valueOf(iSkip-iMaxRows)+ "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;" + String.valueOf(iMaxRows) + "&nbsp;[~Anteriores~] " + "</A>&nbsp;&nbsp;&nbsp;");
     
     if (!oAddresses.eof())
-      out.write("<A HREF=\"addr_list.jsp?linktable=" + sLinkTable + "&linkfield=" + sLinkField + "&linkvalue=" + sLinkValue + "&maxrows=" + String.valueOf(iMaxRows) + "&skip=" + String.valueOf(iSkip+iMaxRows)+ "\" CLASS=\"linkplain\">Next " + String.valueOf(iMaxRows) + "&nbsp;&gt;&gt;</A>");
+      out.write("<A HREF=\"addr_list.jsp?linktable=" + sLinkTable + "&linkfield=" + sLinkField + "&linkvalue=" + sLinkValue + "&maxrows=" + String.valueOf(iMaxRows) + "&skip=" + String.valueOf(iSkip+iMaxRows)+ "\" CLASS=\"linkplain\">[~Siguientes~] " + String.valueOf(iMaxRows) + "&nbsp;&gt;&gt;</A>");
     %>
 </BODY>
 </HTML>

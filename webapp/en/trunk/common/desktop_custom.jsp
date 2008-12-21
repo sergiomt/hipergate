@@ -75,7 +75,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>Customize this page</TITLE>
+  <TITLE>[~Personalizar p&aacute;gina de inicio~]</TITLE>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
@@ -97,7 +97,7 @@
         var left = new Array (<% for (int n=0,l=0;l<iPortlets;l++) if (oPortlets.getString(1,l).equals("left")) { out.write((n>0 ? ",\"" : "\"")+oPortlets.getString(0,l)+"\""); n++; } %>);
         var right = new Array (<% for (int n=0,l=0;l<iPortlets;l++) if (oPortlets.getString(1,l).equals("right")) { out.write((n>0 ? ",\"" : "\"")+oPortlets.getString(0,l)+"\""); n++; } %>);         
 	var portlets = new Array("com.knowgate.http.portlets.CalendarTab","com.knowgate.http.portlets.CallsTab","com.knowgate.http.portlets.MyIncidencesTab","com.knowgate.http.portlets.OportunitiesTab","com.knowgate.http.portlets.RecentContactsTab","com.knowgate.http.portlets.RecentPostsTab");
-	var labels =  new Array("Calendar","Calls","Incidents","Oportunities","Contacts","Forums");
+	var labels =  new Array("[~Calendario~]","[~Llamadas~]","[~Incidencias~]","[~Oportunidades~]","[~Contactos~]","[~Foros~]");
 
         var frm = document.forms[0];
 
@@ -161,7 +161,7 @@
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()">
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Customize this page</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Personalizar p&aacute;gina de inicio~]</FONT></TD></TR>
   </TABLE>
   <FORM METHOD="post" ACTION="desktop_store.jsp" onsubmit="return validate()">
     <INPUT TYPE="hidden" NAME="left" VALUE=""><INPUT TYPE="hidden" NAME="right" VALUE="">
@@ -169,24 +169,24 @@
       <TR><TD>
         <TABLE CELLSPACING="4" CELLPADDING="4" WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="center" ><FONT CLASS="formstrong">Left Column</FONT></TD>
+            <TD ALIGN="center" ><FONT CLASS="formstrong">[~Columna Izquierda~]</FONT></TD>
 	    <TD></TD>
-            <TD ALIGN="center"><FONT CLASS="formstrong">Available Items</FONT></TD>
+            <TD ALIGN="center"><FONT CLASS="formstrong">[~Pesta&ntilde;as Disponibles~]</FONT></TD>
 	    <TD></TD>
-            <TD ALIGN="center"><FONT CLASS="formstrong">Right Colum</FONT></TD>
+            <TD ALIGN="center"><FONT CLASS="formstrong">[~Columna Derecha~]</FONT></TD>
           </TR>
           <TR>
             <TD ALIGN="center"><SELECT NAME="sel_left" MULTIPLE></SELECT></TD>
             <TD ALIGN="center" VALIGN="middle">
-              <INPUT TYPE="button" VALUE="<< Add" STYLE="width:70" onclick="add(document.forms[0].sel_left)">
+              <INPUT TYPE="button" VALUE="<< [~Agregar~]" STYLE="width:70" onclick="add(document.forms[0].sel_left)">
               <BR><BR>
-              <INPUT TYPE="button" VALUE="Remove >>" STYLE="width:70" onclick="remove(document.forms[0].sel_left)">
+              <INPUT TYPE="button" VALUE="[~Eliminar~] >>" STYLE="width:70" onclick="remove(document.forms[0].sel_left)">
             </TD>
             <TD ALIGN="center"><SELECT NAME="sel_all" MULTIPLE></TD>
             <TD ALIGN="center" VALIGN="middle">
-              <INPUT TYPE="button" VALUE="Add >>" STYLE="width:80" onclick="add(document.forms[0].sel_right)">
+              <INPUT TYPE="button" VALUE="[~Agregar~] >>" STYLE="width:80" onclick="add(document.forms[0].sel_right)">
               <BR><BR>
-              <INPUT TYPE="button" VALUE="<< Remove" STYLE="width:80" onclick="remove(document.forms[0].sel_right)">
+              <INPUT TYPE="button" VALUE="<< [~Eliminar~]" STYLE="width:80" onclick="remove(document.forms[0].sel_right)">
             </TD>
             <TD ALIGN="center"><SELECT NAME="sel_right" MULTIPLE></SELECT></TD>
           </TR>
@@ -195,8 +195,8 @@
           </TR>
           <TR>
     	    <TD COLSPAN="5" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:70" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:70" TITLE="ALT+c" onclick="window.document.location.href='desktop.jsp'">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:70" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:70" TITLE="ALT+c" onclick="window.document.location.href='desktop.jsp'">
     	      <BR><BR>
     	    </TD>
     	  </TR>

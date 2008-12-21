@@ -101,7 +101,7 @@
 %>
 //-->
 </SCRIPT>
-<TITLE>hipergate :: Load addresses</TITLE>
+<TITLE>hipergate :: [~Carga de Direcciones~]</TITLE>
 </HEAD>
 <BODY><%="<!--" + sSQL + "-->\n" + sErrMsg%></BODY>
 </HTML>

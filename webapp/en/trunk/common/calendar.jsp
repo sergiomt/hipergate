@@ -147,7 +147,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
   <HEAD>
-    <TITLE>hipergate :: Calendar</TITLE>
+    <TITLE>hipergate :: [~Calendario~]</TITLE>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
       <!--
@@ -172,9 +172,9 @@
         <!-- inicio del content -->
           <font face="Verdana,Arial" size="1" color="white">
           <center>
-          <a style="color:#ffffff;text-decoration:none" title="Previous Month" href="<%=PrevMonthURL(MyYear,MyMonth,MyCtrl)%>">- &lt;&lt;</a>
-          &nbsp;<b>Date</b>&nbsp;
-          <a style="color:#ffffff;text-decoration:none" title="Next Month" href="<%=NextMonthURL(MyYear,MyMonth,MyCtrl)%>">&gt;&gt; +</a>
+          <a style="color:#ffffff;text-decoration:none" title="[~Mes Anterior~]" href="<%=PrevMonthURL(MyYear,MyMonth,MyCtrl)%>">- &lt;&lt;</a>
+          &nbsp;<b>[~Fecha~]</b>&nbsp;
+          <a style="color:#ffffff;text-decoration:none" title="[~Mes Siguiente~]" href="<%=NextMonthURL(MyYear,MyMonth,MyCtrl)%>">&gt;&gt; +</a>
           </center>
           </font>
           <table border="0" cellpadding="2" cellspacing="0" width="100%">
@@ -221,6 +221,6 @@
         </td>
       </tr>
     </table>
-    <form><center><input type="button" class="closebutton" value="Close" onClick="self.close()"></center></form>
+    <form><center><input type="button" class="closebutton" value="[~Cerrar~]" onClick="self.close()"></center></form>
   </BODY>
 </HTML>

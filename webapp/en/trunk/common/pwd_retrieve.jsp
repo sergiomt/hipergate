@@ -25,13 +25,13 @@
     case (short)0:
 	    break;
     case ACL.CAPTCHA_TIMEOUT:
-      response.sendRedirect (response.encodeRedirectUrl ("pwd_errmsg.jsp?title=Expired key&desc=The graphic key has expired&resume=pwd_request.jsp"));
+      response.sendRedirect (response.encodeRedirectUrl ("pwd_errmsg.jsp?title=[~Clave expirada~]&desc=[~La validez de la clave grafica ha expirado~]&resume=pwd_request.jsp"));
 		  return;
     case ACL.CAPTCHA_MISMATCH:
-      response.sendRedirect (response.encodeRedirectUrl ("pwd_errmsg.jsp?title=Wrong password&desc=The typed graphic key does not match the one shown on screen&resume=pwd_request.jsp"));
+      response.sendRedirect (response.encodeRedirectUrl ("pwd_errmsg.jsp?title=[~Clave erronea~]&desc=[~La la clave grafica introducida no coincide con la mostrada en pantalla~]&resume=pwd_request.jsp"));
 		  return;
 		default:	        
-      response.sendRedirect (response.encodeRedirectUrl ("pwd_errmsg.jsp?title=Error at password&desc=An unexpected error occured whilst validating the graphic key&resume=pwd_request.jsp"));
+      response.sendRedirect (response.encodeRedirectUrl ("pwd_errmsg.jsp?title=[~Error en la clave~]&desc=[~Se produjo un error indeterminado validando la clave grafica~]&resume=pwd_request.jsp"));
 		  return;
   }
 
@@ -59,7 +59,7 @@
   oConn = null;
 
   if (!bCheckChallenge) {
-    response.sendRedirect (response.encodeRedirectUrl ("pwd_errmsg.jsp?title=Wrong answer&desc=The answer to the verification question is not correct&resume=pwd_challenge.jsp"+Gadgets.URLEncode("?captcha_text="+sCaptchaText+"&nickname="+sNickName)));
+    response.sendRedirect (response.encodeRedirectUrl ("pwd_errmsg.jsp?title=[~Respuesta incorrecta~]&desc=[~La respuesta para la frase de verificacion no es correcta~]&resume=pwd_challenge.jsp"+Gadgets.URLEncode("?captcha_text="+sCaptchaText+"&nickname="+sNickName)));
 		return;
   }
   String aRecipients[];
@@ -73,35 +73,35 @@
 
   try {
     oWarnings = SendMail.send(GlobalDBBind.getProperties(), Environment.getTempDir(), null,
-  					    						  "Your password is "+oUser.getStringNull(DB.tx_pwd,""),
-  					    						  "UTF-8", null, "Your password", "noreply@hipergate.com",
+  					    						  "[~Su contraseña de acceso a hipergate es~] "+oUser.getStringNull(DB.tx_pwd,""),
+  					    						  "UTF-8", null, "[~Su contraseña de acceso a hipergate~]", "noreply@hipergate.com",
   					    						  "hipergate", null, aRecipients, null, null, null);
   } catch (Exception xcpt) {
-    response.sendRedirect (response.encodeRedirectUrl ("pwd_errmsg.jsp?title=Failure whilst trying to send password&desc=It was not possible to send you your password "+xcpt.getClass().getName()+" "+xcpt.getMessage()+"&resume=pwd_request.jsp"));
+    response.sendRedirect (response.encodeRedirectUrl ("pwd_errmsg.jsp?title=[~Fallo en el envio~]&desc=[~No fue posible enviarle su contraseña de acceso~] "+xcpt.getClass().getName()+" "+xcpt.getMessage()+"&resume=pwd_request.jsp"));
     return;
   }
 %>
 <HTML>
   <HEAD>
-    <TITLE>Retrieve Password</TITLE>
+    <TITLE>[~Recuperar Contrase&ntilde;a~]</TITLE>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   </HEAD>
 	<BODY TOPMARGIN="8" MARGINHEIGHT="8">
     <TABLE WIDTH="100%">
       <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-      <TR><TD CLASS="striptitle"><FONT CLASS="title1">Retrieve Password</FONT></TD></TR>
+      <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Recuperar Contrase&ntilde;a~]</FONT></TD></TR>
     </TABLE>  
     <TABLE>
       <TR><TD><BR/><BR/></TD></TR>
-      <TR><TD CLASS="textplain">The password has been send to your e-mail</TD></TR>
+      <TR><TD CLASS="textplain">[~La contase&ntilde;a ha sido enviada a su direcci&oacute;n de correo~]</TD></TR>
 <% int nWarns = oWarnings.size();
    for (int w=0; w<nWarns; w++) {
       if (!((String)oWarnings.get(w)).startsWith("OK")) out.write("<TR><TD CLASS=\"textplain\">"+oWarnings.get(w)+"</TD></TR>");
    } // next
 %>   
       <TR><TD><BR/><BR/></TD></TR>
-      <TR><TD align="center"><INPUT TYPE="button" CLASS="closebutton" ACCESSKEY="c" TITLE="ALT+c" VALUE="Close" onclick="window.close()"></TD></TR>
+      <TR><TD align="center"><INPUT TYPE="button" CLASS="closebutton" ACCESSKEY="c" TITLE="ALT+c" VALUE="[~Cerrar~]" onclick="window.close()"></TD></TR>
 	  </TABLE>
   </BODY>
 </HTML>

@@ -30,13 +30,13 @@
     case (short)0:
 	    break;
     case ACL.CAPTCHA_TIMEOUT:
-      response.sendRedirect (response.encodeRedirectUrl ("pwd_errmsg.jsp?title=Expired key&desc=The graphic key has expired&resume=pwd_request.jsp"));
+      response.sendRedirect (response.encodeRedirectUrl ("pwd_errmsg.jsp?title=[~Clave expirada~]&desc=[~La validez de la clave grafica ha expirado~]&resume=pwd_request.jsp"));
 		  return;
     case ACL.CAPTCHA_MISMATCH:
-      response.sendRedirect (response.encodeRedirectUrl ("pwd_errmsg.jsp?title=Wrong password&desc=The typed graphic key does not match the one shown on screen&resume=pwd_request.jsp"));
+      response.sendRedirect (response.encodeRedirectUrl ("pwd_errmsg.jsp?title=[~Clave erronea~]&desc=[~La la clave grafica introducida no coincide con la mostrada en pantalla~]&resume=pwd_request.jsp"));
 		  return;
 		default:	        
-      response.sendRedirect (response.encodeRedirectUrl ("pwd_errmsg.jsp?title=Error at password&desc=An unexpected error occured whilst validating the graphic key&resume=pwd_request.jsp"));
+      response.sendRedirect (response.encodeRedirectUrl ("pwd_errmsg.jsp?title=[~Error en la clave~]&desc=[~Se produjo un error indeterminado validando la clave grafica~]&resume=pwd_request.jsp"));
 		  return;
   }
 
@@ -84,13 +84,13 @@
   oConn = null;
   
   if (!bFound) {
-    response.sendRedirect (response.encodeRedirectUrl ("pwd_errmsg.jsp?title=Usernot found&desc=The specified user was not found at the database&resume=pwd_request.jsp"));
+    response.sendRedirect (response.encodeRedirectUrl ("pwd_errmsg.jsp?title=[~Usuario no encontrado~]&desc=[~El usuario especificado no se encuentra en la base de datos~]&resume=pwd_request.jsp"));
 		return;
   }
 %>
 <HTML>
   <HEAD>
-    <TITLE>Pass phrase</TITLE>
+    <TITLE>[~Frase de verificaci&oacute;n~]</TITLE>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   </HEAD>
@@ -98,7 +98,7 @@
 		<DIV ID="chform" STYLE="visibility:hidden">
     <TABLE WIDTH="100%">
       <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-      <TR><TD CLASS="striptitle"><FONT CLASS="title1">Pass phrase</FONT></TD></TR>
+      <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Frase de verificaci&oacute;n~]</FONT></TD></TR>
     </TABLE>  
 	  <FORM METHOD="post" ACTION="pwd_retrieve.jsp">
 		  <INPUT TYPE="hidden" name="nickname" VALUE="<%=sNickName%>">
@@ -109,9 +109,9 @@
         <TR><TD><INPUT TYPE="text" NAME="tx_reply" MAXLENGTH="100" SIZE="30"></TD></TR>
         <TR>
           <TD>
-			      <INPUT TYPE="submit" CLASS="pushbutton" ACCESSKEY="r" TITLE="ALT+r" VALUE="Retrieve">
+			      <INPUT TYPE="submit" CLASS="pushbutton" ACCESSKEY="r" TITLE="ALT+r" VALUE="[~Recuperar~]">
 			      &nbsp;&nbsp;&nbsp;&nbsp;
-			      <INPUT TYPE="button" CLASS="closebutton" ACCESSKEY="c" TITLE="ALT+c" VALUE="Cancel" onclick="window.close()">
+			      <INPUT TYPE="button" CLASS="closebutton" ACCESSKEY="c" TITLE="ALT+c" VALUE="[~Cancelar~]" onclick="window.close()">
           </TD>
         </TR>
 	    </TABLE>

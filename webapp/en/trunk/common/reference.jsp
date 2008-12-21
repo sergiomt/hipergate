@@ -49,7 +49,7 @@
   String nm_input;
   
   if (null==nm_control) {
-    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Error&desc=No value was set for control field at base form "+nm_table+"("+nm_coding+")&resume=_close"));
+    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Error&desc=[~No se suministro ningun valor para el campo de control en el formulario base~] "+nm_table+"("+nm_coding+")&resume=_close"));
     return;  
   }
 
@@ -59,7 +59,7 @@
     nm_input = nm_control;
   
   if (null==nm_input) {
-    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Error&desc=No value was set for output field at base form "+nm_table+"("+nm_coding+")&resume=_close"));
+    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Error&desc=[~No se suministro ningun valor para el campo de salida en el formulario base~] "+nm_table+"("+nm_coding+")&resume=_close"));
     return;
   }
 %>
@@ -70,7 +70,7 @@
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
-    <TITLE>hipergate :: Reference Listing</TITLE>
+    <TITLE>hipergate :: [~Listado de Referencia~]</TITLE>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
@@ -149,7 +149,7 @@
 			<INPUT TYPE="hidden" NAME="nm_control" VALUE="<%=nm_control%>">
 			<INPUT TYPE="hidden" NAME="nm_coding" VALUE="<%=nm_coding%>">
 			<INPUT TYPE="hidden" NAME="where">
-      <IMG SRC="../images/images/find16.gif">&nbsp;<INPUT TYPE="text" MAXLENGTH="50" NAME="sought" VALUE="<%=tx_sought%>">&nbsp;<A CLASS="linkplain" HREF="#" onclick="findSubstring()">Search</A>
+      <IMG SRC="../images/images/find16.gif">&nbsp;<INPUT TYPE="text" MAXLENGTH="50" NAME="sought" VALUE="<%=tx_sought%>">&nbsp;<A CLASS="linkplain" HREF="#" onclick="findSubstring()">[~Buscar~]</A>
     </FORM>
     <TABLE WIDTH="100%" BORDER="0" CELLSPACING="0" CELLPADDING="0">
 <%  
@@ -205,19 +205,19 @@
   if (iLookup>0) {
     out.write("<BR>");
     if (iSkip>0) // If iSkip>0 then we have prev items
-      out.write("            <A HREF=\"reference.jsp?nm_table=" + nm_table + "&tp_control=" + tp_control + "&nm_control=" + nm_control + "&nm_coding=" + nm_coding + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&where=" + Gadgets.URLEncode(sWhere) + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;<B>Previous</B>" + "</A>&nbsp;&nbsp;&nbsp;");    
+      out.write("            <A HREF=\"reference.jsp?nm_table=" + nm_table + "&tp_control=" + tp_control + "&nm_control=" + nm_control + "&nm_coding=" + nm_coding + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&where=" + Gadgets.URLEncode(sWhere) + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;<B>[~Anteriores~]</B>" + "</A>&nbsp;&nbsp;&nbsp;");    
     if (oLookup.eof()) {
    	  out.write("            <SCRIPT TYPE=\"text/javascript\">eof=true;</SCRIPT>\n");
     } else {
    	  out.write("            <SCRIPT TYPE=\"text/javascript\">eof=false;</SCRIPT>\n");
-      out.write("            <A HREF=\"reference.jsp?nm_table=" + nm_table + "&tp_control=" + tp_control + "&nm_control=" + nm_control + "&nm_coding=" + nm_coding + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&where=" + Gadgets.URLEncode(sWhere) + "\" CLASS=\"linkplain\">&nbsp;<B>Next</B>" + "&nbsp;&nbsp;&gt;&gt;</A>");
+      out.write("            <A HREF=\"reference.jsp?nm_table=" + nm_table + "&tp_control=" + tp_control + "&nm_control=" + nm_control + "&nm_coding=" + nm_coding + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&where=" + Gadgets.URLEncode(sWhere) + "\" CLASS=\"linkplain\">&nbsp;<B>[~Siguientes~]</B>" + "&nbsp;&nbsp;&gt;&gt;</A>");
     }
    } else {
    	 out.write("            <SCRIPT TYPE=\"text/javascript\">eof=true;</SCRIPT>\n");
    }
 %>
     <FORM>
-    <CENTER><INPUT TYPE="button" CLASS="closebutton" onClick="choose('','')" VALUE="Close" ACCESSKEY="ALT+c" TITLE="ALT+c"></CENTER>
+    <CENTER><INPUT TYPE="button" CLASS="closebutton" onClick="choose('','')" VALUE="[~Cerrar~]" ACCESSKEY="ALT+c" TITLE="ALT+c"></CENTER>
     </FORM>
   </BODY>
 </HTML>

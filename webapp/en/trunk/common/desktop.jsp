@@ -58,7 +58,7 @@
     int iDomain = Integer.parseInt(getCookie (request, "domainid", null));
   }
   catch (NumberFormatException nfe) {
-    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Invalid Domain&desc=The session cookie could not be readed please ensure that cookies are enabled at your browser&resume=_back")); 
+    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Dominio Invalido~]&desc=[~No fue posible encontrar la cookie con el identficador de dominio por favor asegurese de que tiene habilitadas las cookies de sesion en su navegador~]&resume=_back")); 
     return;
   }  
   
@@ -95,7 +95,7 @@
 	  if (null!=oMacc) if (oMacc.isNull(DB.incoming_server)) oMacc = null;
   }
   catch (SQLException e) {
-    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=hipergate: Impossible to get connection to database&desc=" + e.getLocalizedMessage() + "&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~hipergate: Imposible obtener la conexion a la base de datos~]&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }
 
   if (null==oConn) return;
@@ -189,7 +189,7 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <META NAME="robots" CONTENT="noindex,nofollow">
-  <TITLE>hipergate :: Main Menu</TITLE>
+  <TITLE>hipergate :: [~Menu principal~]</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
@@ -223,7 +223,7 @@
 
     function createContact() {
 <%    if (bIsGuest) { %>
-        alert("Your credential level as Guest does not allow you to perform this action");
+        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
 <%    } else { %>
       self.open ("../crm/contact_new_f.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>", null, "directories=no,scrollbars=yes,toolbar=no,menubar=no,width=640,height=" + (screen.height<=600 ? "520" : "600"));
 <%    } %>
@@ -233,7 +233,7 @@
 
     function newOportunity() {
 <%    if (bIsGuest) { %>
-        alert("Your credential level as Guest does not allow you to perform this action");
+        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
 <%    } else { %>
 	  self.open ("oportunity_new.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>", "newoportunity", "directories=no,toolbar=no,scrollbars=yes,menubar=no,width=660,height=" + (screen.height<=600 ? "520" : "660"));	  
 <%    } %>
@@ -246,12 +246,12 @@
       var nmc = frm.full_name.value;
 
       if (nmc.length==0) {
-        alert ("Type name or surname of individual to find");
+        alert ("[~Introduzca el nombre o apellidos del Individuo a buscar~]");
         return false;
       }  
       
       if (nmc.indexOf("'")>0 || nmc.indexOf('"')>0 || nmc.indexOf("?")>0 || nmc.indexOf("%")>0 || nmc.indexOf("*")>0 || nmc.indexOf("&")>0 || nmc.indexOf("/")>0) {
-	alert ("Name contains invalid characters");
+	alert ("[~El nombre del Individuo contiene caracteres no válidos~]");
 	return false;
       }
       window.location = "../crm/contact_listing_f.jsp?selected=2&subselected=1&field=tx_name&find=" + escape(nmc);
@@ -261,7 +261,7 @@
 
     function reportBug() {
 <%    if (bIsGuest) { %>
-        alert("Your credential level as Guest does not allow you to perform this action");
+        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
 <%    } else { %>
         self.open("../projtrack/bug_new.jsp",null,"menubar=no,toolbar=no,width=700,height=520");
 <%    } %>
@@ -288,7 +288,7 @@
 <BODY TOPMARGIN="0" MARGINHEIGHT="0">
 <%@ include file="tabmenu.jspf" %>
 <FORM>
-  <TABLE SUMMARY="Page Title Strip"><TR><TD WIDTH="<% out.write(String.valueOf(iTabWidth*iActive)); %>" CLASS="striptitle"><FONT CLASS="title1">Main Page</FONT></TD></TR></TABLE>
+  <TABLE SUMMARY="Page Title Strip"><TR><TD WIDTH="<% out.write(String.valueOf(iTabWidth*iActive)); %>" CLASS="striptitle"><FONT CLASS="title1">[~P&aacute;gina Principal~]</FONT></TD></TR></TABLE>
   <TABLE>
     <TR>
 <% if (bShowPortlets) {
@@ -401,9 +401,9 @@
       </TD>
       <TD WIDTH="20px"></TD>
       <TD VALIGN="top" WIDTH="240px">
-        <FONT SIZE="5" FACE="Arial,Helvetica,sans-serif" COLOR="#EAE5E1"><B><I>Welcome</I></B></FONT>        
+        <FONT SIZE="5" FACE="Arial,Helvetica,sans-serif" COLOR="#EAE5E1"><B><I>[~Bienvenido~]</I></B></FONT>        
         <BR>
-        <FONT FACE="Verdana" SIZE="1" COLOR="#404040">&nbsp;&nbsp;Welcome to hipergate, from the above menu you can navigate  through the different applications of this suite.<BR>On each module you will find a welcome page with search functionalities and quick links to access to the most common tasks of hipergate.<BR></FONT>
+        <FONT FACE="Verdana" SIZE="1" COLOR="#404040">&nbsp;&nbsp;[~Bienvenido a hipergate, desde el men&uacute; superior puedes navegar a trav&eacute;s de las diferentes aplicaciones que componen la suite.~]<BR>[~En cada aplicaci&oacute;n encontrar&aacute;s una p&aacute;gina de entrada de b&uacute;squeda y acceso r&aacute;pido a las tareas comunes y opciones de menu de segundo nivel~] [~que sirven para acceder a cada una de las funcionalidades de la aplicaci&oacute;n.~]<BR></FONT>
 	<BR>
 	<IMG SRC="../images/images/bienvenido_linea.gif" WIDTH="214" HEIGHT="15" BORDER="0">
       </TD>
@@ -414,7 +414,7 @@
     <TR><TD WIDTH="<%=iTabWidth*iActive%>" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
   </TABLE>
 <% if (!id_domain.equals("1024")) { %>  
-  <A HREF="desktop_custom.jsp" CLASS="linkplain">Customize this page</A>
+  <A HREF="desktop_custom.jsp" CLASS="linkplain">[~Personalizar esta p&aacute;gina~]</A>
 <% } %>
   </FORM>
 </BODY>

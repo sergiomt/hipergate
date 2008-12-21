@@ -11,7 +11,7 @@
     <FORM name="hequelform" METHOD="POST" ACTION="hequelexec.jsp" TARGET="hequelresults">
       <TEXTAREA name="cmdline" ROWS="16" COLS="80"></TEXTAREA>
       <BR>
-      <INPUT TYPE="submit" VALUE="Execute">
+      <INPUT TYPE="submit" VALUE="[~Ejecutar~]">
     </FORM>
   </BODY>
 </HTML>

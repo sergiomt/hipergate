@@ -112,33 +112,33 @@
       sAddrZp = oAddresses.getStringNull(5,i,"");
       sAddrCt = oAddresses.getStringNull(6,i,"");
       sAddrEm = oAddresses.getStringNull(7,i,"");
-      if (sAddrEm.length()>0) sAddrEm = "<A HREF=\"mailto:" + sAddrEm + "\" TITLE=\"Send message\">" + sAddrEm + "</A>";
+      if (sAddrEm.length()>0) sAddrEm = "<A HREF=\"mailto:" + sAddrEm + "\" TITLE=\"[~Enviar mensaje~]\">" + sAddrEm + "</A>";
 
-      if (null!=sAddrTp) sResult += "Address Type" + sAddrTp + "<BR>";
+      if (null!=sAddrTp) sResult += "[~Tipo de direcci&oacute;n ~]" + sAddrTp + "<BR>";
       if (null!=sAddrTv) sResult += sAddrTv + " ";
       sResult += Gadgets.HTMLEncode(sAddrSt) + " " + sAddrNu + "<BR>";
       sResult += (sAddrZp.length()>0 ? sAddrZp+" " : "") + sAddrCt + "<BR>";
       sResult += sAddrEm+"<BR>";
       
       oAddrPh = oAddresses.get(8,i);
-      sResult += (oAddrPh==null ? "" : "Main" + oAddrPh + "<BR>");
+      sResult += (oAddrPh==null ? "" : "[~Centralita ~]" + oAddrPh + "<BR>");
       oAddrPh = oAddresses.get(9,i);
-      sResult += (oAddrPh==null ? "" : "Direct" + oAddrPh + "<BR>");
+      sResult += (oAddrPh==null ? "" : "[~Directo ~]" + oAddrPh + "<BR>");
       oAddrPh = oAddresses.get(10,i);
-      sResult += (oAddrPh==null ? "" : "Personal" + oAddrPh + "<BR>");
+      sResult += (oAddrPh==null ? "" : "[~Personal ~]" + oAddrPh + "<BR>");
       oAddrPh = oAddresses.get(11,i);
-      sResult += (oAddrPh==null ? "" : "Mobile" + oAddrPh + "<BR>");
+      sResult += (oAddrPh==null ? "" : "[~M&oacute;vil ~]" + oAddrPh + "<BR>");
       oAddrPh = oAddresses.get(12,i);
-      sResult += (oAddrPh==null ? "" : "Fax" + oAddrPh + "<BR>");
+      sResult += (oAddrPh==null ? "" : "[~Fax ~]" + oAddrPh + "<BR>");
     } // next(i)
   } // fi(sErrMsg)
 %>
 <HTML>
 <HEAD>
-  <TITLE>hipergate :: Address</TITLE>
+  <TITLE>hipergate :: [~Direcci&oacute;n~]</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
   <!--
-    top.frames['<%=request.getParameter("visible_frame")%>'].document.forms['<%=request.getParameter("visible_form")%>'].divField.value = '<%=sResult%><br><a href="javascript:hideDiv()">Close</a>';
+    top.frames['<%=request.getParameter("visible_frame")%>'].document.forms['<%=request.getParameter("visible_form")%>'].divField.value = '<%=sResult%><br><a href="javascript:hideDiv()">[~Cerrar~]</a>';
 <%  if (sErrMsg.length()>0) out.write(    "open('" + sErrMsg + "');\n"); %>
   //-->
   </SCRIPT>

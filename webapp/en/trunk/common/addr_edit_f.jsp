@@ -25,7 +25,7 @@
 %><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//EN" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">  
 <HTML>
   <HEAD>
-    <TITLE>hipergate :: Edit address</TITLE>
+    <TITLE>hipergate :: [~Editar Direcci&oacute;n~]</TITLE>
   </HEAD>
   <FRAMESET NAME="editaddrf" ROWS="100%,*" BORDER="0" FRAMEBORDER="0">
     <FRAME NAME="editaddr" FRAMEBORDER="no" MARGINWIDTH="0" MARGINHEIGHT="0" NORESIZE SRC="addr_edit.jsp?void=0<%=sQueryStr%>">
@@ -33,7 +33,7 @@
     </FRAMESET>
     <NOFRAMES>
       <BODY>
-	<P>This page use frames, but your web browser does not handle them</P>
+	<P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
       </BODY>
     </NOFRAMES>
   </FRAMESET>

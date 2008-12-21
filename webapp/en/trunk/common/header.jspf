@@ -1,7 +1,7 @@
 <%@page pageEncoding="UTF-8"%>
     <table summary="Topmost row" width="100%" cellspacing="0" cellpadding="0" border="0">
       <tr>
-        <td align="left"><a href="../index.html" title="Home page"><img src="../skins/<%=sSkin%>/hglogopeq.jpg" border="0"></a></td>
+        <td align="left"><a href="../index.html" title="[~Pagina de Entrada~]"><img src="../skins/<%=sSkin%>/hglogopeq.jpg" border="0"></a></td>
         <td align="right">
           <table summary="Top right menu" height="28px" cellspacing="0" cellpadding="0" border="0">
           <!-- Linea de arriba menu superior derecho -->
@@ -22,11 +22,11 @@
             <td width="3" background="../images/images/tabmenu/opcion_a.gif" class="menu1"><img src="../images/images/tabmenu/transp.gif" width="3" height="1"></td>
             <!-- col 1 -->
             <td width="24" align="top" class="menu1"><img src="../images/images/tabmenu/kgicon.gif" width="24" height="22" border="0"></td>
-            <td width="64" align="center" class="menu1"><a href="../common/desktop.jsp" class="opcion" target="_top" title="Main Menu">Menu</a></td>
+            <td width="64" align="center" class="menu1"><a href="../common/desktop.jsp" class="opcion" target="_top" title="[~Menu Principal~]">[~Men&uacute;~]</a></td>
             <td width="5" background="../images/images/tabmenu/opcion_ab.gif" class="menu1"></td>
             <!-- col 2 -->
             <td width="24" align="top" class="menu1"><img src="../images/images/tabmenu/disconnect.gif" width="24" height="22" border="0"></td>
-            <td width="120" align="center" class="menu1"><a href="../common/logout.jsp" target="_top" class="opcion" title="Disconnect">Disconnect</a></td>
+            <td width="120" align="center" class="menu1"><a href="../common/logout.jsp" target="_top" class="opcion" title="[~Desconectar~]">[~Desconectar~]</a></td>
             <!-- linea derecha -->
             <td width="3" background="../images/images/tabmenu/opcion_b.gif" class="menu1"><img src="../images/images/tabmenu/transp.gif" width="3" height="1"></td>
           </tr>

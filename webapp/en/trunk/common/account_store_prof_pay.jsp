@@ -101,7 +101,7 @@
  
       case 1:
       	DebugFile.writeln("usuario creado pero error1");
-        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Invalid Password&desc=Password for user is not valid&resume=_back"));  
+        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Contraseña No Válida~]&desc=[~La contraseña especificada para el usuario no es valida~]&resume=_back"));  
         return;
       
     }

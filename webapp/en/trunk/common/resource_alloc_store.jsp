@@ -141,7 +141,7 @@
   msg.setHeader("Content-Transfer-Encoding","8bit");
       
   msg.setSubject(tx_subject);
-  msg.getPrintStream().println("That you for using the incidents reporting system. We have received your report and our team will contact you soon");
+  msg.getPrintStream().println("[~Gracias por usar el sistema de reporte de incidencias. Hemos recibido su informe y nuestro equipo tecnico la revisara en breve.~]");
   msg.sendAndClose();
   */
 %>
@@ -170,7 +170,7 @@
         </TD></TR>
         <TR><TD ALIGN="center">
           <FORM>
-            <INPUT TYPE="button" CLASS="pushbutton" VALUE="Close Window" onclick="window.close()">
+            <INPUT TYPE="button" CLASS="pushbutton" VALUE="[~Cerrar Ventana~]" onclick="window.close()">
           </FORM>
         </TD></TR>
       </TABLE>

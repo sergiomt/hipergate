@@ -154,7 +154,7 @@
       // ----------------------------------------------------------------------
       
       function deleteTerm(gu,sc) {
-        if (confirm("Are you sure that you want to delete the thesauri entry and all its childs?")) {
+        if (confirm("[~Esta seguro de que desea eliminar la entrada de tesauro y todos sus hijos?~]")) {
           window.parent.frames[1].document.location = "term_edit_delete.jsp?gu_term=" + gu + "&id_scope=" + sc + "&id_domain=" + getURLParam("domainid") + "&workarea=" + getURLParam("workarea");
         }
       }
@@ -168,23 +168,23 @@
       <TABLE CELLSPACING="2" CELLPADDING="2">
         <TR><TD COLSPAN="6" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
         <TR>
-          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
-          <TD><A HREF="#" CLASS="linkplain">Delete</A></TD>
-          <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Search"></TD>
+          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar~]"></TD>
+          <TD><A HREF="#" CLASS="linkplain">[~Eliminar~]</A></TD>
+          <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Buscar~]"></TD>
           <TD VALIGN="middle">
             <SELECT NAME="sel_searched" CLASS="combomini"></SELECT>
             <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>">
-  	  &nbsp;<A HREF="#" CLASS="linkplain" TITLE="Find">Search</A>	  
+  	  &nbsp;<A HREF="#" CLASS="linkplain" TITLE="Find">[~Buscar~]</A>	  
           </TD>
-          <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard Search"></TD>
+          <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="[~Descartar B&uacute;squeda~]"></TD>
           <TD VALIGN="bottom">
-            <A HREF="javascript:document.forms[0].find.value='';findInstance();" CLASS="linkplain" TITLE="Discard Search">Discard</A>
+            <A HREF="javascript:document.forms[0].find.value='';findInstance();" CLASS="linkplain" TITLE="[~Descartar B&uacute;squeda~]">[~Descartar~]</A>
           </TD>
         </TR>
         <TR><TD COLSPAN="6" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       </TABLE>
       <FONT CLASS="linkplain">
-      <A HREF="thesauri_f.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&id_scope=<%=id_scope%>&nm_control=<%=nm_control%>&nm_coding=<%=nm_coding%>&skip=0" TARGET="_top" CLASS="linkplain">Root terms</A>
+      <A HREF="thesauri_f.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&id_scope=<%=id_scope%>&nm_control=<%=nm_control%>&nm_coding=<%=nm_coding%>&skip=0" TARGET="_top" CLASS="linkplain">[~T&eacute;rminos ra&iacute;z~]</A>
 <% for (int a=0; a<iLevel; a++) {
      if (aParents[a]!=null)
        if (iLevel-1==a)
@@ -209,7 +209,7 @@
         <TR>
           <TD CLASS="strip<%out.write(sStrip);%>" WIDTH="16px">
 <% if (iLevel!=9) {
-            out.write ("            <A HREF=\"thesauri_f.jsp?id_domain=" + id_domain + "&gu_workarea=" + gu_workarea + (id_language!=null ? "&id_language=" + id_language : "") + (nm_control!=null ? "&nm_control=" + nm_control : "") + (nm_coding!=null ? "&nm_coding=" + nm_coding : "") + "&id_scope=" + id_scope + "&gu_term=" + oTerms.getString(0, t) + "&id_term=" + String.valueOf(oTerms.getInt(iLevel+4, t)) + "&id_level=" + String.valueOf(iLevel+1) + (bo_mainterm!=null ? "&bo_mainterm=" + bo_mainterm : "") + "\" CLASS=\"linknodecor\" TARGET=\"_top\" TITLE=\"Expand\">[+]</A>\n");
+            out.write ("            <A HREF=\"thesauri_f.jsp?id_domain=" + id_domain + "&gu_workarea=" + gu_workarea + (id_language!=null ? "&id_language=" + id_language : "") + (nm_control!=null ? "&nm_control=" + nm_control : "") + (nm_coding!=null ? "&nm_coding=" + nm_coding : "") + "&id_scope=" + id_scope + "&gu_term=" + oTerms.getString(0, t) + "&id_term=" + String.valueOf(oTerms.getInt(iLevel+4, t)) + "&id_level=" + String.valueOf(iLevel+1) + (bo_mainterm!=null ? "&bo_mainterm=" + bo_mainterm : "") + "\" CLASS=\"linknodecor\" TARGET=\"_top\" TITLE=\"[~Expandir~]\">[+]</A>\n");
 } %>
           </TD>
           <TD CLASS="strip<%out.write(sStrip);%>"> <A HREF="#" onclick="choose('<%=oTerms.getString(0, t)%>','<%=oTerms.getString(2, t)%>')" CLASS="linkplain" TITLE="<%=oTerms.getStringNull(3, t,"")%>"><%=oTerms.getString(2, t)%></A></TD>

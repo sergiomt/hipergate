@@ -115,7 +115,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: Bank Account List</TITLE>
+  <TITLE>hipergate :: [~Lista de Cuentas Bancarias~]</TITLE>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -148,7 +148,7 @@
 	  var frm = document.forms[0];
 	  var chi = frm.checkeditems;
 	  	  
-	  if (window.confirm("Are you sure you want to delete selected accounts?")) {
+	  if (window.confirm("[~¿Está seguro de que desea eliminar las cuentas seleccionadas?~]")) {
 	  	  
 	    chi.value = "";	  	  
 	    frm.action = "bank_edit_delete.jsp";
@@ -182,13 +182,13 @@
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8">
   <FORM METHOD="post">
   <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Actualizar~]"> [~Actualizar~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="[~Imprimir~]"> [~Imprimir~]</SPAN>
   </DIV></DIV>
       <TABLE WIDTH="95%">
         <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4"></TD></TR>
-        <TR><TD CLASS="striptitle"><FONT CLASS="title1">Bank Account List&nbsp;<%=(null!=request.getParameter("nm_company") ? "&nbsp;-&nbsp;" + request.getParameter("nm_company") : "")%></FONT></TD></TR>
+        <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Lista de Cuentas Bancarias~]&nbsp;<%=(null!=request.getParameter("nm_company") ? "&nbsp;-&nbsp;" + request.getParameter("nm_company") : "")%></FONT></TD></TR>
       </TABLE>
       <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
       <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
@@ -197,20 +197,20 @@
       <TABLE CELLSPACING="2" CELLPADDING="2">
         <TR><TD COLSPAN="4" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
         <TR>
-          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
+          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nueva~]"></TD>
           <TD VALIGN="middle">
 <% if (bIsGuest) { %>
-            <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New</A>
+            <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Nueva~]</A>
 <% } else { %>
-            <A HREF="#" onclick="createBankAccount()" CLASS="linkplain">New</A>
+            <A HREF="#" onclick="createBankAccount()" CLASS="linkplain">[~Nueva~]</A>
 <% } %>
           </TD>
-          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Remove"></TD>
+          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar~]"></TD>
           <TD>
 <% if (bIsGuest) { %>
-            <A HREF="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">Remove</A>
+            <A HREF="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Eliminar~]</A>
 <% } else { %>
-            <A HREF="javascript:deleteBankAccounts()" CLASS="linkplain">Remove</A>
+            <A HREF="javascript:deleteBankAccounts()" CLASS="linkplain">[~Eliminar~]</A>
 <% } %>
           </TD>
          </TR>
@@ -218,10 +218,10 @@
       </TABLE>
       <TABLE CELLSPACING="1" CELLPADDING="0">
         <TR>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Bank</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>&nbsp;Address</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>&nbsp;Account</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>&nbsp;Credit</B></TD>                   
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Banco~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>&nbsp;[~Direcci&oacute;n~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>&nbsp;[~Cuenta~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>&nbsp;[~Cr&eacute;dito~]</B></TD>                   
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp</TD>
         </TR>
 	<%
@@ -240,7 +240,7 @@
             out.write ("<TR HEIGHT=\"14\">");
             out.write ("<TD CLASS=\"tabletd\">&nbsp;" + sBankNm + "</TD>");
             out.write ("<TD CLASS=\"tabletd\">&nbsp;" + sTxAddr + "</TD>");
-            out.write ("<TD CLASS=\"tabletd\">&nbsp;<A HREF=\"#\" onclick=\"modifyBankAccount('" + sBankNu + "')\" TITLE=\"Edit this Account\">" + sBankNu + "</A></TD>");
+            out.write ("<TD CLASS=\"tabletd\">&nbsp;<A HREF=\"#\" onclick=\"modifyBankAccount('" + sBankNu + "')\" TITLE=\"[~Editar esta Cuenta~]\">" + sBankNu + "</A></TD>");
             out.write ("<TD CLASS=\"tabletd\" ALIGN=\"right\">&nbsp;" + sCredit + "</TD>");
             out.write ("<TD CLASS=\"tabletd\" ALIGN=\"center\"><INPUT VALUE=\"" + sBankNu + "\" TYPE=\"checkbox\" NAME=\"checkbox-" + i + "\">");
             out.write ("</TR>");
@@ -248,16 +248,16 @@
 	%>          	  
       </TABLE>
       <BR>
-      <CENTER><INPUT TYPE="button" CLASS="closebutton" VALUE="Close Window" onClick="self.close()"></CENTER>      
+      <CENTER><INPUT TYPE="button" CLASS="closebutton" VALUE="[~Cerrar Ventana~]" onClick="self.close()"></CENTER>      
     </FORM>
     <%
     // Pintar los enlaces de siguiente y anterior
     
     if (iSkip>0) // Si iSkip>0 entonces hay registros anteriores
-      out.write("<A HREF=\"bank_list.jsp?linktable=" + sLinkTable + "&linkfield=" + sLinkField + "&linkvalue=" + sLinkValue + "&maxrows=" + String.valueOf(iMaxRows) + "&skip=" + String.valueOf(iSkip-iMaxRows)+ "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;" + String.valueOf(iMaxRows) + "&nbsp;Previous " + "</A>&nbsp;&nbsp;&nbsp;");
+      out.write("<A HREF=\"bank_list.jsp?linktable=" + sLinkTable + "&linkfield=" + sLinkField + "&linkvalue=" + sLinkValue + "&maxrows=" + String.valueOf(iMaxRows) + "&skip=" + String.valueOf(iSkip-iMaxRows)+ "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;" + String.valueOf(iMaxRows) + "&nbsp;[~Anteriores~] " + "</A>&nbsp;&nbsp;&nbsp;");
     
     if (!oBankAccounts.eof())
-      out.write("<A HREF=\"bank_list.jsp?linktable=" + sLinkTable + "&linkfield=" + sLinkField + "&linkvalue=" + sLinkValue + "&maxrows=" + String.valueOf(iMaxRows) + "&skip=" + String.valueOf(iSkip+iMaxRows)+ "\" CLASS=\"linkplain\">Next " + String.valueOf(iMaxRows) + "&nbsp;&gt;&gt;</A>");
+      out.write("<A HREF=\"bank_list.jsp?linktable=" + sLinkTable + "&linkfield=" + sLinkField + "&linkvalue=" + sLinkValue + "&maxrows=" + String.valueOf(iMaxRows) + "&skip=" + String.valueOf(iSkip+iMaxRows)+ "\" CLASS=\"linkplain\">[~Siguientes~] " + String.valueOf(iMaxRows) + "&nbsp;&gt;&gt;</A>");
     %>
 </BODY>
 </HTML>

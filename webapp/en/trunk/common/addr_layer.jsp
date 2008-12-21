@@ -158,9 +158,9 @@
       sAddrZp = oAddresses.getStringNull(5,i,"");
       sAddrCt = oAddresses.getStringNull(6,i,"");      
       sAddrEm = oAddresses.getStringNull(7,i,"");
-      if (sAddrEm.length()>0) sAddrEm = "<A HREF=\"mailto:" + sAddrEm + "\" TITLE=\"Send Message\">" + sAddrEm + "</A>";
+      if (sAddrEm.length()>0) sAddrEm = "<A HREF=\"mailto:" + sAddrEm + "\" TITLE=\"[~Enviar mensaje~]\">" + sAddrEm + "</A>";
 
-      if (null!=sAddrTp) sResult += "Address Type" + sAddrTp + "<BR>";
+      if (null!=sAddrTp) sResult += "[~Tipo de direcci&oacute;n ~]" + sAddrTp + "<BR>";
 
 			Address oAddr = new Address();
 			oAddr.putAll(oAddresses.getRowAsMap(i));
@@ -173,28 +173,28 @@
       sResult += sAddrEm+"<BR>";
       
       oAddrPh = oAddresses.get(8,i);
-      sResult += (oAddrPh==null ? "" : "PBX " + oAddrPh + "<BR>");
+      sResult += (oAddrPh==null ? "" : "[~Centralita ~]" + oAddrPh + "<BR>");
       oAddrPh = oAddresses.get(9,i);
-      sResult += (oAddrPh==null ? "" : "Direct Phone" + oAddrPh + "<BR>");
+      sResult += (oAddrPh==null ? "" : "[~Directo ~]" + oAddrPh + "<BR>");
       oAddrPh = oAddresses.get(10,i);
-      sResult += (oAddrPh==null ? "" : "Personal Phone" + oAddrPh + "<BR>");
+      sResult += (oAddrPh==null ? "" : "[~Personal ~]" + oAddrPh + "<BR>");
       oAddrPh = oAddresses.get(11,i);
-      sResult += (oAddrPh==null ? "" : "Mobile Phone" + oAddrPh + "<BR>");
+      sResult += (oAddrPh==null ? "" : "[~M&oacute;vil ~]" + oAddrPh + "<BR>");
       oAddrPh = oAddresses.get(12,i);
-      sResult += (oAddrPh==null ? "" : "Fax" + oAddrPh + "<BR>");
+      sResult += (oAddrPh==null ? "" : "[~Fax ~]" + oAddrPh + "<BR>");
     } // next(i)
   } // fi(sErrMsg)
 %>
 <HTML>
 <HEAD>
-  <TITLE>hipergate :: Address</TITLE>
+  <TITLE>hipergate :: [~Direcci&oacute;n~]</TITLE>
   <LINK REL="stylesheet" TYPE="text/css" HREF="../skins/xp/styles.css">
 </HEAD>
 <BODY marginheight="0" marginwidth="0" topmargin="0" leftmargin="0" class="textsmall">
   <SCRIPT language="JavaScript" type="text/javascript">
   	<!--
   	var aGuids = new Array(<% for (int i=0; i<iAddressCount; i++) { out.write((0==i ? "" : ",")+"\""+oAddresses.getString(0,i)+"\""); } %>);
-    parent.addrLayer.setHTML('<table bgcolor="floralwhite" cellpadding="4" cellspacing="0" width="200" border="1"><tr height="100"><td valign="top" class="textsmall"><%=sResult%><br><a href="javascript:hideDiv()">Close</a></td></tr></table>');
+    parent.addrLayer.setHTML('<table bgcolor="floralwhite" cellpadding="4" cellspacing="0" width="200" border="1"><tr height="100"><td valign="top" class="textsmall"><%=sResult%><br><a href="javascript:hideDiv()">[~Cerrar~]</a></td></tr></table>');
     parent.addrLayer.setVisible(true);
     parent.document.body.style.cursor = "default";
     

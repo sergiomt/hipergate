@@ -187,7 +187,7 @@
 
 	  if (frm.dt_from.value==frm.dt_to.value) {  
 	    if (parseInt(getCombo(frm.sel_h_start),10)*100+parseInt(getCombo(frm.sel_m_start),10)>=parseInt(getCombo(frm.sel_h_end),10)*100+parseInt(getCombo(frm.sel_m_end),10)) {
-	      alert ("End time must be later than start time");
+	      alert ("[~La hora de fin debe ser posterior a la hora de inicio~]");
 	      return false;	  
 	    }
 	  }	  

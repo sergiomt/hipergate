@@ -71,19 +71,19 @@
         var str;
         
         if (frm.tr_<%=id_language%>.value.length==0) {
-          alert ("Description is mandatory");
+          alert ("[~El campo Descripción es obligatorio~]");
           return false;
         }
 
 	str = frm.vl_lookup.value;
 
         if (str.length==0) {
-          alert ("Value is mandatory");
+          alert ("[~El campo Valor es obligatorio~]");
           return false;
         }
 	
         if (hasForbiddenChars(str)) {
-          alert ("Value contains invalid characters");
+          alert ("[~El campo Valor contiene caracteres no permitidos~]");
           return false;
         }
 
@@ -96,12 +96,12 @@
       
       //-->
     </SCRIPT>  
-    <TITLE>hipergate :: Add Value</TITLE>
+    <TITLE>hipergate :: [~Añadir valor~]</TITLE>
   </HEAD>
   
   <BODY  LEFTMARGIN="4" TOPMARGIN="4" SCROLL="no">
     <CENTER>
-      <TABLE WIDTH="80%"><TR><TD ALIGN="center" CLASS="striptitle"><FONT CLASS="title1">Add value</FONT></TD></TR></TABLE></CENTER>
+      <TABLE WIDTH="80%"><TR><TD ALIGN="center" CLASS="striptitle"><FONT CLASS="title1">[~A&ntilde;adir Valor~]</FONT></TD></TR></TABLE></CENTER>
     <DIV ID="dek" STYLE="width:200;height:20;z-index:200;visibility:hidden;position:absolute"></DIV>
     <SCRIPT LANGUAGE="JavaScript1.2" SRC="../javascript/popover.js"></SCRIPT>
     <FORM METHOD="POST" ACTION="lookup_store.jsp<%=sQryStr%>&xxx=1" onsubmit="return validate()">
@@ -110,57 +110,57 @@
         <TR><TD>
           <TABLE CLASS="formfront">
             <TR>
-              <TD ALIGN="right"><A style="cursor:help" title="Actual value stored internally at database"><FONT CLASS="formstrong">Value:</FONT></A></TD>
+              <TD ALIGN="right"><A style="cursor:help" title="[~Valor real que se almacenar&aacute; en la base de datos.~]"><FONT CLASS="formstrong">[~Valor:~]</FONT></A></TD>
               <TD ALIGN="left"><INPUT TYPE="text" SIZE="<%=String.valueOf(iMaxLength>30 ? 30 : iMaxLength)%>" MAXLENGTH="<%=String.valueOf(iMaxLength)%>" NAME="vl_lookup" STYLE="text-transform:uppercase"></TD>          
               <TD></TD>
             </TR>
             <TR>
-              <TD ALIGN="right"><A style="cursor:help" title="Descriptive text shown<BR>when value is chosen"><FONT CLASS="formplain">English Description:</FONT></SPAN></TD>
+              <TD ALIGN="right"><A style="cursor:help" title="[~Texto descriptivo que aparecer&aacute; al visualizar el valor~]"><FONT CLASS="formplain">[~Descripci&oacute;n Ingl&eacute;s:~]</FONT></SPAN></TD>
               <TD ALIGN="left"><INPUT TYPE="text" SIZE="30" MAXLENGTH="50" NAME="tr_en"></TD>
               <TD><IMG SRC="../images/images/flags/en.gif" WIDTH="16" HEIGHT="11" BORDER="0"></TD>
             </TR>
             <TR>
-              <TD ALIGN="right"><A style="cursor:help" title="Descriptive text shown<BR>when value is chosen"><FONT CLASS="formplain">Spanish Description:</FONT></SPAN></TD>
+              <TD ALIGN="right"><A style="cursor:help" title="[~Texto descriptivo que aparecer&aacute; al visualizar el valor~]"><FONT CLASS="formplain">[~Descripci&oacute;n Castellano:~]</FONT></SPAN></TD>
               <TD ALIGN="left"><INPUT TYPE="text" SIZE="30" MAXLENGTH="50" NAME="tr_es"></TD>
               <TD><IMG SRC="../images/images/flags/es.gif" WIDTH="16" HEIGHT="11" BORDER="0"></TD>
             </TR>
             <TR>
-              <TD ALIGN="right"><A style="cursor:help" title="Descriptive text shown<BR>when value is chosen"><FONT CLASS="formplain">French Description:</FONT></SPAN></TD>
+              <TD ALIGN="right"><A style="cursor:help" title="[~Texto descriptivo que aparecer&aacute; al visualizar el valor~]"><FONT CLASS="formplain">[~Descripci&oacute;n Franc&eacute;s:~]</FONT></SPAN></TD>
               <TD ALIGN="left"><INPUT TYPE="text" SIZE="30" MAXLENGTH="50" NAME="tr_fr"></TD>
               <TD><IMG SRC="../images/images/flags/fr.gif" WIDTH="16" HEIGHT="11" BORDER="0"></TD>
             </TR>
             <TR>
-              <TD ALIGN="right"><A style="cursor:help" title="Descriptive text shown<BR>when value is chosen"><FONT CLASS="formplain">Portuguese Description:</FONT></SPAN></TD>
+              <TD ALIGN="right"><A style="cursor:help" title="[~Texto descriptivo que aparecer&aacute; al visualizar el valor~]"><FONT CLASS="formplain">[~Descripci&oacute;n Portugu&eacute;s:~]</FONT></SPAN></TD>
               <TD ALIGN="left"><INPUT TYPE="text" SIZE="30" MAXLENGTH="50" NAME="tr_pt"></TD>
               <TD><IMG SRC="../images/images/flags/br.gif" WIDTH="16" HEIGHT="11" BORDER="0"></TD>
             </TR>
             <TR>
-              <TD ALIGN="right"><A style="cursor:help" title="Descriptive text shown<BR>when value is chosen"><FONT CLASS="formplain">German Description:</FONT></SPAN></TD>
+              <TD ALIGN="right"><A style="cursor:help" title="[~Texto descriptivo que aparecer&aacute; al visualizar el valor~]"><FONT CLASS="formplain">[~Descripci&oacute;n Alem&aacute;n:~]</FONT></SPAN></TD>
               <TD ALIGN="left"><INPUT TYPE="text" SIZE="30" MAXLENGTH="50" NAME="tr_de"></TD>
               <TD><IMG SRC="../images/images/flags/de.gif" WIDTH="16" HEIGHT="11" BORDER="0"></TD>
             </TR>
             <TR>
-              <TD ALIGN="right"><A style="cursor:help" title="Descriptive text shown<BR>when value is chosen"><FONT CLASS="formplain">Italian Description:</FONT></SPAN></TD>
+              <TD ALIGN="right"><A style="cursor:help" title="[~Texto descriptivo que aparecer&aacute; al visualizar el valor~]"><FONT CLASS="formplain">[~Descripci&oacute;n Italiano:~]</FONT></SPAN></TD>
               <TD ALIGN="left"><INPUT TYPE="text" SIZE="30" MAXLENGTH="50" NAME="tr_it"></TD>
               <TD><IMG SRC="../images/images/flags/it.gif" WIDTH="16" HEIGHT="11" BORDER="0"></TD>
             </TR>
             <TR>
-              <TD ALIGN="right"><A style="cursor:help" title="Descriptive text shown<BR>when value is chosen"><FONT CLASS="formplain">Finnish Description:</FONT></SPAN></TD>
+              <TD ALIGN="right"><A style="cursor:help" title="[~Texto descriptivo que aparecer&aacute; al visualizar el valor~]"><FONT CLASS="formplain">[~Descripci&oacute;n Finland&eacute;s:~]</FONT></SPAN></TD>
               <TD ALIGN="left"><INPUT TYPE="text" SIZE="30" MAXLENGTH="50" NAME="tr_fi"></TD>
               <TD><IMG SRC="../images/images/flags/fi.gif" WIDTH="16" HEIGHT="11" BORDER="0"></TD>
             </TR>
             <TR>
-              <TD ALIGN="right"><A style="cursor:help" title="Descriptive text shown<BR>when value is chosen"><FONT CLASS="formplain">Russian Description:</FONT></SPAN></TD>
+              <TD ALIGN="right"><A style="cursor:help" title="[~Texto descriptivo que aparecer&aacute; al visualizar el valor~]"><FONT CLASS="formplain">[~Descripci&oacute;n Ruso:~]</FONT></SPAN></TD>
               <TD ALIGN="left"><INPUT TYPE="text" SIZE="30" MAXLENGTH="50" NAME="tr_ru"></TD>
               <TD><IMG SRC="../images/images/flags/ru.gif" WIDTH="16" HEIGHT="11" BORDER="0"></TD>
             </TR>
             <TR>
-              <TD ALIGN="right"><A style="cursor:help" title="Descriptive text shown<BR>when value is chosen"><FONT CLASS="formplain">Traditional Chinese</FONT></SPAN></TD>
+              <TD ALIGN="right"><A style="cursor:help" title="[~Texto descriptivo que aparecer&aacute; al visualizar el valor~]"><FONT CLASS="formplain">[~Chino Tradicional:~]</FONT></SPAN></TD>
               <TD ALIGN="left"><INPUT TYPE="text" SIZE="30" MAXLENGTH="50" NAME="tr_cn"></TD>
               <TD><IMG SRC="../images/images/flags/tw.gif" WIDTH="16" HEIGHT="11" BORDER="0"></TD>
             </TR>
             <TR>
-              <TD ALIGN="right"><A style="cursor:help" title="Descriptive text shown<BR>when value is chosen"><FONT CLASS="formplain">Simplified Chinese</FONT></SPAN></TD>
+              <TD ALIGN="right"><A style="cursor:help" title="[~Texto descriptivo que aparecer&aacute; al visualizar el valor~]"><FONT CLASS="formplain">[~Chino Simplificado:~]</FONT></SPAN></TD>
               <TD ALIGN="left"><INPUT TYPE="text" SIZE="30" MAXLENGTH="50" NAME="tr_tw"></TD>
               <TD><IMG SRC="../images/images/flags/cn.gif" WIDTH="16" HEIGHT="11" BORDER="0"></TD>
             </TR>
@@ -168,7 +168,7 @@
         </TD></TR>
       </TABLE>
       <BR>
-      <INPUT TYPE="submit" VALUE="Save" CLASS="pushbutton" STYLE="width:80">&nbsp;&nbsp;<INPUT TYPE="button" VALUE="Cancel" CLASS="closebutton" onClick="window.parent.lookupup.location=('<%=nm_table%>'=='k_duties_lookup' ? '../projtrack/resource_' : '')+'lookup_up.jsp<%=sQryStr%>';document.location=('<%=nm_table%>'=='k_duties_lookup' ? '../projtrack/resource_' : '')+'lookup_mid.jsp<%=sQryStr%>';">
+      <INPUT TYPE="submit" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80">&nbsp;&nbsp;<INPUT TYPE="button" VALUE="[~Cancelar~]" CLASS="closebutton" onClick="window.parent.lookupup.location=('<%=nm_table%>'=='k_duties_lookup' ? '../projtrack/resource_' : '')+'lookup_up.jsp<%=sQryStr%>';document.location=('<%=nm_table%>'=='k_duties_lookup' ? '../projtrack/resource_' : '')+'lookup_mid.jsp<%=sQryStr%>';">
       </CENTER>
     </FORM>
   </BODY>
