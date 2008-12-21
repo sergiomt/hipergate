@@ -87,7 +87,7 @@
         
         if (("1"==frm.tp_list.value || "2"==frm.tp_list.value) && frm.gu_query.selectedIndex<0 &&
             frm.action=='list_wizard_03.jsp') {
-          alert ("Must select a Query from with List Members are to be extracted");
+          alert ("[~Debe seleccionar una consulta de la cual extraer los miembros de la lista~]");
           return false;
         }
         frm.submit();                  	
@@ -95,7 +95,7 @@
       }
     //-->
   </SCRIPT>
-  <TITLE>hipergate :: Create Distribution List - Step 2 of 4</TITLE>
+  <TITLE>hipergate :: [~Crear Lista de Distribuci&oacute;n - Paso 2/4~]</TITLE>
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setInputs()">
   <!--<DIV ID="dek" STYLE="width:200;height:20;z-index:200;visibility:hidden;position:absolute"></DIV>-->
@@ -106,17 +106,17 @@
     <INPUT TYPE="hidden" NAME="gu_workarea">
     <INPUT TYPE="hidden" NAME="tp_list" VALUE="">
     <CENTER>            
-    <TABLE><TR><TD WIDTH="310px" CLASS="striptitle"><FONT CLASS="title1">Create List - Step 2 of 4</FONT></TD></TR></TABLE>
+    <TABLE><TR><TD WIDTH="310px" CLASS="striptitle"><FONT CLASS="title1">[~Crear Lista - Paso 2 de 4~]</FONT></TD></TR></TABLE>
     <TABLE CELLSPACING="2" CELLPADDING="2">
       <TR>
-        <TD><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
-        <TD VALIGN="middle"><A HREF="#" onclick="createQuery()" CLASS="linkplain">Create new Query</A></TD>
+        <TD><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nuevo~]"></TD>
+        <TD VALIGN="middle"><A HREF="#" onclick="createQuery()" CLASS="linkplain">[~Crear nueva consulta~]</A></TD>
       </TR>
     </TABLE>
     <TABLE WIDTH="310px" CLASS="formback">
       <TR>
         <TD ALIGN="left" CLASS="formstrong">
-          Choose a Query
+          [~Elija una consulta~]
         </TD>
       </TR>
       <TR><TD>
@@ -136,7 +136,7 @@
       </TD></TR>
     </TABLE>
     <BR>
-    <TABLE WIDTH="400px"><TR><TD ALIGN="center"><INPUT TYPE="button" CLASS="closebutton" VALUE="Cancel" STYLE="width:100px" onClick="self.close()">&nbsp;<INPUT TYPE="button" CLASS="pushbutton" VALUE="<< Previous" STYLE="width:100px" onClick="document.forms[0].action='list_wizard_01.jsp';document.forms[0].submit()">&nbsp;<INPUT TYPE="button" CLASS="pushbutton" VALUE="Next >>" STYLE="width:100px" onClick="return validate()"></TD></TR></TABLE>
+    <TABLE WIDTH="400px"><TR><TD ALIGN="center"><INPUT TYPE="button" CLASS="closebutton" VALUE="[~Cancelar~]" STYLE="width:100px" onClick="self.close()">&nbsp;<INPUT TYPE="button" CLASS="pushbutton" VALUE="[~<< Anterior~]" STYLE="width:100px" onClick="document.forms[0].action='list_wizard_01.jsp';document.forms[0].submit()">&nbsp;<INPUT TYPE="button" CLASS="pushbutton" VALUE="[~Siguiente >>~]" STYLE="width:100px" onClick="return validate()"></TD></TR></TABLE>
     </CENTER>
   </FORM>
 </BODY>

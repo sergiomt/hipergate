@@ -196,7 +196,7 @@
 	  var frm = document.forms[0];
 	  var chi = frm.checkeditems;
 	  	  
-	  if (window.confirm("Are you sure you want to delete selected lists?á certo de")) {
+	  if (window.confirm("[~¿Está seguro de que desea eliminar las listas seleccionadas?~]")) {
 	  	  
 	    chi.value = "";	  	  
 	    
@@ -280,7 +280,7 @@
         	
 	function createOportunity (id,de) {	  
 <% if (bIsGuest) { %>
-        alert("Your credential level as Guest does not allow you to perform this action");
+        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
 <% } else { %>
 	  self.open ("oportunity_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>&gu_list=" + id + "&de_list=" + escape(de), "createoportunity", "directories=no,toolbar=no,menubar=no,width=640,height=560");	  
 <% } %>
@@ -290,7 +290,7 @@
 
       function createProject(gu,de) {
 <% if (bIsGuest) { %>
-        alert("Your credential level as Guest does not allow you to perform this action");
+        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
 <% } else { %>
         window.open("prj_create.jsp?gu_workarea=<%=gu_workarea%>&gu_list=" + gu + "&de_list=" + escape(de), "addproject", "directories=no,toolbar=no,menubar=no,width=540,height=280");       
 <% } %>
@@ -301,7 +301,7 @@
 <% if (bHasAccounts) { %>
       function sendEmail(gu,de) {
 <% if (bIsGuest) { %>
-        alert("Your credential level as Guest does not allow you to perform this action");
+        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
 <% } else { %>
         window.open("../hipermail/msg_new_f.jsp?folder=drafts&to={"+escape(de)+"}", "sendmailtolist");       
 <% } %>
@@ -313,9 +313,9 @@
 <% if (!bHasAccounts) { %>
       function configEmail() {
 <% if (bIsGuest) { %>
-        alert("Your credential level as Guest does not allow you to perform this action");
+        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
 <% } else { %>
-	alert ("Mail server is not properly configured to send e-mails");
+	alert ("[~Debe configurar previamente el servidor de correo para enviar e-mails~]");
 	top.document.location.href="../hipermail/mail_config_f.htm?selected=1&subselected=0"
 <% } %>
       } // configEmail
@@ -352,7 +352,7 @@
       function clone() {        
         // [~//Abrir una ventana de clonado y poner un temporizador para recargar la página cuando se termine el clonado~]
 <% if (bIsGuest) { %>
-        alert ("Your credential level as Guest does not allow you to perform this action");
+        alert ("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
 <% } else { %>
         winclone = window.open ("list_clone.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_instance=" + jsListId + "&opcode=CLST&classid=96", "clonelist", "directories=no,toolbar=no,menubar=no,top=" + (screen.height-200)/2 + ",left=" + (screen.width-320)/2 + ",width=320,height=200");                
         intervalId = setInterval ("findCloned()", 100);
@@ -369,12 +369,12 @@
 	} // setCombos()  
     //-->    
   </SCRIPT>  
-  <TITLE>hipergate :: Distribution Lists</TITLE>
+  <TITLE>hipergate :: [~Listas de distribución~]</TITLE>
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onClick="hideRightMenu()">
     <%@ include file="../common/tabmenu.jspf" %>
     <FORM METHOD="post" onSubmit="findList();return false;">
-      <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">Distribution Lists</FONT></TD></TR></TABLE>      
+      <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Listas de Distribuci&oacute;n~]</FONT></TD></TR></TABLE>      
       <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
       <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
       <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
@@ -386,31 +386,31 @@
       <TABLE CELLSPACING="2" CELLPADDING="2">
         <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
         <TR>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nueva~]"></TD>
         <TD VALIGN="middle">
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert ('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New</A>
+          <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Nueva~]</A>
 <% } else { %>
-          <A HREF="#" onclick="createList();return false;" CLASS="linkplain">New</A>
+          <A HREF="#" onclick="createList();return false;" CLASS="linkplain">[~Nueva~]</A>
 <% } %>
         </TD>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar~]"></TD>
         <TD>
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert ('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">Delete</A>
+          <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Eliminar~]</A>
 <% } else { %>
-          <A HREF="#" onclick="deleteLists();return false;" CLASS="linkplain">Delete</A>
+          <A HREF="#" onclick="deleteLists();return false;" CLASS="linkplain">[~Eliminar~]</A>
 <% } %>
         </TD>
-        <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Find List"></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Buscar Lista~]"></TD>
         <TD VALIGN="middle">
           <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>">
-	  &nbsp;<A HREF="javascript:findList()" CLASS="linkplain" TITLE="Search">Search</A>	  
+	  &nbsp;<A HREF="javascript:findList()" CLASS="linkplain" TITLE="[~Buscar~]">[~Buscar~]</A>	  
         </TD>
-        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard Find Filter"></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="[~Descartar búsqueda~]"></TD>
         <TD VALIGN="bottom">
-          <A HREF="javascript:document.forms[0].find.value='';findList();" CLASS="linkplain" TITLE="Discard Find Filter">Discard</A>
-          <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;Show&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;results&nbsp;</FONT>
+          <A HREF="javascript:document.forms[0].find.value='';findList();" CLASS="linkplain" TITLE="[~Descartar búsqueda~]">[~Descartar~]</A>
+          <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;[~Mostrar~]&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;[~resultados~]&nbsp;</FONT>
         </TD>
         </TR>
         <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
@@ -422,17 +422,17 @@
     	  // [~//Pintar los enlaces de siguiente y anterior~]
     
           if (iSkip>0) // [~//Si iSkip>0 entonces hay registros anteriores~]
-            out.write("            <A HREF=\"list_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
+            out.write("            <A HREF=\"list_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;[~Anteriores~]" + "</A>&nbsp;&nbsp;&nbsp;");
     
           if (!oLists.eof())
-            out.write("            <A HREF=\"list_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
+            out.write("            <A HREF=\"list_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">[~Siguientes~]&nbsp;&gt;&gt;</A>");
 %>
           </TD>
         </TR>
         <TR>
-          <TD CLASS="tableheader" WIDTH="<%=String.valueOf(floor(300f*fScreenRatio))%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(4)" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==4 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>Subject</B></TD>
-          <TD CLASS="tableheader" WIDTH="<%=String.valueOf(floor(400f*fScreenRatio))%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(5)" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>Description</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Seleccionar todos"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select all"></A></TD></TR>
+          <TD CLASS="tableheader" WIDTH="<%=String.valueOf(floor(300f*fScreenRatio))%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(4)" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==4 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este campo~]"></A>&nbsp;<B>[~Asunto~]</B></TD>
+          <TD CLASS="tableheader" WIDTH="<%=String.valueOf(floor(400f*fScreenRatio))%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(5)" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este campo~]"></A>&nbsp;<B>[~Descripci&oacute;n~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Seleccionar todos"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="[~Seleccionar todos~]"></A></TD></TR>
 <%
 	  String sInstId, sInstQr, sInstTp, sInstNm, sInstDe;
 	  for (int i=0; i<iListCount; i++) {
@@ -443,7 +443,7 @@
             sInstDe = oLists.getStringNull(4,i,"");            
 %>
             <TR HEIGHT="14">
-              <TD CLASS="strip<%=(i%2)+1%>" VALIGN="middle">&nbsp;<A HREF="#" oncontextmenu="jsListId='<%=sInstId%>'; jsListTp=<%=sInstTp%>; jsListQr='<%=sInstQr%>'; jsListNm='<%=sInstNm%>'; jsListDe='<%=sInstDe%>'; configureMenu(); return showRightMenu(event);" onmouseover="window.status='Edit List'; return true;" onmouseout="window.status='';" onclick="modifyList('<%=sInstId%>','<%=sInstNm%>')" TITLE="Click Right Mouse Button for Context Menu"><%=oLists.getStringNull(3,i,"(no subject)")%></A></TD>
+              <TD CLASS="strip<%=(i%2)+1%>" VALIGN="middle">&nbsp;<A HREF="#" oncontextmenu="jsListId='<%=sInstId%>'; jsListTp=<%=sInstTp%>; jsListQr='<%=sInstQr%>'; jsListNm='<%=sInstNm%>'; jsListDe='<%=sInstDe%>'; configureMenu(); return showRightMenu(event);" onmouseover="window.status='[~Editar Lista~]'; return true;" onmouseout="window.status='';" onclick="modifyList('<%=sInstId%>','<%=sInstNm%>')" TITLE="[~Bot&oacute;n Derecho para Ver el Men&uacute; Contextual~]"><%=oLists.getStringNull(3,i,"([~sin asunto~])")%></A></TD>
               <TD CLASS="strip<%=(i%2)+1%>">&nbsp;<%=oLists.getStringNull(4,i,"")%></TD>
               <TD CLASS="strip<%=(i%2)+1%>" ALIGN="center"><INPUT VALUE="1" TYPE="checkbox" NAME="<%=sInstId%>">
             </TR>
@@ -452,22 +452,22 @@
     </FORM>
 
     <SCRIPT language="JavaScript" type="text/javascript">
-      addMenuOption("Open","modifyList(jsListId,jsListNm)",1);
-      addMenuOption("Duplicate","clone()",0);
-      addMenuOption("Combine","mergeMembers(jsListId,jsListDe)",0);
+      addMenuOption("[~Abrir~]","modifyList(jsListId,jsListNm)",1);
+      addMenuOption("[~Duplicar~]","clone()",0);
+      addMenuOption("[~Combinar~]","mergeMembers(jsListId,jsListDe)",0);
       addMenuSeparator();
-      addMenuOption("Edit Members","editMembers(jsListId,jsListDe)",0);
-      addMenuOption("Edit Query","editQuery(jsListId,jsListDe)",2);
+      addMenuOption("[~Editar Miembros~]","editMembers(jsListId,jsListDe)",0);
+      addMenuOption("[~Editar Consulta~]","editQuery(jsListId,jsListDe)",2);
       addMenuSeparator();
-      addMenuOption("New Oportunity","createOportunity(jsListId,jsListDe)",0);
+      addMenuOption("[~Nueva Oportunidad~]","createOportunity(jsListId,jsListDe)",0);
 <% if (((iAppMask & (1<<ProjectManager))!=0)) { %>
-      addMenuOption("New Project","createProject(jsListId,jsListDe)",0);
+      addMenuOption("[~Nuevo Proyecto~]","createProject(jsListId,jsListDe)",0);
 <% } %>
 <% if (((iAppMask & (1<<Hipermail))!=0)) {
       if (bHasAccounts) { %>
-      addMenuOption("Send e-mail","sendEmail(jsListId,jsListDe)",0);
+      addMenuOption("[~Enviar e-mail~]","sendEmail(jsListId,jsListDe)",0);
 <%    } else { %>
-      addMenuOption("Send e-mail","configEmail()",0);
+      addMenuOption("[~Enviar e-mail~]","configEmail()",0);
 <% }  } %>
     </SCRIPT>
 </BODY>

@@ -81,7 +81,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: Combine lists</TITLE>
+  <TITLE>hipergate :: [~Combinar Listas~]</TITLE>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -116,17 +116,17 @@
 	var msg;
 	
 	if (frm.sel_added_list.options.selectedIndex==0) {
-	  alert ("Must select a List to be combined");
+	  alert ("[~Debe seleccionar una lista a combinar~]");
 	  return false;
 	}
 	
 	if (frm.target[0].checked && jsTypes[frm.sel_base_list.options.selectedIndex]==<%=DistributionList.TYPE_DYNAMIC%>) {
-	  alert ("It is not possible to put results in the base list because&nbsp;" + getComboText(frm.sel_base_list) + "[~ es una lista de tipo dinámico~]");
+	  alert ("[~No es posible poner el resultado en la Lista Base porque ~]" + getComboText(frm.sel_base_list) + "[~ es una lista de tipo dinámico~]");
 	  return false;
 	}
 	
 	if (getCombo(frm.sel_base_list)==getCombo(frm.sel_added_list)) {
-	  alert ("Base list and combined list may not be the same");
+	  alert ("[~La lista base y la lista a combinar no pueden se la misma~]");
 	  return false;	
 	}
 	
@@ -139,7 +139,7 @@
 	  len = frm.sel_base_list.options.length;
 	  for (var l=0; l<len; l++) {
 	    if (frm.sel_base_list.options[l].value==frm.tx_subject.value) {
-	      alert ("Another list with same subject already exists");
+	      alert ("[~Ya existe otra lista con el mismo Asunto~]");
 	      return false;
 	    }
 	  } // next
@@ -148,23 +148,23 @@
 	if (frm.action[0].checked) {
 	  frm.tp_action.value = "add";
 	  if (frm.target[0].checked)
-	    msg = "You are about to add members from list&nbsp;" + getComboText(frm.sel_added_list) + " to list&nbsp;" + getComboText(frm.sel_base_list) + " overwritting those that already exist. [~¿Está seguro de que desea continuar?~]";
+	    msg = "[~Esta a punto de agregar los miembros de la lista ~]" + getComboText(frm.sel_added_list) + "[~ a la lista ~]" + getComboText(frm.sel_base_list) + "[~ sobreescribiendo los que ya existan.~] [~¿Está seguro de que desea continuar?~]";
           else
-	    msg = "You are about to add members from list&nbsp;" + getComboText(frm.sel_base_list) + " and the list&nbsp;" + getComboText(frm.sel_added_list) + " putting results in a new list" + frm.tx_subject.value + " [~¿Está seguro de que desea continuar?~]";
+	    msg = "[~Esta a punto de agregar los miembros de la lista ~]" + getComboText(frm.sel_base_list) + "[~ y la lista ~]" + getComboText(frm.sel_added_list) + "[~ produciendo el resultado en la nueva lista ~]" + frm.tx_subject.value + " [~¿Está seguro de que desea continuar?~]";
         }
         else if (frm.action[1].checked) {
 	  frm.tp_action.value = "append";
 	  if (frm.target[0].checked)
-	    msg = "You are about to add members from list&nbsp;" + getComboText(frm.sel_added_list) + " to list&nbsp;" + getComboText(frm.sel_base_list) + " without altering those already existing at base list. [~¿Está seguro de que desea continuar?~]";
+	    msg = "[~Esta a punto de agregar los miembros de la lista ~]" + getComboText(frm.sel_added_list) + "[~ a la lista ~]" + getComboText(frm.sel_base_list) + "[~ sin alterar los que ya existan en la lista base.~] [~¿Está seguro de que desea continuar?~]";
           else
-	    msg = "You are about to add members from list&nbsp;" + getComboText(frm.sel_added_list) + " and the list&nbsp;" + getComboText(frm.sel_base_list) + " putting results in a new list" + frm.tx_subject.value + " [~¿Está seguro de que desea continuar?~]";
+	    msg = "[~Esta a punto de agregar los miembros de la lista ~]" + getComboText(frm.sel_added_list) + "[~ y la lista ~]" + getComboText(frm.sel_base_list) + "[~ produciendo el resultado en la nueva lista ~]" + frm.tx_subject.value + " [~¿Está seguro de que desea continuar?~]";
         }
         else {
 	  frm.tp_action.value = "substract";
 	  if (frm.target[0].checked)
-	    msg = "You are about to remove from list" + getComboText(frm.sel_base_list) + " members from list&nbsp;" + getComboText(frm.sel_added_list) + " [~¿Está seguro de que desea continuar?~]";
+	    msg = "[~Esta a punto de eliminar de la lista ~]" + getComboText(frm.sel_base_list) + "[~ los miembros de la lista ~]" + getComboText(frm.sel_added_list) + " [~¿Está seguro de que desea continuar?~]";
           else
-	    msg = "You are about to create list t&nbsp;" + frm.tx_subject.value + " removing members of&nbsp;" + getComboText(frm.sel_added_list) + " from list&nbsp;" + getComboText(frm.sel_base_list) + " [~¿Está seguro de que desea continuar?~]";
+	    msg = "[~Esta a punto producir la lista ~]" + frm.tx_subject.value + "[~ eliminando los miembros de ~]" + getComboText(frm.sel_added_list) + "[~ de la lista ~]" + getComboText(frm.sel_base_list) + " [~¿Está seguro de que desea continuar?~]";
         }
                 
         if (frm.target[0].checked)
@@ -193,13 +193,13 @@
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()">
   <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Actualizar~]"> [~Actualizar~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="[~Imprimir~]"> [~Imprimir~]</SPAN>
   </DIV></DIV>
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Combine lists</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Combinar Listas~]</FONT></TD></TR>
   </TABLE>
   <CENTER>
   <FORM METHOD="post" ACTION="list_merge_store.jsp" onSubmit="return validate()">
@@ -214,7 +214,7 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formstrong">Base List:</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formstrong">[~Lista Base:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
               <SELECT NAME="sel_base_list">
 <%
@@ -226,52 +226,52 @@
             </TD>
           </TR>
           <TR>
-            <TD VALIGN="top" ALIGN="right" WIDTH="140"><FONT CLASS="formstrong">Action:</FONT></TD>
+            <TD VALIGN="top" ALIGN="right" WIDTH="140"><FONT CLASS="formstrong">[~Acci&oacute;n:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
               <FONT CLASS="formplain">
-              <INPUT TYPE="radio" NAME="action" CHECKED>&nbsp;Add members overwriting existing ones.
+              <INPUT TYPE="radio" NAME="action" CHECKED>&nbsp;[~Agregar miembros y sobreescribir los ya exitentes.~]
               <BR>
-              <INPUT TYPE="radio" NAME="action">&nbsp;Add members without modifying already existing ones.
+              <INPUT TYPE="radio" NAME="action">&nbsp;[~Agregar miembros sin modificar los ya existentes.~]
               <BR>
-              <INPUT TYPE="radio" NAME="action">&nbsp;Remove members
+              <INPUT TYPE="radio" NAME="action">&nbsp;[~Eliminar miembros.~]
               </FONT>
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formstrong">List to be Combined:</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formstrong">[~Lista a Combinar:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
               <SELECT NAME="sel_added_list"><OPTION VALUE="" SELECTED></OPTION>
 <%
 	      for (int l=0; l<iListCount; l++) {
 	        if (!oLists.getString(0,l).equals(gu_list))
-	          out.write("<OPTION VALUE=\"" + oLists.getString(0,l) + "\">" + oLists.getStringNull(2,l,"(no subject" + String.valueOf(l) + ")") + "</OPTION>");        
+	          out.write("<OPTION VALUE=\"" + oLists.getString(0,l) + "\">" + oLists.getStringNull(2,l,"([~sin asunto~]" + String.valueOf(l) + ")") + "</OPTION>");        
 	      }
 %>
               </SELECT>
             </TD>
           </TR>
           <TR>
-            <TD VALIGN="top" ALIGN="right" WIDTH="140"><FONT CLASS="formstrong">Put result:</FONT></TD>
+            <TD VALIGN="top" ALIGN="right" WIDTH="140"><FONT CLASS="formstrong">[~Poner el resultado:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
               <TABLE>
                 <TR>
                   <TD><INPUT TYPE="radio" NAME="target" onclick="showFields(false)"></TD>
-                  <TD><FONT CLASS="formplain">on the base list.</FONT></TD>
+                  <TD><FONT CLASS="formplain">[~en la lista base.~]</FONT></TD>
                 </TR>
                 <TR>
                   <TD><INPUT TYPE="radio" NAME="target" CHECKED></TD>
-                  <TD><FONT CLASS="formplain">on a new list.</FONT></TD>
+                  <TD><FONT CLASS="formplain">[~en una nueva lista.~]</FONT></TD>
                 </TR>                
                 <TR>
                   <TD></TD>
                   <TD>
                     <TABLE>
                       <TR>
-                        <TD><FONT CLASS="formplain">Subject:</FONT></TD>
+                        <TD><FONT CLASS="formplain">[~Asunto:~]</FONT></TD>
                         <TD><INPUT TYPE="text" NAME="tx_subject" MAXLENGTH="100" SIZE="40" VALUE=""></TD>
                       </TR>
                       <TR>
-                        <TD><FONT CLASS="formplain">Description:&nbsp;</FONT></TD>
+                        <TD><FONT CLASS="formplain">[~Descripci&oacute;n:~]&nbsp;</FONT></TD>
                         <TD><INPUT TYPE="text" NAME="de_list" MAXLENGTH="50" SIZE="40" VALUE=""></TD>
                       </TR>
 		    </TABLE>
@@ -286,11 +286,11 @@
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">&nbsp;&nbsp;&nbsp;
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">&nbsp;&nbsp;&nbsp;
 <% } else { %>
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
 <% } %>
-              <INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+              <INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>
     	    </TD>
     	  </TR>	            

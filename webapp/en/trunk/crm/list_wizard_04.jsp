@@ -75,7 +75,7 @@
 	  return true;
 	  
 	if (frm.tx_subject.value.length==0) {
-	  alert("Subject is mandatory");
+	  alert("[~El campo Asunto es obligatorio~]");
 	  return false;
 	}
 	else {
@@ -84,17 +84,17 @@
 	}
 
 	if (frm.tx_subject.value.indexOf("'")>=0) {
-	  alert("Subject contains forbidden characters");
+	  alert("[~El campo Asunto contiene caracteres no válidos~]");
 	  return false;	
 	}
 
 	if (frm.de_list.value.indexOf("'")>=0) {
-	  alert("Description contains invalid characters");
+	  alert("[~El campo Descripción contiene caracteres no válidos~]");
 	  return false;	
 	}
 	
 	if (frm.de_list.value.length>50) {
-	  alert("Description cannot be longer than 50 characters");
+	  alert("[~El campo Descripción no puede exceder los 50 caracteres~]");
 	  return false;	
 	}
 		
@@ -113,7 +113,7 @@
       }
     //-->
   </SCRIPT>
-  <TITLE>hipergate :: Create Distribution List - Step 4 of 4</TITLE>
+  <TITLE>hipergate :: [~Crear Lista de Distribuci&oacute;n - Paso 4/4~]</TITLE>
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="window.resizeTo(380,340);">
   <DIV ID="frm1">  
@@ -140,22 +140,22 @@
      out.write("<INPUT TYPE=\"hidden\" NAME=\"desc_file\" VALUE=\"" + request.getParameter("desc_file") + "\">\n");
 %>         
     
-    <TABLE><TR><TD WIDTH="310px" CLASS="striptitle"><FONT CLASS="title1">Create List - Step 4 of 4</FONT></TD></TR></TABLE>
+    <TABLE><TR><TD WIDTH="310px" CLASS="striptitle"><FONT CLASS="title1">[~Crear Lista - Paso 4 de 4~]</FONT></TD></TR></TABLE>
     <BR>  
     <TABLE WIDTH="310px" CLASS="formback">
       <TR>
         <TD ALIGN="left" CLASS="formstrong">
-          Specify Subject and Description
+          [~Especifique Asunto y Descripci&oacute;n~]
         </TD>
       </TR>
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
             <TD ALIGN="left">
-	      <FONT CLASS="formstrong">Subject for e-mails</FONT>
+	      <FONT CLASS="formstrong">[~Asunto para e-mails~]</FONT>
 	      <BR>
 	      <INPUT TYPE="text" MAXLENGTH="100" SIZE="48" CLASS="combomini" NAME="tx_subject">
-	      <FONT CLASS="formplain">List Description</FONT>
+	      <FONT CLASS="formplain">[~Descripci&oacute;n de la lista~]</FONT>
 	      <BR>
 	      <TEXTAREA CLASS="combomini" NAME="de_list" ROWS="3" COLS="48"></TEXTAREA>
             </TD>
@@ -164,7 +164,7 @@
       </TD></TR>
     </TABLE>
     <BR>
-   <CENTER><INPUT TYPE="button" CLASS="closebutton" VALUE="Cancel" STYLE="width:100px" onclick="window.document.location='list_wizard_cancel.jsp?tp_list=' + document.forms[0].tp_list.value + '&gu_query=' + document.forms[0].gu_query.value;">&nbsp;<INPUT TYPE="submit" CLASS="pushbutton" VALUE="<< Previous" STYLE="width:100px" onClick="document.forms[0].action='list_wizard_03.jsp';document.forms[0].submit();">&nbsp;<INPUT TYPE="submit" CLASS="pushbutton" VALUE="Finish" STYLE="width:100px"></CENTER>
+   <CENTER><INPUT TYPE="button" CLASS="closebutton" VALUE="[~Cancelar~]" STYLE="width:100px" onclick="window.document.location='list_wizard_cancel.jsp?tp_list=' + document.forms[0].tp_list.value + '&gu_query=' + document.forms[0].gu_query.value;">&nbsp;<INPUT TYPE="submit" CLASS="pushbutton" VALUE="[~<< Anterior~]" STYLE="width:100px" onClick="document.forms[0].action='list_wizard_03.jsp';document.forms[0].submit();">&nbsp;<INPUT TYPE="submit" CLASS="pushbutton" VALUE="[~Finalizar~]" STYLE="width:100px"></CENTER>
   </FORM>
   </DIV>
 </BODY>

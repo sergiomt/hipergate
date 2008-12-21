@@ -106,6 +106,6 @@
   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
   <TITLE>Wait...</TITLE>
 </HEAD>
-<BODY onLoad="alert('List combination terminated successfully');window.close();">
+<BODY onLoad="alert('[~Operación de combinación de listas finalizada con éxito~]');window.close();">
 </BODY>
 </HTML>

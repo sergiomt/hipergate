@@ -94,14 +94,14 @@
 	
 	if (frm.tx_from.value.length>0) {
 	  if (!check_email(frm.tx_from.value)) {
-	    alert ("sender e-mail address is not valid");
+	    alert ("[~La dirección de e-mail del remitente no es válida~]");
 	    return false;
 	  }
 	}
 
 	if (frm.tx_reply.value.length>0) {
 	  if (!check_email(frm.tx_reply.value)) {
-	    alert ("return e-mail address is not valid");
+	    alert ("[~La dirección de e-mail de retorno no es válida~]");
 	    return false;
 	  }
 	}
@@ -115,7 +115,7 @@
       }
     //-->
   </SCRIPT>
-  <TITLE>hipergate :: Create Distribution List - Step 3 of 4</TITLE>
+  <TITLE>hipergate :: [~Crear Lista de Distribuci&oacute;n - Paso 3/4~]</TITLE>
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setInputs()">
   <FORM METHOD="get" onSubmit="return validate()">
@@ -126,28 +126,28 @@
     <INPUT TYPE="hidden" NAME="gu_query">        
     <CENTER>
     <TABLE>
-      <TR><TD WIDTH="310px" CLASS="striptitle"><FONT CLASS="title1">Create List - Step 3 of 4</FONT></TD></TR>
+      <TR><TD WIDTH="310px" CLASS="striptitle"><FONT CLASS="title1">[~Crear Lista - Paso 3 de 4~]</FONT></TD></TR>
       <TR><TD><IMG SRC="../images/images/spacer.gif" WIDTH="300" HEIGHT="4" BORDER="0"></TD></TR>
     </TABLE>
     <TABLE WIDTH="310px" CLASS="formback">
       <TR>
         <TD ALIGN="left" CLASS="formstrong">
-          Specify sender and return addresses
+          [~Especifique direcciones de remite y retorno~]
         </TD>
       </TR>
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
             <TD ALIGN="left">
-	      <FONT CLASS="formplain">Sender e-mail address</FONT>
+	      <FONT CLASS="formplain">[~Direcci&oacute;n e-mail del remitente~]</FONT>
 	      <BR>
 	      <INPUT TYPE="text" CLASS="combomini" NAME="tx_from" MAXLENGTH="100" SIZE="48" VALUE="<%=sEMail%>">
 	      <BR>
-	      <FONT CLASS="formplain">Display sender name</FONT>
+	      <FONT CLASS="formplain">[~Mostrar nombre de remitente~]</FONT>
 	      <BR>
 	      <INPUT TYPE="text" CLASS="combomini" NAME="tx_sender" MAXLENGTH="100" SIZE="48" VALUE="<%=sFullName%>">
 	      <BR>
-	      <FONT CLASS="formplain">e-mail return address</FONT>
+	      <FONT CLASS="formplain">[~Direcci&oacute;n e-mail de retorno~]</FONT>
 	      <BR>
 	      <INPUT TYPE="text" CLASS="combomini" NAME="tx_reply" MAXLENGTH="100" SIZE="48" VALUE="<%=sEMail%>">	      
             </TD>
@@ -155,7 +155,7 @@
         </TABLE>
       </TD></TR>
     </TABLE>
-    <INPUT TYPE="button" CLASS="closebutton" VALUE="Cancel" STYLE="width:100px" onClick="self.close()">&nbsp;<INPUT TYPE="button" CLASS="pushbutton" VALUE="<< Previous" STYLE="width:100px" onClick="window.history.back()">&nbsp;<INPUT TYPE="submit" CLASS="pushbutton" VALUE="Next >>" STYLE="width:100px">
+    <INPUT TYPE="button" CLASS="closebutton" VALUE="[~Cancelar~]" STYLE="width:100px" onClick="self.close()">&nbsp;<INPUT TYPE="button" CLASS="pushbutton" VALUE="[~<< Anterior~]" STYLE="width:100px" onClick="window.history.back()">&nbsp;<INPUT TYPE="submit" CLASS="pushbutton" VALUE="[~Siguiente >>~]" STYLE="width:100px">
     </CENTER>
   </FORM>
 </BODY>
