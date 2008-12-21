@@ -92,7 +92,7 @@
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: Additional Options for Oportunity</TITLE>
+  <TITLE>hipergate :: [~Opciones adicionales de la Oportunidad~]</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -120,11 +120,11 @@
 <% if ((iAppMask & (1<<ProjectManager))!=0 && nTemplateProjs>0) { %>
         if (frm.bo_project.checked) {
           if (frm.sel_template.selectedIndex<=0) {
-            alert ("A project template must be chosen");
+            alert ("[~Debe seleccionar una plantilla de proyecto~]");
             return false;
           }
           if (frm.dt_start.value.length>0 && !isDate(frm.dt_start.value,"d")) {
-            alert ("Start date is not valid");
+            alert ("[~La fecha de inicio no es válida~]");
             return false;          
           }
         } // fi (bo_project.checked)
@@ -133,18 +133,18 @@
 				
         if (frm.bo_email.checked) {
           if (frm.tx_subject.value.length==0) {
-            alert ("The e-mail subject is required");
+            alert ("[~El asunto del correo es obligatorio~]");
             return false;
           }
           if (frm.tx_recipients.value.length==0) {
-            alert ("At least one e-mail recipient is required");
+            alert ("[~Se requiere al menos un destinatario del correo~]");
             return false;
           }
           rcp = frm.tx_recipients.value.replace(/;/g,",");
 					rcp = rcp.split(",");
 					for (var r=0; r<=rcp.length; r++) {
 					  if (!check_email(rcp[r])) {
-					    alert (rcp[r]+" "+"The e-mail address is not valid");
+					    alert (rcp[r]+" "+"[~La dirección de correo electronico no es valida~]");
 							return false;
 					  } // fi
 					} // next
@@ -163,7 +163,7 @@
 <BODY TOPMARGIN="8" MARGINHEIGHT="8">
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Additional Options for Oportunity</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Opciones adicionales de la Oportunidad~]</FONT></TD></TR>
   </TABLE>  
   <FORM NAME="" METHOD="post" ACTION="oportunity_won_store.jsp" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
@@ -178,7 +178,7 @@
 <% if ((iAppMask & (1<<ProjectManager))!=0 && nTemplateProjs>0) { %>
           <TR>
             <TD ALIGN="right" WIDTH="90"><INPUT TYPE="checkbox" NAME="bo_project" VALUE="1" onclick="if (this.checked) showLayer('div_template'); else hideLayer('div_template');"></TD>
-            <TD ALIGN="left" WIDTH="370" CLASS="formstrong">Create project from template</TD>
+            <TD ALIGN="left" WIDTH="370" CLASS="formstrong">[~Crear un proyecto a partir de una plantilla~]</TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90"></TD>
@@ -186,11 +186,11 @@
               <DIV ID="div_template" STYLE="visibility:hidden">
                 <TABLE SUMMARY="Project Data" CLASS="formfront">
                   <TR>
-                    <TD CLASS="formplain">Template</TD>
+                    <TD CLASS="formplain">[~Plantilla~]</TD>
                     <TD><SELECT NAME="sel_template" CLASS="combomini"><OPTION VALUE=""></OPTION><% for (int p=0; p<nTemplateProjs; p++) out.write("<OPTION VALUE=\""+oTemplateProjs.getString(0,p)+"\">"+oTemplateProjs.getString(1,p)+"</OPTION>"); %></SELECT></TD>
                   </TR>
                   <TR>
-                    <TD CLASS="formplain">Start</TD>
+                    <TD CLASS="formplain">[~Inicio~]</TD>
                     <TD><INPUT TYPE="text" NAME="dt_start" MAXLENGTH="10" SIZE="12">&nbsp;<A HREF="javascript:showCalendar('dt_start')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="View Calendar"></A></TD>
                   </TR>
                 </TABLE>
@@ -201,7 +201,7 @@
    if ((iAppMask & (1<<Hipermail))!=0) { %>
           <TR>
             <TD ALIGN="right" WIDTH="90"><INPUT TYPE="checkbox" NAME="bo_email" VALUE="1" onclick="if (this.checked) showLayer('div_email'); else hideLayer('div_email');"></TD>
-            <TD ALIGN="left" WIDTH="370" CLASS="formstrong">Send a notification e-mail</TD>
+            <TD ALIGN="left" WIDTH="370" CLASS="formstrong">[~Enviar un correo electr&oacute;nico de notificaci&oacute;n~]</TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90"></TD>
@@ -209,15 +209,15 @@
               <DIV ID="div_email" STYLE="visibility:hidden">
                 <TABLE SUMMARY="e-mail Data" CLASS="formfront">
                   <TR>
-                    <TD CLASS="formplain">Subject</TD>
-                    <TD><INPUT TYPE="text" NAME="tx_subject" MAXLENGTH="100" SIZE="50" VALUE="New Sale Alert <%=oOprt.getStringNull(DB.tl_oportunity,"")%>"></TD>
+                    <TD CLASS="formplain">[~Asunto~]</TD>
+                    <TD><INPUT TYPE="text" NAME="tx_subject" MAXLENGTH="100" SIZE="50" VALUE="[~Aviso de Venta~] <%=oOprt.getStringNull(DB.tl_oportunity,"")%>"></TD>
                   </TR>
                   <TR>
-                    <TD CLASS="formplain">Recipients</TD>
+                    <TD CLASS="formplain">[~Destinatarios~]</TD>
                     <TD><INPUT TYPE="text" NAME="tx_recipients" MAXLENGTH="255" SIZE="50"></TD>
                   </TR>
                   <TR>
-                    <TD CLASS="formplain">Text</TD>
+                    <TD CLASS="formplain">[~Texto~]</TD>
                     <TD><TEXTAREA NAME="tx_body" ROWS="4" COLS="40"></TEXTAREA></TD>
                   </TR>
                 </TABLE>
@@ -228,7 +228,7 @@
    if ((iAppMask & (1<<Shop))!=0 && nShops>0) { %>
           <TR>
             <TD ALIGN="right" WIDTH="90"><INPUT TYPE="checkbox" NAME="bo_order" VALUE="1" onclick="if (this.checked) showLayer('div_shops'); else hideLayer('div_shops');"></TD>
-            <TD ALIGN="left" WIDTH="370" CLASS="formstrong">Open order edition form</TD>
+            <TD ALIGN="left" WIDTH="370" CLASS="formstrong">[~Abrir un formulario de edici&oacute;n de pedido~]</TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90"></TD>
@@ -236,7 +236,7 @@
               <DIV ID="div_shops" STYLE="visibility:hidden">
                 <TABLE SUMMARY="Shops Data" CLASS="formfront">
                   <TR>
-                    <TD CLASS="formplain">Catalog</TD>
+                    <TD CLASS="formplain">[~Cat&aacute;logo~]</TD>
                     <TD><SELECT NAME="sel_shop"><% out.write("<OPTION VALUE=\""+oShops.getString(0,0)+"\" SELECTED=\"selected\">"+oShops.getString(1,0)+"</OPTION>"); for (int s=1; s<nShops; s++) out.write("<OPTION VALUE=\""+oShops.getString(0,s)+"\">"+oShops.getString(1,s)+"</OPTION>"); %></SELECT></TD>
                   </TR>
                 </TABLE>
@@ -249,8 +249,8 @@
           </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>
     	    </TD>
     	  </TR>            

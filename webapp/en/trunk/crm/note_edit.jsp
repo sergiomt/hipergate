@@ -78,7 +78,7 @@
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/datefuncs.js"></SCRIPT>        
-  <TITLE>hipergate :: Add Note</TITLE>
+  <TITLE>hipergate :: [~A&ntilde;adir Nota~]</TITLE>
 
     <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
       <!--        
@@ -97,17 +97,17 @@
 	var frm = window.document.forms[0];
 
 	if (!isDate(frm.dt_modified.value, "d") && frm.dt_modified.value.length>0) {
-	  alert ("Date is not valid");
+	  alert ("[~La fecha no es válida~]");
 	  return false;	  
 	}
 	
 	if (frm.tx_note.value.length>4000) {
-	  alert ("Note cannot be longer than 4000 characters");
+	  alert ("[~La nota no puede superar los 4000 caracteres~]");
 	  return false;
 	}
 
 	if (frm.tx_note.value.length==0) {
-	  alert ("Note text may not be empty");
+	  alert ("[~El texto de la nota no puede ser vacio~]");
 	  return false;
 	}
 	
@@ -125,7 +125,7 @@
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8">
 
-  <TABLE><TR><TD CLASS="striptitle"><FONT CLASS="title1">Add Note<%=(sContactNm.length()>0 ? " for&nbsp;" + sContactNm : "")%></FONT></TD></TR></TABLE>
+  <TABLE><TR><TD CLASS="striptitle"><FONT CLASS="title1">[~A&ntilde;adir Nota~]<%=(sContactNm.length()>0 ? "[~ para ~]" + sContactNm : "")%></FONT></TD></TR></TABLE>
   <FORM NAME="" METHOD="post" ACTION="note_edit_store.jsp" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
     <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
@@ -136,26 +136,26 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right" WIDTH="70"><FONT CLASS="formplain">Title</FONT></TD>
+            <TD ALIGN="right" WIDTH="70"><FONT CLASS="formplain">[~T&iacute;tulo:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="400"><INPUT TYPE="text" NAME="tl_note" MAXLENGTH="128" SIZE="40"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="70"><FONT CLASS="formplain">Writer:</FONT></TD>
+            <TD ALIGN="right" WIDTH="70"><FONT CLASS="formplain">[~Redactor:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="400"><INPUT TYPE="text" NAME="tx_fullname" MAXLENGTH="200" SIZE="40" VALUE="<%=oUser.getStringNull(DB.nm_user,"") + " " + oUser.getStringNull(DB.tx_surname1,"") + " " + oUser.getStringNull(DB.tx_surname2,"")%>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="70"><FONT CLASS="formplain">e-mail:</FONT></TD>
+            <TD ALIGN="right" WIDTH="70"><FONT CLASS="formplain">[~e-mail:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="400"><INPUT TYPE="text" NAME="tx_main_email" MAXLENGTH="100" SIZE="40" VALUE="<%=oUser.getStringNull(DB.tx_main_email,"")%>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="70"><FONT CLASS="formplain">Date:</FONT></TD>
+            <TD ALIGN="right" WIDTH="70"><FONT CLASS="formplain">[~Fecha:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="400">
               <INPUT TYPE="text" NAME="dt_modified" MAXLENGTH="10" SIZE="10" VALUE="<%=oSimpleDate.format(new Date())%>">
-              &nbsp;&nbsp;<A HREF="javascript:showCalendar('dt_modified')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
+              &nbsp;&nbsp;<A HREF="javascript:showCalendar('dt_modified')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="70"><FONT CLASS="formplain">Note:</FONT></TD>
+            <TD ALIGN="right" WIDTH="70"><FONT CLASS="formplain">[~Nota:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="400"><TEXTAREA NAME="tx_note" ROWS="9" COLS="60"></TEXTAREA></TD>
           </TR>
           <TR>
@@ -163,8 +163,8 @@
   	  </TR>          
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Close" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cerrar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>
     	    </TD>	            
         </TABLE>

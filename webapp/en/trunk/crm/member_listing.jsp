@@ -221,7 +221,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: <%=de_list%>: members of distribution list</TITLE>
+  <TITLE>hipergate :: <%=de_list%>[~: miembros de la lista de distribuci&oacute;n~]</TITLE>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
@@ -281,7 +281,7 @@
 	  
 	  var frm = document.forms[0];
 	  	  
-	  if (window.confirm("Are you sure you want to delete selected members?")) {
+	  if (window.confirm("[~¿Está seguro de que desea eliminar los miembros seleccionados?~]")) {
 	  	  
 	    frm.checkeditems.value = listEMails();
 	    
@@ -300,7 +300,7 @@
 	  
 	  var frm = document.forms[0];
 	  	  
-	  if (window.confirm("Are you sure you want to deactivate selected members?")) {
+	  if (window.confirm("[~¿Está seguro de que desea desactivar los miembros seleccionados?~]")) {
 	  	  
 	    frm.checkeditems.value = listEMails();
 	    
@@ -319,7 +319,7 @@
 	  
 	  var frm = document.forms[0];
 	  	  
-	  if (window.confirm("Are you sure you want to block selected mebers?")) {
+	  if (window.confirm("[~¿Está seguro de que desea bloquear los miembros seleccionados?~]")) {
 	  	  
 	    frm.checkeditems.value = listEMails();
 	    
@@ -415,7 +415,7 @@
     <!--%@ include file="../common/tabmenu.jspf" %-->
     <FORM METHOD="post">
       <TABLE WIDTH="100%"><TR><TD><IMG SRC="../skins/<%=sSkin%>/hglogopeq.jpg" BORDER="0" ALIGN="MIDDLE"></TD></TR></TABLE>  
-      <TABLE WIDTH="100%"><TR><TD CLASS="striptitle"><FONT CLASS="title1"><%=de_list%>: members of distribution list</FONT></TD></TR></TABLE>
+      <TABLE WIDTH="100%"><TR><TD CLASS="striptitle"><FONT CLASS="title1"><%=de_list%>[~: miembros de la lista de distribuci&oacute;n~]</FONT></TD></TR></TABLE>
       <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
       <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
       <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
@@ -428,72 +428,72 @@
       <TABLE CELLSPACING="2" CELLPADDING="2">
       <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       <TR>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nuevo~]"></TD>
         <TD VALIGN="middle">
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert ('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New</A>
+          <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Nuevo~]</A>
 <% } else { %>
-          <A HREF="#" onclick="createInstance()" CLASS="linkplain">New</A>
+          <A HREF="#" onclick="createInstance()" CLASS="linkplain">[~Nuevo~]</A>
 <% } %>
         </TD>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar~]"></TD>
         <TD>
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert ('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">Delete</A>
+          <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Eliminar~]</A>
 <% } else { %>
-          <A HREF="javascript:deleteMembers()" CLASS="linkplain">Delete</A>
+          <A HREF="javascript:deleteMembers()" CLASS="linkplain">[~Eliminar~]</A>
 <% } %>
         </TD>
-        <TD ALIGN="right" VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Search"></TD>
+        <TD ALIGN="right" VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Buscar~]"></TD>
         <TD VALIGN="middle">
-          <SELECT NAME="sel_searched" CLASS="combomini"><OPTION VALUE="b.<%=DB.tx_name%>">Name<OPTION VALUE="b.<%=DB.tx_surname%>">Surname<OPTION VALUE="b.<%=DB.tx_email%>">e-mail</SELECT>
+          <SELECT NAME="sel_searched" CLASS="combomini"><OPTION VALUE="b.<%=DB.tx_name%>">[~Nombre~]<OPTION VALUE="b.<%=DB.tx_surname%>">[~Apellidos~]<OPTION VALUE="b.<%=DB.tx_email%>">[~e-mail~]</SELECT>
           <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>">
-	  &nbsp;<A HREF="#" onclick="findInstance();return false;" CLASS="linkplain" TITLE="Search">Search</A>
+	  &nbsp;<A HREF="#" onclick="findInstance();return false;" CLASS="linkplain" TITLE="[~Buscar~]">[~Buscar~]</A>
         </TD>
-        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard Find Filter"></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="[~Descartar búsqueda~]"></TD>
         <TD VALIGN="bottom">
-          <A HREF="#" onclick="document.forms[0].find.value='';findInstance();" CLASS="linkplain" TITLE="Descartar búsqueda">Discard</A>
-          <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;Show&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100</SELECT><FONT CLASS="textplain"></FONT>
+          <A HREF="#" onclick="document.forms[0].find.value='';findInstance();" CLASS="linkplain" TITLE="Descartar búsqueda">[~Descartar~]</A>
+          <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;[~Mostrar~]&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100</SELECT><FONT CLASS="textplain"></FONT>
         </TD>
         </TR>
         <TR>
-          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/crm/inactive18.gif" BORDER="0" ALT="Deactivate"></TD>
+          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/crm/inactive18.gif" BORDER="0" ALT="[~Desactivar~]"></TD>
           <TD VALIGN="middle">
 <% if (bIsGuest) { %>
-            <A HREF="#" onclick="alert ('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">Deactivate</A>
+            <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Desactivar~]</A>
 <% } else { %>
-            <A HREF="javascript:deactivateMembers()" CLASS="linkplain">Deactivate</A>
+            <A HREF="javascript:deactivateMembers()" CLASS="linkplain">[~Desactivar~]</A>
 <% } %>
           </TD>
-          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/crm/halt18.gif" BORDER="0" ALT="Block"></TD>
+          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/crm/halt18.gif" BORDER="0" ALT="[~Bloquear~]"></TD>
           <TD VALIGN="middle">
 <% if (bIsGuest) { %>
-            <A HREF="#" onclick="alert ('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">Block</A>
+            <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Bloquear~]</A>
 <% } else { %>
-            <A HREF="javascript:blockMembers()" CLASS="linkplain">Block</A>
+            <A HREF="javascript:blockMembers()" CLASS="linkplain">[~Bloquear~]</A>
 <% } %>
           </TD>
-          <TD ALIGN="center" VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/refresh.gif" HEIGHT="16" BORDER="0" ALT="Update"></TD>
+          <TD ALIGN="center" VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/refresh.gif" HEIGHT="16" BORDER="0" ALT="[~Actualizar~]"></TD>
           <TD COLSPAN="3">
-	  <A HREF="javascript:window.document.location.reload()" CLASS="linkplain" TITLE="Actualizar">Update</A>
+	  <A HREF="javascript:window.document.location.reload()" CLASS="linkplain" TITLE="Actualizar">[~Actualizar~]</A>
 	  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <%        if (sWhere.length()==0) {
             out.write("            <FONT CLASS=\"textplain\"><B>Ver</B>&nbsp;&nbsp;<INPUT TYPE=\"radio\" NAME=\"viewonly\"");
             if (0==iOnly) out.write("CHECKED");
-            out.write(" onclick=\"viewOnly(0)\">&nbsp;All&nbsp;&nbsp;<INPUT TYPE=\"radio\" NAME=\"viewonly\"");
+            out.write(" onclick=\"viewOnly(0)\">&nbsp;[~Todos~]&nbsp;&nbsp;<INPUT TYPE=\"radio\" NAME=\"viewonly\"");
             if (1==iOnly) out.write("CHECKED");
-            out.write(" onclick=\"viewOnly(1)\">&nbsp;Active&nbsp;&nbsp;<INPUT TYPE=\"radio\" NAME=\"viewonly\"");            
+            out.write(" onclick=\"viewOnly(1)\">&nbsp;[~Activos~]&nbsp;&nbsp;<INPUT TYPE=\"radio\" NAME=\"viewonly\"");            
             if (2==iOnly) out.write("CHECKED");
-            out.write(" onclick=\"viewOnly(2)\">&nbsp;Inactive&nbsp;&nbsp;<INPUT TYPE=\"radio\" NAME=\"viewonly\"");
+            out.write(" onclick=\"viewOnly(2)\">&nbsp;[~Inactivos~]&nbsp;&nbsp;<INPUT TYPE=\"radio\" NAME=\"viewonly\"");
             if (3==iOnly) out.write("CHECKED");
-            out.write(" onclick=\"viewOnly(3)\">&nbsp;Blocked");
+            out.write(" onclick=\"viewOnly(3)\">&nbsp;[~Bloqueados~]");
           }
 %>
 	  </TD>
 	</TR>
 	<TR>
-          <TD VALIGN="bottom">&nbsp;<IMG SRC="../images/images/crm/member_load.gif" BORDER="0" WIDTH="24" HEIGHT="24" ALT="Combine with another list"></TD>
-          <TD COLSPAN="3" VALIGN="middle"><A HREF="list_merge.jsp?id_domain?<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_list=<%=gu_list%>" CLASS="linkplain">Combine with another list</A></TD>
+          <TD VALIGN="bottom">&nbsp;<IMG SRC="../images/images/crm/member_load.gif" BORDER="0" WIDTH="24" HEIGHT="24" ALT="[~Combinar con otra Lista~]"></TD>
+          <TD COLSPAN="3" VALIGN="middle"><A HREF="list_merge.jsp?id_domain?<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_list=<%=gu_list%>" CLASS="linkplain">[~Combinar con otra Lista~]</A></TD>
           <TD COLSPAN="4"></TD>
 	</TR>
         <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
@@ -505,24 +505,24 @@
     	  // [~//Pintar los enlaces de siguiente y anterior~]
     
           if (iSkip>0) // [~//Si iSkip>0 entonces hay registros anteriores~]
-            out.write("            <A HREF=\"member_listing.jsp?gu_list=" + gu_list + "&de_list=" + Gadgets.URLEncode(de_list) + "&id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
+            out.write("            <A HREF=\"member_listing.jsp?gu_list=" + gu_list + "&de_list=" + Gadgets.URLEncode(de_list) + "&id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;[~Anteriores~]" + "</A>&nbsp;&nbsp;&nbsp;");
     
           if (!oMembers.eof())
-            out.write("            <A HREF=\"member_listing.jsp?gu_list=" + gu_list + "&de_list=" + Gadgets.URLEncode(de_list) + "&id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
+            out.write("            <A HREF=\"member_listing.jsp?gu_list=" + gu_list + "&de_list=" + Gadgets.URLEncode(de_list) + "&id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">[~Siguientes~]&nbsp;&gt;&gt;</A>");
 %>
           </TD>
         </TR>
         <TR>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(1);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==1 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>Member</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>e-mail</B></TD>
-          <TD CLASS="tableheader" WIDTH="20px" ALIGN="center" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Seleccionar todos"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select all"></A></TD></TR>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(1);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==1 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este campo~]"></A>&nbsp;<B>[~Miembro~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este campo~]"></A>&nbsp;<B>[~e-mail~]</B></TD>
+          <TD CLASS="tableheader" WIDTH="20px" ALIGN="center" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Seleccionar todos"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="[~Seleccionar todos~]"></A></TD></TR>
 <%
   	  String sStrip,sMemberId,sContact;
 
 	  for (int i=0; i<iMemberCount; i++) {  
   	    
   	    if (oMembers.isNull(0,i) && oMembers.isNull(1,i))
-  	      sContact = "<I>(unname)</I>";
+  	      sContact = "<I>([~sin nombre~])</I>";
   	    else
     	      sContact = oMembers.getStringNull(0,i,"") + ", " + oMembers.getStringNull(1,i,"");
 
@@ -535,18 +535,18 @@
               <TD CLASS="strip<% out.write(sStrip); %>" valign="middle">&nbsp;
 <%
               if (null!=sMemberId)
-                out.write("                <A CLASS=\"linkplain\" HREF=\"#\" TITLE=\"Edit Member\" onclick=\"modifyMember('" + sMemberId + "')\">" + sContact + "</A>\n");
+                out.write("                <A CLASS=\"linkplain\" HREF=\"#\" TITLE=\"[~Editar miembro~]\" onclick=\"modifyMember('" + sMemberId + "')\">" + sContact + "</A>\n");
 	      else
                 out.write("                " + sContact + "\n");
 %>
               </TD>
               <TD CLASS="strip<% out.write(sStrip); %>" valign="middle">&nbsp;
 <%	      if (oMembers.getShort(5,i)==(short)0)	      
-	        out.write("<SPAN onmouseover=\"this.style.cursor='help';\" onmouseout=\"this.style.cursor='auto';\" TITLE='Inactive Member'><FONT COLOR=gray>" + oMembers.getString(2,i) + "</FONT></SPAN>");
+	        out.write("<SPAN onmouseover=\"this.style.cursor='help';\" onmouseout=\"this.style.cursor='auto';\" TITLE='[~Miembro Inactivo~]'><FONT COLOR=gray>" + oMembers.getString(2,i) + "</FONT></SPAN>");
 	      else {
 	        if (gu_blacklist!=null) {
 	          if (oBlockMap.get(oMembers.getString(2,i))!=null)
-	            out.write("<SPAN onmouseover=\"this.style.cursor='help';\" onmouseout=\"this.style.cursor='auto';\" TITLE='Blocked Member'><FONT COLOR=red>" + oMembers.getString(2,i) + "</FONT></SPAN>");
+	            out.write("<SPAN onmouseover=\"this.style.cursor='help';\" onmouseout=\"this.style.cursor='auto';\" TITLE='[~Miembro Bloqueado~]'><FONT COLOR=red>" + oMembers.getString(2,i) + "</FONT></SPAN>");
 	          else
 	            out.write(oMembers.getString(2,i));
 	        }
@@ -588,8 +588,8 @@
           <TD width="1" bgcolor="#FFFFFF"><IMG src="../images/images/spacer.gif" height="1" width="1"></TD>
           <TD bgcolor="#D6D3CE">
             <!-- Opciones -->
-            <DIV class="menuCP" onMouseOver="menuHighLight(this)" onMouseOut="menuHighLight(this)" onClick="modifyInstace(jsInstanceId)">Open</DIV>
-            <DIV id="menuOpt01" class="menuE" onMouseOver="menuHighLight(this)" onMouseOut="menuHighLight(this)" onClick="clone()">Duplicate</DIV>
+            <DIV class="menuCP" onMouseOver="menuHighLight(this)" onMouseOut="menuHighLight(this)" onClick="modifyInstace(jsInstanceId)">[~Abrir~]</DIV>
+            <DIV id="menuOpt01" class="menuE" onMouseOver="menuHighLight(this)" onMouseOut="menuHighLight(this)" onClick="clone()">[~Duplicar~]</DIV>
             <HR size="2" width="98%">
             <!-- /Opciones -->
           </TD>

@@ -84,7 +84,7 @@
         var frm = document.forms[0];
                 
         if (frm.memberselection.value=="" || frm.memberselection.value=="null") {
-          alert ("Must choose a type of list to be generated");
+          alert ("[~Debe elegir un tipo de lista a generar~]");
           return false;
         }
         
@@ -103,22 +103,22 @@
     <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
     <INPUT TYPE="hidden" NAME="gu_list" VALUE="<%=request.getParameter("gu_list")%>">
     <TABLE BORDER="0"><TR><TD><IMG SRC="../skins/<%=sSkin%>/hglogopeq.jpg" BORDER="0" ALIGN="MIDDLE"></TD></TR></TABLE>  
-    <TABLE WIDTH="100%"><TR><TD WIDTH="310px" CLASS="striptitle"><FONT CLASS="title1">Insert Members - Step 1 of 3</FONT></TD></TR></TABLE>
+    <TABLE WIDTH="100%"><TR><TD WIDTH="310px" CLASS="striptitle"><FONT CLASS="title1">[~Insertar Miembros - Paso 1 de 3~]</FONT></TD></TR></TABLE>
     <BR>
     <CENTER>
     <TABLE WIDTH="310px" CLASS="formback">
-      <TR><TD ALIGN="left" CLASS="formstrong">Insert Members</TD></TR>
+      <TR><TD ALIGN="left" CLASS="formstrong">[~Insertar Miembros~]</TD></TR>
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
             <TD ALIGN="left">
-              <INPUT TYPE="radio" NAME="tp_memberselection" VALUE="table" onClick="document.forms[0].memberselection.value='1';" checked>&nbsp;<FONT CLASS="formstrong">Select from contact list</FONT>
+              <INPUT TYPE="radio" NAME="tp_memberselection" VALUE="table" onClick="document.forms[0].memberselection.value='1';" checked>&nbsp;<FONT CLASS="formstrong">[~Seleccionar de la lista de contactos~]</FONT>
               <BR>
-              <FONT CLASS="textsmall">Allows to insert members in lists.</FONT>
+              <FONT CLASS="textsmall">[~Permite insertar miembros de las listas de compa&ntilde;ias e individuos.~]</FONT>
               <BR>
-              <INPUT TYPE="radio" NAME="tp_memberselection" VALUE="query" onClick="document.forms[0].memberselection.value='2';">&nbsp;<FONT CLASS="formstrong">Select from Query</FONT>              
+              <INPUT TYPE="radio" NAME="tp_memberselection" VALUE="query" onClick="document.forms[0].memberselection.value='2';">&nbsp;<FONT CLASS="formstrong">[~Seleccionar a partir de una consulta~]</FONT>              
               <BR>
-              <FONT CLASS="textsmall">Allows to insert members proceeding from results of a query.</FONT>
+              <FONT CLASS="textsmall">[~Permite insertar miembros procedentes del resultado de una consulta con filtro por campos.~]</FONT>
             </TD>
           </TR>
         </TABLE>
@@ -127,7 +127,7 @@
     </CENTER>
     <BR>
     <TABLE WIDTH="310px">
-      <TR><TD ALIGN="right"><INPUT TYPE="button" CLASS="closebutton" VALUE="Cancel" STYLE="width:100px" onClick="self.close()">&nbsp;<INPUT TYPE="submit" CLASS="pushbutton" VALUE="Next >>" STYLE="width:100px"></TD></TR>
+      <TR><TD ALIGN="right"><INPUT TYPE="button" CLASS="closebutton" VALUE="[~Cancelar~]" STYLE="width:100px" onClick="self.close()">&nbsp;<INPUT TYPE="submit" CLASS="pushbutton" VALUE="[~Siguiente >>~]" STYLE="width:100px"></TD></TR>
     </TABLE>
   </FORM>
 </BODY>

@@ -105,7 +105,7 @@
 
 <HTML>
 <HEAD>
-  <TITLE>hipergate :: Member Listing</TITLE>
+  <TITLE>hipergate :: [~Listado de Miembros~]</TITLE>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
@@ -155,8 +155,8 @@
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="//setCombos()">
     <FORM METHOD="post">
       <TABLE><TR><TD><IMG SRC="../skins/<%=sSkin%>/hglogopeq.jpg" BORDER="0" ALIGN="MIDDLE"></TD></TR></TABLE>
-      <TABLE WIDTH="90%"><TR><TD CLASS="striptitle"><FONT CLASS="title1">Contact Listing</FONT></TD></TR></TABLE>  
-      <TABLE><TR><TD><IMG SRC="../images/images/crm/person_add.jpg" BORDER="0" ALIGN="MIDDLE">&nbsp;<A HREF="javascript:insertSelected()" CLASS="linkplain">Insert selected</A></TD></TR></TABLE>
+      <TABLE WIDTH="90%"><TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Listado de Contactos~]</FONT></TD></TR></TABLE>  
+      <TABLE><TR><TD><IMG SRC="../images/images/crm/person_add.jpg" BORDER="0" ALIGN="MIDDLE">&nbsp;<A HREF="javascript:insertSelected()" CLASS="linkplain">[~Insertar seleccionados~]</A></TD></TR></TABLE>
       <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
       <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
       <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
@@ -167,9 +167,9 @@
       <INPUT TYPE="hidden" NAME="gu_list" VALUE="<%=request.getParameter("gu_list")%>">
       <TABLE CELLSPACING="1" CELLPADDING="0">
         <TR>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Contacts</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Address</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Select all"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select all"></A></TD></TR>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Contactos~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Direcci&oacute;n~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="[~Seleccionar todos~]"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="[~Seleccionar todos~]"></A></TD></TR>
         </TR>
 <%
 	  for (int i=0; i<iCompanyCount; i++) {
@@ -217,7 +217,7 @@
                   <IMG SRC="<%=sPicture%>" WIDTH="24" HEIGHT="24" BORDER="0" ALIGN="MIDDLE">&nbsp;<%=sContact%><%=sCompany%>
               </TD>
               <TD CLASS="strip<%=(i%2)+1%>" VALIGN="MIDDLE"><%=nullif(oCompanies.getString(5,i),"")%></TD>
-              <TD CLASS="strip<%=((i%2)+1)%>" VALIGN="MIDDLE" ALIGN="center"><INPUT <%=(oCompanies.getString(5,i)==null?"disabled TITLE=\"This entry may not be selected because it does not have an address.\"":"")%> VALUE="1" TYPE="checkbox" NAME="check-<%=i%>">
+              <TD CLASS="strip<%=((i%2)+1)%>" VALIGN="MIDDLE" ALIGN="center"><INPUT <%=(oCompanies.getString(5,i)==null?"disabled TITLE=\"[~No puede seleccionar esta entrada porque no tiene dirección asociada~]\"":"")%> VALUE="1" TYPE="checkbox" NAME="check-<%=i%>">
               <INPUT TYPE="HIDDEN" NAME="guid-<%=i%>" VALUE="'<%=nullif(oCompanies.getString(0,i),"NULL")%>-<%=nullif(oCompanies.getString(1,i),"NULL")%>'">
             </TR>
 <%
@@ -253,11 +253,11 @@
           <TD width="1" bgcolor="#FFFFFF"><IMG src="../images/images/spacer.gif" height="1" width="1"></TD>
           <TD bgcolor="#D6D3CE">
             <!-- Opciones -->
-            <DIV class="menuCP" onMouseOver="menuHighLight(this)" onMouseOut="menuHighLight(this)" onClick="modifyCompany(jsCompanyId, jsCompanyNm)">Open</DIV>
-            <DIV id="menuOpt01" class="menuE" onMouseOver="menuHighLight(this)" onMouseOut="menuHighLight(this)" onClick="clone()">Duplicate</DIV>
+            <DIV class="menuCP" onMouseOver="menuHighLight(this)" onMouseOut="menuHighLight(this)" onClick="modifyCompany(jsCompanyId, jsCompanyNm)">[~Abrir~]</DIV>
+            <DIV id="menuOpt01" class="menuE" onMouseOver="menuHighLight(this)" onMouseOut="menuHighLight(this)" onClick="clone()">[~Duplicar~]</DIV>
             <HR size="2" width="98%">
-            <DIV id="menuOpt02" class="menuE" onMouseOver="menuHighLight(this)" onMouseOut="menuHighLight(this)" onClick="listContacts()">View Individuals</DIV>
-            <DIV id="menuOpt03" class="menuE" onMouseOver="menuHighLight(this)" onMouseOut="menuHighLight(this)" onClick="listAddresses()">View Addresses</DIV>
+            <DIV id="menuOpt02" class="menuE" onMouseOver="menuHighLight(this)" onMouseOut="menuHighLight(this)" onClick="listContacts()">[~Ver Individuos~]</DIV>
+            <DIV id="menuOpt03" class="menuE" onMouseOver="menuHighLight(this)" onMouseOut="menuHighLight(this)" onClick="listAddresses()">[~Ver Direcciones~]</DIV>
             <!-- /Opciones -->
           </TD>
           <TD width="1" bgcolor="#848284"><IMG src="../images/images/spacer.gif" height="1" width="1"></TD>
