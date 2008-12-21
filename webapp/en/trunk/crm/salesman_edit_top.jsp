@@ -92,7 +92,7 @@
       var frm = document.forms[0];
     
       if (frm.sel_year.options.selectedIndex != -1) {
-        if (window.confirm("Are you sure that you want to delete year " + getCombo(frm.sel_year)))
+        if (window.confirm("[~Está seguro de que desea eliminar el año~] " + getCombo(frm.sel_year)))
           // top.frames['yearobjectives'].document.location = "salesman_year_delete.jsp?gu_sales_man=<%=gu_sales_man%>&tx_year=" + getCombo(frm.sel_year) + "&n_sales_man=" + escape("<%=n_sales_man%>");
           var u = "salesman_year_delete.jsp?gu_sales_man=<%=gu_sales_man%>&n_sales_man=<%=(com.knowgate.misc.Gadgets.URLEncode(n_sales_man))%>&tx_year=" + getCombo(frm.sel_year);
           top.frames['yearobjectives'].document.location = u;
@@ -109,12 +109,12 @@
       var frm = document.forms[0];
     
       if (hasForbiddenChars(frm.tx_year.value)) {
-        alert ("Year contains invalid characters");
+        alert ("[~El año contiene caracteres no válidos~]");
 	return;
       }
       
       if (comboIndexOf (frm.sel_year, frm.tx_year.value) != -1) {
-        alert ("Year already exists");
+        alert ("[~Ya existe el año especificado~]");
       }
       else {
   	frm.sel_year.options[frm.sel_year.options.length] = new Option(frm.tx_year.value, frm.tx_year.value, true, true);
@@ -138,16 +138,16 @@
     <FORM onSubmit="return false">
     <TABLE WIDTH="100%">
       <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-      <TR><TD CLASS="striptitle"><FONT CLASS="title1">Edit Sales Objectives&nbsp;<% out.write(n_sales_man); %></FONT></TD></TR>
+      <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Editar Objetivos de Venta~]&nbsp;<% out.write(n_sales_man); %></FONT></TD></TR>
     </TABLE>
       <TABLE WIDTH="100%">
         <TR>
           <TD>
-            <FONT CLASS="formstrong">Year&nbsp;</FONT><SELECT NAME="sel_year" onchange="showYear(getCombo(this))"><% out.write(oStrBuff.toString()); %></SELECT><INPUT TYPE="button" CLASS="closebutton" VALUE="Delete" STYLE="width:80px" onclick="deleteYear()">
+            <FONT CLASS="formstrong">[~Año~]&nbsp;</FONT><SELECT NAME="sel_year" onchange="showYear(getCombo(this))"><% out.write(oStrBuff.toString()); %></SELECT><INPUT TYPE="button" CLASS="closebutton" VALUE="[~Eliminar~]" STYLE="width:80px" onclick="deleteYear()">
           </TD>
           <TD ALIGN="right">
-            <FONT CLASS="formstrong">Create New Year&nbsp;</FONT><INPUT TYPE="text" MAXLENGTH="10" SIZE="6" NAME="tx_year">
-            <INPUT TYPE="button" CLASS="pushbutton" VALUE="New" STYLE="width:80px" onclick="newYear()">
+            <FONT CLASS="formstrong">[~Nuevo Año~]&nbsp;</FONT><INPUT TYPE="text" MAXLENGTH="10" SIZE="6" NAME="tx_year">
+            <INPUT TYPE="button" CLASS="pushbutton" VALUE="[~Nuevo~]" STYLE="width:80px" onclick="newYear()">
           </TD>
         </TR>
       </TABLE>

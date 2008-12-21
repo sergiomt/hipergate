@@ -91,7 +91,7 @@
 
         if (oOldSets.getField(1,l).equals("0") && oOldSets.getField(1,l).equals("1"))
 
-          throw new IllegalStateException ("It is not possible to add member to this list because he does not have any associated address");
+          throw new IllegalStateException ("[~No es posible dar el miembro de alta en ninguna lista porque no tiene ninguna direccion asociada~]");
       }
     }
 
@@ -160,7 +160,7 @@
         oConn.close("subscriptions_store");
       }
     oConn = null;
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Address not Found&desc=" + e.getMessage() + "&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Direccion no encontrada~]&desc=" + e.getMessage() + "&resume=_back"));
   }
   catch (NoSuchFieldException e) {  
     if (oConn!=null)

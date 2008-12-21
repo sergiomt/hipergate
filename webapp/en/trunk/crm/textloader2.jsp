@@ -54,7 +54,7 @@
 
   File oTmp = new File(sTmpDir);
   if (!oTmp.canWrite()) {
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SecurityException&desc=Cannot write into directory "+sTmpDir+"&resume=_back"));  
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SecurityException&desc=[~No es posible escribir en el directorio~] "+sTmpDir+"&resume=_back"));  
     return;
   }
 
@@ -82,7 +82,7 @@
   int iFLen = (int) oTxtFile.length();
   
   if (iFLen==0) {
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=IOException&desc=Input file is empty&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=IOException&desc=[~El archivo a cargar esta vacio~]&resume=_back"));
     return;
   }
   
@@ -150,13 +150,13 @@
 %>
 <HTML>
 <HEAD>
-  <TITLE>hipergate :: Contact Loader</TITLE>
+  <TITLE>hipergate :: [~Carga de Contactos~]</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
       function validate() {
-	return window.confirm("You are about to import the selected file. Are you sure that you want to proceed?");
+	return window.confirm("[~Está a punto de importar el fichero seleccionado. ¿Está seguro de que desea continuar?~]");
       } // validate;
     //-->
   </SCRIPT>
@@ -179,14 +179,14 @@
   
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Contact Loader</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Carga de Contactos~]</FONT></TD></TR>
   </TABLE>  
   <TABLE>
 <%
       out.write("<TR>\n");
       if (bo_colnames) {
         for (int c=0; c<i1stLinColCount; c++) {
-          out.write("      <TD><SELECT CLASS=\"combomini\" NAME=\"colname"+String.valueOf(c+1)+"\"><OPTION VALUE=\"\">Ignore</OPTION>");
+          out.write("      <TD><SELECT CLASS=\"combomini\" NAME=\"colname"+String.valueOf(c+1)+"\"><OPTION VALUE=\"\">[~Ignorar~]</OPTION>");
           boolean bColFound = false;
           for (int n=0; n<iColNames && !bColFound; n++) {
             if (aCols[c].length()>0) bColFound = aCols[c].equalsIgnoreCase(aColNames[n]);
@@ -200,7 +200,7 @@
         } // next
       } else {
         for (int c=0; c<i1stLinColCount; c++) {
-          out.write("      <TD><SELECT CLASS=\"combomini\" NAME=\"colname"+String.valueOf(c+1)+"\"><OPTION VALUE=\"\">Ignore</OPTION>");
+          out.write("      <TD><SELECT CLASS=\"combomini\" NAME=\"colname"+String.valueOf(c+1)+"\"><OPTION VALUE=\"\">[~Ignorar~]</OPTION>");
           for (int n=0; n<iColNames; n++) out.write("<OPTION VALUE=\""+aColNames[n]+"\">"+aColNames[n]+"</OPTION>");
           out.write("</TD>\n");
         } // next
@@ -213,10 +213,10 @@
       for (int c=0; c<iCols; c++) {
 	iType = detectType(aCols[c], tx_decimal);
         out.write("<TD><SELECT CLASS=\"combomini\" NAME=\"coltype"+String.valueOf(c+1)+"\">");
-        out.write("<OPTION VALUE=\"VARCHAR\" "+(TYPE_TEXT==iType ? "SELECTED" : "")+">Text</OPTION>");
-        out.write("<OPTION VALUE=\"INTEGER\" "+(TYPE_INT==iType ? "SELECTED" : "")+">Integer</OPTION>");
-        out.write("<OPTION VALUE=\"DECIMAL\" "+(TYPE_DEC==iType ? "SELECTED" : "")+">Decimal</OPTION>");
-        out.write("<OPTGROUP LABEL=\"Date\">");
+        out.write("<OPTION VALUE=\"VARCHAR\" "+(TYPE_TEXT==iType ? "SELECTED" : "")+">[~Texto~]</OPTION>");
+        out.write("<OPTION VALUE=\"INTEGER\" "+(TYPE_INT==iType ? "SELECTED" : "")+">[~Entero~]</OPTION>");
+        out.write("<OPTION VALUE=\"DECIMAL\" "+(TYPE_DEC==iType ? "SELECTED" : "")+">[~Decimal~]</OPTION>");
+        out.write("<OPTGROUP LABEL=\"[~Fecha~]\">");
         out.write("<OPTION VALUE=\"DATE 'yyyy-MM-dd'\" "+(TYPE_DATE1==iType ? "SELECTED" : "")+">YYYY-MM-DD</OPTION>");
         out.write("<OPTION VALUE=\"DATE 'yyyy/MM/dd'\" "+(TYPE_DATE2==iType ? "SELECTED" : "")+">YYYY/MM/DD</OPTION>");
         out.write("<OPTION VALUE=\"DATE 'dd-MM-yyyy'\" "+(TYPE_DATE3==iType ? "SELECTED" : "")+">DD-MM-YYYY</OPTION>");
@@ -240,11 +240,11 @@
     %>
     </TR>
   </TABLE>
-  <INPUT TYPE="button" class="pushbutton" VALUE="Previous" TITLE="ALT+b" ACCESSKEY="b" onclick="document.location='textloader2undo.jsp?action=_back&workarea=<%=gu_workarea%>&filename=<%=oTxtFile.getName()%>'">
+  <INPUT TYPE="button" class="pushbutton" VALUE="[~Anterior~]" TITLE="ALT+b" ACCESSKEY="b" onclick="document.location='textloader2undo.jsp?action=_back&workarea=<%=gu_workarea%>&filename=<%=oTxtFile.getName()%>'">
   &nbsp;&nbsp;&nbsp;
-  <INPUT TYPE="submit" class="pushbutton" VALUE="Import" TITLE="ALT+i" ACCESSKEY="i">
+  <INPUT TYPE="submit" class="pushbutton" VALUE="[~Importar~]" TITLE="ALT+i" ACCESSKEY="i">
   &nbsp;&nbsp;&nbsp;
-  <INPUT TYPE="button" class="closebutton" VALUE="Cancel" TITLE="ALT+c" ACCESSKEY="c" onclick="document.location='textloader2undo.jsp?action=_close&workarea=<%=gu_workarea%>&filename=<%=oTxtFile.getName()%>'">
+  <INPUT TYPE="button" class="closebutton" VALUE="[~Cancelar~]" TITLE="ALT+c" ACCESSKEY="c" onclick="document.location='textloader2undo.jsp?action=_close&workarea=<%=gu_workarea%>&filename=<%=oTxtFile.getName()%>'">
   </FORM>
 </BODY>
 </HTML>

@@ -7,11 +7,11 @@
 <%
   String id_status = request.getParameter("id_status");
   if (id_status.equals("success"))
-    out.write("<h2>Import finished successfully without warnings</h2>");
+    out.write("<h2>[~Importación de datos finalizada con éxito~]</h2>");
   else if (id_status.equals("warning"))
-    out.write("<h2>Import finished with warnings</h2>");
+    out.write("<h2>[~Importación de datos finalizada con avisos~]</h2>");
   else if (id_status.equals("error")) {
-    out.write("<h2>Import failed</h2><br>"+request.getParameter("desc"));
+    out.write("<h2>[~Importacion de datos fallida~]</h2><br>"+request.getParameter("desc"));
   }
 %>
 </body>

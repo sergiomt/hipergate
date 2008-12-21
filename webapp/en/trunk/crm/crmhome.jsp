@@ -200,9 +200,9 @@
         return false;
       }  
      
-      if (nmc.indexOf("'")>0 || nmc.indexOf('"')>0 || nmc.indexOf("?")>0 || nmc.indexOf("%")>0 || nmc.indexOf("*")>0 || nmc.indexOf("&")>0 || nmc.indexOf("/")>0) {
-	alert ("[~El nombre de la compañía contiene caracteres no válidos~]");
-	return false;
+      if (hasForbiddenChars(nmc)) {
+	      alert ("[~El nombre de la compañía contiene caracteres no válidos~]");
+	      return false;
       } else {
         document.location = "company_listing_f.jsp?selected=2&subselected=0&field=nm_legal&find=" + escape(nmc);        
         return true;
@@ -220,9 +220,9 @@
         return false;
       }  
       
-      if (nmc.indexOf("'")>0 || nmc.indexOf('"')>0 || nmc.indexOf("?")>0 || nmc.indexOf("%")>0 || nmc.indexOf("*")>0 || nmc.indexOf("&")>0 || nmc.indexOf("/")>0) {
-	alert ("[~El nombre del Individuo contiene caracteres no válidos~]");
-	return false;
+      if (hasForbiddenChars(nmc)) {
+	      alert ("[~El nombre del Individuo contiene caracteres no válidos~]");
+	      return false;
       }
       window.location = "contact_listing_f.jsp?selected=2&subselected=1&field=tx_name&find=" + escape(nmc);
     }

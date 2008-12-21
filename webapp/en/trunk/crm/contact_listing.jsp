@@ -32,7 +32,7 @@
   You should have received a copy of hipergate License with this code;
   if not, visit http://www.hipergate.org or mail to info@hipergate.org
 */
-  
+
   String sLanguage = getNavigatorLanguage(request);
   String sSkin = getCookie(request, "skin", "xp");
   String sFace = nullif(request.getParameter("face"),getCookie(request,"face","crm"));
@@ -71,6 +71,7 @@
   DBSubset oQueries = null;
   DBSubset oACourses = null;
   DBSubset oSalesMen = null;
+  Object[] aFind = new Object[1];
   int iQueries = 0;
   QueryByForm oQBF;
   String sOrderBy;
@@ -194,7 +195,6 @@
       iContactCount = oContacts.load (oConn, iSkip);
     }
     else {
-      Object[] aFind = { null };
 
       if (sField.equalsIgnoreCase(DB.nm_course)) {
         aFind[0] = sFind + "%";
@@ -227,26 +227,28 @@
 	      			    (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
       }
       else if (sField.equalsIgnoreCase(DB.nm_legal)) {
-        aFind[0] = "%" + sFind + "%";
         
-	if (oConn.getDataBaseProduct()==JDCConnection.DBMS_ORACLE)
+	      if (oConn.getDataBaseProduct()==JDCConnection.DBMS_ORACLE) {
+          aFind[0] = "%" + sFind + "%";
           oContacts = new DBSubset (DB.v_contact_company_all + " b, " + DB.k_contacts_lookup + " l",
 	      		      "b." + DB.gu_contact + "," + DBBind.Functions.ISNULL + "(b." + DB.tx_surname + ",'') " + DBBind.Functions.CONCAT + " ', ' " + DBBind.Functions.CONCAT + " " + DBBind.Functions.ISNULL + "(b." + DB.tx_name + ",''),l." + DB.tr_ + sLanguage + ",b." + DB.gu_company +",b." + DB.nm_legal + ","+DBBind.Functions.ISNULL+"(b." + DB.nu_notes + ",0),"+DBBind.Functions.ISNULL+"(b." + DB.nu_attachs + ",0),b." + DB.dt_modified,
 	      			    "b." + DB.de_title + "=l." + DB.vl_lookup + "(+) AND (l." + DB.gu_owner + "='" + gu_workarea + "' OR l." + DB.gu_owner + " IS NULL) AND (l." + DB.id_section + "='de_title' OR l." + DB.id_section + " IS NULL) AND b." + DB.gu_workarea + "='" + gu_workarea + "' AND b." + sField + " " + DBBind.Functions.ILIKE + " ? " +
 	      			    sSecurityFilter + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
-	else if (oConn.getDataBaseProduct()==JDCConnection.DBMS_MYSQL)
+	      } else if (oConn.getDataBaseProduct()==JDCConnection.DBMS_MYSQL) {
+          aFind[0] = "%" + sFind + "%";
           oContacts = new DBSubset (DB.v_contact_company_all + " b " +
         			    " LEFT OUTER JOIN " + DB.k_contacts_lookup + " l ON l." + DB.vl_lookup + "=b." + DB.de_title,
 	      		      "b." + DB.gu_contact + ",CONCAT(COALESCE(b." + DB.tx_surname + ",''),', ',COALESCE(b." + DB.tx_name + ",'')),l." + DB.tr_ + sLanguage + ",b." + DB.gu_company +",b." + DB.nm_legal + ","+DBBind.Functions.ISNULL+"(b." + DB.nu_notes + ",0),"+DBBind.Functions.ISNULL+"(b." + DB.nu_attachs + ",0),b." + DB.dt_modified,
 	      			    "(l." + DB.gu_owner + "='" + gu_workarea + "' OR l." + DB.gu_owner + " IS NULL) AND (l." + DB.id_section + "='de_title' OR l." + DB.id_section + " IS NULL) AND b." + DB.gu_workarea + "='" + gu_workarea + "' AND b." + sField + " " + DBBind.Functions.ILIKE + " ? " +
 	      			    sSecurityFilter + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
-	else
+	      } else {
+          aFind[0] = "%" + sFind + "%";
           oContacts = new DBSubset (DB.v_contact_company_all + " b " +
         			    " LEFT OUTER JOIN " + DB.k_contacts_lookup + " l ON l." + DB.vl_lookup + "=b." + DB.de_title,
 	      		      "b." + DB.gu_contact + "," + DBBind.Functions.ISNULL + "(b." + DB.tx_surname + ",'') " + DBBind.Functions.CONCAT + " ', ' " + DBBind.Functions.CONCAT + " " + DBBind.Functions.ISNULL + "(b." + DB.tx_name + ",''),l." + DB.tr_ + sLanguage + ",b." + DB.gu_company +",b." + DB.nm_legal + ","+DBBind.Functions.ISNULL+"(b." + DB.nu_notes + ",0),"+DBBind.Functions.ISNULL+"(b." + DB.nu_attachs + ",0),b." + DB.dt_modified,
 	      			    "(l." + DB.gu_owner + "='" + gu_workarea + "' OR l." + DB.gu_owner + " IS NULL) AND (l." + DB.id_section + "='de_title' OR l." + DB.id_section + " IS NULL) AND b." + DB.gu_workarea + "='" + gu_workarea + "' AND b." + sField + " " + DBBind.Functions.ILIKE + " ? " +
 	      			    sSecurityFilter + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
-                
+        }                
       }
       else if (sField.equalsIgnoreCase(DB.tp_company)) {
         aFind[0] = sFind.toUpperCase();
@@ -270,47 +272,68 @@
 	      			    sSecurityFilter + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
       }
       else if (sField.equalsIgnoreCase(DB.tx_term)) {
-        aFind[0] = "%" + sFind + "%";
-      	if (oConn.getDataBaseProduct()==JDCConnection.DBMS_ORACLE)
+      	if (oConn.getDataBaseProduct()==JDCConnection.DBMS_ORACLE) {
+          aFind[0] = "%" + sFind + "%";
           oContacts = new DBSubset (DB.v_contact_company_all + " b, " + DB.k_contacts_lookup + " l",
       	      		      "b." + DB.gu_contact + "," + DBBind.Functions.ISNULL + "(b." + DB.tx_surname + ",'') " + DBBind.Functions.CONCAT + " ', ' " + DBBind.Functions.CONCAT + " " + DBBind.Functions.ISNULL + "(b." + DB.tx_name + ",''), l." + DB.tr_ + sLanguage + ",b." + DB.gu_company +",b." + DB.nm_legal + ","+DBBind.Functions.ISNULL+"(b." + DB.nu_notes + ",0),"+DBBind.Functions.ISNULL+"(b." + DB.nu_attachs + ",0),b." + DB.dt_modified,
       	      			    "b." + DB.de_title + "=l." + DB.vl_lookup + "(+) AND (l." + DB.gu_owner + "='" + gu_workarea + "' OR l." + DB.gu_owner + " IS NULL) AND (l." + DB.id_section + "='de_title' OR l." + DB.id_section + " IS NULL) AND b." + DB.gu_workarea + "='" + gu_workarea + "' AND " +
       	      			    "EXISTS (SELECT " + DB.gu_term + " FROM " + DB.k_thesauri + " t WHERE t." + DB.gu_term + "=b." + DB.gu_geozone + " AND t. " + DB.tx_term + " " + DBBind.Functions.ILIKE + " ?) " +
       	      			    sSecurityFilter + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
-      	else if (oConn.getDataBaseProduct()==JDCConnection.DBMS_MYSQL)
+      	} else if (oConn.getDataBaseProduct()==JDCConnection.DBMS_MYSQL) {
+          aFind[0] = "%" + sFind + "%";
           oContacts = new DBSubset (DB.v_contact_company_all + " b " +
                 			  " LEFT OUTER JOIN " + DB.k_contacts_lookup + " l ON l." + DB.vl_lookup + "=b." + DB.de_title,
       	      		      "b." + DB.gu_contact + ",CONCAT(COALESCE(b." + DB.tx_surname + ",''),', ',COALESCE(b." + DB.tx_name + ",'')), l." + DB.tr_ + sLanguage + ",b." + DB.gu_company +",b." + DB.nm_legal + ","+DBBind.Functions.ISNULL+"(b." + DB.nu_notes + ",0),"+DBBind.Functions.ISNULL+"(b." + DB.nu_attachs + ",0),b." + DB.dt_modified,
       	      			    "(l." + DB.gu_owner + "='" + gu_workarea + "' OR l." + DB.gu_owner + " IS NULL) AND (l." + DB.id_section + "='de_title' OR l." + DB.id_section + " IS NULL) AND b." + DB.gu_workarea + "='" + gu_workarea + "' AND " +
       	      			    "EXISTS (SELECT " + DB.gu_term + " FROM " + DB.k_thesauri + " t WHERE t." + DB.gu_term + "=b." + DB.gu_geozone + " AND t. " + DB.tx_term + " " + DBBind.Functions.ILIKE + " ?) " +
       	      			    sSecurityFilter + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
-        else
+      	} else if (oConn.getDataBaseProduct()==JDCConnection.DBMS_POSTGRESQL) {
+          aFind[0] = ".*" + Gadgets.accentsToPosixRegEx(sFind) + ".*";
+          oContacts = new DBSubset (DB.v_contact_company_all + " b " +
+                			  " LEFT OUTER JOIN " + DB.k_contacts_lookup + " l ON l." + DB.vl_lookup + "=b." + DB.de_title,
+      	      		      "b." + DB.gu_contact + "," + DBBind.Functions.ISNULL + "(b." + DB.tx_surname + ",'') " + DBBind.Functions.CONCAT + " ', ' " + DBBind.Functions.CONCAT + " " + DBBind.Functions.ISNULL + "(b." + DB.tx_name + ",''), l." + DB.tr_ + sLanguage + ",b." + DB.gu_company +",b." + DB.nm_legal + ","+DBBind.Functions.ISNULL+"(b." + DB.nu_notes + ",0),"+DBBind.Functions.ISNULL+"(b." + DB.nu_attachs + ",0),b." + DB.dt_modified,
+      	      			    "(l." + DB.gu_owner + "='" + gu_workarea + "' OR l." + DB.gu_owner + " IS NULL) AND (l." + DB.id_section + "='de_title' OR l." + DB.id_section + " IS NULL) AND b." + DB.gu_workarea + "='" + gu_workarea + "' AND " +
+      	      			    "EXISTS (SELECT " + DB.gu_term + " FROM " + DB.k_thesauri + " t WHERE t." + DB.gu_term + "=b." + DB.gu_geozone + " AND t. " + DB.tx_term + " ~* ?) " +
+      	      			    sSecurityFilter + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
+        } else {
+          aFind[0] = "%" + sFind + "%";
           oContacts = new DBSubset (DB.v_contact_company_all + " b " +
                 			  " LEFT OUTER JOIN " + DB.k_contacts_lookup + " l ON l." + DB.vl_lookup + "=b." + DB.de_title,
       	      		      "b." + DB.gu_contact + "," + DBBind.Functions.ISNULL + "(b." + DB.tx_surname + ",'') " + DBBind.Functions.CONCAT + " ', ' " + DBBind.Functions.CONCAT + " " + DBBind.Functions.ISNULL + "(b." + DB.tx_name + ",''), l." + DB.tr_ + sLanguage + ",b." + DB.gu_company +",b." + DB.nm_legal + ","+DBBind.Functions.ISNULL+"(b." + DB.nu_notes + ",0),"+DBBind.Functions.ISNULL+"(b." + DB.nu_attachs + ",0),b." + DB.dt_modified,
       	      			    "(l." + DB.gu_owner + "='" + gu_workarea + "' OR l." + DB.gu_owner + " IS NULL) AND (l." + DB.id_section + "='de_title' OR l." + DB.id_section + " IS NULL) AND b." + DB.gu_workarea + "='" + gu_workarea + "' AND " +
       	      			    "EXISTS (SELECT " + DB.gu_term + " FROM " + DB.k_thesauri + " t WHERE t." + DB.gu_term + "=b." + DB.gu_geozone + " AND t. " + DB.tx_term + " " + DBBind.Functions.ILIKE + " ?) " +
       	      			    sSecurityFilter + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
+				}
       }
       else {
-        aFind[0] = "%" + sFind + "%";
-      	if (oConn.getDataBaseProduct()==JDCConnection.DBMS_ORACLE)
+      	if (oConn.getDataBaseProduct()==JDCConnection.DBMS_ORACLE) {
+          aFind[0] = "%" + sFind + "%";
           oContacts = new DBSubset (DB.v_contact_company_all + " b, " + DB.k_contacts_lookup + " l",
       	      		      "b." + DB.gu_contact + "," + DBBind.Functions.ISNULL + "(b." + DB.tx_surname + ",'') " + DBBind.Functions.CONCAT + " ', ' " + DBBind.Functions.CONCAT + " " + DBBind.Functions.ISNULL + "(b." + DB.tx_name + ",''), l." + DB.tr_ + sLanguage + ",b." + DB.gu_company +",b." + DB.nm_legal + ","+DBBind.Functions.ISNULL+"(b." + DB.nu_notes + ",0),"+DBBind.Functions.ISNULL+"(b." + DB.nu_attachs + ",0),b." + DB.dt_modified,
       	      			    "b." + DB.de_title + "=l." + DB.vl_lookup + "(+) AND (l." + DB.gu_owner + "='" + gu_workarea + "' OR l." + DB.gu_owner + " IS NULL) AND (l." + DB.id_section + "='de_title' OR l." + DB.id_section + " IS NULL) AND b." + DB.gu_workarea + "='" + gu_workarea + "' AND b." + sField + " " + DBBind.Functions.ILIKE + " ? " +
       	      			    sSecurityFilter + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
-      	else if (oConn.getDataBaseProduct()==JDCConnection.DBMS_MYSQL)
+      	} else if (oConn.getDataBaseProduct()==JDCConnection.DBMS_MYSQL) {
+          aFind[0] = "%" + sFind + "%";
           oContacts = new DBSubset (DB.v_contact_company_all + " b " +
                 			  " LEFT OUTER JOIN " + DB.k_contacts_lookup + " l ON l." + DB.vl_lookup + "=b." + DB.de_title,
       	      		      "b." + DB.gu_contact + ",CONCAT(COALESCE(b." + DB.tx_surname + ",''),', ',COALESCE(b." + DB.tx_name + ",'')), l." + DB.tr_ + sLanguage + ",b." + DB.gu_company +",b." + DB.nm_legal + ","+DBBind.Functions.ISNULL+"(b." + DB.nu_notes + ",0),"+DBBind.Functions.ISNULL+"(b." + DB.nu_attachs + ",0),b." + DB.dt_modified,
       	      			    "(l." + DB.gu_owner + "='" + gu_workarea + "' OR l." + DB.gu_owner + " IS NULL) AND (l." + DB.id_section + "='de_title' OR l." + DB.id_section + " IS NULL) AND b." + DB.gu_workarea + "='" + gu_workarea + "' AND b." + sField + " " + DBBind.Functions.ILIKE + " ? " +
       	      			    sSecurityFilter + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
-        else
+      	} else if (oConn.getDataBaseProduct()==JDCConnection.DBMS_POSTGRESQL) {
+          aFind[0] = ".*" + Gadgets.accentsToPosixRegEx(sFind) + ".*";
+          oContacts = new DBSubset (DB.v_contact_company_all + " b " +
+                			    " LEFT OUTER JOIN " + DB.k_contacts_lookup + " l ON l." + DB.vl_lookup + "=b." + DB.de_title,
+      	      		        "b." + DB.gu_contact + "," + DBBind.Functions.ISNULL + "(b." + DB.tx_surname + ",'') " + DBBind.Functions.CONCAT + " ', ' " + DBBind.Functions.CONCAT + " " + DBBind.Functions.ISNULL + "(b." + DB.tx_name + ",''), l." + DB.tr_ + sLanguage + ",b." + DB.gu_company +",b." + DB.nm_legal + ","+DBBind.Functions.ISNULL+"(b." + DB.nu_notes + ",0),"+DBBind.Functions.ISNULL+"(b." + DB.nu_attachs + ",0),b." + DB.dt_modified,
+      	      			      "(l." + DB.gu_owner + "='" + gu_workarea + "' OR l." + DB.gu_owner + " IS NULL) AND (l." + DB.id_section + "='de_title' OR l." + DB.id_section + " IS NULL) AND b." + DB.gu_workarea + "='" + gu_workarea + "' AND b." + sField + " ~* ? " +
+      	      			      sSecurityFilter + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
+        } else {
+          aFind[0] = "%" + sFind + "%";
           oContacts = new DBSubset (DB.v_contact_company_all + " b " +
                 			    " LEFT OUTER JOIN " + DB.k_contacts_lookup + " l ON l." + DB.vl_lookup + "=b." + DB.de_title,
       	      		        "b." + DB.gu_contact + "," + DBBind.Functions.ISNULL + "(b." + DB.tx_surname + ",'') " + DBBind.Functions.CONCAT + " ', ' " + DBBind.Functions.CONCAT + " " + DBBind.Functions.ISNULL + "(b." + DB.tx_name + ",''), l." + DB.tr_ + sLanguage + ",b." + DB.gu_company +",b." + DB.nm_legal + ","+DBBind.Functions.ISNULL+"(b." + DB.nu_notes + ",0),"+DBBind.Functions.ISNULL+"(b." + DB.nu_attachs + ",0),b." + DB.dt_modified,
       	      			      "(l." + DB.gu_owner + "='" + gu_workarea + "' OR l." + DB.gu_owner + " IS NULL) AND (l." + DB.id_section + "='de_title' OR l." + DB.id_section + " IS NULL) AND b." + DB.gu_workarea + "='" + gu_workarea + "' AND b." + sField + " " + DBBind.Functions.ILIKE + " ? " +
       	      			      sSecurityFilter + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
+        }
       }
       oContacts.setMaxRows(iMaxRows);
       iContactCount = oContacts.load(oConn,aFind,iSkip);

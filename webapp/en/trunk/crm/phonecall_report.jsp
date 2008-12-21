@@ -1,4 +1,4 @@
-<%@ page import="java.util.Date,java.util.HashMap,java.text.SimpleDateFormat,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.Timestamp,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Date,java.util.Arrays,java.util.HashMap,java.text.SimpleDateFormat,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.Timestamp,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Calendar" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><% 
 /*
   Copyright (C) 2003-2008  Know Gate S.L. All rights reserved.
@@ -42,9 +42,10 @@
   
   String sLanguage = getNavigatorLanguage(request);
   SimpleDateFormat oFmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+  SimpleDateFormat oFdt = new SimpleDateFormat(sLanguage.startsWith("es") ? "EEE d MMM" : "EEE MMM d");
   
   String gu_workarea = nullif(request.getParameter("gu_workarea"), getCookie (request, "workarea", null));
-  Timestamp dt_from = new Timestamp(oFmt.parse(request.getParameter("dt_from")+" 00:00:00").getTime());
+  Timestamp dt_from = new Timestamp(oFmt.parse(nullif(request.getParameter("dt_from"),"1970-01-01")+" 00:00:00").getTime());
   Timestamp dt_to = new Timestamp(oFmt.parse(request.getParameter("dt_to")+" 23:59:59").getTime());
   String gu_campaign = nullif(request.getParameter("gu_campaign"));
   String nm_campaign = null;
@@ -55,10 +56,73 @@
   int nSent = 0;
   int nReceived = 0;
   int nOprts = 0;
+  int nCallDays = 0;
+  Date dtFirstSentCall=null, dtLastSentCall=null;
+  Date dtFirstRecvCall=null, dtLastRecvCall=null;
+
   StringBuffer oByStatus = new StringBuffer();
-  
+  StringBuffer oWonByCause = new StringBuffer();
+  StringBuffer oLostByCause = new StringBuffer();
+  int[] aSentCallsByDay = null;
+  int[] aRecvCallsByDay = null;
+
   try {
     oConn = GlobalDBBind.getConnection(PAGE_NAME);
+    
+    if (gu_campaign.length()==0)
+      oStmt = oConn.prepareStatement("SELECT MIN("+DB.dt_start+"),MAX("+DB.dt_start+") FROM "+DB.k_phone_calls+" WHERE "+DB.gu_workarea+"=? AND "+DB.tp_phonecall+"=? AND "+DB.dt_start+" BETWEEN ? AND ?");
+	  else
+      oStmt = oConn.prepareStatement("SELECT MIN("+DB.dt_start+"),MAX("+DB.dt_start+") FROM "+DB.k_phone_calls+" p,"+DB.k_oportunities +" o WHERE p."+DB.gu_oportunity+"=o."+DB.gu_oportunity+" AND o."+DB.gu_campaign+"='"+gu_campaign+"' AND p."+DB.gu_workarea+"=? AND p."+DB.tp_phonecall+"=? AND p."+DB.dt_start+" BETWEEN ? AND ?");
+	  oStmt.setString(1, gu_workarea);
+	  oStmt.setString(2, "S");
+	  oStmt.setTimestamp(3, dt_from);
+	  oStmt.setTimestamp(4, dt_to);
+	  oRSet = oStmt.executeQuery();
+	  oRSet.next();
+	  dtFirstSentCall = oRSet.getDate(1);
+	  dtLastSentCall = oRSet.getDate(2);
+    oRSet.close();
+	  oStmt.setString(1, gu_workarea);
+	  oStmt.setString(2, "R");
+	  oStmt.setTimestamp(3, dt_from);
+	  oStmt.setTimestamp(4, dt_to);
+	  oRSet = oStmt.executeQuery();
+	  oRSet.next();
+	  dtFirstRecvCall = oRSet.getDate(1);
+	  dtLastRecvCall = oRSet.getDate(2);
+    oRSet.close();
+    oStmt.close();
+
+    if (gu_campaign.length()==0)
+      oStmt = oConn.prepareStatement("SELECT "+DB.dt_start+" FROM "+DB.k_phone_calls+" WHERE "+DB.gu_workarea+"=? AND "+DB.tp_phonecall+"=? AND "+DB.dt_start+" BETWEEN ? AND ?");
+	  else
+      oStmt = oConn.prepareStatement("SELECT "+DB.dt_start+" FROM "+DB.k_phone_calls+" p,"+DB.k_oportunities +" o WHERE p."+DB.gu_oportunity+"=o."+DB.gu_oportunity+" AND o."+DB.gu_campaign+"='"+gu_campaign+"' AND p."+DB.gu_workarea+"=? AND p."+DB.tp_phonecall+"=? AND p."+DB.dt_start+" BETWEEN ? AND ?");
+    if (dtFirstSentCall!=null && dtLastSentCall!=null) {
+      nCallDays = Calendar.DaysBetween(dtFirstSentCall,dtLastSentCall);
+      aSentCallsByDay = new int[nCallDays+1];
+      Arrays.fill(aSentCallsByDay,0);    
+	    oStmt.setString(1, gu_workarea);
+	    oStmt.setString(2, "S");
+	    oStmt.setTimestamp(3, dt_from);
+	    oStmt.setTimestamp(4, dt_to);
+	    oRSet = oStmt.executeQuery();
+	    while (oRSet.next()) aSentCallsByDay[Calendar.DaysBetween(dtFirstSentCall,oRSet.getDate(1))]++;
+      oRSet.close();
+	  }
+    if (dtFirstRecvCall!=null && dtLastRecvCall!=null) {
+      nCallDays = Calendar.DaysBetween(dtFirstRecvCall,dtLastRecvCall);
+      aRecvCallsByDay = new int[nCallDays+1];
+      Arrays.fill(aRecvCallsByDay,0);    
+	    oStmt.setString(1, gu_workarea);
+	    oStmt.setString(2, "R");
+	    oStmt.setTimestamp(3, dt_from);
+	    oStmt.setTimestamp(4, dt_to);
+	    oRSet = oStmt.executeQuery();
+	    while (oRSet.next()) aRecvCallsByDay[Calendar.DaysBetween(dtFirstRecvCall,oRSet.getDate(1))]++;
+      oRSet.close();
+	  }
+    oStmt.close();
+
     if (gu_campaign.length()==0)
       oStmt = oConn.prepareStatement("SELECT "+DB.tp_phonecall+","+"COUNT("+DB.tp_phonecall+") FROM "+DB.k_phone_calls+" WHERE "+DB.gu_workarea+"=? AND "+DB.dt_start+" BETWEEN ? AND ? GROUP BY "+DB.tp_phonecall);
 	  else
@@ -78,6 +142,35 @@
 	  } // wend
 	  oRSet.close();
 	  oStmt.close();
+
+    if (gu_campaign.length()==0)
+      oStmt = oConn.prepareStatement("SELECT o."+DB.tx_cause+",COUNT(o."+DB.gu_oportunity+") FROM "+DB.k_oportunities+" o WHERE o."+DB.id_status+"=? AND EXISTS (SELECT NULL FROM "+DB.k_phone_calls+" p WHERE p."+DB.gu_oportunity+"=o."+DB.gu_oportunity+" AND p."+DB.gu_workarea+"=? AND p."+DB.dt_start+" BETWEEN ? AND ?) GROUP BY "+DB.tx_cause);
+	  else {
+      oStmt = oConn.prepareStatement("SELECT o."+DB.tx_cause+",COUNT(o."+DB.gu_oportunity+") FROM "+DB.k_oportunities+" o WHERE o."+DB.id_status+"=? AND o."+DB.gu_campaign+"='"+gu_campaign+"' AND EXISTS (SELECT NULL FROM "+DB.k_phone_calls+" p WHERE p."+DB.gu_oportunity+"=o."+DB.gu_oportunity+" AND p."+DB.gu_workarea+"=? AND p."+DB.dt_start+" BETWEEN ? AND ?) GROUP BY "+DB.tx_cause);
+	  }
+	  oStmt.setString(1, "GANADA");
+	  oStmt.setString(2, gu_workarea);
+	  oStmt.setTimestamp(3, dt_from);
+	  oStmt.setTimestamp(4, dt_to);
+	  oRSet = oStmt.executeQuery();
+	  while(oRSet.next()) {
+	    String sWonBecause = DBLanguages.getLookUpTranslation(oConn, DB.k_oportunities_lookup, gu_workarea, DB.tx_cause, sLanguage, oRSet.getString(1));
+	    if (null==sWonBecause) sWonBecause = oRSet.getString(1);	    
+	    oWonByCause.append("<TR><TD CLASS=\"textsmall\" ALIGN=\"right\">"+sWonBecause+" "+String.valueOf(oRSet.getInt(2))+"</TD><TD></TD></TR>");
+	  } // wend
+	  oRSet.close();
+	  oStmt.setString(1, "PERDIDA");
+	  oStmt.setString(2, gu_workarea);
+	  oStmt.setTimestamp(3, dt_from);
+	  oStmt.setTimestamp(4, dt_to);
+	  oRSet = oStmt.executeQuery();
+	  while(oRSet.next()) {
+	    String sLostBecause = DBLanguages.getLookUpTranslation(oConn, DB.k_oportunities_lookup, gu_workarea, DB.tx_cause, sLanguage, oRSet.getString(1));
+	    if (null==sLostBecause) sLostBecause = oRSet.getString(1);	    
+	    oLostByCause.append("<TR><TD CLASS=\"textsmall\" ALIGN=\"right\">"+sLostBecause+" "+String.valueOf(oRSet.getInt(2))+"</TD><TD></TD></TR>");
+	  } // wend
+	  oRSet.close();
+	  oStmt.close();
 	  
     if (gu_campaign.length()==0)
       oStmt = oConn.prepareStatement("SELECT o."+DB.id_status+",COUNT(o."+DB.gu_oportunity+") FROM "+DB.k_oportunities+" o WHERE EXISTS (SELECT NULL FROM "+DB.k_phone_calls+" p WHERE p."+DB.gu_oportunity+"=o."+DB.gu_oportunity+" AND p."+DB.gu_workarea+"=? AND p."+DB.dt_start+" BETWEEN ? AND ?) GROUP BY "+DB.id_status);
@@ -92,12 +185,15 @@
 	  while(oRSet.next()) {
 	    String sStatus = DBLanguages.getLookUpTranslation(oConn, DB.k_oportunities_lookup, gu_workarea, DB.id_status, sLanguage, oRSet.getString(1));
 	    if (null==sStatus) sStatus = oRSet.getString(1);	    
+	    if (null==sStatus) sStatus = "";
 	    nOprts += oRSet.getInt(2);
 	    oByStatus.append("<TR><TD CLASS=\"textplain\">"+sStatus+"</TD><TD CLASS=\"textplain\">"+String.valueOf(oRSet.getInt(2))+"</TD></TR>");
+	    if ("GANADA".equals(oRSet.getString(1))) oByStatus.append(oWonByCause.toString());
+	    if ("PERDIDA".equals(oRSet.getString(1))) oByStatus.append(oLostByCause.toString());
 	  } // wend
 	  oRSet.close();
 	  oStmt.close();
-	  
+
     oConn.close(PAGE_NAME);
   }
   catch (Exception e) {
@@ -128,8 +224,12 @@
     <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Efectividad del telemarketing~]</FONT></TD></TR>
   </TABLE>
   <BR/>
+  <FONT CLASS="textstrong">[~Campa&ntilde;a~]&nbsp;<%=nm_campaign%></FONT>
+  <BR/>
+  <FONT CLASS="textplain"><% if (request.getParameter("dt_from")!=null) out.write("[~desde~]&nbsp;"+request.getParameter("dt_from")+"&nbsp;&nbsp;"); out.write("[~hasta~]&nbsp;"+request.getParameter("dt_to"));%></FONT>
+  <BR/><BR/>
   <TABLE SUMMARY="Sent & Received" BORDER="1">
-    <TR><TD CLASS="textstrong" COLSPAN="2">[~Llamadas~]</TD></TR>
+    <TR><TD CLASS="textstrong" COLSPAN="2">[~Llamadas Totales~]</TD></TR>
     <TR><TD CLASS="textplain">[~Llamadas enviadas~]</TD><TD CLASS="textplain"><% out.write(String.valueOf(nSent)); %></TD></TR>
     <TR><TD CLASS="textplain">[~Llamadas recibidas~]</TD><TD CLASS="textplain"><% out.write(String.valueOf(nReceived)); %></TD></TR>
     <TR><TD CLASS="textplain">[~Media por oportunidad~]</TD><TD CLASS="textplain"><% if (nOprts==0) out.write("0"); else out.write(String.valueOf(((int)(100f*(nSent+nReceived))/(float)nOprts)/100f)); %></TD></TR>
@@ -140,5 +240,43 @@
     <%=oByStatus.toString()%>
     <TR><TD CLASS="textstrong">[~Total~]</TD><TD CLASS="textstrong"><% out.write(String.valueOf(nOprts)); %></TD></TR>
   </TABLE>
+<% Date dt;
+   int t;
+   if (aSentCallsByDay!=null) {
+     dt = new Date (dtFirstSentCall.getTime());
+     nCallDays = aSentCallsByDay.length;
+     t = 0;
+%>
+  <BR/>
+  <TABLE SUMMARY="Sent By Day" BORDER="1">
+    <TR><TD CLASS="textstrong" COLSPAN="2">[~Llamadas enviadas cada dia~]</TD></TR>
+<%  for (int e=0; e<nCallDays; e++) {
+      out.write("<TD CLASS=\"textplain\">"+oFdt.format(dt)+"</TD><TD CLASS=\"textplain\">"+String.valueOf(aSentCallsByDay[e])+"</TD></TR>");
+      t+= aSentCallsByDay[e];
+      dt = new Date(dt.getTime()+86400000l);
+    }
+%>
+    <TR><TD CLASS="textstrong">[~Total~]</TD><TD CLASS="textstrong"><% out.write(String.valueOf(t)); %></TD></TR>
+  </TABLE>
+<% }
+   if (aRecvCallsByDay!=null) {
+     dt = new Date (dtFirstRecvCall.getTime());
+     nCallDays = aRecvCallsByDay.length;
+     t = 0;
+%>
+  <BR/>
+  <TABLE SUMMARY="Received By Day" BORDER="1">
+    <TR><TD CLASS="textstrong" COLSPAN="2">[~Llamadas recibidas cada dia~]</TD></TR>
+<%  for (int e=0; e<nCallDays; e++) {
+      out.write("<TD CLASS=\"textplain\">"+oFdt.format(dt)+"</TD><TD CLASS=\"textplain\">"+String.valueOf(aRecvCallsByDay[e])+"</TD></TR>");
+      t+= aRecvCallsByDay[e];
+      dt = new Date(dt.getTime()+86400000l);
+    }
+%>
+    <TR><TD CLASS="textstrong">[~Total~]</TD><TD CLASS="textstrong"><% out.write(String.valueOf(t)); %></TD></TR>
+  </TABLE>
+<% } %>
+  <BR/>
+  <FORM><INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cerrar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()"></FORM>
 </BODY>
 </HTML>

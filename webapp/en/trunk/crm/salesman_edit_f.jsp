@@ -4,7 +4,7 @@
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <TITLE>hipergate :: Edit Sales Objectives</TITLE>
+    <TITLE>hipergate :: [~Editar Objetivos de Venta~]</TITLE>
     <SCRIPT LANGUAGE="javascript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="javascript" SRC="../javascript/getparam.js"></SCRIPT>
   </HEAD>
@@ -13,7 +13,7 @@
     <FRAME NAME="yearobjectives" FRAMEBORDER="no" MARGINWIDTH="0 marginheight=" NORESIZE>
     <NOFRAMES>
       <BODY>
-	<P>This page contains frames, but you browser does not support them.</P>
+	<P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
       </BODY>
     </NOFRAMES>
   </FRAMESET>
