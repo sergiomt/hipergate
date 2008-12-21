@@ -55,7 +55,7 @@
          id_domain = Integer.parseInt(getCookie(request,"domainid",""));
        } 
        catch (NumberFormatException nfe) {
-         response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Invalid session&desc=The system does not recognize your user session&resume=../blank.htm"));
+         response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Sesion no valida~]&desc=[~El sistema no reconoce su sesion de usuario~]&resume=../blank.htm"));
 	 return;       
        }
 	
@@ -93,8 +93,18 @@
 	   oForumsGrp.setGroupPermissions(oConn, oDomain.getString(DB.gu_admins), ACL.PERMISSION_FULL_CONTROL, (short)0, (short)0);
 	 
 	   CategoryLabel.create (oConn, new Object[]{oForumsGrp.getString(DB.gu_category), "es", "foros", null});
-	   CategoryLabel.create (oConn, new Object[]{oForumsGrp.getString(DB.gu_category), "en", "forums", null});
-	    
+	   CategoryLabel.create (oConn, new Object[]{oForumsGrp.getString(DB.gu_category), "en", "forum", null});
+	   CategoryLabel.create (oConn, new Object[]{oForumsGrp.getString(DB.gu_category), "it", "forum", null});
+	   CategoryLabel.create (oConn, new Object[]{oForumsGrp.getString(DB.gu_category), "fr", "forum", null});
+	   CategoryLabel.create (oConn, new Object[]{oForumsGrp.getString(DB.gu_category), "de", "forum", null});
+	   CategoryLabel.create (oConn, new Object[]{oForumsGrp.getString(DB.gu_category), "br", "fórum", null});
+	   CategoryLabel.create (oConn, new Object[]{oForumsGrp.getString(DB.gu_category), "cn", "论坛", null});
+	   CategoryLabel.create (oConn, new Object[]{oForumsGrp.getString(DB.gu_category), "tw", "論壇", null});
+	   CategoryLabel.create (oConn, new Object[]{oForumsGrp.getString(DB.gu_category), "fi", "foorumi", null});
+	   CategoryLabel.create (oConn, new Object[]{oForumsGrp.getString(DB.gu_category), "ru", "форум", null});
+	   CategoryLabel.create (oConn, new Object[]{oForumsGrp.getString(DB.gu_category), "uk", "форум", null});
+	   CategoryLabel.create (oConn, new Object[]{oForumsGrp.getString(DB.gu_category), "vn", "diễn đàn", null});	   
+
 	 } // fi (sForumsCat)
 	 else
 	   oForumsGrp = new NewsGroup(sForumsCat);
@@ -162,7 +172,7 @@
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <TITLE>hipergate :: Category Tree</TITLE>
+    <TITLE>hipergate :: [~&Aacute;rbol de Categor&iacute;as~]</TITLE>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
@@ -180,7 +190,7 @@
     var treeMenuHiFg       = "#FFFF00";         // Color for selected item text.
     var treeMenuFont       = "Arial,Helvetica"; // Text font face.
     var treeMenuFontSize   = 1;                 // Text font size.
-    var treeMenuRoot       = "FORUMS";           // Text for the menu root.
+    var treeMenuRoot       = "[~FOROS~]";           // Text for the menu root.
     var treeMenuFolders    = 1;                 // Sets display of '+' and '-' icons.
     var treeMenuAltText    = false;             // Use menu item text for icon image ALT text.
 
@@ -215,7 +225,7 @@
 </FRAMESET>
 <NOFRAMES>
   <BODY>
-    <P>This page use frames, but your web browser does not handle them</P>
+    <P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
   </BODY>
 </NOFRAMES>
 

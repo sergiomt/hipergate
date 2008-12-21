@@ -112,7 +112,7 @@
   String sSelLang = GlobalDBLang.toHTMLSelect(oConn, sLanguage);
   
   if (0!=id_category.length()) {
-    sHeadStrip = "Edit this address";
+    sHeadStrip = "[~Editar Foro~]";
     
     oCatg = new Category(oConn, id_category);
     n_category = oCatg.getString(DB.nm_category);
@@ -140,7 +140,7 @@
     oCatg = null;
   }
   else {
-    sHeadStrip = "New Forum";
+    sHeadStrip = "[~Nuevo Foro~]";
 
     n_category = new String("");
     is_active = new Short((short)1);
@@ -191,7 +191,7 @@
     // Matriz con los nombres de la imagenes de la toolbar
     var aButtonName = new Array("newreg","delreg","left2","left","right","right2");
     // Matriz con los tips de la imagenes de la toolbar
-    var aButtonTips = new Array("New translated Label","Remove translated label","Go to first label","Previous Label","Next Label","Go to last label");
+    var aButtonTips = new Array("[~Nueva etiqueta traducida~]","[~Eliminar etiqueta traducida~]","[~Ir a la primera etiqueta~]","[~Etiqueta anterior~]","[~Etiqueta siguiente~]","[~Ir a la ultima etiqueta~]");
     // Imagenes de los botones sin pinchar
     var aButtonDown = new Array(aButtonName.length);
     // Imagenes de los botones pinchados
@@ -271,14 +271,14 @@
       var parnt = frm.id_parent_cat.value;
             
       if (alias.indexOf(";")>=0 || alias.indexOf(",")>=0 || alias.indexOf(".")>=0 || alias.indexOf("?")>=0 || alias.indexOf("$")>=0 || alias.indexOf("%")>=0 || alias.indexOf("/")>=0 || alias.indexOf("¨")>=0 || alias.indexOf("`")>=0) {
-        alert ("NewsGroup Alias contains forbidden characters");
+        alert ("[~El Alias del foro contiene caracteres no permitidos~]");
         return false;        
       }
       else
         frm.n_category.value = alias;
 
       if (aName.length==0) {
-        alert ("Must specify at least one Translated Label");
+        alert ("[~Debe especificar el menos una Etiqueta de Nombre Traducido~]");
 	return false;
       }
 
@@ -288,7 +288,7 @@
         if (bLocalLabel) break;
       }
       if (!bLocalLabel) {
-        alert ("Must specify a Translated Label in your browser current language'" + getUserLanguage() + "'");
+        alert ("[~Debe especificar una Etiqueta de Nombre Traducido en el idioma de su navegador cliente ~]'" + getUserLanguage() + "'");
 	      return false;
       }
 
@@ -311,7 +311,7 @@
       
       for (var n=0; n<aName.length; n++) {
         if (ltrim(aName[n][1]).length==0) {
-          alert ("Label for language&nbsp;" + getComboText(frm.sel_language) + " cannot be empty");
+          alert ("[~La etiqueta para el idioma ~]" + getComboText(frm.sel_language) + "[~ no puede estar vacía~]");
           return false;
         }
       }
@@ -463,7 +463,7 @@
 
 <% if (1024==id_domain || 1025==id_domain) { %>
           <TR>
-            <TD ALIGN="right" WIDTH="150"><SPAN onmouseover="popover('Alias is a language independent symbolic name for category.<BR><STRONG>Max 30 characters without spaces</STRONG>')" onmouseout="popout()"><FONT CLASS="formplain">Alias:</FONT></SPAN></TD>
+            <TD ALIGN="right" WIDTH="150"><SPAN onmouseover="popover('[~El alias es un nombre simb&oacute;lico para la categor&iacute;a independiente del idioma en que se muestren su etiquetas.~]<BR><STRONG>[~M&aacute;x 30 caracteres sin espacios.~]</STRONG>')" onmouseout="popout()"><FONT CLASS="formplain">[~Alias:~]</FONT></SPAN></TD>
             <TD ALIGN="left" WIDTH="290">
               <INPUT TYPE="text" NAME="n_category" MAXLENGTH="30" SIZE="34" VALUE="<% out.write(n_category); %>">
             </TD>
@@ -472,11 +472,11 @@
 	      
           <TR>
             <TD ALIGN="right" WIDTH="150">
-              <SPAN onmouseover="popover('Visibility')" onmouseout="popout()"><FONT CLASS="formstrong">Visible:</FONT></SPAN>
+              <SPAN onmouseover="popover('[~Este control indica si el foro ser&aacute; visible para los usuarios durante la navegaci&oacute;n convencional~]')" onmouseout="popout()"><FONT CLASS="formstrong">[~Visible:~]</FONT></SPAN>
             </TD>
             <TD ALIGN="left" WIDTH="290">
               <INPUT TYPE="checkbox" NAME="is_active" VALUE="1" <% if (is_active.intValue()!=0) out.write(" CHECKED=\"true\" "); %>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <SPAN onmouseover="popover('Set whether links and files<BR>must be approved before becoming visible.')" onmouseout="popout()"><FONT CLASS="formstrong">Moderated:</FONT></SPAN>&nbsp;
+              <SPAN onmouseover="popover('[~Establece si los archivos y enlaces<BR>deben ser aprobados antes de resultar visibles.~]')" onmouseout="popout()"><FONT CLASS="formstrong">[~Moderado:~]</FONT></SPAN>&nbsp;
               <INPUT TYPE="checkbox" NAME="id_doc_status" VALUE="1" <% if (id_doc_status.intValue()!=0) out.write(" CHECKED "); %>>
             </TD>
           </TR>
@@ -484,7 +484,7 @@
             <TD COLSPAN="2">
               <TABLE ALIGN="center" WIDTH="92%" BACKGROUND="../skins/<%=sSkin%>/fondoc.gif">
                 <TR><TD>
-		  <SPAN CLASS="lightshadow" STYLE="position:relative;top:-8;left:0;width:48;height=23;" TITLE="Labels are NewsGroup titles shown for each language."><FONT CLASS="formstrong"><BIG>LABELS</BIG></FONT></SPAN>
+		  <SPAN CLASS="lightshadow" STYLE="position:relative;top:-8;left:0;width:48;height=23;" TITLE="[~Las etiquetas son los titulares de los foros que se visualizan en cada idioma.~]"><FONT CLASS="formstrong"><BIG>[~ETIQUETAS~]</BIG></FONT></SPAN>
 		  <IMG SRC="../images/images/spacer.gif" WIDTH="24" HEIGHT="23" BORDER="0" oncontextmenu="return false;">
 		  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
 		    <!--
@@ -504,8 +504,8 @@
             	    <INPUT TYPE="hidden" NAME="id_language">
             	    <TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
             	      <TR>            	      
-            	        <TD><FONT CLASS="formstrong">Language:</FONT></TD>
-            	        <TD>&nbsp;&nbsp;&nbsp;<FONT CLASS="formstrong">Text for Label:</FONT></TD>            	      
+            	        <TD><FONT CLASS="formstrong">[~Idioma:~]</FONT></TD>
+            	        <TD>&nbsp;&nbsp;&nbsp;<FONT CLASS="formstrong">[~Texto de la Etiqueta:~]</FONT></TD>            	      
             	      </TR>  
             	      <TR>
             	        <TD><SELECT NAME="sel_language" onchange="changeName()"><OPTION VALUE="" SELECTED><% out.write (sSelLang); %></SELECT></TD>
@@ -524,11 +524,11 @@
     	    <TD WIDTH="150">&nbsp;</TD>
     	    <TD WIDTH="290">
 <% if (bIsGuest) { %>
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('Your credential level as Guest does not allow you to perform this action')">
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
 <% } else { %>
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">
 <% } %>
-    	      &nbsp;&nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+    	      &nbsp;&nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>
     	    </TD>	    
           </TR>           

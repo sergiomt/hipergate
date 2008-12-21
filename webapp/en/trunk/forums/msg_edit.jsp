@@ -91,7 +91,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: Write Message</TITLE>
+  <TITLE>hipergate :: [~Redactar Mensaje~]</TITLE>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -116,24 +116,24 @@
         var txt;
         
 	      if (!isDate(frm.dt_expire.value, "d") && frm.dt_expire.value.length>0) {
-      	  alert ("End date is not vald結束日期無效");
+      	  alert ("[~La fecha de fin de validez no es correcta~]");
       	  return false;	  
       	}
        
 	      if (!isDate(frm.dt_start.value, "d") && frm.dt_start.value.length>0) {
-      	  alert ("Start date is not valid");
+      	  alert ("[~La fecha de inicio de validez no es correcta~]");
       	  return false;	  
       	}
 
 	      if (isDate(frm.dt_expire.value, "d")) {
 	        if (isDate(frm.dt_start.value, "d")) {
       	    if (parseDate(frm.dt_expire.value, "d")<parseDate(frm.dt_start.value, "d")) {
-      	      alert ("End date must by later than Start date");
+      	      alert ("[~La fecha de inicio de validez debe ser anterior a la fecha de fin~]");
       	      return false;	        	  
       	    }
       	  }
       	  if (parseDate(frm.dt_expire.value+" 23:59:59", "ts")<new Date()) {
-      	    alert ("End date must by later than Start date");
+      	    alert ("[~La fecha de fin de validez debe ser posterior a hoy~]");
       	    return false; 	
       	  }
         }
@@ -141,12 +141,12 @@
       	txt = frm.tx_subject.value;
       	
       	if (txt.length==0) {
-      	  alert ("Subject is mandatory");
+      	  alert ("[~El campo Asunto es obligatorio~]");
       	  return false;	  
       	}
       
       	if (txt.indexOf("'")>=0) {
-      	  alert ("Subject contains forbidden characters");
+      	  alert ("[~El campo Asunto contiene caracteres no válidos~]");
       	  return false;	  
       	}
 	
@@ -181,13 +181,13 @@
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8">
     <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
-      <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
-      <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
-      <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
+      <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
+      <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Actualizar~]"> [~Actualizar~]</SPAN>
+      <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="[~Imprimir~]"> [~Imprimir~]</SPAN>
     </DIV></DIV>
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Write Message</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Redactar Mensaje~]</FONT></TD></TR>
   </TABLE>  
   <FORM ENCTYPE="multipart/form-data" METHOD="post" ACTION="msg_edit_store.jsp" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
@@ -206,35 +206,35 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="left" WIDTH="160px"><FONT CLASS="formstrong">From:</FONT></TD>
+            <TD ALIGN="left" WIDTH="160px"><FONT CLASS="formstrong">[~De:~]</FONT></TD>
             <TD ALIGN="left" CLASS="textplain"><%=(oUsr.getStringNull(DB.nm_user,"")+" "+oUsr.getStringNull(DB.tx_surname1,"")+" "+oUsr.getStringNull(DB.tx_surname2,"")).trim()%></TD>
           </TR>
           <TR>
-            <TD ALIGN="left" WIDTH="160px"><FONT CLASS="formplain">Group</FONT></TD>
+            <TD ALIGN="left" WIDTH="160px"><FONT CLASS="formplain">[~Grupo:~]</FONT></TD>
             <TD ALIGN="left" CLASS="textplain"><% out.write(request.getParameter("nm_newsgrp")); %></TD>
           </TR>
           <TR>
-            <TD ALIGN="left" WIDTH="160px"><FONT CLASS="formplain">Start been visible at date:</FONT></TD>
+            <TD ALIGN="left" WIDTH="160px"><FONT CLASS="formplain">[~Inicio de Visibilidad el:~]</FONT></TD>
             <TD ALIGN="left">
               <INPUT TYPE="text" NAME="dt_start" MAXLENGTH="10" SIZE="10" VALUE="">
-              <A HREF="javascript:showCalendar('dt_start')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
+              <A HREF="javascript:showCalendar('dt_start')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="left" WIDTH="160px"><FONT CLASS="formplain">Expiration date:</FONT></TD>
+            <TD ALIGN="left" WIDTH="160px"><FONT CLASS="formplain">[~Fecha de Caducidad:~]</FONT></TD>
             <TD ALIGN="left">
               <INPUT TYPE="text" NAME="dt_expire" MAXLENGTH="10" SIZE="10" VALUE="">
-              <A HREF="javascript:showCalendar('dt_expire')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
+              <A HREF="javascript:showCalendar('dt_expire')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="left" WIDTH="160px"><FONT CLASS="formplain">Subject:</FONT></TD>
+            <TD ALIGN="left" WIDTH="160px"><FONT CLASS="formplain">[~Asunto:~]</FONT></TD>
             <TD ALIGN="left">
               <INPUT TYPE="text" NAME="tx_subject" MAXLENGTH="254" SIZE="80" VALUE="<%=tx_subject%>">
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="left"><FONT CLASS="formplain">Text:</FONT></TD>
+            <TD ALIGN="left"><FONT CLASS="formplain">[~Texto:~]</FONT></TD>
             <TD ALIGN="left"><SELECT NAME="id_msg_type"><OPTION VALUE="HTM" SELECTED>HTML</OPTION><OPTION VALUE="TXT">Texto</OPTION></SELECT></TD>
           </TR>
         </TABLE>
@@ -244,11 +244,11 @@
           </TR>                    
           <TR>
 	    <TD COLSPAN="2" CLASS="formplain">
-	      File 1: <INPUT TYPE="file" NAME="attach1">
-	      File 2: <INPUT TYPE="file" NAME="attach2">
+	      [~Archivo 1:~] <INPUT TYPE="file" NAME="attach1">
+	      [~Archivo 2:~] <INPUT TYPE="file" NAME="attach2">
 	      <BR>
-	      File 3: <INPUT TYPE="file" NAME="attach3">	      
-	      File 4: <INPUT TYPE="file" NAME="attach4">	      
+	      [~Archivo 3:~] <INPUT TYPE="file" NAME="attach3">	      
+	      [~Archivo 4:~] <INPUT TYPE="file" NAME="attach4">	      
 	    </TD>
           </TR>                    
           <TR>
@@ -256,8 +256,8 @@
           </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Send" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Enviar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>
     	    </TD>	            
         </TABLE>

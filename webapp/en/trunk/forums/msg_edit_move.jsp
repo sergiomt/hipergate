@@ -35,31 +35,28 @@
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
   
   String id_user = getCookie (request, "userid", null);
+  String gu_newsgrp = request.getParameter("sel_move");
 
   String a_items[] = Gadgets.split(request.getParameter("checkeditems"), ",");
     
-  JDCConnection oCon = GlobalDBBind.getConnection("newsmsg_delete");
+  JDCConnection oCon = GlobalDBBind.getConnection("newsmsg_move");
     
   try {
     oCon.setAutoCommit (false);
 
     for (int i=0;i<a_items.length;i++) {
-      NewsMessage.delete(oCon, a_items[i]);
-      DBAudit.log(oCon, NewsMessage.ClassId, "DMSG", id_user, a_items[i], null, 0, 0, null, null);
+      NewsMessage oMsg = new NewsMessage(oCon, a_items[i]);
+      oMsg.move(oCon, gu_newsgrp);
     } // next ()
     oCon.commit();
 
-    oCon.setAutoCommit (true);
-
-    com.knowgate.http.portlets.HipergatePortletConfig.touch(oCon, id_user, "com.knowgate.http.portlets.RecentPostsTab", getCookie(request,"workarea",""));
-
-    oCon.close("newsmsg_delete");
+    oCon.close("newsmsg_move");
   } 
   catch(SQLException e) {
       if (oCon!=null)
         if (!oCon.isClosed()) {
           if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("newsmsg_delete");      
+          oCon.close("newsmsg_move");      
         }
       response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_back"));
     }

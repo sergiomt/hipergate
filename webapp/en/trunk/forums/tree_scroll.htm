@@ -22,7 +22,7 @@
       var id_cat = parent.cmds.document.forms[0].code.value;
       
       if (id_cat.length==0)
-        alert ("You must select a forum to edit");
+        alert ("[~Debe seleccionar primero un foro a editar~]");
       else
         window.open ("forumedit.jsp?id_domain=" + getURLParam("id_domain") + "&id_category=" + id_cat + "&id_user=" + getURLParam("id_user") + "&id_parent_cat=" + getURLParam("id_parent_cat"), "newforum", "directories=no,toolbar=no,menubar=no,width=480,height=420");
     } // editForum()
@@ -33,8 +33,8 @@
       var id_cat = parent.cmds.document.forms[0].code.value;
       
       if (id_cat.length==0)
-        alert ("You must select a forum to delete");
-      else if (window.confirm("Are you sure you want to delete the forum " + unescape(parent.cmds.document.forms[0].ctrl.value) + " and all messages within?"))
+        alert ("[~Debe seleccionar primero un foro a eliminar~]");
+      else if (window.confirm("[~¿Está seguro de que desea eliminar el foro ~]" + unescape(parent.cmds.document.forms[0].ctrl.value) + "[~ y todos sus mensajes?~]"))
         parent.parent.msgsexec.location = "forumedit_delete.jsp?id_domain=" + getURLParam("id_domain") + "&checkeditems=" + id_cat + "&id_user=" + getURLParam("id_user");
     } // deleteForum()
 
@@ -44,7 +44,7 @@
       var id_cat = parent.cmds.document.forms[0].code.value;
 
       if (id_cat.length==0)
-        alert ("A forum to which subscribe must be selected first");
+        alert ("[~Debe seleccionar primero un foro al cual suscribirse~]");
       else
         window.open ("forumsubscribe.jsp?id_domain=" + getURLParam("id_domain") + "&gu_newsgrp=" + id_cat + "&id_user=" + getURLParam("id_user") + "&id_parent_cat=" + getURLParam("id_parent_cat"), "subscribeforum", "directories=no,toolbar=no,menubar=no,width=400,height=300");      	
     }
@@ -56,16 +56,16 @@
       <TABLE CELLSPACING="2" CELLPADDING="2" WIDTH="100%">
       <TR><TD COLSPAN="4" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       <TR>
-        <TD ALIGN="right" ><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Create NewsGroups"></TD>
-        <TD ALIGN="left" VALIGN="center"><A HREF="#" onclick="createForum()" CLASS="linkplain" TITLE="Create NewsGroups">New</A></TD>
-        <TD ALIGN="right" ><IMG SRC="../images/images/forums/forums_edit16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Edit NewsGroup"></TD>
-        <TD ALIGN="left" VALIGN="center"><A HREF="#" onclick="editForum()" CLASS="linkplain" TITLE="Edit NewsGroup">Edit</A></TD>
+        <TD ALIGN="right" ><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nuevo Foro~]"></TD>
+        <TD ALIGN="left" VALIGN="center"><A HREF="#" onclick="createForum()" CLASS="linkplain" TITLE="[~Nuevo Foro~]">[~Nuevo~]</A></TD>
+        <TD ALIGN="right" ><IMG SRC="../images/images/forums/forums_edit16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Editar Foro~]"></TD>
+        <TD ALIGN="left" VALIGN="center"><A HREF="#" onclick="editForum()" CLASS="linkplain" TITLE="[~Editar Foro~]">[~Editar~]</A></TD>
       </TR>
       <TR>
-        <TD ALIGN="right"><IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete NewsGroup"></TD>
-        <TD ALIGN="left" ><A HREF="#" onClick="deleteForum();"  CLASS="linkplain" TITLE="Delete NewsGroup">Delete</A></TD>
-        <TD ALIGN="right" ><IMG SRC="../images/images/forums/subscriptions16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Subscribe"></TD>
-        <TD ALIGN="left" VALIGN="center"><A HREF="#" onclick="subscribeToForum()" CLASS="linkplain" TITLE="Subscribe">Subscribe</A></TD>
+        <TD ALIGN="right"><IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar Foro~]"></TD>
+        <TD ALIGN="left" ><A HREF="#" onClick="deleteForum();"  CLASS="linkplain" TITLE="[~Eliminar Foro~]">[~Eliminar~]</A></TD>
+        <TD ALIGN="right" ><IMG SRC="../images/images/forums/subscriptions16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Suscribir~]"></TD>
+        <TD ALIGN="left" VALIGN="center"><A HREF="#" onclick="subscribeToForum()" CLASS="linkplain" TITLE="[~Suscribir~]">[~Suscribir~]</A></TD>
       </TR>
       <TR><TD COLSPAN="4" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       </TABLE>

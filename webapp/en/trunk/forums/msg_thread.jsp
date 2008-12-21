@@ -70,7 +70,7 @@
     oConn = GlobalDBBind.getConnection("messagethread");
     
     sThreadId = request.getParameter("gu_thread_msg");
-    sSubject = "View thread";
+    sSubject = "[~Ver conversación~]";
      
     if (null==sThreadId) {
       oStmt = oConn.prepareStatement("SELECT " + DB.gu_thread_msg + "," + DB.tx_subject + " FROM " + DB.k_newsmsgs + " WHERE " + DB.gu_msg + "=?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -111,18 +111,18 @@
 
       out.write("  <TABLE WIDTH=\"100%\" CELLSPACING=\"2\" CELLPADDING=\"2\">\n");
       out.write("    <TR><TD BACKGROUND=\"../images/images/loginfoot_med.gif\" HEIGHT=\"3\"></TD></TR>\n");
-      out.write("    <TR><TD><FONT CLASS=\"textplain\"><B>from</B>: </FONT><A HREF=\"mailto:" + sMail + "\">" + sAuthor + "</A></TD></TR>\n");
-      out.write("    <TR><TD><FONT CLASS=\"textplain\"><B>Date</B>: " + sDtPublished + "</FONT></TD></TR>\n");
+      out.write("    <TR><TD><FONT CLASS=\"textplain\"><B>[~De~]</B>: </FONT><A HREF=\"mailto:" + sMail + "\">" + sAuthor + "</A></TD></TR>\n");
+      out.write("    <TR><TD><FONT CLASS=\"textplain\"><B>[~Fecha~]</B>: " + sDtPublished + "</FONT></TD></TR>\n");
       
       if (!bIsGuest)
-        out.write("    <TR><TD><A CLASS=\"linkplain\" HREF=\"msg_edit.jsp?id_domain=" + id_domain + "&gu_workarea=" + gu_workarea + "&gu_newsgrp=" + gu_newsgrp + "&nm_newsgrp=" + nm_newsgrp + "&gu_parent_msg=" + sGuMsg + "\">Reply to All</A></TD></TR>\n");
+        out.write("    <TR><TD><A CLASS=\"linkplain\" HREF=\"msg_edit.jsp?id_domain=" + id_domain + "&gu_workarea=" + gu_workarea + "&gu_newsgrp=" + gu_newsgrp + "&nm_newsgrp=" + nm_newsgrp + "&gu_parent_msg=" + sGuMsg + "\">[~Responder a Todos~]</A></TD></TR>\n");
         
       if (sAttachsId!=null) {
         out.write("    <TR><TD>");
         oProd = new Product(sAttachsId);
         oLocs = oProd.getLocations(oConn);
         for (int a=0; a<oLocs.getRowCount(); a++)
-          out.write("<A HREF=\"../servlet/HttpBinaryServlet?id_user=" + sUserId + "&id_product=" + sAttachsId + "&id_location=" + oLocs.getString(DB.gu_location,a) + "\" CLASS=\"linkplain\" TARGET=\"blank\" TITLE=\"Open/Download\">" + oLocs.getStringNull(DB.xfile,a,"attached File" + String.valueOf(a)) + "</A>&nbsp;<FONT CLASS=\"textsmall\">(" + String.valueOf(oLocs.getInt(DB.len_file,a)/1024) + " Kb)</FONT>&nbsp;&nbsp;&nbsp;&nbsp;");        
+          out.write("<A HREF=\"../servlet/HttpBinaryServlet?id_user=" + sUserId + "&id_product=" + sAttachsId + "&id_location=" + oLocs.getString(DB.gu_location,a) + "\" CLASS=\"linkplain\" TARGET=\"blank\" TITLE=\"[~Abrir/Descargar~]\">" + oLocs.getStringNull(DB.xfile,a,"[~archivo adjunto ~]" + String.valueOf(a)) + "</A>&nbsp;<FONT CLASS=\"textsmall\">(" + String.valueOf(oLocs.getInt(DB.len_file,a)/1024) + " Kb)</FONT>&nbsp;&nbsp;&nbsp;&nbsp;");        
         out.write("</TD></TR>");
       } // fi (sAttachsId)
       

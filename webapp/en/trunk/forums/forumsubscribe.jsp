@@ -110,7 +110,7 @@
 
 				frm.tx_email.value = frm.tx_email.value.toLowerCase();
 				if (!check_email(frm.tx_email.value)) {
-				  alert ("e-mail address is not valid");
+				  alert ("[~La dirección de correo no es válida~]");
 				  frm.tx_email.focus();
 				  return false;
 				}
@@ -132,7 +132,7 @@
 <BODY TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()">
   <TABLE SUMMARY="Form Title" WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Edit subscription</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Editar subscripci&oacute;n~]</FONT></TD></TR>
   </TABLE>  
   <FORM NAME="" METHOD="post" ACTION="forumsubscribe_store.jsp" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
@@ -145,36 +145,36 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right" CLASS="formstrong">Forum</TD>
+            <TD ALIGN="right" CLASS="formstrong">[~Foro~]</TD>
             <TD ALIGN="left" CLASS="formplain"><%=sLGrp%></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" CLASS="formplain">e-mail</TD>
+            <TD ALIGN="right" CLASS="formplain">[~e-mail~]</TD>
             <TD ALIGN="left" CLASS="formplain"><INPUT TYPE="text" NAME="tx_email" MAXLENGTH="100" SIZE="40" TABINDEX="-1" onfocus="document.forms[0].id_msg_type.focus()" STYLE="text-transform:lowercase" VALUE="<%=oSubs.getStringNull(DB.tx_email,oUser.getString(DB.tx_main_email))%>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" CLASS="formplain">Format</TD>
-            <TD ALIGN="left" CLASS="formplain"><SELECT NAME="id_msg_type"><OPTION VALUE="TXT" SELECTED>Text</OPTION><OPTION VALUE="HTM" SELECTED>HTML</OPTION></TD>
+            <TD ALIGN="right" CLASS="formplain">[~Formato~]</TD>
+            <TD ALIGN="left" CLASS="formplain"><SELECT NAME="id_msg_type"><OPTION VALUE="TXT" SELECTED>[~Texto~]</OPTION><OPTION VALUE="HTM" SELECTED>[~HTML~]</OPTION></TD>
           </TR>
           <TR>
             <TD ALIGN="right"><INPUT TYPE="radio" NAME="id_status" VALUE="0" <%=oSubs.getShort(DB.id_status)==(short)0 ? "CHECKED" : ""%>></TD>
-            <TD ALIGN="left" CLASS="formplain">Do not receive any e-mail</TD>
+            <TD ALIGN="left" CLASS="formplain">[~No recibir ning&uacute;n e-mail~]</TD>
           </TR>
           <TR>
             <TD ALIGN="right"><INPUT TYPE="radio" NAME="id_status" VALUE="1" <%=oSubs.getShort(DB.id_status)==(short)1 ? "CHECKED" : ""%>></TD>
-            <TD ALIGN="left" CLASS="formplain">Receive all messages by e-mail</TD>
+            <TD ALIGN="left" CLASS="formplain">[~Recibir todos los mensajes por e-mail~]</TD>
           </TR>
           <TR>
             <TD ALIGN="right"><INPUT TYPE="radio" NAME="id_status" VALUE="2" <%=oSubs.getShort(DB.id_status)==(short)2 ? "CHECKED" : ""%>></TD>
-            <TD ALIGN="left" CLASS="formplain">Receive only messages from my threads</TD>
+            <TD ALIGN="left" CLASS="formplain">[~Recibir s&oacute;lo mensajes de mis hilos~]</TD>
           </TR>
           <TR>
             <TD COLSPAN="2"><HR></TD>
           </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>
     	    </TD>
     	  </TR>            
