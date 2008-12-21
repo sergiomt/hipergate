@@ -7,7 +7,7 @@
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <TITLE>hipergate :: Edit Contact</TITLE>
+    <TITLE>hipergate :: [~Editar Contacto~]</TITLE>
     <SCRIPT LANGUAGE="javascript" SRC="../javascript/getparam.js"></SCRIPT>
     <SCRIPT LANGUAGE="javascript" SRC="../javascript/trim.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
@@ -24,7 +24,7 @@
   </FRAMESET>
   <NOFRAMES>
       <BODY>
-	<P>This page uses frames, but your browser does not handle them.</P>
+	<P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
       </BODY>
   </NOFRAMES>
 </HTML>

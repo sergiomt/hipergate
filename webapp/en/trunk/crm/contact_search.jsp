@@ -54,11 +54,11 @@
 <HEAD>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <TITLE>hipergate :: Search contact</TITLE>
+  <TITLE>hipergate :: [~Buscar contacto~]</TITLE>
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8">
 <%
-if (iSearch==0) out.write("<BR><FONT CLASS=\"textplain\">No indivicual was found with the given criteria</FONT>");
+if (iSearch==0) out.write("<BR><FONT CLASS=\"textplain\">[~No se encontr&oacute; ning&uacute;n individuo que cumpla el criterio especificado~]</FONT>");
 
 for (int c=0; c<iSearch; c++) {
      out.write("<A CLASS=\"linkplain\" HREF=\"contact_set.jsp?gu_contact="+oSearch.getString(0,c)+"&gu_workarea="+gu_workarea+"\">"+oSearch.getStringNull(1,c,"")+" "+oSearch.getStringNull(2,c,""));
@@ -66,8 +66,8 @@ for (int c=0; c<iSearch; c++) {
        out.write(" ("+oSearch.getString(3,c)+")");
      out.write("</A><BR>"); 
 }
-if (iSearch==0) out.write("<BR><A HREF=\"contact_search.jsp?nu_skip="+String.valueOf(Integer.parseInt(nu_skip)+100)+"&gu_workarea="+gu_workarea+"&tx_searched="+Gadgets.URLEncode(tx_searched)+"\" CLASS=\"linkplain\">Next >></A>");
+if (iSearch==0) out.write("<BR><A HREF=\"contact_search.jsp?nu_skip="+String.valueOf(Integer.parseInt(nu_skip)+100)+"&gu_workarea="+gu_workarea+"&tx_searched="+Gadgets.URLEncode(tx_searched)+"\" CLASS=\"linkplain\">[~Siguientes >>~]</A>");
 %>
 <BR><BR>
-<FORM><CENTER><INPUT TYPE="BUTTON" CLASS="closebutton" VALUE="Close" onclick="window.close()"></CENTER></FORM>
+<FORM><CENTER><INPUT TYPE="BUTTON" CLASS="closebutton" VALUE="[~Cerrar~]" onclick="window.close()"></CENTER></FORM>
 </BODY>

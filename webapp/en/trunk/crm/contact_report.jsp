@@ -132,20 +132,20 @@
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8">
-  <TABLE><TR><TD CLASS="striptitle"><FONT CLASS="title1">Report of <%=oCont.getStringNull(DB.tx_name,"")+" "+oCont.getStringNull(DB.tx_surname,"")%></FONT></TD></TR></TABLE>  
+  <TABLE><TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Informe sobre~] <%=oCont.getStringNull(DB.tx_name,"")+" "+oCont.getStringNull(DB.tx_surname,"")%></FONT></TD></TR></TABLE>  
   <TABLE>
     <TR>
-      <TD><FONT CLASS="textplain">Company:</FONT></TD>
+      <TD><FONT CLASS="textplain">[~Compa&ntilde;&iacute;a:~]</FONT></TD>
       <TD><FONT CLASS="textplain"><%=oComp.getStringNull(DB.nm_legal,"")%></FONT></TD>      
     </TR>
     <TR>
-      <TD><FONT CLASS="textplain">Position:</FONT></TD>
+      <TD><FONT CLASS="textplain">[~Empleo:~]</FONT></TD>
       <TD><FONT CLASS="textplain"><%=de_title%></FONT></TD> 
     </TR>
 <% if (iColl>0) { %>        
     <TR>
       <TD COLSPAN="2">
-        <FONT CLASS="textplain">Other people from the same company
+        <FONT CLASS="textplain">[~Otras personas de la misma compa&ntilde;&iacute;a~]
 <% for (int f=0; f<iColl; f++) {
      out.write ("<BR>&nbsp;&nbsp;&nbsp;" + oColl.getStringNull(0,f,"")+" "+oColl.getStringNull(1,f,""));
      if (!oColl.isNull(2,f))
@@ -158,7 +158,7 @@
 <% } %>        
   </TABLE>
   <BR>
-  <FONT CLASS="subtitle">Addresses:</FONT>
+  <FONT CLASS="subtitle">[~Direcciones:~]</FONT>
   <BR>
   <FONT CLASS="textplain">
 <% for (int d=0; d<oAddr.getRowCount(); d++) {
@@ -170,40 +170,40 @@
        out.write (oAddr.getStringNull(DB.nu_street, d, "")+" "+oAddr.getStringNull(DB.nm_street, d, "")+" "+oAddr.getStringNull(DB.tp_street, d, "")+"<BR>");   
        out.write (oAddr.getStringNull(DB.mn_city, d, "")+" "+oAddr.getStringNull(DB.id_state, d, "")+" "+oAddr.getStringNull(DB.zipcode, d, "")+"<BR>");
      }
-     if (!oAddr.isNull(DB.work_phone,d)) out.write ("Main " + oAddr.getString(DB.work_phone,d) + "  ");
-     if (!oAddr.isNull(DB.direct_phone,d)) out.write ("Direct Phone " + oAddr.getString(DB.direct_phone,d));
-     if (!oAddr.isNull(DB.mov_phone,d)) out.write ("Mobile Phone " + oAddr.getString(DB.mov_phone,d));
-     if (!oAddr.isNull(DB.fax_phone,d)) out.write ("Fax " + oAddr.getString(DB.fax_phone,d));
+     if (!oAddr.isNull(DB.work_phone,d)) out.write ("[~Centralita~] " + oAddr.getString(DB.work_phone,d) + "  ");
+     if (!oAddr.isNull(DB.direct_phone,d)) out.write ("[~Directo~] " + oAddr.getString(DB.direct_phone,d));
+     if (!oAddr.isNull(DB.mov_phone,d)) out.write ("[~M&oacute;vil~] " + oAddr.getString(DB.mov_phone,d));
+     if (!oAddr.isNull(DB.fax_phone,d)) out.write ("[~Fax~] " + oAddr.getString(DB.fax_phone,d));
      if (!oAddr.isNull(DB.work_phone,d)||!oAddr.isNull(DB.direct_phone,d)||!oAddr.isNull(DB.mov_phone,d)||!oAddr.isNull(DB.fax_phone,d)) out.write("<BR>");
 
-     out.write ("e-mail <A HREF=\"mailto:" + oAddr.getStringNull(DB.tx_email,d,"") + "\">" + oAddr.getStringNull(DB.tx_email,d,"") + "</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF=\"" + oAddr.getStringNull(DB.url_addr,d,"") + "\">"+oAddr.getStringNull(DB.url_addr,d,"")+"</A><BR>");
-     out.write ("Contact Person " + oAddr.getStringNull(DB.contact_person,d,"") + "  <A HREF=\"" + oAddr.getStringNull(DB.tx_email_alt,d,"") + "\">"+oAddr.getStringNull(DB.tx_email_alt,d,"")+"</A><BR>");
+     out.write ("[~e-mail~] <A HREF=\"mailto:" + oAddr.getStringNull(DB.tx_email,d,"") + "\">" + oAddr.getStringNull(DB.tx_email,d,"") + "</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF=\"" + oAddr.getStringNull(DB.url_addr,d,"") + "\">"+oAddr.getStringNull(DB.url_addr,d,"")+"</A><BR>");
+     out.write ("[~Persona de Contacto~] " + oAddr.getStringNull(DB.contact_person,d,"") + "  <A HREF=\"" + oAddr.getStringNull(DB.tx_email_alt,d,"") + "\">"+oAddr.getStringNull(DB.tx_email_alt,d,"")+"</A><BR>");
      out.write ("<BR>"); 
 }
 %>
   </FONT>
-  <FONT CLASS="subtitle">Opportunities</FONT>
+  <FONT CLASS="subtitle">[~Oportunidades:~]</FONT>
   <BR>
   <FONT CLASS="textplain">
 <% for (int o=0; o<iOprt; o++) {
      out.write(oOprt.getStringNull(0,o,"")+"<BR>");
-     out.write("created "+oOprt.getDateShort(1,o)+" ");
-     if (!oOprt.isNull(2,o)) out.write("modified "+oOprt.getDateShort(2,o)+" ");
-     if (!oOprt.isNull(3,o)) out.write("next task "+oOprt.getDateShort(3,o)+" ");
+     out.write("[~creada~] "+oOprt.getDateShort(1,o)+" ");
+     if (!oOprt.isNull(2,o)) out.write("[~modificada~] "+oOprt.getDateShort(2,o)+" ");
+     if (!oOprt.isNull(3,o)) out.write("[~siguiente acci&oacute;n~] "+oOprt.getDateShort(3,o)+" ");
      out.write("<BR>");
-     out.write("status "+oOprt.getStringNull(4,o,"")+"  cause "+oOprt.getStringNull(5,o,"?")+"<BR>");
-     if (!oOprt.isNull(6,o)) out.write("cost "+oOprt.get(6,o).toString()+"<BR>");
+     out.write("[~estado~] "+oOprt.getStringNull(4,o,"")+"  [~causa~] "+oOprt.getStringNull(5,o,"?")+"<BR>");
+     if (!oOprt.isNull(6,o)) out.write("[~importe ~]"+oOprt.get(6,o).toString()+"<BR>");
      if (!oOprt.isNull(7,o)) out.write(oOprt.getString(7,o)+"<BR>");
 } %>
   </FONT>
   <BR>
-  <FONT CLASS="subtitle">Notes:</FONT>
+  <FONT CLASS="subtitle">[~Notas:~]</FONT>
   <BR>
   <FONT CLASS="textplain">
 <% for (int n=0; n<iNots; n++) {
      out.write(oNots.getDateShort(4,n)+"  "+oNots.getStringNull(0,n,"")+"<BR>");
      if (!oNots.isNull(2,n)) {
-       out.write("From " + oNots.getString(2,n));
+       out.write("[~De~] " + oNots.getString(2,n));
        if (!oNots.isNull(3,n))
        out.write("&lt;<A HREF=\"mailto:" + oNots.getString(3,n) + "\">" + oNots.getString(3,n) + "</A>&gt;");
        out.write("<BR>");
@@ -214,18 +214,18 @@
 
   </FONT>
   <BR>
-  <FONT CLASS="subtitle">Meetings:</FONT>
+  <FONT CLASS="subtitle">[~Reuniones:~]</FONT>
   <BR>
   <FONT CLASS="textplain">
 <% for (int m=0; m<iMeet; m++) {
 
-     out.write(oMeet.getDateShort(2,m)+"  "+oMeet.getStringNull(3,m,"")+" with "+ oMeet.getStringNull(0,m,"") + " "+oMeet.getStringNull(1,m,"")+"<BR>");
+     out.write(oMeet.getDateShort(2,m)+"  "+oMeet.getStringNull(3,m,"")+" [~con~] "+ oMeet.getStringNull(0,m,"") + " "+oMeet.getStringNull(1,m,"")+"<BR>");
      if (!oMeet.isNull(4,m)) out.write(oMeet.getStringNull(4,m,"")+"<BR>");
      if (!oMeet.isNull(5,m)) out.write(oMeet.getStringNull(5,m,"")+"<BR>");
 } %>
   </FONT>  
   <BR>
-  <FONT CLASS="subtitle">Calls:</FONT>
+  <FONT CLASS="subtitle">[~Llamadas:~]</FONT>
   <BR>
   <FONT CLASS="textplain">
 <% for (int c=0; c<iCall; c++) {
@@ -234,7 +234,7 @@
 } %>
   </FONT>  
   <BR>
-  <FONT CLASS="subtitle">Orders:</FONT>
+  <FONT CLASS="subtitle">[~Pedidos:~]</FONT>
   <BR>
   <FONT CLASS="textplain">
 <% for (int x=0; x<iOrdr; x++) {
@@ -242,20 +242,20 @@
 } %>
   </FONT>  
   <BR>
-  <FONT CLASS="subtitle">Incidents:</FONT>
+  <FONT CLASS="subtitle">[~Incidencias:~]</FONT>
   <BR>
   <FONT CLASS="textplain">
 <% for (int b=0; b<iBugs; b++) {
      out.write(oBugs.getDateShort(1,b)+"  "+oBugs.getStringNull(0,b,"")+"<BR>");
-     if (!oBugs.isNull(2,b)) out.write("Status: "+oBugs.getStringNull(2,b,"")+"<BR>");
+     if (!oBugs.isNull(2,b)) out.write("[~Estado:~] "+oBugs.getStringNull(2,b,"")+"<BR>");
      if (!oBugs.isNull(3,b)) out.write(oBugs.getStringNull(3,b,"")+"<BR>");
 } %>
   </FONT>  
   <BR>
 <CENTER>
-<A HREF="#" CLASS="linkplain" onclick="window.print()">Print</A>
+<A HREF="#" CLASS="linkplain" onclick="window.print()">[~Imprimir~]</A>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<A HREF="#" CLASS="linkplain" onclick="window.close()">Close</A>
+<A HREF="#" CLASS="linkplain" onclick="window.close()">[~Cerrar~]</A>
 </CENTER>
 </BODY>
 </HTML>

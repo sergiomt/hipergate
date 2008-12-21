@@ -158,7 +158,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>Sent and received messages</TITLE>
+  <TITLE>[~Mensajes enviados y recibidos~]</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
@@ -199,12 +199,12 @@
 	  var frm = document.forms[0];
 
 	  if (!isDate(frm.dt_before.value, "d") && frm.dt_before.value.length>0) {
-	    alert ("Start date is not valid");
+	    alert ("[~La fecha de inicio no es válida~]");
 	    return false;
 	  }
 
 	  if (!isDate(frm.dt_after.value, "d") && frm.dt_after.value.length>0) {
-	    alert ("End date is not valid");
+	    alert ("[~La fecha de fin no es válida~]");
 	    return false;
 	  }
 	
@@ -230,9 +230,9 @@
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()">
     <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
-      <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
-      <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Actualizar"> Actualizar</SPAN>
-      <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Imprimir"> Imprimir</SPAN>
+      <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
+      <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Actualizar~]"> [~Actualizar~]</SPAN>
+      <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="[~Imprimir~]"> [~Imprimir~]</SPAN>
     </DIV></DIV>
     <FORM METHOD="post" ACTION="contact_msgs.jsp" onsubmit="return validate()">
       <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
@@ -248,25 +248,25 @@
       <TABLE CELLSPACING="2" CELLPADDING="2">
       <TR><TD COLSPAN="3" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       <TR>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
-        <TD VALIGN="middle"><A HREF="../hipermail/msg_new_f.jsp?folder=drafts" TARGET="_blank" CLASS="linkplain">New</A></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nuevo~]"></TD>
+        <TD VALIGN="middle"><A HREF="../hipermail/msg_new_f.jsp?folder=drafts" TARGET="_blank" CLASS="linkplain">[~Nuevo~]</A></TD>
         <TD ALIGN="center">
-          <INPUT TYPE="radio" NAME="chk_recipient" onclick="if (validate()) document.forms[0].submit()" <% if (tp_recipient.equals("from")) out.write("CHECKED"); %>><FONT CLASS="textplain">&nbsp;Recibidos&nbsp;&nbsp;</FONT>
-          <INPUT TYPE="radio" NAME="chk_recipient" onclick="if (validate()) document.forms[0].submit()" <% if (tp_recipient.equals("to")) out.write("CHECKED"); %>><FONT CLASS="textplain">&nbsp;Enviados&nbsp;&nbsp;</FONT>
+          <INPUT TYPE="radio" NAME="chk_recipient" onclick="if (validate()) document.forms[0].submit()" <% if (tp_recipient.equals("from")) out.write("CHECKED"); %>><FONT CLASS="textplain">&nbsp;[~Recibidos~]&nbsp;&nbsp;</FONT>
+          <INPUT TYPE="radio" NAME="chk_recipient" onclick="if (validate()) document.forms[0].submit()" <% if (tp_recipient.equals("to")) out.write("CHECKED"); %>><FONT CLASS="textplain">&nbsp;[~Enviados~]&nbsp;&nbsp;</FONT>
         </TD>
       </TR>
       <TR>
         <TD></TD>
-        <TD><FONT CLASS="textplain">Asunto&nbsp;</FONT></TD>
+        <TD><FONT CLASS="textplain">[~Asunto~]&nbsp;</FONT></TD>
         <TD>
                 <INPUT TYPE="text" CLASS="combomini" NAME="subject" VALUE="<%=subject%>">
-                <FONT CLASS="textplain">Entre&nbsp;</FONT>
+                <FONT CLASS="textplain">[~Entre~]&nbsp;</FONT>
                 <INPUT TYPE="text" CLASS="combomini" NAME="dt_before" VALUE="<%=dt_before%>" MAXLENGTH="10" SIZE="11">
-                <A HREF="javascript:showCalendar('dt_before')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Ver Calendario"></A>
-	              &nbsp;&nbsp;<FONT CLASS="textplain">y</FONT>&nbsp;&nbsp;
+                <A HREF="javascript:showCalendar('dt_before')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>
+	              &nbsp;&nbsp;<FONT CLASS="textplain">[~y~]</FONT>&nbsp;&nbsp;
                 <INPUT TYPE="text" CLASS="combomini" NAME="dt_after" VALUE="<%=dt_after%>" SIZE="11" MAXLENGTH="10">
-                <A HREF="javascript:showCalendar('dt_after')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Ver Calendario"></A>
-		            <A HREF="#" onclick="document.forms[0].submit()" CLASS="linkplain">Find</A>            
+                <A HREF="javascript:showCalendar('dt_after')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>
+		            <A HREF="#" onclick="document.forms[0].submit()" CLASS="linkplain">[~Buscar~]</A>            
         </TD>
       </TR>
       <TR><TD COLSPAN="3" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
@@ -287,11 +287,11 @@
           </TD>
         </TR>
         <TR>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (sOrderBy.equals("3") ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by priority"></A></TD>
-          <TD CLASS="tableheader" WIDTH="<%=f150%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="javascript:sortBy(4);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (sOrderBy.equals("4") ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by sender"></A>&nbsp;<B>De</B></TD>
-          <TD CLASS="tableheader" WIDTH="<%=f320%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="javascript:sortBy(6);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (sOrderBy.equals("6") ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by subject"></A>&nbsp;<B>Asunto</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="javascript:sortBy(7);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (sOrderBy.equals("7") ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by received date"></A>&nbsp;<B>Date</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="javascript:sortBy(9);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (sOrderBy.equals("9") ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by size"></A>&nbsp;<B>Size</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (sOrderBy.equals("3") ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por prioridad~]"></A></TD>
+          <TD CLASS="tableheader" WIDTH="<%=f150%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="javascript:sortBy(4);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (sOrderBy.equals("4") ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por remitente~]"></A>&nbsp;<B>[~De~]</B></TD>
+          <TD CLASS="tableheader" WIDTH="<%=f320%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="javascript:sortBy(6);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (sOrderBy.equals("6") ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por asunto~]"></A>&nbsp;<B>[~Asunto~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="javascript:sortBy(7);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (sOrderBy.equals("7") ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por fecha de recepci&oacute;n~]"></A>&nbsp;<B>[~Fecha~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="javascript:sortBy(9);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (sOrderBy.equals("9") ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por tama&ntilde;o~]"></A>&nbsp;<B>[~Tama&ntilde;o~]</B></TD>
         </TR>
 <%
      for (int m=0; m<iMsgs; m++) {
@@ -302,7 +302,7 @@
          sPriority = oMsgs.getStringNull(2, m, "3");
          sFrom = MimeUtility.decodeText(oMsgs.getStringNull(3, m, ""));
          sTo = MimeUtility.decodeText(oMsgs.getStringNull(4, m, ""));
-         sSubject = MimeUtility.decodeText(oMsgs.getStringNull(5, m, "<I>&lt;sin asunto&gt;</I>"));
+         sSubject = MimeUtility.decodeText(oMsgs.getStringNull(5, m, "<I>&lt;[~sin asunto~]&gt;</I>"));
 	 sDateReceived = nullif(oMsgs.getDateShort(6, m));
 	 sDateSent = nullif(oMsgs.getDateShort(7, m));
 	 if (!oMsgs.isNull(8,m))

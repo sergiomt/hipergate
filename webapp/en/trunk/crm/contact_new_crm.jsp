@@ -6,13 +6,13 @@
 <!-- CRM Face -->
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()">
   <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Refresh"> Refresh</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Actualizar~]"> [~Actualizar~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="[~Imprimir~]"> [~Imprimir~]</SPAN>
   </DIV></DIV>
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Create Contact</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Crear Contacto~]</FONT></TD></TR>
   </TABLE>
     
   <ILAYER id="panelLocator" width="600" height="510"></ILAYER>
@@ -74,69 +74,69 @@
           <TR><TD>
             <TABLE ALIGN="center">
               <TR>
-                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">Private:</FONT></TD>
+                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">[~Privado:~]</FONT></TD>
                 <TD ALIGN="left" WIDTH="370">
                   <INPUT TYPE="hidden" NAME="bo_private">
                   <INPUT TYPE="checkbox" NAME="chk_private" VALUE="1">
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Reference:</FONT></TD>
+                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">[~Referencia:~]</FONT></TD>
                 <TD ALIGN="left" WIDTH="370">
                   <INPUT TYPE="text" NAME="id_ref" MAXLENGTH="50" SIZE="32" <% if (bContactAutoRefs) out.write("VALUE=\""+sRefId+"\" TABINDEX=\"-1\" onfocus=\"document.forms[0].tx_name.focus()\""); %>>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">Name:</FONT></TD>
+                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">[~Nombre:~]</FONT></TD>
                 <TD ALIGN="left" WIDTH="420"><INPUT TYPE="text" NAME="tx_name" MAXLENGTH="50" SIZE="32"></TD>
               </TR>
               <TR>
-                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">Name:</FONT></TD>
+                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">[~Apellidos:~]</FONT></TD>
                 <TD ALIGN="left" WIDTH="420"><INPUT TYPE="text" NAME="tx_surname" MAXLENGTH="50" SIZE="32"></TD>
               </TR>
               <TR>
-                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Position:</FONT></TD>
+                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">[~Empleo:~]</FONT></TD>
                 <TD ALIGN="left" WIDTH="420">
-                  <SELECT CLASS="combomini" NAME="sel_title"><OPTION VALUE=""></OPTION><%=sTitleLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Positions List"></A>
+                  <SELECT CLASS="combomini" NAME="sel_title"><OPTION VALUE=""></OPTION><%=sTitleLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Empleos~]"></A>
                   <INPUT TYPE="hidden" NAME="de_title">
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Division:</FONT></TD>
+                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">[~Divisi&oacute;n:~]</FONT></TD>
                 <TD ALIGN="left" WIDTH="420">
                   <INPUT TYPE="text" NAME="tx_division" SIZE="20" MAXLENGTH="32">
-                  &nbsp;&nbsp;<FONT CLASS="formplain">Dept:</FONT>
+                  &nbsp;&nbsp;<FONT CLASS="formplain">[~Dpto:~]</FONT>
                   <INPUT TYPE="text" NAME="tx_dept" SIZE="20" MAXLENGTH="32">
                 </TD>
               </TR>                              
               <TR>
-                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Gender:</FONT></TD>
+                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">[~Sexo:~]</FONT></TD>
                 <TD ALIGN="left" WIDTH="420">
                   <SELECT CLASS="combomini" NAME="sel_gender"><OPTION VALUE=""></OPTION><OPTION VALUE="M">M</OPTION><OPTION VALUE="F">F</OPTION></SELECT>
                   <INPUT TYPE="hidden" NAME="id_gender">
                 </TD>
               </TR>                              
               <TR>
-                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Birth Date</FONT></TD>
+                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">[~Fecha Nacimiento:~]</FONT></TD>
                 <TD ALIGN="left" WIDTH="420">
                   <INPUT TYPE="text" NAME="dt_birth" MAXLENGTH="10" SIZE="10">
-                  <A HREF="javascript:showCalendar('dt_birth')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
+                  <A HREF="javascript:showCalendar('dt_birth')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>
     	      &nbsp;&nbsp;&nbsp;
-    	      <FONT CLASS="formplain">Age:</FONT>
+    	      <FONT CLASS="formplain">[~Edad:~]</FONT>
     	      &nbsp;
                   <INPUT TYPE="text" NAME="ny_age" MAXLENGTH="3" SIZE="3">
                 </TD>
               </TR>                              
               <TR>
-                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Legal Id.</FONT></TD>
+                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">[~Doc. Identidad:~]</FONT></TD>
                 <TD ALIGN="left" WIDTH="420">
                   <INPUT TYPE="text" NAME="sn_passport" SIZE="10" MAXLENGTH="16">&nbsp;
-                  <SELECT CLASS="combomini" NAME="sel_passport"><OPTION VALUE=""></OPTION><%=sPassportLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Identity Document Types"></A>
+                  <SELECT CLASS="combomini" NAME="sel_passport"><OPTION VALUE=""></OPTION><%=sPassportLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Tipos de Documento de Identidad~]"></A>
                   <INPUT TYPE="hidden" NAME="tp_passport">
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Zone:</FONT></TD>
+                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">[~Zona:~]</FONT></TD>
                 <TD ALIGN="left" WIDTH="370">
                   <INPUT TYPE="hidden" NAME="gu_geozone" VALUE="">
                   <INPUT TYPE="hidden" NAME="nm_geozone" SIZE="40" VALUE="">
@@ -144,14 +144,14 @@
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Salesman:</FONT></TD>
+                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">[~Vendedor:~]</FONT></TD>
                 <TD ALIGN="left" WIDTH="370">
                 <INPUT TYPE="hidden" NAME="gu_sales_man" VALUE="">
                 <SELECT NAME="sel_salesman"><OPTION VALUE=""></OPTION><% for (int s=0; s<iSalesMen; s++) out.write ("<OPTION VALUE=\""+oSalesMen.getString(0,s)+"\">"+oSalesMen.getStringNull(1,s,"")+" "+oSalesMen.getStringNull(2,s,"")+" "+oSalesMen.getStringNull(3,s,"")+"</OPTION>"); %></SELECT>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Comments:</FONT></TD>
+                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">[~Comentarios:~]</FONT></TD>
                 <TD ALIGN="left" WIDTH="420"><TEXTAREA NAME="tx_comments" ROWS="3" COLS="44"></TEXTAREA></TD>
               </TR>
               <TR>
@@ -159,8 +159,8 @@
       	  </TR>          
               <TR>
         	    <TD COLSPAN="2" ALIGN="center">
-                  <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-        	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Close" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="top.close()">
+                  <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+        	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cerrar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="top.close()">
         	      <BR><BR>
         	    </TD>	            
             </TABLE>
@@ -170,7 +170,7 @@
       </FORM>    
     </DIV>
     
-    <DIV onclick="selectTab(0)" id="p1tab0" class="tab" style="background-color:#eeeeee; left:0px; top:0px; z-index:4; clip:rect(0 auto 30 0); cursor:hand">Contact</DIV>
+    <DIV onclick="selectTab(0)" id="p1tab0" class="tab" style="background-color:#eeeeee; left:0px; top:0px; z-index:4; clip:rect(0 auto 30 0); cursor:hand">[~Contacto~]</DIV>
 
     <DIV id="p1panel1" class="panel" style="background-color: #dddddd;  z-index:3; height: 470px"> 
 
@@ -181,7 +181,7 @@
         <TR><TD>
         <TABLE ALIGN="center">
           <TR>
-            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">Company:</FONT></TD>            
+            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">[~Compa&ntilde;&iacute;a:~]</FONT></TD>            
             <TD ALIGN="left" WIDTH="420">
                 <INPUT TYPE="hidden" NAME="gu_company">
                 <SELECT CLASS="combomini" STYLE="visibility:hidden" NAME="sel_company" onChange="document.forms[1].gu_company.value='';window.parent.contactexec.location.href='company_load.jsp?gu_company=' + getCombo(document.forms[1].sel_company) + '&gu_workarea=' + document.forms[0].gu_workarea.value;">
@@ -198,49 +198,49 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Legal Name:</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">[~Raz&oacute;n Social:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
               <INPUT TYPE="text" NAME="nm_legal" MAXLENGTH="50" SIZE="40" STYLE="text-transform:uppercase" onChange="document.forms[1].gu_company.value='';document.forms[1].sel_company.selectedIndex=0;">
-              &nbsp;&nbsp;<A HREF="javascript:reference(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Companies List"></A>
+              &nbsp;&nbsp;<A HREF="javascript:reference(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Compa&ntilde;&iacute;as~]"></A>
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Commercial Name:</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">[~Nombre Comercial:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="nm_commercial" MAXLENGTH="50" SIZE="40"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Sector:</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Sector:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
-              <INPUT TYPE="text" NAME="nm_sector" MAXLENGTH="32" SIZE="40" TABINDEX="-1" onfocus="document.forms[1].id_legal.focus()">&nbsp;<A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Sectors List"></A>
+              <INPUT TYPE="text" NAME="nm_sector" MAXLENGTH="32" SIZE="40" TABINDEX="-1" onfocus="document.forms[1].id_legal.focus()">&nbsp;<A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Sectores~]"></A>
               <INPUT TYPE="hidden" NAME="id_sector">
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Legal Id:</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~NIF:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
               <INPUT TYPE="text" NAME="id_legal" MAXLENGTH="16" SIZE="12">
             </TD>
           </TR>          
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Company Type:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370"><SELECT STYLE="visibility:hidden" NAME="sel_typecompany"><OPTION VALUE=""></OPTION><%=sTypeLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Company Types"></A></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Tipo Compa&ntilde;&iacute;a:~]</FONT></TD>
+            <TD ALIGN="left" WIDTH="370"><SELECT STYLE="visibility:hidden" NAME="sel_typecompany"><OPTION VALUE=""></OPTION><%=sTypeLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Tipos de Compañía~]"></A></TD>
           </TR>          
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Income:</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Facturaci&oacute;n:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
               <INPUT TYPE="text" NAME="im_revenue" MAXLENGTH="11" SIZE="10">
-              &nbsp;&nbsp;&nbsp;<FONT CLASS="formplain">Head Count:</FONT>&nbsp;
+              &nbsp;&nbsp;&nbsp;<FONT CLASS="formplain">[~N&uacute;m. Empleados:~]</FONT>&nbsp;
               <INPUT TYPE="text" NAME="nu_employees" MAXLENGTH="9" SIZE="10">
             </TD>
           </TR>          
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Date Founded:</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Fecha Constituci&oacute;n:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
               <INPUT TYPE="text" NAME="dt_founded" MAXLENGTH="10" SIZE="10">
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Description:</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Descripci&oacute;n:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="370"><TEXTAREA NAME="de_company" ROWS="2" COLS="40"></TEXTAREA></TD>
           </TR>
           <TR>
@@ -248,8 +248,8 @@
   	  </TR>          
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="if (validate()) window.document.forms[0].submit();">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Close" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="top.close()">
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="if (validate()) window.document.forms[0].submit();">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cerrar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="top.close()">
     	      <BR>
     	    </TD>	            
 	  </TR>
@@ -261,7 +261,7 @@
 
     </DIV>
 
-    <DIV onclick="selectTab(1)" id="p1tab1" class="tab" style="background-color:#dddddd; left:150px; top:0px; z-index:3; clip:rect(0 auto 30 0)"><SPAN onmouseover="this.style.cursor='hand';" onmouseout="this.style.cursor='auto';">Company</SPAN></DIV>
+    <DIV onclick="selectTab(1)" id="p1tab1" class="tab" style="background-color:#dddddd; left:150px; top:0px; z-index:3; clip:rect(0 auto 30 0)"><SPAN onmouseover="this.style.cursor='hand';" onmouseout="this.style.cursor='auto';">[~Compa&ntilde;&iacute;a~]</SPAN></DIV>
 
     <DIV id="p1panel2" class="panel" style="background-color: #cccccc; z-index:2; height: 470px">
 
@@ -272,14 +272,14 @@
             <TABLE WIDTH="100%">
               <TR>
                 <TD ALIGN="right" WIDTH="140"><INPUT NAME="sameaddr" TYPE="checkbox" onclick="if (document.forms[1].sel_company.options.selectedIndex>0) window.parent.contactexec.location.href='contact_inherit_addr.jsp?gu_company=' + getCombo(document.forms[1].sel_company); else document.forms[2].sameaddr.checked = false;"></TD>
-                <TD ALIGN="left" WIDTH="460"><A HREF="#" onclick="if (document.forms[1].sel_company.options.selectedIndex>0) { document.forms[2].sameaddr.checked = true; window.parent.contactexec.location.href='contact_inherit_addr.jsp?gu_company=' + getCombo(document.forms[1].sel_company); }" CLASS="linkplain">Same address as the company</A></TD>
+                <TD ALIGN="left" WIDTH="460"><A HREF="#" onclick="if (document.forms[1].sel_company.options.selectedIndex>0) { document.forms[2].sameaddr.checked = true; window.parent.contactexec.location.href='contact_inherit_addr.jsp?gu_company=' + getCombo(document.forms[1].sel_company); }" CLASS="linkplain">[~Misma direcci&oacute;n que la compa&ntilde;&iacute;a~]</A></TD>
 	      </TR>
               <TR>
-                <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Address Type:</FONT></TD>
+                <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Tipo de Direcci&oacute;n:~]</FONT></TD>
                 <TD ALIGN="left" WIDTH="460">
                   <TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="0" BORDER="0"><TR>
                     <TD ALIGN="left">
-                      <A HREF="javascript:lookup(5)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Address Types"></A>&nbsp;<SELECT CLASS="combomini" STYLE="visibility:hidden" NAME="sel_location"><OPTION VALUE=""></OPTION><%=sLocationLookUp%></SELECT>          
+                      <A HREF="javascript:lookup(5)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Tipos de Direcci&oacute;n~]"></A>&nbsp;<SELECT CLASS="combomini" STYLE="visibility:hidden" NAME="sel_location"><OPTION VALUE=""></OPTION><%=sLocationLookUp%></SELECT>          
                       <INPUT TYPE="hidden" NAME="tp_location">
                     </TD>
                     <TD ALIGN="right">
@@ -291,115 +291,115 @@
     <% if (sLanguage.equalsIgnoreCase("es")) { %>
               <TR>
                 <TD ALIGN="right" WIDTH="140">
-                  <A HREF="javascript:lookup(6)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Street Types"></A>&nbsp;
+                  <A HREF="javascript:lookup(6)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Tipos de V&iacute;a~]"></A>&nbsp;
                   <INPUT TYPE="hidden" NAME="tp_street">
                   <SELECT CLASS="combomini" STYLE="visibility:hidden" NAME="sel_street"><OPTION VALUE=""></OPTION><%=sStreetLookUp%></SELECT>
                 </TD>
                 <TD ALIGN="left" WIDTH="460">
                   <INPUT TYPE="text" NAME="nm_street" MAXLENGTH="100" SIZE="36">
                   &nbsp;&nbsp;
-                  <FONT CLASS="formplain">Num.</FONT>&nbsp;<INPUT TYPE="text" NAME="nu_street" MAXLENGTH="16" SIZE="4">
+                  <FONT CLASS="formplain">[~N&uacute;m.~]</FONT>&nbsp;<INPUT TYPE="text" NAME="nu_street" MAXLENGTH="16" SIZE="4">
                 </TD>
               </TR>
     <% } else { %>
               <TR>
                 <TD ALIGN="right" WIDTH="140">
-    	      <FONT CLASS="formplain">Num.</FONT>&nbsp;
+    	      <FONT CLASS="formplain">[~N&uacute;m.~]</FONT>&nbsp;
                 </TD>
                 <TD ALIGN="left" WIDTH="460">
                   <INPUT TYPE="text" NAME="nu_street" MAXLENGTH="16" SIZE="4">
                   <INPUT TYPE="text" NAME="nm_street" MAXLENGTH="100" SIZE="36">
                   <INPUT TYPE="hidden" NAME="tp_street">
                   <SELECT CLASS="combomini" STYLE="visibility:hidden" NAME="sel_street"><OPTION VALUE=""></OPTION><%=sStreetLookUp%></SELECT>
-                  <A HREF="javascript:lookup(6)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Street Types"></A>              
+                  <A HREF="javascript:lookup(6)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Tipos de V&iacute;a~]"></A>              
                 </TD>
               </TR>
     <% } %>
               <TR>
-                <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Flat:</FONT></TD>
+                <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Esc/Piso:~]</FONT></TD>
                 <TD ALIGN="left" WIDTH="460">
                   <INPUT TYPE="text" NAME="tx_addr1" MAXLENGTH="100" SIZE="10">
                   &nbsp;&nbsp;
-                  <FONT CLASS="formplain">Rest:</FONT>&nbsp;
+                  <FONT CLASS="formplain">[~Resto:~]</FONT>&nbsp;
                   <INPUT TYPE="text" NAME="tx_addr2" MAXLENGTH="100" SIZE="32">
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Country:</FONT></TD>
+                <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Pais:~]</FONT></TD>
                 <TD ALIGN="left" WIDTH="460">
     	      <SELECT CLASS="combomini" STYLE="visibility:hidden" NAME="sel_country" onchange="loadstates()"><OPTION VALUE=""></OPTION><%=sCountriesLookUp%></SELECT>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">State/Province:</FONT></TD>
+                <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Provincia/Estado:~]</FONT></TD>
                 <TD ALIGN="left" WIDTH="460">
-                  <A HREF="javascript:lookup(7)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View States"></A>&nbsp;<SELECT CLASS="combomini" STYLE="visibility:hidden" NAME="sel_state"></SELECT>
+                  <A HREF="javascript:lookup(7)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver provincias~]"></A>&nbsp;<SELECT CLASS="combomini" STYLE="visibility:hidden" NAME="sel_state"></SELECT>
                   <INPUT TYPE="hidden" NAME="id_state" MAXLENGTH="16">
                   <INPUT TYPE="hidden" NAME="nm_state" MAXLENGTH="30">
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">City:</FONT></TD>
+                <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Ciudad:~]</FONT></TD>
                 <TD ALIGN="left" WIDTH="460">
                   <INPUT TYPE="text" NAME="mn_city" STYLE="text-transform:uppercase" MAXLENGTH="50" SIZE="30">
                   &nbsp;&nbsp;
-                  <FONT CLASS="formplain">Zipcode:</FONT>
+                  <FONT CLASS="formplain">[~C&oacute;d Postal:~]</FONT>
                   &nbsp;
                   <INPUT TYPE="text" NAME="zipcode" MAXLENGTH="30" SIZE="5">
                 </TD>
               </TR>
               <TR>
                 <TD ALIGN="right" WIDTH="140">
-                  <FONT CLASS="formplain">Telephones:</FONT>
+                  <FONT CLASS="formplain">[~Tel&eacute;fonos:~]</FONT>
                 </TD>
                 <TD ALIGN="left" WIDTH="460">
                   <TABLE BGCOLOR="#E5E5E5">
                     <TR>
-                      <TD><FONT CLASS="textsmall">Main</FONT></TD>
+                      <TD><FONT CLASS="textsmall">[~Centralita~]</FONT></TD>
                       <TD><INPUT TYPE="text" NAME="work_phone" MAXLENGTH="16" SIZE="10"></TD>
                       <TD>&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-                      <TD><FONT CLASS="textsmall">Direct</FONT></TD>
+                      <TD><FONT CLASS="textsmall">[~Directo~]</FONT></TD>
                       <TD><INPUT TYPE="text" NAME="direct_phone" MAXLENGTH="16" SIZE="10"></TD>
                     </TR>
                     <TR>
-                      <TD><FONT CLASS="textsmall">Personal</FONT></TD>
+                      <TD><FONT CLASS="textsmall">[~Personal~]</FONT></TD>
                       <TD><INPUT TYPE="text" NAME="home_phone" MAXLENGTH="16" SIZE="10"></TD>              
                       <TD>&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-                      <TD><FONT CLASS="textsmall">Mobile Phone</FONT></TD>
+                      <TD><FONT CLASS="textsmall">[~M&oacute;vil~]</FONT></TD>
                       <TD><INPUT TYPE="text" NAME="mov_phone" MAXLENGTH="16" SIZE="10"></TD>
                       <TD>&nbsp;&nbsp;&nbsp;&nbsp;</TD>
                     </TR>
                     <TR>                
-                      <TD><FONT CLASS="textsmall">Fax</FONT></TD>
+                      <TD><FONT CLASS="textsmall">[~Fax~]</FONT></TD>
                       <TD><INPUT TYPE="text" NAME="fax_phone" MAXLENGTH="16" SIZE="10"></TD>
                       <TD>&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-                      <TD><FONT CLASS="textsmall">Other</FONT></TD>
+                      <TD><FONT CLASS="textsmall">[~Otro~]</FONT></TD>
                       <TD><INPUT TYPE="text" NAME="other_phone" MAXLENGTH="16" SIZE="10"></TD>
                     </TR>
                   </TABLE>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">e-mail:</FONT></TD>
+                <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~e-mail:~]</FONT></TD>
                 <TD ALIGN="left" WIDTH="460"><INPUT TYPE="text" NAME="tx_email" STYLE="text-tansform:lowercase" MAXLENGTH="50" SIZE="42">
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">URL:</FONT></TD>
+                <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~URL:~]</FONT></TD>
                 <TD ALIGN="left" WIDTH="460"><INPUT TYPE="text" NAME="url_addr" MAXLENGTH="254" SIZE="42">
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Contact Person:</FONT></TD>
+                <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Persona Contacto:~]</FONT></TD>
                 <TD ALIGN="left" WIDTH="460">
-                  <A HREF="javascript:lookup(8)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Saludos"></A>&nbsp;
+                  <A HREF="javascript:lookup(8)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Saludos~]"></A>&nbsp;
                   <SELECT CLASS="combomini" STYLE="visibility:hidden"  NAME="sel_salutation"><OPTION VALUE=""></OPTION><%=sSalutationLookUp%></SELECT>&nbsp;
                   <INPUT TYPE="hidden" NAME="tx_salutation">
                   <INPUT TYPE="text" NAME="contact_person" MAXLENGTH="254" SIZE="32">
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Comments:</FONT></TD>
+                <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Comentarios:~]</FONT></TD>
                 <TD ALIGN="left" WIDTH="460"><TEXTAREA NAME="tx_remarks" ROWS="2" COLS="40"></TEXTAREA></TD>
               </TR>
               <TR>
@@ -409,11 +409,11 @@
               <TR>
                 <TD COLSPAN="2" ALIGN="center">
     <% if (bIsGuest) { %>
-                  <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('Your credential level as Guest does not allow you to perform this action')">&nbsp;&nbsp;&nbsp;
+                  <INPUT TYPE="button" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">&nbsp;&nbsp;&nbsp;
     <% } else { %>
-                  <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="if (validate()) window.document.forms[0].submit();">&nbsp;&nbsp;&nbsp;
+                  <INPUT TYPE="button" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="if (validate()) window.document.forms[0].submit();">&nbsp;&nbsp;&nbsp;
     <% } %>
-                  <INPUT TYPE="button" ACCESSKEY="c" VALUE="Close" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="top.close()">
+                  <INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cerrar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="top.close()">
         	</TD>
               </TR>
             </TABLE>
@@ -422,7 +422,7 @@
       </FORM>
     </DIV>
     <DIV onclick="selectTab(2)" id="p1tab2" class="tab" style="background-color:#cccccc; left:300px; top:0px; z-index:2; clip:rect(0 auto 30 0)">
-      <SPAN onmouseover="this.style.cursor='hand';" onmouseout="this.style.cursor='auto';">Address</SPAN>
+      <SPAN onmouseover="this.style.cursor='hand';" onmouseout="this.style.cursor='auto';">[~Direcci&oacute;n~]</SPAN>
     </DIV>
     </DIV>
   </CENTER>

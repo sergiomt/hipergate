@@ -45,7 +45,7 @@
   else if (request.getParameter("id_mode").equals("appendupdate"))
     iMode = ContactLoader.MODE_APPENDUPDATE;
   else {
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=IllegalArgumentException&desc=Insert or update mode not valid&resume=_back"));  
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=IllegalArgumentException&desc=[~Modo de insercion o actualizacion no valido~]&resume=_back"));  
     return;
   }
 
@@ -99,7 +99,7 @@
         oConn.close("contact_fastedit_store");
       }
     oConn = null;
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=Row " + String.valueOf(r+1) + " " + e.getLocalizedMessage() + "&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=[~Fila~] " + String.valueOf(r+1) + " " + e.getLocalizedMessage() + "&resume=_back"));
   }
   catch (IllegalArgumentException e) {  
     if (oConn!=null)
@@ -108,7 +108,7 @@
         oConn.close("contact_fastedit_store");
       }
     oConn = null;
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=IllegalArgumentException&desc=Row " + String.valueOf(r+1) + " " + e.getMessage() + "&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=IllegalArgumentException&desc=[~Fila~] " + String.valueOf(r+1) + " " + e.getMessage() + "&resume=_back"));
   }
   catch (ArrayIndexOutOfBoundsException e) {  
     if (oConn!=null)
@@ -117,7 +117,7 @@
         oConn.close("contact_fastedit_store");
       }
     oConn = null;
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=ArrayIndexOutOfBoundsException&desc=Row " + String.valueOf(r+1) + " " + e.getMessage() + "&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=ArrayIndexOutOfBoundsException&desc=[~Fila~] " + String.valueOf(r+1) + " " + e.getMessage() + "&resume=_back"));
   }
   /*
   catch (NullPointerException e) {  
@@ -127,7 +127,7 @@
         oConn.close("contact_fastedit_store");
       }
     oConn = null;
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=Row " + String.valueOf(r+1) + e.getMessage() + "&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=[~Fila~] " + String.valueOf(r+1) + e.getMessage() + "&resume=_back"));
   }
   */
   catch (ClassCastException e) {  
@@ -137,7 +137,7 @@
         oConn.close("contact_fastedit_store");
       }
     oConn = null;
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=ClassCastException&desc=Row " + String.valueOf(r+1) + e.getMessage() + "&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=ClassCastException&desc=[~Fila~] " + String.valueOf(r+1) + e.getMessage() + "&resume=_back"));
   }
   if (null==oConn) return;  
   oConn = null;
@@ -160,13 +160,13 @@
           <TABLE BGCOLOR="#FFFFFF" BORDER="0" CELLSPACING="8" CELLPADDING="8">
             <TR VALIGN="middle">
               <TD><IMG SRC="../images/images/chequeredflag.gif" WIDTH="40" HEIGHT="38" BORDER="0" ALT="Chequered Flag"></TD>
-              <TD><FONT CLASS="textplain"><% out.write(String.valueOf(nRows)+" Rows successfully saved"); %></FONT></TD>
+              <TD><FONT CLASS="textplain"><% out.write(String.valueOf(nRows)+" [~Registros grabados con éxito~]"); %></FONT></TD>
 	    </TR>
 	  </TABLE>
         </TD></TR>
         <TR><TD ALIGN="center">
           <FORM>
-            <INPUT TYPE="button" CLASS="pushbutton" VALUE="Back" onclick="window.location.href='contact_fastedit.jsp'">
+            <INPUT TYPE="button" CLASS="pushbutton" VALUE="[~Volver~]" onclick="window.location.href='contact_fastedit.jsp'">
           </FORM>
         </TD></TR>
       </TABLE>

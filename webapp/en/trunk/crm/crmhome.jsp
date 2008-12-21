@@ -170,7 +170,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: Contact Management</TITLE> 
+  <TITLE>hipergate :: [~Gesti&oacute;n de Contactos~]</TITLE> 
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
@@ -196,12 +196,12 @@
       var nmc = frm.nm_company.value.toUpperCase();      
 
       if (nmc.length==0) {
-        alert ("Type legal name of Company to find");
+        alert ("[~Introduzca la razón social de la Compañía a buscar~]");
         return false;
       }  
      
       if (nmc.indexOf("'")>0 || nmc.indexOf('"')>0 || nmc.indexOf("?")>0 || nmc.indexOf("%")>0 || nmc.indexOf("*")>0 || nmc.indexOf("&")>0 || nmc.indexOf("/")>0) {
-	alert ("Company name contains invalid characters");
+	alert ("[~El nombre de la compañía contiene caracteres no válidos~]");
 	return false;
       } else {
         document.location = "company_listing_f.jsp?selected=2&subselected=0&field=nm_legal&find=" + escape(nmc);        
@@ -216,12 +216,12 @@
       var nmc = frm.full_name.value;
 
       if (nmc.length==0) {
-        alert ("Type name or surname for individual to find");
+        alert ("[~Introduzca el nombre o apellidos del Individuo a buscar~]");
         return false;
       }  
       
       if (nmc.indexOf("'")>0 || nmc.indexOf('"')>0 || nmc.indexOf("?")>0 || nmc.indexOf("%")>0 || nmc.indexOf("*")>0 || nmc.indexOf("&")>0 || nmc.indexOf("/")>0) {
-	alert ("Contact name contains invalid characters");
+	alert ("[~El nombre del Individuo contiene caracteres no válidos~]");
 	return false;
       }
       window.location = "contact_listing_f.jsp?selected=2&subselected=1&field=tx_name&find=" + escape(nmc);
@@ -232,7 +232,7 @@
     function importWAB() {
     
       if (navigator.appName!="Microsoft Internet Explorer") {
-        alert ("Windows Address Book import only works from Internet Explorer");
+        alert ("[~La importación de contactos solo funciona desde Microsoft Internet Explorer~]");
         return false;
       }
       
@@ -274,7 +274,7 @@
 <BODY  TOPMARGIN="0" MARGINHEIGHT="0">
 <%@ include file="../common/tabmenu.jspf" %>
 <BR>
-<TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">Contact Management</FONT></TD></TR></TABLE>
+<TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Gesti&oacute;n de Contactos~]</FONT></TD></TR></TABLE>
 <FORM>
   <TABLE  BORDER="0">
     <TR>
@@ -290,7 +290,7 @@
       	          <TD ROWSPAN="2" CLASS="subtitle" ALIGN="right"><IMG SRC="../skins/<%=sSkin%>/tab/angle45_24x24.gif" style="display:block" WIDTH="24" HEIGHT="24" BORDER="0"></TD>
       	        </TR>
                 <TR>
-            	  <TD BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" COLSPAN="2" CLASS="subtitle" ALIGN="left" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">Companies</TD>
+            	  <TD BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" COLSPAN="2" CLASS="subtitle" ALIGN="left" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">[~Compa&ntilde;&iacute;as~]</TD>
                 </TR>
               </TABLE>
             </TD>
@@ -309,21 +309,21 @@
               <TABLE CELLSPACING="8" BORDER="0">
                 <TR>
                   <TD ROWSPAN="2">
-                    <A HREF="company_listing_f.jsp?selected=2&subselected=0"><IMG style="display:block" SRC="../images/images/crm/companies.gif" BORDER="0" ALT="Companies"></A>
+                    <A HREF="company_listing_f.jsp?selected=2&subselected=0"><IMG style="display:block" SRC="../images/images/crm/companies.gif" BORDER="0" ALT="[~Compa&ntilde;&iacute;as~]"></A>
                   </TD>
                   <TD>
                     <INPUT TYPE="text" NAME="nm_company" MAXLENGTH="50" STYLE="width:180px;text-transform:uppercase">
                   </TD>
                   <TD>
-                    <A HREF="#" onClick="searchCompany();return false" CLASS="linkplain">Find Company</A>
+                    <A HREF="#" onClick="searchCompany();return false" CLASS="linkplain">[~Buscar Compa&ntilde;&iacute;a~]</A>
                   </TD>
                 </TR>
       	        <TR>
                   <TD>
       <% if (bIsGuest) { %>
-                    <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New Company</A>
+                    <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Nueva Compa&ntilde;&iacute;a~]</A>
       <% } else { %>
-                    <A HREF="#" onclick="createCompany();return false" CLASS="linkplain">New Company</A>
+                    <A HREF="#" onclick="createCompany();return false" CLASS="linkplain">[~Nueva Compa&ntilde;&iacute;a~]</A>
       <% } %>
                   </TD>
                   <TD></TD>
@@ -348,7 +348,7 @@
             <TD>
               <TABLE CELLSPACING="0" CELLPADDING="0" BORDER="0">
                 <TR>
-            	  <TD BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" CLASS="subtitle" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" HEIGHT="1" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">Individuals</TD>
+            	  <TD BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" CLASS="subtitle" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" HEIGHT="1" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">[~Individuos~]</TD>
       	          <TD ALIGN="right"><IMG  SRC="../skins/<%=sSkin%>/tab/angle45_22x22.gif" WIDTH="22" HEIGHT="22" BORDER="0"></TD>
       	        </TR>
               </TABLE>
@@ -368,23 +368,23 @@
               <TABLE CELLSPACING="8" BORDER="0">
                 <TR>
                   <TD ROWSPAN="3">
-                    <A HREF="contact_listing_f.jsp?selected=2&subselected=1"><IMG style="display:block" SRC="../images/images/crm/contacts.gif" BORDER="0" ALT="Individuals"></A>
+                    <A HREF="contact_listing_f.jsp?selected=2&subselected=1"><IMG style="display:block" SRC="../images/images/crm/contacts.gif" BORDER="0" ALT="[~Individuos~]"></A>
                   </TD>
                   <TD>
                     <INPUT TYPE="text" NAME="full_name" MAXLENGTH="50" STYLE="width:180px">
                   </TD>
                   <TD>
-                    <A HREF="#" onClick="searchContact();return false;" CLASS="linkplain">Find Individual</A>
+                    <A HREF="#" onClick="searchContact();return false;" CLASS="linkplain">[~Buscar Individuo~]</A>
                   </TD>
                 </TR>
       	        <TR>
                   <TD>
       <% if (bIsGuest) { %>
-                    <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New Individual</A>
+                    <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Nuevo Individuo~]</A>
       <% } else { %>
-                    <A HREF="#" onclick="createContact()" CLASS="linkplain">New Individual</A>
+                    <A HREF="#" onclick="createContact()" CLASS="linkplain">[~Nuevo Individuo~]</A>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <A HREF="contact_fastedit_f.jsp" CLASS="linkplain">Fast Edit</A>
+                    <A HREF="contact_fastedit_f.jsp" CLASS="linkplain">[~Edición R&aacute;pida~]</A>
       <% } %>
                   </TD>
                   <TD></TD>
@@ -396,9 +396,9 @@
                         <TD><IMG style="display:block" SRC="../images/images/crm/outlookexpress.gif" WIDTH="15" HEIGHT="18" BORDER="0"></TD>
                         <TD>
       <% if (bIsGuest) { %>
-                          <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">Import Address Book Entries from outllok Express</A>
+                          <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Importar Contactos de Outlook Express~]</A>
       <% } else { %>
-                          <A HREF="#" onclick="importWAB()" CLASS="linkplain">Import Address Book Entries from outllok Express</A>
+                          <A HREF="#" onclick="importWAB()" CLASS="linkplain">[~Importar Contactos de Outlook Express~]</A>
       <% } %>
                         </TD>
                       </TR>
@@ -406,9 +406,9 @@
                         <TD><IMG style="display:block" SRC="../images/images/crm/textload.gif" WIDTH="19" HEIGHT="18" BORDER="0"></TD>
                         <TD>
       <% if (bIsGuest) { %>
-                          <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">Import contacts from text file</A>
+                          <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Importar Contactos desde Texto~]</A>
       <% } else { %>
-                          <A HREF="#" onclick="importTXT()" CLASS="linkplain">Import contacts from text file</A>
+                          <A HREF="#" onclick="importTXT()" CLASS="linkplain">[~Importar Contactos desde Texto~]</A>
       <% } %>
                         </TD>
                       </TR>
@@ -440,7 +440,7 @@
             <TD>
               <TABLE CELLSPACING="0" CELLPADDING="0" BORDER="0">
                 <TR>
-            	  <TD BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" CLASS="subtitle" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" HEIGHT="1" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">Distribution Lists</TD>
+            	  <TD BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" CLASS="subtitle" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" HEIGHT="1" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">[~Listas de Distribuci&oacute;n~]</TD>
       	          <TD ALIGN="right"><IMG  SRC="../skins/<%=sSkin%>/tab/angle45_22x22.gif" WIDTH="22" HEIGHT="22" BORDER="0"></TD>
       	        </TR>
               </TABLE>
@@ -454,7 +454,7 @@
               <TABLE CELLSPACING="8" BORDER="0">
                 <TR>
                   <TD ROWSPAN="2">
-                    <A HREF="list_listing_f.jsp?selected=2&subselected=3"><IMG style="display:block" SRC="../images/images/crm/mailserved.gif" BORDER="0" ALT="Lists"></A>
+                    <A HREF="list_listing_f.jsp?selected=2&subselected=3"><IMG style="display:block" SRC="../images/images/crm/mailserved.gif" BORDER="0" ALT="[~Listas~]"></A>
                   </TD>
                   <TD>
                     <SELECT NAME="sel_list" CLASS="textplain" STYLE="width:180px">
@@ -464,15 +464,15 @@
                     </SELECT>
                   </TD>
                   <TD>
-                    <A HREF="#" onclick="alert('Direct Send is disabled at demostrative version')" CLASS="linkplain">Send Mailing</A>
+                    <A HREF="#" onclick="alert('[~La funcionalidad de envío directo está deshabilitada en la versión demostrativa~]')" CLASS="linkplain">[~Enviar Comunicado~]</A>
                   </TD>
       	        </TR>	  
       	        <TR>
                   <TD>
       <% if (bIsGuest) { %>            
-                    <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New List</A>
+                    <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Nueva Lista~]</A>
       <% } else { %>
-                    <A HREF="#" onclick="createList();return false" CLASS="linkplain">New List</A>
+                    <A HREF="#" onclick="createList();return false" CLASS="linkplain">[~Nueva Lista~]</A>
       <% } %>
                   </TD>
                   <TD></TD>
@@ -511,7 +511,7 @@
       	          <TD ROWSPAN="2" CLASS="subtitle" ALIGN="right"><IMG SRC="../skins/<%=sSkin%>/tab/angle45_24x24.gif" style="display:block" WIDTH="24" HEIGHT="24" BORDER="0"></TD>
       	        </TR>
                 <TR>
-            	  <TD COLSPAN="2" BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" CLASS="subtitle" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" HEIGHT="1" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">Recent</TD>
+            	  <TD COLSPAN="2" BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" CLASS="subtitle" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" HEIGHT="1" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">[~Recientes~]</TD>
                 </TR>
               </TABLE>
             </TD>

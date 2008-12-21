@@ -143,7 +143,7 @@
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/datefuncs.js"></SCRIPT>      
-  <TITLE>hipergate :: Edit Individual</TITLE>
+  <TITLE>hipergate :: [~Editar Individuo~]</TITLE>
 
     <SCRIPT LANGUAGE="JavaScript1.3" TYPE="text/javascript" DEFER="defer">
       <!--
@@ -172,7 +172,7 @@
         switch(parseInt(odctrl)) {
           case 1:
             if (frm.nm_company.value.indexOf("'")>=0)
-              alert("The company name contains forbidden characters");
+              alert("[~El nombre de la compañía contiene caracteres no permitidos~]");
             else
               window.open("../common/reference.jsp?nm_table=k_companies&tp_control=1&nm_control=nm_legal AS nm_company&nm_coding=gu_company" + 
                           (frm.nm_company.value.length==0 || frm.gu_company.value.length==32 ? "" : "&where=" + escape(" <%=DB.nm_legal%> LIKE '"+frm.nm_company.value+"%' ")),
@@ -303,22 +303,22 @@
        	var frm = window.document.forms[0];
        	
        	if (frm.tx_comments.value.length>254) {
-       	  alert ("Comments cannot be longer than 254 characters");
+       	  alert ("[~Los comentarios no pueden superar los 254 caracteres~]");
        	  return false;
        	}
        
        	if (frm.ny_age.value.indexOf("+")>=0 || frm.ny_age.value.indexOf("-")>=0 || frm.ny_age.value.indexOf(".")>=0 || frm.ny_age.value.indexOf(",")>=0) {
-       	  alert ("Age is not valid");
+       	  alert ("[~La edad no es válida~]");
        	  return false;	  
        	}
        
        	if (isNaN(frm.ny_age.value)) {
-       	  alert ("Age is not valid");
+       	  alert ("[~La edad no es válida~]");
        	  return false;	  
        	}
        	
        	if (!isDate(frm.dt_birth.value, "d") && frm.dt_birth.value.length>0) {
-       	  alert ("Birth Date is not valid");
+       	  alert ("[~La fecha de nacimiento no es válida~]");
        	  return false;	  
        	}
        	
