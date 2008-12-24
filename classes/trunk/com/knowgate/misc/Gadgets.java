@@ -932,6 +932,38 @@ public final class Gadgets {
   // ----------------------------------------------------------
 
   /**
+   * Replace any vowel by a POSIX Regular Expression representing all its accentuated variants
+   * @return If Input String is Andrés Lozäno
+   * the returned value will be something like [AÁÀÄÂAÅAAAÃ]ndr[eéàëêeeeee]s L[oóòöôoooøõo]z[aáàäâaåaaaã]n[oóòöôoooøõo]
+   */
+  public static String accentsToPosixRegEx(String sText) {
+    String[] aSets = new String[]{"aáàäâaåaaaã?",
+    							  "eéàëêeeeee",
+    							  "iíàïîiiiiii",
+    							  "oóòöôoooøõo",
+    							  "uúùüûuuuuuuuuu",
+    							  "yıyÿy"};
+    if (null==sText) return null;
+    final int nSets = aSets.length;
+    final int lText = sText.length();
+    final String sLext = sText.toLowerCase();
+    StringBuffer oText = new StringBuffer();
+    for (int n=0; n<lText; n++) {
+      char c = sText.charAt(n);
+      int iMatch = -1;
+      for (int s=0; s<nSets && -1==iMatch; s++) {
+        if (aSets[s].indexOf(c)>=0) iMatch=s;
+      } // next(s)
+      
+      if (iMatch!=-1)
+      	oText.append("["+(sText.charAt(n)==c ? aSets[iMatch] : aSets[iMatch].toUpperCase())+"]");
+      else
+      	oText.append(sText.charAt(n));
+    } // next (n)
+    return oText.toString();
+  } // AccentsToPosixRegEx
+  	
+  /**
    * Split a String in two parts
    * This method is a special case optimization of split() to be used when
    * the input string is to be splitted by a single character delimiter and
