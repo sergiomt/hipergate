@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Measures SYSTEM "measures.dtd">
+<!--
+	* MORFEO Project
+	* http://morfeo-project.org
+	*
+	* Component: Device Information Simple API
+	* Programming Language: Java
+	*
+	* $Id: measures.xml 1035 2008-03-19 10:13:18Z crdlc $
+	*
+	* (C) Copyright 2008 Telefónica Investigación y Desarrollo
+	*     S.A.Unipersonal (Telefónica I+D)
+	*
+	* Info about members and contributors of the MORFEO project
+	* is available at:
+	*
+	*   http://morfeo-project.org/
+	*
+	* This program is free software; you can redistribute it and/or modify
+	* it under the terms of the GNU General Public License as published by
+	* the Free Software Foundation; either version 2 of the License, or
+	* (at your option) any later version.
+	*
+	* This program is distributed in the hope that it will be useful,
+	* but WITHOUT ANY WARRANTY; without even the implied warranty of
+	* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+	* GNU General Public License for more details.
+	*
+	* You should have received a copy of the GNU General Public License
+	* along with this program; if not, write to the Free Software
+	* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+	*
+	* If you want to use this software an plan to distribute a
+	* proprietary application in any way, and you are not licensing and
+	* distributing your source code under GPL, you probably need to
+	* purchase a commercial license of the product.  More info about
+	* licensing options is available at:
+	*
+	*   http://morfeo-project.org/
+	*
+-->
+<Measures>
+	<Measure type="Storage">
+		<!-- Byte -->
+		<Unit name="byte">
+			<Conversions>
+				<Unit name="kilobyte" factor="0.0009765625"/>
+				<Unit name="megabyte" factor="0.000000953"/>
+			</Conversions>
+		</Unit>
+		<!-- KiloByte -->
+		<Unit name="kilobyte">
+			<Conversions>
+				<Unit name="byte" factor="1024"/>
+				<Unit name="megabyte" factor="0.0009765625"/>
+			</Conversions>
+		</Unit>
+		<!-- MegaByte -->
+		<Unit name="megabyte">
+			<Conversions>
+				<Unit name="byte" factor="1048576"/>
+				<Unit name="kilobyte" factor="1024"/>
+			</Conversions>
+		</Unit>
+	</Measure>
+	<Measure type="PhysicalLength">
+		<!-- Meter -->
+		<Unit name="meter">
+			<Conversions>
+				<Unit name="foot" factor="3.28084"/>
+				<Unit name="pica" factor="236.22"/>
+				<Unit name="millimeter" factor="1000"/>
+				<Unit name="centimeter" factor="100"/>
+				<Unit name="inch" factor="39.37"/>
+				<Unit name="point" factor="2384.65"/>
+			</Conversions>
+		</Unit>
+		<!-- Feet -->
+		<Unit name="foot"/>
+		<!-- Pica -->
+		<Unit name="pica"/>
+		<!-- Millimeter -->
+		<Unit name="millimeter"/>
+		<!-- Centimeter -->
+		<Unit name="centimeter"/>
+		<!-- Inche -->
+		<Unit name="inch"/>
+		<!-- Point -->
+		<Unit name="point"/>
+	</Measure>
+</Measures>

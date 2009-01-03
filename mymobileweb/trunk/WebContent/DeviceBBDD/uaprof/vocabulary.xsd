@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="profile-desc">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="extends" minOccurs="0"/>
+        <xs:element ref="component-desc" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="extends">
+    <xs:complexType>
+      <xs:attribute name="ref" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="component-desc">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="attribute-desc" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:ID" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="attribute-desc">
+    <xs:complexType>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+      <xs:attribute name="base-type" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="integer"/>
+            <xs:enumeration value="literal"/>
+            <xs:enumeration value="rational"/>
+            <xs:enumeration value="boolean"/>
+            <xs:enumeration value="dimension"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="composition" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="simple"/>
+            <xs:enumeration value="set"/>
+            <xs:enumeration value="sequence"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="resolution-policy" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="locked"/>
+            <xs:enumeration value="override"/>
+            <xs:enumeration value="append"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

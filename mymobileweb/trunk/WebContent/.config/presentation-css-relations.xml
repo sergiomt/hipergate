@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<presmetadata>
+  <style-sheets>
+    <style-sheet name="mypresentation.css">
+      <presentations>
+        <presentation file="initPr" op="InitOp"></presentation>
+      </presentations>
+    </style-sheet>
+    <style-sheet name="default.css">
+      <presentations>
+        <presentation file="login" op="Login"></presentation>
+        <presentation file="error" op="Messages"></presentation>
+        <presentation file="information" op="Messages"></presentation>
+        <presentation file="plain" op="Messages"></presentation>
+        <presentation file="question" op="Messages"></presentation>
+        <presentation file="warning" op="Messages"></presentation>
+      </presentations>
+    </style-sheet>
+  </style-sheets>
+</presmetadata>
+

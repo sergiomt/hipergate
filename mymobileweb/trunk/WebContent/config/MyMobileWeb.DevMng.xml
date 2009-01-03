@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration name="root">
+    <module name="devmgt">
+        <module name="devinfo">
+            <property name="data" value="C:\Documents and Settings\Sergio Montoro Ten\Mis documentos\Workspace\hipergate-mobile\WebContent\DeviceBBDD"/>
+            <property name="sources" value="WURFL,UAPROF"/>
+            <property name="timeout" value="5"/>
+            <property name="retry" value="5"/>
+        </module>
+        <module name="cache">
+            <property name="refreshInterval" value="1"/>
+        </module>
+    </module>
+</configuration>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE VocabularyDescription SYSTEM "vocabulary-description.dtd" [    	
+    <!ENTITY DEVICE "device">
+    <!ENTITY WEBBROWSER "webBrowser">
+    <!ENTITY ALLASPECTS "&DEVICE;, &WEBBROWSER;">
+]>
+
+<!--
+	* MORFEO Project
+	* http://morfeo-project.org
+	*
+	* Component: Device Information Simple API
+	* Programming Language: Java
+	*
+	* $Id: ddrcv-description.xml 1251 2008-04-01 15:18:56Z crdlc $
+	*
+	* (C) Copyright 2008 Telefónica Investigación y Desarrollo
+	*     S.A.Unipersonal (Telefónica I+D)
+	*
+	* Info about members and contributors of the MORFEO project
+	* is available at:
+	*
+	*   http://morfeo-project.org/
+	*
+	* This program is free software; you can redistribute it and/or modify
+	* it under the terms of the GNU General Public License as published by
+	* the Free Software Foundation; either version 2 of the License, or
+	* (at your option) any later version.
+	*
+	* This program is distributed in the hope that it will be useful,
+	* but WITHOUT ANY WARRANTY; without even the implied warranty of
+	* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+	* GNU General Public License for more details.
+	*
+	* You should have received a copy of the GNU General Public License
+	* along with this program; if not, write to the Free Software
+	* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+	*
+	* If you want to use this software an plan to distribute a
+	* proprietary application in any way, and you are not licensing and
+	* distributing your source code under GPL, you probably need to
+	* purchase a commercial license of the product.  More info about
+	* licensing options is available at:
+	*
+	*   http://morfeo-project.org/
+	*
+-->
+
+<!-- DDR Core Vocabulary description -->
+
+<VocabularyDescription
+	target="http://www.w3.org/2008/01/ddr-core-vocabulary">
+
+	<!-- Aspects -->
+	<Aspects>
+		<Aspect name="&DEVICE;" />
+		<Aspect name="&WEBBROWSER;" />
+	</Aspects>
+
+	<!-- Properties -->
+	<Properties>
+		<!-- Vendor property -->
+		<Property name="vendor" datatype="xs:string"
+			aspects="&ALLASPECTS;" defaultAspect="&DEVICE;" />
+
+		<!-- Model property -->
+		<Property name="model" datatype="xs:string"
+			aspects="&ALLASPECTS;" defaultAspect="&DEVICE;" />
+
+		<!-- DisplayWidth property -->
+		<Property name="displayWidth" datatype="xs:nonNegativeInteger"
+			aspects="&ALLASPECTS;" defaultAspect="&DEVICE;" />
+
+		<!-- DisplayHeight property -->
+		<Property name="displayHeight" datatype="xs:nonNegativeInteger"
+			aspects="&ALLASPECTS;" defaultAspect="&DEVICE;" />
+
+		<!-- DisplayColorDepth property -->
+		<Property name="displayColorDepth"
+			datatype="xs:nonNegativeInteger" aspects="&DEVICE;"
+			defaultAspect="&DEVICE;" />
+
+		<!-- CookieSupport property -->
+		<Property name="cookieSupport" datatype="xs:boolean"
+			aspects="&WEBBROWSER;" defaultAspect="&WEBBROWSER;" />
+
+		<!-- Version property -->
+		<Property name="version" datatype="xs:string"
+			aspects="&ALLASPECTS;" defaultAspect="&DEVICE;" />
+
+		<!-- ImageFormatSupport property -->
+		<Property name="imageFormatSupport" datatype="mymw:imageFormats"
+			aspects="&WEBBROWSER;" defaultAspect="&WEBBROWSER;" />
+
+		<!-- InputModeSupport property -->
+		<Property name="inputModeSupport" datatype="mymw:inputModes"
+			aspects="&WEBBROWSER;" defaultAspect="&WEBBROWSER;" />
+
+		<!-- StylesheetSupport property -->
+		<Property name="stylesheetSupport" datatype="mymw:stylesheetLanguages"
+			aspects="&WEBBROWSER;" defaultAspect="&WEBBROWSER;" />
+
+		<!-- MarkupSupport property -->
+		<Property name="markupSupport" datatype="mymw:markupLanguages"
+			aspects="&WEBBROWSER;" defaultAspect="&WEBBROWSER;" />
+
+		<!-- InputDevices property -->
+		<Property name="inputDevices" datatype="mymw:inputDevicesSet"
+			aspects="&DEVICE;" defaultAspect="&DEVICE;" />
+
+		<!-- ScriptSupport property -->
+		<Property name="scriptSupport" datatype="mymw:scriptingLanguages"
+			aspects="&WEBBROWSER;" defaultAspect="&WEBBROWSER;" />
+
+	</Properties>
+
+</VocabularyDescription>

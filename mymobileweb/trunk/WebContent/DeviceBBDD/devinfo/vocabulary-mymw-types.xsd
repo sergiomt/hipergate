@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!--
+	* MORFEO Project
+	* http://morfeo-project.org
+	*
+	* Component: MyMobileWeb
+	* Programming Language: Java
+	*
+	* File: 
+	* Version: $Revision: 6151 $
+	* Date: $Date: 2008-11-10 16:43:37 +0100 (lun, 10 nov 2008) $
+	* Last modified by: $Author: marioag $
+	*
+	* (C) Copyright 2004 Telefónica Investigación y Desarrollo
+	*     S.A.Unipersonal (Telefónica I+D)
+	*
+	* Info about members and contributors of the MORFEO project
+	* is available at:
+	*
+	*   http://morfeo-project.org/
+	*
+	* This program is free software; you can redistribute it and/or modify
+	* it under the terms of the GNU General Public License as published by
+	* the Free Software Foundation; either version 2 of the License, or
+	* (at your option) any later version.
+	*
+	* This program is distributed in the hope that it will be useful,
+	* but WITHOUT ANY WARRANTY; without even the implied warranty of
+	* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+	* GNU General Public License for more details.
+	*
+	* You should have received a copy of the GNU General Public License
+	* along with this program; if not, write to the Free Software
+	* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+	*
+	* If you want to use this software an plan to distribute a
+	* proprietary application in any way, and you are not licensing and
+	* distributing your source code under GPL, you probably need to
+	* purchase a commercial license of the product.  More info about
+	* licensing options is available at:
+	*
+	*   http://morfeo-project.org/
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://morfeo-project.org/mymobileweb"
+	elementFormDefault="qualified"
+	xmlns="http://morfeo-project.org/mymobileweb">
+
+	<xs:annotation>
+		<xs:documentation>MyMobileWeb Language Types</xs:documentation>
+	</xs:annotation>
+
+	<!-- Property acceptedCharacterSets -->
+
+	<xs:simpleType name="charsetsItem">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ISO-8859-1">
+				<xs:annotation>
+					<xs:documentation>ISO-8859-1</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="US-ASCII">
+				<xs:annotation>
+					<xs:documentation>US-ASCII</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="UTF-8">
+				<xs:annotation>
+					<xs:documentation>UTF-8</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ISO-10646-UCS-2">
+				<xs:annotation>
+					<xs:documentation>ISO-10646-UCS-2</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="charsets">
+		<xs:annotation>
+			<xs:documentation>
+				Set of accepted charsets by an user agent
+			</xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="charsetsItem" />
+	</xs:simpleType>
+
+	<!-- Property audioFormatSupport -->
+
+	<xs:simpleType name="audioFormatItem">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="aac" >
+				<xs:annotation>
+					<xs:documentation>AAC</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="aiff" >
+				<xs:annotation>
+					<xs:documentation>AIFF</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="amr" >
+				<xs:annotation>
+					<xs:documentation>AMR</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="au" >
+				<xs:annotation>
+					<xs:documentation>uLaw, NeXT, or Sun Audio</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="awb" >
+				<xs:annotation>
+					<xs:documentation>AMR wide band standard</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="evrc" >
+				<xs:annotation>
+					<xs:documentation>Enhanced Variable Rate Codec</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="imelody" >
+				<xs:annotation>
+					<xs:documentation>iMelody</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="midi" >
+				<xs:annotation>
+					<xs:documentation>MIDI</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mld" >
+				<xs:annotation>
+					<xs:documentation>iMode sound</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mmf" >
+				<xs:annotation>
+					<xs:documentation>MMF (a Yamaha format)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mp3" >
+				<xs:annotation>
+					<xs:documentation>MP3</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ra" >
+				<xs:annotation>
+					<xs:documentation>Real Audio</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="rmf" >
+				<xs:annotation>
+					<xs:documentation>RMF (Beatnik format)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="smf" >
+				<xs:annotation>
+					<xs:documentation>SMF (Standard MIDI File)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="wav" >
+				<xs:annotation>
+					<xs:documentation>WAV (Waveform)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="xmf" >
+				<xs:annotation>
+					<xs:documentation>XMF (Beatnik format)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="audioFormats">
+		<xs:annotation>
+			<xs:documentation>
+				Set of audio formats a client supports
+			</xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="audioFormatItem" />
+	</xs:simpleType>
+
+	<!-- Property videoFormatSupport -->
+
+	<xs:simpleType name="videoFormatItem">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="3gpp" >
+				<xs:annotation>
+					<xs:documentation>3GPP Video (including H.263)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="avi" >
+				<xs:annotation>
+					<xs:documentation>AVI Video</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mov" >
+				<xs:annotation>
+					<xs:documentation>MOV Video</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mp4" >
+				<xs:annotation>
+					<xs:documentation>MP4 Video</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mpeg" >
+				<xs:annotation>
+					<xs:documentation>Video encoded using MPEG</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="qcif" >
+				<xs:annotation>
+					<xs:documentation>QCIF Video</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="rm" >
+				<xs:annotation>
+					<xs:documentation>Real Media</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="sqcif" >
+				<xs:annotation>
+					<xs:documentation>SQCIF Video</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="wmv" >
+				<xs:annotation>
+					<xs:documentation>WMV Video</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="videoFormats">
+		<xs:annotation>
+			<xs:documentation>
+				Set of video formats a client supports
+			</xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="videoFormatItem" />
+	</xs:simpleType>
+
+	<!-- Property ringtoneFormatSupport -->
+
+	<xs:simpleType name="ringtoneFormatItem">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="aac" >
+				<xs:annotation>
+					<xs:documentation>AAC</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="aiff" >
+				<xs:annotation>
+					<xs:documentation>AIFF</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="amr" >
+				<xs:annotation>
+					<xs:documentation>AMR</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="au" >
+				<xs:annotation>
+					<xs:documentation>uLaw, NeXT, or Sun Audio</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="awb" >
+				<xs:annotation>
+					<xs:documentation>AMR wide band standard</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="evrc" >
+				<xs:annotation>
+					<xs:documentation>Enhanced Variable Rate Codec</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="imelody" >
+				<xs:annotation>
+					<xs:documentation>iMelody</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="midi" >
+				<xs:annotation>
+					<xs:documentation>MIDI</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mld" >
+				<xs:annotation>
+					<xs:documentation>iMode sound</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mmf" >
+				<xs:annotation>
+					<xs:documentation>MMF (a Yamaha format)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mp3" >
+				<xs:annotation>
+					<xs:documentation>MP3</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ra" >
+				<xs:annotation>
+					<xs:documentation>Real Audio</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="rmf" >
+				<xs:annotation>
+					<xs:documentation>RMF (Beatnik format)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="smf" >
+				<xs:annotation>
+					<xs:documentation>SMF (Standard MIDI File)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="wav" >
+				<xs:annotation>
+					<xs:documentation>WAV (Waveform)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="xmf" >
+				<xs:annotation>
+					<xs:documentation>XMF (Beatnik format)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ringtoneFormats">
+		<xs:annotation>
+			<xs:documentation>
+				<xs:documentation>
+					Set of ringtone formats a client supports
+				</xs:documentation>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="ringtoneFormatItem" />
+	</xs:simpleType>
+
+
+
+
+</xs:schema>

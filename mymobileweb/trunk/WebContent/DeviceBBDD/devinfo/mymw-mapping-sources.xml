@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE VocabularySources SYSTEM "vocabulary-sources.dtd"[
+    <!ENTITY DEVICE "device">
+    <!ENTITY WEBBROWSER "webBrowser">
+    <!ENTITY DELIVERYCONTEXT "deliveryContext">
+]>
+<!--
+	* MORFEO Project
+	* http://morfeo-project.org
+	*
+	* Component: Device Information Simple API
+	* Programming Language: Java
+	*
+	* $Id: mymw-sources.xml 1305 2008-04-15 07:56:09Z crdlc $
+	*
+	* (C) Copyright 2008 Telefónica Investigación y Desarrollo
+	*     S.A.Unipersonal (Telefónica I+D)
+	*
+	* Info about members and contributors of the MORFEO project
+	* is available at:
+	*
+	*   http://morfeo-project.org/
+	*
+	* This program is free software; you can redistribute it and/or modify
+	* it under the terms of the GNU General Public License as published by
+	* the Free Software Foundation; either version 2 of the License, or
+	* (at your option) any later version.
+	*
+	* This program is distributed in the hope that it will be useful,
+	* but WITHOUT ANY WARRANTY; without even the implied warranty of
+	* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+	* GNU General Public License for more details.
+	*
+	* You should have received a copy of the GNU General Public License
+	* along with this program; if not, write to the Free Software
+	* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+	*
+	* If you want to use this software an plan to distribute a
+	* proprietary application in any way, and you are not licensing and
+	* distributing your source code under GPL, you probably need to
+	* purchase a commercial license of the product.  More info about
+	* licensing options is available at:
+	*
+	*   http://morfeo-project.org/
+	*
+-->
+
+<VocabularySources target="http://morfeo-project.org/mymobileweb">
+
+	<!-- Mappings -->
+	<Mappings>
+
+		<TargetProperty name="locationProvider">
+			<Match aspect="&DELIVERYCONTEXT;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<!-- Accesskey -->
+
+		<TargetProperty name="accesskeySupport">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="displayAccesskey">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<!-- Readable colors -->
+
+		<TargetProperty name="readableBackgroundColor1">
+			<Match aspect="&DEVICE;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="readableBackgroundColor2">
+			<Match aspect="&DEVICE;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<!-- Rendering, limitations and bugs -->
+
+		<TargetProperty name="rendersTables">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+				<PropertySource name="UAPROF" priority="2" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="rendersTablesForLayout">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="showsPageTitle">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="alignCenterInsertAutoBr">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="selectAsRadioButton">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="insertBrAfterInputWithNowrap">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="insertBrAfterSelect">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="nowrapModeSupport">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="nowrapModeInTableSupport">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="canSkipAlignedLinkRow">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="emptyTextValueNotSentInRequest">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="emptyOptionValueSupport">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<!-- MimeTypes, markups and characters -->
+
+		<TargetProperty name="preferredJsonMimeType">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="preferredXhtmlMimeType">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="openWaveExtensionsXhtmlSupport">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="preferredPageMarkupLanguage">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="acceptedCharacterSets">
+			<Match aspect="&DEVICE;">
+				<PropertySource name="UAPROF" priority="1" />
+				<PropertySource name="WURFL" priority="2" />
+			</Match>
+		</TargetProperty>
+
+		<!-- URL encoded -->
+
+		<TargetProperty name="urlEncoded">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<!-- Sizes and measures -->
+
+		<TargetProperty name="typicalDisplayCharactersX">
+			<Match aspect="&DEVICE;">
+				<PropertySource name="WURFL" priority="1" />
+				<PropertySource name="UAPROF" priority="2" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="typicalDisplayCharactersY">
+			<Match aspect="&DEVICE;">
+				<PropertySource name="WURFL" priority="1" />
+				<PropertySource name="UAPROF" priority="2" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="maximumImageHeight">
+			<Match aspect="&DEVICE;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="maximumImageWidth">
+			<Match aspect="&DEVICE;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="maximumEmbeddedObjectSize">
+			<Match aspect="&DEVICE;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="maximumDownloadableRingtoneSize">
+			<Match aspect="&DEVICE;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<!-- Formats -->
+
+		<TargetProperty name="audioFormatSupport">
+			<Match aspect="&DEVICE;">
+				<PropertySource name="WURFL" priority="1" />
+				<PropertySource name="UAPROF" priority="2" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="videoFormatSupport">
+			<Match aspect="&DEVICE;">
+				<PropertySource name="WURFL" priority="1" />
+				<PropertySource name="UAPROF" priority="2" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="ringtoneFormatSupport">
+			<Match aspect="&DEVICE;">
+				<PropertySource name="WURFL" priority="1" />
+				<PropertySource name="UAPROF" priority="2" />
+			</Match>
+		</TargetProperty>
+
+		<!-- Is wireless device -->
+
+		<TargetProperty name="isWirelessDevice">
+			<Match aspect="&DEVICE;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<!-- Phonebook, phonecalls and sms -->
+
+		<TargetProperty name="makePhoneCallString">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="wtaVoiceCall">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+				<PropertySource name="UAPROF" priority="2" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="wtaPhonebook">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+				<PropertySource name="UAPROF" priority="2" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="availableSmsClient">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<!-- File upload -->
+
+		<TargetProperty name="fileUploadSupport">
+			<Match aspect="&DEVICE;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<!-- AJAX -->
+
+		<TargetProperty name="ajaxXhrType">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<!-- WML -->
+
+		<TargetProperty name="showsCardTitle">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="menuWithSelectElementRecommended">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty
+			name="breakListOfLinksWithBrElementRecommended">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="numberOfSoftKeys">
+			<Match aspect="&DEVICE;">
+				<PropertySource name="UAPROF" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="imageAsLinkSupport">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="openWaveExtensionsWmlSupport ">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="builtInBackButtonSupport">
+			<Match aspect="&DEVICE;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="insertBrElementAfterWidgetRecommended">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="wmlMakePhoneCallString">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<!-- I-Mode -->
+
+		<TargetProperty name="imodeRegion">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="emoji">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="chtmlRendersTables">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="chtmlDisplayAccesskey">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="chtmlMakePhoneCallString">
+			<Match aspect="&WEBBROWSER;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="ringtoneSupport">
+			<Match aspect="&DEVICE;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="videoSupport">
+			<Match aspect="&DEVICE;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="maximumVideoWidth">
+			<Match aspect="&DEVICE;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="maximumVideoHeight">
+			<Match aspect="&DEVICE;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="preferredVideoWidth">
+			<Match aspect="&DEVICE;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+		<TargetProperty name="preferredVideoHeight">
+			<Match aspect="&DEVICE;">
+				<PropertySource name="WURFL" priority="1" />
+			</Match>
+		</TargetProperty>
+
+	</Mappings>
+
+</VocabularySources>

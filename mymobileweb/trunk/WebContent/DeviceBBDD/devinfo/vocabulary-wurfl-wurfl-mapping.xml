@@ -1,0 +1,2515 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE VocabularyMappings SYSTEM "vocabulary-mapping.dtd">
+<VocabularyMappings source="WURFL" target="http://wurfl.sourceforge.net">
+    <!-- This file was automatically created by org.morfeo.ddr.tools.WURFLGenerator -->
+    <TargetProperty name="screensaver_greyscale">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="screensaver_greyscale"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="fl_wallpaper">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="fl_wallpaper"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_xmf">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_xmf"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="columns">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="columns"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wta_phonebook">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="wta_phonebook"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_wml">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_wml"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="location_provider">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="location_provider"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ringtone_xmf">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ringtone_xmf"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ringtone_directdownload_size_limit">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="ringtone_directdownload_size_limit"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="chtml_displays_image_in_center">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="chtml_displays_image_in_center"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wallpaper_colors">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="wallpaper_colors"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_max_width">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="mms_max_width"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="screensaver_max_height">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="screensaver_max_height"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_audio_capture_enabled">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_audio_capture_enabled"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_supports_monospace_font">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_supports_monospace_font"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wallpaper_preferred_height">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="wallpaper_preferred_height"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="panasonic">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="panasonic"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="video"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ajax_xhr_type">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="ajax_xhr_type"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="device_os_version">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="device_os_version"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="time_to_live_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="time_to_live_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wml_displays_image_in_center">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="wml_displays_image_in_center"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_video_vcodec_h263_0">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="streaming_video_vcodec_h263_0"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="fl_sub_lcd">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="fl_sub_lcd"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mobile_browser_version">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="mobile_browser_version"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="screensaver_png">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="screensaver_png"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_video_vcodec_h263_3">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="streaming_video_vcodec_h263_3"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_midi">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_midi"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ajax_manipulate_css">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ajax_manipulate_css"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_marquee_as_css_property">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_marquee_as_css_property"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_nowrap_mode_in_table">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_nowrap_mode_in_table"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="picture_bmp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="picture_bmp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_3gpp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_3gpp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="epoc_bmp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="epoc_bmp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="evrc">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="evrc"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="digiplug">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="digiplug"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="gif">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="gif"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_nowrap_mode">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_nowrap_mode"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_udp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_udp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="unique">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="unique"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="max_deck_size">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="max_deck_size"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_video_sqcif_max_height">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="streaming_video_sqcif_max_height"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_mp4">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="streaming_mp4"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="nokia_ringtone">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="nokia_ringtone"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_wma">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_wma"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="emoji">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="emoji"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_video_max_video_bit_rate">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="streaming_video_max_video_bit_rate"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="screensaver_bmp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="screensaver_bmp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="sagem_v1">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="sagem_v1"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="sagem_v2">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="sagem_v2"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wizards_recommended">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="wizards_recommended"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_3dapi">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_3dapi"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wta_misc">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="wta_misc"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_mov">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="streaming_mov"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="empty_option_value_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="empty_option_value_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="sckl_vcard">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="sckl_vcard"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_table_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_table_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="device_claims_web_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="device_claims_web_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_inline_size_limit">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="video_inline_size_limit"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="uaprof3">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="uaprof3"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="oma_v_1_0_combined_delivery">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="oma_v_1_0_combined_delivery"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="uaprof2">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="uaprof2"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="marketing_name">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="marketing_name"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="picture_inline_size_limit">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="picture_inline_size_limit"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ringtone_oma_size_limit">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="ringtone_oma_size_limit"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_3gpp2">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_3gpp2"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="pointing_method">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="pointing_method"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_realaudio">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_realaudio"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="built_in_recorder">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="built_in_recorder"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wallpaper_wbmp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="wallpaper_wbmp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="sender">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="sender"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_au">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_au"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ringtone_qcelp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ringtone_qcelp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wbmp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="wbmp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="post_method_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="post_method_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="iso8859_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="iso8859_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_midi_monophonic">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_midi_monophonic"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="image_as_link_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="image_as_link_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="max_url_length_homepage">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="max_url_length_homepage"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="cookie_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="cookie_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="colors">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="colors"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wallpaper">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="wallpaper"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="built_in_camera">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="built_in_camera"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="has_qwerty_keyboard">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="has_qwerty_keyboard"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wallpaper_directdownload_size_limit">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="wallpaper_directdownload_size_limit"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_midi_polyphonic_voices">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="mms_midi_polyphonic_voices"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="connectionoriented_confirmed_service_load">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="connectionoriented_confirmed_service_load"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="bmp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="bmp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_datefield_broken">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_datefield_broken"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="expiration_date">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="expiration_date"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_evrc">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_evrc"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ringtone_3gpp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ringtone_3gpp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="amr">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="amr"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_preferred_width">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="video_preferred_width"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_max_width">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="video_max_width"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ems_upi">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ems_upi"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_preferred_height">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="video_preferred_height"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="model_name">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="model_name"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="resolution_height">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="resolution_height"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="nokiavcal">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="nokiavcal"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="built_in_back_button_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="built_in_back_button_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="voicexml">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="voicexml"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_png">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_png"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_3gpp2">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="video_3gpp2"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="imelody">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="imelody"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_select_as_radiobutton">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_select_as_radiobutton"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="max_no_of_bookmarks">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="max_no_of_bookmarks"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="empty_text_value_not_sent_in_request">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="empty_text_value_not_sent_in_request"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="picture_gif">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="picture_gif"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_video_acodec_awb">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="streaming_video_acodec_awb"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_file_upload">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="xhtml_file_upload"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_max_frame_rate">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="video_max_frame_rate"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_video_sqcif">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="streaming_video_sqcif"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_3gpp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_3gpp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="card_title_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="card_title_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="au">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="au"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_support_level">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="xhtml_support_level"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_mmapi_1_0">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_mmapi_1_0"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_mmapi_1_1">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_mmapi_1_1"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="chtml_display_accesskey">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="chtml_display_accesskey"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="screensaver_gif">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="screensaver_gif"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_acodec_aac_ltp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="video_acodec_aac_ltp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_vcodec_h263_0">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="video_vcodec_h263_0"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="transparent_png_alpha">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="transparent_png_alpha"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_vcodec_h263_3">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="video_vcodec_h263_3"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_max_size">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="mms_max_size"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ems_odi">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ems_odi"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_video">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_video"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_jtwi">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_jtwi"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wallpaper_jpg">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="wallpaper_jpg"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_supports_css_cell_table_coloring">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_supports_css_cell_table_coloring"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ringtone_df_size_limit">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="ringtone_df_size_limit"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_ota_bitmap">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_ota_bitmap"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_align_center_insert_auto_br">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_align_center_insert_auto_br"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_video_qcif">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="streaming_video_qcif"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_insert_br_after_select">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_insert_br_after_select"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_support_iframe">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_support_iframe"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="screensaver_oma_size_limit">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="screensaver_oma_size_limit"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_imelody">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_imelody"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="nokia_series">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="nokia_series"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_supports_invisible_text">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_supports_invisible_text"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="aac">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="aac"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_allows_disabled_form_elements">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_allows_disabled_form_elements"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="access_key_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="access_key_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_jad">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_jad"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="oma_v_1_0_forwardlock">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="oma_v_1_0_forwardlock"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="javascript_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="javascript_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="svgt_1_1">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="svgt_1_1"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_jar">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_jar"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_vcodec_h264">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="video_vcodec_h264"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wallpaper_tiff">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="wallpaper_tiff"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wallpaper_oma_size_limit">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="wallpaper_oma_size_limit"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="chtml_can_display_images_and_text_on_same_line">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="chtml_can_display_images_and_text_on_same_line"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_video_capture_enabled">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_video_capture_enabled"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="picture_resize">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="picture_resize"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ringtone_midi_monophonic">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ringtone_midi_monophonic"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_3gpp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="streaming_3gpp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="opwv_wml_extensions_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="opwv_wml_extensions_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_https">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_https"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_video_max_audio_bit_rate">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="streaming_video_max_audio_bit_rate"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="picture_oma_size_limit">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="picture_oma_size_limit"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="insert_br_element_after_widget_recommended">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="insert_br_element_after_widget_recommended"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="sckl_operatorlogo">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="sckl_operatorlogo"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="picture_greyscale">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="picture_greyscale"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_loctapi">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_loctapi"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_display_accesskey">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_display_accesskey"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_gif_static">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_gif_static"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="siemens_logo_height">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="siemens_logo_height"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_nokia_ui">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_nokia_ui"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_acodec_awb">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="video_acodec_awb"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ringtone_awb">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ringtone_awb"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_vcodec_mpeg4">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="video_vcodec_mpeg4"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="opwv_xhtml_extensions_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="opwv_xhtml_extensions_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="greyscale">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="greyscale"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ringtone_imelody">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ringtone_imelody"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="picture_png">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="picture_png"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="html_wi_imode_htmlx_1_1">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="html_wi_imode_htmlx_1_1"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="picturemessage">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="picturemessage"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ajax_support_inner_html">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ajax_support_inner_html"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_acodec_aac">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="video_acodec_aac"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="jpg">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="jpg"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wallpaper_gif">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="wallpaper_gif"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_socket">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_socket"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_mp4">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_mp4"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_mp3">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_mp3"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="rmf">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="rmf"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_readable_background_color2">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="xhtml_readable_background_color2"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_readable_background_color1">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="xhtml_readable_background_color1"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_max_record_store_size">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="j2me_max_record_store_size"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="transparent_png_index">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="transparent_png_index"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="softkey_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="softkey_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_real_media_8">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="video_real_media_8"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_real_media_9">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="video_real_media_9"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="html_wi_imode_htmlx_1">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="html_wi_imode_htmlx_1"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_siemens_extension">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_siemens_extension"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="max_url_length_in_requests">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="max_url_length_in_requests"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_mpeg4">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_mpeg4"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="sckl_vcalendar">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="sckl_vcalendar"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_nokia_ringingtone">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_nokia_ringingtone"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ringtone">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ringtone"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="proportional_font">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="proportional_font"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_wbxml">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_wbxml"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ems_imelody">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ems_imelody"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="picture_jpg">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="picture_jpg"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="max_url_length_cached_page">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="max_url_length_cached_page"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wallpaper_df_size_limit">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="wallpaper_df_size_limit"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_mmf">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_mmf"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="total_cache_disable_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="total_cache_disable_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ununiqueness_handler">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="ununiqueness_handler"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="rows">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="rows"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="max_no_of_connection_settings">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="max_no_of_connection_settings"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ems_version">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="ems_version"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="imode_region">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="imode_region"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ajax_manipulate_dom">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ajax_manipulate_dom"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="html_wi_w3_xhtmlbasic_1_1">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="html_wi_w3_xhtmlbasic_1_1"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="icons_on_menu_items_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="icons_on_menu_items_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_supports_forms_in_table">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_supports_forms_in_table"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="picture_max_height">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="picture_max_height"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_http">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_http"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="nokia_voice_call">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="nokia_voice_call"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wta_voice_call">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="wta_voice_call"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wav">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="wav"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wallpaper_bmp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="wallpaper_bmp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_screen_height">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="j2me_screen_height"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_wmlc">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_wmlc"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_supports_inline_input">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_supports_inline_input"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="screensaver_preferred_width">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="screensaver_preferred_width"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="basic_authentication_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="basic_authentication_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="fl_standalone">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="fl_standalone"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="compactmidi">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="compactmidi"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wta_pdc">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="wta_pdc"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="can_skip_aligned_link_row">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="can_skip_aligned_link_row"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wallpaper_greyscale">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="wallpaper_greyscale"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_screen_width">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="j2me_screen_width"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_video_acodec_aac">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="streaming_video_acodec_aac"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_canvas_width">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="j2me_canvas_width"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_video_qcif_max_width">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="streaming_video_qcif_max_width"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_select_key_code">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="j2me_select_key_code"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_bits_per_pixel">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="j2me_bits_per_pixel"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mobile_browser">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="mobile_browser"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="times_square_mode_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="times_square_mode_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ajax_support_event_listener">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ajax_support_event_listener"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="https_detectable">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="https_detectable"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="screensaver_directdownload_size_limit">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="screensaver_directdownload_size_limit"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ringtone_digiplug">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ringtone_digiplug"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="https_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="https_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wifi">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="wifi"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="uaprof">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="uaprof"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_send_sms_string">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="xhtml_send_sms_string"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="smf">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="smf"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_nokia_wallpaper">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_nokia_wallpaper"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="is_wireless_device">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="is_wireless_device"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="picture_max_width">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="picture_max_width"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="max_object_size">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="max_object_size"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ringtone_wav">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ringtone_wav"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="receiver">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="receiver"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_acodec_amr">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="video_acodec_amr"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="sckl_groupgraphic">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="sckl_groupgraphic"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="has_pointing_device">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="has_pointing_device"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wallpaper_png">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="wallpaper_png"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="brand_name">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="brand_name"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="menu_with_select_element_recommended">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="menu_with_select_element_recommended"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ringtone_mmf">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ringtone_mmf"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_btapi">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_btapi"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="nokia_edition">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="nokia_edition"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="multipart_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="multipart_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_wmv">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="video_wmv"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="picture_colors">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="picture_colors"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_realmedia">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_realmedia"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wallpaper_max_height">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="wallpaper_max_height"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_acodec_qcelp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="video_acodec_qcelp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_realvideo">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_realvideo"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="picture_directdownload_size_limit">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="picture_directdownload_size_limit"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="flash_lite_version">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="flash_lite_version"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="phone_id_provided">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="phone_id_provided"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="callericon">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="callericon"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_right_softkey_code">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="j2me_right_softkey_code"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_rmf">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_rmf"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="sp_midi">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="sp_midi"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="resolution_width">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="resolution_width"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_symbian_install">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_symbian_install"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_gif_animated">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_gif_animated"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="preferred_markup">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="preferred_markup"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ringtone_amr">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ringtone_amr"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_h263">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_h263"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_max_height">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="mms_max_height"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="midi_monophonic">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="midi_monophonic"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="device_os">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="device_os"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="inline_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="inline_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_spmidi">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_spmidi"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="svgt_1_1_plus">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="svgt_1_1_plus"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_real8">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_real8"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_nokia_3dscreensaver">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_nokia_3dscreensaver"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_real_media_8">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="streaming_real_media_8"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_real_media_9">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="streaming_real_media_9"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="screensaver_max_width">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="screensaver_max_width"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="gprtf">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="gprtf"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="utf8_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="utf8_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="doja_4_0">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="doja_4_0"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ringtone_mp3">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ringtone_mp3"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="connectionoriented_confirmed_cache_operation">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="connectionoriented_confirmed_cache_operation"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="connectionoriented_unconfirmed_cache_operation">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="connectionoriented_unconfirmed_cache_operation"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_document_title_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_document_title_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_qcelp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_qcelp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="connectionoriented_confirmed_service_indication">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="connectionoriented_confirmed_service_indication"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="downloadfun_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="downloadfun_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_gif">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_gif"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_support_wml2_namespace">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_support_wml2_namespace"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="png">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="png"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wallpaper_inline_size_limit">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="wallpaper_inline_size_limit"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_canvas_height">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="j2me_canvas_height"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_preferred_charset">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="xhtml_preferred_charset"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="release_date">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="release_date"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_3gpp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="video_3gpp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="html_wi_imode_compact_generic">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="html_wi_imode_compact_generic"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="operatorlogo">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="operatorlogo"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="screensaver_wbmp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="screensaver_wbmp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_video_size_limit">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="streaming_video_size_limit"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_vcard">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_vcard"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_photo_capture_enabled">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_photo_capture_enabled"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_gif89a">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_gif89a"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="screensaver_preferred_height">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="screensaver_preferred_height"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="siemens_ota">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="siemens_ota"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="oma_v_1_0_separate_delivery">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="oma_v_1_0_separate_delivery"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="chtml_make_phone_call_string">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="chtml_make_phone_call_string"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_serial">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_serial"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_mp4">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_mp4"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_mp3">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_mp3"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_wmapi_2_0">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_wmapi_2_0"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ems_variablesizedpictures">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ems_variablesizedpictures"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_bmp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_bmp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ringtone_inline_size_limit">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="ringtone_inline_size_limit"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xmf">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xmf"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="directdownload_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="directdownload_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="siemens_screensaver_width">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="siemens_screensaver_width"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="picture_preferred_width">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="picture_preferred_width"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="qcelp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="qcelp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_qcif">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="video_qcif"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_vcalendar">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_vcalendar"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="connectionless_service_indication">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="connectionless_service_indication"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="external_script_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="external_script_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="is_transcoder">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="is_transcoder"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="text_imelody">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="text_imelody"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wallpaper_resize">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="wallpaper_resize"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="connectionoriented_unconfirmed_service_load">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="connectionoriented_unconfirmed_service_load"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="screensaver">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="screensaver"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_wav">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_wav"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_select_as_dropdown">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_select_as_dropdown"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_clear_key_code">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="j2me_clear_key_code"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_format_as_attribute">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_format_as_attribute"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_video_sqcif_max_width">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="streaming_video_sqcif_max_width"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wml_can_display_images_and_text_on_same_line">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="wml_can_display_images_and_text_on_same_line"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_midp_1_0">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_midp_1_0"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wallpaper_preferred_width">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="wallpaper_preferred_width"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ringtone_voices">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="ringtone_voices"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_left_softkey_code">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="j2me_left_softkey_code"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_real_media_10">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="streaming_real_media_10"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_jpeg_progressive">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_jpeg_progressive"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_aac">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_aac"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_video">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="streaming_video"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_midi_polyphonic">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_midi_polyphonic"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_middle_softkey_code">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="j2me_middle_softkey_code"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_url_encoded">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_url_encoded"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_video_vcodec_mpeg4">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="streaming_video_vcodec_mpeg4"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="max_url_length_bookmark">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="max_url_length_bookmark"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_send_mms_string">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="xhtml_send_mms_string"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="emptyok">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="emptyok"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_wmv">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="streaming_wmv"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="picture_wbmp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="picture_wbmp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="screensaver_inline_size_limit">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="screensaver_inline_size_limit"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="siemens_screensaver_height">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="siemens_screensaver_height"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_make_phone_call_string">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="xhtml_make_phone_call_string"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="max_image_height">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="max_image_height"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ringtone_rmf">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ringtone_rmf"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_select_as_popup">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_select_as_popup"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_nokia_operatorlogo">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_nokia_operatorlogo"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ascii_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ascii_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_amr">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_amr"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="max_image_width">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="max_image_width"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="fl_browser">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="fl_browser"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="elective_forms_recommended">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="elective_forms_recommended"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="tiff">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="tiff"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="chtml_table_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="chtml_table_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="model_extra_info">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="model_extra_info"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_motorola_lwt">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_motorola_lwt"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_heap_size">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="j2me_heap_size"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="html_wi_oma_xhtmlmp_1_0">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="html_wi_oma_xhtmlmp_1_0"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wml_make_phone_call_string">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="wml_make_phone_call_string"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="html_wi_oma_xhtmlmp_1_2">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="html_wi_oma_xhtmlmp_1_2"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_video_qcif_max_height">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="streaming_video_qcif_max_height"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="numbered_menus">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="numbered_menus"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="html_web_3_2">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="html_web_3_2"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_wbmp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_wbmp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_sqcif">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="video_sqcif"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_video_acodec_amr">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="streaming_video_acodec_amr"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="max_length_of_username">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="max_length_of_username"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ems">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ems"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="siemens_logo_width">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="siemens_logo_width"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="doja_2_0">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="doja_2_0"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="doja_2_1">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="doja_2_1"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="break_list_of_links_with_br_element_recommended">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="break_list_of_links_with_br_element_recommended"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_supports_file_upload">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_supports_file_upload"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="oma_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="oma_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_video_vcodec_h264">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="streaming_video_vcodec_h264"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="largeoperatorlogo">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="largeoperatorlogo"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="picture_df_size_limit">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="picture_df_size_limit"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_capture_image_formats">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="j2me_capture_image_formats"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="doja_2_2">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="doja_2_2"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wrap_mode_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="wrap_mode_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_supports_table_for_layout">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_supports_table_for_layout"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="can_send_sms_from_browser">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="can_send_sms_from_browser"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="html_web_4_0">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="html_web_4_0"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_midp_2_0">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_midp_2_0"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_df_size_limit">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="video_df_size_limit"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="fl_screensaver">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="fl_screensaver"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_siemens_color_game">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_siemens_color_game"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="screensaver_resize">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="screensaver_resize"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wallpaper_max_width">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="wallpaper_max_width"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_wav">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_wav"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_datefield_no_accepts_null_date">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_datefield_no_accepts_null_date"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_jpg">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_jpg"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_return_key_code">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="j2me_return_key_code"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_video_acodec_aac_ltp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="streaming_video_acodec_aac_ltp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="sdio">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="sdio"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_amr">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_amr"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ajax_support_getelementbyid">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ajax_support_getelementbyid"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_cldc_1_0">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_cldc_1_0"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_cldc_1_1">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_cldc_1_1"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="max_length_of_password">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="max_length_of_password"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="json_preferred_mime_type">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="json_preferred_mime_type"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_max_jar_size">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="j2me_max_jar_size"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_wmapi_1_1">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_wmapi_1_1"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_wmapi_1_0">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_wmapi_1_0"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="html_wi_imode_html_2">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="html_wi_imode_html_2"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mld">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mld"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtmlmp_preferred_mime_type">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:string" name="xhtmlmp_preferred_mime_type"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="html_wi_imode_html_3">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="html_wi_imode_html_3"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="screensaver_df_size_limit">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="screensaver_df_size_limit"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="html_wi_imode_html_1">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="html_wi_imode_html_1"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_storage_size">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="j2me_storage_size"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="html_wi_imode_html_4">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="html_wi_imode_html_4"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="nokiaring">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="nokiaring"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="html_wi_imode_html_5">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="html_wi_imode_html_5"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ringtone_compactmidi">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ringtone_compactmidi"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="nokiavcard">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="nokiavcard"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ringtone_midi_polyphonic">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ringtone_midi_polyphonic"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="awb">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="awb"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wap_push_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="wap_push_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="deck_prefetch_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="deck_prefetch_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="menu_with_list_of_links_recommended">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="menu_with_list_of_links_recommended"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_video_max_frame_rate">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="streaming_video_max_frame_rate"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_autoexpand_select">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_autoexpand_select"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ajax_support_events">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ajax_support_events"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_xmf">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_xmf"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="picture_preferred_height">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="picture_preferred_height"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ringtone_spmidi">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ringtone_spmidi"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="picture">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="picture"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_mp4">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="video_mp4"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="screensaver_jpg">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="screensaver_jpg"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="accept_third_party_cookie">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="accept_third_party_cookie"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="voices">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="voices"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="html_wi_w3_xhtmlbasic">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="html_wi_w3_xhtmlbasic"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="midi_polyphonic">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="midi_polyphonic"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_format_as_css_property">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_format_as_css_property"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_bmp3">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_bmp3"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="max_data_rate">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="max_data_rate"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="doja_1_5">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="doja_1_5"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_oma_size_limit">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="video_oma_size_limit"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="table_support">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="table_support"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="connectionless_service_load">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="connectionless_service_load"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mp3">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mp3"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_mov">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="video_mov"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="doja_1_0">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="doja_1_0"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_directdownload_size_limit">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="video_directdownload_size_limit"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_rmf">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_rmf"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="doja_3_0">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="doja_3_0"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ringtone_aac">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ringtone_aac"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_svgt">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_svgt"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_real_media_10">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="video_real_media_10"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_wbmp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_wbmp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="doja_3_5">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="doja_3_5"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="video_max_height">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="video_max_height"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="gif_animated">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="gif_animated"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wml_1_2">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="wml_1_2"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wml_1_1">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="wml_1_1"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="wml_1_3">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="wml_1_3"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_video_max_bit_rate">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="streaming_video_max_bit_rate"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="streaming_video_min_video_bit_rate">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="streaming_video_min_video_bit_rate"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_png">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_png"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="connectionoriented_unconfirmed_service_indication">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="connectionoriented_unconfirmed_service_indication"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="sckl_ringtone">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="sckl_ringtone"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_max_frame_rate">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="mms_max_frame_rate"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_honors_bgcolor">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_honors_bgcolor"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="connectionless_cache_operation">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="connectionless_cache_operation"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="css_supports_width_as_percentage">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="css_supports_width_as_percentage"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="ajax_support_javascript">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="ajax_support_javascript"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="screensaver_colors">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:nonNegativeInteger" name="screensaver_colors"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="vpn">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="vpn"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mms_jpeg_baseline">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mms_jpeg_baseline"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="xhtml_insert_br_after_input_with_nowrap">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="xhtml_insert_br_after_input_with_nowrap"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="j2me_bmp">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="j2me_bmp"/>
+        </Match>
+    </TargetProperty>
+    <TargetProperty name="mmf">
+        <Match aspect="__NULL">
+            <SourceProperty datatype="xs:boolean" name="mmf"/>
+        </Match>
+    </TargetProperty>
+</VocabularyMappings>

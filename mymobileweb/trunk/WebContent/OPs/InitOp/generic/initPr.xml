@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="mypresentation.css" type="text/css"?>
+<mymw:document xmlns:mymw="http://morfeo-project.org/mymobileweb" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:user="http://morfeo-project.org/user" xmlns:c="http://java.sun.com/jsp/jstl/core" id="initPr" xsi:schemaLocation="http://morfeo-project.org/mymobileweb C:\Archivos de programa\MyEclipse\MyMobileWeb\DeployTools\resources\transformations\xsd\cmt.xsd">
+  <mymw:head>
+    <mymw:title>hipergate : Menu</mymw:title>
+  </mymw:head>
+  <mymw:body>
+
+  	<mymw:div id="contacts" class="vertical nowrap">
+	  <mymw:label class="bold">Contactos</mymw:label>
+	</mymw:div>
+
+  	<mymw:div id="search" class="nowrap">
+      <mymw:entryfield id="sought" bind="${ mySought }" class="left" />
+      <mymw:submit id="submit" value="Buscar" principal="true"/>
+	</mymw:div>
+
+  	<mymw:div id="newcontact" class="vertical nowrap">
+	  <mymw:link id="lnew" resourceid="new">Nuevo Contacto</mymw:link>
+	</mymw:div>
+
+  	<mymw:div id="calendar" class="vertical nowrap">
+	  <mymw:label class="bold">Calendario</mymw:label>
+	</mymw:div>
+
+	<mymw:div id="meetings" class="vertical nowrap">	  
+      <mymw:table id="ttoday" optionsbind="${dataTable}" bind="${fileSel}" 
+		          keymember="guid" class="mytable selcol0">
+        <mymw:th class="header">
+          <mymw:td>Hoy</mymw:td>
+          <mymw:td display="false"></mymw:td>
+        </mymw:th>
+        <mymw:tr class="body">
+          <mymw:td member="title"/>
+          <mymw:td member="guid" display="false" />
+        </mymw:tr>                
+      </mymw:table>		    
+
+	  <mymw:link id="ladd"  resourceid="new" >Añadir Actividad</mymw:link>
+	  <mymw:link id="lview" resourceid="view">Ver Calendario</mymw:link>
+	</mymw:div>
+
+    <mymw:include content="InitOp/generic/footer/contents"/> 
+
+  </mymw:body>
+</mymw:document>
+

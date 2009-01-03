@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!--
+* MORFEO Project
+* http://morfeo-project.org
+*
+* Component: MyMobileWeb
+* Programming Language: Java
+*
+* File: 
+* Version: $Revision: 2012 $
+* Date: $Date: 2007-01-15 16:43:13 +0100 (lun, 15 ene 2007) $
+* Last modified by: $Author: crdlc $
+*
+* (C) Copyright 2004 Telefónica Investigación y Desarrollo
+*     S.A.Unipersonal (Telefónica I+D)
+*
+* Info about members and contributors of the MORFEO project
+* is available at:
+*
+*   http://morfeo-project.org/
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*
+* If you want to use this software an plan to distribute a
+* proprietary application in any way, and you are not licensing and
+* distributing your source code under GPL, you probably need to
+* purchase a commercial license of the product.  More info about
+* licensing options is available at:
+*
+*   http://morfeo-project.org/
+-->
+
+<!-- MyMobileWeb Literals. Change this file if you want to show the user other labels -->
+<Literals sourcelang="en_US" targetlang="en_US">
+
+	<Literal name="Install">
+		<Translation>Install</Translation>
+	</Literal>
+
+	<Literal name="Error">
+		<Translation>Error</Translation>
+	</Literal>
+	
+	<Literal name="Total">
+		<Translation>Total</Translation>
+	</Literal>
+	
+	<Literal name="Warning">
+		<Translation>Warning</Translation>
+	</Literal>
+
+	<Literal name="Question">
+		<Translation>Question</Translation>
+	</Literal>
+	
+	<Literal name="Information">
+		<Translation>Information</Translation>
+	</Literal>
+	
+	<!-- Paging literals -->
+	<Literal name="Next">
+	    <Translation>Next</Translation>
+	</Literal>
+	<Literal name="Previous">
+	    <Translation>Previous</Translation>
+	</Literal>
+	
+	<Literal name="Choose One">
+	    <Translation>Choose One</Translation>
+	</Literal>
+	
+	<Literal name="Seleccione">
+	    <Translation>Choose One</Translation>
+	</Literal>
+	
+    <Literal name="Back">
+	    <Translation>Back</Translation>
+	</Literal>
+	
+	<Literal name="ReadMore">
+		<Translation>read more..</Translation>
+	</Literal>
+	
+	<!-- Menu display as combo buttom  -->
+	<Literal name="L_Ok">
+	    <Translation>Ok</Translation>
+	</Literal>
+	
+	<!-- Datefield  -->
+	<Literal name="Day">
+		<Translation>Day</Translation>
+	</Literal>
+	
+	<Literal name="Month">
+		<Translation>Month</Translation>
+	</Literal>
+	
+	<Literal name="Year">
+		<Translation>Year</Translation>
+	</Literal>
+	
+	<Literal name="Date">
+		<Translation>Date</Translation>
+	</Literal>
+	
+	<!-- Timefield  -->
+	<Literal name="Hour">
+		<Translation>Hour</Translation>
+	</Literal>
+	
+	<Literal name="Minute">
+		<Translation>Minute</Translation>
+	</Literal>
+	
+	<Literal name="Second">
+		<Translation>Second</Translation>
+	</Literal>
+	
+	<Literal name="Time">
+		<Translation>Time</Translation>
+	</Literal>
+	
+	<Literal name="January">
+		<Translation>January</Translation>
+	</Literal>
+	
+	<Literal name="February">
+		<Translation>February</Translation>
+	</Literal>
+	
+	<Literal name="March">
+		<Translation>March</Translation>
+	</Literal>
+	
+	<Literal name="April">
+		<Translation>April</Translation>
+	</Literal>
+	
+	<Literal name="May">
+		<Translation>May</Translation>
+	</Literal>
+	
+	<Literal name="June">
+		<Translation>June</Translation>
+	</Literal>
+	
+	<Literal name="July">
+		<Translation>July</Translation>
+	</Literal>
+	
+	<Literal name="August">
+		<Translation>August</Translation>
+	</Literal>
+	
+	<Literal name="September">
+		<Translation>September</Translation>
+	</Literal>
+	
+	<Literal name="October">
+		<Translation>October</Translation>
+	</Literal>
+	
+	<Literal name="November">
+		<Translation>November</Translation>
+	</Literal>
+	
+	<Literal name="December">
+		<Translation>December</Translation>
+	</Literal>
+	
+	<Literal name="Monday">
+		<Translation>Monday</Translation>
+	</Literal>
+	
+	<Literal name="Tuesday">
+		<Translation>Tuesday</Translation>
+	</Literal>
+	
+	<Literal name="Wednesday">
+		<Translation>Wednesday</Translation>
+	</Literal>
+	
+	<Literal name="Thursday">
+		<Translation>Thursday</Translation>
+	</Literal>
+	
+	<Literal name="Friday">
+		<Translation>Friday</Translation>
+	</Literal>
+	
+	<Literal name="Saturday">
+		<Translation>Saturday</Translation>
+	</Literal>
+	
+	<Literal name="Sunday">
+		<Translation>Sunday</Translation>
+	</Literal>
+	
+	<Literal name="Toggle">
+		<Translation>Toggle</Translation>
+	</Literal>
+	
+	<Literal name="CalendarView">
+		<Translation>View</Translation>
+	</Literal>
+	
+	<Literal name="TimeView">
+		<Translation>View</Translation>
+	</Literal>	
+	
+</Literals>

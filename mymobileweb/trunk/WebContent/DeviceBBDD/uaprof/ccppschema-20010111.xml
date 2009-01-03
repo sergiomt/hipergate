@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<profile-desc id="http://www.wapforum.org/profiles/MMS/ccppschema-20010111#">
+  <component-desc id="MmsCharacteristics">
+    <attribute-desc name="MmsCcppAccept" base-type="literal" composition="set" resolution-policy="locked" />
+    <attribute-desc name="MmsCcppAcceptCharSet" base-type="literal" composition="set" resolution-policy="locked" />
+    <attribute-desc name="MmsCcppAcceptEncoding" base-type="literal" composition="set" resolution-policy="locked" />
+    <attribute-desc name="MmsCcppAcceptLanguage" base-type="literal" composition="set" resolution-policy="locked" />
+    <attribute-desc name="MmsMaxImageResolution" base-type="literal" composition="simple" resolution-policy="locked" />
+    <attribute-desc name="MmsMaxMessageSize" base-type="integer" composition="simple" resolution-policy="locked" />
+    <attribute-desc name="MmsVersion" base-type="literal" composition="set" resolution-policy="locked" />
+  </component-desc>
+</profile-desc>

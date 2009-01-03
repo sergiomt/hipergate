@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE VocabularyMappings SYSTEM "vocabulary-mapping.dtd"[    	
+    <!ENTITY DEVICE "device">
+    <!ENTITY WEBBROWSER "webBrowser">
+    <!ENTITY ALLASPECTS "&DEVICE;, &WEBBROWSER;">
+]>
+<!--
+	* MORFEO Project
+	* http://morfeo-project.org
+	*
+	* Component: Device Information Simple API
+	* Programming Language: Java
+	*
+	* $Id: vocabulary-ddrcv-uaprof-mapping.xml 1263 2008-04-03 15:20:59Z crdlc $
+	*
+	* (C) Copyright 2008 Telefónica Investigación y Desarrollo
+	*     S.A.Unipersonal (Telefónica I+D)
+	*
+	* Info about members and contributors of the MORFEO project
+	* is available at:
+	*
+	*   http://morfeo-project.org/
+	*
+	* This program is free software; you can redistribute it and/or modify
+	* it under the terms of the GNU General Public License as published by
+	* the Free Software Foundation; either version 2 of the License, or
+	* (at your option) any later version.
+	*
+	* This program is distributed in the hope that it will be useful,
+	* but WITHOUT ANY WARRANTY; without even the implied warranty of
+	* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+	* GNU General Public License for more details.
+	*
+	* You should have received a copy of the GNU General Public License
+	* along with this program; if not, write to the Free Software
+	* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+	*
+	* If you want to use this software an plan to distribute a
+	* proprietary application in any way, and you are not licensing and
+	* distributing your source code under GPL, you probably need to
+	* purchase a commercial license of the product.  More info about
+	* licensing options is available at:
+	*
+	*   http://morfeo-project.org/
+	*
+-->
+<!-- Mapping between Device Description Repository Core Vocabulary and User Agent Profile -->
+
+<VocabularyMappings source="UAPROF"
+	target="http://www.w3.org/2008/01/ddr-core-vocabulary">
+
+	<!-- Property vendor -->
+	<TargetProperty name="vendor">
+		<Match aspect="&DEVICE;">
+			<SourceProperty name="Vendor" datatype="xs:string" />
+		</Match>
+		<Match aspect="&WEBBROWSER;">
+			<SourceProperty name="BrowserName" datatype="xs:string" />
+		</Match>
+	</TargetProperty>
+
+	<!-- Property model -->
+	<TargetProperty name="model">
+		<Match aspect="&DEVICE;">
+			<SourceProperty name="Model" datatype="xs:string" />
+		</Match>
+	</TargetProperty>
+
+	<!-- Property version -->
+	<TargetProperty name="version">
+		<Match aspect="&WEBBROWSER;">
+			<SourceProperty name="BrowserVersion" datatype="xs:string" />
+		</Match>
+	</TargetProperty>
+
+	<!-- Property displayWidth -->
+	<TargetProperty name="displayWidth">
+		<Match aspect="&DEVICE;">
+			<SourceProperty name="ScreenSize" datatype="xs:string"
+				decorator="org.morfeo.ddr.Dimension.getWidth" />
+		</Match>
+	</TargetProperty>
+
+	<!-- Property displayHeight -->
+	<TargetProperty name="displayHeight">
+		<Match aspect="&DEVICE;">
+			<SourceProperty name="ScreenSize" datatype="xs:string"
+				decorator="org.morfeo.ddr.Dimension.getHeight" />
+		</Match>
+	</TargetProperty>
+
+	<!-- Property displayColorDepth -->
+	<TargetProperty name="displayColorDepth">
+		<Match aspect="&DEVICE;">
+			<SourceProperty name="BitsPerPixel"
+				datatype="xs:nonNegativeInteger" />
+		</Match>
+	</TargetProperty>
+
+	<!-- Property cookieSupport -->
+	<TargetProperty name="cookieSupport" />
+
+	<!-- Property imageFormatSupport -->
+	<TargetProperty name="imageFormatSupport">
+		<Match value="gif87" aspect="&WEBBROWSER;">
+			<SourceProperty name="CcppAccept" datatype="xs:enumeration"
+				value="image/gif" />
+		</Match>
+		<Match value="jpeg" aspect="&WEBBROWSER;">
+			<SourceProperty name="CcppAccept" datatype="xs:enumeration"
+				value="image/jpeg" />
+		</Match>
+		<Match value="png" aspect="&WEBBROWSER;">
+			<SourceProperty name="CcppAccept" datatype="xs:enumeration"
+				value="image/png" />
+		</Match>
+		<Match value="tiff" aspect="&WEBBROWSER;">
+			<SourceProperty name="CcppAccept" datatype="xs:enumeration"
+				value="image/tiff" />
+		</Match>
+		<Match value="bmp" aspect="&WEBBROWSER;">
+			<SourceProperty name="CcppAccept" datatype="xs:enumeration"
+				value="image/bmp" />
+		</Match>
+		<Match value="wbmp" aspect="&WEBBROWSER;">
+			<SourceProperty name="CcppAccept" datatype="xs:enumeration"
+				value="image/vnd.wap.wbmp" />
+		</Match>
+	</TargetProperty>
+
+	<!-- Property inputModeSupport -->
+	<TargetProperty name="inputModeSupport" />
+
+	<!-- Property stylesheetSupport -->
+	<TargetProperty name="stylesheetSupport" />
+
+	<!-- Property markupSupport -->
+	<TargetProperty name="markupSupport">
+		<Match value="xhtmlBasic10" aspect="&WEBBROWSER;">
+			<SourceProperty name="XhtmlModules"
+				datatype="xs:enumeration" value="xhtml-basic10-model" />
+		</Match>
+		<Match value="xhtmlBasic11" aspect="&WEBBROWSER;">
+			<SourceProperty name="XhtmlModules"
+				datatype="xs:enumeration" value="xhtml-basic11-model" />
+		</Match>
+		<Match value="xhtmlMP10" aspect="&WEBBROWSER;">
+			<SourceProperty name="XhtmlModules"
+				datatype="xs:enumeration" value="xhtml-mobile10-model" />
+		</Match>
+		<Match value="xhtmlMP12" aspect="&WEBBROWSER;">
+			<SourceProperty name="XhtmlModules"
+				datatype="xs:enumeration" value="xhtml-mobile12-model" />
+		</Match>
+	</TargetProperty>
+
+	<!-- Property inputDevices -->
+	<TargetProperty name="inputDevices">
+		<Match value="keypad" aspect="&DEVICE;">
+			<SourceProperty name="Keyboard" datatype="xs:enumeration"
+				value="PhoneKeypad" />
+		</Match>
+	</TargetProperty>
+
+	<!-- Property scriptSupport -->
+	<TargetProperty name="scriptSupport">
+		<Match value="ecmascript-MP" aspect="&WEBBROWSER;">
+			<SourceProperty name="JavaScriptEnabled"
+				datatype="xs:boolean" />
+		</Match>
+	</TargetProperty>
+
+</VocabularyMappings>

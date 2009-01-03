@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+* MORFEO Project
+* http://morfeo-project.org
+*
+* Component: MyMobileWeb
+* Programming Language: Java
+*
+* File: 
+* Version: $Revision: 1052 $
+* Date: $Date: 2006-10-11 08:30:08 +0200 $
+* Last modified by: $Author: crdlc $
+*
+* (C) Copyright 2004 Telefónica Investigación y Desarrollo
+*     S.A.Unipersonal (Telefónica I+D)
+*
+* Info about members and contributors of the MORFEO project
+* is available at:
+*
+*   http://morfeo-project.org/
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*
+* If you want to use this software an plan to distribute a
+* proprietary application in any way, and you are not licensing and
+* distributing your source code under GPL, you probably need to
+* purchase a commercial license of the product.  More info about
+* licensing options is available at:
+*
+*   http://morfeo-project.org/
+-->
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" version="2.4">
+  <context-param>
+    <param-name>org.morfeo.tidmobile.conf</param-name>
+    <param-value>C:\Documents and Settings\Sergio Montoro Ten\Mis documentos\Workspace\hipergate-mobile\WebContent\config</param-value>
+  </context-param>
+  <!-- Please uncomment this if you want a custom session management that produces shorter URL-Rewrites 
+	<listener>
+		<listener-class>org.morfeo.tidmobile.server.SessionListener</listener-class>
+	</listener>   -->
+  <!-- Please uncomment this if you want a absolute images path 
+   <servlet>             
+    <servlet-name>
+      ImageContentRetriever
+    </servlet-name>      
+    
+    <servlet-class>
+      org.morfeo.tidmobile.server.lc.contmng.ImageContentRetriever
+    </servlet-class>                   
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>ImageContentRetriever</servlet-name>
+    <url-pattern>/CI</url-pattern>
+  </servlet-mapping> -->
+  <servlet>
+    <servlet-name>TranscoderHTTP</servlet-name>
+    <servlet-class>org.morfeo.mymw.transcoder.server.TranscoderHTTP</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>TranscoderHTTP</servlet-name>
+    <url-pattern>/TR</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>DriverHTTP</servlet-name>
+    <servlet-class>org.morfeo.tidmobile.server.DriverHTTP</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DriverHTTP</servlet-name>
+    <url-pattern>/DriverHTTP/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>DriverHTTP</servlet-name>
+    <url-pattern>/DH/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>DContextUpdater</servlet-name>
+    <servlet-class>org.morfeo.mymw.dc.DContextUpdater</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DContextUpdater</servlet-name>
+    <url-pattern>/DCU</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>ResourceMgt</servlet-name>
+    <servlet-class>org.morfeo.mymw.server.resource.ResourceMgt</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ResourceMgt</servlet-name>
+    <url-pattern>/R</url-pattern>
+  </servlet-mapping>
+  <filter>
+    <filter-name>MultiChannelFilter</filter-name>
+    <filter-class>org.morfeo.tidmobile.devmgt.MultiChannelFilter</filter-class>
+  </filter>
+  <!-- Please uncomment this if you want a custom session management that produces shorter URL-Rewrites 
+	<filter>
+    	<filter-name>JspFilter</filter-name>
+	    <filter-class>org.morfeo.tidmobile.server.JspFilter</filter-class>    
+		 <dispatcher>FORWARD</dispatcher>
+     </filter>	 -->
+  <filter-mapping>
+    <filter-name>MultiChannelFilter</filter-name>
+    <url-pattern>/DH/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>MultiChannelFilter</filter-name>
+    <url-pattern>/DriverHTTP/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>MultiChannelFilter</filter-name>
+    <url-pattern>/index.jsp</url-pattern>
+  </filter-mapping>
+  <filter>
+    <filter-name>GZipFilter</filter-name>
+    <filter-class>org.morfeo.mymw.server.gz.GZipFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>GZipFilter</filter-name>
+    <url-pattern>*.js</url-pattern>
+  </filter-mapping>
+  <!-- Please uncomment this if you want a custom session management that produces shorter URL-Rewrites   
+  	<filter-mapping>
+    	<filter-name>JspFilter</filter-name>
+    	<url-pattern>/*</url-pattern>
+	</filter-mapping>    -->
+  <session-config>
+    <session-timeout>30</session-timeout>
+  </session-config>
+  <mime-mapping>
+    <extension>htm</extension>
+    <mime-type>text/html</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>html</extension>
+    <mime-type>text/html</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>gif</extension>
+    <mime-type>image/gif</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>jpeg</extension>
+    <mime-type>image/jpeg</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>jpg</extension>
+    <mime-type>image/jpeg</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>pdf</extension>
+    <mime-type>application/pdf</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>zip</extension>
+    <mime-type>application/zip</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>class</extension>
+    <mime-type>application/x-java-vm</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>jar</extension>
+    <mime-type>application/x-java-archive</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>ser</extension>
+    <mime-type>application/x-java-serialized-object</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>exe</extension>
+    <mime-type>application/octet-stream</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>swf</extension>
+    <mime-type>application/x-shockwave-flash</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>wbmp</extension>
+    <mime-type>image/vnd.wap.wbmp</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>wml</extension>
+    <mime-type>text/vnd.wap.wml</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>cab</extension>
+    <mime-type>application/cab</mime-type>
+  </mime-mapping>
+</web-app>
+

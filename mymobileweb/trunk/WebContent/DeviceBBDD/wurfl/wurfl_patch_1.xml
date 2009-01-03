@@ -1,0 +1,898 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wurfl_patch>
+	<devices>
+
+		<!-- Default device -->
+
+		<device fall_back="root" id="generic" user_agent="">
+			<group id="product_info">
+				<capability name="location_provider" value="none" />
+			</group>
+
+			<group id="browser">
+				<capability name="cookie_support" value="true" />
+				<capability name="javascript_support" value="false" />
+				<capability name="external_script_support"
+					value="false" />
+				<capability name="json_preferred_mime_type"
+					value="application/json" />
+			</group>
+
+			<group id="xhtml_ui">
+				<capability
+					name="xhtml_insert_br_after_input_with_nowrap" value="false" />
+				<capability name="xhtml_insert_br_after_select"
+					value="false" />
+				<capability name="xhtml_align_center_insert_auto_br"
+					value="false" />
+				<capability name="xhtml_nowrap_mode_in_table"
+					value="true" />
+				<capability name="xhtmlmp_preferred_mime_type"
+					value="application/vnd.wap.xhtml+xml" />
+				<capability name="xhtml_url_encoded" value="false" />
+			</group>
+
+			<group id="bugs">
+				<capability name="empty_text_value_not_sent_in_request"
+					value="false" />
+			</group>
+
+			<group id="display">
+				<capability name="rows" value="2" />
+			</group>
+
+			<group id="sms">
+				<capability name="can_send_sms_from_browser"
+					value="false" />
+			</group>
+
+			<group id="markup">
+				<capability name="html_wi_w3_xhtmlbasic_1_1"
+					value="false" />
+				<capability name="html_wi_oma_xhtmlmp_1_2"
+					value="false" />
+			</group>
+
+			<group id="ajax">
+				<capability name="ajax_xhr_type" value="none" />
+			</group>
+		</device>
+
+		<!-- User Agent for dotMobi checker -->
+
+		<device
+			user_agent="SonyEricssonK750i/R1L Browser/SEMC-Browser/4.2 Profile/MIDP-2.0 Configuration/CLDC-1.1"
+			fall_back="sonyericsson_k750i_ver1_subr1a"
+			id="sonyericsson_k750i_ver1_subr1l">
+			<group id="xhtml_ui">
+				<capability name="xhtml_supports_table_for_layout"
+					value="false" />
+				<capability name="xhtml_url_encoded" value="true" />
+			</group>
+			<group id="browser">
+				<capability name="cookie_support" value="false" />
+			</group>
+			<group id="markup">
+				<capability name="html_wi_oma_xhtmlmp_1_2" value="true" />
+			</group>
+		</device>
+
+
+		<!-- iMode Devices -->
+
+		<device user_agent="CHTML Generic" fall_back="generic"
+			id="chtml_generic">
+			<group id="browser">
+				<capability name="cookie_support" value="false" />
+			</group>
+		</device>
+
+		<!-- BlackBerry 4.0 -->
+
+		<device user_agent="BlackBerry/4.0"
+			fall_back="blackberry_generic_ver3_sub70"
+			id="blackberry_generic_ver4">
+			<group id="markup">
+				<capability name="preferred_markup"
+					value="html_web_3_2" />
+				<capability name="html_web_4_0" value="false" />
+			</group>
+			<group id="image_format">
+				<capability name="colors" value="65536" />
+			</group>
+		</device>
+
+
+		<!-- Sony Ericsson XHTML-MP -->
+
+		<device user_agent="SonyEricsson XHTML"
+			fall_back="ericsson_generic" id="sonyericsson_xhtml_generic">
+			<group id="bugs">
+				<capability name="empty_text_value_not_sent_in_request"
+					value="true" />
+			</group>
+			<group id="display">
+				<capability name="rows" value="10" />
+			</group>
+			<group id="xhtml_ui">
+				<capability name="xhtml_align_center_insert_auto_br"
+					value="true" />
+				<capability name="xhtml_select_as_dropdown"
+					value="true" />
+			</group>
+		</device>
+
+		<!-- Sony Ericsson K750 -->
+
+		<device user_agent="SonyEricssonK750"
+			fall_back="sonyericsson_42_generic" id="sonyericsson_k750_ver1">
+			<group id="bugs">
+				<capability name="empty_text_value_not_sent_in_request"
+					value="false" />
+			</group>
+			<group id="display">
+				<capability name="rows" value="10" />
+			</group>
+			<group id="xhtml_ui">
+				<capability name="xhtml_align_center_insert_auto_br"
+					value="false" />
+			</group>
+			<group id="image_format">
+				<capability name="svgt_1_1" value="false" />
+
+			</group>
+		</device>
+
+		<!-- Samsung Z-130 -->
+
+		<device user_agent="SGH-Z130" actual_device_root="true"
+			fall_back="netfront_ver3" id="sgh_z130_ver1">
+			<group id="browser">
+				<capability name="cookie_support" value="false" />
+			</group>
+			<group id="xhtml_ui">
+				<capability name="xhtml_insert_br_after_select"
+					value="true" />
+				<capability name="xhtml_document_title_support"
+					value="false" />
+			</group>
+		</device>
+
+		<!-- Nokia Series60 Platform 2.0-->
+
+		<device user_agent="Nokia 60 Developer Platform 2.0"
+			fall_back="nokia_generic_series60"
+			id="nokia_generic_series60_dp20">
+			<group id="display">
+				<capability name="columns" value="34" />
+				<capability name="rows" value="14" />
+			</group>
+			<group id="xhtml_ui">
+				<capability name="xhtml_supports_table_for_layout"
+					value="true" />
+				<capability name="xhtml_table_support" value="true" />
+				<capability name="xhtml_nowrap_mode" value="true" />
+			</group>
+		</device>
+
+		<!-- Nokia Series60 Platform 3.0-->
+
+		<device user_agent="Nokia 60 Developer Platform 3.0"
+			fall_back="nokia_generic_series60_dp20"
+			id="nokia_generic_series60_dp30">
+			<group id="sms">
+				<capability name="can_send_sms_from_browser"
+					value="true" />
+			</group>
+		</device>
+
+		<!-- Nokia N80 -->
+
+		<device id="nokia_n80_ver1" user_agent="NokiaN80-1"
+			fall_back="nokia_generic_series60_dp30" actual_device_root="true">
+			<group id="display">
+				<capability name="columns" value="34" />
+				<capability name="rows" value="10" />
+			</group>
+			<group id="xhtml_ui">
+				<capability name="xhtml_insert_br_after_select"
+					value="true" />
+				<capability name="xhtml_nowrap_mode" value="false" />
+			</group>
+			<group id="browser">
+				<capability name="cookie_support" value="true" />
+			</group>
+		</device>
+
+		<!-- Nokia N81 -->
+
+		<device id="nokia_n81_ver1"
+			user_agent="Mozilla/5.0 (SymbianOS/9.2; U; Series60/3.1 NokiaN81-1/1.00 Profile/MIDP-2.0 Configuration/CLDC-1.1) AppleWebKit/413 (KHTML, like Gecko) Safari/413"
+			fall_back="nokia_generic_series60_dp30" actual_device_root="true">
+			<group id="display">
+				<capability name="columns" value="34" />
+				<capability name="rows" value="14" />
+			</group>
+			<group id="xhtml_ui">
+				<capability name="xhtml_insert_br_after_select"
+					value="true" />
+				<capability name="xhtml_nowrap_mode" value="false" />
+			</group>
+			<group id="browser">
+				<capability name="cookie_support" value="true" />
+			</group>
+		</device>
+		
+		<!-- Nokia 6670 -->
+
+		<device id="nokia_6670_ver1" user_agent="Nokia6670"
+			fall_back="nokia_generic_series60_dp20" actual_device_root="true">
+			<group id="display">
+				<capability name="columns" value="34" />
+				<capability name="rows" value="14" />
+				<capability name="resolution_width" value="352" />
+				<capability name="resolution_height" value="416" />
+				<capability name="max_image_width" value="340" />
+				<capability name="max_image_height" value="400" />
+			</group>
+			<group id="xhtml_ui">
+				<capability name="xhtml_insert_br_after_select"
+					value="true" />
+			</group>
+		</device>
+
+		<!-- Nokia 6630 -->
+
+		<device user_agent="Nokia6630" actual_device_root="true"
+			fall_back="nokia_generic_series60_dp20" id="nokia_6630_ver1">
+			<group id="sms">
+				<capability name="can_send_sms_from_browser"
+					value="true" />
+			</group>
+			<group id="display">
+				<capability name="rows" value="14" />
+				<capability name="resolution_width" value="352" />
+				<capability name="resolution_height" value="416" />
+				<capability name="max_image_width" value="340" />
+				<capability name="max_image_height" value="400" />
+			</group>
+		</device>
+
+		<device id="nokia_6630_ver1_submoz"
+			user_agent="Mozilla/4.0 (compatible; MSIE 5.0; Series60/3.0 Nokia6630/4.06.0 Profile/MIDP-2.0 Configuration/CLDC-1.1)"
+			fall_back="nokia_6630_ver1">
+			<group id="display">
+				<capability name="columns" value="23" />
+				<capability name="rows" value="14" />
+				<capability name="resolution_width" value="352" />
+				<capability name="resolution_height" value="416" />
+			</group>
+		</device>
+
+		<!-- Nokia 6680 -->
+
+		<device user_agent="Nokia6680"
+			fall_back="nokia_generic_series60_dp20" id="nokia_6680_ver1"
+			actual_device_root="true">
+			<group id="sms">
+				<capability name="can_send_sms_from_browser"
+					value="true" />
+			</group>
+		</device>
+
+		<device user_agent="Nokia6681" actual_device_root="true"
+			fall_back="nokia_generic_series60_dp20" id="nokia_6681_ver1">
+			<group id="sms">
+				<capability name="can_send_sms_from_browser"
+					value="true" />
+			</group>
+		</device>
+
+		<!-- Nokia N90 -->
+
+		<device user_agent="NokiaN90-1" actual_device_root="true"
+			fall_back="nokia_generic_series60_dp20" id="nokia_n90_ver1">
+			<group id="sms">
+				<capability name="can_send_sms_from_browser"
+					value="true" />
+			</group>
+		</device>
+
+		<!-- Nokia Mobile Browser 4.0 -->
+
+		<device user_agent="Nokia Mobile Browser 4.0"
+			fall_back="nokia_generic" id="nokia_mobile_browser_ver4">
+			<group id="wml_ui">
+				<capability
+					name="break_list_of_links_with_br_element_recommended"
+					value="true" />
+			</group>
+			<group id="browser">
+				<capability name="cookie_support" value="false" />
+			</group>
+		</device>
+
+		<!-- Nokia 7650 -->
+		<device user_agent="Nokia7650/1.0" fall_back="nokia_7650_ver1"
+			id="nokia_7650_ver1_sub">
+			<group id="wml_ui">
+				<capability
+					name="break_list_of_links_with_br_element_recommended"
+					value="true" />
+				<capability
+					name="insert_br_element_after_widget_recommended" value="true" />
+			</group>
+		</device>
+
+
+		<!-- Opera mobile .Nokia E61-->
+		<device
+			user_agent="Mozilla/5.0 (SymbianOS/9.1; U; en-us) AppleWebKit/413 (KHTML, like Gecko) Safari/413"
+			fall_back="nokia_e61_ver1" id="nokia_e61_ver1_submozilla50">
+			<group id="image_format">
+				<capability name="svgt_1_1" value="true" />
+			</group>
+			<group id="markup">
+				<capability name="preferred_markup"
+					value="html_web_3_2" />
+				<capability name="html_web_4_0" value="true" />
+			</group>
+			<group id="bugs">
+				<capability name="supports_data_object_from_servlet"
+					value="false" />
+			</group>
+		</device>
+
+		<!-- OpenWave version 6 -->
+
+		<device user_agent="UP.Browser/6" fall_back="upgui_generic"
+			id="opwv_v6_generic">
+			<group id="xhtml_ui">
+				<capability name="xhtml_insert_br_after_select"
+					value="true" />
+				<capability name="xhtml_nowrap_mode_in_table"
+					value="false" />
+			</group>
+			<group id="browser">
+				<capability name="cookie_support" value="false" />
+			</group>
+		</device>
+
+		<!-- OpenWave version 6.2 -->
+
+		<device id="opwv_v62_generic" user_agent="UP.Browser/6.2"
+			fall_back="opwv_v61_generic">
+			<group id="xhtml_ui">
+				<capability name="cookie_support" value="false" />
+			</group>
+		</device>
+
+		<!-- OpenWave version 7 -->
+
+		<device user_agent="UP.Browser/7" fall_back="opwv_v62_generic"
+			id="opwv_v7_generic">
+			<group id="xhtml_ui">
+				<capability
+					name="xhtml_insert_br_after_input_with_nowrap" value="true" />
+				<capability name="xhtml_nowrap_mode_in_table"
+					value="true" />
+			</group>
+			<group id="display">
+				<capability name="max_image_height" value="90" />
+				<capability name="resolution_width" value="140" />
+				<capability name="resolution_height" value="180" />
+				<capability name="rows" value="6" />
+			</group>
+			<group id="image_format">
+				<capability name="colors" value="65536" />
+			</group>
+		</device>
+
+		<device user_agent="OPWV-SDK UP.Browser/7.0.2.115 (GUI) MMP/2.0"
+			fall_back="opwv_v7_generic" id="opwv_sdk_ver1_sub702115">
+			<group id="display">
+				<capability name="columns" value="18" />
+			</group>
+		</device>
+
+
+
+		<device user_agent="SonyEricssonK610"
+			fall_back="sonyericsson_42_generic" id="sonyericsson_k610_ver1">
+			<group id="browser">
+				<capability name="cookie_support" value="false" />
+			</group>
+			<group id="bugs">
+				<capability name="empty_text_value_not_sent_in_request"
+					value="false" />
+			</group>
+		</device>
+
+		<!-- Sony Ericsson K800 -->
+
+		<device user_agent="SonyEricssonK800" fall_back="netfront_ver3"
+			id="sonyericsson_k800_ver1">
+			<group id="browser">
+				<capability name="cookie_support" value="false" />
+			</group>
+			<group id="xhtml_ui">
+				<capability name="xhtmlmp_preferred_mime_type"
+					value="application/xhtml+xml" />
+			</group>
+		</device>
+
+		<!-- Sony Ericsson X530 -->
+
+		<device user_agent="SonyEricssonZ530" fall_back="netfront_ver3"
+			id="sonyericsson_z530_ver1">
+			<group id="browser">
+				<capability name="cookie_support" value="false" />
+			</group>
+			<group id="bugs">
+				<capability name="empty_text_value_not_sent_in_request"
+					value="false" />
+			</group>
+			<group id="xhtml_ui">
+				<capability name="xhtmlmp_preferred_mime_type"
+					value="application/xhtml+xml" />
+			</group>
+		</device>
+
+		<!-- Siemens S55 -->
+
+		<device user_agent="SIE-S55" actual_device_root="true"
+			fall_back="opwv_v61_generic" id="sie_s55_ver1">
+			<group id="xhtml_ui">
+				<capability name="xhtmlmp_preferred_mime_type"
+					value="application/xhtml+xml" />
+			</group>
+			<group id="markup">
+				<capability name="preferred_markup" value="wml_1_1" />
+			</group>
+		</device>
+
+		<!-- Siemens M55 -->
+
+		<device user_agent="SIE-M55" actual_device_root="true"
+			fall_back="opwv_v61_generic" id="sie_m55_ver1">
+			<group id="markup">
+				<capability name="preferred_markup" value="wml_1_1" />
+			</group>
+		</device>
+
+		<!-- Siemens ME45 -->
+
+		<device user_agent="SIE-ME45/00 UP.Browser/5"
+			actual_device_root="true" fall_back="upgui_generic"
+			id="sie_me45_ver1">
+			<group id="display">
+				<capability name="rows" value="4" />
+			</group>
+			<group id="wml_ui">
+				<capability
+					name="break_list_of_links_with_br_element_recommended"
+					value="true" />
+			</group>
+		</device>
+
+		<!-- Siemens CX65 -->
+
+		<device user_agent="SIE-CX65" actual_device_root="true"
+			fall_back="sie_platform65_generic" id="sie_cx65_ver1">
+			<group id="xhtml_ui">
+				<capability name="xhtmlmp_preferred_mime_type"
+					value="application/xhtml+xml" />
+			</group>
+		</device>
+
+		<!-- PDAs -->
+
+		<device id="ms_mobile_browser_ver1"
+			user_agent="Mozilla/2.0 (compatible; MSIE XXXXXX; Windows CE; Smartphone; XXXXXXX)"
+			fall_back="generic_xhtml">
+			<group id="markup">
+				<capability name="preferred_markup"
+					value="html_web_3_2" />
+			</group>
+		</device>
+
+
+		<device
+			user_agent="Mozilla/2.0 (compatible; MSIE 3.02; Windows CE; PPC; 240x320)"
+			fall_back="ms_mobile_browser_ver1_sub240320"
+			id="ms_mobile_browser_ver1_subceppc240320">
+			<group id="browser">
+				<capability name="javascript_support" value="true" />
+				<capability name="external_script_support"
+					value="false" />
+			</group>
+			<group id="markup">
+				<capability name="preferred_markup"
+					value="html_web_3_2" />
+				<capability name="wml_1_1" value="true" />
+				<capability name="wml_1_2" value="true" />
+				<capability name="wml_1_3" value="true" />
+				<capability name="html_web_3_2" value="true" />
+				<capability name="html_web_4_0" value="true" />
+			</group>
+
+			<group id="storage">
+				<capability name="max_deck_size" value="9437184" />
+				<capability name="max_object_size" value="9437184" />
+			</group>
+
+			<group id="display">
+				<capability name="max_image_height" value="960" />
+				<capability name="max_image_width" value="720" />
+				<capability name="columns" value="34" />
+				<capability name="rows" value="10" />
+			</group>
+
+			<group id="xhtml_ui">
+				<capability name="xhtml_document_title_support"
+					value="false" />
+			</group>
+		</device>
+
+		<device
+			user_agent="Mozilla/4.0 (compatible; MSIE 4.01; Windows CE; Smartphone; 176x220)"
+			fall_back="ms_mobile_browser_ver1_subce176220"
+			id="ms_mobile_browser_ver1_subcemoz40176220">
+			<group id="display">
+				<capability name="rows" value="8" />
+			</group>
+		</device>
+
+
+		<!-- Symbol Pocket PC 2002 B/W -->
+		<device
+			user_agent="Mozilla/2.0 (compatible; MSIE 3.02; Windows CE; PPC; 240x320)"
+			fall_back="ms_mobile_browser_ver1_subceppc240320" id="symbol_ppc">
+		</device>
+
+
+		<!-- TSM-500 Pocket PC 2003 -->
+		<device
+			user_agent="Mozilla/4.0 (compatible; MSIE 4.01; Windows CE; PPC; 240x320)"
+			fall_back="ms_mobile_browser_ver1_sub240320"
+			id="ms_mobile_browser_ver1_submsie401240320">
+			<group id="browser">
+				<capability name="external_script_support" value="true" />
+				<capability name="javascript_support" value="true" />
+			</group>
+
+			<group id="display">
+				<capability name="max_image_height" value="960" />
+				<capability name="max_image_width" value="720" />
+				<capability name="columns" value="34" />
+				<capability name="rows" value="10" />
+			</group>
+
+			<group id="xhtml_ui">
+				<capability name="xhtml_document_title_support"
+					value="false" />
+			</group>
+		</device>
+
+		<device
+			user_agent="Mozilla/4.0 (compatible; MSIE 6.0; Windows CE; IEMobile 6.12)"
+			fall_back="ms_mobile_ver6" id="ms_mobile_ver612" />
+
+		<device
+			user_agent="Mozilla/4.0 (compatible; MSIE 6.0; Windows CE; IEMobile"
+			fall_back="ms_mobile_browser_ver1" id="ms_mobile_ver6">
+			<group id="browser">
+				<capability name="external_script_support" value="true" />
+				<capability name="javascript_support" value="true" />
+			</group>
+
+			<group id="display">
+				<capability name="max_image_height" value="960" />
+				<capability name="max_image_width" value="720" />
+				<capability name="columns" value="34" />
+				<capability name="rows" value="10" />
+			</group>
+
+			<group id="xhtml_ui">
+				<capability name="xhtml_document_title_support"
+					value="false" />
+			</group>
+
+			<group id="ajax">
+				<capability name="ajax_xhr_type" value="standard" />
+			</group>
+		</device>
+
+		<device
+			user_agent="Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.4) Gecko/20030624 Netscape/7.1 (ax)"
+			fall_back="mozilla_ver5" id="netscape7_1_nt_us">
+			<group id="browser">
+				<capability name="javascript_support" value="true" />
+				<capability name="external_script_support" value="true" />
+			</group>
+		</device>
+
+		<device user_agent="Klondike/1.50 (HTTP Win32)"
+			fall_back="klondike_ver1_sub10" id="klondike_ver1_sub150http">
+			<group id="wml_ui">
+				<capability
+					name="insert_br_element_after_widget_recommended" value="true" />
+			</group>
+			<group id="browser">
+				<capability name="cookie_support" value="false" />
+			</group>
+		</device>
+
+		<device user_agent="WinWAP 3" fall_back="generic"
+			id="winwap_ver3">
+			<group id="browser">
+				<capability name="cookie_support" value="false" />
+			</group>
+			<group id="wml_ui">
+				<capability
+					name="insert_br_element_after_widget_recommended" value="true" />
+			</group>
+		</device>
+
+		<device user_agent="WinWAP-SPBE/1.2 (1.2.0.17;Win32)"
+			fall_back="generic" id="winwap_spbe_ver12">
+			<group id="browser">
+				<capability name="cookie_support" value="false" />
+			</group>
+			<group id="wml_ui">
+				<capability
+					name="insert_br_element_after_widget_recommended" value="true" />
+				<capability name="card_title_support" value="false" />
+			</group>
+		</device>
+
+		<device user_agent="SIE-SX1" actual_device_root="true"
+			fall_back="nokia_generic_series60" id="sie_sx1_ver1">
+			<group id="display">
+				<capability name="columns" value="24" />
+			</group>
+		</device>
+
+		<device id="mot_v360_ver1"
+			user_agent="MOT-V360v/08.B7.58R MIB/2.2.1 Profile/MIDP-2.0 Configuration/CLDC-1.1"
+			fall_back="mot_mib22_generic" actual_device_root="true">
+			<group id="browser">
+				<capability name="cookie_support" value="false" />
+			</group>
+		</device>
+
+		<device id="mot_v3i_ver1"
+			user_agent="MOT-V3i/08.B4.38R MIB/2.2.1 Profile/MIDP-2.0 Configuration/CLDC-1.1"
+			fall_back="mot_v3_ver1" actual_device_root="true">
+			<group id="display">
+				<capability name="columns" value="28" />
+			</group>
+		</device>
+
+		<device user_agent="Opera 7" fall_back="mozilla_ver5"
+			id="generic_opera_7">
+			<group id="browser">
+				<capability name="cookie_support" value="true" />
+			</group>
+		</device>
+
+		<!-- Opera 9 -->
+		<device user_agent="Opera/9.22 (Windows NT 5.0; U; es-es)"
+			fall_back="generic_opera_9" id="generic_opera_922" />
+
+		<device user_agent="Opera/8.01 (J2ME/MIDP; Opera Mini"
+			fall_back="generic_web_browser" id="opera_mini_ver1">
+			<group id="browser">
+				<capability name="cookie_support" value="false" />
+				<capability name="javascript_support" value="true" />
+			</group>
+		</device>
+
+		<device user_agent="Opera/8.01 (J2ME/MIDP; Opera Mini/3"
+			fall_back="opera_mini_ver2" id="opera_mini_ver3">
+			<group id="markup">
+				<capability name="preferred_markup"
+					value="html_web_4_0" />
+			</group>
+			<group id="display">
+				<capability name="rows" value="12" />
+			</group>
+		</device>
+
+		<device
+			user_agent="Opera/8.01 (J2ME/MIDP; Opera Mini/3.1.7196/1644; en; U; ssr)"
+			fall_back="opera_mini_ver3" id="opera_mini_ver3_sub17196" />
+
+		<!-- End Opera -->
+
+		<device
+			user_agent="Mozilla/4.0 (compatible; MSIE 4.01; Windows CE; PPC; 240x320)"
+			actual_device_root="true"
+			fall_back="ms_mobile_browser_ver1_sub240320"
+			id="ms_mobile_browser_ver1_submsie401240320">
+			<group id="product_info">
+				<capability name="has_pointing_device" value="true" />
+			</group>
+		</device>
+
+		<device
+			user_agent="Mozilla/4.0 (compatible; MSIE 6.0; Windows CE; PPC; 240x320) Opera 8.60 [en]"
+			id="generic_opera_860" fall_back="generic_opera_850">
+			<group id="browser">
+				<capability name="json_preferred_mime_type"
+					value="text/plain" />
+			</group>
+		</device>
+
+		<!-- user_agent is _mymw_wurfl_ext_header. Matching happens elsewhere -->
+
+		<device user_agent="_mymw_wurfl_ext_header"
+			fall_back="ms_mobile_browser_ver1_submsie401240320"
+			id="ms_mobile_browser_ver1_sub240320_PocketPC_2003">
+		</device>
+
+		<device user_agent="_mymw_wurfl_ext_header"
+			fall_back="ms_mobile_browser_ver1_submsie401240320"
+			id="ms_mobile_browser_ver1_sub240321_PocketPC_2003">
+		</device>
+
+		<device user_agent="_mymw_wurfl_ext_header"
+			fall_back="ms_mobile_browser_ver1_submsie401240320"
+			id="ms_mobile_browser_ver1_sub240320_PocketPC_50">
+			<group id="ajax">
+				<capability name="ajax_xhr_type" value="standard" />
+			</group>
+		</device>
+
+		<device user_agent="Jigsaw/2.2.5 W3C_CSS_Validator_JFouffa/2.0"
+			id="Jigsaw225W3CValidator" fall_back="generic">
+			<group id="xhtml_ui">
+				<capability name="xhtmlmp_preferred_mime_type"
+					value="application/xhtml+xml" />
+				<capability name="xhtml_url_encoded" value="true" />
+			</group>
+			<group id="markup">
+				<capability name="preferred_markup"
+					value="html_wi_w3_xhtmlbasic" />
+				<capability name="html_wi_oma_xhtmlmp_1_0" value="true" />
+			</group>
+		</device>
+
+		<device user_agent="W3C_Validator/1.432.2.22"
+			id="W3C_Validator1432222" fall_back="generic">
+			<group id="xhtml_ui">
+				<capability name="xhtmlmp_preferred_mime_type"
+					value="application/xhtml+xml" />
+				<capability name="xhtml_url_encoded" value="true" />
+			</group>
+			<group id="markup">
+				<capability name="preferred_markup"
+					value="html_wi_w3_xhtmlbasic" />
+				<capability name="html_wi_oma_xhtmlmp_1_0" value="true" />
+			</group>
+			<group id="browser">
+				<capability name="cookie_support" value="false" />
+			</group>
+		</device>
+
+		<device
+			user_agent="Mobile Web Best Practices checker (http://www.w3.org/2006/05/mwbp-check/)"
+			id="MobileWebBestPracticesChecker" fall_back="w3c_ddc_ver1" />
+
+		<device
+			user_agent="W3C-mobileOK/DDC-1.0 (see http://www.w3.org/2006/07/mobileok-ddc)"
+			fall_back="generic_xhtml" id="w3c_ddc_ver1">
+			<group id="xhtml_ui">
+				<capability name="xhtmlmp_preferred_mime_type"
+					value="application/xhtml+xml" />
+				<capability name="xhtml_url_encoded" value="true" />
+			</group>
+			<group id="markup">
+				<capability name="preferred_markup"
+					value="html_wi_w3_xhtmlbasic" />
+				<capability name="html_wi_oma_xhtmlmp_1_0" value="true" />
+				<capability name="html_wi_oma_xhtmlmp_1_2" value="true" />
+			</group>
+			<group id="browser">
+				<capability name="cookie_support" value="false" />
+			</group>
+		</device>
+
+		<device
+			user_agent="Mozilla/5.0 (Linux; U; Android 0.5; en-us) AppleWebKit/522+ (KHTML, like Gecko) Safari/419.3"
+			fall_back="generic_firefox_104" id="android_0_5">
+			<group id="display">
+				<capability name="resolution_width" value="325" />
+				<capability name="resolution_height" value="200" />
+
+				<capability name="max_image_width" value="325" />
+				<capability name="max_image_height" value="200" />
+			</group>
+		</device>
+
+		<device id="htc_hermes_ver1"
+			user_agent="HTC_TyTN Mozilla/4.0 (compatible; MSIE 6.0; Windows CE; IEMobile 6.12)"
+			fall_back="ms_mobile_ver6" actual_device_root="false">
+			<group id="browser">
+				<capability name="javascript_support" value="true" />
+				<capability name="external_script_support"
+					value="false" />
+			</group>
+			<group id="markup">
+				<capability name="preferred_markup"
+					value="html_web_4_0" />
+				<capability name="html_web_4_0" value="true" />
+			</group>
+		</device>
+
+		<device id="HPiPAQhw6900Mod"
+			user_agent="HPiPAQhw6900/1.0/Mozilla/4.0 (compatible; MSIE 4.01; Windows CE; PPC; 240x240)"
+			fall_back="ms_mobile_browser_ver1_sub240320_PocketPC_50">
+			<group id="display">
+				<capability name="resolution_width" value="240" />
+				<capability name="resolution_height" value="240" />
+			</group>
+			<group id="product_info">
+				<capability name="location_provider" value="gps" />
+			</group>
+		</device>
+
+		<device id="HTC_TyTN_IIMod"
+			user_agent="HTC_TyTN_II Mozilla/4.0 (compatible; MSIE 6.0; Windows CE; IEMobile 7.6)"
+			fall_back="ms_mobile_ver6">
+			<group id="product_info">
+				<capability name="brand_name" value="HTC" />
+				<capability name="model_name" value="Hermes" />
+				<capability name="uaprof"
+					value="http://www.htcmms.com.tw/gen/Hermes-2.0.xml" />
+				<capability name="has_pointing_device" value="true" />
+			</group>
+			<group id="display">
+				<capability name="max_image_height" value="300" />
+				<capability name="max_image_width" value="228" />
+				<capability name="resolution_height" value="320" />
+				<capability name="resolution_width" value="240" />
+				<capability name="columns" value="34" />
+				<capability name="rows" value="10" />
+			</group>
+			<group id="markup">
+				<capability name="preferred_markup"
+					value="html_web_3_2" />
+				<capability name="wml_1_1" value="true" />
+				<capability name="wml_1_2" value="true" />
+				<capability name="wml_1_3" value="true" />
+				<capability name="html_web_3_2" value="true" />
+				<capability name="html_web_4_0" value="true" />
+			</group>
+		</device>
+
+		<device id="apple_generic" user_agent="Mozilla/5.0 (iPhone;"
+			fall_back="generic_xhtml">
+			<group id="browser">
+				<capability name="javascript_support" value="true" />
+				<capability name="external_script_support"
+					value="false" />
+			</group>
+			<group id="markup">
+				<capability name="preferred_markup"
+					value="html_web_4_0" />
+				<capability name="html_web_4_0" value="true" />
+			</group>
+			<group id="ajax">
+				<capability name="ajax_xhr_type" value="standard" />
+			</group>
+			<group id="display">
+				<capability name="rows" value="12" />
+			</group>
+			<group id="product_info">
+				<capability name="has_pointing_device" value="true" />
+			</group>
+			<group id="xhtml_ui">
+				<capability name="xhtml_make_phone_call_string"
+					value="tel:" />
+			</group>
+		</device>
+
+	</devices>
+
+</wurfl_patch>

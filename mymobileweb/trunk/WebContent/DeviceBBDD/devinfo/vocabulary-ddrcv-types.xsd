@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!--
+	* MORFEO Project
+	* http://morfeo-project.org
+	*
+	* Component: MyMobileWeb
+	* Programming Language: Java
+	*
+	* File: 
+	* Version: $Revision: 6151 $
+	* Date: $Date: 2008-11-10 16:43:37 +0100 (lun, 10 nov 2008) $
+	* Last modified by: $Author: marioag $
+	*
+	* (C) Copyright 2004 Telefónica Investigación y Desarrollo
+	*     S.A.Unipersonal (Telefónica I+D)
+	*
+	* Info about members and contributors of the MORFEO project
+	* is available at:
+	*
+	*   http://morfeo-project.org/
+	*
+	* This program is free software; you can redistribute it and/or modify
+	* it under the terms of the GNU General Public License as published by
+	* the Free Software Foundation; either version 2 of the License, or
+	* (at your option) any later version.
+	*
+	* This program is distributed in the hope that it will be useful,
+	* but WITHOUT ANY WARRANTY; without even the implied warranty of
+	* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+	* GNU General Public License for more details.
+	*
+	* You should have received a copy of the GNU General Public License
+	* along with this program; if not, write to the Free Software
+	* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+	*
+	* If you want to use this software an plan to distribute a
+	* proprietary application in any way, and you are not licensing and
+	* distributing your source code under GPL, you probably need to
+	* purchase a commercial license of the product.  More info about
+	* licensing options is available at:
+	*
+	*   http://morfeo-project.org/
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://morfeo-project.org/mymobileweb"
+	elementFormDefault="qualified"
+	xmlns="http://morfeo-project.org/mymobileweb">
+
+	<xs:annotation>
+		<xs:documentation>DDR Core Vocabulary Types</xs:documentation>
+	</xs:annotation>
+
+	<!-- Property imageFormatSupport -->
+
+	<xs:simpleType name="imageFormatsItem">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="gif87" />
+			<xs:enumeration value="gif89a" />
+			<xs:enumeration value="jpeg" />
+			<xs:enumeration value="png" />
+			<xs:enumeration value="tiff" />
+			<xs:enumeration value="svgt11" />
+			<xs:enumeration value="bmp" />
+			<xs:enumeration value="wbmp" />			
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="imageFormats">
+		<xs:annotation>
+			<xs:documentation>
+				Set of image formats a client supports
+			</xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="imageFormatsItem" />
+	</xs:simpleType>
+	
+	<!-- Property InputModeSupport -->
+
+	<xs:simpleType name="inputModesItem">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="useFormatAttribute" />
+			<xs:enumeration value="useWCSS" />
+			<xs:enumeration value="useInputmodeAttribute" />			
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="inputModes">
+		<xs:annotation>
+			<xs:documentation>
+				Set of specific formats for input type="text"
+			</xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="inputModesItem" />
+	</xs:simpleType>
+	
+	<!-- Property stylesheetSupport -->
+
+	<xs:simpleType name="stylesheetLanguagesItem">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="css10" />
+			<xs:enumeration value="css21" />
+			<xs:enumeration value="wcss10" />			
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="stylesheetLanguages">
+		<xs:annotation>
+			<xs:documentation>
+				Set of Style Sheet languages a client supports
+			</xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="stylesheetLanguagesItem" />
+	</xs:simpleType>
+
+	<!-- Property markupSupport -->
+
+	<xs:simpleType name="markupLanguagesItem">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="xhtmlBasic10" />
+			<xs:enumeration value="xhtmlBasic11" />
+			<xs:enumeration value="xhtmlMP10" />			
+			<xs:enumeration value="xhtmlMP12" />
+			<xs:enumeration value="html40" />
+			<xs:enumeration value="html32" />
+			<xs:enumeration value="wml11" />
+			<xs:enumeration value="wml12" />
+			<xs:enumeration value="wml13" />
+			<xs:enumeration value="htmlWiImodeHtml1" />
+			<xs:enumeration value="htmlWiImodeHtml2" />
+			<xs:enumeration value="htmlWiImodeHtml3" />
+			<xs:enumeration value="htmlWiImodeHtml4" />
+			<xs:enumeration value="htmlWiImodeHtml5" />
+			<xs:enumeration value="htmlWiImodeHtmlx1" />
+			<xs:enumeration value="htmlWiImodeHtmlx11" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="markupLanguages">
+		<xs:annotation>
+			<xs:documentation>
+				Set of mark-up languages a client supports
+			</xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="markupLanguagesItem" />
+	</xs:simpleType>
+	
+	<!-- Property inputDevices -->
+
+	<xs:simpleType name="inputDevicesSetItem">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="keypad" />
+			<xs:enumeration value="touchScreen" />
+			<xs:enumeration value="stylus" />			
+			<xs:enumeration value="trackball" />
+			<xs:enumeration value="clickWheel" />			
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="inputDevicesSet">
+		<xs:annotation>
+			<xs:documentation>
+				Set of input devices are available to the user
+			</xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="inputDevicesSetItem" />
+	</xs:simpleType>
+	
+	<!-- Property scriptSupport -->
+
+	<xs:simpleType name="scriptingLanguagesItem">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ecmascript-MP" />			
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="scriptingLanguages">
+		<xs:annotation>
+			<xs:documentation>
+				Set of input devices are available to the user
+			</xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="scriptingLanguagesItem" />
+	</xs:simpleType>
+
+
+</xs:schema>
