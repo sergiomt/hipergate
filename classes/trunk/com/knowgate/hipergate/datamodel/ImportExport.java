@@ -756,20 +756,34 @@ public class ImportExport {
                       if (null!=sCategory) oImplLoad.put("gu_category", sCategory);
                     } // fi (ALLCAPS)
                     oImplLoad.store(oConn, sWorkArea, iFlags);
-                  } catch (SQLException xcpt) {
+                  } catch (NumberFormatException xcpt) {
                     iErrorCount++;
-                    if (DebugFile.trace) DebugFile.writeln("  "+xcpt.getClass().getName()+": at line "+String.valueOf(iLine)+" "+xcpt.getMessage());
+                    if (DebugFile.trace) DebugFile.writeln("  NumberFormatException: at line "+String.valueOf(iLine)+" "+xcpt.getMessage());
                     if (bRecoverable) {
                       if (DebugFile.trace) DebugFile.writeln("  Connection.rollback()");
                       try { oConn.rollback(); } catch (SQLException ignore) {}
                     } // fi (bRecoverable)
                     if (oBadWrtr!=null) {
-                      oBadWrtr.write(xcpt.getClass().getName()+": at line "+String.valueOf(iLine)+" "+xcpt.getMessage()+"\r\n");
+                      oBadWrtr.write("NumberFormatException: at line "+String.valueOf(iLine)+" "+xcpt.getMessage()+"\r\n");
                       oBadWrtr.write(sLine+"\r\n");
-                    }
+                    } // fi
                     if (oDiscardWrtr!=null) {
                       oDiscardWrtr.write(sLine+sRowDelim);
-                    }
+                    } // fi
+                  } catch (SQLException xcpt) {
+                    iErrorCount++;
+                    if (DebugFile.trace) DebugFile.writeln("  SQLException: at line "+String.valueOf(iLine)+" "+xcpt.getMessage());
+                    if (bRecoverable) {
+                      if (DebugFile.trace) DebugFile.writeln("  Connection.rollback()");
+                      try { oConn.rollback(); } catch (SQLException ignore) {}
+                    } // fi (bRecoverable)
+                    if (oBadWrtr!=null) {
+                      oBadWrtr.write("SQLException: at line "+String.valueOf(iLine)+" "+xcpt.getMessage()+"\r\n");
+                      oBadWrtr.write(sLine+"\r\n");
+                    } // fi
+                    if (oDiscardWrtr!=null) {
+                      oDiscardWrtr.write(sLine+sRowDelim);
+                    } // fi
                   } // catch
                 } // fi (aLine.length!=iColFmtsCount)
               } // fi (sLine!="")

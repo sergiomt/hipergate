@@ -605,28 +605,23 @@ public class ModelManager {
 
   // ---------------------------------------------------------------------------
 
+  private boolean isDoubleQuote(StringBuffer oBuffer, int iLen, int iPos) {
+    if (iPos>=iLen-2)
+      return false;
+    else
+      return (oBuffer.charAt(++iPos)==(char)39);    
+  } // isDoubleQuote
+
+  // ---------------------------------------------------------------------------
+
   private boolean switchQuoteActiveStatus (StringBuffer oBuffer, int iLen, char cAt, int iPos, boolean bActive) {
     boolean bRetVal;
-    // If a single quote sign ' is found then switch on or off value of bActive
+    // If a single quote sign ' is found then switch ON or OFF the value of bActive
     if (cAt==39) {
-      // Take into account double quotes escape sequences
-      // If a previous quote was found
-      if (!bActive) {
-    	// And we are not just at end of file
-    	if (iPos<iLen-2) {
-    	  // and the next character is also a quote
-    	  if (oBuffer.charAt(++iPos)==(char)39) {
-    	    // then we've found a double quote escape '' and must ignore it
-    		bRetVal = bActive;
-    	  } else {
-    		bRetVal = true;
-    	  } // fi (charAt(c+1)==')
-    	} else {
-    	  bRetVal = true;    		  
-    	} // fi (c<iLen-2)
-      } else {
-    	bRetVal = false;
-      } // fi (!bActive)
+      if (isDoubleQuote(oBuffer, iLen, iPos))
+      	bRetVal = bActive;
+      else
+      	bRetVal = !bActive;
     } else {
       bRetVal = bActive;
     }// fi (cAt==')
@@ -659,6 +654,11 @@ public class ModelManager {
     char cAt;
 
     // Initially bActive is set to true
+    // bActive signals that the current status is sensitive
+    // to statement delimiters.
+    // When a single quote is found, bActive is set to false
+    // and then found delimiters are ignored until another
+    // matching closing quote is reached.
     boolean bActive = true;
     int iStatementsCount = 0;
     int iMark = 0, iTail = 0, iIndex = 0;
