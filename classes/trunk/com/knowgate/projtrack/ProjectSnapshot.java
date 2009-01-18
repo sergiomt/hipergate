@@ -31,13 +31,22 @@
 */
 package com.knowgate.projtrack;
 
+import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
+
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerConfigurationException;
+
 import java.util.Date;
+
 import java.sql.SQLException;
 
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBPersist;
 import com.knowgate.dataobjs.DBCommand;
+import com.knowgate.dataxslt.StylesheetCache;
 import com.knowgate.misc.Gadgets;
 
 public class ProjectSnapshot {
@@ -110,6 +119,16 @@ public class ProjectSnapshot {
 
   public String toXML() {
   	return oRecord.getStringNull(DB.tx_snapshot,"<ProjectSnapshot/>");
+  }
+
+  /**
+   * Export this ProjectSnapshot as a GanttProject .gan file
+   * @since 5.0
+   */
+  public String toGantt()
+  	throws IOException, FileNotFoundException, UnsupportedEncodingException,
+           NullPointerException, TransformerException, TransformerConfigurationException {
+    return StylesheetCache.transform(getClass().getResourceAsStream("GanttTemplate.xsl"), "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+toXML(), null);
   }
 
   // **********************************************************

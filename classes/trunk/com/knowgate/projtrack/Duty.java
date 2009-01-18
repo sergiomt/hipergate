@@ -36,14 +36,21 @@ import com.knowgate.debug.DebugFile;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBBind;
+import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.dataobjs.DBPersist;
+import com.knowgate.dataobjs.DBSubset;
 
+import com.knowgate.misc.Calendar;
 import com.knowgate.misc.Gadgets;
 
 import java.sql.SQLException;
 import java.sql.CallableStatement;
 import java.sql.Statement;
 import java.sql.ResultSet;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
 
 public class Duty extends DBPersist {
 
@@ -96,8 +103,59 @@ public class Duty extends DBPersist {
 
     // Forzar la fecha de modificación del registro
     replace(DB.dt_modified, dtNow);
+    
+    if (!isNull(DB.dt_start) || !isNull(DB.dt_scheduled)) {
+      Date dtBegin = isNull(DB.dt_start) ? getDate(DB.dt_scheduled) : getDate(DB.dt_start);
+      Date dtEnd = isNull(DB.dt_end) ? new Date(dtBegin.getTime()+86400000l) : getDate(DB.dt_end);
+      replace(DB.ti_duration, new BigDecimal(Calendar.DaysBetween(dtBegin, dtEnd)));
+      
+      Date oPrjEnd = DBCommand.queryDateTime(oConn, "SELECT "+DB.dt_end+" FROM "+DB.k_projects+" WHERE "+DB.gu_project+"='"+getString(DB.gu_project)+"'");
+      boolean bUpdateProject = false;
+      if (oPrjEnd==null)
+      	bUpdateProject = true;
+      else if (oPrjEnd.compareTo(dtEnd)<0)
+      	bUpdateProject = true;
+	  if (bUpdateProject)
+	  	Project.setEndDate(oConn, getString(DB.gu_project), dtEnd);
+    } // fi
 
     return super.store(oConn);
+  } // store
+
+  /**
+   * <p>Get resources assigned to this duty</p>
+   * @param oConn Database Connection
+   * @throws IllegalStateException
+   * @throws SQLException
+   * @since 5.0
+   */
+  public Resource[] resources(JDCConnection oConn)
+  	throws IllegalStateException,SQLException {
+    
+    if (isNull(DB.gu_duty))
+      throw new IllegalStateException("Duty.resources() Duty must be loaded before calling resources() method");
+
+    Resource[] aResces = null;
+    DBSubset oResces = new DBSubset(DB.k_x_duty_resource,
+                                    DB.nm_resource+","+DB.pct_time,
+                                    DB.gu_duty+"=?",10);
+    int nResources = oResces.load(oConn, new Object[]{getString(DB.gu_duty)});
+    if (nResources>0) {
+      String sWorkArea = DBCommand.queryStr(oConn, "SELECT "+DB.gu_owner+" FROM "+DB.k_projects+" p,"+DB.k_duties+" d WHERE d."+DB.gu_project+"=p."+DB.gu_project+" AND d."+DB.gu_duty+"='"+getString(DB.gu_duty)+"'");
+      aResces = new Resource[nResources];
+      for (int r=0; r<nResources; r++) {
+      	aResces[r] = new Resource();
+      	aResces[r].load(oConn, sWorkArea, oResces.getString(0,r));
+      	if (!oResces.isNull(1,r))
+      	  aResces[r].setWorkLoadPercentage(oResces.getShort(1,r));
+      } // next
+    } // fi
+
+    return aResces;
+  } // resources
+
+  public String toXML(String sIdent, String sDelim, HashMap oAttrs) {
+    return super.toXML(sIdent, sDelim, oAttrs);
   }
 
   // **********************************************************

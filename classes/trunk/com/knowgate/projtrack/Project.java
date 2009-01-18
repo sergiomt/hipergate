@@ -34,19 +34,26 @@ package com.knowgate.projtrack;
 
 import java.text.SimpleDateFormat;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Stack;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import com.knowgate.debug.DebugFile;
 
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBBind;
+import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.dataobjs.DBPersist;
 import com.knowgate.dataobjs.DBSubset;
 
 import com.knowgate.acl.ACLUser;
+import com.knowgate.crm.Company;
+import com.knowgate.crm.Contact;
 import com.knowgate.misc.Gadgets;
+import com.knowgate.misc.Calendar;
 import com.knowgate.jdc.JDCConnection;
 
 import java.sql.SQLException;
@@ -54,6 +61,7 @@ import java.sql.CallableStatement;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 
 /**
  * <p>Project</p>
@@ -584,16 +592,113 @@ public class Project extends DBPersist {
 
   // ----------------------------------------------------------
 
-  private String snapshotBuilder(JDCConnection oConn, String sIdent) throws SQLException {
+  public String toXML(JDCConnection oConn, String sIdent, String sDelim, HashMap oAttrs) throws SQLException {
+    SimpleDateFormat oXMLDateTime = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+
+    StringBuffer oBuffer = new StringBuffer(4000);
+	if (null==oAttrs) {
+      oBuffer.append(sIdent+"<Project>"+sDelim);
+	} else {
+      oBuffer.append(sIdent+"<Project");
+      Iterator oNames = oAttrs.keySet().iterator();
+      while (oNames.hasNext()) {
+        Object oName = oNames.next();
+        oBuffer.append(" "+oName+"=\""+oAttrs.get(oName)+"\"");
+      } // wend
+      oBuffer.append(">" + sDelim);
+	} // fi
+
+    oBuffer.append(sIdent+sIdent+"<gu_project>"+getString(DB.gu_project)+"</gu_project>"+sDelim);
+    oBuffer.append(sIdent+sIdent+"<dt_created>"+oXMLDateTime.format(getCreationDate(oConn))+"</dt_created>"+sDelim);
+    oBuffer.append(sIdent+sIdent+"<nm_project><![CDATA["+getString(DB.nm_project)+"]]></nm_project>"+sDelim);
+    oBuffer.append(sIdent+sIdent+"<gu_owner>"+getString(DB.gu_owner)+"</gu_owner>"+sDelim);
+    oBuffer.append(sIdent+sIdent+"<id_parent>"+getStringNull(DB.id_parent,"")+"</id_parent>"+sDelim);
+    oBuffer.append(sIdent+sIdent+"<id_dept>"+getStringNull(DB.id_dept,"")+"</id_dept>"+sDelim);
+    oBuffer.append(sIdent+sIdent+"<id_status>"+getStringNull(DB.id_status,"")+"</id_status>"+sDelim);
+
+    if (isNull(DB.dt_start) && DBCommand.queryExists(oConn, DB.k_duties, DB.gu_project+"='"+getString(DB.gu_project)+"' AND "+DB.dt_start+" IS NOT NULL")) {
+      put(DB.dt_start, DBCommand.queryMinDate(oConn, DB.dt_start, DB.k_duties, DB.gu_project+"='"+getString(DB.gu_project)+"'"));
+    }
+    
+    if (isNull(DB.dt_start))
+      oBuffer.append(sIdent+sIdent+"<dt_start></dt_start>"+sDelim);
+    else
+      oBuffer.append(sIdent+sIdent+"<dt_start>"+getDateShort(DB.dt_start)+"</dt_start>"+sDelim);
+
+    if (isNull(DB.dt_scheduled) && DBCommand.queryExists(oConn, DB.k_duties, DB.gu_project+"='"+getString(DB.gu_project)+"' AND "+DB.dt_scheduled+" IS NOT NULL")) {
+      put(DB.dt_scheduled, DBCommand.queryMinDate(oConn, DB.dt_scheduled, DB.k_duties, DB.gu_project+"='"+getString(DB.gu_project)+"'"));
+    }
+
+    if (isNull(DB.dt_scheduled))
+      oBuffer.append(sIdent+sIdent+"<dt_scheduled></dt_scheduled>"+sDelim);
+    else
+      oBuffer.append(sIdent+sIdent+"<dt_scheduled>"+getDateShort(DB.dt_scheduled)+"</dt_scheduled>"+sDelim);
+
+    if (isNull(DB.dt_end) && DBCommand.queryExists(oConn, DB.k_duties, DB.gu_project+"='"+getString(DB.gu_project)+"' AND "+DB.dt_end+" IS NOT NULL")) {
+      put(DB.dt_scheduled, DBCommand.queryMaxDate(oConn, DB.dt_end, DB.k_duties, DB.gu_project+"='"+getString(DB.gu_project)+"'"));
+    }
+
+    if (isNull(DB.dt_end))
+      oBuffer.append(sIdent+sIdent+"<dt_end></dt_end>"+sDelim);
+    else
+      oBuffer.append(sIdent+sIdent+"<dt_end>"+getDateShort(DB.dt_end)+"</dt_end>"+sDelim);
+
+    if ((!isNull(DB.dt_start) || !isNull(DB.dt_scheduled)) && !isNull(DB.dt_end)) {
+      oBuffer.append(sIdent+sIdent+"<ti_duration>"+String.valueOf(Calendar.DaysBetween(isNull(DB.dt_start) ? getDate(DB.dt_scheduled) : getDate(DB.dt_start), getDate(DB.dt_end)))+"</ti_duration>"+sDelim);
+    } // fi
+
+    if (isNull(DB.pr_cost))
+      oBuffer.append(sIdent+sIdent+"<pr_cost></pr_cost>"+sDelim);
+    else
+      oBuffer.append(sIdent+sIdent+"<pr_cost>"+String.valueOf(getFloat(DB.pr_cost))+"</pr_cost>"+sDelim);
+    oBuffer.append(sIdent+sIdent+"<gu_company>"+getStringNull(DB.gu_company,"")+"</gu_company>"+sDelim);
+    oBuffer.append(sIdent+sIdent+"<gu_contact>"+getStringNull(DB.gu_contact,"")+"</gu_contact>"+sDelim);
+    oBuffer.append(sIdent+sIdent+"<gu_user>"+getStringNull(DB.gu_user,"")+"</gu_user>"+sDelim);
+    oBuffer.append(sIdent+sIdent+"<id_ref>"+getStringNull(DB.id_ref,"")+"</id_ref>"+sDelim);
+    oBuffer.append(sIdent+sIdent+"<nm_project><![CDATA["+getStringNull(DB.de_project,"")+"]]></nm_project>"+sDelim);
+
+	if (isNull(DB.gu_company)) {
+	  oBuffer.append(sIdent+sIdent+"<Company/>"+sDelim);	
+	} else {
+	  Company oComp = new Company(oConn, getString(DB.gu_company));
+	  oBuffer.append(oComp.toXML(oConn, sIdent+" ", sDelim));
+	  oBuffer.append(sDelim);
+	}// fi
+
+	if (isNull(DB.gu_contact)) {
+	  oBuffer.append(sIdent+sIdent+"<Contact/>"+sDelim);	
+	} else {
+	  Contact oCont = new Contact(oConn, getString(DB.gu_contact));
+	  oBuffer.append(oCont.toXML(oConn, sIdent+" ", sDelim));
+	  oBuffer.append(sDelim);
+	}// fi
+
+    oBuffer.append(sIdent+"</Project>");
+    
+    return oBuffer.toString();
+  } // toXML
+
+  // ----------------------------------------------------------
+
+  private String snapshotBuilder(JDCConnection oConn, String sIdent,
+  								 int[] aIdCounters,
+                                 HashMap<String,Resource> oResources,
+                                 StringBuffer oAllocations)
+    throws SQLException {
+
 	final String s2 = sIdent+sIdent;
 	final String s3 = sIdent+sIdent+sIdent;
 
     if (DebugFile.trace) {
-      DebugFile.writeln("Begin Project.snapshotBuilder([Connection])");
+      DebugFile.writeln("Begin Project.snapshotBuilder([JDCConnection],"+sIdent+","+String.valueOf(aIdCounters[0])+","+String.valueOf(aIdCounters[1])+",HashMap["+String.valueOf(oResources.size())+"], ...)");
       DebugFile.incIdent();
     }
+
+	HashMap oAttrs = new HashMap(11);
+	aIdCounters[0] = aIdCounters[0]+1;
+	oAttrs.put("id_project", String.valueOf(aIdCounters[0]));
 	
-	String sXml = toXML(sIdent);
+	String sXml = toXML(oConn, sIdent, "\n", oAttrs);
 
 	DBSubset oDuties = new DBSubset (DB.k_duties, "*", DB.gu_project+"=? ORDER BY "+DB.dt_modified+" DESC", 50);
 	int nDuties = oDuties.load(oConn, new Object[]{getString(DB.gu_project)});
@@ -605,7 +710,7 @@ public class Project extends DBPersist {
 
     if (DebugFile.trace) DebugFile.writeln("bugs count is "+String.valueOf(nBugs));
 
-	DBSubset oSubp = new DBSubset (DB.k_projects, "*", DB.	id_parent+"=? ORDER BY "+DB.nm_project, 20);
+	DBSubset oSubp = new DBSubset (DB.k_projects, "*", DB.	id_parent+"=? ORDER BY "+DB.dt_start+","+DB.dt_end, 20);
 	int nSubp = oSubp.load(oConn, new Object[]{getString(DB.gu_project)});
 
     if (DebugFile.trace) DebugFile.writeln("subprojects count is "+String.valueOf(nSubp));
@@ -620,8 +725,25 @@ public class Project extends DBPersist {
 	for (int d=0; d<nDuties; d++) {
 	  oDut.clear();
 	  oDut.putAll(oDuties.getRowAsMap(d));
-	  oSS.append(oDut.toXML(s3));
+	  if (oDut.isNull(DB.ti_duration))
+	  	oDut.replace(DB.ti_duration, new BigDecimal(1d));
+	  oAttrs.clear();
+	  aIdCounters[0] = aIdCounters[0]+1;
+	  oAttrs.put("id_duty", String.valueOf(aIdCounters[0]));
+	  oSS.append(oDut.toXML(s3,"\n",oAttrs));
 	  oSS.append("\n");
+	  Resource[] aResources = oDut.resources(oConn);
+	  if (aResources!=null) {
+	  	int nResources = aResources.length;
+	  	for (int r=0; r<nResources; r++) {
+		  if (!oResources.containsKey(aResources[r].getValue())) {
+	  		aIdCounters[1] = aIdCounters[1]+1;
+		  	aResources[r].setProgressive(aIdCounters[1]);
+		    oResources.put(aResources[r].getValue(), aResources[r]);
+		  } // fi
+		  oAllocations.append("    <Allocation id_duty=\""+String.valueOf(aIdCounters[0])+"\" pg_resource=\""+String.valueOf(aIdCounters[1])+"\" load=\""+String.valueOf(aResources[r].getWorkLoadPercentage())+"\" />\n");
+	  	} // next
+	  }
 	} // next
 	oDuties = null;
 	oDut = null;
@@ -646,11 +768,12 @@ public class Project extends DBPersist {
 	for (int p=0; p<nSubp; p++) {
 	  oSub.clear();
 	  oSub.putAll(oSubp.getRowAsMap(p));
-	  oSS.append(oSub.snapshotBuilder(oConn,s3));
+	  oSS.append(oSub.snapshotBuilder(oConn,s3,aIdCounters,oResources,oAllocations));
 	} // next
 	oSubp = null;
 	oSub = null;
 	oSS.append(s2+"</Subprojects>\n");
+	
 	oSS.append(sIdent+"</Project>\n");
 
     if (DebugFile.trace) {
@@ -678,12 +801,18 @@ public class Project extends DBPersist {
 
     SimpleDateFormat oXMLDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
+    HashMap<String,Resource> oResources = new HashMap<String,Resource>();
+    StringBuffer oAllocations = new StringBuffer();
+    int[] aIdCounters = new int[2];
+    aIdCounters[0]=-1;
+    aIdCounters[1]=-1;
+
 	ProjectSnapshot oPrjSnpSht = new ProjectSnapshot();
 
 	oPrjSnpSht.setProject(getString(DB.gu_project));
 	oPrjSnpSht.setTitle(getStringNull(DB.nm_project,"")+" "+new Date().toString());
     if (sAuditUsr!=null) oPrjSnpSht.setWriter(sAuditUsr);
-    String sSnapshot = snapshotBuilder(oConn,"  ");
+    String sSnapshot = snapshotBuilder(oConn,"  ",aIdCounters,oResources,oAllocations);
     StringBuffer oData = new StringBuffer(sSnapshot.length()+1000);
     oData.append("<ProjectSnapshot>\n");
     oData.append("  <gu_project>"+getString(DB.gu_project)+"</gu_project>\n");
@@ -696,6 +825,23 @@ public class Project extends DBPersist {
       oData.append("  <tx_full_name><![CDATA["+oWrt.getStringNull(DB.nm_user,"")+" "+oWrt.getStringNull(DB.tx_surname1,"")+" "+oWrt.getStringNull(DB.tx_surname2,"")+"]]></tx_full_name>\n");      
     }
     oData.append(sSnapshot);
+    oData.append("  <Resources>\n");
+	Iterator<String> oIter = oResources.keySet().iterator();
+	while (oIter.hasNext()) {
+	  Resource oResc = oResources.get(oIter.next());
+      oData.append("    <Resource>\n");
+      oData.append("      <pg_resource>"+String.valueOf(oResc.getProgressive())+"</pg_resource>\n");
+      oData.append("      <vl_resource><![CDATA["+oResc.getValue()+"]]></vl_resource>\n");
+      oData.append("      <tx_full_name><![CDATA["+oResc.getFullName()+"]]></tx_full_name>\n");
+      oData.append("      <tx_email><![CDATA["+oResc.getEmail()+"]]></tx_email>\n");
+      oData.append("      <tx_phone><![CDATA["+oResc.getPhone()+"]]></tx_phone>\n");
+      oData.append("    </Resource>\n");	  
+	} // wend	
+    oData.append("  </Resources>\n");
+    oData.append("  <Allocations>\n");
+    oData.append(oAllocations.toString());
+    oData.append("  </Allocations>\n");
+
     oData.append("</ProjectSnapshot>");
 	oPrjSnpSht.setData(oData.toString());
 
@@ -759,6 +905,45 @@ public class Project extends DBPersist {
 
     return bRetVal;
   } // delete()
+
+  /**
+   * <p>Set end date for a project.</p>
+   * This method updates the end date of a project and
+   * also the end date of all its parent projects which
+   * end date is prior to the one specified.
+   * @param oConn Database Connection
+   * @param sProjectGUID GUID of project to be deleted.
+   * @param sDt End Date.
+   * @throws SQLException
+   */
+  
+  public static void setEndDate(JDCConnection oConn, String sProjectGUID, Date oDt) throws SQLException {
+    PreparedStatement oUpdt = oConn.prepareStatement("UPDATE "+DB.k_projects+" SET "+DB.dt_end+"=? WHERE "+DB.gu_project+"=?");
+    oUpdt.setTimestamp(1, new Timestamp(oDt.getTime()));
+    oUpdt.setString(2, sProjectGUID);
+    oUpdt.executeUpdate();
+    oUpdt.close();
+    PreparedStatement oStmt = oConn.prepareStatement("SELECT p."+DB.gu_project+",p."+DB.dt_end+" FROM "+DB.k_projects+" p,"+DB.k_projects+" c WHERE p."+DB.gu_project+"=c."+DB.id_parent+" AND c."+DB.gu_project+"=?",
+                                                     ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+    
+    oStmt.setString(1, sProjectGUID);
+    ResultSet oRSet = oStmt.executeQuery();
+    String sParentGUID = null;
+    Timestamp tsParentEnd = null;
+    boolean bUpdateParent = false;
+    if (oRSet.next()) {
+      sParentGUID = oRSet.getString(1);
+      tsParentEnd = oRSet.getTimestamp(2);
+      if (oRSet.wasNull()) {
+        bUpdateParent = true;
+      } else {
+      	bUpdateParent = tsParentEnd.getTime()<oDt.getTime();
+      } // fi
+    } // fi
+    oRSet.close();
+    oStmt.close();
+    if (bUpdateParent) setEndDate(oConn, sParentGUID, oDt);
+  } // setEndDate
   
   // **********************************************************
   // Public Constants
