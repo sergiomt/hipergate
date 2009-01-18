@@ -82,10 +82,18 @@ public class DistributionList extends DBPersist {
     super(DB.k_lists, "DistributionList");
 
     String sListGUID;
-    PreparedStatement oStmt = oConn.prepareStatement("SELECT "+DB.gu_list+" FROM "+DB.k_lists+" WHERE "+DB.gu_workarea+"=? AND "+DB.de_list+"=?",
-                                                     ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-    oStmt.setString(1, sWorkAreaGUID);
-    oStmt.setString(2, sListDesc);
+    PreparedStatement oStmt;
+    
+    if (null==sWorkAreaGUID) {
+      oStmt = oConn.prepareStatement("SELECT "+DB.gu_list+" FROM "+DB.k_lists+" WHERE "+DB.de_list+"=?",
+                                    ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+      oStmt.setString(1, sListDesc);
+    } else {
+      oStmt = oConn.prepareStatement("SELECT "+DB.gu_list+" FROM "+DB.k_lists+" WHERE "+DB.gu_workarea+"=? AND "+DB.de_list+"=?",
+                                    ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+      oStmt.setString(1, sWorkAreaGUID);
+      oStmt.setString(2, sListDesc);
+    }
     ResultSet oRSet = oStmt.executeQuery();
     if (oRSet.next())
       sListGUID = oRSet.getString(1);
