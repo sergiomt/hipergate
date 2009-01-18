@@ -86,7 +86,8 @@ DECLARE
   IdCategory CHAR(32);
   CatPath TEXT;
 BEGIN
-  CatPath := '''';
+  CatPath := CHR(32);
+  CatPath := trim(trailing from CatPath);
   IdCategory := $1;
 
   SELECT nm_category INTO CatPath FROM k_categories WHERE gu_category=$1;
@@ -103,7 +104,7 @@ BEGIN
         DoNext := 0;
       ELSE
         SELECT nm_category INTO Neighname FROM k_categories WHERE gu_category=Neighbour;
-	    CatPath := Neighname || ''/'' || CatPath;
+	    CatPath := Neighname || CHR(47) || CatPath;
         IdCategory := Neighbour;
       END IF;
     END IF;
@@ -414,7 +415,7 @@ BEGIN
   IF NOT FOUND THEN
     GuMailRoot := NULL;
   ELSE
-    SELECT gu_category INTO GuMailRoot FROM k_categories c, k_cat_tree t WHERE c.gu_category=t.gu_child_cat AND t.gu_parent_cat=GuUserHome AND nm_category=NmDomain||''_''||TxNickName||''_mail'';
+    SELECT gu_category INTO GuMailRoot FROM k_categories c, k_cat_tree t WHERE c.gu_category=t.gu_child_cat AND t.gu_parent_cat=GuUserHome AND nm_category=NmDomain||CHR(95)||TxNickName||''_mail'';
     IF NOT FOUND THEN
       SELECT gu_category INTO GuMailRoot FROM k_categories c, k_cat_tree t WHERE c.gu_category=t.gu_child_cat AND t.gu_parent_cat=GuUserHome AND nm_category LIKE NmDomain||''_%_mail'' ORDER BY dt_created DESC LIMIT 1;
       IF NOT FOUND THEN
@@ -439,7 +440,7 @@ BEGIN
 
   SELECT k_sp_get_user_mailroot($1) INTO GuMailRoot;
 
-  SELECT gu_category INTO GuMailBox FROM k_categories c, k_cat_tree t WHERE c.gu_category=t.gu_child_cat AND t.gu_parent_cat=GuMailRoot AND (nm_category=NmDomain||''_''||TxNickName||''_''||$2 OR nm_category=$2);
+  SELECT gu_category INTO GuMailBox FROM k_categories c, k_cat_tree t WHERE c.gu_category=t.gu_child_cat AND t.gu_parent_cat=GuMailRoot AND (nm_category=NmDomain||CHR(95)||TxNickName||CHR(95)||$2 OR nm_category=$2);
   IF NOT FOUND THEN
     SELECT gu_category INTO GuMailRoot FROM k_categories c, k_cat_tree t WHERE c.gu_category=t.gu_child_cat AND t.gu_parent_cat=GuMailRoot AND nm_category LIKE NmDomain||''_%_inbox'' ORDER BY dt_created DESC LIMIT 1;
     IF NOT FOUND THEN

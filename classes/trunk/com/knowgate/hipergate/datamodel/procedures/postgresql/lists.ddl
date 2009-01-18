@@ -366,3 +366,76 @@ GO;
 
 CREATE TRIGGER k_tr_upd_cont AFTER UPDATE ON k_contacts FOR EACH ROW EXECUTE PROCEDURE k_sp_upd_cont()
 GO;
+
+CREATE FUNCTION k_sp_rebuild_member_address () RETURNS INTEGER AS '
+DECLARE
+  m RECORD;
+  nRowCount INTEGER;
+  IdLegal VARCHAR(16);
+  NmLegal VARCHAR(70);
+  NmCommercial VARCHAR(70);
+  IdSector VARCHAR(16);  
+  TpCompany VARCHAR(30);
+  NuEmployees INTEGER;
+  ImRevenue FLOAT;
+  TxFranchise VARCHAR(100);
+  TrTitle VARCHAR(50);
+BEGIN
+  nRowCount:=0;
+
+  DELETE FROM k_member_address;
+
+  FOR m IN SELECT a.gu_address,a.ix_address,c.gu_workarea,c.gu_company,a.dt_created,a.dt_modified,a.gu_user,c.nm_commercial,c.nm_legal,
+                  c.id_legal,c.id_sector,c.id_status,c.id_ref,c.de_company,c.tp_company,c.nu_employees,c.im_revenue,c.gu_sales_man,
+                  c.tx_franchise,c.gu_geozone,a.tp_location,a.tp_street,a.nm_street,a.nu_street,a.tx_addr1,a.tx_addr2,
+                  COALESCE(a.tx_addr1,'''')||CHR(10)||COALESCE(a.tx_addr2,'''') AS full_addr,a.id_country,a.nm_country,a.id_state,
+                  a.nm_state,a.mn_city,a.zipcode,a.work_phone,a.direct_phone,a.home_phone,a.mov_phone,a.fax_phone,a.other_phone,
+                  a.po_box,a.tx_email,a.url_addr,a.contact_person,a.tx_salutation,a.tx_remarks
+                  FROM k_companies c, k_x_company_addr x, k_addresses a
+                  WHERE c.gu_company=x.gu_company AND x.gu_address=a.gu_address LOOP
+    BEGIN
+      INSERT INTO k_member_address (gu_address,ix_address,gu_workarea,gu_company,dt_created,dt_modified,gu_writer,nm_commercial,nm_legal,id_legal,id_sector,id_status,id_ref,tx_comments,tp_company,nu_employees,im_revenue,gu_sales_man,tx_franchise,gu_geozone,tp_location,tp_street,nm_street,nu_street,tx_addr1,tx_addr2,full_addr,id_country,nm_country,id_state,nm_state,mn_city,zipcode,work_phone,direct_phone,home_phone,mov_phone,fax_phone,other_phone,po_box,tx_email,url_addr,contact_person,tx_salutation,tx_remarks)
+      VALUES (m.gu_address,m.ix_address,m.gu_workarea,m.gu_company,m.dt_created,m.dt_modified,m.gu_user,m.nm_commercial,m.nm_legal,m.id_legal,m.id_sector,m.id_status,m.id_ref,m.de_company,m.tp_company,m.nu_employees,m.im_revenue,m.gu_sales_man,m.tx_franchise,m.gu_geozone,m.tp_location,m.tp_street,m.nm_street,m.nu_street,m.tx_addr1,m.tx_addr2,m.full_addr,m.id_country,m.nm_country,m.id_state,m.nm_state,m.mn_city,m.zipcode,m.work_phone,m.direct_phone,m.home_phone,m.mov_phone,m.fax_phone,m.other_phone,m.po_box,m.tx_email,m.url_addr,m.contact_person,m.tx_salutation,m.tx_remarks);
+      nRowCount:=nRowCount+1;
+    EXCEPTION
+      WHEN INTEGRITY_CONSTRAINT_VIOLATION OR UNIQUE_VIOLATION THEN
+    END;
+  END LOOP;
+
+  FOR m IN SELECT a.gu_address,a.ix_address,c.gu_workarea,c.gu_company,c.gu_contact,a.dt_created,a.dt_modified,a.gu_user,
+  				  c.id_status,c.id_ref,c.de_title,c.tx_comments,c.gu_sales_man,c.gu_geozone,c.bo_private,c.dt_birth,c.tx_dept,
+  				  c.tx_division,c.sn_passport,c.ny_age,c.id_gender,c.tx_name,c.tx_surname,a.tp_location,a.tp_street,a.nm_street,
+  				  a.nu_street,a.tx_addr1,a.tx_addr2,COALESCE(a.tx_addr1,'''')||CHR(10)||COALESCE(a.tx_addr2,'''') AS full_addr,
+                  a.id_country,a.nm_country,a.id_state,a.nm_state,a.mn_city,a.zipcode,a.work_phone,a.direct_phone,
+                  a.home_phone,a.mov_phone,a.fax_phone,a.other_phone,a.po_box,a.tx_email,a.url_addr,a.contact_person,
+                  a.tx_salutation,a.tx_remarks
+                  FROM k_contacts c, k_x_contact_addr x, k_addresses a
+                  WHERE c.gu_contact=x.gu_contact AND x.gu_address=a.gu_address LOOP
+    IF m.gu_company IS NOT NULL THEN
+      SELECT id_legal,nm_legal,nm_commercial,id_sector,tp_company,nu_employees,im_revenue,tx_franchise INTO IdLegal,NmLegal,NmCommercial,IdSector,TpCompany,NuEmployees,ImRevenue,TxFranchise FROM k_companies WHERE gu_company=m.gu_company;
+    ELSE
+      IdLegal:=NULL;
+      NmLegal:=NULL;
+      NmCommercial:=NULL;
+      IdSector:=NULL;
+      TpCompany:=NULL;
+      NuEmployees:=NULL;
+      ImRevenue:=NULL;
+      TxFranchise:=NULL;
+    END IF;
+    IF m.de_title IS NOT NULL THEN
+      SELECT tr_es INTO TrTitle FROM k_contacts_lookup WHERE gu_owner=m.gu_workarea AND id_section=''de_title'' AND vl_lookup=m.de_title;
+    END IF;
+    BEGIN
+      INSERT INTO k_member_address (  gu_address,  ix_address,  gu_workarea,  gu_company,  gu_contact,  dt_created,  dt_modified,  bo_private,gu_writer,nm_commercial,nm_legal,id_legal,id_sector,  id_status,  tx_name,  tx_surname,  de_title,tr_title,  id_ref,  dt_birth,  id_gender,  sn_passport,  tx_comments,tp_company,nu_employees,im_revenue,  gu_sales_man,tx_franchise,  gu_geozone,  ny_age,  tx_dept,  tx_division,  tp_location,  tp_street,  nm_street,  nu_street,  tx_addr1,  tx_addr2,full_addr  ,  id_country,  nm_country,  id_state,  nm_state,  mn_city,  zipcode,  work_phone,  direct_phone,  home_phone,  mov_phone,  fax_phone,  other_phone,  po_box,  tx_email,  url_addr,  contact_person,  tx_salutation,  tx_remarks)
+      VALUES                       (m.gu_address,m.ix_address,m.gu_workarea,m.gu_company,m.gu_contact,m.dt_created,m.dt_modified,m.bo_private,m.gu_user,NmCommercial ,NmLegal ,IdLegal ,IdSector ,m.id_status,m.tx_name,m.tx_surname,m.de_title,TrTitle ,m.id_ref,m.dt_birth,m.id_gender,m.sn_passport,m.tx_comments,TpCompany ,NuEmployees ,ImRevenue ,m.gu_sales_man,TxFranchise ,m.gu_geozone,m.ny_age,m.tx_dept,m.tx_division,m.tp_location,m.tp_street,m.nm_street,m.nu_street,m.tx_addr1,m.tx_addr2,m.full_addr,m.id_country,m.nm_country,m.id_state,m.nm_state,m.mn_city,m.zipcode,m.work_phone,m.direct_phone,m.home_phone,m.mov_phone,m.fax_phone,m.other_phone,m.po_box,m.tx_email,m.url_addr,m.contact_person,m.tx_salutation,m.tx_remarks);
+      nRowCount:=nRowCount+1;
+    EXCEPTION
+      WHEN INTEGRITY_CONSTRAINT_VIOLATION OR UNIQUE_VIOLATION THEN
+    END;
+  END LOOP;
+
+  RETURN nRowCount;
+END;
+' LANGUAGE 'plpgsql';
+GO;
