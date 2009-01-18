@@ -87,6 +87,7 @@ import javax.mail.FolderClosedException;
 import com.sun.mail.smtp.SMTPMessage;
 
 import org.htmlparser.Parser;
+import org.htmlparser.Node;
 import org.htmlparser.util.NodeList;
 import org.htmlparser.util.NodeIterator;
 import org.htmlparser.util.ParserException;
@@ -1463,7 +1464,8 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
    * @throws SecurityException
    * @throws IllegalArgumentException if sContentType is not "plain" or "html"
    */
-  public SMTPMessage composeFinalMessage(Session oMailSession, String sSubject, String sBody, String sId, String sContentType, String sEncoding)
+  public SMTPMessage composeFinalMessage(Session oMailSession, String sSubject, String sBody,
+                                         String sId, String sContentType, String sEncoding)
     throws IOException,MessagingException,IllegalArgumentException,SecurityException {
 
     if (DebugFile.trace) {
@@ -1537,8 +1539,10 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
         if (DebugFile.trace) DebugFile.writeln("MimeBodyPart(multipart/alternative).addBodyPart(text/plain)");
         oTextHtmlAlt.addBodyPart(oMsgPlainText);
 
-        // ****************************************
-        // Iterate images from HTML ad replace CIDs
+        // *****************************************
+        // Iterate images from HTML and replace CIDs
+
+        oPrsr = Parser.createParser(sBody, getEncoding());
 
         NodeList oCollectionList = new NodeList();
         TagNameFilter oImgFilter = new TagNameFilter ("IMG");
@@ -1552,6 +1556,7 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
         for (int i=0; i<nImgs; i++) {
 
           sSrc = ((ImageTag) oCollectionList.elementAt(i)).extractImageLocn();
+          sSrc = sSrc.replace('\\','/');
 
           // Keep a reference to every related image name so that the same image is not included twice in the message
           if (!oDocumentImages.containsKey(sSrc)) {
@@ -1577,7 +1582,8 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
           } // fi (!oDocumentImages.containsKey(sSrc))
 
           try {
-            Pattern oPattern = oCompiler.compile(sSrc, Perl5Compiler.SINGLELINE_MASK);
+            Pattern oPattern = oCompiler.compile(Gadgets.replace(((ImageTag) oCollectionList.elementAt(i)).extractImageLocn(),'\\',"\\\\"),
+            									 Perl5Compiler.SINGLELINE_MASK);
             oSrcSubs.setSubstitution("cid:"+oDocumentImages.get(sSrc));
             if (DebugFile.trace) DebugFile.writeln("Util.substitute([PatternMatcher],"+ sSrc + ",cid:"+oDocumentImages.get(sSrc)+",...)");
             sBody = Util.substitute(oMatcher, oPattern, oSrcSubs, sBody);
@@ -1599,7 +1605,25 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
       if (oDocumentImages.isEmpty()) {
           // Set HTML part
           MimeBodyPart oMsgHtml = new MimeBodyPart();
-          oMsgHtml.setDisposition("inline");          
+          oMsgHtml.setDisposition("inline");
+
+          // ****************************************************************************
+          // Replace <!--WEBBEACON SRC="http://..."--> tag by an <IMG SRC="http://..." />
+          
+	      try {
+            int iWebBeaconStart = Gadgets.indexOfIgnoreCase(sBody,"<!--WEBBEACON", 0);
+            if (iWebBeaconStart>0) {
+              int iSrcTagStart = sBody.indexOf('"', iWebBeaconStart+13);
+              int iSrcTagEnd = sBody.indexOf('"', iSrcTagStart+1);
+              int iWebBeaconEnd = sBody.indexOf("-->", iWebBeaconStart+13);
+              if (iWebBeaconEnd>0) {
+		        sBody = sBody.substring(0,iWebBeaconStart)+"<IMG SRC=\""+sBody.substring(iSrcTagStart+1,iSrcTagEnd)+"\" WIDTH=\"1\" HEIGHT=\"1\" BORDER=\"0\" ALT=\"\" />"+sBody.substring(iWebBeaconEnd+3);
+              }
+            }
+	      } catch (Exception malformedwebbeacon) {
+	  	    if (DebugFile.trace) DebugFile.writeln("Malformed Web Beacon");
+	      } 
+	  	              
           oMsgHtml.setText(sBody,sEncoding,"html");
           oTextHtmlAlt.addBodyPart(oMsgHtml);
       } else {
@@ -1747,7 +1771,8 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
    * @throws SecurityException
    * @throws IllegalArgumentException if sContentType is not "plain" or "html"
    */
-  public SMTPMessage composeFinalMessage(Session oMailSession, String sSubject, String sBody, String sId, String sContentType)
+  public SMTPMessage composeFinalMessage(Session oMailSession, String sSubject, String sBody,
+                                         String sId, String sContentType)
     throws IOException,MessagingException,IllegalArgumentException,SecurityException {
     return composeFinalMessage(oMailSession, sSubject, sBody, sId, sContentType, "utf-8");
   }
