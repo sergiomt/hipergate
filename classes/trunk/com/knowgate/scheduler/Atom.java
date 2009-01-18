@@ -101,7 +101,17 @@ public class Atom extends DBPersist {
 
       if (!oRow.wasNull()) {
 
-        if (sCol.equalsIgnoreCase(DB.tx_name)) {
+        if (sCol.equalsIgnoreCase(DB.gu_company)) {
+          put(DB.gu_company, oRow.getString(c));
+          put("Data.Company_Guid", oRow.getString(c));
+          put("Datos.Guid_Empresa", oRow.getString(c));        	
+        }
+        else if (sCol.equalsIgnoreCase(DB.gu_contact)) {
+          put(DB.gu_contact, oRow.getString(c));
+          put("Data.Contact_Guid", oRow.getString(c));
+          put("Datos.Guid_Contacto", oRow.getString(c));        	
+        }
+        else if (sCol.equalsIgnoreCase(DB.tx_name)) {
 
           put(DB.tx_name, oRow.getString(c));
           put("Data.Name", oRow.getString(c));

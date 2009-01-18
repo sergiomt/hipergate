@@ -91,7 +91,8 @@ public class AtomFeeder {
    * @throws SQLException
    */
 
-  private int loadDynamicList(JDCConnection oConn, String sJobGUID, Date dtExec, String sListGUID, String sQueryGUID, String sWorkAreaGUID) throws SQLException {
+  private int loadDynamicList(JDCConnection oConn, String sJobGUID, Date dtExec, String sListGUID,
+                              String sQueryGUID, String sWorkAreaGUID, short iInitialStatus) throws SQLException {
     Statement oStmt;
     QueryByForm oQBF;
     String sSQL;
@@ -113,7 +114,7 @@ public class AtomFeeder {
 
     sSQL = "INSERT INTO " + DB.k_job_atoms +
            " (gu_job,id_status," + sColumns + ") " +
-           " (SELECT '" + sJobGUID + "'," + String.valueOf(Atom.STATUS_PENDING) +
+           " (SELECT '" + sJobGUID + "'," + String.valueOf(iInitialStatus) +
            "," + sColumns + " FROM " + DB.k_member_address + " ma WHERE ma.gu_workarea='" + sWorkAreaGUID +
            "' AND (" + oQBF.composeSQL() + ") AND NOT EXISTS (SELECT x." + DB.tx_email +
            " FROM " + DB.k_lists + " b, " + DB.k_x_list_members + " x WHERE b." +
@@ -145,7 +146,9 @@ public class AtomFeeder {
    * @param sListGUID GUID of list to be loaded
    * @throws SQLException
    */
-  private int loadStaticList(JDCConnection oConn, String sJobGUID, Date dtExec, String sListGUID) throws SQLException {
+  private int loadStaticList(JDCConnection oConn, String sJobGUID,
+  							 Date dtExec, String sListGUID, short iInitialStatus)
+  	throws SQLException {
     Statement oStmt;
     String sSQL;
     int iInserted;
@@ -164,7 +167,7 @@ public class AtomFeeder {
 
     sSQL = "INSERT INTO " + DB.k_job_atoms +
            " (gu_job,id_status," + sColumns + ") " +
-           " (SELECT '" + sJobGUID + "'," + String.valueOf(Atom.STATUS_PENDING) +
+           " (SELECT '" + sJobGUID + "'," + String.valueOf(iInitialStatus) +
            "," + sColumns + " FROM " + DB.k_x_list_members + " m WHERE " +
            DB.gu_list + "='" + sListGUID + "' AND m." + DB.bo_active + "<>0 AND " +
            "NOT EXISTS (SELECT x." + DB.tx_email + " FROM " + DB.k_lists + " b, " +
@@ -196,10 +199,12 @@ public class AtomFeeder {
    * @throws SQLException
    */
 
-  private int loadDirectList(JDCConnection oConn, String sJobGUID, Date dtExec, String sListGUID) throws SQLException {
+  private int loadDirectList(JDCConnection oConn, String sJobGUID, Date dtExec,
+                             String sListGUID, short iInitialStatus)
+    throws SQLException {
 
     // Alimentar una lista directa se hace igual que una estática
-    return loadStaticList(oConn, sJobGUID, dtExec, sListGUID);
+    return loadStaticList(oConn, sJobGUID, dtExec, sListGUID, Atom.STATUS_PENDING);
   } // loadDirectList()
 
   // ----------------------------------------------------------
@@ -301,13 +306,13 @@ public class AtomFeeder {
         // Para cada tipo de lista usar el método de carga de miembros que corresponda
         switch (oDistribList.getShort(DB.tp_list)) {
           case DistributionList.TYPE_DYNAMIC:
-            iLoaded += loadDynamicList(oConn, oJobsSet.getString(0, j), dtExec, oParams.getProperty("gu_list"), oDistribList.getString(DB.gu_query), oDistribList.getString(DB.gu_workarea));
+            iLoaded += loadDynamicList(oConn, oJobsSet.getString(0, j), dtExec, oParams.getProperty("gu_list"), oDistribList.getString(DB.gu_query), oDistribList.getString(DB.gu_workarea), Atom.STATUS_PENDING);
             break;
           case DistributionList.TYPE_STATIC:
-            iLoaded += loadStaticList(oConn, oJobsSet.getString(0, j), dtExec, oParams.getProperty("gu_list"));
+            iLoaded += loadStaticList(oConn, oJobsSet.getString(0, j), dtExec, oParams.getProperty("gu_list"), Atom.STATUS_PENDING);
             break;
           case DistributionList.TYPE_DIRECT:
-            iLoaded += loadDirectList(oConn, oJobsSet.getString(0, j), dtExec, oParams.getProperty("gu_list"));
+            iLoaded += loadDirectList(oConn, oJobsSet.getString(0, j), dtExec, oParams.getProperty("gu_list"), Atom.STATUS_PENDING);
             break;
         } // end switch()
       }
@@ -344,11 +349,12 @@ public class AtomFeeder {
    * On each loadAtoms() no more than iWorkerThreads Jobs will be loaded at a time.
    * @param oConn Database Connection
    * @param sJodId GUID of Job for witch atoms are to be loaded.
+   * @param iInitialStatus Initial status for new Atoms
    * @return DBSubset with loaded Job
    * @throws SQLException
    */
 
-  public DBSubset loadAtoms(JDCConnection oConn, String sJobId) throws SQLException {
+  public DBSubset loadAtoms(JDCConnection oConn, String sJobId, short iInitialStatus) throws SQLException {
     PreparedStatement oCmdsStmt;
     PreparedStatement oJobStmt;
     ResultSet oCmdsSet;
@@ -405,13 +411,13 @@ public class AtomFeeder {
         // Para cada tipo de lista usar el método de carga de miembros que corresponda
         switch (oDistribList.getShort(DB.tp_list)) {
           case DistributionList.TYPE_DYNAMIC:
-            iLoaded += loadDynamicList(oConn, oJobsSet.getString(0, 0), dtExec, oParams.getProperty("gu_list"), oDistribList.getString(DB.gu_query), oDistribList.getString(DB.gu_workarea));
+            iLoaded += loadDynamicList(oConn, oJobsSet.getString(0, 0), dtExec, oParams.getProperty("gu_list"), oDistribList.getString(DB.gu_query), oDistribList.getString(DB.gu_workarea), iInitialStatus);
             break;
           case DistributionList.TYPE_STATIC:
-            iLoaded += loadStaticList(oConn, oJobsSet.getString(0, 0), dtExec, oParams.getProperty("gu_list"));
+            iLoaded += loadStaticList(oConn, oJobsSet.getString(0, 0), dtExec, oParams.getProperty("gu_list"), iInitialStatus);
             break;
           case DistributionList.TYPE_DIRECT:
-            iLoaded += loadDirectList(oConn, oJobsSet.getString(0, 0), dtExec, oParams.getProperty("gu_list"));
+            iLoaded += loadDirectList(oConn, oJobsSet.getString(0, 0), dtExec, oParams.getProperty("gu_list"), iInitialStatus);
             break;
         } // end switch()
       }
@@ -441,6 +447,21 @@ public class AtomFeeder {
      return oJobsSet;
   } // loadAtoms()
 
+  // ----------------------------------------------------------
+
+  /**
+   * <p>Load Atoms with PENDING status for a given Job into k_job_atoms table</p>
+   * On each loadAtoms() no more than iWorkerThreads Jobs will be loaded at a time.
+   * @param oConn Database Connection
+   * @param sJodId GUID of Job for witch atoms are to be loaded.
+   * @return DBSubset with loaded Job
+   * @throws SQLException
+   */
+
+  public DBSubset loadAtoms(JDCConnection oConn, String sJobId) throws SQLException {
+    return loadAtoms(oConn, sJobId, Atom.STATUS_PENDING);
+  }
+  
   // ----------------------------------------------------------
 
   /**

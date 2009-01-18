@@ -452,8 +452,6 @@ public abstract class Job extends DBPersist {
 
       oStmt = oConn.prepareStatement("UPDATE " + DB.k_jobs + " SET " + DB.id_status + "=" + String.valueOf(iStatus) + "," + DB.dt_finished + "=? WHERE " + DB.gu_job + "='" + getString(DB.gu_job) + "'");
 
-      try { if (oConn.getDataBaseProduct()!=JDCConnection.DBMS_POSTGRESQL) oStmt.setQueryTimeout(10);} catch (SQLException sqle) {}
-
       oStmt.setTimestamp(1, new Timestamp(new java.util.Date().getTime()));
       oStmt.executeUpdate();
       oStmt.close();
@@ -738,7 +736,7 @@ public abstract class Job extends DBPersist {
     * @param aRecipients Recipients list (e-mail addresses)
     * @param sRecipientTp Recipient Type {to,cc,bcc}
     * @param sFormat Message Format {text,html}
-    * @param sStatusId {Job.STATUS_PENDING,STATUS_SUSPENDED}
+    * @param iStatusId {Job.STATUS_PENDING,STATUS_SUSPENDED}
     * @throws SQLException
     * @since 4.0
    **/

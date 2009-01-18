@@ -43,6 +43,7 @@ import java.sql.SQLException;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.debug.DebugFile;
+import com.knowgate.debug.StackTraceUtil;
 
 
 /**
@@ -316,14 +317,32 @@ public class WorkerThread extends Thread {
           // -------------------------------------------------------------------
           // Actual Atom processing call here!
 
-          oJob.process(oAtm);
+		  try {
+            oJob.process(oAtm);
+            if (DebugFile.trace)
+              DebugFile.writeln("Thread " + getName() + " consumed Atom " + String.valueOf(oAtm.getInt(DB.pg_atom)));
 
-          if (DebugFile.trace)
-            DebugFile.writeln("Thread " + getName() + " consumed Atom " + String.valueOf(oAtm.getInt(DB.pg_atom)));
+            // Move Atom register from k_job_atoms to k_job_atoms_archived
+            oAtm.archive(oConsumerConnection);
+		  }
+          catch (Exception e) {
+            if (DebugFile.trace) {
+              DebugFile.writeln(getName() + " " + e.getClass().getName() + " job " + oJob.getString(DB.gu_job) + " atom " + String.valueOf(oAtm.getInt(DB.pg_atom)) + e.getMessage());
+              DebugFile.writeln(StackTraceUtil.getStackTrace(e));
+            }
 
-          // Move Atom register from k_job_atoms to k_job_atoms_archived
-          oAtm.archive(oConsumerConnection);
+            sLastError = e.getClass().getName() + ", job " + oJob.getString(DB.gu_job) + " ";
+            sLastError = "atom " + String.valueOf(oAtm.getInt(DB.pg_atom)) + " ";
+            sLastError += e.getMessage() + "\n" + StackTraceUtil.getStackTrace(e) + "\n";
+            try {
+              oAtm.setStatus(oConsumerConnection, Atom.STATUS_INTERRUPTED, e.getClass().getName() + " " + e.getMessage());
+            } catch (SQLException sqle) {
+              if (DebugFile.trace) DebugFile.writeln("Atom.setStatus() SQLException " + sqle.getMessage());
+            }
+            oJob.log(sLastError);
 
+            if (iCallbacks>0) callBack(WorkerThreadCallback.WT_ATOM_CONSUME, "Thread " + getName() + " " + sLastError, e, oJob);
+          }
           if (iCallbacks>0) callBack(WorkerThreadCallback.WT_ATOM_CONSUME, "Thread " + getName() + " consumed Atom " + String.valueOf(oAtm.getInt(DB.pg_atom)), null, oAtm);
 
           oAtm = null;
@@ -370,9 +389,11 @@ public class WorkerThread extends Thread {
           }
           sLastError += e.getMessage();
 
-          oJob.log(getName() + " " + e.getClass().getName() + ", job " + oJob.getString(DB.gu_job) + " ");
-          if (null!=oAtm) oJob.log("atom " + String.valueOf(oAtm.getInt(DB.pg_atom)) + " ");
-          oJob.log(e.getMessage() + "\n");
+		  try {
+            oJob.log(getName() + " " + e.getClass().getName() + ", job " + oJob.getString(DB.gu_job) + " ");
+            if (null!=oAtm) oJob.log("atom " + String.valueOf(oAtm.getInt(DB.pg_atom)) + " ");
+            oJob.log(e.getMessage() + "\n" + StackTraceUtil.getStackTrace(e) + "\n");
+		  } catch (java.io.IOException ioe) { }
         } // fi (oJob)
         else
           sLastError = e.getClass().getName() + " " + e.getMessage();
