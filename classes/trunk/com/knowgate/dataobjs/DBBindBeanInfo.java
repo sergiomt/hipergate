@@ -72,16 +72,16 @@ public class DBBindBeanInfo extends SimpleBeanInfo {
   }
 
   public MethodDescriptor[] getMethodDescriptors() {
-    try {
+    try {    	
         Class voidParams[] = {  };
-        Class nextValParams[] = { Class.forName("java.sql.Connection"), Class.forName("String") };
-        Class getTableParams[] = { Class.forName("String") };
-        Class getPropertyParams[] = { Class.forName("String") };
-        Class getProperty2Params[] = { Class.forName("String"),Class.forName("String") };
-        Class getConnection1Params[] = { Class.forName("String") };
-        Class getConnection2Params[] = { Class.forName("String"),Class.forName("String") };
-        Class escapeParams[] = { Class.forName("java.util.Date"), Class.forName("String") };
-        Class existsParams[] = { Class.forName("com.knowgate.jdc.JDCConnection"), Class.forName("String"), Class.forName("String") };
+        Class nextValParams[] = { Class.forName("java.sql.Connection"), String.class };
+        Class getTableParams[] = { String.class };
+        Class getPropertyParams[] = { String.class };
+        Class getProperty2Params[] = { String.class,String.class };
+        Class getConnection1Params[] = { String.class };
+        Class getConnection2Params[] = { String.class,String.class };
+        Class escapeParams[] = { Class.forName("java.util.Date"), String.class };
+        Class existsParams[] = { Class.forName("com.knowgate.jdc.JDCConnection"), String.class, String.class };
         Class getDataModelParams[] = { Class.forName("com.knowgate.jdc.JDCConnection") };
 
         MethodDescriptor getProfileName =
@@ -107,9 +107,9 @@ public class DBBindBeanInfo extends SimpleBeanInfo {
         MethodDescriptor getConnection2 =
             new MethodDescriptor(DBBind.class.getMethod("getConnection", getConnection2Params));
         MethodDescriptor  getDataModelVersion =
-            new MethodDescriptor(DBBind.class.getMethod("getDatabaseProductName", getDataModelParams));
+            new MethodDescriptor(DBBind.class.getMethod("getDataModelVersion", getDataModelParams));
         MethodDescriptor  getDataModelVersionNumber =
-            new MethodDescriptor(DBBind.class.getMethod("getDatabaseProductName", getDataModelParams));
+            new MethodDescriptor(DBBind.class.getMethod("getDataModelVersionNumber", getDataModelParams));
         MethodDescriptor  getDatabaseProductName =
             new MethodDescriptor(DBBind.class.getMethod("getDatabaseProductName", voidParams));
         MethodDescriptor  getTime =
@@ -119,7 +119,7 @@ public class DBBindBeanInfo extends SimpleBeanInfo {
         MethodDescriptor escape =
             new MethodDescriptor(DBBind.class.getMethod("escape", escapeParams));
         MethodDescriptor exists =
-            new MethodDescriptor(DBBind.class.getMethod("exists", voidParams));
+            new MethodDescriptor(DBBind.class.getMethod("exists", existsParams));
 
         MethodDescriptor rv[] = { getProfileName,getProperties,getProperty,getProperty2,
         						  restartBind, closeBind, nextVal, getTable,

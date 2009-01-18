@@ -411,6 +411,174 @@ public class DBCommand {
   // ---------------------------------------------------------------------------
 
   /**
+   * Execute a SQL query to get the minimum value for a column
+   * @param oCon Connection Open JDBC database connection
+   * @param sColumn Column Name
+   * @param sTable Table Name
+   * @param sWhere WHERE clause to restrict minimum search
+   * @return The minimum value found for the given restrictions or <b>null</b> if no minimum value was found
+   * @throws SQLException
+   * @since 4.0
+   */
+  
+  public static Object queryMin(Connection oCon, String sColumn, String sTable, String sWhere)
+    throws SQLException {
+
+    Statement oStm = null;
+    ResultSet oRst = null;
+    Object oMin = null;
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin DBCommand.queryMin("+sColumn+","+sTable+","+sWhere+")");
+      DebugFile.incIdent();
+    }
+
+    try {
+      oStm = oCon.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+      oRst = oStm.executeQuery("SELECT MIN("+sColumn+") FROM "+sTable+(null==sWhere ? "" : " WHERE "+sWhere));
+      if (oRst.next()) {
+        oMin = oRst.getObject(1);
+        if (oRst.wasNull()) oMin = null;
+      }
+      oRst.close();
+      oRst=null;
+      oStm.close();
+      oStm=null;
+    } catch (Exception xcpt) {
+      if (DebugFile.trace) {
+        DebugFile.writeln(xcpt.getClass().getName()+" "+xcpt.getMessage());
+        DebugFile.decIdent();
+      }
+      if (oRst!=null) { try {oRst.close(); } catch (Exception ignore) {} }
+      if (oStm!=null) { try {oStm.close(); } catch (Exception ignore) {} }
+      throw new SQLException(xcpt.getMessage());
+    }
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      if (null==oMin)
+        DebugFile.writeln("End DBCommand.queryMin() : null ");
+      else
+        DebugFile.writeln("End DBCommand.queryMin() : "+oMin.toString());
+    }
+    return oMin;
+  } // queryMin
+
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Execute a SQL query to get the maximum date value for a date column
+   * @param oCon Connection Open JDBC database connection
+   * @param sColumn Column Name
+   * @param sTable Table Name
+   * @param sWhere WHERE clause to restrict maximum search
+   * @return The maximum date found for the given restrictions or <b>null</b> if no maximum date was found
+   * @throws SQLException
+   * @since 4.0
+   */
+  
+  public static Date queryMaxDate(Connection oCon, String sColumn, String sTable, String sWhere)
+    throws SQLException {
+
+    Statement oStm = null;
+    ResultSet oRst = null;
+    Timestamp oMax = null;
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin DBCommand.queryMaxDate("+sColumn+","+sTable+","+sWhere+")");
+      DebugFile.incIdent();
+    }
+
+    try {
+      oStm = oCon.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+      oRst = oStm.executeQuery("SELECT MAX("+sColumn+") FROM "+sTable+(null==sWhere ? "" : " WHERE "+sWhere));
+      if (oRst.next()) {
+        oMax = oRst.getTimestamp(1);
+        if (oRst.wasNull()) oMax = null;
+      }
+      oRst.close();
+      oRst=null;
+      oStm.close();
+      oStm=null;
+    } catch (Exception xcpt) {
+      if (DebugFile.trace) {
+        DebugFile.writeln(xcpt.getClass().getName()+" "+xcpt.getMessage());
+        DebugFile.decIdent();
+      }
+      if (oRst!=null) { try {oRst.close(); } catch (Exception ignore) {} }
+      if (oStm!=null) { try {oStm.close(); } catch (Exception ignore) {} }
+      throw new SQLException(xcpt.getMessage());
+    }
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      if (null==oMax)
+        DebugFile.writeln("End DBCommand.queryMaxDate() : null ");
+      else
+        DebugFile.writeln("End DBCommand.queryMaxDate() : "+oMax.toString());
+    }
+    return new Date(oMax.getTime());
+  } // queryMax
+
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Execute a SQL query to get the minimum value for a date column
+   * @param oCon Connection Open JDBC database connection
+   * @param sColumn Column Name
+   * @param sTable Table Name
+   * @param sWhere WHERE clause to restrict minimum search
+   * @return The minimum date found for the given restrictions or <b>null</b> if no minimum date was found
+   * @throws SQLException
+   * @since 4.0
+   */
+  
+  public static Date queryMinDate(Connection oCon, String sColumn, String sTable, String sWhere)
+    throws SQLException {
+
+    Statement oStm = null;
+    ResultSet oRst = null;
+    Timestamp oMin = null;
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin DBCommand.queryMinDate("+sColumn+","+sTable+","+sWhere+")");
+      DebugFile.incIdent();
+    }
+
+    try {
+      oStm = oCon.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+      oRst = oStm.executeQuery("SELECT MIN("+sColumn+") FROM "+sTable+(null==sWhere ? "" : " WHERE "+sWhere));
+      if (oRst.next()) {
+        oMin = oRst.getTimestamp(1);
+        if (oRst.wasNull()) oMin = null;
+      }
+      oRst.close();
+      oRst=null;
+      oStm.close();
+      oStm=null;
+    } catch (Exception xcpt) {
+      if (DebugFile.trace) {
+        DebugFile.writeln(xcpt.getClass().getName()+" "+xcpt.getMessage());
+        DebugFile.decIdent();
+      }
+      if (oRst!=null) { try {oRst.close(); } catch (Exception ignore) {} }
+      if (oStm!=null) { try {oStm.close(); } catch (Exception ignore) {} }
+      throw new SQLException(xcpt.getMessage());
+    }
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      if (null==oMin)
+        DebugFile.writeln("End DBCommand.queryMinDate() : null ");
+      else
+        DebugFile.writeln("End DBCommand.queryMinDate() : "+oMin.toString());
+    }
+    return new Date(oMin.getTime());
+  } // queryMin
+
+  // ---------------------------------------------------------------------------
+
+  /**
    * Execute a SQL query to get the maximum value for a column of type INTEGER
    * @param oCon Connection Open JDBC database connection
    * @param sColumn Column Name
