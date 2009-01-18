@@ -1,34 +1,34 @@
-ALTER TABLE k_version ADD dt_created DATE NULL;
+ALTER TABLE k_version ADD dt_created DATE NULL
 GO;
-ALTER TABLE k_version ADD dt_modified DATE NULL;
+ALTER TABLE k_version ADD dt_modified DATE NULL
 GO;
-ALTER TABLE k_version ADD bo_register NUMBER(5) NULL;
+ALTER TABLE k_version ADD bo_register NUMBER(5) NULL
 GO;
-ALTER TABLE k_version ADD gu_support CHAR(32) NULL;
+ALTER TABLE k_version ADD gu_support CHAR(32) NULL
 GO;
-ALTER TABLE k_version ADD gu_contact CHAR(32) NULL;
+ALTER TABLE k_version ADD gu_contact CHAR(32) NULL
 GO;
-ALTER TABLE k_version ADD tx_name VARCHAR2(100) NULL;
+ALTER TABLE k_version ADD tx_name VARCHAR2(100) NULL
 GO;
-ALTER TABLE k_version ADD tx_surname VARCHAR2(100) NULL;
+ALTER TABLE k_version ADD tx_surname VARCHAR2(100) NULL
 GO;
-ALTER TABLE k_version ADD nu_employees NUMBER(28) NULL;
+ALTER TABLE k_version ADD nu_employees NUMBER(28) NULL
 GO;
-ALTER TABLE k_version ADD nm_company VARCHAR2(70) NULL;
+ALTER TABLE k_version ADD nm_company VARCHAR2(70) NULL
 GO;
-ALTER TABLE k_version ADD id_sector VARCHAR2(16) NULL;
+ALTER TABLE k_version ADD id_sector VARCHAR2(16) NULL
 GO;
-ALTER TABLE k_version ADD id_country CHAR(3) NULL;
+ALTER TABLE k_version ADD id_country CHAR(3) NULL
 GO;
-ALTER TABLE k_version ADD nm_state VARCHAR2(30) NULL;
+ALTER TABLE k_version ADD nm_state VARCHAR2(30) NULL
 GO;
-ALTER TABLE k_version ADD mn_city VARCHAR2(50) NULL;
+ALTER TABLE k_version ADD mn_city VARCHAR2(50) NULL
 GO;
-ALTER TABLE k_version ADD zipcode VARCHAR2(30) NULL;
+ALTER TABLE k_version ADD zipcode VARCHAR2(30) NULL
 GO;
-ALTER TABLE k_version ADD work_phone VARCHAR2(16) NULL;
+ALTER TABLE k_version ADD work_phone VARCHAR2(16) NULL
 GO;
-ALTER TABLE k_version ADD tx_email VARCHAR2(70) NULL;
+ALTER TABLE k_version ADD tx_email VARCHAR2(70) NULL
 GO;
 UPDATE k_version SET vs_stamp='4.0.0'
 GO;
