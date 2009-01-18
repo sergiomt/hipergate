@@ -320,6 +320,102 @@ public class StylesheetCache {
 
   // ---------------------------------------------------------------------------
 
+  /**
+   * Perform XSLT transformation
+   * @param oStyleSheetStream Stream to XSL style sheet
+   * @param sXMLInput Input String with XML source data
+   * @param oProps Parameters for Transformer. The substring "param_"
+   * will be added as a preffix to each property name passed as parameter.
+   * So if you pass a property named "workarea" it must be retrieved from XSL
+   * as &lt;xsl:param name="param_workarea"/&gt;
+   * @return String Transformed document
+   * @throws NullPointerException if sXMLInput or oProps are <b>null</b>
+   * @throws FileNotFoundException if sStyleSheetPath does not exist
+   * @throws IOException
+   * @throws UnsupportedEncodingException
+   * @throws TransformerException
+   * @throws TransformerConfigurationException
+   * @since 5.0
+   */
+  public static String transform (InputStream oStyleSheetStream, String sXMLInput, Properties oProps)
+    throws IOException, FileNotFoundException, UnsupportedEncodingException,
+           NullPointerException, TransformerException, TransformerConfigurationException {
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin StylesheetCache.transform([InputStream], String, Properties)");
+      DebugFile.incIdent();
+    }
+
+    if (null==oStyleSheetStream) {
+      if (DebugFile.trace) DebugFile.decIdent();
+      throw new NullPointerException("StylesheetCache.transform() XSL input stream may not be null");
+    }
+
+    if (null==sXMLInput) {
+      if (DebugFile.trace) DebugFile.decIdent();
+      throw new NullPointerException("StylesheetCache.transform() XML input String may not be null");
+    }
+
+    // ****************************************
+    // Get character encoding of input XML data
+    String sEncoding;
+    int iEnc = Gadgets.indexOfIgnoreCase(sXMLInput, "encoding");
+    if (iEnc<0) {
+      sEncoding = "ISO8859_1";
+    } else {
+      int iBeg = iEnc+8;
+      int iEnd;
+      while (sXMLInput.charAt(iBeg)==' ' || sXMLInput.charAt(iBeg)=='=') iBeg++;
+      while (sXMLInput.charAt(iBeg)==' ') iBeg++;
+      if (sXMLInput.charAt(iBeg)=='"') {
+        iEnd = ++iBeg;
+        while (sXMLInput.charAt(iEnd)!='"') iEnd++;
+      } else {
+        iEnd = iBeg;
+        while (sXMLInput.charAt(iEnd)!=' ' && sXMLInput.charAt(iEnd)!='?') iEnd++;
+      } // fi
+      sEncoding = sXMLInput.substring(iBeg, iEnd);
+    } // fi
+    // ****************************************
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("XML input file encoding is "+sEncoding);
+    }
+
+    ByteArrayOutputStream oOutputStream = new ByteArrayOutputStream();
+    ByteArrayInputStream oXMLInputStream = new ByteArrayInputStream(sXMLInput.getBytes(sEncoding));
+
+    TransformerFactory oFactory = TransformerFactory.newInstance();
+    StreamSource oStreamSrc = new StreamSource(oStyleSheetStream);
+    Templates oTemplates = oFactory.newTemplates(oStreamSrc);
+    Transformer oTransformer = oTemplates.newTransformer();
+
+    if (null!=oProps) setParameters(oTransformer, oProps);
+    StreamSource oStreamSrcXML = new StreamSource(oXMLInputStream);
+    StreamResult oStreamResult = new StreamResult(oOutputStream);
+    if (DebugFile.trace) DebugFile.writeln("Transformer.transform(StreamSource,StreamResult)");
+    oTransformer.transform(oStreamSrcXML, oStreamResult);
+    oStreamSrcXML = null;
+    oXMLInputStream.close();
+    String sRetVal = oOutputStream.toString(sEncoding);
+    if (DebugFile.trace) {
+      if (null==sRetVal)
+        DebugFile.writeln("Transformer.transform() returned null");
+      else
+        DebugFile.writeln("Transformer.transform() returned "+String.valueOf(sRetVal.length())+" characters");
+    }
+    oStreamResult = null;
+    oOutputStream.close();
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End StylesheetCache.transform()");
+    }
+    return sRetVal;
+  } // transform
+
+  // ---------------------------------------------------------------------------
+
   static class SheetEntry {
     long lastModified;
     Templates templates;

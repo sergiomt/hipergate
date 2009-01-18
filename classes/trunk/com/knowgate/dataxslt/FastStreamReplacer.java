@@ -292,9 +292,13 @@ public class FastStreamReplacer {
    * @param aKeys An array of Strings to be used as keys
    * @param aValues An array of Strings that will be the actual values for the keys
    * @return A HashMap with the given keys and values
+   * @throws ArrayIndexOutOfBoundsException
    */
-  public static HashMap createMap(String[] aKeys, String[] aValues) {
+  public static HashMap createMap(String[] aKeys, String[] aValues) throws ArrayIndexOutOfBoundsException {
 
+    if (aKeys.length!=aValues.length)
+    	throw new ArrayIndexOutOfBoundsException("FastStreamReplacer.createMap() ArrayIndexOutOfBoundsException supplied "+String.valueOf(aKeys.length)+" keys but "+String.valueOf(aValues.length)+" values");
+    
     HashMap oRetVal  = new HashMap(5+((aKeys.length*100)/60));
 
     for (int k=0; k<aKeys.length; k++)
