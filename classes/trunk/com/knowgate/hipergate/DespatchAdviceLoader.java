@@ -151,8 +151,8 @@ public class DespatchAdviceLoader extends CSVParser implements ImportLoader {
 	try {
 	  
 	  ColumnList oColsList = new ColumnList();
-	  Collections.addAll(oColsList, Gadgets.split(sColumnList,','));
-	  
+	  Collections.addAll(oColsList, (Object[]) Gadgets.split(sColumnList,','));
+
 	  // Prepare SQL statements
 	  prepare(oConn, oColsList);
 	  

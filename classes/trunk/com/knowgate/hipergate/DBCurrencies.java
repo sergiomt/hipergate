@@ -68,6 +68,7 @@ public class DBCurrencies {
 
 	public static ArrayList<CurrencyCode> currencyCodes(Connection oConn) throws SQLException {
 	  if (null==aCurrencies) {
+
 	  	aCurrencies = new ArrayList<CurrencyCode>(270);
 	    Statement oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 	    ResultSet oRSet = oStmt.executeQuery("SELECT "+DB.numeric_code+","+DB.alpha_code+","+DB.char_code+","+DB.id_entity+","+DB.nm_entity+","+DB.tr_currency_+"en FROM "+DB.k_lu_currencies+" ORDER BY 2");

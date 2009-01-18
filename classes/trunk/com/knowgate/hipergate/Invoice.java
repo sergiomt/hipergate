@@ -595,7 +595,7 @@ public class Invoice extends AbstractOrder {
     oBfr.append("  <cac:BuyerParty>\n");
     oBfr.append("    <cac:Party>\n");
     if (oBuyer.isNull(DB.gu_contact))
-      oBfr.append("      <cac:PartyName><cbc:Name><![CDATA["+oBuyer.getString(DB.nm_legal)+"]]></cbc:Name></cac:PartyName>\n");
+      oBfr.append("      <cac:PartyName><cbc:Name><![CDATA["+oBuyer.getStringNull(DB.nm_legal,"")+"]]></cbc:Name></cac:PartyName>\n");
     else
       oBfr.append("      <cac:PartyName><cbc:Name><![CDATA["+oBuyer.getStringNull(DB.tx_name,"")+" "+oBuyer.getStringNull(DB.tx_surname,"")+"]]></cbc:Name></cac:PartyName>\n");
     oBfr.append("      <cac:Address>\n");
