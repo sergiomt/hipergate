@@ -232,9 +232,11 @@ GO;
 INSERT INTO k_member_address SELECT gu_address,ix_address,gu_workarea,gu_company,gu_contact,dt_created,dt_modified,bo_private,gu_writer,tx_name,tx_surname,nm_commercial,nm_legal,id_legal,id_sector,de_title,tr_title,id_status,id_ref,dt_birth,sn_passport,tx_comments,id_gender,tp_company,nu_employees,im_revenue,gu_sales_man,tx_franchise,gu_geozone,ny_age,tx_dept,tx_division,tp_location,tp_street,nm_street,nu_street,tx_addr1,tx_addr2,full_addr,id_country,nm_country,id_state,nm_state,mn_city,zipcode,work_phone,direct_phone,home_phone,mov_phone,fax_phone,other_phone,po_box,tx_email,url_addr,contact_person,tx_salutation,tx_remarks FROM v_member_address
 GO;
 
-DROP TRIGGER k_tr_ins_comp_addr ON k_x_company_addr;
+DROP TRIGGER k_tr_ins_comp_addr ON k_x_company_addr
+GO;
 
-DROP FUNCTION k_sp_ins_comp_addr();
+DROP FUNCTION k_sp_ins_comp_addr()
+GO;
 
 CREATE FUNCTION k_sp_ins_comp_addr() RETURNS OPAQUE AS '
 DECLARE

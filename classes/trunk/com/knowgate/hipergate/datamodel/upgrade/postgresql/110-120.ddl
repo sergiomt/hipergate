@@ -30,7 +30,7 @@ GO;
 CREATE TABLE k_newsgroup_subscriptions (
   gu_newsgrp  CHAR(32) NOT NULL,
   gu_user     CHAR(32) NOT NULL,
-  dt_created  DATETIME DEFAULT CURRENT_TIMESTAMP,
+  dt_created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   id_status   SMALLINT DEFAULT 0,
   id_msg_type CHAR(5) DEFAULT 'TXT',
   tp_subscrip SMALLINT DEFAULT 1,
@@ -44,6 +44,9 @@ ALTER TABLE k_newsgroup_subscriptions ADD CONSTRAINT f1_newsgroup_subscriptions 
 GO;
 
 ALTER TABLE k_newsgroup_subscriptions ADD CONSTRAINT f2_newsgroup_subscriptions FOREIGN KEY (gu_user)  REFERENCES k_users(gu_user)
+GO;
+
+DROP FUNCTION k_sp_del_newsgroup (CHAR)
 GO;
 
 CREATE FUNCTION k_sp_del_newsgroup (CHAR) RETURNS INTEGER AS '

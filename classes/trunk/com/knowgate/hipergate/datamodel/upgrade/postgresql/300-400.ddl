@@ -1,39 +1,39 @@
-ALTER TABLE k_version ADD dt_created   TIMESTAMP    NULL;
+ALTER TABLE k_version ADD dt_created   TIMESTAMP    NULL
 GO;
-ALTER TABLE k_version ADD dt_modified  TIMESTAMP    NULL;
+ALTER TABLE k_version ADD dt_modified  TIMESTAMP    NULL
 GO;
-ALTER TABLE k_version ADD bo_register  SMALLINT     NULL;
+ALTER TABLE k_version ADD bo_register  SMALLINT     NULL
 GO;
-ALTER TABLE k_version ADD gu_support   CHAR(32)     NULL;
+ALTER TABLE k_version ADD gu_support   CHAR(32)     NULL
 GO;
-ALTER TABLE k_version ADD gu_contact   CHAR(32)     NULL;
+ALTER TABLE k_version ADD gu_contact   CHAR(32)     NULL
 GO;
-ALTER TABLE k_version ADD tx_name      VARCHAR(100) NULL;
+ALTER TABLE k_version ADD tx_name      VARCHAR(100) NULL
 GO;
-ALTER TABLE k_version ADD tx_surname   VARCHAR(100) NULL;
+ALTER TABLE k_version ADD tx_surname   VARCHAR(100) NULL
 GO;
-ALTER TABLE k_version ADD nu_employees INTEGER      NULL;
+ALTER TABLE k_version ADD nu_employees INTEGER      NULL
 GO;
-ALTER TABLE k_version ADD nm_company   VARCHAR(70)  NULL;
+ALTER TABLE k_version ADD nm_company   VARCHAR(70)  NULL
 GO;
-ALTER TABLE k_version ADD id_sector    VARCHAR(16)  NULL;
+ALTER TABLE k_version ADD id_sector    VARCHAR(16)  NULL
 GO;
-ALTER TABLE k_version ADD id_country   CHAR(3)      NULL;
+ALTER TABLE k_version ADD id_country   CHAR(3)      NULL
 GO;
-ALTER TABLE k_version ADD nm_state     VARCHAR(30)  NULL;
+ALTER TABLE k_version ADD nm_state     VARCHAR(30)  NULL
 GO;
-ALTER TABLE k_version ADD mn_city	   VARCHAR(50)  NULL;
+ALTER TABLE k_version ADD mn_city	   VARCHAR(50)  NULL
 GO;
-ALTER TABLE k_version ADD zipcode	   VARCHAR(30)  NULL;
+ALTER TABLE k_version ADD zipcode	   VARCHAR(30)  NULL
 GO;
-ALTER TABLE k_version ADD work_phone   VARCHAR(16)  NULL;
+ALTER TABLE k_version ADD work_phone   VARCHAR(16)  NULL
 GO;
-ALTER TABLE k_version ADD tx_email     VARCHAR(70)  NULL;
+ALTER TABLE k_version ADD tx_email     VARCHAR(70)  NULL
 GO;
 UPDATE k_version SET vs_stamp='4.0.0'
 GO;
 
-CREATE SEQUENCE seq_k_msg_votes INCREMENT 1 MINVALUE 1 START 1;
+CREATE SEQUENCE seq_k_msg_votes INCREMENT 1 MINVALUE 1 START 1
 GO;
 
 ALTER TABLE k_newsmsgs ADD nu_votes INTEGER DEFAULT 0
