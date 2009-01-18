@@ -1,3 +1,5 @@
+DROP FUNCTION k_sp_rebuild_member_address ();
+
 DROP FUNCTION k_sp_company_blocked (CHAR,CHAR);
 
 DROP FUNCTION k_sp_contact_blocked (CHAR,CHAR);
