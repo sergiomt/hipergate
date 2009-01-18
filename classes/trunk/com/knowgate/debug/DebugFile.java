@@ -328,5 +328,5 @@ public final class DebugFile {
   /**
    * Activate/Deactive trace output
    */
-  public static final boolean trace = false;
+  public static final boolean trace = true;
   }
