@@ -52,6 +52,7 @@ import com.knowgate.misc.Gadgets;
 
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBBind;
+import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.dataobjs.DBPersist;
 import com.knowgate.dataobjs.DBSubset;
 
@@ -394,7 +395,7 @@ public class NewsMessage extends DBPersist{
         sSQL = "DELETE FROM " + DB.k_x_cat_objs + " WHERE " + DB.gu_category + "='" + getString(DB.gu_newsgrp) + "' AND " + DB.gu_object + "='" + sMsgId + "'";
         oStmt = oConn.createStatement();
         if (DebugFile.trace) DebugFile.writeln("Statement.execute(" + sSQL + ")");
-        oStmt.execute(sSQL);
+        oStmt.executeUpdate(sSQL);
         oStmt.close();
       } // fi (!bNewMsg)
 
@@ -412,6 +413,39 @@ public class NewsMessage extends DBPersist{
 
     return bRetVal;
   } // store
+
+  // ----------------------------------------------------------
+
+  /**
+   * Move this message and all its replies to another NewsGroup
+   * @param oConn Database Conenction
+   * @param sNewsGroupId GUID of the target NewsGroup
+   * @throws SQLException
+   * @since 5.0
+   */
+  public void move (JDCConnection oConn, String sNewsGroupId) throws SQLException {
+    if (!isNull(DB.gu_parent_msg))
+	  throw new SQLException("NewsMessage.move() only the first message of each thread can be moved with all its replies");
+
+      if (DebugFile.trace) {
+        DebugFile.writeln("Begin NewsMessage.move([Connection],"+sNewsGroupId+")");
+        DebugFile.incIdent();
+      }
+
+      String sSQL = "UPDATE " + DB.k_x_cat_objs + " SET "+DB.gu_category+"=? WHERE "+DB.gu_object+" IN (SELECT "+DB.gu_msg+" FROM "+DB.k_newsmsgs+" WHERE "+DB.gu_thread_msg+"=?)";
+
+      if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(" + sSQL + ")");
+      PreparedStatement oStmt = oConn.prepareStatement(sSQL);
+      oStmt.setString(1, sNewsGroupId);
+      oStmt.setString(2, getString(DB.gu_msg));
+      oStmt.executeUpdate();
+      oStmt.close();
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End NewsMessage.move()");
+    }
+  } // move
 
   // ----------------------------------------------------------
 

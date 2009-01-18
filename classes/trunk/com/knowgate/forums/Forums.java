@@ -217,6 +217,17 @@ public class Forums {
   // --------------------------------------------------------------------------
 
   public static String XMLListTopLevelMessagesForGroup(JDCConnection oConn, 
+  											   Date dtStart, Date dtEnd,
+  											   String sGroupId, String sOrderBy)
+    throws SQLException,IllegalArgumentException {
+    DBSubset oDbss = getTopLevelMessagesForGroup(oConn, sGroupId, dtStart, dtEnd, sOrderBy);
+    
+	return "<NewsMessages offset=\"0\" eof=\"true\" count=\""+String.valueOf(oDbss.getRowCount())+"\">\n"+oDbss.toXML("","NewsMessage","dd/MM/yyyy hh:mm", null)+"</NewsMessages>\n";
+  } // XMLListMessagesForGroup
+
+  // --------------------------------------------------------------------------
+
+  public static String XMLListTopLevelMessagesForGroup(JDCConnection oConn, 
   											           int nMaxMsgs, int nOffset,
   											           String sGroupId, String sOrderBy)
     throws SQLException,IllegalArgumentException {
@@ -382,6 +393,35 @@ public class Forums {
     	      "m." + DB.gu_parent_msg + " IS NULL AND "+
     	      "m." + DB.gu_msg + "=x." + DB.gu_object + " AND g." + DB.gu_newsgrp + "=? ORDER BY "+sOrderBy+" DESC", nMaxMsgs);
     oPosts.setMaxRows(nMaxMsgs);    
+    oPosts.load (oConn, new Object[]{sGuNewsGroup}, nOffset);
+    return oPosts;
+  } // getMessagesForGroup
+
+  // --------------------------------------------------------------------------
+
+  public static DBSubset getTopLevelMessagesForGroup(JDCConnection oConn,
+  											         String sGuNewsGroup,
+  											         Date dtStart, Date dtEnd,
+  											         String sOrderBy)
+  throws SQLException,IllegalArgumentException {
+	
+	dtStart = new Date(dtStart.getYear(), dtStart.getMonth(), dtStart.getDate(), 0, 0, 0);
+	dtEnd = new Date(dtEnd.getYear(), dtEnd.getMonth(), dtEnd.getDate(), 23, 59, 59);
+	if (null==sOrderBy) sOrderBy = DB.dt_published;
+    if (sOrderBy.length()==0) sOrderBy = DB.dt_published;
+
+    DBSubset  oPosts = new DBSubset (DB.k_newsmsgs + " m," + DB.k_x_cat_objs + " x," + DB.k_newsgroups + " g," + DB.k_categories + " c",
+    	      "x." + DB.gu_category + ",m." + DB.gu_msg + ",m." + DB.gu_product + ",m." + DB.nm_author + ",m." + DB.tx_subject +
+    	      ",m." + DB.dt_published + ",m." + DB.tx_email + ",m." + DB.nu_thread_msgs + ",m." + DB.gu_thread_msg +
+    	      ",m." + DB.gu_parent_msg + ",m." + DB.nu_votes + ",m." + DB.tx_msg,
+    	      "m." + DB.id_status + "="+String.valueOf(NewsMessage.STATUS_VALIDATED)+
+    	      " AND x." + DB.gu_category + "=" + "g." + DB.gu_newsgrp + " AND " +
+    	      "c." + DB.gu_category + "=g." + DB.gu_newsgrp + " AND " +
+    	      "m." + DB.gu_parent_msg + " IS NULL AND "+
+    	      "m." + DB.gu_msg + "=x." + DB.gu_object + " AND "+
+    	      "g." + DB.gu_newsgrp + "=? AND "+
+    	      "m." + DB.dt_published + " BETWEEN ? AND ? "+
+    	      "ORDER BY "+sOrderBy+" DESC", 100);
     oPosts.load (oConn, new Object[]{sGuNewsGroup});
     return oPosts;
   } // getMessagesForGroup
