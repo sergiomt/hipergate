@@ -72,9 +72,9 @@ final class ConnectionReaper extends Thread {
     private boolean keepruning;
 
    /**
-    * Connection Reaper call interval (default = 5 mins)
+    * Connection Reaper call interval (default = 10 mins)
     */
-    private long delay=300000l;
+    private long delay=600000l;
 
     /**
      * <p>Constructor</p>
@@ -101,13 +101,13 @@ final class ConnectionReaper extends Thread {
 
     /**
      * <p>Set connection reaper call interval</p>
-     * The default value is 5 minutes
+     * The default value is 10 minutes
      * @param lDelay long Number of miliseconds between reaper calls
      * @throws IllegalArgumentException if lDelay is less than 1000
      * @since 3.0
      */
     public void setDelay(long lDelay) throws IllegalArgumentException {
-      if (lDelay<1000l)
+      if (lDelay<1000l && lDelay>0l)
         throw new IllegalArgumentException("ConnectionReaper delay cannot be smaller than 1000 miliseconds");
       delay=lDelay;
     }
@@ -124,7 +124,7 @@ final class ConnectionReaper extends Thread {
            try {
              sleep(delay);
            } catch( InterruptedException e) { }
-           pool.reapConnections();
+           if (keepruning) pool.reapConnections();
         } // wend
     } // run
 } // ConnectionReaper
@@ -399,7 +399,9 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
         DebugFile.incIdent();
       }
 
-     reaper.halt();
+     if (null!=reaper) reaper.halt();
+
+     reaper = null;
 
      closeConnections();
 
@@ -555,7 +557,10 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
     * @since 3.0
     */
    public long getReaperDaemonDelay() {
-     return reaper.getDelay();
+     if (reaper!=null)
+       return reaper.getDelay();
+     else
+       return 0l;
    }
 
    /**
@@ -565,7 +570,14 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
     * @since 3.0
     */
    public void setReaperDaemonDelay(long lDelayMs) throws IllegalArgumentException {
-     reaper.setDelay(lDelayMs);
+     if (lDelayMs>0l) {
+       if (reaper==null) reaper = new ConnectionReaper(this);
+       reaper.setDelay(lDelayMs);
+     }
+     else {
+       if (reaper!=null) reaper.halt();
+       reaper=null;
+     }
    }
 
    // ---------------------------------------------------------

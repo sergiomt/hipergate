@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import java.sql.SQLException;
+import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.ResultSet;
 
@@ -349,41 +350,60 @@ public class DirectList extends DistributionList {
 
     int ChkCods[] = checkValues();
 
-    ListMember oMbr = new ListMember();
+	PreparedStatement oMbr = oConn.prepareStatement("INSERT INTO "+DB.k_list_members+" (gu_member,tx_email,tx_name,tx_surname,tx_salutation) VALUES (?,?,?,?,?)");
 
-    oMbr.put(DB.tp_member, ListMember.ClassId);
-    oMbr.put(DB.bo_active, iStatus);
-
+	String sSQL = "INSERT INTO "+DB.k_x_list_members+"("+DB.gu_list+","+DB.tp_member+","+DB.bo_active+","+DB.tx_email+","+DB.tx_name+","+DB.tx_surname+","+DB.tx_salutation+","+DB.id_format+") VALUES (?,?,?,?,?,?,?,?)";
+	PreparedStatement oIns = oConn.prepareStatement(sSQL);
+	
     int iLines = oCSV.getLineCount();
 
     for (int r=0; r<iLines; r++) {
 
       if (ChkCods[r] == CHECK_OK) {
+		oMbr.setString(1, Gadgets.generateUUID());
+		oMbr.setString(2, getField(iMail, r));
+		oMbr.setString(3, getField(iName, r));
+		oMbr.setString(4, getField(iSurN, r));
+		oMbr.setString(5, getField(iSalt, r));
+        try {
+		  oMbr.executeUpdate();
+        }
+        catch (SQLException sqle) {
+          if (DebugFile.trace) {
+            DebugFile.writeln("SQLException whilst inserting line "+String.valueOf(r+1)+" "+getField(iMail, r)+" at "+DB.k_list_members+" "+sqle.getMessage());
+          }
+          oMbr.close();
+          oMbr = oConn.prepareStatement("INSERT INTO "+DB.k_list_members+" (gu_member,tx_email,tx_name,tx_surname,tx_salutation) VALUES (?,?,?,?,?)");
+        }
 
-        oMbr.replace(DB.gu_member, Gadgets.generateUUID());
-
-        oMbr.replace(DB.tx_email, getField(iMail, r));
-
-        oMbr.replace(DB.tx_name, getField(iName, r));
-
-        oMbr.replace(DB.tx_surname, getField(iSurN, r));
-
-        oMbr.replace(DB.tx_salutation, getField(iSalt, r));
-
-        oMbr.replace(DB.tp_member, ListMember.ClassId);
+	    oIns.setString(1, sListId);
+	    oIns.setShort (2, DirectList.ClassId);
+	    oIns.setShort (3, iStatus);
+		oIns.setString(4, getField(iMail, r));
+		oIns.setString(5, getField(iName, r));
+		oIns.setString(6, getField(iSurN, r));
+		oIns.setString(7, getField(iSalt, r));
 
         if (iFrmt>=0)
-          oMbr.replace(DB.id_format, getField(iFrmt, r).toUpperCase());
+		  oIns.setString(8, getField(iFrmt, r).toUpperCase());
         else
-          oMbr.replace(DB.id_format, "TXT");
+		  oIns.setString(8, "TXT");
 
         try {
-          oMbr.store(oConn, sListId);
+		  oIns.executeUpdate();
         }
-        catch (NoSuchFieldException nsfe) {
-          /* never really thrown with paramenters passed to ListMember.store() from this method */
+        catch (SQLException sqle) {
+          if (DebugFile.trace) {
+            DebugFile.writeln("SQLException whilst inserting line "+String.valueOf(r+1)+" "+getField(iMail, r)+" at "+DB.k_x_list_members+" "+sqle.getMessage());
+          }
+          oIns.close();
+          oIns = oConn.prepareStatement(sSQL);
         }
-      } // fi (CHECK_OK)
+      } else {
+        if (DebugFile.trace) {
+          DebugFile.writeln("Skipped line "+String.valueOf(r+1)+" "+getField(iMail, r)+" error code is "+String.valueOf(ChkCods[r]));
+        }
+      }
     } // next
 
     if (DebugFile.trace) {

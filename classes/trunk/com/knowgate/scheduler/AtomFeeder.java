@@ -204,7 +204,7 @@ public class AtomFeeder {
     throws SQLException {
 
     // Alimentar una lista directa se hace igual que una estática
-    return loadStaticList(oConn, sJobGUID, dtExec, sListGUID, Atom.STATUS_PENDING);
+    return loadStaticList(oConn, sJobGUID, dtExec, sListGUID, iInitialStatus);
   } // loadDirectList()
 
   // ----------------------------------------------------------

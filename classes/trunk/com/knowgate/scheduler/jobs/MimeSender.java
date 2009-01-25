@@ -387,7 +387,7 @@ public class MimeSender extends Job {
       oSentMsg.setReplyTo(aReply);
 
       // Send message here
-      // oHndlr.sendMessage(oSentMsg);
+      oHndlr.sendMessage(oSentMsg);
 
     } catch (Exception e) {
       if (DebugFile.trace) {
@@ -566,7 +566,7 @@ public class MimeSender extends Job {
            nErrs++;
 		 } else {
 
-           oCon = oDbb.getConnection("MimeSender.main");
+           oCon = oDbb.getConnection("MimeSender.main()");
            oCon.setAutoCommit(false);
            int nLists = oLists.load(oCon, new Object[]{oDbb.getProperty("mail.list").trim(),oDbb.getProperty("mail.list").trim()});
            if (nLists==0) {
@@ -698,11 +698,17 @@ public class MimeSender extends Job {
                      System.out.println("Mail number "+String.valueOf(oAtm.getInt(DB.pg_atom))+" "+oAtm.getString(DB.tx_email)+" failed with SQLException "+sqle.getMessage());
                      if (DebugFile.trace) DebugFile.writeln("SQLException at atom "+String.valueOf(oAtm.getInt(DB.pg_atom))+" "+sqle.getMessage()+" "+StackTraceUtil.getStackTrace(sqle));
                      try { oCon.rollback(); oAtm.setStatus(oCon, Atom.STATUS_INTERRUPTED, "SQLException "+sqle.getMessage()); oCon.commit(); } catch (SQLException ignore) { }
+                     oRst.close(); oRst=null;
+                 	 oStm.close(); oStm=null;
+                     break;
                    } catch (NullPointerException npe) {
                      nErrs++;
                      System.out.println("Mail number "+String.valueOf(oAtm.getInt(DB.pg_atom))+" "+oAtm.getString(DB.tx_email)+" failed with NullPointerException "+npe.getMessage());
                      if (DebugFile.trace) DebugFile.writeln("NullPointerException at atom "+String.valueOf(oAtm.getInt(DB.pg_atom))+" "+npe.getMessage()+" "+StackTraceUtil.getStackTrace(npe));
                      try { oCon.rollback(); oAtm.setStatus(oCon, Atom.STATUS_INTERRUPTED, "NullPointerException "+npe.getMessage()); oCon.commit(); } catch (SQLException ignore) { }
+                     oRst.close(); oRst=null;
+                 	 oStm.close(); oStm=null;
+                     break;
                    } catch (MessagingException msge) {
                      nErrs++;
                      System.out.println("Mail number "+String.valueOf(oAtm.getInt(DB.pg_atom))+" "+oAtm.getString(DB.tx_email)+" failed with MessagingException "+msge.getMessage());
@@ -712,17 +718,21 @@ public class MimeSender extends Job {
                      bHasNext = oRst.next();
                    }
                  } //wend
-                 oRst.close();
+                 if (null!=oRst) oRst.close();
                  oRst=null;
-                 oStm.close();
+                 if (null!=oStm) oStm.close();
                  oStm=null;
-                 System.out.println("Finishing job...");
-                 oSnd.setStatus(oCon, Job.STATUS_FINISHED);
+                 if (oSnd.getStatus()==Job.STATUS_RUNNING) {
+                   System.out.println("Finishing job...");
+                   oSnd.setStatus(oCon, Job.STATUS_FINISHED);
+                 } else {
+                   System.out.println("Job finished abnormaly.");
+                 }
                  oSnd=null;     
                } // fi
              } 
            } // fi
-           oCon.close("MimeSender.main");
+           oCon.close("MimeSender.main()");
            oCon=null;
 	     }
        } // fi   	   	 
@@ -752,7 +762,7 @@ public class MimeSender extends Job {
    	   if (oStm!=null) oStm.close();   	   
    	   if (null!=oCon) {
    	   	if (!oCon.getAutoCommit()) oCon.rollback();
-   	   	if (!oCon.isClosed()) oCon.close("MimeSender.main");
+   	   	if (!oCon.isClosed()) oCon.close("MimeSender.main()");
    	   }
    	   if (null!=oDbb) { oDbb.close(); }
    	 }

@@ -624,7 +624,7 @@ public class DBBind extends Beans implements DataSource {
         if (DebugFile.trace) DebugFile.writeln("Connection pool creation : OK" );
 
         try {
-          oConnPool.setReaperDaemonDelay(Long.parseLong(Environment.getProfileVar(sProfile,"connectionreaperdelay", "30000")));
+          oConnPool.setReaperDaemonDelay(Long.parseLong(Environment.getProfileVar(sProfile,"connectionreaperdelay", "600000")));
         }
         catch (NumberFormatException nfe) {
           if (DebugFile.trace) {

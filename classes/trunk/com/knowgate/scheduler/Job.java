@@ -441,6 +441,11 @@ public abstract class Job extends DBPersist {
    */
   public void setStatus(JDCConnection oConn, int iStatus) throws SQLException {
 
+	if (iStatus!=Job.STATUS_ABORTED && iStatus!=Job.STATUS_FINISHED &&
+		iStatus!=Job.STATUS_INTERRUPTED && iStatus!=Job.STATUS_PENDING &&
+		iStatus!=Job.STATUS_RUNNING && iStatus!=Job.STATUS_SUSPENDED)
+	  throw new IllegalArgumentException("Job.setStatus() illegal status value "+String.valueOf(iStatus));
+
     PreparedStatement oStmt;
 
     if (DebugFile.trace) {
@@ -469,11 +474,22 @@ public abstract class Job extends DBPersist {
 
     }
 
+	replace(DB.id_status, iStatus);
+	
     if (DebugFile.trace) {
       DebugFile.decIdent();
       DebugFile.writeln("End Job.setStatus()");
     }
   } // setStatus
+
+  /**
+   * <p>Get Job status</p>
+   * @since 5.0
+   */
+
+  public short getStatus() {
+    return getShort(DB.id_status);
+  }
 
   /**
    * <p>Fills atoms data from their e-mails</p>
