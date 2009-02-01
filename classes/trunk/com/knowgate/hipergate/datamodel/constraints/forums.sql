@@ -8,4 +8,9 @@ ALTER TABLE k_newsmsgs ADD CONSTRAINT f1_newsmsgs FOREIGN KEY (gu_product) REFER
 ALTER TABLE k_newsmsgs ADD CONSTRAINT f2_newsmsgs FOREIGN KEY (gu_writer) REFERENCES k_users(gu_user);
 ALTER TABLE k_newsmsgs ADD CONSTRAINT f3_newsmsgs FOREIGN KEY (gu_validator) REFERENCES k_users(gu_user);
 
+ALTER TABLE k_newsgroup_tags ADD CONSTRAINT f1_newsgroup_tags FOREIGN KEY (gu_newsgrp) REFERENCES k_newsgroups(gu_newsgrp);
+
 ALTER TABLE k_newsmsg_vote ADD CONSTRAINT f1_newsmsg_vote FOREIGN KEY (gu_msg) REFERENCES k_newsmsgs(gu_msg);
+
+ALTER TABLE k_newsmsg_tags ADD CONSTRAINT f1_newsmsg_tags FOREIGN KEY (gu_msg) REFERENCES k_newsmsgs(gu_msg);
+ALTER TABLE k_newsmsg_tags ADD CONSTRAINT f2_newsmsg_tags FOREIGN KEY (gu_tag) REFERENCES k_newsgroup_tags(gu_tag);

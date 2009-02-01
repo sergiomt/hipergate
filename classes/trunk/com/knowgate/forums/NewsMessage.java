@@ -251,7 +251,7 @@ public class NewsMessage extends DBPersist{
    * If id_msg_type is <b>null</b> then it will be assigned to "TXT" by default.<br>
    * If dt_start is <b>null</b> then message visibility will start inmediately.<br>
    * If dt_end is <b>null</b> then message will never expire.<br>
-   * dt_published will always be set to the currents system date no matter with values it is passed as parameter.<br>
+   * dt_published will be set to the currents system date if not passed as a parameter.<br>
    * nu_thread_msgs will be updated in all messages from this thread by calling k_sp_count_thread_msgs stored procedure.<br>
    * Column k_newsgroups.dt_last_update is automatically set to the current date each time a new message is stored.
    * @param oConn Database Connection
@@ -337,7 +337,7 @@ public class NewsMessage extends DBPersist{
     if (!AllVals.containsKey(DB.id_msg_type))
       put(DB.id_msg_type, "TXT");
 
-    replace(DB.dt_published, dtNow);
+    if (isNull(DB.dt_published)) replace(DB.dt_published, dtNow);
 
     bRetVal = super.store(oConn);
 
@@ -406,6 +406,22 @@ public class NewsMessage extends DBPersist{
       oStmt.close();
     } // fi (bRetVal && containsKey(gu_newsgrp))
 
+	DBSubset oOldTags = new DBSubset (DB.k_newsmsg_tags, DB.gu_tag, DB.gu_msg+"=?", 10);
+	int nTags = oOldTags.load(oConn, new Object[]{getString(DB.gu_msg)});
+	for (int t=0; t<nTags; t++) {
+      DBCommand.executeUpdate(oConn, "UPDATE "+DB.k_newsgroup_tags+" SET "+DB.nu_msgs+"="+DB.nu_msgs+"-1 WHERE "+DB.gu_newsgrp+"='"+getString(DB.gu_newsgrp)+"' AND "+DB.gu_tag+"='"+oOldTags.getString(0,t)+"'");
+	}
+	DBCommand.executeUpdate(oConn, "DELETE FROM "+DB.k_newsmsg_tags+" WHERE "+DB.gu_msg+"='"+getString(DB.gu_msg)+"'");
+
+	if (!isNull(DB.tx_tags)) {
+	  String[] aTags = Gadgets.split(getString(DB.tx_tags),',');
+	  nTags = aTags.length;
+	  for (int t=0; t<nTags; t++) {
+        DBCommand.executeUpdate(oConn, "INSERT INTO "+DB.k_newsmsg_tags+" ("+DB.gu_msg+","+DB.gu_tag+") VALUES ('"+getString(DB.gu_msg)+"','"+aTags[t]+"')");
+        DBCommand.executeUpdate(oConn, "UPDATE "+DB.k_newsgroup_tags+" SET "+DB.nu_msgs+"="+DB.nu_msgs+"+1 WHERE "+DB.gu_newsgrp+"='"+getString(DB.gu_newsgrp)+"' AND "+DB.gu_tag+"='"+aTags[t]+"'");
+	  }
+	}
+	
     if (DebugFile.trace) {
       DebugFile.decIdent();
       DebugFile.writeln("End NewsMessage.store() : " + String.valueOf(bRetVal));

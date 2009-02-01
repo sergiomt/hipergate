@@ -69,6 +69,7 @@ import com.knowgate.misc.Gadgets;
 import com.knowgate.misc.CSVParser;
 import com.knowgate.math.Money;
 
+
 /**
  *
  * <p>A bidimensional array representing data readed from a database table.</p>

@@ -3,9 +3,11 @@ GO;
 
 CREATE PROCEDURE k_sp_del_newsgroup (IdNewsGroup CHAR) IS
 BEGIN
+  DELETE k_newsmsg_tags WHERE gu_msg IN (SELECT gu_object FROM k_x_cat_objs WHERE gu_category=IdNewsGroup);
   DELETE k_newsmsg_vote WHERE gu_msg IN (SELECT gu_object FROM k_x_cat_objs WHERE gu_category=IdNewsGroup);
   DELETE k_newsmsgs WHERE gu_msg IN (SELECT gu_object FROM k_x_cat_objs WHERE gu_category=IdNewsGroup);
   DELETE k_newsgroup_subscriptions WHERE gu_newsgrp=IdNewsGroup;
+  DELETE k_newsgroup_tags WHERE gu_newsgrp=IdNewsGroup;
   DELETE k_newsgroups WHERE gu_newsgrp=IdNewsGroup;
   DELETE k_x_cat_objs WHERE gu_category=IdNewsGroup;
   k_sp_del_category (IdNewsGroup);
@@ -26,6 +28,7 @@ BEGIN
   CLOSE childs;
   DELETE k_x_cat_objs WHERE gu_object=IdNewsMsg;
   DELETE k_newsmsg_vote WHERE gu_msg=IdNewsMsg;
+  DELETE k_newsmsg_tags WHERE gu_msg=IdNewsMsg;
   DELETE k_newsmsgs WHERE gu_msg=IdNewsMsg;
 END k_sp_del_newsmsg;
 GO;

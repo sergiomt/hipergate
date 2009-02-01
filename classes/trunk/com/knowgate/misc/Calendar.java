@@ -53,6 +53,7 @@ public class Calendar {
   private static String WeekDayNamesPT[] = { null, "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado" };
   private static String WeekDayNamesRU[] = { null, "???????????", "???????????", "???????", "Wednesday", "???????", "???????", "???????" };
   private static String WeekDayNamesCN[] = { null, "", "???????????", "???????", "Wednesday", "???????", "???????", "???????" };
+  private static String WeekDayNamesNO[] = { null, "søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag" };
 
   private static String MonthNamesES[] = { "Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre" };
   private static String MonthNamesEN[] = { "January","February","March","April","May","June","July","August","September","October","November","December" };
@@ -61,6 +62,7 @@ public class Calendar {
   private static String MonthNamesDE[] = { "Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember" };
   private static String MonthNamesPT[] = { "Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro" };
   private static String MonthNamesRU[] = { "??????","???????","?????","??????","???","????","????","???????","????????","???????","??????","???????" };
+  private static String MonthNamesNO[] = { "januar","februar","mars","april","mai","juni","juli","august","september","oktober","november","desember" };
 
   private static String MonthNamesRFC[] = { "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec" };
 
@@ -100,6 +102,8 @@ public class Calendar {
         sRetVal = WeekDayNamesPT[MyWeekDay];
       else if (sLangId.equalsIgnoreCase("ru"))
         sRetVal = WeekDayNamesRU[MyWeekDay];
+      else if (sLangId.equalsIgnoreCase("no"))
+        sRetVal = WeekDayNamesNO[MyWeekDay];
       else
         throw new java.lang.IllegalArgumentException("Calendar.WeekDayName 2nd parameter (Language Id.) must be one of {es,en}");
     }
@@ -148,6 +152,8 @@ public class Calendar {
         sRetVal = MonthNamesDE[MyMonth];
       else if (sLangId.equalsIgnoreCase("pt"))
         sRetVal = MonthNamesPT[MyMonth];
+      else if (sLangId.equalsIgnoreCase("no"))
+        sRetVal = MonthNamesNO[MyMonth];
       else
         throw new java.lang.IllegalArgumentException("Calendar.WeekDayName 2nd parameter (Language Id.) must be one of {es,en}");
     }

@@ -14,6 +14,24 @@ CONSTRAINT pk_newsgroups PRIMARY KEY (gu_newsgrp)
 )
 GO;
 
+CREATE TABLE k_newsgroup_tags
+(
+gu_tag            CHAR(32)     NOT NULL,
+gu_newsgrp        CHAR(32)     NOT NULL,
+dt_created        DATETIME     DEFAULT CURRENT_TIMESTAMP,
+tl_tag            VARCHAR(70)  NOT NULL,
+de_tag            VARCHAR(200)     NULL,
+nu_msgs           INTEGER     DEFAULT 0,
+bo_incoming_ping  SMALLINT    DEFAULT 0,
+dt_trackback      DATETIME         NULL,
+url_trackback     VARCHAR(2000)    NULL,
+
+CONSTRAINT pk_newsgroup_tags PRIMARY KEY (gu_tag),
+CONSTRAINT u1_newsgroup_tags UNIQUE (gu_newsgrp,tl_tag)
+
+)
+GO;
+
 CREATE TABLE k_newsmsgs
 (
 gu_msg           CHAR(32)         NOT NULL,
@@ -70,3 +88,11 @@ CREATE TABLE k_newsmsg_vote (
 )
 GO;
 
+CREATE TABLE k_newsmsg_tags
+(
+gu_msg CHAR(32)     NOT NULL,
+gu_tag CHAR(32)     NOT NULL,
+
+CONSTRAINT pk_newsmsg_tags PRIMARY KEY (gu_msg,gu_tag)
+)
+GO;

@@ -222,9 +222,11 @@ public final class DB {
   public static final String k_working_time = "k_working_time";
 
   public static final String k_newsgroups = "k_newsgroups";
+  public static final String k_newsgroup_tags = "k_newsgroup_tags";
   public static final String k_newsgroup_subscriptions = "k_newsgroup_subscriptions";
   public static final String k_newsmsgs = "k_newsmsgs";
   public static final String k_newsmsg_vote = "k_newsmsg_vote";
+  public static final String k_newsmsg_tags = "k_newsmsg_tags";
 
   public static final String k_mime_msgs = "k_mime_msgs";
   public static final String k_inet_addrs = "k_inet_addrs";
@@ -945,6 +947,13 @@ public final class DB {
   public static final String nu_votes = "nu_votes";
   public static final String od_score = "od_score";
   public static final String ip_addr = "ip_addr";
+  public static final String gu_tag = "gu_tag";
+  public static final String tl_tag = "tl_tag";
+  public static final String de_tag = "de_tag";
+  public static final String tx_tags = "tx_tags";
+  public static final String nu_msgs = "nu_msgs";
+  public static final String dt_trackback = "dt_trackback";
+  public static final String url_trackback = "url_trackback";
 
   // k_accounts
   public static final String id_account = "id_account";

@@ -3,9 +3,11 @@ GO;
 
 CREATE FUNCTION k_sp_del_newsgroup (CHAR) RETURNS INTEGER AS '
 BEGIN
+  DELETE FROM k_newsmsg_tags WHERE gu_msg IN (SELECT gu_object FROM k_x_cat_objs WHERE gu_category=$1);
   DELETE FROM k_newsmsg_vote WHERE gu_msg IN (SELECT gu_object FROM k_x_cat_objs WHERE gu_category=$1);
   DELETE FROM k_newsmsgs WHERE gu_msg IN (SELECT gu_object FROM k_x_cat_objs WHERE gu_category=$1);
   DELETE FROM k_newsgroup_subscriptions WHERE gu_newsgrp=$1;
+  DELETE FROM k_newsgroup_tags WHERE gu_newsgrp=$1;
   DELETE FROM k_newsgroups WHERE gu_newsgrp=$1;
   DELETE FROM k_x_cat_objs WHERE gu_category=$1;
   PERFORM k_sp_del_category ($1);
@@ -28,6 +30,7 @@ BEGIN
   CLOSE childs;
   DELETE FROM k_x_cat_objs WHERE gu_object=$1;
   DELETE FROM k_newsmsg_vote WHERE gu_msg=$1;
+  DELETE FROM k_newsmsg_tags WHERE gu_msg=$1;
   DELETE FROM k_newsmsgs WHERE gu_msg=$1;
   RETURN 0;
 END;
