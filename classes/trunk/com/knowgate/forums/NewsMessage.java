@@ -33,6 +33,7 @@
 package com.knowgate.forums;
 
 import java.util.Date;
+import java.util.HashMap;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -65,11 +66,14 @@ import com.knowgate.hipergate.Product;
  */
 public class NewsMessage extends DBPersist{
 
+  private HashMap<String,NewsMessageTag> oTagsSet;
+
   /**
    * Create empty NewsMessage
    */
   public NewsMessage() {
     super(DB.k_newsmsgs, "NewsMessage");
+	oTagsSet = new HashMap<String,NewsMessageTag>();
   }
 
   /**
@@ -78,6 +82,7 @@ public class NewsMessage extends DBPersist{
    */
   public NewsMessage(JDCConnection oConn, String sGuMsg) throws SQLException {
     super(DB.k_newsmsgs, "NewsMessage");
+    oTagsSet = new HashMap<String,NewsMessageTag>();
     load(oConn, new Object[]{sGuMsg});
   }
 	
@@ -204,6 +209,15 @@ public class NewsMessage extends DBPersist{
     }
     oRSet.close();
     oStmt.close();
+
+    oTagsSet.clear();
+    DBSubset oTags = new DBSubset(DB.k_newsmsg_tags, "*", DB.gu_msg+"=?", 10);
+    int nTags = oTags.load(oConn, new Object[]{sGuMsg});
+    for (int t=0; t<nTags; t++) {
+      NewsMessageTag oNnts = new NewsMessageTag();
+      oNnts.putAll(oTags.getRowAsMap(t));
+      oTagsSet.put(oNnts.getString(DB.gu_tag), oNnts);
+    } // next
     	
     if (DebugFile.trace) {
       DebugFile.decIdent();
@@ -590,6 +604,17 @@ public class NewsMessage extends DBPersist{
     oStmt.close();
     return nVotes;
   } // countVotes
+
+  // ----------------------------------------------------------
+
+  /**
+   * Get tags for this message
+   * @return HashMap of NewsMessageTag objects
+   * @since 5.0
+   */
+  public HashMap<String,NewsMessageTag> tags() {
+  	return oTagsSet;
+  }
 
   // **********************************************************
   // Static Methods
