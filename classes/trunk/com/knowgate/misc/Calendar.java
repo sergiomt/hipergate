@@ -204,6 +204,22 @@ public class Calendar {
 
   //-----------------------------------------------------------
 
+  public static Date addMonths(int nMonths, Date dt) {
+  	Date dtRetVal = dt;
+  	if (nMonths>0) {
+  	  for (int m=0; m<nMonths; m++) {
+  	    dtRetVal = new Date(dtRetVal.getTime()+(86400000l*(LastDay(dtRetVal.getMonth(),dtRetVal.getYear()+1900))));
+  	  }
+  	} else if (nMonths<0) {
+  	  for (int m=0; m>nMonths; m--) {
+  	    dtRetVal = new Date(dtRetVal.getTime()-(86400000l*(LastDay(dtRetVal.getMonth(),dtRetVal.getYear()+1900))));
+  	  }  		
+  	}
+  	return dtRetVal;
+  } // addMonths
+
+  //-----------------------------------------------------------
+
   public static int DaysBetween(Date dt1st, Date dt2nd) {
 	return (int) Math.round(((double) (dt2nd.getTime() - dt1st.getTime())) / 86400000d); 
   } // DaysBetween
