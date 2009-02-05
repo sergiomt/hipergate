@@ -45,6 +45,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
 import com.knowgate.debug.DebugFile;
+import com.knowgate.misc.Gadgets;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBBind;
@@ -339,10 +340,15 @@ public class Forums {
     DBSubset  oPosts = new DBSubset (DB.k_newsmsgs + " m",
     	      "m." + DB.gu_msg + ",m." + DB.gu_product + ",m." + DB.nm_author + ",m." + DB.tx_subject +
     	      ",m." + DB.dt_published + ",m." + DB.tx_email + ",m." + DB.nu_thread_msgs + ",m." + DB.gu_thread_msg +
-    	      ",m." + DB.gu_parent_msg + ",m." + DB.nu_votes + ",m." + DB.tx_msg,
+    	      ",m." + DB.gu_parent_msg + ",m." + DB.nu_votes + ", 'permalink' AS tx_permalink, m." + DB.tx_msg,
     	      "m." + DB.id_status + "="+String.valueOf(NewsMessage.STATUS_VALIDATED)+" AND "+
-    	      "m." + DB.gu_thread_msg + "=? ORDER BY "+DB.gu_thread_msg, 100);
-    oPosts.load (oConn, new Object[]{sGuThread});
+    	      "m." + DB.gu_thread_msg + "=? ORDER BY "+DB.dt_published, 100);
+    int nPosts = oPosts.load (oConn, new Object[]{sGuThread});
+    int iPermalink = oPosts.getColumnPosition("tx_permalink");
+    int iSubject = oPosts.getColumnPosition(DB.tx_subject);    
+	for (int p=0; p<nPosts; p++) {
+	  oPosts.setElementAt(Gadgets.ASCIIEncode(oPosts.getStringNull(iSubject, p, "")).toLowerCase(), iPermalink, p);
+	} // next
     return oPosts;
   } // getMessagesForThread
 
@@ -362,12 +368,17 @@ public class Forums {
     DBSubset  oPosts = new DBSubset (DB.k_newsmsgs + " m," + DB.k_x_cat_objs + " x," + DB.k_newsgroups + " g," + DB.k_categories + " c",
     	      "x." + DB.gu_category + ",m." + DB.gu_msg + ",m." + DB.gu_product + ",m." + DB.nm_author + ",m." + DB.tx_subject +
     	      ",m." + DB.dt_published + ",m." + DB.tx_email + ",m." + DB.nu_thread_msgs + ",m." + DB.gu_thread_msg +
-    	      ",m." + DB.gu_parent_msg + ",m." + DB.nu_votes + ",m." + DB.tx_msg,
+    	      ",m." + DB.gu_parent_msg + ",m." + DB.nu_votes + ", 'permalink' AS tx_permalink, m." + DB.tx_msg,
     	      "m." + DB.id_status + "="+String.valueOf(NewsMessage.STATUS_VALIDATED)+" AND x." + DB.gu_category + "=" + "g." + DB.gu_newsgrp + " AND " +
     	      "c." + DB.gu_category + "=g." + DB.gu_newsgrp + " AND " +
     	      "m." + DB.gu_msg + "=x." + DB.gu_object + " AND g." + DB.gu_newsgrp + "=? ORDER BY "+sOrderBy+" DESC", nMaxMsgs);
     oPosts.setMaxRows(nMaxMsgs);    
-    oPosts.load (oConn, new Object[]{sGuNewsGroup});
+    int nPosts = oPosts.load (oConn, new Object[]{sGuNewsGroup});
+    int iPermalink = oPosts.getColumnPosition("tx_permalink");
+    int iSubject = oPosts.getColumnPosition(DB.tx_subject);    
+	for (int p=0; p<nPosts; p++) {
+	  oPosts.setElementAt(Gadgets.ASCIIEncode(oPosts.getStringNull(iSubject, p, "")).toLowerCase(), iPermalink, p);
+	} // next
     return oPosts;
   } // getMessagesForGroup
 
@@ -387,13 +398,18 @@ public class Forums {
     DBSubset  oPosts = new DBSubset (DB.k_newsmsgs + " m," + DB.k_x_cat_objs + " x," + DB.k_newsgroups + " g," + DB.k_categories + " c",
     	      "x." + DB.gu_category + ",m." + DB.gu_msg + ",m." + DB.gu_product + ",m." + DB.nm_author + ",m." + DB.tx_subject +
     	      ",m." + DB.dt_published + ",m." + DB.tx_email + ",m." + DB.nu_thread_msgs + ",m." + DB.gu_thread_msg +
-    	      ",m." + DB.gu_parent_msg + ",m." + DB.nu_votes + ",m." + DB.tx_msg,
+    	      ",m." + DB.gu_parent_msg + ",m." + DB.nu_votes + ", 'permalink' AS tx_permalink, m." + DB.tx_msg,
     	      "m." + DB.id_status + "="+String.valueOf(NewsMessage.STATUS_VALIDATED)+" AND x." + DB.gu_category + "=" + "g." + DB.gu_newsgrp + " AND " +
     	      "c." + DB.gu_category + "=g." + DB.gu_newsgrp + " AND " +
     	      "m." + DB.gu_parent_msg + " IS NULL AND "+
     	      "m." + DB.gu_msg + "=x." + DB.gu_object + " AND g." + DB.gu_newsgrp + "=? ORDER BY "+sOrderBy+" DESC", nMaxMsgs);
     oPosts.setMaxRows(nMaxMsgs);    
-    oPosts.load (oConn, new Object[]{sGuNewsGroup}, nOffset);
+    int nPosts = oPosts.load (oConn, new Object[]{sGuNewsGroup}, nOffset);
+    int iPermalink = oPosts.getColumnPosition("tx_permalink");
+    int iSubject = oPosts.getColumnPosition(DB.tx_subject);    
+	for (int p=0; p<nPosts; p++) {
+	  oPosts.setElementAt(Gadgets.ASCIIEncode(oPosts.getStringNull(iSubject, p, "")).toLowerCase(), iPermalink, p);
+	} // next
     return oPosts;
   } // getMessagesForGroup
 
@@ -413,7 +429,7 @@ public class Forums {
     DBSubset  oPosts = new DBSubset (DB.k_newsmsgs + " m," + DB.k_x_cat_objs + " x," + DB.k_newsgroups + " g," + DB.k_categories + " c",
     	      "x." + DB.gu_category + ",m." + DB.gu_msg + ",m." + DB.gu_product + ",m." + DB.nm_author + ",m." + DB.tx_subject +
     	      ",m." + DB.dt_published + ",m." + DB.tx_email + ",m." + DB.nu_thread_msgs + ",m." + DB.gu_thread_msg +
-    	      ",m." + DB.gu_parent_msg + ",m." + DB.nu_votes + ",m." + DB.tx_msg,
+    	      ",m." + DB.gu_parent_msg + ",m." + DB.nu_votes + ", 'permalink' AS tx_permalink, m." + DB.tx_msg,
     	      "m." + DB.id_status + "="+String.valueOf(NewsMessage.STATUS_VALIDATED)+
     	      " AND x." + DB.gu_category + "=" + "g." + DB.gu_newsgrp + " AND " +
     	      "c." + DB.gu_category + "=g." + DB.gu_newsgrp + " AND " +
@@ -422,7 +438,12 @@ public class Forums {
     	      "g." + DB.gu_newsgrp + "=? AND "+
     	      "m." + DB.dt_published + " BETWEEN ? AND ? "+
     	      "ORDER BY "+sOrderBy+" DESC", 100);
-    oPosts.load (oConn, new Object[]{sGuNewsGroup});
+    int nPosts = oPosts.load (oConn, new Object[]{sGuNewsGroup});
+    int iPermalink = oPosts.getColumnPosition("tx_permalink");
+    int iSubject = oPosts.getColumnPosition(DB.tx_subject);    
+	for (int p=0; p<nPosts; p++) {
+	  oPosts.setElementAt(Gadgets.ASCIIEncode(oPosts.getStringNull(iSubject, p, "")).toLowerCase(), iPermalink, p);
+	} // next
     return oPosts;
   } // getMessagesForGroup
 
@@ -435,7 +456,7 @@ public class Forums {
    * @param sOrderBy Attribute to sort messages. By default it is dt_published which corresponds to publishing date. Can be also nu_votes to sort messages by number of votes or nm_author to sort by author.
    * @param sGuWorkArea WorkArea GUID
    * @param sOrderBy
-   * @return DBSubset containing the following columns: gu_category,gu_msg,gu_product,nm_author,tx_subject,dt_published,tx_email,nu_thread_msgs,gu_thread_msg,nu_votes,tx_msg
+   * @return DBSubset containing the following columns: gu_category,gu_msg,gu_product,nm_author,tx_subject,dt_published,tx_email,nu_thread_msgs,gu_thread_msg,nu_votes,tx_permalink,tx_msg
    * @throws SQLException
    * @throws IllegalArgumentException If nMaxMsgs<=0
    */
@@ -453,21 +474,26 @@ public class Forums {
     DBSubset  oPosts = new DBSubset (DB.k_newsmsgs + " m," + DB.k_x_cat_objs + " x," + DB.k_newsgroups + " g," + DB.k_categories + " c",
     	      "x." + DB.gu_category + ",m." + DB.gu_msg + ",m." + DB.gu_product + ",m." + DB.nm_author + ",m." + DB.tx_subject +
     	      ",m." + DB.dt_published + ",m." + DB.tx_email + ",m." + DB.nu_thread_msgs + ",m." + DB.gu_thread_msg +
-    	      ",m." + DB.nu_votes + ",m." + DB.tx_msg,
+    	      ",m." + DB.nu_votes + ", 'permalink' AS tx_permalink, m." + DB.tx_msg,
     	      sActiveOnly +
     	      "m." + DB.id_status + "=0 AND x." + DB.gu_category + "=" + "g." + DB.gu_newsgrp + " AND " +
     	      "c." + DB.gu_category + "=g." + DB.gu_newsgrp + " AND " +
     	      "m." + DB.gu_msg + "=x." + DB.gu_object + " AND m." + DB.gu_parent_msg + " IS NULL AND g." + DB.gu_workarea +
     	      "=? ORDER BY "+sOrderBy+(sOrderBy.equalsIgnoreCase(DB.dt_published) || sOrderBy.equalsIgnoreCase(DB.nu_votes) ? " DESC" : ""), nMaxMsgs);
     oPosts.setMaxRows(nMaxMsgs);    
-    oPosts.load (oConn, new Object[]{sGuWorkArea});
+    int nPosts = oPosts.load (oConn, new Object[]{sGuWorkArea});
+    int iPermalink = oPosts.getColumnPosition("tx_permalink");
+    int iSubject = oPosts.getColumnPosition(DB.tx_subject);    
+	for (int p=0; p<nPosts; p++) {
+	  oPosts.setElementAt(Gadgets.ASCIIEncode(oPosts.getStringNull(iSubject, p, "")).toLowerCase(), iPermalink, p);
+	} // next
     return oPosts;
   } // getTopLevelMessages
 
   // --------------------------------------------------------------------------
   
-  public static ArrayList getDaysWithPosts(JDCConnection oConn, String sGuNewsGrp,
-  										   Date dtFrom, Date dtTo)
+  public static ArrayList<Boolean> getDaysWithPosts(JDCConnection oConn, String sGuNewsGrp,
+  										            Date dtFrom, Date dtTo)
   	throws SQLException {
 
 	SimpleDateFormat oShortDate = new SimpleDateFormat("yyyy-MM-dd");
@@ -477,7 +503,7 @@ public class Forums {
     }
     
     String sCurrDate, sPostDate;
-    ArrayList oDaysList = new ArrayList(com.knowgate.misc.Calendar.DaysBetween(dtFrom,dtTo));
+    ArrayList<Boolean> oDaysList = new ArrayList<Boolean>(com.knowgate.misc.Calendar.DaysBetween(dtFrom,dtTo));
 	Calendar oDay = Calendar.getInstance(); 
 	Calendar oTo = Calendar.getInstance();
 	oTo.setTime(dtTo);

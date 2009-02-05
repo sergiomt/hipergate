@@ -345,6 +345,8 @@ public class NewsMessage extends DBPersist{
 
     replace(DB.nu_thread_msgs, ++nThreadMsgs);
 
+    replace(DB.dt_modified, dtNow);
+
     if (!AllVals.containsKey(DB.dt_start))
       put(DB.dt_start, dtNow);
 
