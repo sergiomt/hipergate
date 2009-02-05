@@ -37,6 +37,7 @@ CREATE TABLE k_newsmsgs
 gu_msg           CHAR(32)         NOT NULL,
 nm_author        VARCHAR(200)     NOT NULL,
 gu_writer        CHAR(32)         NOT NULL,
+dt_modified      DATETIME             NULL,
 dt_published     DATETIME         DEFAULT CURRENT_TIMESTAMP,
 dt_start         DATETIME             NULL,
 id_language      CHAR(2)          DEFAULT 'xx',
