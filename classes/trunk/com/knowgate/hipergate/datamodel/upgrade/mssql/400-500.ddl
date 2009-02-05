@@ -64,3 +64,7 @@ CREATE PROCEDURE k_sp_del_newsmsg @IdNewsMsg CHAR(32) AS
   DELETE k_newsmsg_tags WHERE gu_msg=@IdNewsMsg
   DELETE k_newsmsgs WHERE gu_msg=@IdNewsMsg
 GO;
+
+ALTER TABLE k_newsmsgs ADD dt_modified  DATETIME NULL
+GO;
+

@@ -73,3 +73,6 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';
 GO;
+
+ALTER TABLE k_newsmsgs ADD dt_modified TIMESTAMP NULL
+GO;

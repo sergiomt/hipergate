@@ -63,3 +63,6 @@ BEGIN
   DELETE k_newsmsgs WHERE gu_msg=IdNewsMsg;
 END k_sp_del_newsmsg;
 GO;
+
+ALTER TABLE k_newsmsgs ADD dt_modified DATE NULL
+GO;

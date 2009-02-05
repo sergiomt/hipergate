@@ -72,3 +72,6 @@ BEGIN
   DELETE FROM k_newsmsgs WHERE gu_msg=IdNewsMsg;
 END
 GO;
+
+ALTER TABLE k_newsmsgs ADD dt_modified TIMESTAMP NULL
+GO;
