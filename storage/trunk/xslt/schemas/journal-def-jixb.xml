@@ -2,13 +2,15 @@
   <mapping class="com.knowgate.forums.NewsGroupJournalPage" name="template">
     <value name="name" field="name" style="attribute" usage="required"/>
     <value name="filter" field="filter" style="attribute" usage="required"/>
-    <value name="limit" field="limit" style="attribute" usage="optional" format="int:default" default="10" />
+    <value name="limit" field="limit" style="attribute" usage="optional" default="10" />
     <value name="inputfile" field="inputfile" style="element" usage="required"/>
   </mapping>
   <mapping class="com.knowgate.forums.NewsGroupJournal" name="journal">
     <value name="guid" field="guid" style="attribute" usage="required"/>
     <value name="language" field="language" style="attribute" usage="optional" default="en"/>
+    <value name="encoding" field="encoding" style="attribute" usage="optional" default="UTF-8"/>
     <value name="basehref" field="basehref" style="element" usage="required"/>
+    <value name="blogpath" field="blogpath" style="element" usage="required"/>
     <value name="outputpath" field="outputpath" style="element" usage="required"/>
     <collection name="templates" ordered="false" field="templates" usage="required"/>
   </mapping>
