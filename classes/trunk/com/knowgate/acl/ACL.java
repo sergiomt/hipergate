@@ -240,7 +240,7 @@ public final class ACL {
    * <ul>
    * <li>ACL.PWD_CLEAR_TEXT Do not encrypt sStr (return as it is given)
    * <li>ACL.PWD_DTIP_RC4 Encrypt using RC4 algorithm
-   * <li>ACL.PWD_DTIP_RC4_64 Decrypt by decoding base64 input and the using RC4 algorithm
+   * <li>ACL.PWD_DTIP_RC4_64 Decrypt by decoding base64 input and then using RC4 algorithm
    * </ul>
    * @return Decrypted string
    * @throws NullPointerException if sStr is <b>null</b>
@@ -257,17 +257,22 @@ public final class ACL {
       throw new IllegalArgumentException("ACL.encript() encryption algorithm must be either PWD_CLEAR_TEXT or PWD_DTIP_RC4");
 
     if (DebugFile.trace) {
-      DebugFile.writeln("Begin ACL.encript(" + sStr + "," + String.valueOf(iFlags) + ")" );
+      DebugFile.writeln("Begin ACL.decript(" + sStr + "," + String.valueOf(iFlags) + ")" );
       DebugFile.incIdent();
     }
 
-    if ((iFlags & ACL.PWD_DTIP_RC4)!=0)
+    if ((iFlags & ACL.PWD_DTIP_RC4)!=0) {
+      RC4 oRc4 = new RC4(getRC4key());
+
+	  // Clear Txt -RC-> Byte Array -Base64Encode-> Encryp TXT -Base64Decode-> Byte Array -RC4-> Clear TXT
+
 	  if ((iFlags&ACL.PWD_DTIP_RC4_64)!=0)
-        sDecrypted = RC4EnDeCrypt(Base64Decoder.decode(sStr), getRC4key());
+        sDecrypted = new String(oRc4.rc4(Base64Decoder.decode(sStr)));
       else
-        sDecrypted = RC4EnDeCrypt(sStr, getRC4key());      	
-    else
+        sDecrypted = new String(oRc4.rc4(sStr));     	
+    } else {
       sDecrypted = sStr;
+    }
 	
     if (DebugFile.trace) {
       DebugFile.decIdent();
@@ -294,6 +299,7 @@ public final class ACL {
   public static String encript (String sStr, int iFlags)
     throws IllegalArgumentException, NullPointerException {
 
+	byte[] byEncrypted = null;
     String sEncrypted;
 
     if (iFlags!=PWD_CLEAR_TEXT && iFlags!=PWD_DTIP_RC4 && iFlags!=PWD_DTIP_RC4_64)
@@ -304,15 +310,23 @@ public final class ACL {
       DebugFile.incIdent();
     }
 
-    if ((iFlags & ACL.PWD_DTIP_RC4)!=0)
-      sEncrypted = RC4EnDeCrypt(sStr, getRC4key());
-    else
-      sEncrypted = sStr;
+    if ((iFlags & ACL.PWD_DTIP_RC4)!=0) {
+      RC4 oRc4 = new RC4(getRC4key());
+      
+      byEncrypted = oRc4.rc4(sStr);
+      // Buggy version
+      // sEncrypted = RC4EnDeCrypt(sStr, getRC4key());
 
-	if ((iFlags&ACL.PWD_DTIP_RC4_64)!=0) {
-	  sEncrypted = Base64Encoder.encode(sEncrypted);
-	} // fi
-	
+	  if ((iFlags&ACL.PWD_DTIP_RC4_64)!=0) {
+	    sEncrypted = Base64Encoder.encode(byEncrypted);
+	  } else {
+	    sEncrypted = new String(byEncrypted);
+	  }
+    }
+    else {
+      sEncrypted = sStr;
+    }
+
     if (DebugFile.trace) {
       DebugFile.decIdent();
       DebugFile.writeln("End ACL.encript() : " + sEncrypted);
@@ -371,24 +385,6 @@ public final class ACL {
 
   // ---------------------------------------------------------------------------
 
-  private static void RC4Init(String sPwd, char cKey[], int byBox[])
-    throws NullPointerException {
-    int iPwdLen = sPwd.length();
-    int a, b, t;
-
-    for (a=0; a<256; a++) {
-      cKey[a] = sPwd.charAt((a % iPwdLen));
-      byBox[a] = a;
-    } // next
-
-    for (a=0, b=0; a<256; a++) {
-      b = (b + byBox[a] + cKey[a]) % 256;
-      t = byBox[a];
-      byBox[a] = byBox[b];
-      byBox[b] = t;
-    } // next
-  } // RC4Init
-
   /**
    * <p>Get RC4 default key for encryption</p>
    * Since version 4.0, the RC4 key may be readed from file acl.cnf
@@ -436,44 +432,24 @@ public final class ACL {
    * @param sTxt Text to be encrypted
    * @return String Encrypted text
    * @throws NullPointerException if sTxt is null
-   * @see {@link http://www.4guysfromrolla.com/webtech/010100-1.shtml}
+   * @see {@link http://www.clarenceho.net:8123/blog/articles/2005/11/21/rc4-encryption-in-java-april-2003}
    */
 
   public static String RC4EnDeCrypt(String sTxt)
     throws NullPointerException {
-    return RC4EnDeCrypt(sTxt, getRC4key());
+    RC4 oRc4 = new RC4(getRC4key());
+    return new String(oRc4.rc4(sTxt));
   }
 
   /**
    * <p>Encrypt text using RC4 algorithm</p>
    * @param sTxt Text to be encrypted
    * @param sKey Encryption key
-   * @see {@link http://www.4guysfromrolla.com/webtech/010100-1.shtml}
+   * @see {@link http://www.clarenceho.net:8123/blog/articles/2005/11/21/rc4-encryption-in-java-april-2003}
    */
   public static String RC4EnDeCrypt(String sTxt, String sKey) {
-
-    int iTxtLen = sTxt.length();
-    int i=0, j=0;
-    char cKey[] = new char[256];
-    int byBox[] = new int[256];
-    char byCipher[] = new char[iTxtLen];
-    int t;
-    short k;
-
-    RC4Init(sKey, cKey, byBox);
-
-    for (int a=0; a<iTxtLen; a++) {
-      i = (i+1) % 256;
-      j = (j + byBox[i]) % 256;
-      t = byBox[i];
-      byBox[i] = byBox[j];
-      byBox[j] = t;
-      k = (short) byBox[(byBox[i] + byBox[j]) % 256];
-
-      byCipher[a] = (char) (((short)sTxt.charAt(a)) ^ k);
-    } // next
-
-    return new String(byCipher);
+    RC4 oRc4 = new RC4(sKey);
+    return new String(oRc4.rc4(sTxt));
   } // RC4EnDeCrypt
 
   /**
