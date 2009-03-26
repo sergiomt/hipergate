@@ -259,3 +259,37 @@ ip_addr       VARCHAR(15) NULL
 )
 GO;
 
+CREATE TABLE k_webbeacons (
+    id_webbeacon  INTEGER  NOT NULL,
+    dt_created    DATETIME DEFAULT CURRENT_TIMESTAMP,
+    dt_last_visit DATETIME NOT NULL,
+	nu_pages      INTEGER  NOT NULL,
+    gu_user       CHAR(32) NULL,
+    gu_contact    CHAR(32) NULL,
+    CONSTRAINT pk_webbeacons PRIMARY KEY(id_webbeacon)
+)
+GO;
+    
+CREATE TABLE k_webbeacon_pages (
+    id_page   INTEGER  NOT NULL,
+    nu_hits   INTEGER  NOT NULL,
+    gu_object CHAR(32)     NULL,
+    url_page  CHARACTER VARYING(254) NOT NULL,
+    CONSTRAINT pk_webbeacon_pages PRIMARY KEY(id_page),
+    CONSTRAINT u1_webbeacon_pages UNIQUE (url_page),
+    CONSTRAINT c1_webbeacon_pages CHECK (LENGTH(url_page)>0)
+)
+GO;
+
+CREATE TABLE k_webbeacon_hit (
+    id_webbeacon  INTEGER  NOT NULL,
+    id_page       INTEGER  NOT NULL,
+    id_referrer   INTEGER      NULL,
+    dt_hit        DATETIME DEFAULT CURRENT_TIMESTAMP,
+    ip_addr       INTEGER  NULL,
+    CONSTRAINT f1_webbeacon_hit FOREIGN KEY (id_webbeacon) REFERENCES k_webbeacons (id_webbeacon),
+    CONSTRAINT f2_webbeacon_hit FOREIGN KEY (id_page) REFERENCES k_webbeacon_pages (id_page),
+    CONSTRAINT f3_webbeacon_hit FOREIGN KEY (id_referrer) REFERENCES k_webbeacon_pages (id_page)        
+)
+GO;
+

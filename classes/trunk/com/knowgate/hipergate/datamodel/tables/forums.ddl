@@ -1,16 +1,18 @@
 
 CREATE TABLE k_newsgroups
 (
-gu_newsgrp     CHAR(32)     NOT NULL,
-id_domain      INTEGER      NOT NULL,
-gu_workarea    CHAR(32)     NOT NULL,
-dt_created     DATETIME     DEFAULT CURRENT_TIMESTAMP,
-bo_binaries    SMALLINT     DEFAULT 0,
-dt_last_update DATETIME 	NULL,
-dt_expire      INTEGER          NULL,
-de_newsgrp     VARCHAR(254)     NULL,
+gu_newsgrp     CHAR(32)      NOT NULL,
+id_domain      INTEGER       NOT NULL,
+gu_workarea    CHAR(32)      NOT NULL,
+dt_created     DATETIME      DEFAULT CURRENT_TIMESTAMP,
+bo_binaries    SMALLINT      DEFAULT 0,
+dt_last_update DATETIME 	 NULL,
+dt_expire      INTEGER       NULL,
+de_newsgrp     VARCHAR(254)  NULL,
+tx_journal     VARCHAR(4000) NULL,
 
-CONSTRAINT pk_newsgroups PRIMARY KEY (gu_newsgrp)
+CONSTRAINT pk_newsgroups PRIMARY KEY (gu_newsgrp),
+CONSTRAINT c1_newsgroups CHECK (LENGTH(tx_journal)>0 OR tx_journal IS NULL)
 )
 GO;
 
@@ -19,6 +21,7 @@ CREATE TABLE k_newsgroup_tags
 gu_tag            CHAR(32)     NOT NULL,
 gu_newsgrp        CHAR(32)     NOT NULL,
 dt_created        DATETIME     DEFAULT CURRENT_TIMESTAMP,
+od_tag            SMALLINT     DEFAULT 1000,
 tl_tag            VARCHAR(70)  NOT NULL,
 de_tag            VARCHAR(200)     NULL,
 nu_msgs           INTEGER     DEFAULT 0,
@@ -41,7 +44,7 @@ dt_modified      DATETIME             NULL,
 dt_published     DATETIME         DEFAULT CURRENT_TIMESTAMP,
 dt_start         DATETIME             NULL,
 id_language      CHAR(2)          DEFAULT 'xx',
-id_status        SMALLINT 	  DEFAULT 1,
+id_status        SMALLINT 	      DEFAULT 1,
 id_msg_type      CHAR(5)          DEFAULT 'TXT',
 nu_thread_msgs   INTEGER          DEFAULT 1,
 gu_thread_msg    CHAR(32)         NOT NULL,
@@ -91,8 +94,8 @@ GO;
 
 CREATE TABLE k_newsmsg_tags
 (
-gu_msg CHAR(32)     NOT NULL,
-gu_tag CHAR(32)     NOT NULL,
+gu_msg CHAR(32) NOT NULL,
+gu_tag CHAR(32) NOT NULL,
 
 CONSTRAINT pk_newsmsg_tags PRIMARY KEY (gu_msg,gu_tag)
 )

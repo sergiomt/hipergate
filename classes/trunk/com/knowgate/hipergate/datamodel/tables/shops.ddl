@@ -143,7 +143,8 @@ CREATE TABLE k_orders (
   tx_email_to    CHARACTER VARYING(100) NULL,
   tx_comments    VARCHAR(254)  NULL,
 
-  CONSTRAINT pk_orders PRIMARY KEY(gu_order)
+  CONSTRAINT pk_orders PRIMARY KEY(gu_order),
+  CONSTRAINT u1_orders UNIQUE(gu_workarea,pg_order)  
 )
 GO;
 
@@ -241,7 +242,8 @@ CREATE TABLE k_despatch_advices (
   tx_email_to    CHARACTER VARYING(100) NULL,
   tx_comments    VARCHAR(254)  NULL,
 
-  CONSTRAINT pk_despatch_advices PRIMARY KEY(gu_despatch)
+  CONSTRAINT pk_despatch_advices PRIMARY KEY(gu_despatch),
+  CONSTRAINT u1_despatch_advices UNIQUE(gu_workarea,pg_despatch)  
 )
 GO;
 
@@ -385,6 +387,7 @@ CREATE TABLE k_invoices (
   tx_comments    VARCHAR(254) NULL,
 
   CONSTRAINT pk_invoices PRIMARY KEY(gu_invoice),
+  CONSTRAINT u1_invoices UNIQUE(gu_workarea,pg_invoice),
   CONSTRAINT c1_invoices CHECK (dt_printed IS NULL OR dt_printed>=dt_modified)
 )
 GO;
@@ -440,8 +443,6 @@ CREATE TABLE k_invoice_payments (
   CONSTRAINT pk_invoice_payments PRIMARY KEY(gu_invoice,pg_payment)
 )
 GO;
-
-
 
 CREATE TABLE k_x_orders_invoices
 (
@@ -512,5 +513,78 @@ CREATE TABLE k_invoice_lines (
 
   CONSTRAINT pk_invoice_line PRIMARY KEY(gu_invoice,pg_line),
   CONSTRAINT c1_invoice_lines CHECK (pg_line>0)
+)
+GO;
+
+CREATE TABLE k_quotations (
+  gu_quotation   CHAR(32)      NOT NULL,
+  gu_workarea    CHAR(32)      NOT NULL,
+  pg_quotation   INTEGER       NOT NULL,
+  gu_shop        CHAR(32)      NOT NULL,
+  id_currency    CHAR(3)       NOT NULL,
+  dt_created     DATETIME      DEFAULT CURRENT_TIMESTAMP,
+  dt_modified    DATETIME      NULL,
+  dt_sent        DATETIME      NULL,
+  dt_promised    DATETIME      NULL,
+  dt_delivered   DATETIME      NULL,
+  de_quotation   VARCHAR(100)  NULL,
+  gu_pageset     CHAR(32)      NULL,
+  gu_sales_man   CHAR(32)      NULL,
+  gu_company     CHAR(32)      NULL,
+  gu_contact     CHAR(32)      NULL,
+  gu_supplier    CHAR(32)      NULL,
+  gu_base_quotation CHAR(32)   NULL,
+  nm_client	     VARCHAR(200)  NULL,
+  gu_bill_addr   CHAR(32)      NULL,
+  id_ref         VARCHAR(50)   NULL,
+  im_subtotal    DECIMAL(14,4) NULL,
+  im_taxes       DECIMAL(14,4) NULL,
+  im_shipping    DECIMAL(14,4) NULL,
+  im_discount    VARCHAR(10)   NULL,
+  im_total       DECIMAL(14,4) NULL,
+  tp_billing     CHAR(1)       NULL,
+  tx_email_to    CHARACTER VARYING(100) NULL,
+  tx_comments    VARCHAR(254)  NULL,
+
+  CONSTRAINT pk_quotations PRIMARY KEY(gu_quotation),
+  CONSTRAINT u1_quotations UNIQUE(gu_workarea,pg_quotation)
+  
+)
+GO;
+
+CREATE TABLE k_quotation_lines (
+  gu_quotation    CHAR(32)      NOT NULL,
+  pg_line         INTEGER       NOT NULL,
+  pr_sale         DECIMAL(14,4) NOT NULL,
+  nu_quantity     FLOAT	        NOT NULL,
+  id_unit         VARCHAR(16)   DEFAULT 'UNIT',
+  pr_total        DECIMAL(14,4) NOT NULL,
+  pct_tax_rate    FLOAT         NOT NULL,
+  is_tax_included SMALLINT      DEFAULT 1,
+  nm_product      VARCHAR(128)  NOT NULL,
+  gu_product      CHAR(32)          NULL,
+  gu_item         CHAR(32)          NULL,
+  tx_promotion    VARCHAR(100)      NULL,
+  tx_options      VARCHAR(254)      NULL,
+
+  CONSTRAINT pk_quotation_line PRIMARY KEY(gu_quotation,pg_line),
+  CONSTRAINT c1_quotation_lines CHECK (pg_line>0)
+)
+GO;
+
+CREATE TABLE k_x_quotations_orders
+(
+  gu_order     CHAR(32) NOT NULL,
+  gu_quotation CHAR(32) NOT NULL,
+
+  CONSTRAINT pk_x_quotations_orders PRIMARY KEY(gu_order,gu_quotation)
+)
+GO;
+
+CREATE TABLE k_quotations_next
+(
+  gu_workarea  CHAR(32) NOT NULL,
+  pg_quotation INTEGER  NOT NULL,
+  CONSTRAINT pk_quotations_next PRIMARY KEY(gu_workarea,pg_quotation)
 )
 GO;
