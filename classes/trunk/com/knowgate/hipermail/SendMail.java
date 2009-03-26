@@ -551,6 +551,58 @@ public final class SendMail {
 	    catch (FTPException neverthrown) {}
       return oRetMsgs;
     } // send
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * <p>Send a dual plain text and HTML message to a given recipients list</p>
+     * The message will be sent inmediately indipendently to each recipient
+     * @param oSessionProps Properties
+     * <table><tr><th>Property</th><th>Description></th><th>Default value</th></tr>
+     *        <tr><td>mail.user</td><td>Store and transport user</td><td></td></tr>
+     *        <tr><td>mail.password</td><td></td>Store and transport password<td></td></tr>
+     *        <tr><td>mail.store.protocol</td><td></td><td>pop3</td></tr>
+     *        <tr><td>mail.transport.protocol</td><td></td><td>smtp</td></tr>
+     *        <tr><td>mail.<i>storeprotocol</i>.host</td><td>For example: pop.mailserver.com</td><td></td></tr>
+     *        <tr><td>mail.<i>storeprotocol</i>.socketFactory.class</td><td>Only if using SSL set this value to javax.net.ssl.SSLSocketFactory</td><td></td></tr>
+     *        <tr><td>mail.<i>storeprotocol</i>.socketFactory.port</td><td>Only if using SSL</td><td></td></tr>
+     *        <tr><td>mail.<i>transportprotocol</i>.host</td><td>For example: smtp.mailserver.com</td><td></td></tr>
+     *        <tr><td>mail.<i>transportprotocol</i>.socketFactory.class</td><td>Only if using SSL set this value to javax.net.ssl.SSLSocketFactory</td><td></td></tr>
+     *        <tr><td>mail.<i>transportprotocol</i>.socketFactory.port</td><td>Only if using SSL</td><td></td></tr>
+     * </table>
+     * @param sTextHtml HTML message part
+     * @param sTextPlain Plain text message part
+     * @param sSubject Message subject
+     * @param sFromAddr Recipient From address
+     * @param sFromPersonal Recipient From Display Name
+     * @param sReplyAddr Reply-To address
+     * @param aRecipients List of recipient addresses
+     */
+ 
+	public static ArrayList send(Properties oSessionProps,
+								 String sTextHtml,
+								 String sTextPlain,
+								 String sSubject,
+							     String sFromAddr,
+							     String sFromPersonal, 
+							     String sReplyAddr,
+							     String aRecipients[])
+      throws IOException,IllegalAccessException,NullPointerException,
+             MessagingException,SQLException,ClassNotFoundException,InstantiationException {
+
+	  final String StrNull = null;
+	  final String ArrNull[] = null;
+
+	  if (null==sSubject) sSubject = "";
+	  if (null==sFromPersonal) sFromPersonal = sFromAddr;
+	  if (null==sReplyAddr) sReplyAddr = sFromAddr;
+	  ArrayList oRetMsgs = null;
+	  try {
+	    oRetMsgs = send(oSessionProps, StrNull, sTextHtml, sTextPlain, "UTF-8", ArrNull, sSubject, sFromAddr, sFromPersonal, sReplyAddr, aRecipients, "to", StrNull, StrNull, StrNull);
+	  } catch (FileNotFoundException neverthrown) {}
+	    catch (FTPException neverthrown) {}
+      return oRetMsgs;
+    } // send
 	
     // ------------------------------------------------------------------------
     	  
