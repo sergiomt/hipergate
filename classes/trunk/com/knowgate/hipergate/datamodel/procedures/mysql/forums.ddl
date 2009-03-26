@@ -26,6 +26,7 @@ BEGIN
       END IF;
     UNTIL Done=1 END REPEAT;
   CLOSE childs;
+  UPDATE k_newsmsgs SET nu_thread_msgs=nu_thread_msgs-1 WHERE gu_thread_msg=IdNewsMsg;
   DELETE FROM k_x_cat_objs WHERE gu_object=IdNewsMsg;
   DELETE FROM k_newsmsg_vote WHERE gu_msg=IdNewsMsg;
   DELETE FROM k_newsmsg_tags WHERE gu_msg=IdNewsMsg;
