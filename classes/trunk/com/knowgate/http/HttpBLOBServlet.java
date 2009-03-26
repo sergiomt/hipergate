@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+  Copyright (C) 2003-2009  Know Gate S.L. All rights reserved.
+                           C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -53,12 +53,12 @@ import com.knowgate.misc.Environment;
 /**
  * <p>Send LONGVARBINARY database field to HttpServletResponse OutputStream</p>
  * @author Sergio Montoro ten
- * @version 2.0
+ * @version 5.0
  */
 
 public class HttpBLOBServlet extends HttpServlet {
 
- private static final long serialVersionUID = 2l;
+ private static final long serialVersionUID = 5l;
 
  // -----------------------------------------------------------
 
@@ -126,14 +126,20 @@ public class HttpBLOBServlet extends HttpServlet {
     {
     boolean bFound;
     String sSQL;
+    String sExt;
+    String sContentType;
     Class oDriver;
     Connection oConn = null;
+    Connection oCon2 = null;
     PreparedStatement oStmt;
+    PreparedStatement oStm2;
     ResultSet oRSet;
+    ResultSet oRSe2;
     InputStream oBlob = null;
     int iOffset;
     int iReaded;
     int iPar;
+    int iDot;
     StringTokenizer oStrTok;
 
      if (DebugFile.trace) {
@@ -175,7 +181,6 @@ public class HttpBLOBServlet extends HttpServlet {
       if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(" + sSQL + ")");
 
       oStmt = oConn.prepareStatement (sSQL);
-
       iPar = 0;
       oStrTok = new StringTokenizer(request.getParameter("pk_value"), ",");
       while (oStrTok.hasMoreTokens()) {
@@ -192,14 +197,31 @@ public class HttpBLOBServlet extends HttpServlet {
       if (bFound) {
 
         sFileName = oRSet.getString(1);
+		sContentType = "application/octet-stream";
+		iDot = sFileName.indexOf('.');
+		
+		// New for v5.0, set mime type at header
+		
+		if (iDot>=0 && iDot<sFileName.length()-1) {
+		  sExt = sFileName.substring(iDot+1).toUpperCase();
+		  oCon2 = DriverManager.getConnection(jdbcURL,dbUserName,dbUserPassword);
+		  oStm2 = oCon2.prepareStatement("SELECT mime_type FROM k_lu_prod_types WHERE id_prod_type=? AND mime_type IS NOT NULL",
+		  								 ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+		  oStm2.setString(1, sExt);
+		  oRSe2 = oStm2.executeQuery();
+		  if (oRSe2.next()) sContentType = oRSe2.getString(1);
+		  oRSe2.close();
+		  oStm2.close();
+		} // fi
+		// *** end new for v5.0
 
         if (DebugFile.trace) {
-          DebugFile.writeln("response.setContentType(\"application/octet-stream\")");
+          DebugFile.writeln("response.setContentType(\""+sContentType+"\")");
           DebugFile.writeln("response.setHeader(\"Content-Disposition\", \"inline; filename=\"" + sFileName + "\"");
         }
 
         // Send some basic http headers to support binary d/l.
-        response.setContentType("application/octet-stream");
+        response.setContentType(sContentType);
         response.setHeader("Content-Disposition", "inline; filename=\"" + sFileName + "\"");
 
         if (DebugFile.trace)
