@@ -19,6 +19,7 @@ CREATE PROCEDURE k_sp_del_newsmsg @IdNewsMsg CHAR(32) AS
         EXECUTE k_sp_del_newsmsg @IdChild
       END
   CLOSE childs
+  UPDATE k_newsmsgs SET nu_thread_msgs=nu_thread_msgs-1 WHERE gu_thread_msg=@IdNewsMsg
   DELETE k_x_cat_objs WHERE gu_object=@IdNewsMsg
   DELETE k_newsmsg_vote WHERE gu_msg=@IdNewsMsg
   DELETE k_newsmsg_tags WHERE gu_msg=@IdNewsMsg
