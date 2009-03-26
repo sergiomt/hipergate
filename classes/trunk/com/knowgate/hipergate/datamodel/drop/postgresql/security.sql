@@ -1,3 +1,5 @@
+DROP SEQUENCE seq_k_webbeacons;
+
 ALTER TABLE k_workareas DROP CONSTRAINT f1_workareas;
 
 ALTER TABLE k_x_group_user DROP CONSTRAINT f1_x_group_user;
