@@ -32,11 +32,17 @@
 
 package com.knowgate.lucene;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import java.util.Date;
+import java.util.Properties;
 
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.DateTools.Resolution;
 import org.apache.lucene.document.Field;
@@ -44,6 +50,9 @@ import org.apache.lucene.document.Field.Index;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.Document;
 
+
+import com.knowgate.dfs.FileSystem;
+import com.knowgate.debug.DebugFile;
 import com.knowgate.misc.Gadgets;
 
 /**
@@ -79,4 +88,55 @@ public class NewsMessageIndexer extends Indexer {
       oDoc.add (new Field("abstract", sText, Field.Store.YES, Field.Index.TOKENIZED));
     oIWrt.addDocument(oDoc);
   } // addNewsMessage
+
+
+  public static void addOrReplaceNewsMessage(Properties oProps, String sGuid, String sWorkArea,
+                                             String sContainer, String sTitle,
+                                             String sAuthor, Date dtCreated,
+                                              String sText)
+    throws ClassNotFoundException, IOException, IllegalArgumentException,
+             NoSuchFieldException, IllegalAccessException, InstantiationException, NullPointerException {
+
+    String sDirectory = oProps.getProperty("luceneindex");
+
+    if (null==sDirectory) {
+      if (DebugFile.trace) DebugFile.decIdent();
+      throw new NoSuchFieldException ("Cannot find luceneindex property");
+    }
+
+    sDirectory = Gadgets.chomp(sDirectory, File.separator) + "k_newsmsgs" + File.separator + sWorkArea;
+
+    if (DebugFile.trace) DebugFile.writeln("index directory is " + sDirectory);
+
+    File oDir = new File(sDirectory);
+	boolean bNewIndex = !oDir.exists();
+    if (bNewIndex) {
+	  FileSystem oFs = new FileSystem();
+	  try {
+	    oFs.mkdirs("file://"+sDirectory);
+	  } catch (Exception xcpt) {
+        if (DebugFile.trace) DebugFile.writeln(xcpt.getClass()+" "+xcpt.getMessage());
+        throw new FileNotFoundException ("Could not create directory "+sDirectory+" "+xcpt.getMessage());
+	  }
+    }
+
+    if (DebugFile.trace)
+      DebugFile.writeln("Class.forName(" + oProps.getProperty("analyzer" , DEFAULT_ANALYZER) + ")");
+
+    Class oAnalyzer = Class.forName(oProps.getProperty("analyzer" , DEFAULT_ANALYZER));
+
+    if (DebugFile.trace)
+      DebugFile.writeln("new IndexWriter(...)");
+
+    IndexReader oIRdr = IndexReader.open(sDirectory);
+    oIRdr.deleteDocuments(new Term("guid",sGuid));
+    oIRdr.close();
+
+    IndexWriter oIWrt = new IndexWriter(sDirectory, (Analyzer) oAnalyzer.newInstance(), bNewIndex);
+	
+	addNewsMessage(oIWrt, sGuid, sWorkArea, sContainer, sTitle, sAuthor, dtCreated, sText);
+	
+	oIWrt.close();
+	
+  } // addOrReplaceNewsMessage
 }
