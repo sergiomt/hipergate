@@ -214,6 +214,10 @@ public class WorkArea extends DBPersist {
    * <tr><td>DELETE k_orders</td></tr>
    * <tr><td>DELETE k_order_lines</td></tr>
    * <tr><td>DELETE k_orders_lookup</td></tr>
+   * <tr><td>DELETE k_quotations</td></tr>
+   * <tr><td>DELETE k_quotation_lines</td></tr>
+   * <tr><td>DELETE k_x_quotations_orders</td></tr>
+   * <tr><td>DELETE k_quotation_next</td></tr>
    * <tr><td>DELETE k_warehouses</td></tr>
    * <tr><td>DELETE k_sale_points</td></tr>
    * <tr><td>DELETE k_lu_business_states</td></tr>
@@ -683,6 +687,35 @@ public class WorkArea extends DBPersist {
       oStmt.close();
     }
 
+    //-------------------
+	// Nuevo para la v5.0
+
+    if (DBBind.exists(oConn, DB.k_quotations, "U")) {
+      oStmt = oConn.createStatement();
+      try { if (oConn.getDataBaseProduct()!=JDCConnection.DBMS_POSTGRESQL) oStmt.setQueryTimeout(30); } catch (SQLException sqle) {}
+
+	  DBSubset oPagSets = new DBSubset(DB.k_quotations, DB.gu_pageset, DB.gu_workarea+"=? AND "+DB.gu_pageset+" IS NOT NULL", 100);
+	  int nPagSets = oPagSets.load(oConn, new Object[]{sWrkAreaGUID});
+	  for (int p=0; p<nPagSets; p++) PageSetDB.delete(oConn, oPagSets.getString(0,p));
+
+      sSQL = "DELETE FROM " + DB.k_x_quotations_orders + " WHERE " + DB.gu_quotation + " IN (SELECT "+DB.gu_quotation+" FROM "+DB.k_quotations+" WHERE "+DB.gu_workarea+"='"+sWrkAreaGUID + "')";
+      if (DebugFile.trace) DebugFile.writeln("Statement.execute(" + sSQL + ")");
+      oStmt.execute(sSQL);
+
+      sSQL = "DELETE FROM " + DB.k_quotation_lines + " WHERE " + DB.gu_quotation + " IN (SELECT "+DB.gu_quotation+" FROM "+DB.k_quotations+" WHERE "+DB.gu_workarea+"='"+sWrkAreaGUID + "')";
+      if (DebugFile.trace) DebugFile.writeln("Statement.execute(" + sSQL + ")");
+      oStmt.execute(sSQL);
+
+      sSQL = "DELETE FROM " + DB.k_quotations + " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "'";
+      if (DebugFile.trace) DebugFile.writeln("Statement.execute(" + sSQL + ")");
+      oStmt.execute(sSQL);
+
+      sSQL = "DELETE FROM " + DB.k_quotations_next + " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "'";
+      if (DebugFile.trace) DebugFile.writeln("Statement.execute(" + sSQL + ")");
+      oStmt.execute(sSQL);
+    }
+
+    //-------------------
 	// Nuevo para la v4.0
 
 	if (DBBind.exists(oConn, DB.k_warehouses, "U")) {
@@ -1666,6 +1699,72 @@ public class WorkArea extends DBPersist {
 
   // ----------------------------------------------------------
 
+  /**
+   * <p>Checks whether or not a user has access rights for a given WorkArea and Application</p>
+   * @param oConn JDBC database connection
+   * @param guWorkArea WorkArea GUID
+   * @param isApp Application Identifier
+   * @return boolean
+   * @throws SQLException
+   * @since 5.0
+   */
+  public static boolean getUserAppAccess(JDCConnection oConn, String guWorkArea, String sUserId, int idApp)
+  	throws SQLException {
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin WorkArea.getUserAppAccess([Connection], " + guWorkArea + "," + sUserId + "," + String.valueOf(idApp) + ")");
+      DebugFile.incIdent();
+    }
+
+    boolean bHasAccess = false;
+
+	PreparedStatement oStmt;
+	ResultSet oRSet;
+	String guAdmins, guPowUsrs, guUsrs, guGuests, guOther;
+	
+	oStmt = oConn.prepareStatement("SELECT " + DB.gu_admins + "," + DB.gu_powusers + "," + DB.gu_users + "," + DB.gu_guests + "," + DB.gu_other + " FROM " + DB.DB.k_x_app_workarea + " WHERE " + DB.gu_workarea + "=? AND " + DB.id_app +" =?",
+								   ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+	oStmt.setString(1, guWorkArea);
+	oStmt.setInt(1, idApp);	
+	ResultSet oRSet = oStmt.executeQuery();
+	if (oRSet.next()) {
+	  guAdmins = oRSet.getString(1);
+	  guPowUsrs= oRSet.getString(2);
+	  guUsrs   = oRSet.getString(3);
+	  guGuests = oRSet.getString(4);
+	  guOther  = oRSet.getString(5);
+	} // fi
+	oRSet.close();
+	oStmt.close();
+	
+	if (guAdmins!=null || guPowUsrs!=null || guUsrs!=null || guGuests!=null || guOther!=null) {
+	  String sGroupList = "";
+	  if (guAdmins!=null)  sGroupList = "'"+guAdmins+"'";
+	  if (guPowUsrs!=null) sGroupList += (sGroupList.length()==0 ? "" : ",")+"'"+guPowUsrs+"'";
+	  if (guUsrs!=null)    sGroupList += (sGroupList.length()==0 ? "" : ",")+"'"+guUsrs+"'";
+	  if (guGuests!=null)  sGroupList += (sGroupList.length()==0 ? "" : ",")+"'"+guGuests+"'";
+	  if (guOther!=null)   sGroupList += (sGroupList.length()==0 ? "" : ",")+"'"+guOther+"'";
+
+	  oStmt = oConn.prepareStatement("SELECT NULL FROM "+DB.k_x_group_user+" WHERE "+DB.gu_user+"=? AND "+
+									 DB.gu_acl_group+" IN ("+sGroupList+")",
+								     ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+	  oStmt.setString(1, sUserId);
+	  oRSet = oStmt.executeQuery();
+	  bHasAccess = oRSet.next();
+	  oRSet.close();
+	  oStmt.close();
+	} // fi
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End WorkArea.getUserAppAccess() : " + String.valueOf(bHasAccess));
+    }
+
+	return bHasAccess;
+  } // getUserAppAccess
+
+  // ----------------------------------------------------------
+
   public static String getIdFromName(JDCConnection oConn, int iDomainId, String sWorkAreaNm) throws SQLException {
     PreparedStatement oStmt;
     ResultSet oRSet;
@@ -1760,23 +1859,31 @@ public class WorkArea extends DBPersist {
       DebugFile.incIdent();
     }
 
-    if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(SELECT " + DB.tx_date_format + " FROM " + DB.k_workareas + " WHERE " + DB.gu_workarea + "='" + sWorkAreaGuid);
+	if (oParams.containsKey("tx_date_format")) {
+      sRetVal = (String) oParams.get("tx_date_format");
+	} else {
 
-    try {
-      oStmt = oConn.prepareStatement("SELECT " + DB.tx_date_format + " FROM " + DB.k_workareas + " WHERE " + DB.gu_workarea + "=?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-      oStmt.setString(1, sWorkAreaGuid);
-      oRSet = oStmt.executeQuery();
-      if (oRSet.next())
-        sRetVal = oRSet.getString(1);
-      else
-        sRetVal = null;
-    } catch (SQLException sqle) {
-      DebugFile.writeln("SQLException "+sqle.getMessage());
-      sRetVal = "yyyy-MM-dd";
-    } finally {
-      if (null!=oRSet) oRSet.close();
-      if (null!=oStmt) oStmt.close();      
-    }
+      if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(SELECT " + DB.tx_date_format + " FROM " + DB.k_workareas + " WHERE " + DB.gu_workarea + "='" + sWorkAreaGuid);
+
+      try {
+        oStmt = oConn.prepareStatement("SELECT " + DB.tx_date_format + " FROM " + DB.k_workareas + " WHERE " + DB.gu_workarea + "=?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+        oStmt.setString(1, sWorkAreaGuid);
+        oRSet = oStmt.executeQuery();
+        if (oRSet.next()) {
+          sRetVal = oRSet.getString(1);
+          oParams.put("tx_date_format", sRetVal);
+        }
+        else {
+          sRetVal = null;
+        }
+      } catch (SQLException sqle) {
+        DebugFile.writeln("SQLException "+sqle.getMessage());
+        sRetVal = "yyyy-MM-dd";
+      } finally {
+        if (null!=oRSet) oRSet.close();
+        if (null!=oStmt) oStmt.close();      
+      }
+	} // fi
 
     if (DebugFile.trace) {
       DebugFile.decIdent();
@@ -1813,35 +1920,40 @@ public class WorkArea extends DBPersist {
       DebugFile.incIdent();
     }
 
-    if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(SELECT " + DB.tx_date_format + "," + DB.id_locale + " FROM " + DB.k_workareas + " WHERE " + DB.gu_workarea + "='" + sWorkAreaGuid);
+	if (oParams.containsKey("sdf_date_format")) {
+      oRetVal = (SimpleDateFormat) oParams.get("sdf_date_format");
+	} else {
+      if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(SELECT " + DB.tx_date_format + "," + DB.id_locale + " FROM " + DB.k_workareas + " WHERE " + DB.gu_workarea + "='" + sWorkAreaGuid);
 
-    try {
-      oStmt = oConn.prepareStatement("SELECT " + DB.tx_date_format + "," + DB.id_locale + " FROM " + DB.k_workareas + " WHERE " + DB.gu_workarea + "=?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-      oStmt.setString(1, sWorkAreaGuid);
-      oRSet = oStmt.executeQuery();
-      if (oRSet.next()) {
-        String sFmt = oRSet.getString(1);
-        if (oRSet.wasNull()) {
-		  String sLoc = oRSet.getString(2);
-		  if (oRSet.wasNull()) {
-            oRetVal = new SimpleDateFormat("yyyy-MM-dd");
-		  } else {
-		  	oRetVal = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.SHORT, new Locale(sLoc));
-		  }
-        } else {
-          oRetVal = new SimpleDateFormat(sFmt);
+      try {
+        oStmt = oConn.prepareStatement("SELECT " + DB.tx_date_format + "," + DB.id_locale + " FROM " + DB.k_workareas + " WHERE " + DB.gu_workarea + "=?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+        oStmt.setString(1, sWorkAreaGuid);
+        oRSet = oStmt.executeQuery();
+        if (oRSet.next()) {
+          String sFmt = oRSet.getString(1);
+          if (oRSet.wasNull()) {
+		    String sLoc = oRSet.getString(2);
+		    if (oRSet.wasNull()) {
+              oRetVal = new SimpleDateFormat("yyyy-MM-dd");
+		    } else {
+		  	  oRetVal = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.SHORT, new Locale(sLoc));
+		    }
+          } else {
+            oRetVal = new SimpleDateFormat(sFmt);
+          }
+          oParams.put("sdf_date_format", oRetVal);
         }
+        else {
+          oRetVal = null;      
+        }
+      } catch (SQLException sqle) {
+        DebugFile.writeln("SQLException "+sqle.getMessage());
+        oRetVal = new SimpleDateFormat("yyyy-MM-dd");
+      } finally {
+        if (null!=oRSet) oRSet.close();
+        if (null!=oStmt) oStmt.close();      
       }
-      else {
-        oRetVal = null;      
-      }
-    } catch (SQLException sqle) {
-      DebugFile.writeln("SQLException "+sqle.getMessage());
-      oRetVal = new SimpleDateFormat("yyyy-MM-dd");
-    } finally {
-      if (null!=oRSet) oRSet.close();
-      if (null!=oStmt) oStmt.close();      
-    }
+	} // fi
 
     if (DebugFile.trace) {
       DebugFile.decIdent();
