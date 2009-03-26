@@ -348,7 +348,7 @@ public class Project extends DBPersist {
           oStmt = oConn.prepareStatement("SELECT " + DBBind.Functions.ISNULL + "(" + DB.nm_user + ",'')" + DBBind.Functions.CONCAT + "' '" + DBBind.Functions.CONCAT + DBBind.Functions.ISNULL + "(" + DB.tx_surname1 + ",'') " + DBBind.Functions.CONCAT + DBBind.Functions.ISNULL + "(" + DB.tx_surname2 + ",'') FROM " + DB.k_users + " WHERE " + DB.gu_user + "=?",
         							     ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
         }
-        oStmt.setString(1, getString(DB.gu_contact));
+        oStmt.setString(1, getString(DB.gu_user));
         oRSet = oStmt.executeQuery();
         if (oRSet.next())
           replace(DB.tx_user, oRSet.getString(1));
