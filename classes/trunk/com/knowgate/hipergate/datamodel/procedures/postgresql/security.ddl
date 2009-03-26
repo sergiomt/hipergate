@@ -42,3 +42,7 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';
 GO;
+
+CREATE SEQUENCE seq_k_webbeacons INCREMENT 1 START 1
+GO;
+

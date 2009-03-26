@@ -19,15 +19,16 @@ GO;
 CREATE FUNCTION k_sp_del_newsmsg (CHAR) RETURNS INTEGER AS '
 DECLARE
   IdChild CHAR(32);
-  childs CURSOR (id CHAR(32)) FOR SELECT gu_msg FROM k_newsmsgs WHERE gu_parent_msg=id;
+  childs REFCURSOR;
 BEGIN
-  OPEN childs($1);
+  OPEN childs FOR SELECT gu_msg FROM k_newsmsgs WHERE gu_parent_msg=$1;
     LOOP
       FETCH childs INTO IdChild;
       EXIT WHEN NOT FOUND;
       PERFORM k_sp_del_newsmsg (IdChild);
     END LOOP;
   CLOSE childs;
+  UPDATE k_newsmsgs SET nu_thread_msgs=nu_thread_msgs-1 WHERE gu_thread_msg=$1;  
   DELETE FROM k_x_cat_objs WHERE gu_object=$1;
   DELETE FROM k_newsmsg_vote WHERE gu_msg=$1;
   DELETE FROM k_newsmsg_tags WHERE gu_msg=$1;
