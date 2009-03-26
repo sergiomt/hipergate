@@ -1099,12 +1099,12 @@ public class Category  extends DBPersist {
     if (DebugFile.trace) {
       DebugFile.writeln("Begin Category.getLabel([Connection], " + sLanguage + ")" );
       DebugFile.incIdent();
-      DebugFile.writeln("Connection.prepareStatement(SELECT " + DB.tr_category + " FROM " + DB.k_cat_labels + " WHERE " + DB.gu_category + "='" + get(DB.gu_category) + "' AND " + DB.id_language + "='" + sLanguage + "'");
+      DebugFile.writeln("Connection.prepareStatement(SELECT " + DB.tr_category + " FROM " + DB.k_cat_labels + " WHERE " + DB.gu_category + "='" + get(DB.gu_category) + "' AND " + DB.id_language + "='" + Gadgets.left(sLanguage,2).toLowerCase() + "'");
       }
 
     PreparedStatement oStmt = oConn.prepareStatement("SELECT " + DB.tr_category + " FROM " + DB.k_cat_labels + " WHERE " + DB.gu_category + "=? AND " + DB.id_language + "=?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
     oStmt.setString(1, getString(DB.gu_category));
-    oStmt.setString(2, sLanguage);
+    oStmt.setString(2, Gadgets.left(sLanguage,2).toLowerCase());
 
     ResultSet oRSet = oStmt.executeQuery();
     if (oRSet.next())

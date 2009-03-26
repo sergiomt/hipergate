@@ -76,9 +76,9 @@ public class Order extends AbstractOrder {
    */
   public Order(String sOrderId) {
     super(DB.k_orders, DB.k_order_lines, DB.gu_order, "Order");
-    put(DB.gu_order, sOrderId);
     oBillAddr=oShipAddr=null;
     sGuDespatchAdvice=sGuInvoice=null;
+    put(DB.gu_order, sOrderId);
   }
 
   /**
@@ -89,6 +89,8 @@ public class Order extends AbstractOrder {
    */
   public Order(JDCConnection oConn, String sOrderId) throws SQLException {
     super(DB.k_orders, DB.k_order_lines, DB.gu_order, "Order");
+    oBillAddr=oShipAddr=null;
+    sGuDespatchAdvice=sGuInvoice=null;
     load(oConn, new Object[]{sOrderId});
   }
 
@@ -176,7 +178,7 @@ public class Order extends AbstractOrder {
    * @param oConn Database Connection
    * If gu_order is null then a new GUID is automatically assigned.<br>
    * If pg_order is null then next value for sequence seq_k_orders is automatically assigned.<br>
-   * If id_legal is <b>null</b> and sn_passport or id_legal is provided for customer then that one is automatically set.<br>
+   * If id_legal is <b>null</b> and gu_contact or gu_company is provided for customer then that one is automatically set.<br>
    * dt_modified field is set to current date.<br>
    * @throws SQLException
    */

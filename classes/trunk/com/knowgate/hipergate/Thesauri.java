@@ -35,6 +35,7 @@ package com.knowgate.hipergate;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Types;
 
 import com.knowgate.debug.DebugFile;
 import com.knowgate.dataobjs.DB;
@@ -96,7 +97,10 @@ public class Thesauri {
     oStmt.setString(3, sTxTerm);
     oStmt.setString(4, sTxTermPlural);
     oStmt.setString(5, sIdLanguage);
-    oStmt.setString(6, sDeTerm);
+    if (sDeTerm==null)
+      oStmt.setNull(6, Types.VARCHAR);
+    else
+      oStmt.setString(6, sDeTerm);
     oStmt.setString(7, sIdScope);
     oStmt.setInt(8, iIdDomain);
     oStmt.setInt(9, iNextVal);
@@ -143,21 +147,30 @@ public class Thesauri {
     oStmt = oConn.prepareStatement("SELECT " + DB.gu_rootterm + "," + DB.id_term + "0," + DB.id_term + "1," + DB.id_term + "2," + DB.id_term + "3," + DB.id_term + "4," + DB.id_term + "5," + DB.id_term + "6," + DB.id_term + "7," + DB.id_term + "8," + DB.id_term + "9 FROM " + DB.k_thesauri + " WHERE " + DB.gu_term + "=?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
     oStmt.setString(1, sGuParent);
     oRSet = oStmt.executeQuery();
-    oRSet.next();
-    sGuRootTerm = oRSet.getString(1);
-    oTerm[0] = oRSet.getObject(2);
-    oTerm[1] = oRSet.getObject(3);
-    oTerm[2] = oRSet.getObject(4);
-    oTerm[3] = oRSet.getObject(5);
-    oTerm[4] = oRSet.getObject(6);
-    oTerm[5] = oRSet.getObject(7);
-    oTerm[6] = oRSet.getObject(8);
-    oTerm[7] = oRSet.getObject(9);
-    oTerm[8] = oRSet.getObject(10);
-    oTerm[9] = oRSet.getObject(11);
+    boolean bParentExists = oRSet.next();
+    if (bParentExists) {
+      sGuRootTerm = oRSet.getString(1);
+      oTerm[0] = oRSet.getObject(2);
+      oTerm[1] = oRSet.getObject(3);
+      oTerm[2] = oRSet.getObject(4);
+      oTerm[3] = oRSet.getObject(5);
+      oTerm[4] = oRSet.getObject(6);
+      oTerm[5] = oRSet.getObject(7);
+      oTerm[6] = oRSet.getObject(8);
+      oTerm[7] = oRSet.getObject(9);
+      oTerm[8] = oRSet.getObject(10);
+      oTerm[9] = oRSet.getObject(11);
+    } else {
+      sGuRootTerm = null;
+    }
     oRSet.close();
     oStmt.close();
 
+	if (!bParentExists) {
+	  if (DebugFile.trace) { DebugFile.writeln("Parent term \""+sGuParent+"\" not found"); DebugFile.decIdent(); }
+	  throw new SQLException ("Thesauri.createTerm() Parent term \""+sGuParent+"\" not found");
+	}
+	
     if (DebugFile.trace)
       DebugFile.writeln("Connection.prepareStatement(INSERT INTO " + DB.k_thesauri + " (" + DB.gu_rootterm + "," + DB.gu_term + "," + DB.tx_term + "," + DB.tx_term + "2," + DB.id_language + "," + DB.de_term + "," + DB.id_scope + "," + DB.id_domain + "," + DB.id_term + "0," + DB.id_term + "1," + DB.id_term + "2," + DB.id_term + "3," + DB.id_term + "4," + DB.id_term + "5," + DB.id_term + "6," + DB.id_term + "7," + DB.id_term + "8," + DB.id_term + "9) VALUES ('" + sGuRootTerm + "','" + sGuTerm + "','" + sTxTerm + "','" + sTxTermPlural + "','" + sIdLanguage + "','" + sDeTerm + "','" + sIdScope + "'," + String.valueOf(iIdDomain) + ",?,?,?,?,?,?,?,?,?,?))");
 
@@ -167,7 +180,10 @@ public class Thesauri {
     oStmt.setString(3, sTxTerm);
     oStmt.setString(4, sTxTermPlural);
     oStmt.setString(5, sIdLanguage);
-    oStmt.setString(6, sDeTerm);
+    if (sDeTerm==null)
+      oStmt.setNull(6, Types.VARCHAR);
+    else
+      oStmt.setString(6, sDeTerm);
     oStmt.setString(7, sIdScope);
     oStmt.setInt(8, iIdDomain);
 

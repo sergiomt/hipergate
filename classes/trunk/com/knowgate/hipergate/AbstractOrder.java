@@ -24,7 +24,7 @@ import com.knowgate.misc.Gadgets;
 import com.knowgate.dataobjs.DBBind;
 
 /**
- * An abstract super class for Order and Invoice classes
+ * An abstract super class for Quotation, Order and Invoice classes
  * @author Sergio Montoro Ten
  * @version 3.0
  */
