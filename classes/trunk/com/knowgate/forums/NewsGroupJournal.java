@@ -51,14 +51,10 @@ import java.sql.Timestamp;
 
 import javax.xml.transform.TransformerException;
 
-import org.jibx.runtime.IBindingFactory;
-import org.jibx.runtime.IUnmarshallingContext;
-import org.jibx.runtime.BindingDirectory;
-import org.jibx.runtime.JiBXException;
-
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.misc.Calendar;
 import com.knowgate.misc.Gadgets;
+import com.knowgate.misc.Month;
 import com.knowgate.dfs.FileSystem;
 import com.knowgate.debug.DebugFile;
 import com.knowgate.dataobjs.DB;
@@ -68,28 +64,20 @@ import com.knowgate.dataxslt.StylesheetCache;
 import com.knowgate.forums.Forums;
 import com.knowgate.forums.NewsGroup;
 
-public class NewsGroupJournal extends NewsGroup {
+/**
+ * <p>NewsGroupJournal</p>
+ * @author Sergio Montoro Ten
+ * @version 5.0
+ */
+public class NewsGroupJournal {
 
   private String guid;
   private String blogpath;
   private String basehref;
   private String language;
+  private String encoding;
   private String outputpath;
   private ArrayList<NewsGroupJournalPage> templates;
-
-  private class Month {
-  	
-  	public Month (int y, int m) { year = y; month = m; }
-
-	public Date firstDay () { return new Date(year, month, 1, 0, 0, 0); }
-
-	public Date lastDay () { return new Date(year, month, Calendar.LastDay(month, year+1900), 23, 59, 59); }
-
-	public String toString() { return String.valueOf(year+1900)+"_"+Gadgets.leftPad(String.valueOf(month+1),'0',2); }
-
-  	private int year;
-  	private int month;  	
-  }
 
   // ---------------------------------------------------------------------------
 
@@ -105,8 +93,14 @@ public class NewsGroupJournal extends NewsGroup {
 
   // ---------------------------------------------------------------------------
 
+  public String getEncoding() {
+  	return encoding==null ? "UTF-8" : encoding;
+  }
+
+  // ---------------------------------------------------------------------------
+
   public String getLanguage() {
-  	return language;
+  	return language==null ? "es" : language;
   }
 
   // ---------------------------------------------------------------------------
@@ -142,15 +136,12 @@ public class NewsGroupJournal extends NewsGroup {
   // ---------------------------------------------------------------------------
 
   public void rebuild(JDCConnection oConn, boolean bFullRebuild)
-  	throws SQLException,IOException,TransformerException {
+  	throws NullPointerException,SQLException,FileNotFoundException,IOException,TransformerException {
 
 	String sMessageList;
 	String sXMLDataSource;
-	String sTagsList;
-	ArrayList<Month> aMonthsWithPosts = new ArrayList<Month>();
 	String sDaysWithPosts;
-    SimpleDateFormat oFmt = new SimpleDateFormat("yyyy_MM_dd");
-	FileSystem oFs = new FileSystem();
+    SimpleDateFormat oFmt = new SimpleDateFormat("yyyy_MM_dd");	
 	File oOut;
 	Date dtLastModified;
 	Date dtFileModified;
@@ -158,56 +149,52 @@ public class NewsGroupJournal extends NewsGroup {
 	String sFilePath;
 
     if (DebugFile.trace) {
-      DebugFile.writeln("Begin NewsGroupJournal.rebuild()");
+      DebugFile.writeln("Begin NewsGroupJournal.rebuild([JDCConnection], "+String.valueOf(bFullRebuild)+")");
       DebugFile.incIdent();
     }
+
+	if (getGuid()==null) {
+      if (DebugFile.trace) {
+      	DebugFile.writeln("NewsGroupJournal.rebuild() GUID for NewsGroup is null");
+        DebugFile.decIdent();
+      }	
+      throw new NullPointerException("NewsGroupJournal.rebuild() No NewsGroup with GUID "+getGuid()+" found at "+DB.k_newsgroups+" table");
+	}
+	
+	NewsGroup oNewsGrp = new NewsGroup();
+
+	if (!oNewsGrp.load(oConn, getGuid())) {
+      if (DebugFile.trace) {
+      	DebugFile.writeln("NewsGroupJournal.rebuild() No NewsGroup with GUID "+getGuid()+" found at "+DB.k_newsgroups+" table");
+        DebugFile.decIdent();
+      }	
+      throw new SQLException("NewsGroupJournal.rebuild() No NewsGroup with GUID "+getGuid()+" found at "+DB.k_newsgroups+" table");
+	} // fi
+	
+	String sXmlProlog = "<?xml version=\"1.0\" encoding=\""+getEncoding()+"\"?>\n";
+	String sNewsGrpXml = oNewsGrp.toXML(oConn);
+	String sMonthsWithPosts = Forums.XMLListMonthsWithPosts(oConn, getGuid(), getLanguage());
+
+	FileSystem oFs = new FileSystem();
+	try { oFs.mkdirs("file://"+getOutputPath()+"archives"); } catch (Exception ignore) { }
 
     Properties oProps = new Properties();
 	oProps.put("language", getLanguage());
 	oProps.put("basehref", getBaseHref());
+
+    ArrayList<Boolean> aDaysWithPosts = Forums.getDaysWithPosts(oConn, getGuid(), null, null);
 
 	DBSubset oLastModified = new DBSubset(DB.k_newsmsgs+" m,"+DB.k_x_cat_objs+" x",
 										  "MAX(m."+DB.dt_modified+")",
 		                                  "m."+DB.gu_msg+"=x."+DB.gu_object+" AND "+
 		                                  "x."+DB.gu_category+"=? AND "+
 		                                  "m."+DB.dt_published+" BETWEEN ? AND ?", 1);
-
-	Date dtFirstPost = DBCommand.queryMinDate(oConn, "m."+DB.dt_published,
-		                                      DB.k_newsmsgs+" m,"+DB.k_x_cat_objs+" x",
-		                                      "m."+DB.gu_msg+"=x."+DB.gu_object+" AND "+
-		                                      "x."+DB.gu_category+"='"+getGuid()+"'");
-    Date dtLastPost =  DBCommand.queryMaxDate(oConn, "m."+DB.dt_published,
-		                                      DB.k_newsmsgs+" m,"+DB.k_x_cat_objs+" x",
-		                                      "m."+DB.gu_msg+"=x."+DB.gu_object+" AND "+
-		                                      "x."+DB.gu_category+"='"+getGuid()+"'");
-
-    ArrayList<Boolean> aDaysWithPosts = Forums.getDaysWithPosts(oConn, getGuid(), dtFirstPost, dtLastPost);
-
-	Date dtFirstDayOfMonth = new Date(dtFirstPost.getYear(), dtFirstPost.getMonth(), 1, 0, 0, 0);
-	Date dtLastDayOfMonth = new Date(dtFirstPost.getYear(), dtFirstPost.getMonth(), Calendar.LastDay(dtFirstPost.getMonth(), dtFirstPost.getYear()+1900), 23, 59, 59);
-
-	PreparedStatement oStmt = oConn.prepareStatement("SELECT NULL FROM "+
-													 DB.k_newsmsgs+" m,"+DB.k_x_cat_objs+" x WHERE "+
-		                                             "m."+DB.gu_msg+"=x."+DB.gu_object+" AND "+
-		                                             "x."+DB.gu_category+"=? AND "+
-		                                             "m."+DB.dt_published+" BETWEEN ? AND ?");	
-
-	while (dtLastPost.compareTo(dtLastDayOfMonth)<=0) {
-	  oStmt.setString   (1, getGuid());
-	  oStmt.setTimestamp(2, new Timestamp(dtFirstDayOfMonth.getTime()));
-	  oStmt.setTimestamp(3, new Timestamp(dtLastDayOfMonth.getTime()));
-	  ResultSet oRSet = oStmt.executeQuery();
-	  boolean bMonthHasPosts = oRSet.next();
-	  oRSet.close();
-	  if (bMonthHasPosts) {
-		aMonthsWithPosts.add(new Month(dtFirstDayOfMonth.getYear(),dtFirstDayOfMonth.getMonth()));
-	  } // fi
-	  dtFirstDayOfMonth = Calendar.addMonths(1, dtFirstDayOfMonth);
-	  dtLastDayOfMonth = new Date(dtFirstDayOfMonth.getYear(), dtFirstDayOfMonth.getMonth(), Calendar.LastDay(dtFirstDayOfMonth.getMonth(), dtFirstDayOfMonth.getYear()+1900), 23, 59, 59);
-	} // wend
-	oStmt.close();
 	
 	for (NewsGroupJournalPage t : templates) {
+
+      if (DebugFile.trace) {
+        DebugFile.writeln("Processing "+t.getFilter()+" template");
+      }
 
 	  if (t.getFilter().equalsIgnoreCase("main")) {
 
@@ -216,116 +203,288 @@ public class NewsGroupJournal extends NewsGroup {
 		                                         "m."+DB.gu_msg+"=x."+DB.gu_object+" AND "+
 		                                         "x."+DB.gu_category+"='"+getGuid()+"'");
 		if (null==dtLastModified) dtLastModified = new Date();
+
+        if (DebugFile.trace) {
+          DebugFile.writeln("Last modified message date is "+dtLastModified.toString());
+        }
+
 	    sFilePath = getOutputPath()+"main.html";
+
 	    oOut = new File(sFilePath);
 	    if (oOut.exists()) {
 	      dtFileModified = new Date(oOut.lastModified());
-	      oOut.delete();
-	      bNeedsRebuild = (dtLastModified.compareTo(dtFileModified)<0) || (new File(getBlogPath()+t.getInputFilePath()).lastModified()>dtFileModified.getTime());
+          if (DebugFile.trace) {
+            DebugFile.writeln("Output file path is "+sFilePath+" last modified at "+dtFileModified.toString());
+          }
+	      bNeedsRebuild = (dtLastModified.compareTo(dtFileModified)>0) || (new File(getBlogPath()+t.getInputFilePath()).lastModified()>dtFileModified.getTime());
+	      if (bNeedsRebuild || bFullRebuild) oOut.delete();
 	    } else {
+          if (DebugFile.trace) {
+            DebugFile.writeln("Output file "+sFilePath+" does not exist");
+          }
 	      bNeedsRebuild = true;
 	    }
 	    
 		if (bNeedsRebuild || bFullRebuild) {
 	  	  sMessageList = Forums.XMLListTopLevelMessagesForGroup(oConn, t.getLimit(), 0, getGuid(), DB.dt_published);
-	  	  sXMLDataSource = sMessageList;
+	  	  sXMLDataSource = sXmlProlog + "<Journal guid=\""+getGuid()+"\">\n" + sNewsGrpXml + "\n" + sMonthsWithPosts + "\n" + sMessageList + "</Journal>";
+
+		  if (DebugFile.trace) {
+		  	oFs.delete(getOutputPath()+"main.xml");
+		  	oFs.writefilestr(getOutputPath()+"main.xml", sXMLDataSource, getEncoding());
+		  }
+
 	      oFs.writefilestr(sFilePath,
-	                       StylesheetCache.transform(getBlogPath()+t.getInputFilePath(), sXMLDataSource, oProps), "UTF-8");
+	                       StylesheetCache.transform(getBlogPath()+t.getInputFilePath(), sXMLDataSource, oProps), getEncoding());
 		} // fi (bNeedsRebuild)
-			    
+
+      } else if (t.getFilter().equalsIgnoreCase("rss2")) {
+
+        dtLastModified =  DBCommand.queryMaxDate(oConn, "m."+DB.dt_modified,
+		                                         DB.k_newsmsgs+" m,"+DB.k_x_cat_objs+" x",
+		                                         "m."+DB.gu_msg+"=x."+DB.gu_object+" AND "+
+		                                         "x."+DB.gu_category+"='"+getGuid()+"' AND "+
+		                                         "m."+DB.gu_parent_msg+" IS NULL");
+		if (null==dtLastModified) dtLastModified = new Date();
+
+        if (DebugFile.trace) {
+          DebugFile.writeln("Last modified message date is "+dtLastModified.toString());
+        }
+
+	    sFilePath = getOutputPath()+"rss2.xml";
+
+	    oOut = new File(sFilePath);
+	    if (oOut.exists()) {
+	      dtFileModified = new Date(oOut.lastModified());
+          if (DebugFile.trace) {
+            DebugFile.writeln("Output file path is "+sFilePath+" last modified at "+dtFileModified.toString());
+          }
+	      bNeedsRebuild = (dtLastModified.compareTo(dtFileModified)>0) || (new File(getBlogPath()+t.getInputFilePath()).lastModified()>dtFileModified.getTime());
+	      if (bNeedsRebuild || bFullRebuild) oOut.delete();
+	    } else {
+          if (DebugFile.trace) {
+            DebugFile.writeln("Output file "+sFilePath+" does not exist");
+          }
+	      bNeedsRebuild = true;
+	    }
+	    
+		if (bNeedsRebuild || bFullRebuild) {
+			
+	  	  sMessageList = Forums.XMLListTopLevelMessagesForGroup(oConn, t.getLimit(), 0, getGuid(), DB.dt_published, "yyyy-MM-dd'T'hh:mm:ss");
+	  	  try {
+	  	    sMessageList = Gadgets.replace(sMessageList,"<((IMG)|img) +((SRC)|(src))=\"/", "<img src=\""+getBaseHref()+"/");
+	  	  } catch (org.apache.oro.text.regex.MalformedPatternException neverthrown) { }
+	  	  sXMLDataSource = sXmlProlog + "<Journal guid=\""+getGuid()+"\">\n" + sNewsGrpXml + "\n" + sMessageList + "</Journal>";
+
+	      oFs.writefilestr(sFilePath,
+	                       StylesheetCache.transform(getBlogPath()+t.getInputFilePath(), sXMLDataSource, oProps), getEncoding());
+		  if (DebugFile.trace) {
+	        oFs.writefilestr(sFilePath+".source.xml", sXMLDataSource, getEncoding());
+		  }
+		} // fi (bNeedsRebuild)
+
 	  } else if (t.getFilter().equalsIgnoreCase("monthly")) {
+
+		  ArrayList<Month> aMonthsWithPosts = Forums.getMonthsWithPosts(oConn, getGuid());
 
 		  for (Month m : aMonthsWithPosts) {
 
-		    if (oLastModified.load(oConn, new Object[]{getGuid(), m.firstDay(), m.lastDay()})>0) {
-		      dtLastModified = oLastModified.getDate(0,0);
+			oProps.put("year", String.valueOf(m.getYear()));
+			oProps.put("month", String.valueOf(m.getMonth()));
+
+		    if (oLastModified.load(oConn, new Object[]{getGuid(), new Timestamp(m.firstDay().getTime()), new Timestamp(m.lastDay().getTime())})>0) {
+		      if (oLastModified.isNull(0,0))
+		        dtLastModified = new Date();
+		      else
+		        dtLastModified = oLastModified.getDate(0,0);
 		    } else {
 		      dtLastModified = new Date();
 		    }
+			
+            if (DebugFile.trace) {
+              DebugFile.writeln("Last modified message date is "+dtLastModified.toString());
+            }
 
 	        sFilePath = getOutputPath()+"archives"+File.separator+m.toString()+".html";
 	        oOut = new File(sFilePath);
 	        if (oOut.exists()) {
 	          dtFileModified = new Date(oOut.lastModified());
-	          oOut.delete();
+              if (DebugFile.trace) {
+                DebugFile.writeln("Output file path is "+sFilePath+" last modified at "+dtFileModified.toString());
+              }
 	          bNeedsRebuild = (dtLastModified.compareTo(dtFileModified)>0);
+	          if (bNeedsRebuild || bFullRebuild) oOut.delete();
 	        } else {
+              if (DebugFile.trace) {
+                DebugFile.writeln("Output file "+sFilePath+" does not exist");
+              }
 	          bNeedsRebuild = true;
 	        }
 			
 		    if (bNeedsRebuild || bFullRebuild) {
 			  sMessageList = Forums.XMLListTopLevelMessagesForGroup(oConn, m.firstDay(), m.lastDay(), getGuid(), DB.dt_published);
-	  	      sXMLDataSource = sMessageList;
+	  	      sXMLDataSource = sXmlProlog + "<Journal guid=\""+getGuid()+"\">\n" + sNewsGrpXml + "\n" + sMonthsWithPosts + "\n" + sMessageList + "</Journal>";
+
+		  	  if (DebugFile.trace) {
+		  	    oFs.delete(Gadgets.dechomp(sFilePath,"html")+"xml");
+		  	    oFs.writefilestr(Gadgets.dechomp(sFilePath,"html")+"xml", sXMLDataSource, getEncoding());
+		      }
+
 	          oFs.writefilestr(sFilePath,
-	                           StylesheetCache.transform(getBlogPath()+t.getInputFilePath(), sXMLDataSource, oProps), "UTF-8");
+	                           StylesheetCache.transform(getBlogPath()+t.getInputFilePath(), sXMLDataSource, oProps), getEncoding());
 		    } // fi
 		    
 		  } // next		  
 	    } else if (t.getFilter().equalsIgnoreCase("daily")) {
-	    	
-	      Date dtDay00 = dtFirstPost;
-	      Date dtDay23 = new Date(dtFirstPost.getYear(), dtFirstPost.getMonth(), dtFirstPost.getDate(), 23, 59, 59);
 
-		  for (Boolean b : aDaysWithPosts) {
+	      Date dt1stPost = DBCommand.queryMinDate(oConn, "m."+DB.dt_published,
+		                                          DB.k_newsmsgs+" m,"+DB.k_x_cat_objs+" x",
+		                                          "m."+DB.gu_msg+"=x."+DB.gu_object+" AND "+
+		                                          "x."+DB.gu_category+"='"+getGuid()+"' AND "+
+		                                          "m."+DB.id_status+"="+String.valueOf(NewsMessage.STATUS_VALIDATED));
+		  if (dt1stPost!=null) {
 
-		    if (oLastModified.load(oConn, new Object[]{getGuid(), dtDay00, dtDay23})>0) {
-		      dtLastModified = oLastModified.getDate(0,0);
-		    } else {
-		      dtLastModified = new Date();
-		    }
+	        Date dtDay00 = new Date(dt1stPost.getYear(), dt1stPost.getMonth(), dt1stPost.getDate(),  0,  0,  0);
+	        Date dtDay23 = new Date(dt1stPost.getYear(), dt1stPost.getMonth(), dt1stPost.getDate(), 23, 59, 59);
 
-	  	    sFilePath = getOutputPath()+"archives"+File.separator+oFmt.format(dtDay00)+".html";
-	        oOut = new File(sFilePath);
-	        if (oOut.exists()) {
-	          dtFileModified = new Date(oOut.lastModified());
-	          oOut.delete();
-	          bNeedsRebuild = (dtLastModified.compareTo(dtFileModified)>0);
-	        } else {
-	          bNeedsRebuild = true;
-	        }
+		    for (Boolean b : aDaysWithPosts) {
+		  	
+		  	  if (b.booleanValue()) {
 
-		    if (bNeedsRebuild || bFullRebuild) {
-			  sMessageList = Forums.XMLListTopLevelMessagesForGroup(oConn, dtDay00, dtDay23, getGuid(), DB.dt_published);
-	  	      sXMLDataSource = sMessageList;
-	          oFs.writefilestr(sFilePath,
-	                           StylesheetCache.transform(getBlogPath()+t.getInputFilePath(), sXMLDataSource, oProps), "UTF-8");
-		    } // fi
+			    oProps.put("year", String.valueOf(dtDay00.getYear()));
+			    oProps.put("month", String.valueOf(dtDay00.getMonth()));
 
-		  } // next
-		  
+		        if (oLastModified.load(oConn, new Object[]{getGuid(), new Timestamp(dtDay00.getTime()), new Timestamp(dtDay23.getTime())})>0) {
+		          if (oLastModified.isNull(0,0))
+		            dtLastModified = new Date();
+		          else
+		            dtLastModified = oLastModified.getDate(0,0);
+		        } else {
+		          dtLastModified = new Date();
+		        }
+
+                if (DebugFile.trace) {
+                  DebugFile.writeln("Last modified message date is "+dtLastModified.toString());
+                }
+
+	  	        sFilePath = getOutputPath()+"archives"+File.separator+oFmt.format(dtDay00)+".html";
+	            oOut = new File(sFilePath);
+	            if (oOut.exists()) {
+	              dtFileModified = new Date(oOut.lastModified());
+                  if (DebugFile.trace) {
+                    DebugFile.writeln("Output file path is "+sFilePath+" last modified at "+dtFileModified.toString());
+                  }
+	              bNeedsRebuild = (dtLastModified.compareTo(dtFileModified)>0);
+	              if (bNeedsRebuild || bFullRebuild) oOut.delete();
+	            } else {
+                  if (DebugFile.trace) {
+                    DebugFile.writeln("Output file "+sFilePath+" does not exist");
+                  }
+	              bNeedsRebuild = true;
+	            }
+
+		        if (bNeedsRebuild || bFullRebuild) {
+			      sMessageList = Forums.XMLListTopLevelMessagesForGroup(oConn, dtDay00, dtDay23, getGuid(), DB.dt_published);
+	  	          sXMLDataSource = sXmlProlog + "<Journal guid=\""+getGuid()+"\">\n" + sNewsGrpXml + "\n" + sMonthsWithPosts + "\n" + sMessageList + "</Journal>";
+	              oFs.writefilestr(sFilePath,
+	                               StylesheetCache.transform(getBlogPath()+t.getInputFilePath(), sXMLDataSource, oProps), getEncoding());
+		        } // fi
+
+		      } // fi (DaysWithPosts)
+			  dtDay00 = new Date(dtDay00.getTime()+86400000l);
+			  dtDay23 = new Date(dtDay23.getTime()+86400000l);
+		    } // next
+		  } else {
+            if (DebugFile.trace)
+              DebugFile.writeln("No date for first post found rebuilding daily template");
+		  } // fi
+
 	    } else if (t.getFilter().equalsIgnoreCase("single")) {
 
 	      DBSubset  oPostsModified = new DBSubset (
 	      	  DB.k_newsmsgs + " m," + DB.k_x_cat_objs + " x," + DB.k_newsgroups + " g," + DB.k_categories + " c",
-    	      "m." + DB.dt_modified + ",m."+DB.gu_msg+",m."+DB.tx_subject,
+    	      "MAX(m." + DB.dt_modified + "),m."+DB.gu_thread_msg,
     	      "m." + DB.id_status + "="+String.valueOf(NewsMessage.STATUS_VALIDATED)+" AND x." + DB.gu_category + "=" + "g." + DB.gu_newsgrp + " AND " +
     	      "c." + DB.gu_category + "=g." + DB.gu_newsgrp + " AND " +
-    	      "m." + DB.gu_msg + "=x." + DB.gu_object + " AND g." + DB.gu_newsgrp + "=?", 10000);
+    	      "m." + DB.gu_msg + "=x." + DB.gu_object + " AND g." + DB.gu_newsgrp + "=? GROUP BY m."+DB.gu_thread_msg, 100);
 		  int nPosts = oPostsModified.load(oConn, new Object[]{getGuid()});
 
 		  for (int p=0; p<nPosts; p++) {
 		    dtLastModified = oPostsModified.getDate(0,0);
+		    if (null==dtLastModified) dtLastModified = new Date();
+
+            if (DebugFile.trace) {
+              DebugFile.writeln("Last modified message date is "+dtLastModified.toString());
+            }
 		    
-	  	    sFilePath = getOutputPath()+"archives"+File.separator+Gadgets.ASCIIEncode(oPostsModified.getStringNull(2, p, "")).toLowerCase()+".html";
+	  	    sFilePath = getOutputPath()+"archives"+File.separator+oPostsModified.getString(1,p)+".html";
 	        oOut = new File(sFilePath);
 	        if (oOut.exists()) {
 	          dtFileModified = new Date(oOut.lastModified());
-	          oOut.delete();
+              if (DebugFile.trace) {
+                DebugFile.writeln("Output file path is "+sFilePath+" last modified at "+dtFileModified.toString());
+              }
 	          bNeedsRebuild = (dtLastModified.compareTo(dtFileModified)>0);
+	          if (bNeedsRebuild || bFullRebuild) oOut.delete();
 	        } else {
+              if (DebugFile.trace) {
+                DebugFile.writeln("Output file "+sFilePath+" does not exist");
+              }
 	          bNeedsRebuild = true;
 	        }
 
 		    if (bNeedsRebuild || bFullRebuild) {
 
-			  sMessageList = Forums.XMLListMessagesForThread(oConn, oPostsModified.getString(1,0));
-	  	      sXMLDataSource = sMessageList;
+			  sMessageList = Forums.XMLListMessagesForThread(oConn, oPostsModified.getString(1,p));
+	  	      sXMLDataSource = sXmlProlog + "<Journal guid=\""+getGuid()+"\">\n" + sNewsGrpXml + "\n" + sMonthsWithPosts + "\n" + sMessageList + "</Journal>";
 	          oFs.writefilestr(sFilePath,
-	                           StylesheetCache.transform(getBlogPath()+t.getInputFilePath(), sXMLDataSource, oProps), "UTF-8");
+	                           StylesheetCache.transform(getBlogPath()+t.getInputFilePath(), sXMLDataSource, oProps), getEncoding());
+		  	  if (DebugFile.trace) {
+		  	    oFs.writefilestr(Gadgets.dechomp(sFilePath,"html")+"xml", sXMLDataSource, getEncoding());
+		      }
 		    } // fi
 		    
 		  } //next
-	    } // fi
+
+	    } else if (t.getFilter().equalsIgnoreCase("bytag")) {
+
+          DBSubset oTags = Forums.getNewsGroupTags(oConn, getGuid());
+          int nTags = oTags.getRowCount();
+
+          for (int g=0; g<nTags; g++) {
+          	
+            if (DebugFile.trace) {
+                DebugFile.writeln("Rebuilding archive for tag "+oTags.getString(3,g));
+            }
+
+	        oProps.put("tag", oTags.getString(4,g));
+
+	  	    sFilePath = getOutputPath()+"archives"+File.separator+oTags.getString(4,g)+".html";
+	        oOut = new File(sFilePath);
+	        if (oOut.exists()) {
+	          dtFileModified = new Date(oOut.lastModified());
+              if (DebugFile.trace) {
+                DebugFile.writeln("Output file path is "+sFilePath+" last modified at "+dtFileModified.toString());
+              }
+	          oOut.delete();
+	        } else {
+              if (DebugFile.trace) {
+                DebugFile.writeln("Output file "+sFilePath+" does not exist");
+              }
+	        }
+
+			sMessageList = Forums.XMLListTopLevelMessagesForTag(oConn, 32767, 0, getGuid(), oTags.getString(0,g), DB.dt_published);
+	  	    sXMLDataSource = sXmlProlog + "<Journal guid=\""+getGuid()+"\">\n" + sNewsGrpXml + "\n" + sMonthsWithPosts + "\n" + sMessageList + "</Journal>";
+	        oFs.writefilestr(sFilePath,
+	                         StylesheetCache.transform(getBlogPath()+t.getInputFilePath(), sXMLDataSource, oProps), getEncoding());
+
+		  	if (DebugFile.trace) {
+		  	  oFs.delete(Gadgets.dechomp(sFilePath,"html")+"xml");
+		  	  oFs.writefilestr(Gadgets.dechomp(sFilePath,"html")+"xml", sXMLDataSource, getEncoding());
+		    }
+		  } //next	    
+ 	    } // fi	    
+
 	  } // next (template)
 	
     if (DebugFile.trace) {
@@ -334,55 +493,6 @@ public class NewsGroupJournal extends NewsGroup {
     }
 
   } // rebuild
-
-  // ---------------------------------------------------------------------------
-
-  /**
-   * Create a NewsGroupJournal object by parsing its definition from an XML file
-   * @param oConn JDBC Database Connection
-   * @param sXMLBlogPath String Directory path to blog definition files
-   * @param sXMLFileName String Name of XML file containing the blog definition
-   * @param sEnc String Character encoding, if <b>null</b> then UTF-8 is assumed.
-   * @return Menu object
-   * @throws JiBXException
-   * @throws FileNotFoundException
-   * @throws UnsupportedEncodingException
-   * @throws IOException
-   */
-  public static NewsGroupJournal parse(JDCConnection oConn, String sXMLBlogPath, String sXMLFileName, String sEnc)
-    throws JiBXException, FileNotFoundException, UnsupportedEncodingException,
-           IOException, SQLException {
-
-    if (DebugFile.trace) {
-      DebugFile.writeln("Begin NewsGroupJournal.parse("+sXMLBlogPath+","+sXMLFileName+","+sEnc+")");
-      DebugFile.incIdent();
-    }
-
-    if (sEnc==null) sEnc="UTF-8";
-	
-    IBindingFactory bfact = BindingDirectory.getFactory(NewsGroupJournal.class);
-    IUnmarshallingContext uctx = bfact.createUnmarshallingContext();
-
-    final int BUFFER_SIZE = 8000;
-    FileInputStream oFileStream = new FileInputStream(Gadgets.chomp(sXMLBlogPath,File.separator)+sXMLFileName);
-    BufferedInputStream oXMLStream = new BufferedInputStream(oFileStream, BUFFER_SIZE);
-
-    NewsGroupJournal oBlog = (NewsGroupJournal) uctx.unmarshalDocument (oXMLStream, sEnc);
-
-    oXMLStream.close();
-    oFileStream.close();
-
-	oBlog.setBlogPath(sXMLBlogPath);
-	oBlog.load(oConn, new Object[]{oBlog.getGuid()});
-
-    if (DebugFile.trace) {
-      DebugFile.decIdent();
-      DebugFile.writeln("End NewsGroupJournal.parse()");
-    }
-
-    return oBlog;
-  } // parse
-
 }
 
 

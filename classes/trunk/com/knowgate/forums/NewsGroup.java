@@ -32,12 +32,25 @@
 
 package com.knowgate.forums;
 
+import java.io.IOException;
+import java.io.Reader;
+
 import java.sql.SQLException;
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.sql.Timestamp;
+
+import java.util.Date;
+
+import javax.xml.transform.TransformerException;
+
+import org.jibx.runtime.IBindingFactory;
+import org.jibx.runtime.IUnmarshallingContext;
+import org.jibx.runtime.BindingDirectory;
+import org.jibx.runtime.JiBXException;
 
 import com.knowgate.debug.DebugFile;
 import com.knowgate.jdc.JDCConnection;
@@ -52,15 +65,18 @@ import com.knowgate.hipergate.Product;
 /**
  * <p>NewsGroup</p>
  * @author Sergio Montoro Ten
- * @version 2.0
+ * @version 5.0
  */
 public class NewsGroup extends Category {
 
+  private NewsGroupJournal oJournal;
+  
   /**
    * Create empty newsgroup
    */
   public NewsGroup() {
     super(DB.k_newsgroups,"NewsGroup");
+    oJournal = null;
   }
 
   // ----------------------------------------------------------
@@ -75,6 +91,7 @@ public class NewsGroup extends Category {
 
     put(DB.gu_category, sIdNewsGroup);
     put(DB.gu_newsgrp , sIdNewsGroup);
+    oJournal = null;
   }
 
   // ----------------------------------------------------------
@@ -87,7 +104,8 @@ public class NewsGroup extends Category {
    * @param sIdNewsGroup GUID of newsGroup to be loaded
    * @throws SQLException
    */
-  public NewsGroup(JDCConnection oConn, String sIdNewsGroup) throws SQLException {
+  public NewsGroup(JDCConnection oConn, String sIdNewsGroup)
+  	throws SQLException {
     super(DB.k_newsgroups,"NewsGroup");
 
     load (oConn, new Object[]{sIdNewsGroup});
@@ -257,8 +275,27 @@ public class NewsGroup extends Category {
 
         for (int c=1; c<=iColCount; c++) {
           sColName = oMDat.getColumnName(c).toLowerCase();
-          if (!sColName.equalsIgnoreCase(DB.dt_created));
+          if (sColName.equalsIgnoreCase(DB.tx_journal)) {
+    		try {
+			  Reader oRdr = oRSet.getCharacterStream(c);
+              if (!oRSet.wasNull()) {
+    		    IBindingFactory bfact = BindingDirectory.getFactory(NewsGroupJournal.class);
+    		    IUnmarshallingContext uctx = bfact.createUnmarshallingContext();
+                oJournal = (NewsGroupJournal) uctx.unmarshalDocument (oRdr);
+    		    oRdr.close();
+                put(DB.tx_journal, oRSet.getString(c));
+    		  } else {
+              oJournal = null;
+              } // fi
+    		} catch (JiBXException xcpt) {
+    		  throw new SQLException(xcpt.getMessage(), "JIBX", xcpt);
+    		} catch (IOException ioe) {
+    		  throw new SQLException(ioe.getMessage(), "IO", ioe);
+    		}
+          }
+          else if (!sColName.equalsIgnoreCase(DB.dt_created)) {
             put(sColName, oRSet.getObject(c));
+          }
         } // next
         oMDat = null;
       }
@@ -273,6 +310,23 @@ public class NewsGroup extends Category {
 
     return bRetVal;
   } // load
+
+  // ----------------------------------------------------------
+
+  /**
+   * <p>Load NewsGroup from database</p>
+   * Both field sets from k_categories and k_newsgroups are loaded into
+   * internal properties collection upon load.
+   * @param oConn Database Conenction
+   * @param String GUID of NewsGroup to be loaded.
+   * @return <b>true</b> if NewsGroup was successfully loaded, <b>false</b> if
+   * Newsgroup GUID was not found at k_newsgropus o k_categories tables.
+   * @throws SQLException
+   */
+
+  public boolean load(JDCConnection oConn, String sGuNewsGroup) throws SQLException {
+    return load(oConn, new Object[]{sGuNewsGroup});
+  }
 
   // ----------------------------------------------------------
 
@@ -334,8 +388,13 @@ public class NewsGroup extends Category {
     oStmt.close();
 
     return bSubscriber;
-  }
+  } //  isSubscriber
 
+  // ----------------------------------------------------------
+
+  public NewsGroupJournal getJournal() {
+  	return oJournal;
+  }
   // ----------------------------------------------------------
 
   /**
@@ -379,7 +438,23 @@ public class NewsGroup extends Category {
 	
 	return oDbss;
   } // getTopLevelMessages
- 
+
+  public String toXML(JDCConnection oConn, String sIdent, String sDelim) throws SQLException {
+  	String sXml = toXMLWithLabels(oConn, sIdent, sDelim);
+  	String sEndTag = "</"+sAuditCls+">";
+  	String sBeforeEndTag = sXml.substring(0, sXml.length()-sEndTag.length());
+	String sNewsGrpTags = Forums.XMLListTags(oConn, getString(DB.gu_newsgrp));
+	return sBeforeEndTag+"\n"+sNewsGrpTags+"\n"+sEndTag;
+  }
+
+  public String toXML(JDCConnection oConn, String sIdent) throws SQLException {
+  	return toXML(oConn, sIdent, "\n");
+  }
+
+  public String toXML(JDCConnection oConn) throws SQLException {
+  	return toXML(oConn, "", "\n");
+  }
+
   // **********************************************************
   // Static Methods
 
@@ -406,7 +481,45 @@ public class NewsGroup extends Category {
     oGrp.put(DB.id_domain, iDomain);
     oGrp.put(DB.gu_workarea, sWorkArea);
     oGrp.put(DB.bo_binaries, (short)0);
+    oGrp.put(DB.dt_last_update, new Timestamp(new Date().getTime()));
 
+    oGrp.store(oConn);
+
+    return sCatId;
+  } // store
+
+  /**
+   * <p>Store Newsgroup</p>
+   * @param oConn Database Connection
+   * @param iDomain Identifier of Domain to with the NewsGroup will belong.
+   * @param sWorkArea GUID of WorkArea to with the NewsGroup will belong.
+   * @param sCategoryId Category GUID (newsgroups are subregisters of categories)
+   * @param sParentId GUID of Parent Group (groups, as categories, are hierarchical)
+   * @param sCategoryName Category name (k_categories.nm_category)
+   * @param iIsActive 1 if group is activem, 0 if it is inactive.
+   * @param iDocStatus Initial Document Status. One of { Newsgroup.FREE, Newsgroup.MODERATED }
+   * @param sOwner GUID of User owner of this NewsGroup
+   * @param sIcon1 Closed Folder Icon
+   * @param sIcon2 Opened Folder Icon
+   * @param boBinaries <b>true if group allows binay attachments <b>false</b> otherwise
+   * @param sDesc News Group Description (up to 254 characters)
+   * @param sTxJournalXml Journal XML definition file (up to 4000 characters)
+   * @return GUID of newly created NewsGroup
+   * @throws SQLException
+   * @since 5.0
+   */
+  public static String store(JDCConnection oConn, int iDomain, String sWorkArea, String sCategoryId, String sParentId, String sCategoryName, short iIsActive, int iDocStatus,
+  							 String sOwner, String sIcon1, String sIcon2, boolean boBinaries, String sDesc, String sTxJournalXml) throws SQLException {
+    String sCatId = Category.store(oConn, sCategoryId, sParentId, sCategoryName, iIsActive, iDocStatus, sOwner, sIcon1, sIcon2);
+
+    NewsGroup oGrp = new NewsGroup(sCatId);
+    oGrp.put(DB.id_domain, iDomain);
+    oGrp.put(DB.gu_workarea, sWorkArea);
+    oGrp.put(DB.bo_binaries, (short) (boBinaries ? 1 : 0));
+    oGrp.put(DB.dt_last_update, new Timestamp(new Date().getTime()));
+    if (null!=sDesc) if (sDesc.length()>0) oGrp.put(DB.de_newsgrp, sDesc);
+    if (null!=sTxJournalXml) if (sTxJournalXml.length()>0) oGrp.put(DB.tx_journal, sTxJournalXml);
+    
     oGrp.store(oConn);
 
     return sCatId;

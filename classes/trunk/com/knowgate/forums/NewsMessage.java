@@ -62,7 +62,7 @@ import com.knowgate.hipergate.Product;
 /**
  * <p>NewsMessage</p>
  * @author Sergio Montoro Ten
- * @version 4.0
+ * @version 5.0
  */
 public class NewsMessage extends DBPersist{
 
@@ -279,6 +279,7 @@ public class NewsMessage extends DBPersist{
     ResultSet oRSet;
     Statement oStmt;
     CallableStatement oCall;
+    PreparedStatement oUpdt = null;
     String sSQL;
 
     Timestamp dtNow = new Timestamp(DBBind.getTime());
@@ -343,7 +344,7 @@ public class NewsMessage extends DBPersist{
         oCall.close();
     }
 
-    replace(DB.nu_thread_msgs, ++nThreadMsgs);
+    if (bNewMsg) replace(DB.nu_thread_msgs, ++nThreadMsgs);
 
     replace(DB.dt_modified, dtNow);
 
@@ -380,47 +381,34 @@ public class NewsMessage extends DBPersist{
       oStmt.close();
     }
 
-    if (bRetVal && AllVals.containsKey(DB.gu_newsgrp)) {
-      if (DebugFile.trace) DebugFile.writeln("Category.store() && containsKey(DB.gu_newsgrp)");
+	if (AllVals.containsKey(DB.gu_newsgrp)) {
+      sSQL = "UPDATE " + DB.k_newsgroups + " SET " + DB.dt_last_update + "=? WHERE " + DB.gu_newsgrp + "=?";
+      if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement (" + sSQL + ")");
+      oUpdt = oConn.prepareStatement(sSQL);
+      oUpdt.setTimestamp(1, new Timestamp(new Date().getTime()));
+      oUpdt.setObject(2, AllVals.get(DB.gu_newsgrp), java.sql.Types.CHAR);
+      oUpdt.executeUpdate();
+      oUpdt.close();
+      oUpdt = null;
 
-      if (bNewMsg) {
+      if (bRetVal) {
+        if (DebugFile.trace) DebugFile.writeln("Category.store() && containsKey(DB.gu_newsgrp)");
 
-        if (DebugFile.trace) DebugFile.writeln("new message");
+        if (!bNewMsg) {
+          sSQL = "DELETE FROM " + DB.k_x_cat_objs + " WHERE " + DB.gu_category + "='" + getString(DB.gu_newsgrp) + "' AND " + DB.gu_object + "='" + sMsgId + "'";
+          oStmt = oConn.createStatement();
+          if (DebugFile.trace) DebugFile.writeln("Statement.execute(" + sSQL + ")");
+          oStmt.executeUpdate(sSQL);
+          oStmt.close();
+        } // fi (!bNewMsg)
 
-        // Check whether or not dt_last_update column exists for backward compatibility with 1.x versions
-        boolean bHasLastUpdate;
-        try {
-          bHasLastUpdate = (((DBBind) (oConn.getPool().getDatabaseBinding())).getDBTable(DB.k_newsgroups).getColumnByName(DB.dt_last_update)!=null);
-        } catch (NullPointerException npe) { bHasLastUpdate = true; }
-
-        if (bHasLastUpdate) {
-          PreparedStatement oUpdt = null;
-          sSQL = "UPDATE " + DB.k_newsgroups + " SET " + DB.dt_last_update + "=? WHERE " + DB.gu_newsgrp + "=?";
-
-          if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement (" + sSQL + ")");
-
-          oUpdt = oConn.prepareStatement(sSQL);
-          oUpdt.setTimestamp(1, new Timestamp(new Date().getTime()));
-          oUpdt.setObject(2, AllVals.get(DB.gu_newsgrp), java.sql.Types.VARCHAR);
-          oUpdt.executeUpdate();
-          oUpdt.close();
-          oUpdt = null;
-        } // fi (bHasLastUpdate)
-      }
-      else {
-        sSQL = "DELETE FROM " + DB.k_x_cat_objs + " WHERE " + DB.gu_category + "='" + getString(DB.gu_newsgrp) + "' AND " + DB.gu_object + "='" + sMsgId + "'";
+        sSQL = "INSERT INTO " + DB.k_x_cat_objs + "(" + DB.gu_category + "," + DB.gu_object + "," + DB.id_class + "," + DB.bi_attribs + "," + DB.od_position + ") VALUES ('" + getString(DB.gu_newsgrp) + "','" + sMsgId + "'," + String.valueOf(NewsMessage.ClassId) + ",0,NULL)";
         oStmt = oConn.createStatement();
         if (DebugFile.trace) DebugFile.writeln("Statement.execute(" + sSQL + ")");
-        oStmt.executeUpdate(sSQL);
+        oStmt.execute(sSQL);
         oStmt.close();
-      } // fi (!bNewMsg)
-
-      sSQL = "INSERT INTO " + DB.k_x_cat_objs + "(" + DB.gu_category + "," + DB.gu_object + "," + DB.id_class + "," + DB.bi_attribs + "," + DB.od_position + ") VALUES ('" + getString(DB.gu_newsgrp) + "','" + sMsgId + "'," + String.valueOf(NewsMessage.ClassId) + ",0,NULL)";
-      oStmt = oConn.createStatement();
-      if (DebugFile.trace) DebugFile.writeln("Statement.execute(" + sSQL + ")");
-      oStmt.execute(sSQL);
-      oStmt.close();
-    } // fi (bRetVal && containsKey(gu_newsgrp))
+      } // fi (bRetVal)
+	} // fi
 
 	DBSubset oOldTags = new DBSubset (DB.k_newsmsg_tags, DB.gu_tag, DB.gu_msg+"=?", 10);
 	int nTags = oOldTags.load(oConn, new Object[]{getString(DB.gu_msg)});

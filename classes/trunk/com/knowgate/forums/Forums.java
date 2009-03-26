@@ -46,9 +46,11 @@ import java.text.SimpleDateFormat;
 
 import com.knowgate.debug.DebugFile;
 import com.knowgate.misc.Gadgets;
+import com.knowgate.misc.Month;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBBind;
+import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.dataobjs.DBSubset;
 
 import org.apache.lucene.queryParser.ParseException;
@@ -59,7 +61,7 @@ import com.knowgate.lucene.NewsMessageSearcher;
 /**
  * <p>Forums Model Class</p>
  * @author Sergio Montoro Ten
- * @version 4.0
+ * @version 5.0
  */
 
 public class Forums {
@@ -187,12 +189,48 @@ public class Forums {
 
   // --------------------------------------------------------------------------
 
+  public static String XMLListTags(JDCConnection oConn, String sGuNewsGroup)
+    throws SQLException {
+  	
+    DBSubset oTags = getNewsGroupTags(oConn, sGuNewsGroup);
+    int nTags = oTags.getRowCount();
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin Forums.XMLListTags([JDCConnection]," + sGuNewsGroup + ")");
+      DebugFile.incIdent();
+    }
+
+    StringBuffer oStrBuff = new StringBuffer(4000);
+    oStrBuff.append("<NewsGroupTags>\n");
+	oStrBuff.append(oTags.toXML("  ","NewsGroupTag"));
+    oStrBuff.append("</NewsGroupTags>");
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End Forums.XMLListTags()");
+    }
+	return oStrBuff.toString();  	
+  } // XMLListTags
+
+  // --------------------------------------------------------------------------
+
+  public static String XMLListTopLevelMessages(JDCConnection oConn, int nMaxMsgs,
+  											   int iDomainId, String sWorkAreaId,
+  											   Boolean bActiveOnly, String sDateTimeFormat,
+  											   String sOrderBy)
+    throws SQLException,IllegalArgumentException {
+	DBSubset oDbss = getTopLevelMessages(oConn, nMaxMsgs,sWorkAreaId, bActiveOnly, sOrderBy);
+    return "<NewsMessages count=\""+String.valueOf(oDbss.getRowCount())+"\">\n"+oDbss.toXML("","NewsMessage", sDateTimeFormat, null)+"</NewsMessages>";
+  } // XMLListTopLevelMessages
+
+  // --------------------------------------------------------------------------
+
   public static String XMLListTopLevelMessages(JDCConnection oConn, int nMaxMsgs,
   											   int iDomainId, String sWorkAreaId,
   											   Boolean bActiveOnly, String sOrderBy)
     throws SQLException,IllegalArgumentException {
-	DBSubset oDbss = getTopLevelMessages(oConn, nMaxMsgs,sWorkAreaId, bActiveOnly, sOrderBy);
-    return "<NewsMessages count=\""+String.valueOf(oDbss.getRowCount())+"\">\n"+oDbss.toXML("","NewsMessage","dd/MM/yyyy hh:mm", null)+"</NewsMessages>";
+    return XMLListTopLevelMessages(oConn, nMaxMsgs, iDomainId, sWorkAreaId,
+  								   bActiveOnly, "dd/MM/yyyy HH:mm", sOrderBy);
   } // XMLListTopLevelMessages
 
   // --------------------------------------------------------------------------
@@ -201,8 +239,9 @@ public class Forums {
     throws SQLException,IllegalArgumentException {
     DBSubset oDbss = getMessagesForThread(oConn, sGuThread);
     
-	return "<NewsMessages count=\""+String.valueOf(oDbss.getRowCount())+"\">\n"+oDbss.toXML("","NewsMessage","dd/MM/yyyy hh:mm", null)+"</NewsMessages>\n";
+	return "<NewsMessages count=\""+String.valueOf(oDbss.getRowCount())+"\">\n"+oDbss.toXML("","NewsMessage","dd/MM/yyyy HH:mm", null)+"</NewsMessages>\n";
   } // XMLListMessagesForThread
+
 
   // --------------------------------------------------------------------------
 
@@ -212,8 +251,21 @@ public class Forums {
     throws SQLException,IllegalArgumentException {
     DBSubset oDbss = getMessagesForGroup(oConn, sGroupId, nMaxMsgs, nOffset, sOrderBy);
     
-	return "<NewsMessages offset=\""+String.valueOf(nOffset)+"\" eof=\""+String.valueOf(oDbss.eof())+"\" count=\""+String.valueOf(oDbss.getRowCount())+"\">\n"+oDbss.toXML("","NewsMessage","dd/MM/yyyy hh:mm", null)+"</NewsMessages>\n";
+	return "<NewsMessages offset=\""+String.valueOf(nOffset)+"\" eof=\""+String.valueOf(oDbss.eof())+"\" count=\""+String.valueOf(oDbss.getRowCount())+"\">\n"+oDbss.toXML("","NewsMessage","dd/MM/yyyy HH:mm", null)+"</NewsMessages>\n";
   } // XMLListMessagesForGroup
+
+  // --------------------------------------------------------------------------
+
+  public static String XMLListTopLevelMessagesForGroup(JDCConnection oConn, 
+  											   Date dtStart, Date dtEnd,
+  											   String sGroupId, String sOrderBy,
+  											   String sDateFormat)
+    throws SQLException,IllegalArgumentException {
+    DBSubset oDbss = getTopLevelMessagesForGroup(oConn, sGroupId, dtStart, dtEnd, sOrderBy);
+    
+	return "<NewsMessages offset=\"0\" eof=\"true\" count=\""+String.valueOf(oDbss.getRowCount())+"\">\n"+oDbss.toXML("","NewsMessage",sDateFormat, null)+"</NewsMessages>\n";
+  } // XMLListMessagesForGroup
+
 
   // --------------------------------------------------------------------------
 
@@ -221,10 +273,21 @@ public class Forums {
   											   Date dtStart, Date dtEnd,
   											   String sGroupId, String sOrderBy)
     throws SQLException,IllegalArgumentException {
-    DBSubset oDbss = getTopLevelMessagesForGroup(oConn, sGroupId, dtStart, dtEnd, sOrderBy);
     
-	return "<NewsMessages offset=\"0\" eof=\"true\" count=\""+String.valueOf(oDbss.getRowCount())+"\">\n"+oDbss.toXML("","NewsMessage","dd/MM/yyyy hh:mm", null)+"</NewsMessages>\n";
-  } // XMLListMessagesForGroup
+    return XMLListTopLevelMessagesForGroup(oConn, dtStart, dtEnd, sGroupId, sOrderBy, "dd/MM/yyyy HH:mm");
+  } // XMLListTopLevelMessagesForGroup
+
+  // --------------------------------------------------------------------------
+
+  public static String XMLListTopLevelMessagesForGroup(JDCConnection oConn, 
+  											           int nMaxMsgs, int nOffset,
+  											           String sGroupId, String sOrderBy,
+  											           String sDateFormat)
+    throws SQLException,IllegalArgumentException {
+    DBSubset oDbss = getTopLevelMessagesForGroup(oConn, sGroupId, nMaxMsgs, nOffset, sOrderBy);
+
+	return "<NewsMessages offset=\""+String.valueOf(nOffset)+"\" eof=\""+String.valueOf(oDbss.eof())+"\" count=\""+String.valueOf(oDbss.getRowCount())+"\">\n"+oDbss.toXML("","NewsMessage",sDateFormat, null)+"</NewsMessages>\n";
+  } // XMLListTopLevelMessagesForGroup
 
   // --------------------------------------------------------------------------
 
@@ -234,8 +297,38 @@ public class Forums {
     throws SQLException,IllegalArgumentException {
     DBSubset oDbss = getTopLevelMessagesForGroup(oConn, sGroupId, nMaxMsgs, nOffset, sOrderBy);
 
-	return "<NewsMessages offset=\""+String.valueOf(nOffset)+"\" eof=\""+String.valueOf(oDbss.eof())+"\" count=\""+String.valueOf(oDbss.getRowCount())+"\">\n"+oDbss.toXML("","NewsMessage","dd/MM/yyyy hh:mm", null)+"</NewsMessages>\n";
+	return "<NewsMessages offset=\""+String.valueOf(nOffset)+"\" eof=\""+String.valueOf(oDbss.eof())+"\" count=\""+String.valueOf(oDbss.getRowCount())+"\">\n"+oDbss.toXML("","NewsMessage","dd/MM/yyyy HH:mm", null)+"</NewsMessages>\n";
   } // XMLListTopLevelMessagesForGroup
+
+  // --------------------------------------------------------------------------
+
+  public static String XMLListTopLevelMessagesForTag(JDCConnection oConn, 
+  											           int nMaxMsgs, int nOffset,
+  											           String sGroupId, String sTagId, String sOrderBy)
+    throws SQLException,IllegalArgumentException {
+    DBSubset oDbss = getTopLevelMessagesForTag(oConn, sGroupId, sTagId, nMaxMsgs, nOffset, sOrderBy);
+
+	return "<NewsMessages offset=\""+String.valueOf(nOffset)+"\" eof=\""+String.valueOf(oDbss.eof())+"\" count=\""+String.valueOf(oDbss.getRowCount())+"\">\n"+oDbss.toXML("","NewsMessage","dd/MM/yyyy hh:mm", null)+"</NewsMessages>\n";
+  } // XMLListTopLevelMessagesForTag
+
+  // --------------------------------------------------------------------------
+  
+  public static String XMLListMonthsWithPosts(JDCConnection oConn, String sGuNewsGrp, String sLanguage)
+  	throws SQLException {
+  	ArrayList<Month> aMonthsWithPosts = Forums.getMonthsWithPosts(oConn, sGuNewsGrp);
+  	StringBuffer oStrBuff = new StringBuffer();
+  	oStrBuff.append("<Months>");
+  	if (null!=aMonthsWithPosts) {
+  	  for (int n=aMonthsWithPosts.size()-1; n>=0; n--) {
+  	    Month m = aMonthsWithPosts.get(n);
+  	    oStrBuff.append("<Month m=\""+Gadgets.leftPad(String.valueOf(m.getMonth()+1),'0',2)+"\" y=\""+String.valueOf(m.getYear()+1900)+"\">");
+  	    oStrBuff.append(com.knowgate.misc.Calendar.MonthName(m.getMonth(), sLanguage)+" "+String.valueOf(m.getYear()+1900));
+  	    oStrBuff.append("</Month>");
+  	  } // next
+  	} // fi
+  	oStrBuff.append("</Months>");
+    return oStrBuff.toString();
+  } // XMLListMonthsWithPosts
 
   // --------------------------------------------------------------------------
   
@@ -333,22 +426,55 @@ public class Forums {
   } // getNewsGroupsList
 
   // --------------------------------------------------------------------------
+  
+  /**
+   * Get list of tags for a NewsGroup
+   * @param oConn Database Connection 
+   * @param sGuNewsGroup NewsGroup GUID
+   * @throws SQLException
+   * @return DBSubset containing the following columns: gu_tag,dt_created,od_tag,tl_tag,nm_tag_ascii,de_tag,nu_msgs,bo_incoming_ping,dt_trackback,url_trackback
+   * @since 5.0
+   */
+  public static DBSubset getNewsGroupTags(JDCConnection oConn, String sGuNewsGroup)
+    throws SQLException {
+    		 
+	DBSubset oTags = new DBSubset (DB.k_newsgroup_tags,
+								   DB.gu_tag+","+DB.dt_created+","+DB.od_tag+","+DB.tl_tag+","+DB.tl_tag+" AS nm_tag,"+DB.de_tag+","+DB.nu_msgs+","+DB.bo_incoming_ping+","+DB.dt_trackback+","+DB.url_trackback,
+								   DB.gu_newsgrp+"=? "+
+								   "ORDER BY "+DB.od_tag+","+DB.tl_tag, 100);
+
+    int nTags = oTags.load(oConn, new Object[]{sGuNewsGroup});
+	for (int t=0; t<nTags; t++) {
+	  oTags.setElementAt(Gadgets.URLEncode(Gadgets.ASCIIEncode(oTags.getString(3,t)).toLowerCase().replace(' ','_')), 4, t);
+	}
+	return oTags;
+  } // getNewsGroupTags
+
+  // --------------------------------------------------------------------------
 
   public static DBSubset getMessagesForThread(JDCConnection oConn, String sGuThread)
     throws SQLException {
 
-    DBSubset  oPosts = new DBSubset (DB.k_newsmsgs + " m",
+    DBSubset oPosts = new DBSubset (DB.k_newsmsgs + " m",
     	      "m." + DB.gu_msg + ",m." + DB.gu_product + ",m." + DB.nm_author + ",m." + DB.tx_subject +
     	      ",m." + DB.dt_published + ",m." + DB.tx_email + ",m." + DB.nu_thread_msgs + ",m." + DB.gu_thread_msg +
-    	      ",m." + DB.gu_parent_msg + ",m." + DB.nu_votes + ", 'permalink' AS tx_permalink, m." + DB.tx_msg,
+    	      ",m." + DB.gu_parent_msg + ",m." + DB.nu_votes + ", m."+DB.gu_msg+" AS tx_permalink, m." + DB.tx_msg,
+    	      "m." + DB.gu_parent_msg + " IS NULL AND "+
     	      "m." + DB.id_status + "="+String.valueOf(NewsMessage.STATUS_VALIDATED)+" AND "+
-    	      "m." + DB.gu_thread_msg + "=? ORDER BY "+DB.dt_published, 100);
-    int nPosts = oPosts.load (oConn, new Object[]{sGuThread});
-    int iPermalink = oPosts.getColumnPosition("tx_permalink");
-    int iSubject = oPosts.getColumnPosition(DB.tx_subject);    
-	for (int p=0; p<nPosts; p++) {
-	  oPosts.setElementAt(Gadgets.ASCIIEncode(oPosts.getStringNull(iSubject, p, "")).toLowerCase(), iPermalink, p);
-	} // next
+    	      "m." + DB.gu_thread_msg + "=?", 100);
+    oPosts.load (oConn, new Object[]{sGuThread});
+    DBSubset oReplies = new DBSubset (DB.k_newsmsgs + " m",
+    	      "m." + DB.gu_msg + ",m." + DB.gu_product + ",m." + DB.nm_author + ",m." + DB.tx_subject +
+    	      ",m." + DB.dt_published + ",m." + DB.tx_email + ",m." + DB.nu_thread_msgs + ",m." + DB.gu_thread_msg +
+    	      ",m." + DB.gu_parent_msg + ",m." + DB.nu_votes + ", m."+DB.gu_msg+" AS tx_permalink, m." + DB.tx_msg,
+    	      "m." + DB.gu_parent_msg + " IS NOT NULL AND "+
+    	      "m." + DB.id_status + "="+String.valueOf(NewsMessage.STATUS_VALIDATED)+" AND "+
+    	      "m." + DB.gu_thread_msg + "=? ORDER BY m."+DB.dt_published+",m."+DB.dt_modified, 100);
+    oReplies.load (oConn, new Object[]{sGuThread});
+
+	if (oReplies.getRowCount()>0) oPosts.union(oReplies);
+    int nPosts = oPosts.getRowCount();
+
     return oPosts;
   } // getMessagesForThread
 
@@ -368,17 +494,24 @@ public class Forums {
     DBSubset  oPosts = new DBSubset (DB.k_newsmsgs + " m," + DB.k_x_cat_objs + " x," + DB.k_newsgroups + " g," + DB.k_categories + " c",
     	      "x." + DB.gu_category + ",m." + DB.gu_msg + ",m." + DB.gu_product + ",m." + DB.nm_author + ",m." + DB.tx_subject +
     	      ",m." + DB.dt_published + ",m." + DB.tx_email + ",m." + DB.nu_thread_msgs + ",m." + DB.gu_thread_msg +
-    	      ",m." + DB.gu_parent_msg + ",m." + DB.nu_votes + ", 'permalink' AS tx_permalink, m." + DB.tx_msg,
+    	      ",m." + DB.gu_parent_msg + ",m." + DB.nu_votes + ", m."+DB.gu_msg+" AS tx_permalink, m." + DB.tx_msg+","+
+    	      "NULL AS NewsMessageTag",
     	      "m." + DB.id_status + "="+String.valueOf(NewsMessage.STATUS_VALIDATED)+" AND x." + DB.gu_category + "=" + "g." + DB.gu_newsgrp + " AND " +
     	      "c." + DB.gu_category + "=g." + DB.gu_newsgrp + " AND " +
     	      "m." + DB.gu_msg + "=x." + DB.gu_object + " AND g." + DB.gu_newsgrp + "=? ORDER BY "+sOrderBy+" DESC", nMaxMsgs);
+    
     oPosts.setMaxRows(nMaxMsgs);    
     int nPosts = oPosts.load (oConn, new Object[]{sGuNewsGroup});
-    int iPermalink = oPosts.getColumnPosition("tx_permalink");
-    int iSubject = oPosts.getColumnPosition(DB.tx_subject);    
+    
+    DBSubset oTags;
 	for (int p=0; p<nPosts; p++) {
-	  oPosts.setElementAt(Gadgets.ASCIIEncode(oPosts.getStringNull(iSubject, p, "")).toLowerCase(), iPermalink, p);
+      oTags = new DBSubset (DB.k_newsmsg_tags+" m,"+DB.k_newsgroup_tags+" g",
+                            "g.gu_tag,g.gu_newsgrp,g.dt_created,g.tl_tag,g.de_tag,g.nu_msgs,g.bo_incoming_ping,g.dt_trackback,g.url_trackback,g.od_tag",
+    					    "m."+DB.gu_msg+"=? AND m."+DB.gu_tag+"=g."+DB.gu_tag, 10);
+      oTags.load(oConn, new Object[]{oPosts.getString(1,p)});
+      oPosts.setElementAt(oTags, 13, p);
 	} // next
+	
     return oPosts;
   } // getMessagesForGroup
 
@@ -398,20 +531,26 @@ public class Forums {
     DBSubset  oPosts = new DBSubset (DB.k_newsmsgs + " m," + DB.k_x_cat_objs + " x," + DB.k_newsgroups + " g," + DB.k_categories + " c",
     	      "x." + DB.gu_category + ",m." + DB.gu_msg + ",m." + DB.gu_product + ",m." + DB.nm_author + ",m." + DB.tx_subject +
     	      ",m." + DB.dt_published + ",m." + DB.tx_email + ",m." + DB.nu_thread_msgs + ",m." + DB.gu_thread_msg +
-    	      ",m." + DB.gu_parent_msg + ",m." + DB.nu_votes + ", 'permalink' AS tx_permalink, m." + DB.tx_msg,
+    	      ",m." + DB.gu_parent_msg + ",m." + DB.nu_votes + ", m."+DB.gu_msg+" AS tx_permalink, m." + DB.tx_msg+","+
+    	      "NULL AS NewsMessageTag",
     	      "m." + DB.id_status + "="+String.valueOf(NewsMessage.STATUS_VALIDATED)+" AND x." + DB.gu_category + "=" + "g." + DB.gu_newsgrp + " AND " +
     	      "c." + DB.gu_category + "=g." + DB.gu_newsgrp + " AND " +
     	      "m." + DB.gu_parent_msg + " IS NULL AND "+
     	      "m." + DB.gu_msg + "=x." + DB.gu_object + " AND g." + DB.gu_newsgrp + "=? ORDER BY "+sOrderBy+" DESC", nMaxMsgs);
     oPosts.setMaxRows(nMaxMsgs);    
     int nPosts = oPosts.load (oConn, new Object[]{sGuNewsGroup}, nOffset);
-    int iPermalink = oPosts.getColumnPosition("tx_permalink");
-    int iSubject = oPosts.getColumnPosition(DB.tx_subject);    
+
+    DBSubset oTags;
 	for (int p=0; p<nPosts; p++) {
-	  oPosts.setElementAt(Gadgets.ASCIIEncode(oPosts.getStringNull(iSubject, p, "")).toLowerCase(), iPermalink, p);
+      oTags = new DBSubset (DB.k_newsmsg_tags+" m,"+DB.k_newsgroup_tags+" g",
+                            "g.gu_tag,g.gu_newsgrp,g.dt_created,g.tl_tag,g.de_tag,g.nu_msgs,g.bo_incoming_ping,g.dt_trackback,g.url_trackback,g.od_tag",
+    					    "m."+DB.gu_msg+"=? AND m."+DB.gu_tag+"=g."+DB.gu_tag, 10);
+      oTags.load(oConn, new Object[]{oPosts.getString(1,p)});
+      oPosts.setElementAt(oTags, 13, p);
 	} // next
+
     return oPosts;
-  } // getMessagesForGroup
+  } // getTopLevelMessagesForGroup
 
   // --------------------------------------------------------------------------
 
@@ -429,7 +568,8 @@ public class Forums {
     DBSubset  oPosts = new DBSubset (DB.k_newsmsgs + " m," + DB.k_x_cat_objs + " x," + DB.k_newsgroups + " g," + DB.k_categories + " c",
     	      "x." + DB.gu_category + ",m." + DB.gu_msg + ",m." + DB.gu_product + ",m." + DB.nm_author + ",m." + DB.tx_subject +
     	      ",m." + DB.dt_published + ",m." + DB.tx_email + ",m." + DB.nu_thread_msgs + ",m." + DB.gu_thread_msg +
-    	      ",m." + DB.gu_parent_msg + ",m." + DB.nu_votes + ", 'permalink' AS tx_permalink, m." + DB.tx_msg,
+    	      ",m." + DB.gu_parent_msg + ",m." + DB.nu_votes + ", m."+DB.gu_msg+" AS tx_permalink, m." + DB.tx_msg+","+
+    	      "NULL AS NewsMessageTag",
     	      "m." + DB.id_status + "="+String.valueOf(NewsMessage.STATUS_VALIDATED)+
     	      " AND x." + DB.gu_category + "=" + "g." + DB.gu_newsgrp + " AND " +
     	      "c." + DB.gu_category + "=g." + DB.gu_newsgrp + " AND " +
@@ -438,14 +578,46 @@ public class Forums {
     	      "g." + DB.gu_newsgrp + "=? AND "+
     	      "m." + DB.dt_published + " BETWEEN ? AND ? "+
     	      "ORDER BY "+sOrderBy+" DESC", 100);
-    int nPosts = oPosts.load (oConn, new Object[]{sGuNewsGroup});
-    int iPermalink = oPosts.getColumnPosition("tx_permalink");
-    int iSubject = oPosts.getColumnPosition(DB.tx_subject);    
+    int nPosts = oPosts.load (oConn, new Object[]{sGuNewsGroup, new Timestamp(dtStart.getTime()), new Timestamp(dtEnd.getTime())});
+
+    DBSubset oTags;
 	for (int p=0; p<nPosts; p++) {
-	  oPosts.setElementAt(Gadgets.ASCIIEncode(oPosts.getStringNull(iSubject, p, "")).toLowerCase(), iPermalink, p);
+      oTags = new DBSubset (DB.k_newsmsg_tags+" m,"+DB.k_newsgroup_tags+" g",
+                            "g.gu_tag,g.gu_newsgrp,g.dt_created,g.tl_tag,g.de_tag,g.nu_msgs,g.bo_incoming_ping,g.dt_trackback,g.url_trackback,g.od_tag",
+    					    "m."+DB.gu_msg+"=? AND m."+DB.gu_tag+"=g."+DB.gu_tag, 10);
+      oTags.load(oConn, new Object[]{oPosts.getString(1,p)});
+      oPosts.setElementAt(oTags, 13, p);
 	} // next
+
     return oPosts;
-  } // getMessagesForGroup
+  } // getTopLevelMessagesForGroup
+
+  // --------------------------------------------------------------------------
+
+  public static DBSubset getTopLevelMessagesForTag(JDCConnection oConn,
+  											       String sGuNewsGroup, String sGuTag,
+  											       int nMaxMsgs, int nOffset,
+  											       String sOrderBy)
+  throws SQLException,IllegalArgumentException {
+	
+	if (nOffset<0) throw new IllegalArgumentException("Forums.getTopLevelMessagesForTag() The offset of messages to get must be greater than or equal to zero");
+	if (nMaxMsgs<=0) throw new IllegalArgumentException("Forums.getTopLevelMessagesForTag() The number of messages to get must be greater than zero");
+	if (null==sOrderBy) sOrderBy = DB.dt_published;
+    if (sOrderBy.length()==0) sOrderBy = DB.dt_published;
+
+    DBSubset  oPosts = new DBSubset (DB.k_newsmsgs + " m," + DB.k_x_cat_objs + " x," + DB.k_newsgroups + " g," + DB.k_categories + " c," + DB.k_newsmsg_tags + " t",
+    	      "x." + DB.gu_category + ",m." + DB.gu_msg + ",m." + DB.gu_product + ",m." + DB.nm_author + ",m." + DB.tx_subject +
+    	      ",m." + DB.dt_published + ",m." + DB.tx_email + ",m." + DB.nu_thread_msgs + ",m." + DB.gu_thread_msg +
+    	      ",m." + DB.gu_parent_msg + ",m." + DB.nu_votes + ", m."+DB.gu_msg+" AS tx_permalink, m." + DB.tx_msg,
+    	      "m."+DB.gu_msg+"=t."+DB.gu_msg+" AND t."+DB.gu_tag+"=? AND "+
+    	      "m." + DB.id_status + "="+String.valueOf(NewsMessage.STATUS_VALIDATED)+" AND x." + DB.gu_category + "=" + "g." + DB.gu_newsgrp + " AND " +
+    	      "c." + DB.gu_category + "=g." + DB.gu_newsgrp + " AND " +
+    	      "m." + DB.gu_parent_msg + " IS NULL AND "+
+    	      "m." + DB.gu_msg + "=x." + DB.gu_object + " AND g." + DB.gu_newsgrp + "=? ORDER BY "+sOrderBy+" DESC", nMaxMsgs);
+    oPosts.setMaxRows(nMaxMsgs);    
+    int nPosts = oPosts.load (oConn, new Object[]{sGuTag,sGuNewsGroup}, nOffset);
+    return oPosts;
+  } // getTopLevelMessagesForTag
 
   // --------------------------------------------------------------------------
   
@@ -474,7 +646,7 @@ public class Forums {
     DBSubset  oPosts = new DBSubset (DB.k_newsmsgs + " m," + DB.k_x_cat_objs + " x," + DB.k_newsgroups + " g," + DB.k_categories + " c",
     	      "x." + DB.gu_category + ",m." + DB.gu_msg + ",m." + DB.gu_product + ",m." + DB.nm_author + ",m." + DB.tx_subject +
     	      ",m." + DB.dt_published + ",m." + DB.tx_email + ",m." + DB.nu_thread_msgs + ",m." + DB.gu_thread_msg +
-    	      ",m." + DB.nu_votes + ", 'permalink' AS tx_permalink, m." + DB.tx_msg,
+    	      ",m." + DB.nu_votes + ", m."+DB.gu_msg+" AS tx_permalink, m." + DB.tx_msg,
     	      sActiveOnly +
     	      "m." + DB.id_status + "=0 AND x." + DB.gu_category + "=" + "g." + DB.gu_newsgrp + " AND " +
     	      "c." + DB.gu_category + "=g." + DB.gu_newsgrp + " AND " +
@@ -482,11 +654,6 @@ public class Forums {
     	      "=? ORDER BY "+sOrderBy+(sOrderBy.equalsIgnoreCase(DB.dt_published) || sOrderBy.equalsIgnoreCase(DB.nu_votes) ? " DESC" : ""), nMaxMsgs);
     oPosts.setMaxRows(nMaxMsgs);    
     int nPosts = oPosts.load (oConn, new Object[]{sGuWorkArea});
-    int iPermalink = oPosts.getColumnPosition("tx_permalink");
-    int iSubject = oPosts.getColumnPosition(DB.tx_subject);    
-	for (int p=0; p<nPosts; p++) {
-	  oPosts.setElementAt(Gadgets.ASCIIEncode(oPosts.getStringNull(iSubject, p, "")).toLowerCase(), iPermalink, p);
-	} // next
     return oPosts;
   } // getTopLevelMessages
 
@@ -497,8 +664,38 @@ public class Forums {
   	throws SQLException {
 
 	SimpleDateFormat oShortDate = new SimpleDateFormat("yyyy-MM-dd");
+	
+
+	if (null==dtFrom) {
+	  dtFrom = DBCommand.queryMinDate(oConn, "m."+DB.dt_published,
+		                              DB.k_newsmsgs+" m,"+DB.k_x_cat_objs+" x",
+		                              "m."+DB.gu_msg+"=x."+DB.gu_object+" AND "+
+		                              "x."+DB.gu_category+"='"+sGuNewsGrp+"' AND "+
+		                              "m."+DB.id_status+"="+String.valueOf(NewsMessage.STATUS_VALIDATED));	
+    } // fi
+    
+    if (null==dtFrom) {
+      return new ArrayList<Boolean>();
+    }
+	
+	dtFrom.setHours(0);
+	dtFrom.setMinutes(0);
+	dtFrom.setSeconds(0);
+	
+	if (null==dtTo) {
+      dtTo =  DBCommand.queryMaxDate(oConn, "m."+DB.dt_published,
+		                             DB.k_newsmsgs+" m,"+DB.k_x_cat_objs+" x",
+		                             "m."+DB.gu_msg+"=x."+DB.gu_object+" AND "+
+		                             "x."+DB.gu_category+"='"+sGuNewsGrp+"' AND "+
+		                             "m."+DB.id_status+"="+String.valueOf(NewsMessage.STATUS_VALIDATED));	
+	} // fi
+
+	dtTo.setHours(23);
+	dtTo.setMinutes(59);
+	dtTo.setSeconds(59);
+
     if (DebugFile.trace) {
-      DebugFile.writeln("Begin Forums.getDaysWithPosts([JDCConnection], "+oShortDate.format(dtFrom)+","+oShortDate.format(dtTo)+")");
+      DebugFile.writeln("Begin Forums.getDaysWithPosts([JDCConnection], "+sGuNewsGrp+", "+oShortDate.format(dtFrom)+","+oShortDate.format(dtTo)+")");
       DebugFile.incIdent();
     }
     
@@ -510,6 +707,8 @@ public class Forums {
     DBSubset oDbs = new DBSubset(DB.k_newsmsgs + " m," + DB.k_x_cat_objs + " x",
     							 "DISTINCT("+DBBind.Functions.ISNULL+"(m."+DB.dt_start+",m."+DB.dt_published+")) AS dt_show",
     							 "x."+DB.gu_category+"=? AND x. "+DB.gu_object+"=m."+DB.gu_msg+" AND x."+DB.id_class+"="+String.valueOf(NewsMessage.ClassId)+" AND "+
+    							 "m."+DB.gu_parent_msg+" IS NULL AND "+
+    							 "m."+DB.id_status+"="+String.valueOf(NewsMessage.STATUS_VALIDATED)+" AND "+
     							 DBBind.Functions.ISNULL+"(m."+DB.dt_start+",m."+DB.dt_published+") BETWEEN ? AND ? ORDER BY 1",100);
     int nDays = oDbs.load(oConn, new Object[]{sGuNewsGrp, new Timestamp(dtFrom.getTime()),new Timestamp(dtTo.getTime())});
     if (DebugFile.trace) {
@@ -571,4 +770,87 @@ public class Forums {
 
   // --------------------------------------------------------------------------
 
+  
+  public static ArrayList<Month> getMonthsWithPosts(JDCConnection oConn, String sGuNewsGrp)
+  	throws SQLException {
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin Forums.getMonthsWithPosts([JDCConnection], "+sGuNewsGrp+")");
+      DebugFile.incIdent();
+    }
+
+    ArrayList<Month> aMonthsWithPosts = new ArrayList<Month>();
+
+	Date dtFirstPost = DBCommand.queryMinDate(oConn, "m."+DB.dt_published,
+		                                      DB.k_newsmsgs+" m,"+DB.k_x_cat_objs+" x",
+		                                      "m."+DB.gu_msg+"=x."+DB.gu_object+" AND "+
+		                                      "x."+DB.gu_category+"='"+sGuNewsGrp+"'");
+
+    if (DebugFile.trace) {
+      if (dtFirstPost==null)
+        DebugFile.writeln("There is no first post");
+      else
+        DebugFile.writeln("First post was written at "+dtFirstPost.toString());
+    }
+
+    Date dtLastPost =  DBCommand.queryMaxDate(oConn, "m."+DB.dt_published,
+		                                      DB.k_newsmsgs+" m,"+DB.k_x_cat_objs+" x",
+		                                      "m."+DB.gu_msg+"=x."+DB.gu_object+" AND "+
+		                                      "x."+DB.gu_category+"='"+sGuNewsGrp+"'");
+    if (DebugFile.trace) {
+      if (dtLastPost==null)
+        DebugFile.writeln("There is no last post");
+      else
+        DebugFile.writeln("Last post was written at "+dtLastPost.toString());
+    }
+
+	if (dtFirstPost!=null) {
+	  Date dtFirstDayOfMonth = new Date(dtFirstPost.getYear(), dtFirstPost.getMonth(), 1, 0, 0, 0);
+	  Date dtLastDayOfMonth = new Date(dtFirstPost.getYear(), dtFirstPost.getMonth(), com.knowgate.misc.Calendar.LastDay(dtFirstPost.getMonth(), dtFirstPost.getYear()+1900), 23, 59, 59);
+
+	  String sSQL = "SELECT NULL FROM "+ DB.k_newsmsgs+" m,"+DB.k_x_cat_objs+" x WHERE "+
+                    "m."+DB.gu_msg+"=x."+DB.gu_object+" AND "+
+		            "x."+DB.gu_category+"=? AND "+
+		            "m."+DB.dt_published+" BETWEEN ? AND ? AND "+
+		            "m."+DB.id_status+"="+String.valueOf(NewsMessage.STATUS_VALIDATED);	
+
+      if (DebugFile.trace) {
+        DebugFile.writeln("Connection.preparedStatement("+sSQL+")");
+      }
+
+	  PreparedStatement oStmt = oConn.prepareStatement(sSQL);
+
+	  while (dtLastPost.compareTo(dtLastDayOfMonth)>0 || (dtLastPost.compareTo(dtFirstDayOfMonth)>=0 && dtLastPost.compareTo(dtLastDayOfMonth)<=0)) {
+        if (DebugFile.trace) {
+          DebugFile.writeln("Scanning period between "+dtFirstDayOfMonth.toString()+" and "+dtLastDayOfMonth.toString());
+        }
+	    oStmt.setString   (1, sGuNewsGrp);
+	    oStmt.setTimestamp(2, new Timestamp(dtFirstDayOfMonth.getTime()));
+	    oStmt.setTimestamp(3, new Timestamp(dtLastDayOfMonth.getTime()));
+	    ResultSet oRSet = oStmt.executeQuery();
+	    boolean bMonthHasPosts = oRSet.next();
+	    oRSet.close();
+	    if (bMonthHasPosts) {
+          if (DebugFile.trace) {
+            DebugFile.writeln(com.knowgate.misc.Calendar.MonthName(dtFirstDayOfMonth.getMonth(),"en")+" "+String.valueOf(dtFirstDayOfMonth.getYear()+1900)+" has posts");
+          }
+		  aMonthsWithPosts.add(new Month(dtFirstDayOfMonth.getYear(),dtFirstDayOfMonth.getMonth()));
+	    } else {
+          if (DebugFile.trace) {
+            DebugFile.writeln(com.knowgate.misc.Calendar.MonthName(dtFirstDayOfMonth.getMonth(),"en")+" "+String.valueOf(dtFirstDayOfMonth.getYear()+1900)+" has not posts");
+          }
+	    } // fi
+	    dtFirstDayOfMonth = com.knowgate.misc.Calendar.addMonths(1, dtFirstDayOfMonth);
+	    dtLastDayOfMonth = new Date(dtFirstDayOfMonth.getYear(), dtFirstDayOfMonth.getMonth(), com.knowgate.misc.Calendar.LastDay(dtFirstDayOfMonth.getMonth(), dtFirstDayOfMonth.getYear()+1900), 23, 59, 59);
+	  } // wend
+	  oStmt.close();
+	} // fi
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End Forums.getMonthsWithPosts() : " + String.valueOf(aMonthsWithPosts.size()));
+    }
+
+    return aMonthsWithPosts;
+  } // getMonthsWithPosts
 }
