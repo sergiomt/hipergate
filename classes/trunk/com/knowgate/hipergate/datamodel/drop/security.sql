@@ -1,4 +1,8 @@
+DROP TABLE k_webbeacon_hit;
 
+DROP TABLE k_webbeacon_pages;
+
+DROP TABLE k_webbeacons;
 
 DROP VIEW v_app_workarea;
 
