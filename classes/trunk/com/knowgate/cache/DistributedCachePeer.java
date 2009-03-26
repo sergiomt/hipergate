@@ -416,6 +416,22 @@ public final class DistributedCachePeer {
   // ----------------------------------------------------------
 
   /**
+   * @param sTokenKey Token of integer value to be retrieved
+   * @return Integer or <b>null</b> if no value was found cached with given token
+   * @throws ClassCastException
+   * @since 5.0
+   */
+  public Integer getInteger(String sTokenKey) throws RemoteException, ClassCastException {
+    Object oObj = get (sTokenKey);
+    if (null==oObj)
+      return null;
+    else
+      return (Integer) oObj;
+  } // getInteger
+
+  // ----------------------------------------------------------
+
+  /**
    * Return keys for entries in cache
    * @return Set of keys (Strings)
    */
