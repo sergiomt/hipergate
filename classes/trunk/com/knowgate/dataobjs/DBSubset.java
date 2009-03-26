@@ -1201,6 +1201,18 @@ public final class DBSubset {
   // ----------------------------------------------------------
 
   /**
+   * <p>Get name for column given its index</p>
+   * @param iColumnPosition [0..getColumnCount()-1]
+   * @return String Column Name
+   * @since 5.0
+   */
+  public String getColumnName(int iColumnPosition) throws ArrayIndexOutOfBoundsException {
+    return ColNames[iColumnPosition];
+  }
+
+  // ----------------------------------------------------------
+
+  /**
    * @param sColumnName Name of column witch position is to be returned. Column names are case insensitive.
    * @return Column position or -1 if no column with such name exists.
    */
@@ -1957,6 +1969,48 @@ public final class DBSubset {
   // ----------------------------------------------------------
 
   /**
+   * <p>Get pre-loaded value and tries to convert it into a Long</p>
+   * @param iCol Column position [0..getColumnCount()-1]
+   * @param iRow Row position [0..getRowCount()-1]
+   * @return Field value converted to Integer or <b>null</b> if field was NULL.
+   * @since 5.0
+   */
+
+  public Long getLong (int iCol, int iRow)
+    throws ArrayIndexOutOfBoundsException {
+
+    Object oVal = (((Vector) oResults.get(iRow)).get(iCol));
+    Class oCls;
+    Long iRetVal;
+
+    if (null==oVal) return null;
+
+    oCls = oVal.getClass();
+
+    try {
+      if (oCls.equals(Short.TYPE))
+        iRetVal = new Long(((Short) oVal).shortValue());
+      else if (oCls.equals(Integer.TYPE))
+        iRetVal = new Long(((Integer) oVal).intValue());
+      else if (oCls.equals(Long.TYPE))
+        iRetVal = (Long) oVal;
+      else if (oCls.equals(Class.forName("java.math.BigDecimal")))
+        iRetVal = new Long(((java.math.BigDecimal) oVal).longValue());
+      else if (oCls.equals(Float.TYPE))
+        iRetVal = new Long(((Float) oVal).longValue());
+      else if (oCls.equals(Double.TYPE))
+        iRetVal = new Long(((Double) oVal).longValue());
+      else
+        iRetVal = new Long(oVal.toString());
+    } catch (ClassNotFoundException cnfe) { /* never thrown */ iRetVal = null; }
+
+    return iRetVal;
+
+  } // getLong
+
+  // ----------------------------------------------------------
+
+  /**
    * <p>Get pre-loaded value and tries to convert it into an Integer</p>
    * @param sCol Column name
    * @param iRow Row position [0..getRowCount()-1]
@@ -2627,6 +2681,9 @@ public final class DBSubset {
             else if (oColClass.equals(ClassFloat) && (oDecFmt!=null))
               strBuff.append (oDecFmt.format((double)((java.lang.Float) oColValue).floatValue()));
 
+            else if (oColClass.equals(getClass()))
+              strBuff.append ("<"+getColumnName(iCol)+"s>\n"+((DBSubset)oColValue).toXML(sIdent+"  ", getColumnName(iCol), sDateFormat, sDecimalFormat)+"\n</"+getColumnName(iCol)+"s>\n");
+
             else
               strBuff.append(oColValue);
           }
@@ -3102,6 +3159,17 @@ public final class DBSubset {
     return oRetVal;
   }
 
+  private Long sumLong(int iCol) {
+    long iRetVal = 0l;
+    final int iRows = getRowCount();
+
+    for (int r=0; r<iRows; r++)
+      if (!isNull(iCol, r))
+        iRetVal += getLong(iCol, r);
+
+    return new Long(iRetVal);
+  }
+
   private Integer sumInteger(int iCol) {
     int iRetVal = 0;
     final int iRows = getRowCount();
@@ -3162,6 +3230,8 @@ public final class DBSubset {
 
     if (oFirst.getClass().getName().equals("java.math.BigDecimal"))
       return sumDecimal(iCol);
+    else if (oFirst.getClass().getName().equals("java.lang.Long"))
+      return sumLong(iCol);
     else if (oFirst.getClass().getName().equals("java.lang.Integer"))
       return sumInteger(iCol);
     else if (oFirst.getClass().getName().equals("java.lang.Short"))
@@ -3171,7 +3241,7 @@ public final class DBSubset {
     else if (oFirst.getClass().getName().equals("java.lang.Double"))
       return sumDouble(iCol);
     else
-      throw new NumberFormatException("Column " + String.valueOf(iCol) + " is not a suitable type for sum()");
+      throw new NumberFormatException("Column " + String.valueOf(iCol) + " of type " + oFirst.getClass().getName() + " is not a suitable type for sum()");
   }
 
   // ----------------------------------------------------------

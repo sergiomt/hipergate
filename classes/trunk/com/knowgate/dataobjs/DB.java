@@ -101,6 +101,10 @@ public final class DB {
   public static final String k_prod_attrs = "k_prod_attrs";
   public static final String k_prod_keywords = "k_prod_keywords";
   public static final String k_shops = "k_shops";
+  public static final String k_quotations = "k_quotations";
+  public static final String k_quotation_lines = "k_quotation_lines";
+  public static final String k_x_quotations_orders = "k_x_quotations_orders";
+  public static final String k_quotations_next = "k_quotations_next";
   public static final String k_orders = "k_orders";
   public static final String k_order_lines = "k_order_lines";
   public static final String k_orders_lookup = "k_orders_lookup";
@@ -510,6 +514,10 @@ public final class DB {
   public static final String gu_root_cat = "gu_root_cat";
   public static final String gu_bundles_cat = "gu_bundles_cat";
 
+  // k_quotations
+  public static final String gu_quotation = "gu_quotation";
+  public static final String pg_quotation = "pg_quotation";
+
   // k_orders
   public static final String gu_order = "gu_order";
   public static final String gu_item = "gu_item";
@@ -737,6 +745,7 @@ public final class DB {
   public static final String nm_assigned = "nm_assigned";
   public static final String nm_inspector = "nm_inspector";
   public static final String tx_bug_brief = "tx_bug_brief";
+  public static final String tx_bug_info = "tx_bug_info";
   public static final String id_client = "id_client";
 
   // k_bugs_changelog
@@ -948,12 +957,15 @@ public final class DB {
   public static final String od_score = "od_score";
   public static final String ip_addr = "ip_addr";
   public static final String gu_tag = "gu_tag";
+  public static final String od_tag = "od_tag";
   public static final String tl_tag = "tl_tag";
   public static final String de_tag = "de_tag";
   public static final String tx_tags = "tx_tags";
   public static final String nu_msgs = "nu_msgs";
   public static final String dt_trackback = "dt_trackback";
   public static final String url_trackback = "url_trackback";
+  public static final String bo_incoming_ping = "bo_incoming_ping";
+  public static final String tx_journal = "tx_journal";
 
   // k_accounts
   public static final String id_account = "id_account";

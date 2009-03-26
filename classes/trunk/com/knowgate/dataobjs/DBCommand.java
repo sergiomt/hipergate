@@ -517,8 +517,11 @@ public class DBCommand {
       else
         DebugFile.writeln("End DBCommand.queryMaxDate() : "+oMax.toString());
     }
-    return new Date(oMax.getTime());
-  } // queryMax
+    if (oMax==null)
+      return null;
+    else
+      return new Date(oMax.getTime());
+  } // queryMaxDate
 
   // ---------------------------------------------------------------------------
 
@@ -573,7 +576,10 @@ public class DBCommand {
       else
         DebugFile.writeln("End DBCommand.queryMinDate() : "+oMin.toString());
     }
-    return new Date(oMin.getTime());
+    if (oMin==null)
+      return null;
+    else
+      return new Date(oMin.getTime());
   } // queryMin
 
   // ---------------------------------------------------------------------------
