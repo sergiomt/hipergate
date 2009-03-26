@@ -134,7 +134,10 @@ public class StylesheetCache {
 
     if (DebugFile.trace) {
       DebugFile.decIdent();
-      DebugFile.writeln("End StylesheetCache.newTransformer()");
+      if (null==oTransformer)
+        DebugFile.writeln("End StylesheetCache.newTransformer() : null");
+	  else
+        DebugFile.writeln("End StylesheetCache.newTransformer() : " + oTransformer.toString());
     }
 
     return oTransformer;

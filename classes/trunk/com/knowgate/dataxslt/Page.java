@@ -97,6 +97,12 @@ public class Page extends DOMSubDocument {
    * @throws DOMException
    */
   public String template() throws DOMException {
+
+	if (DebugFile.trace) {
+      DebugFile.writeln("Begin Page.template()");
+      DebugFile.incIdent();
+	}
+        	
     Microsite oMSite = oOwnerPageSet.microsite();
 
     Node oTopNode = oMSite.getRootNode().getFirstChild();
@@ -106,11 +112,21 @@ public class Page extends DOMSubDocument {
 
     Node oContainers = oMSite.seekChildByName(oTopNode, "containers");
 
+    if (oContainers==null) {
+      if (DebugFile.trace) {
+        DebugFile.writeln("ERROR: <containers> node not found.");
+        DebugFile.decIdent();
+      }
+      throw new DOMException(DOMException.NOT_FOUND_ERR, "<containers> node not found");
+    }
+
     Node oContainer = (Node) oMSite.seekChildByAttr(oContainers, "guid", this.container());
 
     if (oContainer==null) {
-      if (DebugFile.trace)
+      if (DebugFile.trace) {
         DebugFile.writeln("ERROR: guid attribute for container " + this.container() + " not found.");
+        DebugFile.decIdent();
+      }
 
       throw new DOMException(DOMException.NOT_FOUND_ERR, "guid attribute for container " + this.container() + " not found");
     } // fi
@@ -118,11 +134,18 @@ public class Page extends DOMSubDocument {
     Element oTemplate = oMSite.seekChildByName(oContainer, "template");
 
     if (oTemplate==null) {
-      if (DebugFile.trace)
+      if (DebugFile.trace) {
         DebugFile.writeln("ERROR: <template> node for page " + this.getTitle() + " not found.");
+        DebugFile.decIdent();
+      }
 
       throw new DOMException(DOMException.NOT_FOUND_ERR, "<template> node for page " + this.getTitle() + " not found");
     }
+
+	if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End Page.template() : " + oMSite.getTextValue(oTemplate));
+	}
 
     return oMSite.getTextValue(oTemplate);
   } // template

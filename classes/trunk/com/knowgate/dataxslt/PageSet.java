@@ -847,10 +847,26 @@ public class PageSet extends DOMDocument {
         iCloseHead = sTransformed.indexOf("</head");
         if (iCloseHead<0) iCloseHead = sTransformed.indexOf("</HEAD");
 
+		if (iCloseHead<0) {
+          if (DebugFile.trace) {
+            DebugFile.writeln("Stylesheet lacks </head> tag");
+            DebugFile.decIdent();
+          }		  
+		  throw new TransformerException("Stylesheet lacks </head> tag");
+		} // fi
+
         // Buscar el inicio de tag <body>
         iOpenBody = sTransformed.indexOf("<body", iCloseHead);
         if (iOpenBody<0) iOpenBody = sTransformed.indexOf("<BODY", iCloseHead);
 
+		if (iOpenBody<0) {
+          if (DebugFile.trace) {
+            DebugFile.writeln("Stylesheet lacks <body> tag");
+            DebugFile.decIdent();
+          }		  
+		  throw new TransformerException("Stylesheet lacks <body> tag");
+		} // fi
+		
         iCloseBody = sTransformed.indexOf(">", iOpenBody+5);
         for (char s = sTransformed.charAt(iCloseBody+1); s=='\r' || s=='\n' || s==' ' || s=='\t'; s = sTransformed.charAt(++iCloseBody)) ;
 
