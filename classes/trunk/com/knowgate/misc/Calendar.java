@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/O�a, 107 1�2 28050 Madrid (Spain)
+                      C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -45,24 +45,27 @@ import com.knowgate.debug.DebugFile;
 
 public class Calendar {
 
-  private static String WeekDayNamesES[] = { null, "domingo", "lunes", "martes", "mi�rcoles", "jueves", "viernes", "s�bado" };
+  private static String WeekDayNamesES[] = { null, "domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado" };
   private static String WeekDayNamesEN[] = { null, "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
-  private static String WeekDayNamesIT[] = { null, "Domenica", "Luned�", "Marted�", "Mercoled�", "Gioved�", "Venerd�", "Sabato" };
+  private static String WeekDayNamesIT[] = { null, "Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato" };
   private static String WeekDayNamesFR[] = { null, "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi" };
   private static String WeekDayNamesDE[] = { null, "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag" };
-  private static String WeekDayNamesPT[] = { null, "Domingo", "Segunda-feira", "Ter�a-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "S�bado" };
-  private static String WeekDayNamesRU[] = { null, "???????????", "???????????", "???????", "Wednesday", "???????", "???????", "???????" };
-  private static String WeekDayNamesCN[] = { null, "", "???????????", "???????", "Wednesday", "???????", "???????", "???????" };
-  private static String WeekDayNamesNO[] = { null, "s�ndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "l�rdag" };
+  private static String WeekDayNamesPT[] = { null, "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado" };
+  private static String WeekDayNamesRU[] = { null, "Воскресенье", "понедельник", "вторник", "среда", "четверг", "пятница", "суббота" };
+  private static String WeekDayNamesCN[] = { null, "周日", "周一", "周二", "周三", "周四", "周五", "周六" };
+  private static String WeekDayNamesNO[] = { null, "søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag" };
+  private static String WeekDayNamesPL[] = { null, "niedziela", "poniedzialek", "wtorek", "sroda", "czwartek", "piatek", "sobota" };
 
   private static String MonthNamesES[] = { "Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre" };
   private static String MonthNamesEN[] = { "January","February","March","April","May","June","July","August","September","October","November","December" };
   private static String MonthNamesIT[] = { "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre" };
-  private static String MonthNamesFR[] = { "Janvier","F�vrier","Mars","Avril","Mai","Juin","Juillet","Ao�t","Septembre","Octobre","Novembre","D�cembre" };
-  private static String MonthNamesDE[] = { "Januar","Februar","M�rz","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember" };
-  private static String MonthNamesPT[] = { "Janeiro","Fevereiro","Mar�o","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro" };
-  private static String MonthNamesRU[] = { "??????","???????","?????","??????","???","????","????","???????","????????","???????","??????","???????" };
+  private static String MonthNamesFR[] = { "Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre" };
+  private static String MonthNamesDE[] = { "Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember" };
+  private static String MonthNamesPT[] = { "Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro" };
+  private static String MonthNamesRU[] = { "Январь", "	Февраль", "март", "Апрель", "Пусть", "июня", "Июль", "Август", "сентябрь", "Октябрь", "Ноябрь", "Декабрь" };
+  private static String MonthNamesCN[] = { "一月","二月","3月","4月","五月","六月","7月","8月","9月","10月","十一月","12月" };
   private static String MonthNamesNO[] = { "januar","februar","mars","april","mai","juni","juli","august","september","oktober","november","desember" };
+  private static String MonthNamesPL[] = { "Styczen","Luty","Marzec","Kwiecien","Maj","Czerwiec","Lipiec","Sierpien","Wrzesien","Pazdziernik","Listopad","Grudzien" };
 
   private static String MonthNamesRFC[] = { "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec" };
 
@@ -87,7 +90,7 @@ public class Calendar {
       throw new java.lang.IllegalArgumentException("Calendar.WeekDayName 1st parameter (MyWeekDay) is " + String.valueOf(MyWeekDay) + " but must be in the range [1..7]");
     else {
       if (null==sLangId)
-        throw new java.lang.IllegalArgumentException("Calendar.WeekDayName 2nd parameter (Language Id.) is null but must be one of {es,en}");
+        throw new java.lang.IllegalArgumentException("Calendar.WeekDayName 2nd parameter (Language Id.) is null but must be one of {es,en,it,fr,de,pt,ru,cn,no} but is null");
       else if (sLangId.equalsIgnoreCase("es"))
         sRetVal = WeekDayNamesES[MyWeekDay];
       else if (sLangId.equalsIgnoreCase("en"))
@@ -104,8 +107,12 @@ public class Calendar {
         sRetVal = WeekDayNamesRU[MyWeekDay];
       else if (sLangId.equalsIgnoreCase("no"))
         sRetVal = WeekDayNamesNO[MyWeekDay];
+      else if (sLangId.equalsIgnoreCase("pl"))
+        sRetVal = WeekDayNamesPL[MyWeekDay];
+      else if (sLangId.equalsIgnoreCase("cn"))
+        sRetVal = WeekDayNamesCN[MyWeekDay];
       else
-        throw new java.lang.IllegalArgumentException("Calendar.WeekDayName 2nd parameter (Language Id.) must be one of {es,en}");
+        throw new java.lang.IllegalArgumentException("Calendar.WeekDayName 2nd parameter (Language Id.) must be one of {es,en,it,fr,de,pt,ru,cn,no} but is "+sLangId);
     }
 
     if (DebugFile.trace) {
@@ -139,7 +146,7 @@ public class Calendar {
       throw new java.lang.IllegalArgumentException("Calendar.MonthName 1st parameter (MyMonth) is " + String.valueOf(MyMonth) + " but must be in the range [0..11]");
     else {
       if (null==sLangId)
-        throw new java.lang.IllegalArgumentException("Calendar.MonthName 2nd parameter (Language Id.) is null but must be one of {es,en}");
+        throw new java.lang.IllegalArgumentException("Calendar.MonthName 2nd parameter (Language Id.) is null but must be one of {es,en,it,fr,de,pt,ru,cn,no} but is null");
       else if (sLangId.equalsIgnoreCase("es"))
         sRetVal = MonthNamesES[MyMonth];
       else if (sLangId.equalsIgnoreCase("en"))
@@ -154,8 +161,14 @@ public class Calendar {
         sRetVal = MonthNamesPT[MyMonth];
       else if (sLangId.equalsIgnoreCase("no"))
         sRetVal = MonthNamesNO[MyMonth];
+      else if (sLangId.equalsIgnoreCase("ru"))
+        sRetVal = MonthNamesRU[MyMonth];
+      else if (sLangId.equalsIgnoreCase("pl"))
+        sRetVal = MonthNamesPL[MyMonth];
+      else if (sLangId.equalsIgnoreCase("cn"))
+        sRetVal = MonthNamesCN[MyMonth];
       else
-        throw new java.lang.IllegalArgumentException("Calendar.WeekDayName 2nd parameter (Language Id.) must be one of {es,en}");
+        throw new java.lang.IllegalArgumentException("Calendar.WeekDayName 2nd parameter (Language Id.) must be one of {es,en,it,fr,de,pt,ru,cn,no} but is "+sLangId);
     }
 
     if (DebugFile.trace) {
