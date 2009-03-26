@@ -130,3 +130,6 @@ EXCEPTION
     CoStatus:=-1;
 END k_sp_autenticate;
 GO;
+
+CREATE SEQUENCE seq_k_webbeacons INCREMENT BY 1 START WITH 1
+GO;
