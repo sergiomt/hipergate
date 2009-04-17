@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/OÒa, 107 1∫2 28050 Madrid (Spain)
+                      C/O√±a, 107 1¬∫2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -235,7 +235,7 @@ public class XMLDocument {
     String sCurrent;
     String vNodes[];  // Array de nodos parseados
     String vAttrs[];  // Array de atributos parseados
-    boolean bAttrs[]; // Guarda indicadores booleanos seg˙n se van encontrando los atributos
+    boolean bAttrs[]; // Guarda indicadores booleanos seg√∫n se van encontrando los atributos
                       // para saber cual es el que no se encuentra en caso de fallo
 
     if (DebugFile.trace) {
@@ -243,7 +243,7 @@ public class XMLDocument {
       DebugFile.incIdent();
     }
 
-    // Parsear la cadena de b˙squeda XPath y colocar el resultado
+    // Parsear la cadena de b√∫squeda XPath y colocar el resultado
     // en dos arrays, uno para los nodos y otro para los atributos.
     vNodes = Gadgets.split(sXPath, "/");
     if (null==vNodes) {
@@ -312,7 +312,7 @@ public class XMLDocument {
           iNode++;
         }
 
-        // Tratar de forma especial la funciÛn position() de XPath
+        // Tratar de forma especial la funci√≥n position() de XPath
         else if (vAttrs[iNode].startsWith("position()")) {
 
           String[] aAttrValue = Gadgets.split2(vAttrs[iNode], '=');
@@ -587,7 +587,7 @@ public class XMLDocument {
         (b==' ') && iStartParent>0;
          b = sXMLDoc.charAt(--iStartParent)) ;
 
-    // Quitar los saltos de lÌnea y retornos de carro por detr·s del nodo
+    // Quitar los saltos de l√≠nea y retornos de carro por detr√°s del nodo
     for (char c = sXMLDoc.charAt(iEndParent);
         (c=='\r' || c=='\n') && iEndParent<sXMLDoc.length();
          c = sXMLDoc.charAt(++iEndParent)) ;

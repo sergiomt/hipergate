@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -646,7 +646,7 @@ public class PageSet extends DOMDocument {
         // Set user defined parameters for stylesheet
         StylesheetCache.setParameters(oTransformer, oUserProps);
 
-        // Realizar la transformación
+        // Realizar la transformaciÃ³n
         if (DebugFile.trace)
           DebugFile.writeln("oTransformer.transform(oStreamSrcXML, oStreamResult)");
 
@@ -752,7 +752,7 @@ public class PageSet extends DOMDocument {
     if (DebugFile.trace)
       DebugFile.writeln("new FileInputStream(" + (sURI.startsWith("file://") ? sURI.substring(7) : sURI) + ")");
 
-    // Para cada contenedor (página) realizar la transformación XSLT
+    // Para cada contenedor (pÃ¡gina) realizar la transformaciÃ³n XSLT
 
       oCurrentPage = this.page(sPageGUID);
 
@@ -808,7 +808,7 @@ public class PageSet extends DOMDocument {
         // Paso el title de la pagina como parametro
         oTransformer.setParameter ("param_page", oCurrentPage.getTitle());
 
-        // Realizar la transformación
+        // Realizar la transformaciÃ³n
         oTransformer.transform (oStreamSrcXML, oStreamResult);
 
       }
@@ -880,7 +880,7 @@ public class PageSet extends DOMDocument {
         oPostTransform.append(sTransformed.substring(iCloseHead, iCloseHead+7));
         oPostTransform.append(sTransformed.substring(iOpenBody, iCloseBody));
 
-        // Cargar el código fuente del control de visulización del Integrador
+        // Cargar el cÃ³digo fuente del control de visulizaciÃ³n del Integrador
         try {
           sCharBuffer = oFS.readfilestr(sCtrlPath, "UTF-8");
 
@@ -1020,7 +1020,7 @@ public class PageSet extends DOMDocument {
       DebugFile.writeln("new FileInputStream(" + (sURI.startsWith("file://") ? sURI.substring(7) : sURI) + ")");
 
 
-    // Para cada contenedor (página) realizar la transformación XSLT
+    // Para cada contenedor (pÃ¡gina) realizar la transformaciÃ³n XSLT
     for (int c=0; c<vPages.size(); c++) {
 
       oCurrentPage = (Page) vPages.get(c);
@@ -1064,7 +1064,7 @@ public class PageSet extends DOMDocument {
         // Paso el title de la pagina como parametro
         oTransformer.setParameter ("param_page", ((Page)(vPages.get(c))).getTitle());
 
-        // Realizar la transformación
+        // Realizar la transformaciÃ³n
         oTransformer.transform (oStreamSrcXML, oStreamResult);
 
       }
@@ -1120,7 +1120,7 @@ public class PageSet extends DOMDocument {
         oPostTransform.append(sTransformed.substring(iCloseHead, iCloseHead+7));
         oPostTransform.append(sTransformed.substring(iOpenBody, iCloseBody));
 
-        // Cargar el código fuente del control de visulización del Integrador
+        // Cargar el cÃ³digo fuente del control de visulizaciÃ³n del Integrador
         try {
           sCharBuffer = oFS.readfilestr(sCtrlPath, "UTF-8");
 
@@ -1446,7 +1446,7 @@ public class PageSet extends DOMDocument {
   } // main
 
   // **********************************************************
-  // * Variables estáticas
+  // * Variables estÃ¡ticas
 
   public static final short ClassId = 71;
 

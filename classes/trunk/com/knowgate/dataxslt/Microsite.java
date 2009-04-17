@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/OÒa, 107 1∫2 28050 Madrid (Spain)
+                      C/O√±a, 107 1¬∫2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -70,9 +70,9 @@ public class Microsite extends DOMDocument {
 
   public Microsite (String sURI)
     throws ClassNotFoundException, Exception, IllegalAccessException {
-    // Crea un ·rbol DOM en memoria a partir de un archivo XML de definiciÛn
-    // Par·metros:
-    //             sURI -> Ruta absoluta al documento XML de definiciÛn
+    // Crea un √°rbol DOM en memoria a partir de un archivo XML de definici√≥n
+    // Par√°metros:
+    //             sURI -> Ruta absoluta al documento XML de definici√≥n
     //                     este documento debe validar con el schema
     //                     microsite.xsd
 
@@ -95,9 +95,9 @@ public class Microsite extends DOMDocument {
 
   public Microsite (String sURI, boolean bValidateXML)
     throws ClassNotFoundException, Exception, IllegalAccessException {
-    // Crea un ·rbol DOM en memoria a partir de un archivo XML de definiciÛn
-    // Par·metros:
-    //             sURI -> Ruta absoluta al documento XML de definiciÛn
+    // Crea un √°rbol DOM en memoria a partir de un archivo XML de definici√≥n
+    // Par√°metros:
+    //             sURI -> Ruta absoluta al documento XML de definici√≥n
     //                     este documento debe validar con el schema
     //                     microsite.xsd
 
@@ -416,11 +416,11 @@ public class Microsite extends DOMDocument {
 
   public void createPageSet(String sPath, HashMap oParameters) throws IOException {
     // Crear un nuevo documento PageSet en un archivo
-    // a partir de la definiciÛn estructural de este Microsite
-    // Par·metros:
+    // a partir de la definici√≥n estructural de este Microsite
+    // Par√°metros:
     //             sPath       -> Ruta al archivo de salida
-    //             oParameters -> Par·metros adicionales de creaciÛn
-    //             (tÌpicamente: font, color, etc)
+    //             oParameters -> Par√°metros adicionales de creaci√≥n
+    //             (t√≠picamente: font, color, etc)
 
     FileWriter oWriter = new FileWriter(sPath);
     Iterator oKeyIterator;
@@ -428,7 +428,7 @@ public class Microsite extends DOMDocument {
     Vector oContainers;
     int iContainers;
 
-    // Escribir a capÛn los nodos del PageSet
+    // Escribir a cap√≥n los nodos del PageSet
     oWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
     oWriter.write("<?xml-stylesheet type=\"text/xsl\"?>\n");
     oWriter.write("<?xml-stylesheet type=\"text/xsl\"?>\n");
