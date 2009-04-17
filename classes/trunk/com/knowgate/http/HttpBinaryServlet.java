@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -191,8 +191,8 @@ public class HttpBinaryServlet extends HttpServlet {
 
       oConn = DriverManager.getConnection(jdbcURL,dbUserName,dbUserPassword);
 
-      // Si el archivo a recuperar está contenido dentro de una categoría,
-      // verificar los permisos del usuario sobre dicha categoría
+      // Si el archivo a recuperar estÃ¡ contenido dentro de una categorÃ­a,
+      // verificar los permisos del usuario sobre dicha categorÃ­a
       gu_category = request.getParameter("id_category");
       if (gu_category!=null)
         if (gu_category.length()>0) {
