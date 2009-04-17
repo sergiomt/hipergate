@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -360,7 +360,7 @@ public class DBLanguages {
 
         oTermsBuff.append("<OPTION VALUE=\"" + oChld.getString(DB.gu_term) + "\">");
         for (int s=1; s<oChld.level(); s++)
-          oTermsBuff.append(" ");
+          oTermsBuff.append("Â ");
         oTermsBuff.append(oChld.getString(DB.tx_term));
         oTermsBuff.append("</OPTION>");
       } // wend

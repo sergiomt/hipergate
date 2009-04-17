@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -54,6 +54,7 @@ import java.sql.DatabaseMetaData;
 
 import com.knowgate.debug.DebugFile;
 import com.knowgate.acl.ACL;
+import com.knowgate.acl.PasswordRecord;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBBind;
@@ -1431,12 +1432,12 @@ public class Category  extends DBPersist {
   public boolean store(JDCConnection oConn) throws SQLException {
     java.sql.Timestamp dtNow = new java.sql.Timestamp(DBBind.getTime());
 
-    // Si no se especificó un identificador para la categoria
-    // entonces añadirlo autimaticamente
+    // Si no se especificÃ³ un identificador para la categoria
+    // entonces aÃ±adirlo autimaticamente
     if (!AllVals.containsKey(DB.gu_category))
       put(DB.gu_category, Gadgets.generateUUID());
 
-    // Forzar la fecha de modificación del registro
+    // Forzar la fecha de modificaciÃ³n del registro
     replace(DB.dt_modified, dtNow);
 
     return super.store(oConn);
@@ -1474,7 +1475,7 @@ public class Category  extends DBPersist {
 
   /**
    * <p>Store a set of labels for this category</p>
-   * This method takes a string of the form "en;Root|es;Raíz|fr;Racine|it;Radice|ru;\u041A\u043E\u0440\u0435\u043D\u044C"
+   * This method takes a string of the form "en;Root|es;RaÃ­z|fr;Racine|it;Radice|ru;\u041A\u043E\u0440\u0435\u043D\u044C"
    * and store one label for each {language,literal} pair
    * @param oConn JDCConnection
    * @param sNamesTable String Language names and translated names
@@ -1614,11 +1615,11 @@ public class Category  extends DBPersist {
 
     if (DebugFile.trace) DebugFile.writeln(String.valueOf(iFiles) + " files found");
 
-    // Cursor preparado para leer los archivos de una categoría
+    // Cursor preparado para leer los archivos de una categorÃ­a
     if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(SELECT NULL FROM " + DB.k_products + " p, " + DB.k_x_cat_objs + " o WHERE p." + DB.nm_product + "=? AND o." + DB.gu_category + "=? AND o." + DB.id_class + "=" + String.valueOf(Product.ClassId) + " AND p." + DB.gu_product + "=o." + DB.gu_object);
     oStmt = oConn.prepareStatement("SELECT " + DB.gu_product + " FROM " + DB.k_products + " p, " + DB.k_x_cat_objs + " o WHERE p." + DB.nm_product + "=? AND o." + DB.gu_category + "=? AND o." + DB.id_class + "=" + String.valueOf(Product.ClassId) + " AND p." + DB.gu_product + "=o." + DB.gu_object, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
-    // Cursor preparado para buscar una categoría hija por nombre traducido
+    // Cursor preparado para buscar una categorÃ­a hija por nombre traducido
     if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(SELECT " + DB.gu_category + " FROM " + DB.k_cat_tree + " t," + DB.k_cat_labels + " l WHERE t.gu_parent_cat=? AND l.tr_category=? AND t.gu_child_cat=l.gu_category");
     oCatg = oConn.prepareStatement("SELECT " + DB.gu_category + " FROM " + DB.k_cat_tree + " t," + DB.k_cat_labels + " l WHERE t." + DB.gu_parent_cat + "=? AND l." + DB.tr_category + "=? AND t." + DB.gu_child_cat + "=l." + DB.gu_category, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
@@ -1630,10 +1631,10 @@ public class Category  extends DBPersist {
         if (DebugFile.trace) DebugFile.writeln("nm_product=" + (sFileName.length()<=128 ? sFileName : sFileName.substring(0,128)));
 
         if (sFileName.toLowerCase().endsWith(".url"))
-          // Si el archivo tiene extensión .url interpretarlo como un enlace
+          // Si el archivo tiene extensiÃ³n .url interpretarlo como un enlace
           oProd.put(DB.nm_product, (sFileName.length()<=128 ? sFileName.substring(0,sFileName.length()-4) : sFileName.substring(0,128)));
         else
-          // Es un archivo físico
+          // Es un archivo fÃ­sico
           oProd.put(DB.nm_product, (sFileName.length()<=128 ? sFileName : sFileName.substring(0,128)));
 
         // Guardar el archivo como un producto en la base de datos
@@ -1647,11 +1648,11 @@ public class Category  extends DBPersist {
         if (DebugFile.trace) DebugFile.writeln("oProd.store([Connection]);");
         oProd.store(oConn);
 
-        // Añadir el producto a la categoría actual
+        // AÃ±adir el producto a la categorÃ­a actual
         if (DebugFile.trace) DebugFile.writeln("oProd.addToCategory([Connection], " + getStringNull(DB.gu_category, "null") + ");");
         oProd.addToCategory(oConn, this.getString(DB.gu_category), 0);
 
-        // Crear una nueva ubicación de producto para apuntar al archivo físico o al enlace
+        // Crear una nueva ubicaciÃ³n de producto para apuntar al archivo fÃ­sico o al enlace
         oLoca = new ProductLocation();
 
         oLoca.put(DB.gu_owner, getString(DB.gu_owner));
@@ -1660,7 +1661,7 @@ public class Category  extends DBPersist {
         if (sFileName.toLowerCase().endsWith(".url")) {
           // Si se trata de un archivo .url
           // abrirlo como un fichero de propiedades
-          // para sacar los parámetros del enlace.
+          // para sacar los parÃ¡metros del enlace.
           oURLProps = new Properties();
           oIOStrm = new FileInputStream(oFile);
           oURLProps.load(oIOStrm);
@@ -1680,7 +1681,7 @@ public class Category  extends DBPersist {
           try { oConn.commit(); } catch (SQLException ignore) { /* Ignore exception if AutoCOmmit was already set to true*/}
         }
         else {
-          // Si es una archivo físico moverlo de ubicación y apuntar su ruta en la base de datos
+          // Si es una archivo fÃ­sico moverlo de ubicaciÃ³n y apuntar su ruta en la base de datos
           oLoca.setPath (sProtocol, sServer, sTargetPath, sFileName, sFileName);
           oLoca.put(DB.id_cont_type, oLoca.getContainerType());
           oLoca.setLength(new Long(oFile.length()).intValue());
@@ -1691,7 +1692,7 @@ public class Category  extends DBPersist {
           try { oConn.commit(); } catch (SQLException ignore) { /* Ignore exception if AutoCOmmit was already set to true*/}
 
           // Coger el fichero "sSourcePath/sFileName" y moverlo a "sProtocol://sServer/sTargetPath/sFileName"
-          // luego grabar en la base de datos su nueva ubicación física
+          // luego grabar en la base de datos su nueva ubicaciÃ³n fÃ­sica
           oLoca.upload(oConn, oFS, sSourcePath, sFileName, sProtocol + sServer + sTargetPath, sFileName);
         }
         oLoca = null;
@@ -1715,30 +1716,30 @@ public class Category  extends DBPersist {
           oNewCategory = new Category(oConn, sNewCategoryId);
           sNewCategoryNm = oNewCategory.getString(DB.nm_category);
 
-          // Crear el directorio espejo donde se almacenan los archivos (Productos) de la categoría
+          // Crear el directorio espejo donde se almacenan los archivos (Productos) de la categorÃ­a
           oFS.mkdirs(sProtocol + sServer + sTargetChomp + sNewCategoryNm);
         }
         else {
 
-          // Componer un nuevo alias (nombre corto único) para la categoria que representa el directorio
+          // Componer un nuevo alias (nombre corto Ãºnico) para la categoria que representa el directorio
           sNewCategoryNm = Category.makeName(oConn, sFileName);
 
           if (DebugFile.trace) DebugFile.writeln("sNewCategoryNm=" + sNewCategoryNm);
 
-          // Crear la categoría
+          // Crear la categorÃ­a
           aCatValues = new Object[] { getString(DB.gu_category), getString(DB.gu_owner), sNewCategoryNm, iTrue, iActive, "folderclosed_16x16.gif", "folderopen_16x16.gif"};
           sNewCategoryId = Category.create(oConn, aCatValues);
 
-          // Crear la etiqueta de nombre traducido para la categoría
+          // Crear la etiqueta de nombre traducido para la categorÃ­a
           aLblValues = new Object[] { sNewCategoryId, sLanguage, sFileName, null };
           CategoryLabel.create(oConn, aLblValues);
 
           try { oConn.commit(); } catch (SQLException ignore) { /* Ignore exception if AutoCOmmit was already set to true*/}
 
-          // Crear el directorio espejo donde se almacenan los archivos (Productos) de la categoría
+          // Crear el directorio espejo donde se almacenan los archivos (Productos) de la categorÃ­a
           oFS.mkdirs(sProtocol + sServer + sTargetChomp + sNewCategoryNm);
 
-          // Añadir archivos recursivamente
+          // AÃ±adir archivos recursivamente
           oNewCategory = new Category(oConn, sNewCategoryId);
           oNewCategory.inheritPermissions(oConn, getString(DB.gu_category), (short)1, (short)1);
         }
@@ -2076,7 +2077,7 @@ public class Category  extends DBPersist {
      int iObjs = oObjs.getRowCount();
      boolean bRetVal;
 
-    // recorre los objetos de esta categoría y los borra
+    // recorre los objetos de esta categorÃ­a y los borra
     for (int o=0; o<iObjs; o++) {
       switch (oObjs.getInt(1, o)) {
         case com.knowgate.hipergate.Product.ClassId:
@@ -2095,6 +2096,9 @@ public class Category  extends DBPersist {
           break;
         case com.knowgate.hipermail.DBMimeMessage.ClassId:
           com.knowgate.hipermail.DBMimeMessage.delete(oConn, sCategoryGUID, oObjs.getString(0, o));
+          break;
+        case com.knowgate.acl.PasswordRecord.ClassId:
+          com.knowgate.acl.PasswordRecord.delete(oConn, oObjs.getString(0, o));
           break;
       }
     } // next (o)
@@ -2151,7 +2155,7 @@ public class Category  extends DBPersist {
       oStmt.close();
     } // fi (k_x_contact_prods)
 
-    // Saca la lista de categorías hijas de primer nivel y repite el proceso de borrado
+    // Saca la lista de categorÃ­as hijas de primer nivel y repite el proceso de borrado
     LinkedList oChilds = oCat.browse(oConn, BROWSE_DOWN, BROWSE_BOTTOMUP);
     ListIterator oIter = oChilds.listIterator();
 
@@ -2283,7 +2287,7 @@ public class Category  extends DBPersist {
     sShortCategoryNm.replace('"', 'q');
     sShortCategoryNm.replace('|', '_');
 
-    // Obtener el máximo de las categorías cuyo alias es igual al buscado
+    // Obtener el mÃ¡ximo de las categorÃ­as cuyo alias es igual al buscado
     if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(SELECT " + DBBind.Functions.ISNULL + "(MAX(" + DB.nm_category + "),'" + sShortCategoryNm + "~00000000') FROM " + DB.k_categories + " WHERE " + DB.nm_category + " LIKE '" + sShortCategoryNm + "%')");
 
     PreparedStatement oStmt = oConn.prepareStatement("SELECT " + DBBind.Functions.ISNULL + "(MAX(" + DB.nm_category + "),'" + sShortCategoryNm + "~00000000') FROM " + DB.k_categories + " WHERE " + DB.nm_category + " LIKE ?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -2298,14 +2302,14 @@ public class Category  extends DBPersist {
     oRSet.close();
     oStmt.close();
 
-    // Buscar el churriguito y sacar los números que quedan a la derecha
+    // Buscar el churriguito y sacar los nÃºmeros que quedan a la derecha
     iChurriguito = sCatNm.indexOf("~");
     if (iChurriguito>0)
       sCatIndex = String.valueOf(Integer.parseInt(sCatNm.substring(iChurriguito+1)) + 1);
     else
       sCatIndex = "00000001";
 
-    // Añadir zeros de padding por la izquierda
+    // AÃ±adir zeros de padding por la izquierda
     for (int z=0; z<8-sCatIndex.length(); z++) sCatIndex = "0" + sCatIndex;
 
     sShortCategoryNm += "~" + sCatIndex;
