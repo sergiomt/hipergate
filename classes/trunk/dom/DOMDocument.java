@@ -251,7 +251,6 @@ public class DOMDocument {
 
       oParserWrapper.setFeature("http://xml.org/sax/features/namespaces", bNamespaces);
 
-      // Validación XML-Schema
       oParserWrapper.setFeature("http://xml.org/sax/features/validation", bValidation);
       oParserWrapper.setFeature("http://apache.org/xml/features/validation/schema", bValidation);
       oParserWrapper.setFeature("http://apache.org/xml/features/validation/schema-full-checking", bValidation);
@@ -321,7 +320,6 @@ public class DOMDocument {
 
       oParserWrapper.setFeature("http://xml.org/sax/features/namespaces", bNamespaces);
 
-      // Validación XML-Schema
       oParserWrapper.setFeature("http://xml.org/sax/features/validation", bValidation);
       oParserWrapper.setFeature("http://apache.org/xml/features/validation/schema", bValidation);
       oParserWrapper.setFeature("http://apache.org/xml/features/validation/schema-full-checking", bValidation);
@@ -366,7 +364,6 @@ public class DOMDocument {
 
       oParserWrapper.setFeature("http://xml.org/sax/features/namespaces", bNamespaces);
 
-      // Validación XML-Schema
       oParserWrapper.setFeature("http://xml.org/sax/features/validation", bValidation);
       oParserWrapper.setFeature("http://apache.org/xml/features/validation/schema", bValidation);
       oParserWrapper.setFeature("http://apache.org/xml/features/validation/schema-full-checking", bValidation);
