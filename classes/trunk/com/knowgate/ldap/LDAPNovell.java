@@ -2,7 +2,7 @@ package com.knowgate.ldap;
 
 /*
   Copyright (C) 2004  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -397,7 +397,7 @@ public class LDAPNovell extends LDAPModel {
       // Contacto Privado
       addLeaf (makeName(PRIVATE_CONTACTS_LEAF_PATTERN,new String[]{sTxEmail,sOwner,sWorkAreaName,sDomainName})+","+getPartitionName(), oAttrs);
     } else {
-      // Contacto Público (workarea)
+      // Contacto PÃºblico (workarea)
       addLeaf (makeName(PUBLIC_CONTACTS_LEAF_PATTERN,new String[]{sTxEmail,sWorkAreaName,sDomainName})+","+getPartitionName(), oAttrs);
     }
 
@@ -468,7 +468,7 @@ public class LDAPNovell extends LDAPModel {
       addLeaf (makeName(PRIVATE_CONTACTS_LEAF_PATTERN,new String[]{sTxEmail,sOwner,sWorkAreaName,sDomainName})+","+getPartitionName(), oAttrs);
     } else {
 
-      // Contacto Público (workarea)
+      // Contacto PÃºblico (workarea)
       if (exists(makeName(PUBLIC_CONTACTS_LEAF_PATTERN,new String[]{sTxEmail,sWorkAreaName,sDomainName})+","+getPartitionName()))
         deleteAddress (oJdbc, sAddrId);
 
@@ -819,7 +819,7 @@ public class LDAPNovell extends LDAPModel {
 
       // Usuario
       addLeaf ("cn=" + oRSet.getString("mail") + ",dc=users," + sDN, oAttrs);
-      // Añadir el contenedor de contactos privados
+      // AÃ±adir el contenedor de contactos privados
       addHive ("dc=privateContacts,cn=" + oRSet.getString("mail") + ",dc=users," + sDN, "privateContacts");
     } // wend
 
@@ -846,7 +846,7 @@ public class LDAPNovell extends LDAPModel {
           // Contacto Privado
           addLeaf("cn=" + oRSet.getString("mail") + "dc=privateContacts,cn=" + oRSet.getString("control_owner") + ",dc=users," + sDN, oAttrs);
         } else {
-          // Contacto Público (workarea)
+          // Contacto PÃºblico (workarea)
           addLeaf("cn=" + oRSet.getString("mail") + ",dc=publicContacts," + sDN, oAttrs);
         }
     } // wend
@@ -934,7 +934,7 @@ public class LDAPNovell extends LDAPModel {
 
       // Usuario      
       addLeaf (sDN, oAttrs);
-      // Añadir el contenedor de contactos privados
+      // AÃ±adir el contenedor de contactos privados
       addHive ("dc=privateContacts," + sDN, "privateContacts");
     } // wend
 
@@ -960,7 +960,7 @@ public class LDAPNovell extends LDAPModel {
           // Contacto Privado          
           addLeaf(makeName(PRIVATE_CONTACTS_LEAF_PATTERN,new String[]{oRSet.getString("mail"),oRSet.getString("control_owner"),sWorkAreaNm,sDomainNm}) + "," + getPartitionName(), oAttrs);
         } else {
-          // Contacto Público (workarea)
+          // Contacto PÃºblico (workarea)
           addLeaf(makeName(PUBLIC_CONTACTS_LEAF_PATTERN,new String[]{oRSet.getString("mail"),sWorkAreaNm,sDomainNm}) + "," + getPartitionName(), oAttrs);
         }
     } // wend
@@ -1073,7 +1073,7 @@ public class LDAPNovell extends LDAPModel {
           catch (LDAPException e) { continue; }
 
           if (!getPartitionName().equals(nextEntry.getDN()))
-            deleteEntry(nextEntry); // No borrar el elemento raíz!!!
+            deleteEntry(nextEntry); // No borrar el elemento raÃ­z!!!
         } // wend
     }
     catch (com.novell.ldap.LDAPException xcpt) {
