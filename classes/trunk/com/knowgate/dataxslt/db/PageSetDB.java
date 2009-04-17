@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -239,7 +239,7 @@ public class PageSetDB extends DBPersist {
     if (!AllVals.containsKey(DB.gu_pageset))
       put(DB.gu_pageset, Gadgets.generateUUID());
 
-    // Forzar la fecha de modificación del registro
+    // Forzar la fecha de modificaciÃ³n del registro
     replace(DB.dt_modified, dtNow);
 
     return super.store(oConn);
@@ -374,7 +374,7 @@ public class PageSetDB extends DBPersist {
   } // setPage
 
   // **********************************************************
-  // Metodos Estáticos
+  // Metodos EstÃ¡ticos
 
   /**
    * <p>Get relative path to XML data file</p>
@@ -468,7 +468,7 @@ public class PageSetDB extends DBPersist {
   } // delete
 
   // **********************************************************
-  // * Variables estáticas
+  // * Variables estÃ¡ticas
 
   public static final short ClassId = 71;
 }
