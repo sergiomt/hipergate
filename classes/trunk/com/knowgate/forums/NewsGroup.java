@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -571,7 +571,7 @@ public class NewsGroup extends Category {
     oRSet.close();
     oStmt.close();
 
-    // Borrar los mensajes y la categoría subyacente
+    // Borrar los mensajes y la categorÃ­a subyacente
     CallableStatement oCall;
 
     if (DebugFile.trace) DebugFile.writeln("Connection.prepareCall({ call k_sp_del_newsgroup('" + sNewsGroupGUID + "') })");
