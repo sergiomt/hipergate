@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -57,8 +57,8 @@ import com.knowgate.dataobjs.DBSubset;
    list for each slice witch entries point to meetings having place at that
    slice.
    Lets say that there are four meetings in a day, one from 9:30 to 10:30
-   [nº 0], another from 10:00 to 10:30 [nº 1], another from 11:00 to 12:00
-   [nº 2] and a last one from 11:45 to 12:30 [nº 3].
+   [n 0], another from 10:00 to 10:30 [n 1], another from 11:00 to 12:00
+   [n 2] and a last one from 11:45 to 12:30 [n 3].
    The internal array will then have this form:
 
    ... [slots from 00:00 up to 9:30]
@@ -164,6 +164,7 @@ public class DayPlan {
       DebugFile.incIdent();
     }
 
+	int mCount;
     long lToday = dtToday.getTime();
     java.util.Date zero = new java.util.Date(lToday);
     java.util.Date four = new java.util.Date(lToday);
@@ -173,12 +174,21 @@ public class DayPlan {
 
     four.setHours(23); four.setMinutes(59); four.setSeconds(59);
 
-    oMeetings  = new DBSubset(DB.k_meetings + " m," + DB.k_x_meeting_fellow + " f",
-                              "m." + DB.gu_meeting + ",m." + DB.gu_fellow + ",m." + DB.dt_start + ",m." + DB.dt_end + ",m." + DB.bo_private + ",m." + DB.df_before + ",m." + DB.tp_meeting + ",m." + DB.tx_meeting + ",m." + DB.de_meeting,
-                              "m." + DB.id_domain + "=? AND m." + DB.gu_workarea + "=? AND " +
-                              "m." + DB.gu_meeting +"=f." + DB.gu_meeting  + " AND f." + DB.gu_fellow + "=? AND m." + DB.dt_start + ">=" + DBBind.escape(zero, "ts") + " AND m." + DB.dt_start + "< " + DBBind.escape(four, "ts") + " ORDER BY m."+  DB.dt_start, 8);
+	if (null==sWorkAreaId) {
+      oMeetings  = new DBSubset(DB.k_meetings + " m," + DB.k_x_meeting_fellow + " f",
+                                "m." + DB.gu_meeting + ",m." + DB.gu_fellow + ",m." + DB.dt_start + ",m." + DB.dt_end + ",m." + DB.bo_private + ",m." + DB.df_before + ",m." + DB.tp_meeting + ",m." + DB.tx_meeting + ",m." + DB.de_meeting,
+                                "m." + DB.id_domain + "=? AND " +
+                                "m." + DB.gu_meeting +"=f." + DB.gu_meeting  + " AND f." + DB.gu_fellow + "=? AND m." + DB.dt_start + ">=" + DBBind.escape(zero, "ts") + " AND m." + DB.dt_start + "< " + DBBind.escape(four, "ts") + " ORDER BY m."+  DB.dt_start, 8);
 
-    int mCount = oMeetings.load(oConn, new Object[] { new Integer(iDomainId), sWorkAreaId, sFellowId });
+      mCount = oMeetings.load(oConn, new Object[] { new Integer(iDomainId), sFellowId });
+	} else {
+      oMeetings  = new DBSubset(DB.k_meetings + " m," + DB.k_x_meeting_fellow + " f",
+                                "m." + DB.gu_meeting + ",m." + DB.gu_fellow + ",m." + DB.dt_start + ",m." + DB.dt_end + ",m." + DB.bo_private + ",m." + DB.df_before + ",m." + DB.tp_meeting + ",m." + DB.tx_meeting + ",m." + DB.de_meeting,
+                                "m." + DB.id_domain + "=? AND m." + DB.gu_workarea + "=? AND " +
+                                "m." + DB.gu_meeting +"=f." + DB.gu_meeting  + " AND f." + DB.gu_fellow + "=? AND m." + DB.dt_start + ">=" + DBBind.escape(zero, "ts") + " AND m." + DB.dt_start + "< " + DBBind.escape(four, "ts") + " ORDER BY m."+  DB.dt_start, 8);
+
+      mCount = oMeetings.load(oConn, new Object[] { new Integer(iDomainId), sWorkAreaId, sFellowId });
+	}
 
     if (DebugFile.trace) DebugFile.writeln(String.valueOf(mCount) + " meetings found");
 
