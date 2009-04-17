@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003-2008  Know Gate S.L. All rights reserved.
-                           C/Oña, 107 1º2 28050 Madrid (Spain)
+                           C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -460,7 +460,7 @@ public final class ACL {
    */
   public static String getLocalizedMaskName(int iACLMask, String sLanguage) throws IllegalArgumentException {
     int iName;
-    String es[] = { "Desconocido", "Listar", "Leer", "Añadir", "Añadir y Leer", "Moderar", "Modificar", "Control Total"};
+    String es[] = { "Desconocido", "Listar", "Leer", "AÃ±adir", "AÃ±adir y Leer", "Moderar", "Modificar", "Control Total"};
     String en[] = { "Unknown", "List", "Read", "Add", "Add & Read", "Moderate", "Modify", "Full Control"};
 
     if (PERMISSION_LIST==iACLMask)

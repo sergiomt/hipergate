@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -1148,10 +1148,15 @@ public final class ACLUser extends DBPersist {
 
     if (DBBind.exists(oConn, DB.k_user_pwd, "U")) {
       oStmt = oConn.createStatement();
+      if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(DELETE FROM " + DB.k_x_cat_objs + " WHERE " + DB.gu_object + " IN (SELECT "+DB.gu_pwd+" FROM "+DB.k_user_pwd+" WHERE " + DB.gu_user + "='" + sUserGUID + "'))");
+      oStmt.executeUpdate("DELETE FROM " + DB.k_x_cat_objs + " WHERE " + DB.gu_object + " IN (SELECT "+DB.gu_pwd+" FROM "+DB.k_user_pwd+" WHERE " + DB.gu_user + "='" + sUserGUID + "')");
+      oStmt.close();
+
+      oStmt = oConn.createStatement();
       if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(DELETE FROM " + DB.k_user_pwd + " WHERE " + DB.gu_user + "='" + sUserGUID + "')");
       oStmt.executeUpdate("DELETE FROM " + DB.k_user_pwd + " WHERE " + DB.gu_user + "='" + sUserGUID + "'");
       oStmt.close();
-    }
+    } // fi
 
     if (DBBind.exists(oConn, DB.k_user_mail, "U")) {
       oStmt = oConn.createStatement();
