@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2007  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -61,11 +61,11 @@ import com.knowgate.misc.Gadgets;
  */
 
 public class FLVParser extends LINParser {
-  private int  iCols;              // Número de columnas contadas en el descriptor
-  private int  iErrLine;           // Línea del fichero donde se produjo el último error de parseo
+  private int  iCols;              // NÃºmero de columnas contadas en el descriptor
+  private int  iErrLine;           // LÃ­nea del fichero donde se produjo el Ãºltimo error de parseo
   private int[] aColFrom;          // Array con las posiciones de inicio de cada columna
   private int[] aColTo;            // Array con las posiciones de fin de cada columna
-  private HashMap oColPosMap;      // Mapa que recupera el índice de cada columna dado su nombre
+  private HashMap oColPosMap;      // Mapa que recupera el Ã­ndice de cada columna dado su nombre
 
   // ----------------------------------------------------------
 

@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -204,211 +204,211 @@ public final class Gadgets {
             case '"':
               results.append("&quot;");
               break;
-            case '¡':
+            case 'Â¡':
               results.append("&iexcl;");
               break;
-            case '¤':
+            case 'Â¤':
               results.append("&curren;");
               break;
-            case '¥':
+            case 'Â¥':
               results.append("&yen;");
               break;
             case '|':
               results.append("&brvbar;");
               break;
-            case '§':
+            case 'Â§':
               results.append("&sect;");
               break;
-            case '¨':
+            case 'Â¨':
               results.append("&uml;");
               break;
-            case '©':
+            case 'Â©':
               results.append("&copy;");
               break;
-            case 'ª':
+            case 'Âª':
               results.append("&ordf;");
               break;
-            case '«':
+            case 'Â«':
               results.append("&laquo;");
               break;
-            case '»':
+            case 'Â»':
               results.append("&raquo;");
               break;
-            case '€':
+            case 'â‚¬':
               results.append("&euro;");
               break;
-            case '£':
+            case 'Â£':
               results.append("&pound;");
               break;
-            case '­':
+            case 'Â­':
               results.append("&shy;");
               break;
-            case '®':
+            case 'Â®':
               results.append("&reg;");
               break;
-            case '¯':
+            case 'Â¯':
               results.append("&macr;");
               break;
-            case '°':
+            case 'Â°':
               results.append("&deg;");
               break;
-            case '±':
+            case 'Â±':
               results.append("&plusmn;");
               break;
-            case '¹':
+            case 'Â¹':
               results.append("&sup1;");
               break;
-            case '²':
+            case 'Â²':
               results.append("&sup2;");
               break;
-            case '³':
+            case 'Â³':
               results.append("&sup3;");
               break;
-            case '´':
+            case 'Â´':
               results.append("&acute;");
               break;
-            case 'µ':
+            case 'Âµ':
               results.append("&micro;");
               break;
-            case '¶':
+            case 'Â¶':
               results.append("&para;");
               break;
-            case '·':
+            case 'Â·':
               results.append("&middot;");
               break;
-            case '¸':
+            case 'Â¸':
               results.append("&cedil;");
               break;
-            case 'º':
+            case 'Âº':
               results.append("&ordm;");
               break;
-            case '¿':
+            case 'Â¿':
               results.append("&iquest;");
               break;
-            case 'ñ':
+            case 'Ã±':
               results.append("&ntilde;");
               break;
-            case 'Ñ':
+            case 'Ã‘':
               results.append("&Ntilde;");
               break;
-            case 'á':
+            case 'Ã¡':
               results.append("&aacute;");
               break;
-            case 'é':
+            case 'Ã©':
               results.append("&eacute;");
               break;
-            case 'í':
+            case 'Ã­':
               results.append("&iacute;");
               break;
-            case 'ó':
+            case 'Ã³':
               results.append("&oacute;");
               break;
-            case 'ú':
+            case 'Ãº':
               results.append("&uacute;");
               break;
-            case 'ü':
+            case 'Ã¼':
               results.append("&uuml;");
               break;
-            case 'Á':
+            case 'Ã':
               results.append("&Aacute;");
               break;
-            case 'À':
+            case 'Ã€':
               results.append("&Agrave;");
               break;
-            case 'Ä':
+            case 'Ã„':
               results.append("&Auml;");
               break;
-            case 'Â':
+            case 'Ã‚':
               results.append("&Acirc;");
               break;
-            case 'Å':
+            case 'Ã…':
               results.append("&Aring;");
               break;
-            case 'É':
+            case 'Ã‰':
               results.append("&Eacute;");
               break;
-            case 'È':
+            case 'Ãˆ':
               results.append("&Egrave;");
               break;
-            case 'Ë':
+            case 'Ã‹':
               results.append("&Euml;");
               break;
-            case 'Ê':
+            case 'ÃŠ':
               results.append("&Ecirc;");
               break;
-            case 'Í':
+            case 'Ã':
               results.append("&Iacute;");
               break;
-            case 'Ì':
+            case 'ÃŒ':
               results.append("&Igrave;");
               break;
-            case 'Ï':
+            case 'Ã':
               results.append("&Iuml;");
               break;
-            case 'Î':
+            case 'Ã':
               results.append("&Icirc;");
               break;
-            case 'Ó':
+            case 'Ã“':
               results.append("&Oacute;");
               break;
-            case 'Ò':
+            case 'Ã’':
               results.append("&Ograve;");
               break;
-            case 'Ö':
+            case 'Ã–':
               results.append("&Ouml;");
               break;
-            case 'Ô':
+            case 'Ã”':
               results.append("&Ocirc;");
               break;
-            case 'Ú':
+            case 'Ãš':
               results.append("&Uacute;");
               break;
-            case 'Ù':
+            case 'Ã™':
               results.append("&Ugrave;");
               break;
-            case 'Ü':
+            case 'Ãœ':
               results.append("&Uuml;");
               break;
-            case 'Û':
+            case 'Ã›':
               results.append("&Ucirc;");
               break;
-            case '½':
+            case 'Â½':
               results.append("&frac12;");
               break;
-            case '¾':
+            case 'Â¾':
               results.append("&frac34;");
               break;
-            case '¼':
+            case 'Â¼':
               results.append("&frac14;");
               break;
-            case 'Ç':
+            case 'Ã‡':
               results.append("&Ccedil;");
               break;
-            case 'ç':
+            case 'Ã§':
               results.append("&ccedil;");
               break;
-            case 'ğ':
+            case 'Ã°':
               results.append("&eth;");
               break;
-            case '¢':
+            case 'Â¢':
               results.append("&cent;");
               break;
-            case 'Ş':
+            case 'Ã':
               results.append("&THORN;");
               break;
-            case 'ş':
+            case 'Ã¾':
               results.append("&thorn;");
               break;
-            case 'Ğ':
+            case 'Ã':
               results.append("&ETH;");
               break;
-            case '×':
+            case 'Ã—':
               results.append("&times;");
               break;
-            case '÷':
+            case 'Ã·':
               results.append("&divide;");
               break;
-            case 'Æ':
+            case 'Ã†':
               results.append("&AElig;");
               break;
 
@@ -625,15 +625,15 @@ public final class Gadgets {
                            "AElig;"
                            };
 
-    final String[] aChars= {"&", "<", ">", "\"", "¡", "¤", "¥", "|", "§",
-                            "¨", "©", "ª", "«" , "»", "€", "£", "­", "®",
-                            "¯", "°", "±", "¹" , "²", "³", "´", "µ", "¶",
-                            "·", "¸", "º", "¿" , "ñ", "Ñ", "á", "é", "í",
-                            "ó", "ú", "ü", "Á" , "À", "Ä", "Â", "Å", "É",
-                            "È", "Ë", "Ê", "Í" , "Ì", "Ï", "Î", "Ó", "Ò",
-                            "Ö", "Ô", "Ú", "Ù" , "Ü", "Û", "½", "¾", "¼",
-                            "Ç", "ç", "ğ", "¢" , "Ş", "ş", "Ğ", "×", "÷",
-                            "Æ"
+    final String[] aChars= {"&", "<", ">", "\"", "Â¡", "Â¤", "Â¥", "|", "Â§",
+                            "Â¨", "Â©", "Âª", "Â«" , "Â»", "â‚¬", "Â£", "Â­", "Â®",
+                            "Â¯", "Â°", "Â±", "Â¹" , "Â²", "Â³", "Â´", "Âµ", "Â¶",
+                            "Â·", "Â¸", "Âº", "Â¿" , "Ã±", "Ã‘", "Ã¡", "Ã©", "Ã­",
+                            "Ã³", "Ãº", "Ã¼", "Ã" , "Ã€", "Ã„", "Ã‚", "Ã…", "Ã‰",
+                            "Ãˆ", "Ã‹", "ÃŠ", "Ã" , "ÃŒ", "Ã", "Ã", "Ã“", "Ã’",
+                            "Ã–", "Ã”", "Ãš", "Ã™" , "Ãœ", "Ã›", "Â½", "Â¾", "Â¼",
+                            "Ã‡", "Ã§", "Ã°", "Â¢" , "Ã", "Ã¾", "Ã", "Ã—", "Ã·",
+                            "Ã†"
                            };
 
     final int iEnts = aEnts.length;
@@ -717,94 +717,94 @@ public final class Gadgets {
         case '?':
           sEscaped.append("%3F");
           break;
-        case 'á':
+        case 'Ã¡':
           sEscaped.append("%E1");
           break;
-        case 'é':
+        case 'Ã©':
           sEscaped.append("%E9");
           break;
-        case 'í':
+        case 'Ã­':
           sEscaped.append("%ED");
           break;
-        case 'ó':
+        case 'Ã³':
           sEscaped.append("%F3");
           break;
-        case 'ú':
+        case 'Ãº':
           sEscaped.append("%FA");
           break;
-        case 'Á':
+        case 'Ã':
           sEscaped.append("%C1");
           break;
-        case 'É':
+        case 'Ã‰':
           sEscaped.append("%C9");
           break;
-        case 'Í':
+        case 'Ã':
           sEscaped.append("%CD");
           break;
-        case 'Ó':
+        case 'Ã“':
           sEscaped.append("%D3");
           break;
-        case 'Ú':
+        case 'Ãš':
           sEscaped.append("%DA");
           break;
-        case 'à':
+        case 'Ã ':
           sEscaped.append("%E0");
           break;
-        case 'è':
+        case 'Ã¨':
           sEscaped.append("%E8");
           break;
-        case 'ì':
+        case 'Ã¬':
           sEscaped.append("%EC");
           break;
-        case 'ò':
+        case 'Ã²':
           sEscaped.append("%F2");
           break;
-        case 'ù':
+        case 'Ã¹':
           sEscaped.append("%F9");
           break;
-        case 'À':
+        case 'Ã€':
           sEscaped.append("%C0");
           break;
-        case 'È':
+        case 'Ãˆ':
           sEscaped.append("%C8");
           break;
-        case 'Ì':
+        case 'ÃŒ':
           sEscaped.append("%CC");
           break;
-        case 'Ò':
+        case 'Ã’':
           sEscaped.append("%D2");
           break;
-        case 'Ù':
+        case 'Ã™':
           sEscaped.append("%D9");
           break;
-        case 'ñ':
+        case 'Ã±':
           sEscaped.append("%F1");
           break;
-        case 'Ñ':
+        case 'Ã‘':
           sEscaped.append("%D1");
           break;
-        case 'ç':
+        case 'Ã§':
           sEscaped.append("%E7");
           break;
-        case 'Ç':
+        case 'Ã‡':
           sEscaped.append("%C7");
           break;
-        case 'ô':
+        case 'Ã´':
           sEscaped.append("%F4");
           break;
-        case 'Ô':
+        case 'Ã”':
           sEscaped.append("%D4");
           break;
-        case 'ö':
+        case 'Ã¶':
           sEscaped.append("%F6");
           break;
-        case 'Ö':
+        case 'Ã–':
           sEscaped.append("%D6");
           break;
         case '`':
           sEscaped.append("%60");
           break;
-        case '¨':
+        case 'Â¨':
           sEscaped.append("%A8");
           break;
         default:
@@ -833,48 +833,48 @@ public final class Gadgets {
 
     for (int c=0; c<iLen; c++) {
       switch (sStr.charAt(c)) {
-        case 'Á':
-        case 'À':
-        case 'Ä':
-        case 'Â':
-        case 'Å':
+        case 'Ã':
+        case 'Ã€':
+        case 'Ã„':
+        case 'Ã‚':
+        case 'Ã…':
           sStrBuff.append('A');
           break;
-        case 'É':
-        case 'È':
-        case 'Ë':
-        case 'Ê':
+        case 'Ã‰':
+        case 'Ãˆ':
+        case 'Ã‹':
+        case 'ÃŠ':
           sStrBuff.append('E');
           break;
-        case 'Í':
-        case 'Ì':
-        case 'Ï':
-        case 'Î':
+        case 'Ã':
+        case 'ÃŒ':
+        case 'Ã':
+        case 'Ã':
           sStrBuff.append('I');
           break;
-        case 'Ó':
-        case 'Ò':
-        case 'Ö':
-        case 'Ô':
-        case 'Ø':
+        case 'Ã“':
+        case 'Ã’':
+        case 'Ã–':
+        case 'Ã”':
+        case 'Ã˜':
           sStrBuff.append('O');
           break;
-        case 'Ú':
-        case 'Ù':
-        case 'Ü':
-        case 'Û':
+        case 'Ãš':
+        case 'Ã™':
+        case 'Ãœ':
+        case 'Ã›':
           sStrBuff.append('U');
           break;
-        case 'Æ':
+        case 'Ã†':
           sStrBuff.append('E');
           break;
-        case 'Ñ':
+        case 'Ã‘':
           sStrBuff.append('N');
           break;
-        case 'Ç':
+        case 'Ã‡':
           sStrBuff.append('C');
           break;
-        case '°':
+        case 'Â°':
           sStrBuff.append('o');
           break;
         case '\\':
@@ -900,10 +900,10 @@ public final class Gadgets {
         case '|':
           sStrBuff.append('P');
           break;
-        case '¡':
+        case 'Â¡':
           sStrBuff.append('E');
           break;
-        case '¿':
+        case 'Â¿':
         case '?':
           sStrBuff.append('Q');
           break;
@@ -913,10 +913,10 @@ public final class Gadgets {
         case '%':
           sStrBuff.append('P');
           break;
-        case 'ß':
+        case 'ÃŸ':
           sStrBuff.append('B');
           break;
-        case '¥':
+        case 'Â¥':
           sStrBuff.append('Y');
           break;
         case (char)255:
@@ -933,16 +933,16 @@ public final class Gadgets {
 
   /**
    * Replace any vowel by a POSIX Regular Expression representing all its accentuated variants
-   * @return If Input String is Andrés Lozäno
-   * the returned value will be something like [AÁÀÄÂAÅAAAÃ]ndr[eéàëêeeeee]s L[oóòöôoooøõo]z[aáàäâaåaaaã]n[oóòöôoooøõo]
+   * @return If Input String is AndrÃ©s LozÃ¤no
+   * the returned value will be something like [AÃÃ€Ã„Ã‚AÃ…AAAÃƒ]ndr[eÃ©Ã Ã«Ãªeeeee]s L[oÃ³Ã²Ã¶Ã´oooÃ¸Ãµo]z[aÃ¡Ã Ã¤Ã¢aÃ¥aaaÃ£]n[oÃ³Ã²Ã¶Ã´oooÃ¸Ãµo]
    */
   public static String accentsToPosixRegEx(String sText) {
-    String[] aSets = new String[]{"aáàäâaåaaaã?",
-    							  "eéàëêeeeee",
-    							  "iíàïîiiiiii",
-    							  "oóòöôoooøõo",
-    							  "uúùüûuuuuuuuuu",
-    							  "yıyÿy"};
+    String[] aSets = new String[]{"aÃ¡Ã Ã¤Ã¢aÃ¥aaaÃ£?",
+    							  "eÃ©Ã Ã«Ãªeeeee",
+    							  "iÃ­Ã Ã¯Ã®iiiiii",
+    							  "oÃ³Ã²Ã¶Ã´oooÃ¸Ãµo",
+    							  "uÃºÃ¹Ã¼Ã»uuuuuuuuu",
+    							  "yÃ½yÃ¿y"};
     if (null==sText) return null;
     final int nSets = aSets.length;
     final int lText = sText.length();
@@ -1973,7 +1973,7 @@ public final class Gadgets {
       StringBuffer oOutput = new StringBuffer();
       if (aTokens!=null)
         for (int t=0; t<aTokens.length; t++)
-          oOutput.append(aTokens[t]+(t<aTokens.length-1 ? "¶" :""));
+          oOutput.append(aTokens[t]+(t<aTokens.length-1 ? "Â¶" :""));
       DebugFile.decIdent();
       DebugFile.writeln("End Gadgets.tokenizeCmdLine() : " + oOutput.toString());
     }
@@ -2171,8 +2171,8 @@ public final class Gadgets {
    * @param sSpecialSet Set of special characters
    * @param cEsc Escape character to be used
    * @return The input String without all special characters preceded by the escape character
-   * for example: if input is "Chicken & ~Egg",the special set is "&~" and escape is '¬' then
-   * returned value is "Chicken ¬& ¬~Egg"
+   * for example: if input is "Chicken & ~Egg",the special set is "&~" and escape is 'Â¬' then
+   * returned value is "Chicken Â¬& Â¬~Egg"
    * @throws NullPointerException if sSpecialSet is null
    * @since 4.0
    */

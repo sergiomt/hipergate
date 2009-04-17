@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -60,11 +60,11 @@ public class CSVParser  {
   private char cBuffer[];      // Buffer interno que contiene los caracteres del fichero a parsear
   private int  iBuffer;        // Longuitud del buffer interno
   private String ColNames[];   // Nombres de columnas leidos del descriptor de fichero
-  private int RowPointers[];   // Punteros al inicio de cada línea en el buffer interno
+  private int RowPointers[];   // Punteros al inicio de cada lÃ­nea en el buffer interno
   private int ColPointers[][]; // Punteros al inicio de cada columna en el buffer interno
-  private int iCols;           // Número de columnas contadas en el descriptor
-  private int iRows;           // Número de filas encontradas en el fichero leído
-  private int iErrLine;        // Línea del fichero donde se produjo el último error de parseo
+  private int iCols;           // NÃºmero de columnas contadas en el descriptor
+  private int iRows;           // NÃºmero de filas encontradas en el fichero leÃ­do
+  private int iErrLine;        // LÃ­nea del fichero donde se produjo el Ãºltimo error de parseo
   private char cDelimiter;
   private boolean bQuoted;
   private String sCharSet;
@@ -232,8 +232,8 @@ public class CSVParser  {
           case '`':
             cDelimiter = '`';
             break;
-          case '¨':
-            cDelimiter = '¨';
+          case 'Â¨':
+            cDelimiter = 'Â¨';
             break;
           case '\t':
             cDelimiter = '\t';
@@ -249,7 +249,7 @@ public class CSVParser  {
     if (cDelimiter == (char)0)
       throw new RuntimeException("Cannot assign a valid column delimiter");
 
-    // Almacenar los nombres de campo y contar el número de columnas
+    // Almacenar los nombres de campo y contar el nÃºmero de columnas
     ColNames = Gadgets.split(sFileDescriptor, new String(new char[]{cDelimiter}));
     iCols = ColNames.length;
 
@@ -259,7 +259,7 @@ public class CSVParser  {
       for (int c=0; c<iCols; c++)
         ColNames[c] = (ColNames[c].replace('"',' ')).trim();
 
-    // Contar el número de filas a partir de los saltos de línea
+    // Contar el nÃºmero de filas a partir de los saltos de lÃ­nea
     iRows = 1;
     for (int p=0; p<iBuffer; p++) {
       if (cBuffer[p]=='\n') iRows++;

@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2007  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -56,7 +56,7 @@ public class LINParser {
   // ----------------------------------------------------------
 
   private Vector oLines;   // Array de lineas del fichero
-  private int  iRows;      // Número de filas encontradas en el fichero leído
+  private int  iRows;      // NÃºmero de filas encontradas en el fichero leÃ­do
   private String sCharSet; // Juego de caracteres
 
   // ----------------------------------------------------------
