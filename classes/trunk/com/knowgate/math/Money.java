@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2006  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -234,7 +234,7 @@ public class Money extends BigDecimal {
    * If there is only a comma or a dot then it is assumed to be de decimal delimiter.
    * If both comma and dot are present, then the leftmost of them is assumed to
    * be the thousands delimiter and the rightmost is the decimal delimiter.
-   * Any letters and currency symbols {€$£¤¢¥#ƒ&} are ignored
+   * Any letters and currency symbols {â‚¬$Â£Â¤Â¢Â¥#Æ’&} are ignored
    */
   public static boolean isMoney (String sVal) {
     if (sVal==null) return false;
@@ -250,7 +250,7 @@ public class Money extends BigDecimal {
       }
     } // fi
     sAmount = sAmount.replace(',','.');
-    sAmount = Gadgets.removeChars(sAmount, "€$£¤¢¥#ƒ& ABCDEFGHIJKLMNOPQRSZUVWXYZ");
+    sAmount = Gadgets.removeChars(sAmount, "â‚¬$Â£Â¤Â¢Â¥#Æ’& ABCDEFGHIJKLMNOPQRSZUVWXYZ");
     boolean bMatch = false;
     try {
       bMatch = Gadgets.matches(sAmount, "(\\+|-)?([0-9]+)|([0-9]+.[0-9]+)");
@@ -270,13 +270,13 @@ public class Money extends BigDecimal {
     if (sVal.length()==0) throw new IllegalArgumentException("Money.parse() argument cannot be an empty string");
 
     sAmount = sVal.toUpperCase();
-    if (sAmount.indexOf("EUR")>=0 || sAmount.indexOf("€")>=0 || sAmount.indexOf("&euro;")>=0)
+    if (sAmount.indexOf("EUR")>=0 || sAmount.indexOf("â‚¬")>=0 || sAmount.indexOf("&euro;")>=0)
       oCur = CurrencyCode.EUR;
     else if (sAmount.indexOf("USD")>=0 || sAmount.indexOf("$")>=0)
       oCur = CurrencyCode.USD;
-    else if (sAmount.indexOf("GBP")>=0 || sAmount.indexOf("£")>=0)
+    else if (sAmount.indexOf("GBP")>=0 || sAmount.indexOf("Â£")>=0)
       oCur = CurrencyCode.GBP;
-    else if (sAmount.indexOf("JPY")>=0 || sAmount.indexOf("YEN")>=0 || sAmount.indexOf("¥")>=0)
+    else if (sAmount.indexOf("JPY")>=0 || sAmount.indexOf("YEN")>=0 || sAmount.indexOf("Â¥")>=0)
       oCur = CurrencyCode.JPY;
     else if (sAmount.indexOf("CNY")>=0 || sAmount.indexOf("YUAN")>=0)
       oCur = CurrencyCode.CNY;
@@ -293,7 +293,7 @@ public class Money extends BigDecimal {
     } // fi
 
     sAmount = sAmount.replace(',','.');
-    sAmount = Gadgets.removeChars(sAmount, "€$£¤¢¥#ƒ& ABCDEFGHIJKLMNOPQRSZUVWXYZ");
+    sAmount = Gadgets.removeChars(sAmount, "â‚¬$Â£Â¤Â¢Â¥#Æ’& ABCDEFGHIJKLMNOPQRSZUVWXYZ");
 
     return  new Money(sAmount, oCur);
   } // parse
