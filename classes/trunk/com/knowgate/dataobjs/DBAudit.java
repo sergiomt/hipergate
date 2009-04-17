@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/OÒa, 107 1∫2 28050 Madrid (Spain)
+                      C/O√±a, 107 1¬∫2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -68,13 +68,13 @@ public class DBAudit {
    * @param oConn Database connection, if null then data if dumped to a flat file.
    * @param iIdEntity - Internal ClassId short nombre for audited class.
    * @param sCoOp - Operation Code (4 alphanumeric digits)
-   * @param sGUUser - GUID of user performing the operation (m·x. 32 characters)
-   * @param sGUEntity1 - GUID of primary entity (or source entitity) for the operation (m·x. 32 characters)
-   * @param sGUEntity2 - GUID of secondary entity (or target entitity) for the operation (m·x. 32 characters)
+   * @param sGUUser - GUID of user performing the operation (m√°x. 32 characters)
+   * @param sGUEntity1 - GUID of primary entity (or source entitity) for the operation (m√°x. 32 characters)
+   * @param sGUEntity2 - GUID of secondary entity (or target entitity) for the operation (m√°x. 32 characters)
    * @param iIdTransact - Transaction Identifier
    * @param iIPAddr - User IP address
-   * @param sTxParams1 - Aditional parameters related to entity 1 (m·x 255 characters)
-   * @param sTxParams2 - Aditional parameters related to entity 2 (m·x 255 characters)
+   * @param sTxParams1 - Aditional parameters related to entity 1 (m√°x 255 characters)
+   * @param sTxParams2 - Aditional parameters related to entity 2 (m√°x 255 characters)
    * @throws SQLException
    * @throws SecurityException
    */
@@ -126,13 +126,13 @@ public class DBAudit {
    * Write a log entry into javatrx.txt file
    * @param iIdEntity - Internal ClassId short nombre for audited class.
    * @param sCoOp - Operation Code (4 alphanumeric digits)
-   * @param sGUUser - GUID of user performing the operation (m·x. 32 characters)
-   * @param sGUEntity1 - GUID of primary entity (or source entitity) for the operation (m·x. 32 characters)
-   * @param sGUEntity2 - GUID of secondary entity (or target entitity) for the operation (m·x. 32 characters)
+   * @param sGUUser - GUID of user performing the operation (m√°x. 32 characters)
+   * @param sGUEntity1 - GUID of primary entity (or source entitity) for the operation (m√°x. 32 characters)
+   * @param sGUEntity2 - GUID of secondary entity (or target entitity) for the operation (m√°x. 32 characters)
    * @param iIdTransact - Transaction Identifier
    * @param iIPAddr - User IP address
-   * @param sTxParams1 - Aditional parameters related to entity 1 (m·x 255 characters)
-   * @param sTxParams2 - Aditional parameters related to entity 2 (m·x 255 characters)
+   * @param sTxParams1 - Aditional parameters related to entity 1 (m√°x 255 characters)
+   * @param sTxParams2 - Aditional parameters related to entity 2 (m√°x 255 characters)
    * @throws SecurityException if there aren't sufficient permissions for writting at javatrc.txt file
    */
   public static void log (short iIdEntity, String sCoOp, String sGUUser, String sGUEntity1, String sGUEntity2, int iIdTransact, String sIPAddr, String sTxParams1, String sTxParams2) {
@@ -159,10 +159,10 @@ public class DBAudit {
   /**
    * Write an operation line to the log file
    * @param sTransactId Transaction Identifier
-   * @param sUserId GUID of user performing the operation (m·x. 32 characters)
+   * @param sUserId GUID of user performing the operation (m√°x. 32 characters)
    * @param sObject GUID of primary entity for the operation
-   * @param sOpCode Operation code (m·x. 4 characters)
-   * @param sParams Aditional parameters related to entity 1 (m·x 255 characters)
+   * @param sOpCode Operation code (m√°x. 4 characters)
+   * @param sParams Aditional parameters related to entity 1 (m√°x 255 characters)
    * @throws SecurityException if there aren't sufficient permissions for writting at javatrc.txt file
    */
   private static void writeLog (short iIdEntity, String sCoOp, String sUserId, String sGUEntity1, String sGUEntity2, int iIdTransact, String sIPAddr, String sTxParams1, String sTxParams2)

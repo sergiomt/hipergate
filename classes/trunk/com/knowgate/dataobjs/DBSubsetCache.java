@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -288,10 +288,10 @@ public final class DBSubsetCache {
     }
   } // DBCacheEntry
 
-  private int iCacheCapacity; // Número máximo de entradas en el cache
+  private int iCacheCapacity; // NÃºmero mÃ¡ximo de entradas en el cache
   private String LRUList[];   // Slots usados por el algoritmo de limpieza Least Recently Used
   private TreeMap oCache;     // B-Tree con las entradas del cache
 
-  public int iTopIndex;       // Máximo índice en el cache (siempre de accede módulo la capacidad)
+  public int iTopIndex;       // MÃ¡ximo Ã­ndice en el cache (siempre de accede mÃ³dulo la capacidad)
   public int iUsed;           // Contador de entradas actualmente en uso
 } // DBSubsetCache

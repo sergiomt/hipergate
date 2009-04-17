@@ -1,6 +1,5 @@
 /*
   Copyright (C) 2003-2007  Know Gate S.L. All rights reserved.
-                           C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -385,12 +384,15 @@ public final class DB {
   public static final String outgoing_port = "outgoing_port";
 
   // k_user_pwd
+  public static final String gu_pwd = "gu_pwd";
   public static final String tl_pwd = "tl_pwd";
   public static final String tp_pwd = "tp_pwd";
+  public static final String id_pwd = "id_pwd";
   public static final String tx_account = "tx_account";
   public static final String tx_prk = "tx_prk";
   public static final String tx_pbk = "tx_pbk";
   public static final String bin_key = "bin_key";
+  public static final String tx_lines = "tx_lines";
 
   // k_groups
   public static final String gu_acl_group = "gu_acl_group";

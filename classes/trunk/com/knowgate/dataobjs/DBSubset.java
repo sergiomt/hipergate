@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -129,7 +129,7 @@ public final class DBSubset {
     iTimeOut = 60;
     bEOF = true;
     sColDelim = "`";
-    sRowDelim = "¨";
+    sRowDelim = "Â¨";
     sTxtQualifier = "\"";
     oShortDate = null;
   }
@@ -2163,7 +2163,7 @@ public final class DBSubset {
   /**
    * <p>Get value of a VARCHAR field that holds a money+currency amount<p>
    * Money values are stored with its currency sign embedded inside,
-   * like "26.32 USD" or "$48.3" or "35.44 €"
+   * like "26.32 USD" or "$48.3" or "35.44 â‚¬"
    * @param iCol int Column position [0..getColumnCount()-1]
    * @param iRow int Row position [0..getRowCount()-1]
    * @return com.knowgate.math.Money
@@ -2189,7 +2189,7 @@ public final class DBSubset {
   /**
    * <p>Get value of a VARCHAR field that holds a money+currency amount<p>
    * Money values are stored with its currency sign embedded inside,
-   * like "26.32 USD" or "$48.3" or "35.44 €"
+   * like "26.32 USD" or "$48.3" or "35.44 â‚¬"
    * @param iCol int Column position [0..getColumnCount()-1]
    * @param iRow int Row position [0..getRowCount()-1]
    * @return com.knowgate.math.Money
@@ -3144,6 +3144,45 @@ public final class DBSubset {
       DebugFile.writeln("End DBSubset.sortBy("+String.valueOf(iCol)+")");
     }
   } // sortBy
+
+  /**
+   * <p>Sort in memory an already loaded ResultSet by a given column</p>
+   * A modified bubble sort algorithm is used. Resulting in a O(n&sup2;) worst case
+   * and O(n) best case if the ResultSet was already sorted by the given column.
+   * @param iCol int Column Index [0..getColumnCount()-1]
+   * @throws ArrayIndexOutOfBoundsException
+   * @throws ClassCastException
+   * @since 5.0
+   */
+  public void sortByDesc(int iCol)
+    throws ArrayIndexOutOfBoundsException, ClassCastException {
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin DBSubset.sortBy("+String.valueOf(iCol)+")");
+      DebugFile.incIdent();
+    }
+
+    final int iRows = getRowCount();
+    final int iRows1 = iRows-1;
+    boolean bSwapFlag = true;
+
+    for (int q=0; q<iRows && bSwapFlag; q++) {
+      bSwapFlag = false;
+      for (int r=0; r<iRows1; r++) {
+        if (!isNull(iCol,r) || !isNull(iCol,r+1)) {
+          if (!isNull(iCol,r) && isNull(iCol,r+1))
+            bSwapFlag = swapRows(r,r+1);
+          else if (((Comparable) get(iCol, r)).compareTo(get(iCol, r+1))<0)
+            bSwapFlag = swapRows(r,r+1);
+        } // fi
+      } // next (r)
+    } // next (q)
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End DBSubset.sortBy("+String.valueOf(iCol)+")");
+    }
+  } // sortByDesc
 
   // ----------------------------------------------------------
 

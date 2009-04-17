@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -1004,7 +1004,7 @@ public class DBTable {
             oCol = new DBColumn (sName,sColName,iSQLType,sTypeName,iPrecision,iDigits,iNullable,iColPos);
           }
 
-          // Establecer el comportamiento de no tocar en ningún caso los campos dt_created
+          // Establecer el comportamiento de no tocar en ningÃºn caso los campos dt_created
           // quitar este if si se desea asignarlos manualmente al insertar cada registro
           if (!sColName.equals(DB.dt_created))
             oColumns.add(oCol);

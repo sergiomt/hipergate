@@ -1,6 +1,5 @@
 /*
   Copyright (C) 2003-2006  Know Gate S.L. All rights reserved.
-                           C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -35,6 +34,7 @@ package com.knowgate.dataobjs;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
@@ -271,9 +271,19 @@ public class DBCommand {
       oStm = oCon.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
       oRst = oStm.executeQuery(sSQL);
       if (oRst.next()) {
-        sStr = oRst.getString(1);
-        if (oRst.wasNull()) sStr = null;
-      }
+      	ResultSetMetaData oMDat = oRst.getMetaData();
+      	int nCols = oMDat.getColumnCount();
+      	if (nCols==1) {
+          sStr = oRst.getString(1);
+          if (oRst.wasNull()) sStr = null;
+      	} else {
+      	  sStr = "";
+      	  for (int c=1; c<=nCols; c++) {
+      	  	String sCol = oRst.getString(c);
+            if (!oRst.wasNull()) sStr += sCol;      	  	
+      	  } // next 
+      	} // fi
+      } // fi
       oRst.close();
       oRst=null;
       oStm.close();

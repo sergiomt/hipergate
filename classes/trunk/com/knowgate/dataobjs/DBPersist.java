@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -406,7 +406,7 @@ public class DBPersist implements Map {
   /**
    * <p>Get value of a VARCHAR field that holds a money+currency amount<p>
    * Money values are stored with its currency sign embedded inside,
-   * like "26.32 USD" or "$48.3" or "35.44 €"
+   * like "26.32 USD" or "$48.3" or "35.44 â‚¬"
    * @param sKey Field Name
    * @return com.knowgate.math.Money
    * @throws NumberFormatException
@@ -432,6 +432,12 @@ public class DBPersist implements Map {
    * such name was found at internal value collection.
    */
   public String getString(String sKey) throws NullPointerException {
+    if (DebugFile.trace) {
+      if (!AllVals.containsKey(sKey))
+        DebugFile.writeln("NullPointerException at "+(getAuditClassName()==null ? "DBPersist" : getAuditClassName())+" does not contain any object with key "+sKey);
+      else if (isNull(sKey))
+        DebugFile.writeln("NullPointerException at "+(getAuditClassName()==null ? "DBPersist" : getAuditClassName())+".getString("+sKey+") is null");
+    }
     return getItemMap().get(sKey).toString();
   }
 
@@ -1741,7 +1747,7 @@ public class DBPersist implements Map {
    * &nbsp;&nbsp;&lt;tx_main_email&gt;guest7@domain.com&lt;/tx_main_email&gt;<br>
    * &nbsp;&nbsp;&lt;tx_alt_email&gt;admin@hipergate.com&lt;/tx_alt_email&gt;<br>
    * &nbsp;&nbsp;&lt;dt_last_updated&gt;Fri, 29 Aug 2003 13:30:00 GMT+0130&lt;/dt_last_updated&gt;<br>
-   * &nbsp;&nbsp;&lt;tx_comments&gt;&lt;![CDATA[Sôme ñasti & ïnternational chars stuff]]&gt;&lt;/tx_comments&gt;<br>
+   * &nbsp;&nbsp;&lt;tx_comments&gt;&lt;![CDATA[SÃ´me Ã±asti & Ã¯nternational chars stuff]]&gt;&lt;/tx_comments&gt;<br>
    * &lt;/ACLUser&gt;</p>
    * @param sXMLFilePath XML Path to XML file to parse
    * @throws SAXException

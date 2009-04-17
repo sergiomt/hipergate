@@ -34,11 +34,10 @@ package com.knowgate.dataobjs;
 
 /**
  * Just a wrapper of DBBind for loading database connection properties from
- * "intranet" instead of "hipergate" profile.
+ * "mobile" instead of "hipergate" profile.
  */
-
-public class DBIntranet extends DBBind {
-  public DBIntranet() {
-    super("intranet");
+public class DBMobile extends DBBind {
+  public DBMobile() {
+    super("mobile");
   }
 }
