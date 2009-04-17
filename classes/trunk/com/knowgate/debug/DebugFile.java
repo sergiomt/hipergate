@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -133,8 +133,8 @@ public final class DebugFile {
 
     try {
 
-      // Volcar las trazas de salida a una ubicación por defecto
-      // según el sistema operativo sea Windows o UNIX
+      // Volcar las trazas de salida a una ubicaciÃ³n por defecto
+      // segÃºn el sistema operativo sea Windows o UNIX
 
       switch (dumpTo) {
         case DUMP_TO_FILE:
@@ -161,8 +161,8 @@ public final class DebugFile {
 
     try {
 
-      // Volcar las trazas de salida a una ubicación por defecto
-      // según el sistema operativo sea Windows o UNIX
+      // Volcar las trazas de salida a una ubicaciÃ³n por defecto
+      // segÃºn el sistema operativo sea Windows o UNIX
 
       switch (dumpTo) {
         case DUMP_TO_FILE:
@@ -190,8 +190,8 @@ public final class DebugFile {
 
     try {
 
-      // Volcar las trazas de salida a una ubicación por defecto
-      // según el sistema operativo sea Windows o UNIX
+      // Volcar las trazas de salida a una ubicaciÃ³n por defecto
+      // segÃºn el sistema operativo sea Windows o UNIX
 
       switch (dumpTo) {
         case DUMP_TO_FILE:
@@ -219,8 +219,8 @@ public final class DebugFile {
 
     try {
 
-      // Volcar las trazas de salida a una ubicación por defecto
-      // según el sistema operativo sea Windows o UNIX
+      // Volcar las trazas de salida a una ubicaciÃ³n por defecto
+      // segÃºn el sistema operativo sea Windows o UNIX
 
       switch (dumpTo) {
         case DUMP_TO_FILE:
@@ -314,11 +314,11 @@ public final class DebugFile {
     System.out.println("JVM encoding " + System.getProperty( "file.encoding "));
   }
 
-  // Espacios de identación en cada línea de traza
+  // Espacios de identaciÃ³n en cada lÃ­nea de traza
   private static String sIdent = "";
 
   // **********************************************************
-  // Esta variable controla si se volcarán trazas o no
+  // Esta variable controla si se volcarÃ¡n trazas o no
 
   public static final short DUMP_TO_FILE = (short) 1;
   public static final short DUMP_TO_STDOUT = (short) 2;
@@ -328,5 +328,5 @@ public final class DebugFile {
   /**
    * Activate/Deactive trace output
    */
-  public static final boolean trace = true;
+  public static final boolean trace = false;
   }
