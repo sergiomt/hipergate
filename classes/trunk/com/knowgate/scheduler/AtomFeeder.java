@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -106,10 +106,10 @@ public class AtomFeeder {
     // Lista de columnas de la table k_member_address
     String sColumns = "gu_company,gu_contact,tx_email,tx_name,tx_surname,tx_salutation,nm_commercial,tp_street,nm_street,nu_street,tx_addr1,tx_addr2,nm_country,nm_state,mn_city,zipcode,work_phone,direct_phone,home_phone,mov_phone,fax_phone,other_phone,po_box";
 
-    // Componer la sentencia SQL de filtrado de datos a partir de la definición de la consulta almacenada en la tabla k_queries
+    // Componer la sentencia SQL de filtrado de datos a partir de la definiciÃ³n de la consulta almacenada en la tabla k_queries
     oQBF = new QueryByForm(oConn, DB.k_member_address, "ma", sQueryGUID);
 
-    // Insertar los registros a capón haciendo un snapshot de k_member_address a k_job_atoms
+    // Insertar los registros a capÃ³n haciendo un snapshot de k_member_address a k_job_atoms
     oStmt = oConn.createStatement();
 
     sSQL = "INSERT INTO " + DB.k_job_atoms +
@@ -159,10 +159,10 @@ public class AtomFeeder {
      }
 
     // Lista de columnas de la table k_x_list_members
-    // * TO DO: Añadir el resto de columnas que faltan para reemplazar direcciones
+    // * TO DO: AÃ±adir el resto de columnas que faltan para reemplazar direcciones
     String sColumns = "id_format,gu_company,gu_contact,tx_email,tx_name,tx_surname,tx_salutation";
 
-    // Insertar los registros a capón haciendo un snapshot de k_member_address a k_job_atoms
+    // Insertar los registros a capÃ³n haciendo un snapshot de k_member_address a k_job_atoms
     oStmt = oConn.createStatement();
 
     sSQL = "INSERT INTO " + DB.k_job_atoms +
@@ -203,7 +203,7 @@ public class AtomFeeder {
                              String sListGUID, short iInitialStatus)
     throws SQLException {
 
-    // Alimentar una lista directa se hace igual que una estática
+    // Alimentar una lista directa se hace igual que una estÃ¡tica
     return loadStaticList(oConn, sJobGUID, dtExec, sListGUID, iInitialStatus);
   } // loadDirectList()
 
@@ -268,7 +268,7 @@ public class AtomFeeder {
        DebugFile.incIdent();
      }
 
-    // Crea un DBSubset para recorrer los jobs pendientes de ejecución
+    // Crea un DBSubset para recorrer los jobs pendientes de ejecuciÃ³n
 
     oJobsSet = new DBSubset(DB.k_jobs,
                             "gu_job,gu_job_group,gu_workarea,id_command,tx_parameters,id_status,dt_execution,dt_finished,dt_created,dt_modified",
@@ -288,22 +288,22 @@ public class AtomFeeder {
     // Para cada job, cargar su lista de miembros del tipo que corresponda y
     // cambiar el estado a Running
     for (int j=0; j<iJobCount; j++) {
-      // leer los parámetros adicionales del job del campo tx_parameters
+      // leer los parÃ¡metros adicionales del job del campo tx_parameters
       oParams = parseParameters(oJobsSet.getString(4, j));
 
-      // Generar un objeto temporal de tipo lista de distribución
+      // Generar un objeto temporal de tipo lista de distribuciÃ³n
       // para leer los valores de la lista de miembros
       if (oParams.getProperty("gu_list")!=null) {
         oDistribList = new DistributionList(oConn, oParams.getProperty("gu_list"));
 
-        // Si la fecha de ejecución del job es null,
-        // tomar la fecha actual como fecha de ejecución inmediata
+        // Si la fecha de ejecuciÃ³n del job es null,
+        // tomar la fecha actual como fecha de ejecuciÃ³n inmediata
         if (oDistribList.isNull(DB.dt_execution))
           dtExec = dtNow;
         else
           dtExec = oDistribList.getDate(DB.dt_execution);
 
-        // Para cada tipo de lista usar el método de carga de miembros que corresponda
+        // Para cada tipo de lista usar el mÃ©todo de carga de miembros que corresponda
         switch (oDistribList.getShort(DB.tp_list)) {
           case DistributionList.TYPE_DYNAMIC:
             iLoaded += loadDynamicList(oConn, oJobsSet.getString(0, j), dtExec, oParams.getProperty("gu_list"), oDistribList.getString(DB.gu_query), oDistribList.getString(DB.gu_workarea), Atom.STATUS_PENDING);
@@ -374,7 +374,7 @@ public class AtomFeeder {
        DebugFile.incIdent();
      }
 
-    // Crea un DBSubset para recorrer los jobs pendientes de ejecución
+    // Crea un DBSubset para recorrer los jobs pendientes de ejecuciÃ³n
 
     oJobsSet = new DBSubset(DB.k_jobs,
                             "gu_job,gu_job_group,gu_workarea,id_command,tx_parameters,id_status,dt_execution,dt_finished,dt_created,dt_modified",
@@ -393,22 +393,22 @@ public class AtomFeeder {
     // Para cada job, cargar su lista de miembros del tipo que corresponda y
     // cambiar el estado a Running
     if (1==iJobCount) {
-      // leer los parámetros adicionales del job del campo tx_parameters
+      // leer los parÃ¡metros adicionales del job del campo tx_parameters
       oParams = parseParameters(oJobsSet.getString(4, 0));
 
-      // Generar un objeto temporal de tipo lista de distribución
+      // Generar un objeto temporal de tipo lista de distribuciÃ³n
       // para leer los valores de la lista de miembros
       if (oParams.getProperty("gu_list")!=null) {
         oDistribList = new DistributionList(oConn, oParams.getProperty("gu_list"));
 
-        // Si la fecha de ejecución del job es null,
-        // tomar la fecha actual como fecha de ejecución inmediata
+        // Si la fecha de ejecuciÃ³n del job es null,
+        // tomar la fecha actual como fecha de ejecuciÃ³n inmediata
         if (oDistribList.isNull(DB.dt_execution))
           dtExec = dtNow;
         else
           dtExec = oDistribList.getDate(DB.dt_execution);
 
-        // Para cada tipo de lista usar el método de carga de miembros que corresponda
+        // Para cada tipo de lista usar el mÃ©todo de carga de miembros que corresponda
         switch (oDistribList.getShort(DB.tp_list)) {
           case DistributionList.TYPE_DYNAMIC:
             iLoaded += loadDynamicList(oConn, oJobsSet.getString(0, 0), dtExec, oParams.getProperty("gu_list"), oDistribList.getString(DB.gu_query), oDistribList.getString(DB.gu_workarea), iInitialStatus);
@@ -491,7 +491,7 @@ public class AtomFeeder {
        DebugFile.incIdent();
      }
 
-    // Crear un cursor actualizable para recorrer los átomos y cargarlos en la cola
+    // Crear un cursor actualizable para recorrer los Ã¡tomos y cargarlos en la cola
     // al mismo tiempo que se cambia en la base de datos su estado de Pending a Running
     oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
@@ -509,7 +509,7 @@ public class AtomFeeder {
     iJobCol = oRSet.findColumn(DB.gu_job);
     iAtmCol = oRSet.findColumn(DB.pg_atom);
 
-    // Bucle de carga y actualización de estado de job_atoms
+    // Bucle de carga y actualizaciÃ³n de estado de job_atoms
 
     sSQL = "UPDATE " + DB.k_job_atoms + " SET " + DB.id_status + "=" + Atom.STATUS_RUNNING + " WHERE " + DB.gu_job + "=? AND " + DB.pg_atom + "=?";
     if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(" + sSQL + ")");
