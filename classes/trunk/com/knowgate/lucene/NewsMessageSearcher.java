@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003-2006  Know Gate S.L. All rights reserved.
-                           C/Oña, 107 1º2 28050 Madrid (Spain)
+                           C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -152,7 +152,7 @@ public class NewsMessageSearcher {
         aRetArr = new NewsMessageRecord[iDocCount];
         for (int d=0; d<iDocCount; d++) {
           oDoc = oSearch.doc(oTopDoc[d].doc);
-          String[] aAbstract = Gadgets.split(oSearch.doc(oTopDoc[d].doc).get("abstract"), '¨');
+          String[] aAbstract = Gadgets.split(oSearch.doc(oTopDoc[d].doc).get("abstract"), 'Â¨');
           try {
             aRetArr[d] = new NewsMessageRecord(oTopDoc[d].score, oDoc.get("workarea"),
                          oDoc.get("guid"), oDoc.get("container"), oDoc.get("title"),                       

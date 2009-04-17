@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003-2005  Know Gate S.L. All rights reserved.
-                           C/Oña, 107 1º2 28050 Madrid (Spain)
+                           C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -155,7 +155,7 @@ public class MailSearcher {
         aRetArr = new MailRecord[iDocCount];
         for (int d=0; d<iDocCount; d++) {
           Document oDoc = oSearch.doc(oTopDoc[d].doc);
-          String[] aAbstract = Gadgets.split(oSearch.doc(oTopDoc[d].doc).get("abstract"), '¨');
+          String[] aAbstract = Gadgets.split(oSearch.doc(oTopDoc[d].doc).get("abstract"), 'Â¨');
           aRetArr[d] = new MailRecord(aAbstract[0], aAbstract[1], aAbstract[2],
                                       aAbstract[3], aAbstract[4], aAbstract[5],
                                       oDoc.get("container"));
@@ -173,7 +173,7 @@ public class MailSearcher {
         for (int h=0; h<iHitCount; h++) {
           Document oDoc = oHitSet.doc(h);
           if (DebugFile.trace) DebugFile.writeln("found "+oDoc.get("guid")+" "+oDoc.get("title")+" created by "+" "+oDoc.get("author")+" at date "+oDoc.get("created"));
-          String[] aAbstract = Gadgets.split(oDoc.get("abstract"), '¨');
+          String[] aAbstract = Gadgets.split(oDoc.get("abstract"), 'Â¨');
           aRetArr[h] = new MailRecord(aAbstract[0], aAbstract[1], aAbstract[2],
                                       aAbstract[3], aAbstract[4], aAbstract[5],
                                       oDoc.get("container"));

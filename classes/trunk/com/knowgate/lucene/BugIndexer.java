@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -107,7 +107,10 @@ public class BugIndexer extends Indexer {
     if (null!=oPriority)   oDoc.add (new Field("priority" , oPriority.toString(), Field.Store.YES, Field.Index.UN_TOKENIZED));
     if (null!=oSeverity)   oDoc.add (new Field("severity" , oSeverity.toString(), Field.Store.YES, Field.Index.UN_TOKENIZED));
     if (null!=sReportedBy) oDoc.add (new Field("author"   , sReportedBy, Field.Store.YES, Field.Index.TOKENIZED));
-    oDoc.add (new Field("comments", sComments, Field.Store.NO, Field.Index.TOKENIZED));
+    if (null==sComments)
+      oDoc.add (new Field("comments", "", Field.Store.NO, Field.Index.TOKENIZED));
+    else
+      oDoc.add (new Field("comments", sComments, Field.Store.NO, Field.Index.TOKENIZED));
     if (null==sText) {
       oDoc.add (new Field("text", "", Field.Store.NO, Field.Index.TOKENIZED));
       oDoc.add (new Field("abstract", "", Field.Store.YES, Field.Index.TOKENIZED));
@@ -189,7 +192,7 @@ public class BugIndexer extends Indexer {
       oSeverity = new Short(oBug.getShort(DB.od_severity));
 
     addBug(oIWrt, oBug.getString(DB.gu_bug), oBug.getInt(DB.pg_bug),
-           oBug.getString(sWorkArea), oBug.getString(DB.gu_project),
+           sWorkArea, oBug.getString(DB.gu_project),
            oBug.getStringNull(DB.tl_bug,""), oBug.getString(DB.gu_writer),
            oBug.getStringNull(DB.nm_reporter,""), oBug.getCreationDate(oCon),
            oBug.getStringNull(DB.tp_bug,null), oPriority, oSeverity,

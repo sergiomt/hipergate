@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -127,7 +127,7 @@ public class Crawler {
       sTitle = null;
 
       // ***************************************************************
-      // Código ñapa para indexar las listas de correo waltrappa de Iván
+      // CÃ³digo Ã±apa para indexar las listas de correo waltrappa de IvÃ¡n
 
       iTitleStart = sHTMLText.indexOf("<H1>");
       if (iTitleStart<0) iTitleStart = sHTMLText.indexOf("<h1>");
@@ -154,7 +154,7 @@ public class Crawler {
         else
           sTitle += " " + sHTMLText.substring (iTitleStart+4, iTitleEnd).trim();
 
-      // Fin de ñapa
+      // Fin de Ã±apa
       // ***************************************************************
 
       if (sTitle==null) sTitle = "untitled";
