@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -620,7 +620,7 @@ public class DistributionList extends DBPersist {
     oAppendedList = new DistributionList(oConn, sListGUID);
 
     // *******************************************************************
-    // Añadir los miembros que no estuviesen ya presentes en la lista base
+    // AÃ±adir los miembros que no estuviesen ya presentes en la lista base
 
     oInsrt = oConn.createStatement();
 
@@ -628,7 +628,7 @@ public class DistributionList extends DBPersist {
 
     if (oAppendedList.getShort(DB.tp_list)==TYPE_DYNAMIC) {
 
-      // Componer la sentencia SQL de filtrado de datos a partir de la definición de la consulta almacenada en la tabla k_queries
+      // Componer la sentencia SQL de filtrado de datos a partir de la definiciÃ³n de la consulta almacenada en la tabla k_queries
       QueryByForm oQBF = new QueryByForm(oConn, DB.k_member_address, "ma", oAppendedList.getString(DB.gu_query));
       sColumnList = DB.tx_email + "," + DB.tx_name + "," + DB.tx_surname + "," + DB.tx_salutation + "," + DB.gu_company + "," + DB.gu_contact;
 
@@ -698,16 +698,16 @@ public class DistributionList extends DBPersist {
     sColumnList = DB.tx_email + "," + DB.tx_name + "," + DB.tx_surname + "," + DB.tx_salutation + "," + DB.bo_active + "," + DB.gu_company + "," + DB.gu_contact + "," + DB.id_format;
 
     // ************************************************************************************
-    // Actualizar los miembros de la lista a añadir que ya estén presentes en la lista base
+    // Actualizar los miembros de la lista a aÃ±adir que ya estÃ©n presentes en la lista base
 
-    // Preparar la sentencia de actualización de registros en la lista base
+    // Preparar la sentencia de actualizaciÃ³n de registros en la lista base
     sSQL = "UPDATE " + DB.k_x_list_members + " SET " + DB.tx_name + "=?," + DB.tx_surname + "=?," + DB.tx_salutation + "=?," + DB.bo_active + "=?," + DB.gu_company + "=?," + DB.gu_contact + "=?," + DB.id_format + "=? WHERE " + DB.gu_list + "='" + getString(DB.gu_list) + "' AND " + DB.tx_email + "=?";
 
     if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(" + sSQL + ")");
 
     oUpdt = oConn.prepareStatement(sSQL);
 
-    // Preparar la sentencia para leer registros comunes en la lista añadida
+    // Preparar la sentencia para leer registros comunes en la lista aÃ±adida
     oInsrt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
     try { if (oConn.getDataBaseProduct()!=JDCConnection.DBMS_POSTGRESQL) oInsrt.setQueryTimeout(60); }  catch (SQLException sqle) { /* ignore */}
@@ -724,8 +724,8 @@ public class DistributionList extends DBPersist {
 
     oRSet = oInsrt.executeQuery(sSQL);
 
-    // Recorrer los registros de la lista añadida que ya estén en la lista base
-    // y actualizar sus campos con los valores de la lista añadida.
+    // Recorrer los registros de la lista aÃ±adida que ya estÃ©n en la lista base
+    // y actualizar sus campos con los valores de la lista aÃ±adida.
     while (oRSet.next()) {
       oUpdt.setObject(1, oRSet.getObject(1), Types.VARCHAR);  // tx_name
       oUpdt.setObject(2, oRSet.getObject(2), Types.VARCHAR);  // tx_surname

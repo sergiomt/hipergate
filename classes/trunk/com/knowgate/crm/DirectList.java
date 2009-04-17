@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -139,7 +139,7 @@ public class DirectList extends DistributionList {
         sName = getField(iName, r);
         if (sName.length()>100)
           CheckCodes[r] = CHECK_NAME_TOO_LONG;
-        else if (sName.indexOf(',')>=0 || sName.indexOf(';')>=0 || sName.indexOf('`')>=0 || sName.indexOf('¨')>=0 || sName.indexOf('?')>=0 || sName.indexOf('"')>=0)
+        else if (sName.indexOf(',')>=0 || sName.indexOf(';')>=0 || sName.indexOf('`')>=0 || sName.indexOf('Â¨')>=0 || sName.indexOf('?')>=0 || sName.indexOf('"')>=0)
           CheckCodes[r] = CHECK_INVALID_NAME;
       }
 
@@ -147,7 +147,7 @@ public class DirectList extends DistributionList {
         sSurN = getField(iName, r);
         if (sSurN.length()>100)
           CheckCodes[r] = CHECK_SURNAME_TOO_LONG;
-        else if (sSurN.indexOf(',')>=0 || sSurN.indexOf(';')>=0 || sSurN.indexOf('`')>=0 || sSurN.indexOf('¨')>=0 || sSurN.indexOf('?')>=0 || sSurN.indexOf('"')>=0)
+        else if (sSurN.indexOf(',')>=0 || sSurN.indexOf(';')>=0 || sSurN.indexOf('`')>=0 || sSurN.indexOf('Â¨')>=0 || sSurN.indexOf('?')>=0 || sSurN.indexOf('"')>=0)
           CheckCodes[r] = CHECK_INVALID_SURNAME;
       }
 
@@ -155,7 +155,7 @@ public class DirectList extends DistributionList {
         sSalt = getField(iSalt, r);
         if (sSalt.length()>16)
           CheckCodes[r] = CHECK_SALUTATION_TOO_LONG;
-        else if (sSalt.indexOf(',')>=0 || sSalt.indexOf(';')>=0 || sSalt.indexOf('`')>=0 || sSalt.indexOf('¨')>=0 || sSalt.indexOf('?')>=0 || sSalt.indexOf('"')>=0)
+        else if (sSalt.indexOf(',')>=0 || sSalt.indexOf(';')>=0 || sSalt.indexOf('`')>=0 || sSalt.indexOf('Â¨')>=0 || sSalt.indexOf('?')>=0 || sSalt.indexOf('"')>=0)
           CheckCodes[r] = CHECK_INVALID_SALUTATION;
       }
 
@@ -163,7 +163,7 @@ public class DirectList extends DistributionList {
         sFrmt = getField(iFrmt, r);
         if (sFrmt.length()>4)
           CheckCodes[r] = CHECK_INVALID_FORMAT;
-        else if (sFrmt.indexOf(',')>=0 || sFrmt.indexOf(';')>=0 || sFrmt.indexOf('`')>=0 || sFrmt.indexOf('¨')>=0 || sFrmt.indexOf('?')>=0 || sFrmt.indexOf('"')>=0)
+        else if (sFrmt.indexOf(',')>=0 || sFrmt.indexOf(';')>=0 || sFrmt.indexOf('`')>=0 || sFrmt.indexOf('Â¨')>=0 || sFrmt.indexOf('?')>=0 || sFrmt.indexOf('"')>=0)
           CheckCodes[r] = CHECK_INVALID_SALUTATION;
       }
 
@@ -190,12 +190,12 @@ public class DirectList extends DistributionList {
    * <table><tr><td>CHECK_OK</td><td>Line is OK</td></tr>
    * <tr><td>CHECK_INVALID_EMAIL</td><td>tx_email is longer than 100 characters or it is rejected by method Gadgets.checkEMail()</td></tr>
    * <tr><td>CHECK_NAME_TOO_LONG</td><td>tx_name is longer than 100 characters</td></tr>
-   * <tr><td>CHECK_INVALID_NAME</td><td>tx_name contains forbidden characters { ',' ';' '`' '¨' '?' '"' }</td></tr>
+   * <tr><td>CHECK_INVALID_NAME</td><td>tx_name contains forbidden characters { ',' ';' '`' 'Â¨' '?' '"' }</td></tr>
    * <tr><td>CHECK_SURNAME_TOO_LONG</td><td>tx_surname is longer than 100 characters</td></tr>
-   * <tr><td>CHECK_INVALID_SURNAME</td><td>tx_surname contains forbidden characters { ',' ';' '`' '¨' '?' '"' }</td></tr>
+   * <tr><td>CHECK_INVALID_SURNAME</td><td>tx_surname contains forbidden characters { ',' ';' '`' 'Â¨' '?' '"' }</td></tr>
    * <tr><td>CHECK_INVALID_FORMAT</td><td>id_format is longer than 4 characters</td></tr>
    * <tr><td>CHECK_SALUTATION_TOO_LONG</td><td>tx_salutation is longer than 16 characters</td></tr>
-   * <tr><td>CHECK_INVALID_SALUTATION</td><td>tx_salutation contains forbidden characters { ',' ';' '`' '¨' '?' '"' }</td></tr>
+   * <tr><td>CHECK_INVALID_SALUTATION</td><td>tx_salutation contains forbidden characters { ',' ';' '`' 'Â¨' '?' '"' }</td></tr>
    * </table>
    * @throws ArrayIndexOutOfBoundsException
    * @throws FileNotFoundException

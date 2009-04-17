@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -909,7 +909,7 @@ public class Contact extends DBPersist {
       oDlte = null;
     } // fi (exists(oConn, DB.k_x_meeting_contact))
 
-    /* Borrar las llamadas telefónicas */
+    /* Borrar las llamadas telefÃ³nicas */
     if (DBBind.exists(oConn, DB.k_phone_calls, "U")) {
       if (DebugFile.trace)
         DebugFile.writeln("Connection.prepareStatement(DELETE FROM " + DB.k_phone_calls + " WHERE " + DB.gu_contact + "='" + sContactGUID + "')");

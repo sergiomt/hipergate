@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -529,7 +529,7 @@ public class ListMember {
       oMember.put(DB.gu_member, Gadgets.generateUUID());
     }
 
-    // Forzar la fecha de modificación del registro
+    // Forzar la fecha de modificaciÃ³n del registro
     oMember.replace(DB.dt_modified, dtNow);
 
     if (DistributionList.TYPE_DIRECT==iTpList || DistributionList.TYPE_BLACK==iTpList)
