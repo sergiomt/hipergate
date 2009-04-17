@@ -1,6 +1,5 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/OÒa, 107 1∫2 28050 Madrid (Spain)O
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -42,10 +41,13 @@ import javax.net.ssl.HttpsURLConnection;
 
 import javax.activation.DataHandler;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 
 import com.enterprisedt.net.ftp.FTPClient;
 import com.enterprisedt.net.ftp.FTPException;
@@ -54,6 +56,8 @@ import com.enterprisedt.net.ftp.FTPTransferType;
 import com.knowgate.debug.DebugFile;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.misc.Environment;
+
+import com.knowgate.dfs.chardet.CharacterSetDetector;
 
 import java.util.Properties;
 
@@ -65,7 +69,7 @@ import java.util.Properties;
  * atomic calls.
  * <p>This is an alpha state testing module.</p>
  * @author Sergio Montoro Ten
- * @version 4.0
+ * @version 5.0
  */
 
 public class FileSystem {
@@ -181,7 +185,7 @@ public class FileSystem {
   // ----------------------------------------------------------
 
   /**
-   * Crea un FileSystem tomando los par·metros de creaciÛn necesarios
+   * Crea un FileSystem tomando los par√°metros de creaci√≥n necesarios
    * de un conjunto de propiedades.
    * @param oProps Conjunto de propiedades. Actualmente se usan dos:
    * fileuser = Nombre de Usuario a Autentificar
@@ -200,7 +204,10 @@ public class FileSystem {
    */
   public FileSystem(Properties oProps) throws NumberFormatException,IllegalArgumentException {
 
-    OS = Integer.parseInt(oProps.getProperty("javamode", "0"));
+	String sJavaMode = oProps.getProperty("javamode", "0");
+	if (sJavaMode.length()==0) sJavaMode = "0";
+	
+    OS = Integer.parseInt(sJavaMode.trim());
 
     if (OS<0 || OS>2)
       throw new IllegalArgumentException("javamode property can only be set to 0, 1 or 2");
@@ -1366,23 +1373,8 @@ public class FileSystem {
 
   // ----------------------------------------------------------
 
-  private static String detectEncoding(byte[] byBuffer, String sDefault) {
-    String sEncoding;
-    if (byBuffer[0]==-1 && byBuffer[1]==-2 )
-      sEncoding = "UTF-16LE";
-    else if (byBuffer[0]==-2 && byBuffer[1]==-1 )
-      sEncoding = "UTF-16BE";
-    else if (byBuffer[0]==-17 && byBuffer[1]==-69 && byBuffer[2]==-65)
-      sEncoding = "UTF-8";
-    else
-      sEncoding = sDefault;
-    return sEncoding;
-  } // detectEncoding
-
-  // ----------------------------------------------------------
-
   /**
-   * Detect file encoding by reading its first three bytes
+   * Detect file encoding
    * @param oFile File
    * @param sDefault String Character encoding to be returned if no clear character encoding was identified
    * @return String UTF-16LE, UTF-16BE or UTF-8
@@ -1392,20 +1384,15 @@ public class FileSystem {
    */
   public static String detectEncoding(File oFile, String sDefault)
     throws FileNotFoundException, IOException {
-    byte byBuffer[] = new byte[3];
-    FileInputStream oInStrm = new FileInputStream(oFile);
-    int iReaded = oInStrm.read(byBuffer, 0, 3);
-    oInStrm.close();
-    if (iReaded < 3)
-      return sDefault;
-    else
-      return detectEncoding(byBuffer, sDefault);
+
+	return new CharacterSetDetector().detect(oFile, sDefault);
+
   } // detectEncoding
 
   // ----------------------------------------------------------
 
   /**
-   * Detect file encoding by reading its first three bytes
+   * Detect file encoding
    * @param sFilePath File Path including protocol. Like "file:///tmp/myfile.txt" or "ftp://myhost:21/dir/myfile.txt"
    * @param sDefault String Character encoding to be returned if no clear character encoding was identified
    * @return String UTF-16LE, UTF-16BE or UTF-8
@@ -1416,12 +1403,10 @@ public class FileSystem {
   public String detectEncoding(String sFilePath, String sDefault)
     throws FileNotFoundException, IOException, FTPException {
     byte[] byBuffer = readfilebin(sFilePath);
-    if (byBuffer==null)
-      return sDefault;
-    else if (byBuffer.length < 3)
-      return sDefault;
-    else
-      return detectEncoding(byBuffer, sDefault);
+	ByteArrayInputStream oInStrm = new ByteArrayInputStream(readfilebin(sFilePath));
+    String sEncoding = new CharacterSetDetector().detect(oInStrm, sDefault);
+	oInStrm.close();
+	return sEncoding;
   } // detectEncoding
 
   // ----------------------------------------------------------
@@ -1547,19 +1532,28 @@ public class FileSystem {
         oStrm.close();
       } else {
 	    if (null==oHttpCli) {
-	      oHttpCli = new HttpClient();
+	      oHttpCli = new DefaultHttpClient();
 	    } // fi (oHttpCli)
-		oHttpCli.getState().setCredentials(realm(), oUrl.getHost(),
-                					       new UsernamePasswordCredentials(user(), password()));	      
-	    GetMethod oGet = null;
+
+		oHttpCli.getCredentialsProvider().setCredentials(new AuthScope(oUrl.getHost(), AuthScope.ANY_PORT, realm()), 
+														 new UsernamePasswordCredentials(user(), password()));	      
+	    HttpGet oGet = null;
 	    try {
-	      oGet =new GetMethod(sFilePath);	    
-	      oGet.setDoAuthentication(true);	    
-	      oHttpCli.executeMethod(oGet);
-	      aRetVal = oGet.getResponseBody();
+	      oGet = new HttpGet(sFilePath);		  
+	      HttpResponse oResp = oHttpCli.execute(oGet);
+	      HttpEntity oEnty = oResp.getEntity();
+	      int nLen = (int) oEnty.getContentLength();
+	      if (nLen>0) {
+	        aRetVal = new byte[nLen];
+	        InputStream oBody = oEnty.getContent();
+			oBody.read(aRetVal,0,nLen);
+			oBody.close();	        
+	      } else {
+	      	aRetVal = null;
+	      }// fi	      
 		} finally {
-          if (null!=oGet) oGet.releaseConnection();
-          oGet = null;
+          oHttpCli.getConnectionManager().shutdown();
+          oHttpCli = null;
         }
       } // fi (user is anonymous)
     }
@@ -1675,19 +1669,29 @@ public class FileSystem {
         oStrm.close();
 	  } else {
 	    if (null==oHttpCli) {	    	
-	      oHttpCli = new HttpClient();
+	      oHttpCli = new DefaultHttpClient();
 	    } // fi (oHttpCli)
-		oHttpCli.getState().setCredentials(realm(), oUrl.getHost(),
-                					       new UsernamePasswordCredentials(user(), password()));	      
-	    GetMethod oGet = null;
+		oHttpCli.getCredentialsProvider().setCredentials(new AuthScope(oUrl.getHost(), AuthScope.ANY_PORT, realm()), 
+														 new UsernamePasswordCredentials(user(), password()));	      
+	    HttpGet oGet = null;
 	    try {
-	      oGet =new GetMethod(sFilePath);	    
-	      oGet.setDoAuthentication(true);	    
-	      oHttpCli.executeMethod(oGet);
-	      sRetVal = oGet.getResponseBodyAsString();
+
+	      oGet = new HttpGet(sFilePath);		  
+	      HttpResponse oResp = oHttpCli.execute(oGet);
+	      HttpEntity oEnty = oResp.getEntity();
+	      int nLen = (int) oEnty.getContentLength();
+	      if (nLen>0) {
+	        byte[] aRetVal = new byte[nLen];
+	        InputStream oBody = oEnty.getContent();
+			oBody.read(aRetVal,0,nLen);
+			oBody.close();
+			sRetVal = new String(aRetVal, sEncoding);
+	      } else {
+	      	sRetVal = "";
+	      }// fi	      
 		} finally {
-          if (null!=oGet) oGet.releaseConnection();
-          oGet = null;
+          oHttpCli.getConnectionManager().shutdown();
+          oHttpCli = null;
         }
 	  } // fi
     }
@@ -1745,12 +1749,7 @@ public class FileSystem {
           oInStrm = new FileInputStream(oFile);
           oBfStrm = new BufferedInputStream(oInStrm, iFLen);
 
-          int iReaded = oBfStrm.read(byBuffer, 0,3);
-
-          if (iReaded>2)
-            sEncoding = detectEncoding(byBuffer,"ISO-8859-1");
-          else
-            sEncoding = "ISO-8859-1";
+          sEncoding = new CharacterSetDetector().detect(oBfStrm,"ISO-8859-1");
 
           if (DebugFile.trace) DebugFile.writeln("encoding is " + sEncoding);
 
@@ -2026,7 +2025,7 @@ public class FileSystem {
   private String sPort;
   private String sPath;
   private String sFile;
-  private HttpClient oHttpCli;
+  private DefaultHttpClient oHttpCli;
 
   // ******************
   // Static values
