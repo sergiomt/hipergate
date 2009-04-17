@@ -103,14 +103,14 @@ public class TextElement {
           sName.indexOf('-')>=0 || sName.indexOf('(')>=0 || sName.indexOf(')')>=0 ||
           sName.indexOf('+')>=0 || sName.indexOf('[')>=0 || sName.indexOf(']')>=0 ||
           sName.indexOf('%')>=0 || sName.indexOf('{')>=0 || sName.indexOf('}')>=0 ||
-          sName.indexOf('ñ')>=0 || sName.indexOf('Ñ')>=0 || sName.indexOf('^')>=0 ||
-          sName.indexOf('ç')>=0 || sName.indexOf('Ç')>=0 || sName.indexOf('"')>=0 ||
-          sName.indexOf('á')>=0 || sName.indexOf('é')>=0 || sName.indexOf('í')>=0 ||
-          sName.indexOf('ó')>=0 || sName.indexOf('ú')>=0 || sName.indexOf('à')>=0 ||
-          sName.indexOf('è')>=0 || sName.indexOf('è')>=0 || sName.indexOf('ò')>=0 ||
-          sName.indexOf('ù')>=0 || sName.indexOf('`')>=0 || sName.indexOf('´')>=0 ||
+          sName.indexOf('Ã±')>=0 || sName.indexOf('Ã‘')>=0 || sName.indexOf('^')>=0 ||
+          sName.indexOf('Ã§')>=0 || sName.indexOf('Ã‡')>=0 || sName.indexOf('"')>=0 ||
+          sName.indexOf('Ã¡')>=0 || sName.indexOf('Ã©')>=0 || sName.indexOf('Ã­')>=0 ||
+          sName.indexOf('Ã³')>=0 || sName.indexOf('Ãº')>=0 || sName.indexOf('Ã ')>=0 ||
+          sName.indexOf('Ã¨')>=0 || sName.indexOf('Ã¨')>=0 || sName.indexOf('Ã²')>=0 ||
+          sName.indexOf('Ã¹')>=0 || sName.indexOf('`')>=0 || sName.indexOf('Â´')>=0 ||
           sName.indexOf('.')>=0 || sName.indexOf(':')>=0 || sName.indexOf(',')>=0 ||
-          sName.indexOf(39 )>=0 || sName.indexOf('¡')>=0 || sName.indexOf('¿')>=0) {
+          sName.indexOf(39 )>=0 || sName.indexOf('Â¡')>=0 || sName.indexOf('Â¿')>=0) {
       }
       throw new IllegalArgumentException("Element name contains invalid characters");
     }
