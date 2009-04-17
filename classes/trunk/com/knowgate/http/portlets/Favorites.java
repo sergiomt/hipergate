@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2003-2006  Know Gate S.L. All rights reserved.
+  Copyright (C) 2003-2008  Know Gate S.L. All rights reserved.
                            C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
@@ -32,16 +32,18 @@
 
 package com.knowgate.http.portlets;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
-
-import java.util.Date;
-import java.util.Properties;
-import java.util.Enumeration;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.File;
 
 import java.sql.SQLException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Properties;
 
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerConfigurationException;
@@ -53,136 +55,135 @@ import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.*;
 import com.knowgate.dataxslt.StylesheetCache;
 import com.knowgate.misc.Gadgets;
-import com.knowgate.dfs.FileSystem;
-import com.knowgate.forums.NewsGroup;
+import com.knowgate.hipergate.Product;
 
-/**
- * Recent Posts Tabbed Dialog Portlet
- * @author Sergio Montoro Ten
- * @version 1.0
- */
+public class Favorites extends GenericPortlet {
 
-public class PostsForGroup extends GenericPortlet {
-  public PostsForGroup() { }
+  public Favorites() { }
 
-  public PostsForGroup(HipergatePortletConfig oConfig)
-    throws javax.portlet.PortletException {
+  public Favorites(HipergatePortletConfig oConfig)
+    throws PortletException {
 
     init(oConfig);
   }
 
+  /*
   // ---------------------------------------------------------------------------
 
   public String render(RenderRequest req, String sEncoding)
     throws PortletException, IOException, IllegalStateException {
 
+     if (DebugFile.trace) {
+       DebugFile.writeln("Begin Favorites.render([RenderRequest], "+sEncoding+")");
+       DebugFile.incIdent();
+     }
+
+    final int iMaxNew = 8;              // Show a limited number of most recent messages
+    final long lRefreshEvery = 60000l;  // 1 minute
+
     ByteArrayInputStream oInStream;
     ByteArrayOutputStream oOutStream;
-
-    if (DebugFile.trace) {
-      DebugFile.writeln("Begin PostsForGroup.render()");
-      DebugFile.incIdent();
-    }
-
-    final int iMaxRecent = 10;
-
-    FileSystem oFS = new FileSystem(FileSystem.OS_PUREJAVA);
-
+ 
     String sOutput;
     String sDomainId = req.getProperty("domain");
     String sWorkAreaId = req.getProperty("workarea");
     String sUserId = req.getProperty("user");
-    String sNewsGrp = req.getProperty("newsgrp");
     String sZone = req.getProperty("zone");
     String sLang = req.getProperty("language");
     String sTemplatePath = req.getProperty("template");
     String sStorage = req.getProperty("storage");
     String sFileDir = "file://" + sStorage + "domains" + File.separator + sDomainId + File.separator + "workareas" + File.separator + sWorkAreaId + File.separator + "cache" + File.separator + sUserId;
-    String sCachedFile = "recentpoststab_" + req.getWindowState().toString() + ".xhtm";
+    String sCachedFile = "newmails_" + req.getWindowState().toString() + ".xhtm";
 
-    // New for v4.0
-    String sOrderBy = req.getProperty("orderby");
-    if (null==sOrderBy) sOrderBy = DB.dt_published;
-    if (sOrderBy.length()==0) sOrderBy = DB.dt_published;
+    boolean bFetch;
 
-    if (DebugFile.trace) {
-      DebugFile.writeln ("template=" + sTemplatePath);
-      DebugFile.writeln ("cache dir=" + sFileDir);
-      DebugFile.writeln ("modified=" + req.getAttribute("modified"));
-      DebugFile.writeln ("encoding=" + sEncoding);
-    }
+    File oCached = new File(sFileDir.substring(7)+File.separator+sCachedFile);
 
-    Date oDtModified = (Date) req.getAttribute("modified");
-
-    if (null!=oDtModified) {
+    if (!oCached.exists()) {
+      bFetch = true;
       try {
-
-        File oCached = new File(sFileDir.substring(7)+File.separator+sCachedFile);
-
-        if (!oCached.exists()) {
-          oFS.mkdirs(sFileDir);
-        }
-        else if (oCached.lastModified()>oDtModified.getTime()) {
-          sOutput = new String(oFS.readfile(sFileDir+File.separator+sCachedFile, sEncoding==null ? "ISO8859_1" : sEncoding));
-
-          if (DebugFile.trace) {
-            DebugFile.writeln("cache hit " + sFileDir+File.separator+sCachedFile);
-            DebugFile.decIdent();
-            DebugFile.writeln("End RecentPosts.render()");
-          }
-
-          return sOutput;
-        }
-      }
-      catch (Exception xcpt) {
-        DebugFile.writeln(xcpt.getClass().getName() + " " + xcpt.getMessage());
-      }
+      	oFS.mkdirs(sFileDir);
+      } catch (Exception xcpt) {
+        throw new PortletException(xcpt.getMessage(), xcpt);
+      } 
+    } else {
+      bFetch = (new Date().getTime()-oCached.lastModified()>lRefreshEvery);
     }
+      
+	if (bFetch) {
 
-    String sXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><?xml-stylesheet type=\"text/xsl\"?>";
-
-    int iPosts = 0;
-
-    if (req.getWindowState().equals(WindowState.MINIMIZED)) {
-      sXML += "<posts/>";
-    }
-    else {
-
-      DBBind oDBB = (DBBind) getPortletContext().getAttribute("GlobalDBBind");
-
-      JDCConnection oCon = null;
-
-      try  {
-        oCon = oDBB.getConnection("PostsForGroup");
-
-        NewsGroup oGrp = new NewsGroup(sNewsGrp);
-        DBSubset  oPosts = oGrp.getTopLevelMessages(oCon, iMaxRecent, sOrderBy);
-        iPosts = oPosts.getRowCount();
-
-        oCon.close("PostsForGroup");
-        oCon = null;
-
-        Date dtPub;
-        int iDtPubColPos = oPosts.getColumnPosition(DB.dt_published);
-        for (int p=0; p<iPosts; p++) {
-          dtPub = oPosts.getDate(iDtPubColPos,p);
-          oPosts.setElementAt(Gadgets.leftPad(String.valueOf(dtPub.getMonth()+1),'0',2)+"-"+Gadgets.leftPad(String.valueOf(dtPub.getDate()),'0',2)+" "+Gadgets.leftPad(String.valueOf(dtPub.getHours()),'0',2)+":"+Gadgets.leftPad(String.valueOf(dtPub.getMinutes()),'0',2), 5,p);
-        }
-
-        sXML += "<posts>\n"+oPosts.toXML("","newsmsg")+"</posts>";
-      }
-      catch (SQLException e) {
-        sXML += "<posts/>";
-
+      String sXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><?xml-stylesheet type=\"text/xsl\"?>\n<favorites>";
+    
+      if (req.getWindowState().equals(WindowState.MINIMIZED) || null==sMailAccount) {
+		// Nothing to Show
+      } else {
+        JDCConnection oCon = null;
         try {
-          if (null != oCon)
-            if (!oCon.isClosed())
-              oCon.close("PostsForGroup");
-        } catch (SQLException ignore) { }
-      }
-    }
 
-    try {
+          DBBind oDBB = (DBBind) getPortletContext().getAttribute("GlobalDBBind");
+	      
+	      oCon = oDBB.getConnection("Favorites");
+	      
+	      String sFavsCat = DBCommand.queryStr(oCon, "SELECT c."+DB.gu_category+" FROM "+
+	      	                                   DB.k_categories+" c,"+DB.k_cat_tree+" t,"+DB.k_users+" u WHERE "+
+	      	                                   "c."+DB.gu_category+"=t."+DB.gu_child_cat+" AND "+
+	      	                                   "t."+DB.gu_parent_cat+"=u."+DB.gu_category+" AND "+
+	      	                                   "u."+DB.gu_user+"='"+sUserId+"'"+" AND "+
+	      	                                   "c."+DB.nm_category+" LIKE '%favs'");
+
+		  if (null==sFavsCat) {
+			PreparedStatement oStm = oCon.prepareStatement(
+				"SELECT p."+DB.gu_product+","+
+				" FROM "+DB.k_products+" p,"+DB.k_prod_locats+" l WHERE "+
+				"p."+DB.gu_product+"=l."+DB.gu_product+" AND "+
+			    "l."+DB.id_prod_type+"='HTML' AND ("+DB.xprotocol+"='http://' OR "+DB.xprotocol+"='https://') AND "+
+				"p."+DB.gu_owner+"=? ORDER BY p."+DB.dt_modified+" DESC",
+				ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			oStm.setString(1, sUserId);
+				
+		  } else {
+		  	
+		  }
+
+		  oCon.close("Favorites");
+		  oCon=null;
+		  
+		  if (null!=oHnr) {
+		    String[] aRecentXML = oHnr.listRecentMessages("INBOX", iMaxNew);
+	        if (null!=aRecentXML) {
+		      int nRecentXML = aRecentXML.length;
+		      sXML += "<messages total=\""+String.valueOf(nRecentXML)+"\" skip=\"0\">";
+		      for (int r=0; r<nRecentXML; r++)
+	      	    sXML += aRecentXML[r];
+	          sXML += "</messages>";
+	        } else {
+	          sXML += "<messages total=\"0\" skip=\"0\"/>";
+	        }// fi
+		  } else {
+     		if (DebugFile.trace) {
+       		  DebugFile.writeln("Mail Account "+sMailAccount+" not found");
+     		}
+		      sXML += "<messages total=\"0\" skip=\"0\" />";
+		  }
+        } catch (SQLException sqle) {
+          if (oCon!=null) { try { oCon.close("NewMail"); oCon=null; } catch (SQLException ignore) {} }
+          throw new PortletException(sqle.getMessage(), sqle);
+        } catch (AuthenticationFailedException afe) {
+          if (oCon!=null) { try { oCon.close("NewMail"); oCon=null; } catch (SQLException ignore) {} }
+          throw new PortletException(afe.getMessage(), afe);
+        } catch (NoSuchProviderException nspe) {
+          if (oCon!=null) { try { oCon.close("NewMail"); oCon=null; } catch (SQLException ignore) {} }
+          throw new PortletException(nspe.getMessage(), nspe);
+        } catch (MessagingException jmme) {
+          if (oCon!=null) { try { oCon.close("NewMail"); oCon=null; } catch (SQLException ignore) {} }
+          throw new PortletException(jmme.getMessage(), jmme);
+        }
+        sXML += "</folder>";
+      } // fi
+
+	  DebugFile.writeln(sXML);
+
+      try {
        if (DebugFile.trace) DebugFile.writeln("new ByteArrayInputStream(" + String.valueOf(sXML.length()) + ")");
 
        if (sEncoding==null)
@@ -218,8 +219,8 @@ public class PostsForGroup extends GenericPortlet {
        oInStream = null;
 
        oFS.writefilestr (sFileDir+File.separator+sCachedFile, sOutput, sEncoding==null ? "ISO8859_1" : sEncoding);
-     }
-     catch (TransformerConfigurationException tce) {
+      }
+      catch (TransformerConfigurationException tce) {
        if (DebugFile.trace) {
          DebugFile.writeln("TransformerConfigurationException " + tce.getMessageAndLocation());
          try {
@@ -235,8 +236,8 @@ public class PostsForGroup extends GenericPortlet {
          DebugFile.decIdent();
        }
        throw new PortletException("TransformerConfigurationException " + tce.getMessage(), tce);
-     }
-     catch (TransformerException tex) {
+      }
+      catch (TransformerException tex) {
        if (DebugFile.trace) {
          DebugFile.writeln("TransformerException " + tex.getMessageAndLocation());
 
@@ -253,19 +254,21 @@ public class PostsForGroup extends GenericPortlet {
          DebugFile.decIdent();
        }
        throw new PortletException("TransformerException " + tex.getMessage(), tex);
-     }
-
+      }
+	} else {
+      try {
+      	sOutput = new String(oFS.readfile(sFileDir+File.separator+sCachedFile, sEncoding==null ? "ISO8859_1" : sEncoding));
+      } catch (Exception xcpt) {
+      	throw new PortletException(xcpt.getClass().getName()+" "+xcpt.getMessage(), xcpt);
+      }
+	} // fi (bFetch)
+	
      if (DebugFile.trace) {
        DebugFile.decIdent();
-       DebugFile.writeln("End PostsForGroup.render()");
+       DebugFile.writeln("End NewMail.render()");
      }
+
      return sOutput;
-   } // render
-
-   // --------------------------------------------------------------------------
-
-   public void render(RenderRequest req, RenderResponse res)
-     throws PortletException, IOException, IllegalStateException {
-     res.getWriter().write(render(req,res.getCharacterEncoding()));
     }
+    */
 }
