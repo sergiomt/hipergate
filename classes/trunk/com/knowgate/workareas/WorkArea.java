@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/OÒa, 107 1∫2 28050 Madrid (Spain)
+                      C/O√±a, 107 1¬∫2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -128,8 +128,8 @@ public class WorkArea extends DBPersist {
 
 	oParams.clear();
 
-    // Si no se especificÛ un identificador para el ·rea de trabajo
-    // entonces aÒadirlo autimaticamente
+    // Si no se especific√≥ un identificador para el √°rea de trabajo
+    // entonces a√±adirlo autimaticamente
     if (!AllVals.containsKey(DB.gu_workarea))
       put(DB.gu_workarea, Gadgets.generateUUID());
 
@@ -256,8 +256,8 @@ public class WorkArea extends DBPersist {
 
     // -----------------------------------------------------------------------------------
     // Verificar que la WorkArea realmente existe antes de empezar a borrar y tambien
-    // evitar que una inyecciÛn maliciosa de SQL en el par·metro sWrkAreaGUID pudiera
-    // borrar m·s registros de los debidos
+    // evitar que una inyecci√≥n maliciosa de SQL en el par√°metro sWrkAreaGUID pudiera
+    // borrar m√°s registros de los debidos
 
     oPtmt = oConn.prepareStatement("SELECT "+DB.gu_workarea+" FROM "+DB.k_workareas+" WHERE "+DB.gu_workarea+"=?",
                                    ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -365,7 +365,7 @@ public class WorkArea extends DBPersist {
     }
     // -----------------------------------------------------------------------------------
 
-    // Borrar actividades, compaÒeros y salas
+    // Borrar actividades, compa√±eros y salas
 
     if (DBBind.exists(oConn, DB.k_meetings, "U")) {
       oItems = new DBSubset (DB.k_meetings, DB.gu_meeting, DB.gu_workarea + "='" + sWrkAreaGUID + "'", 100);
@@ -436,7 +436,7 @@ public class WorkArea extends DBPersist {
     }
 
     // -----------------------------------------------------------------------------------
-    // Borrar llamadas de telÈfono
+    // Borrar llamadas de tel√©fono
 
     if (DBBind.exists(oConn, DB.k_phone_calls, "U")) {
       oStmt = oConn.createStatement();
@@ -509,7 +509,7 @@ public class WorkArea extends DBPersist {
 
 
     // -----------------------------------------------------------------------------------
-    // Borrar las compaÒÌas, cada compaÒÌa borrar· en cascada sus individuos asociados
+    // Borrar las compa√±√≠as, cada compa√±√≠a borrar√° en cascada sus individuos asociados
 
     if (DBBind.exists(oConn, DB.k_companies, "U")) {
       oItems = new DBSubset (DB.k_companies, DB.gu_company, DB.gu_workarea + "='" + sWrkAreaGUID + "'", 100);
@@ -518,7 +518,7 @@ public class WorkArea extends DBPersist {
         Company.delete(oConn, oItems.getString(0,c));
     }
 
-    // Borrar los contactos, puede haber contactos individuales no asociados a ninguna compaÒia
+    // Borrar los contactos, puede haber contactos individuales no asociados a ninguna compa√±ia
     if (DBBind.exists(oConn, DB.k_contacts, "U")) {
       oItems = new DBSubset (DB.k_contacts, DB.gu_contact, DB.gu_workarea + "='" + sWrkAreaGUID + "'", 100);
       iItems = oItems.load(oConn);
@@ -564,7 +564,7 @@ public class WorkArea extends DBPersist {
 
     // -----------------------------------------------------------------------------------
 
-    // Borrar los proyectos, cada proyecto borrar· en cascada sus incidencias y tareas
+    // Borrar los proyectos, cada proyecto borrar√° en cascada sus incidencias y tareas
     if (DBBind.exists(oConn, DB.k_projects, "U")) {
       oItems = new DBSubset (DB.k_projects, DB.gu_project, DB.gu_owner + "='" + sWrkAreaGUID + "'", 100);
       iItems = oItems.load(oConn);
@@ -600,7 +600,7 @@ public class WorkArea extends DBPersist {
     }
 
     // -----------------------------------------------------------------------------------
-    // Borrar las tiendas, cada tienda borrar· en cascada sus categorÌas y productos
+    // Borrar las tiendas, cada tienda borrar√° en cascada sus categor√≠as y productos
 
     if (DBBind.exists(oConn, DB.k_invoices, "U")) {
       oStmt = oConn.createStatement();
@@ -856,7 +856,7 @@ public class WorkArea extends DBPersist {
       if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(" + sSQL + ")");
       oStmt.executeUpdate(sSQL);
 
-      // Luego los tÈrminos principales
+      // Luego los t√©rminos principales
       sSQL = "DELETE FROM " + DB.k_thesauri + " WHERE " + DB.gu_rootterm + " IN (SELECT " + DB.gu_rootterm + " FROM " + DB.k_thesauri_root + " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "')";
 
       if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(" + sSQL + ")");
@@ -955,13 +955,13 @@ public class WorkArea extends DBPersist {
       } // fi (DBMS_POSTGRESQL)
     } // fi (exists(DB.k_courses))
 
-    // Borrar las campaÒas
+    // Borrar las campa√±as
     // Nuevo para la v4.0 
     if (DBBind.exists(oConn, DB.k_campaigns, "U")) {
       
-      // Los registros de la tabla k_x_campaign_lists no es preciso eliminarlos aquÌ
-      // porque ya habr·n sido eliminados en la llamada al mÈtodo DistributionList.delete()
-	  // Las oportunidades asociadas a la campaÒa tampoco es preciso borrarlas aquÌ
+      // Los registros de la tabla k_x_campaign_lists no es preciso eliminarlos aqu√≠
+      // porque ya habr√°n sido eliminados en la llamada al m√©todo DistributionList.delete()
+	  // Las oportunidades asociadas a la campa√±a tampoco es preciso borrarlas aqu√≠
 	  // puesto que ya han sido eliminadas como efecto lateral de eliminar los contactos
 
       oStmt = oConn.createStatement();
@@ -1720,13 +1720,13 @@ public class WorkArea extends DBPersist {
 
 	PreparedStatement oStmt;
 	ResultSet oRSet;
-	String guAdmins, guPowUsrs, guUsrs, guGuests, guOther;
+	String guAdmins=null, guPowUsrs=null, guUsrs=null, guGuests=null, guOther=null;
 	
-	oStmt = oConn.prepareStatement("SELECT " + DB.gu_admins + "," + DB.gu_powusers + "," + DB.gu_users + "," + DB.gu_guests + "," + DB.gu_other + " FROM " + DB.DB.k_x_app_workarea + " WHERE " + DB.gu_workarea + "=? AND " + DB.id_app +" =?",
+	oStmt = oConn.prepareStatement("SELECT " + DB.gu_admins + "," + DB.gu_powusers + "," + DB.gu_users + "," + DB.gu_guests + "," + DB.gu_other + " FROM " + DB.k_x_app_workarea + " WHERE " + DB.gu_workarea + "=? AND " + DB.id_app +" =?",
 								   ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 	oStmt.setString(1, guWorkArea);
 	oStmt.setInt(1, idApp);	
-	ResultSet oRSet = oStmt.executeQuery();
+	oRSet = oStmt.executeQuery();
 	if (oRSet.next()) {
 	  guAdmins = oRSet.getString(1);
 	  guPowUsrs= oRSet.getString(2);
