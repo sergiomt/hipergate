@@ -112,8 +112,8 @@ public class DataStructOrcl extends DataStruct {
 
   public void dump(Object[] OrPK, Object[] TrPK,  int cParams, String sBasePath) throws SQLException,IOException {
     // Inserta registros del Origen en el Destino,
-    // si encuentra un registro duplicado lo actualiza sin dar ningún error,
-    // si el registro no está, lo inserta
+    // si encuentra un registro duplicado lo actualiza sin dar ningÃºn error,
+    // si el registro no estÃ¡, lo inserta
 
     DataTblDef oMDat;
     Object oValue;

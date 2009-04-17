@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/OÒa, 107 1∫2 28050 Madrid (Spain)
+                      C/O√±a, 107 1¬∫2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -91,15 +91,15 @@ public class DataTransformation {
   // ----------------------------------------------------------
 
   private void setOperation(String sOpDesc) {
-    /* Establece el tipo de operaciÛn que realizar· este servicio de
-      transformaciÛn de datos
-      Par·metros:
-        sOpDesc -> DescripciÛn de la OperaciÛn.
+    /* Establece el tipo de operaci√≥n que realizar√° este servicio de
+      transformaci√≥n de datos
+      Par√°metros:
+        sOpDesc -> Descripci√≥n de la Operaci√≥n.
                    Puede ser uno de los siguientes valores:
-                   1) NEWGUID para que el campo en destino sea un nuevo GUID generado din·micamente
-                   2) NEXTVAL el campo en destino ser· MAX(campo)+1
-                   3) IFNULL(valor) si el campo en origen es NULL se substituir· por el valor especificado
-                   4) REFER(tablaref.camporef) el campo se substituir· por el valor que tenga tablaref.camporef
+                   1) NEWGUID para que el campo en destino sea un nuevo GUID generado din√°micamente
+                   2) NEXTVAL el campo en destino ser√° MAX(campo)+1
+                   3) IFNULL(valor) si el campo en origen es NULL se substituir√° por el valor especificado
+                   4) REFER(tablaref.camporef) el campo se substituir√° por el valor que tenga tablaref.camporef
     */
     int iLeft;
     int iRight;
@@ -175,7 +175,7 @@ public class DataTransformation {
     oStmt.close();
 
     // Asegurar que el nextVal no mapea un campo al mismo valor que tiene
-    // otro obtenido a travÈs de referencia a otra tabla y no de autoincremento
+    // otro obtenido a trav√©s de referencia a otra tabla y no de autoincremento
     if (Operations.REFER==OperationCode) {
       oIter = ReferedValues.values().iterator();
       while (oIter.hasNext())
@@ -228,7 +228,7 @@ public class DataTransformation {
            oRetVal = ReferedValues.get(oInput);
          else if (oInput!=null) {
            // Si el campo no se encuentra en el mapa de memoria
-           // pero ya existÌa en la tabla de destino,
+           // pero ya exist√≠a en la tabla de destino,
            // entonces dejarlo tal cual en el mapeo.
            oStmt = oTrConn.prepareStatement("SELECT NULL FROM " + TargetTable + " WHERE " + TargetField + "=?");
            oStmt.setObject(1,oInput);

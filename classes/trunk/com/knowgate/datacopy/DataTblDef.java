@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -55,7 +55,7 @@ public class DataTblDef {
   // ----------------------------------------------------------
 
   private void alloc(int cCols) {
-    // Nº total de columnas en la tabla
+    // NÂº total de columnas en la tabla
     ColCount = cCols;
     // Array con los nombres de las columnas
     ColNames = new String[cCols];
@@ -96,9 +96,9 @@ public class DataTblDef {
     // **********************************
     // * Leer los valores de metadatos
 
-    // Lanza una SELECT que no devuelve ningún registro y luego
+    // Lanza una SELECT que no devuelve ningÃºn registro y luego
     // hace una llamada a getMetaData para guardar en memoria
-    // la definición de los campos leidos.
+    // la definiciÃ³n de los campos leidos.
     // La clave primaria no se extrae de la SELECT sino que debe
     // pasarse externamente como parametro.
 
@@ -113,7 +113,7 @@ public class DataTblDef {
 
       cCols = oMDat.getColumnCount();
 
-      alloc(cCols); // Función interna de soporte
+      alloc(cCols); // FunciÃ³n interna de soporte
 
       for (int c=0; c<cCols; c++) {
         ColNames[c] = oMDat.getColumnName(c+1);
@@ -140,11 +140,11 @@ public class DataTblDef {
       lenPK = sPK.length()-1;
 
       cPKs = 1;
-      // Cuenta el nº de comas que hay en la cadena de entrada
+      // Cuenta el nÂº de comas que hay en la cadena de entrada
       for (int i=1; i<=lenPK; i++)
         if(sPK.charAt(i)==',') cPKs++;
 
-      // El nº de campos es la cantidad de comas mas uno
+      // El nÂº de campos es la cantidad de comas mas uno
       PrimaryKeys = new String[cPKs];
 
       // Parsea la cadena de entrada usando las coma como indicador de salto
@@ -218,7 +218,7 @@ public class DataTblDef {
   // ----------------------------------------------------------
 
   public int findColumnPosition(String sColName) {
-    // Busca la posición de una columna por nombre
+    // Busca la posiciÃ³n de una columna por nombre
     // Devuelve -1 si no la encuentra
 
     int iCol = -1;
@@ -422,14 +422,14 @@ public class DataTblDef {
   // *********************************************************
   // * Member Variables
 
-  public int cPKs; // Nº total de campos en la PK
+  public int cPKs; // NÂº total de campos en la PK
   public boolean bMayInheritPK;
   private boolean PrimaryKeyMarks[]; // Array con flags booleanos de PK / No-PK
   public String PrimaryKeys[]; // Nombre de los campos en la PK
-  public String ColNames[]; // Nombres de todas las columnas (por orden de aparición)
+  public String ColNames[]; // Nombres de todas las columnas (por orden de apariciÃ³n)
   public int ColTypes[]; // Tipos de todas las columnas
   public int ColSizes[]; // Longitudes de todas las columnas
-  public int ColCount; // Cuenta del nº total de columnas
+  public int ColCount; // Cuenta del nÂº total de columnas
   public String BaseTable;
 
   } // DataTblDef

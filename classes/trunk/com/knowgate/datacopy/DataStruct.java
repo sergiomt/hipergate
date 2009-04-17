@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/OÒa, 107 1∫2 28050 Madrid (Spain)
+                      C/O√±a, 107 1¬∫2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -102,7 +102,7 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
     // Cuenta de tablas en la estructura de datos
     cTables = 0;
 
-    // Indicador de si est·n los cursores preparados
+    // Indicador de si est√°n los cursores preparados
     bOrPrepared = false;
     bTrPrepared = false;
 
@@ -119,9 +119,9 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
     Transformations = new Vector();
     // Vector con acciones para efectuar antes de empezar la copia de cada Rowset
     Before = new Vector();
-    // Vector con acciones para efectuar despuÈs de terminar la copia de cada Rowset
+    // Vector con acciones para efectuar despu√©s de terminar la copia de cada Rowset
     After = new Vector();
-    // Mapeo entre valores GUID en origen y campos autonumÈricos en destino
+    // Mapeo entre valores GUID en origen y campos autonum√©ricos en destino
     // GuidToIdentityMap = new HashMap(103);
   } // initMembers()
 
@@ -147,7 +147,7 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
   // ----------------------------------------------------------
 
   public void connectOrigin(String sDriver, String sURL, String sUsr, String sPwd, String sSchema) throws SQLException,ClassNotFoundException {
-    // Conecta la conexiÛn Origen
+    // Conecta la conexi√≥n Origen
     if (DebugFile.trace) DebugFile.writeln ("Begin DataStruct.connectOrigin(" + sDriver + "," + sURL + "," + sUsr + "," + sPwd + ")");
 
     // Carga el driver JDBC
@@ -164,7 +164,7 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
   // ----------------------------------------------------------
 
   public void connectTarget(String sDriver, String sURL, String sUsr, String sPwd, String sSchema) throws SQLException,ClassNotFoundException {
-    // Conecta la conexiÛn Destino
+    // Conecta la conexi√≥n Destino
     if (DebugFile.trace) DebugFile.writeln ("Begin DataStruct.connectTarget(" + sDriver + "," + sURL + "," + sUsr + "," + sPwd + ")");
 
     // Carga el driver JDBC
@@ -193,7 +193,7 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
   // ----------------------------------------------------------
 
   public void setOriginConnection(Connection oConn) {
-    // Establece una referencia a una conexiÛn Origen ya existente
+    // Establece una referencia a una conexi√≥n Origen ya existente
     oOrConn = oConn;
     iOrStatus = REFERENCED;
   }
@@ -201,7 +201,7 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
   // ----------------------------------------------------------
 
   public void setTargetConnection(Connection oConn) {
-    // Establece una referencia a una conexiÛn Destino ya existente
+    // Establece una referencia a una conexi√≥n Destino ya existente
     oTrConn = oConn;
     iTrStatus = REFERENCED;
   }
@@ -260,7 +260,7 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
 
     clear();
 
-    // SÛlo hay que cerrar las conexiones si no son referencias externas
+    // S√≥lo hay que cerrar las conexiones si no son referencias externas
     if (CONNECTED==iOrStatus) { oOrConn.close(); iOrStatus=DISCONNECTED; }
     if (CONNECTED==iTrStatus) { oTrConn.close(); iTrStatus=DISCONNECTED; }
 
@@ -282,7 +282,7 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
   // ----------------------------------------------------------
 
   private boolean isEmpty(String sStr) {
-    // Devuelve true si sStr=="" Û sStr==null
+    // Devuelve true si sStr=="" √≥ sStr==null
     if (null==sStr)
       return true;
     else if (0==sStr.length())
@@ -367,8 +367,8 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
   // ----------------------------------------------------------
 
   public void prepareStatements() throws SQLException {
-    // MÈtodo para dejar todos los cursores de lectura y escritura preparados
-    // Se llama internamente al inicio de los mÈtodo inser, update o delete
+    // M√©todo para dejar todos los cursores de lectura y escritura preparados
+    // Se llama internamente al inicio de los m√©todo inser, update o delete
 
     HashMap oMap;
     String sSQL;
@@ -389,7 +389,7 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
 
     OrStatements = new PreparedStatement[cTables]; // Sentencias de lectura
     TrStatements = new PreparedStatement[cTables]; // Sentencias de escritura
-    UpStatements = new PreparedStatement[cTables]; // Sentencias de actualizaciÛn
+    UpStatements = new PreparedStatement[cTables]; // Sentencias de actualizaci√≥n
     DlStatements = new PreparedStatement[cTables]; // Sentencias de borrado
 
     OrMetaData = new DataTblDef[cTables]; // Metadatos de las tablas de Origen
@@ -405,7 +405,7 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
         TrMetaData[s] = new DataTblDef();
         if (DebugFile.trace) DebugFile.writeln ("DataTblDef.readMetaData (TargetConnection, " + getRowSet(s).TargetTable + ", " + (String) oToPKs.get(getRowSet(s).TargetTable) + ")");
 
-        // Evitar una excepciÛn Java NullPointerException si no hay PKs en destino
+        // Evitar una excepci√≥n Java NullPointerException si no hay PKs en destino
         if (oToPKs.get(getRowSet(s).TargetTable)!=null)
           TrMetaData[s].readMetaData(oTrConn, getRowSet(s).TargetTable, oToPKs.get(getRowSet(s).TargetTable).toString());
         else
@@ -428,7 +428,7 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
         iTrCols = TrMetaData[s].ColCount;
 
         // ************************************
-        // Preparar las sentencias de inserciÛn
+        // Preparar las sentencias de inserci√≥n
         sSQL = "INSERT INTO " + getRowSet(s).TargetTable + " VALUES (";
         for (c=iTrCols; c>=1; c--)
           sSQL += (c!=1) ? "?," : "?)";
@@ -443,7 +443,7 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
         // ***
 
         // ****************************************
-        // Preparar las sentencias de actualizaciÛn
+        // Preparar las sentencias de actualizaci√≥n
         sSQL = "UPDATE " + getRowSet(s).TargetTable + " SET ";
         for (c=0; c<iTrCols; c++)
           if (!TrMetaData[s].isPrimaryKey(c))
@@ -487,7 +487,7 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
               oMap = (HashMap) FieldMaps.get(s);
               // Si existe un mapeo de nombres,
               // traducir el nombre en destino al que tenga en origen.
-              // Tener en cuenta el caso en que la columna destino est·
+              // Tener en cuenta el caso en que la columna destino est√°
               // definida como autoincremental
               bIsMapped = oMap.containsKey(sCol);
               if (bIsMapped)
@@ -505,7 +505,7 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
             }
             catch (ArrayIndexOutOfBoundsException e) { bIsMapped=false; }
 
-            // Obtener la posiciÛn de la columna en origen
+            // Obtener la posici√≥n de la columna en origen
             iCol = OrMetaData[s].findColumnPosition(sCol);
             if (iCol!=-1)
               sSQL += sCol + ((c<iTrCols-1) ? "," : " ");
@@ -515,9 +515,9 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
                 bHasDefault = oMap.containsKey(sCol);
               }
               catch (ArrayIndexOutOfBoundsException e) {
-                // Si el XML no tiene una secciÛn <DEFVALS>
-                // la llamada FieldDefs.get(s) provocar· una
-                // excepciÛn ArrayIndexOutOfBoundsException
+                // Si el XML no tiene una secci√≥n <DEFVALS>
+                // la llamada FieldDefs.get(s) provocar√° una
+                // excepci√≥n ArrayIndexOutOfBoundsException
                 bHasDefault = false;
                 oMap = null;
               }
@@ -563,7 +563,7 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
   // ----------------------------------------------------------
 
   public Object convert (Object oValue, int iSQLType) {
-    // FunciÛn de soporte para hacer castings de tipos entre bases de datos
+    // Funci√≥n de soporte para hacer castings de tipos entre bases de datos
 
     Object oRetVal;
     String sClass;
@@ -616,7 +616,7 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
 
   public int mapType(int iSQLType) {
     // Mapeo de tipos,
-    // actualmente sÛlo sirve para convertir los TIMESTAMP en DATETIME
+    // actualmente s√≥lo sirve para convertir los TIMESTAMP en DATETIME
 
     int iRetType;
 
@@ -668,11 +668,11 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
   // ----------------------------------------------------------
 
   protected void getRows(Object[] OrPK, Object[] TrPK, int cParams, int iTable) throws SQLException {
-    // MÈtodo interno de soporte para leer un conjunto de final y almacenarlo
+    // M√©todo interno de soporte para leer un conjunto de final y almacenarlo
     // en una matriz bidimensional de objetos
 
     int iPK;
-    int iFetchBurst = 500; // TamaÒo de r·faga de lectura
+    int iFetchBurst = 500; // Tama√±o de r√°faga de lectura
     int iSQLType;
     int cTransforms;
     Vector oRow;
@@ -691,7 +691,7 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
     // Asignar los parametros de la clave primaria para leer valores en origen
 
     oDatR = getRowSet(iTable);
-    // Comprobar primero si existen par·metros en la cl·usula WHERE
+    // Comprobar primero si existen par√°metros en la cl√°usula WHERE
     if (oDatR.WhereClause!=null) {
       if (oDatR.WhereClause.indexOf("?")>0) {
         for (int p=0;p<cParams; p++) {
@@ -708,7 +708,7 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
     /* Not supported under PostgreSQL 7.3.4
     if (DebugFile.trace) DebugFile.writeln ("ResultSet.setFetchSize(" + String.valueOf(iFetchBurst) + ")");
 
-    oRSet.setFetchSize (iFetchBurst); // Asignar el tamaÒo de r·faga de vuelta
+    oRSet.setFetchSize (iFetchBurst); // Asignar el tama√±o de r√°faga de vuelta
     */
 
     oDatR = null;
@@ -720,9 +720,9 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
         DebugFile.writeln ("ERROR: getRowSet(" + String.valueOf(iTable) + ") == null");
     }
 
-    // Si se especificÛ explÌcitamente una lista de campos a leer,
-    // entonces tomar como n˙mero de columnas la del Origen,
-    // en otro caso tomar como n˙mero de columnas las del Destino.
+    // Si se especific√≥ expl√≠citamente una lista de campos a leer,
+    // entonces tomar como n√∫mero de columnas la del Origen,
+    // en otro caso tomar como n√∫mero de columnas las del Destino.
     if (getRowSet(iTable).FieldList.compareTo("*")!=0)
       iCols = oRSet.getMetaData().getColumnCount();
     else
@@ -749,7 +749,7 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
     }
 
     if (0 == cTransforms) {
-      // Si no hay transformaciones para campos, usar un algoritmo m·s r·pido con menos condiciones
+      // Si no hay transformaciones para campos, usar un algoritmo m√°s r√°pido con menos condiciones
       while (oRSet.next() && iRows<iFetchBurst) {
         iRows++;
         if (DebugFile.trace) DebugFile.writeln ("caching row " + String.valueOf(iRows));
@@ -759,8 +759,8 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
         oResults.add(oRow);
       } // wend ()
     }
-    else { // Algoritmo con m·s condiciones para el caso de reemplazo de transformaciÛn de datos
-      oRDat = oRSet.getMetaData(); // Alias r·pido a los metadatos del ResultSet
+    else { // Algoritmo con m√°s condiciones para el caso de reemplazo de transformaci√≥n de datos
+      oRDat = oRSet.getMetaData(); // Alias r√°pido a los metadatos del ResultSet
       while (oRSet.next() && iRows<iFetchBurst) {
         iRows++;
         if (DebugFile.trace) DebugFile.writeln ("caching row " + String.valueOf(iRows));
@@ -770,9 +770,9 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
         iPK = 0;
         for (int c=1; c<=iCols; c++) {
           try {
-            // Obtener una referencia a la transformaciÛn para la columna actual
-            // si no hay transformaciÛn saltar· una excepciÛn y el valor de la
-            // columna se asignar· en la secciÛn catch()
+            // Obtener una referencia a la transformaci√≥n para la columna actual
+            // si no hay transformaci√≥n saltar√° una excepci√≥n y el valor de la
+            // columna se asignar√° en la secci√≥n catch()
             sColName = oRDat.getColumnName(c);
 
             oDatT = (DataTransformation) oTransforms.get(sColName);
@@ -810,8 +810,8 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
   public void insert(Object[] OrPK, Object[] TrPK,  int cParams)
     throws SQLException,NullPointerException {
     // Inserta registros del Origen en el Destino,
-    // si encuentra un registro duplicado lo actualiza sin dar ning˙n error,
-    // si el registro no est·, lo inserta
+    // si encuentra un registro duplicado lo actualiza sin dar ning√∫n error,
+    // si el registro no est√°, lo inserta
 
     String sField;
     DataTblDef oMDat;
@@ -904,8 +904,8 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
 
   public void update(Object[] OrPK, Object[] TrPK,  int cParams) throws SQLException {
     // Inserta registros del Origen en el Destino,
-    // si encuentra un registro duplicado lo actualiza sin dar ning˙n error,
-    // si el registro no est·, lo inserta
+    // si encuentra un registro duplicado lo actualiza sin dar ning√∫n error,
+    // si el registro no est√°, lo inserta
 
     String sField;
     DataTblDef oMDat;
@@ -1216,14 +1216,14 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
         oCurrMap.put(sTrFld, sOrFld);
 
         // Si el elemento <MAPPING> contiene un atributo llamado TRANSFORM
-        // entonces crear un nuevo objeto de transformaciÛn de datos para este mapeo
+        // entonces crear un nuevo objeto de transformaci√≥n de datos para este mapeo
         if (null!=sTransform) {
-          // Crear un nuevo servicio de transformaciÛn de datos para el campo
+          // Crear un nuevo servicio de transformaci√≥n de datos para el campo
           oTransform = new DataTransformation(sTransform,
                                               oCurrRowSet.OriginTable, sOrFld,
                                               oCurrRowSet.TargetTable, sTrFld);
 
-          // Asociar el nombre del campo con su transformaciÛn de datos
+          // Asociar el nombre del campo con su transformaci√≥n de datos
           oCurrTransform.put (sOrFld, oTransform);
 
 		  if (DebugFile.trace) DebugFile.writeln("found transformation "+String.valueOf(oTransform.OperationCode)+" for "+sOrFld);
@@ -1241,12 +1241,12 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
         sTrFld = sChars.substring(0, iComma).trim();
         sOrFld = sChars.substring(iComma+1).trim();
         oCurrDef.put(sTrFld, sOrFld);
-        // Crear un nuevo servicio de transformaciÛn de datos para el campo por defecto
+        // Crear un nuevo servicio de transformaci√≥n de datos para el campo por defecto
         if (null!=sTransform) {
           oTransform = new DataTransformation(sTransform,
                                               oCurrRowSet.OriginTable, sTrFld,
                                               oCurrRowSet.TargetTable, sTrFld);
-          // Asociar el nombre del campo con su transformaciÛn de datos
+          // Asociar el nombre del campo con su transformaci√≥n de datos
           oCurrTransform.put (sTrFld, oTransform);
           // Si la transformacion es de tipo REFER,
           // buscar el mapa de valores para la tabla referenciada
@@ -1600,19 +1600,19 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
 
   // ----------------------------------------------------------
 
-  private boolean bOrPrepared; // Switch que indica si est·n preparados los cursores en Origen
-  private boolean bTrPrepared; // Switch que indica si est·n preparados los cursores en Destino
-  private Connection oOrConn;  // ConexiÛn de Origen
-  private Connection oTrConn;  // ConexiÛn de Destino
-  private int iOrStatus;       // Estado de la ConexiÛn de Origen {CONNECTED|DISCONNECTED|REFERENCED}
-  private int iTrStatus;       // Estado de la ConexiÛn de Destino {CONNECTED|DISCONNECTED|REFERENCED}
+  private boolean bOrPrepared; // Switch que indica si est√°n preparados los cursores en Origen
+  private boolean bTrPrepared; // Switch que indica si est√°n preparados los cursores en Destino
+  private Connection oOrConn;  // Conexi√≥n de Origen
+  private Connection oTrConn;  // Conexi√≥n de Destino
+  private int iOrStatus;       // Estado de la Conexi√≥n de Origen {CONNECTED|DISCONNECTED|REFERENCED}
+  private int iTrStatus;       // Estado de la Conexi√≥n de Destino {CONNECTED|DISCONNECTED|REFERENCED}
 
   protected Vector oResults;   // ResultSet de lectura de registros del Origen
-  protected int iCols;         // Variable intermedia para pasar estado del mÈtodo getRows() a insert() y update()
-  protected int iRows;         // Variable intermedia para pasar estado del mÈtodo getRows() a insert()
+  protected int iCols;         // Variable intermedia para pasar estado del m√©todo getRows() a insert() y update()
+  protected int iRows;         // Variable intermedia para pasar estado del m√©todo getRows() a insert()
 
   // ---------------------------------------------------------
-  // Estructuras de datos cargadas al llamar al mÈtodo parse()
+  // Estructuras de datos cargadas al llamar al m√©todo parse()
 
   protected int cTables;  // Cuenta de tablas en el conjunto de RowSets
   protected Vector FieldMaps; // Vector de HashMaps con los mapeos de campos para cada tabla
@@ -1627,14 +1627,14 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
   protected HashMap oToPKs;
 
   // ---------------------------------------------------------------------
-  // Estructuras de datos cargadas al llamar al mÈtodo prepareStatements()
+  // Estructuras de datos cargadas al llamar al m√©todo prepareStatements()
 
   protected PreparedStatement OrStatements[]; // Cursores de lectura en origen
-  protected PreparedStatement TrStatements[]; // Cursores de inserciÛn en destino
-  protected PreparedStatement UpStatements[]; // Cursores de actualizaciÛn en destino
+  protected PreparedStatement TrStatements[]; // Cursores de inserci√≥n en destino
+  protected PreparedStatement UpStatements[]; // Cursores de actualizaci√≥n en destino
   protected PreparedStatement DlStatements[]; // Cursores de borrado en destino
-  protected DataTblDef OrMetaData[]; // DefiniciÛn de metadatos en origen
-  protected DataTblDef TrMetaData[]; // DefiniciÛn de metadatos en destino
+  protected DataTblDef OrMetaData[]; // Definici√≥n de metadatos en origen
+  protected DataTblDef TrMetaData[]; // Definici√≥n de metadatos en destino
   public HashMap oInsertTexts;
   public HashMap oSelectTexts;
 

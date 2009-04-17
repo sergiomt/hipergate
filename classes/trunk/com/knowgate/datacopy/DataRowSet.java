@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -51,10 +51,10 @@ public class DataRowSet {
     EraseClause = sEraseClause;
   }
 
-  public String FieldList;   // Lista de campos (sólo si el nodo <FIELDLIST> existe en XML
+  public String FieldList;   // Lista de campos (sÃ³lo si el nodo <FIELDLIST> existe en XML
   public String OriginTable; // Tabla Origen
   public String TargetTable; // Tabla Destino
   public String JoinTables;  // Tablas de JOIN (actualmente no se utiliza)
-  public String WhereClause; // Claúsula WHERE
-  public String EraseClause; // Claúsula de borrado
+  public String WhereClause; // ClaÃºsula WHERE
+  public String EraseClause; // ClaÃºsula de borrado
 } // DataRowSet
