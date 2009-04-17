@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -255,8 +255,8 @@ public final class DistributedCachePeer {
     }
 
     if (PROTOCOL_NONE==iProviderProtocol)
-      // Si no existe ningún coordinador de cache distribuido configurado,
-      // tener en cuenta sólo el cache local.
+      // Si no existe ningÃºn coordinador de cache distribuido configurado,
+      // tener en cuenta sÃ³lo el cache local.
       oRetSet = oCacheStore.get(sTokenKey);
     else
     {
@@ -264,7 +264,7 @@ public final class DistributedCachePeer {
       oRetSet = oCacheStore.get(sTokenKey);
 
       if (null!=oRetSet ) {
-        // Obtener la fecha de última modificación del coordinador de caches
+        // Obtener la fecha de Ãºltima modificaciÃ³n del coordinador de caches
         if (PROTOCOL_HTTP==iProviderProtocol || PROTOCOL_HTTPS==iProviderProtocol) {
 
           String sProviderURL = oEnvProps.getProperty("java.naming.provider.url");
@@ -331,7 +331,7 @@ public final class DistributedCachePeer {
           if (DebugFile.trace) DebugFile.writeln("cache hit for " + sTokenKey);
         }
         else {
-          // Si la fecha local es anterior a la del coordinador, la entrada local ya no es válida
+          // Si la fecha local es anterior a la del coordinador, la entrada local ya no es vÃ¡lida
           if (DebugFile.trace) DebugFile.writeln("cache outdated for " + sTokenKey);
           oCacheStore.remove(sTokenKey);
           oRetSet = null;
