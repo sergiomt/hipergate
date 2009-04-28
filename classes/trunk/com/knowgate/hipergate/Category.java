@@ -142,8 +142,9 @@ public class Category  extends DBPersist {
     Category oCatg;
 
     if (DebugFile.trace) {
-      DebugFile.writeln("Begin Category.browse([Connection], ...)");
+      DebugFile.writeln("Begin Category.browse([Connection], ...)");      
       DebugFile.incIdent();
+      DebugFile.writeln((iDirection==Category.BROWSE_UP ? DB.gu_child_cat : DB.gu_parent_cat) + "=" + sCatId);
     }
 
 	oCstm = oConn.prepareStatement("SELECT * FROM "+DB.k_categories+" WHERE "+DB.gu_category+"=?",
@@ -166,10 +167,14 @@ public class Category  extends DBPersist {
       oRSet = oStmt.executeQuery();
       bDoNext = oRSet.next();
 
-      if (bDoNext)
+      if (bDoNext) {
         sNeighbour = oRSet.getString(1);
-      else
+        if (DebugFile.trace) DebugFile.writeln("do next is true with "+(iDirection==Category.BROWSE_UP ? DB.gu_parent_cat : DB.gu_child_cat) + "=" + sNeighbour);
+      }
+      else {
         sNeighbour = "";
+        if (DebugFile.trace) DebugFile.writeln("do next is false");
+      }
 
       oRSet.close();
 
