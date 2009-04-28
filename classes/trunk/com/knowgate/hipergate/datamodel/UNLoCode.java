@@ -30,7 +30,7 @@ public class UNLoCode {
     while ( null!= (sLine = oLR.readLine()) ) {
       sCountryCode = sLine.substring(3,5).toLowerCase();
       sPlaceCode = sLine.substring(6,9).toLowerCase();
-      sPlaceName = sLine.substring(10,46).trim().replace((char)39,'´');
+      sPlaceName = sLine.substring(10,46).trim().replace((char)39,'Â´');
       if (sPlaceName.charAt(0)!='.') {
         sPort = (sLine.charAt(86)=='1' ? "1" : "0");
         sRail = (sLine.charAt(87)=='2' ? "1" : "0");

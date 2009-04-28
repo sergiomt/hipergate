@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -330,7 +330,7 @@ public class ModelManager {
       throw new UnsupportedOperationException("DataBase Management System not supported");
     }
 
-    oStrLog = new StringBuffer();
+    // oStrLog = new StringBuffer();
 
     if (DebugFile.trace) {
       DebugFile.decIdent();
@@ -344,7 +344,7 @@ public class ModelManager {
    * Clear internal operation log
    */
   public void clear() {
-    oStrLog.setLength(0);
+    if (null!=oStrLog) oStrLog.setLength(0);
   }
 
   // ---------------------------------------------------------------------------
@@ -772,14 +772,14 @@ public class ModelManager {
     for (int s = 0; s < iStatements; s++) {
       sSQL = aStatements[s];
       if (sSQL.length() > 0) {
-        oStrLog.append(sSQL + "\n\\\n");
+        if (null!=oStrLog) oStrLog.append(sSQL + "\n\\\n");
 
         try {
           oStmt.execute (sSQL);
         }
         catch (SQLException sqle) {
           iErrors++;
-          oStrLog.append("SQLException: " + sqle.getMessage() + "\n");
+          if (null!=oStrLog) oStrLog.append("SQLException: " + sqle.getMessage() + "\n");
 
           if (bStopOnError) {
             try { if (null!=oStmt) oStmt.close(); } catch (SQLException ignore) { }
@@ -819,18 +819,18 @@ public class ModelManager {
 
       if (FILE_STATEMENTS == iBatchType) {
         if (DebugFile.trace) DebugFile.writeln("new FileInputStream("+sResourcePath+")");
-        oStrLog.append("Open file " + sResourcePath + " as " + sEncoding + "\n");
+        if (null!=oStrLog) oStrLog.append("Open file " + sResourcePath + " as " + sEncoding + "\n");
         oInStrm = new FileInputStream(sResourcePath);
       }
       else {
         if (DebugFile.trace) DebugFile.writeln(getClass().getName()+".getResourceAsStream("+sResourcePath+")");
-        oStrLog.append("Get resource " + sResourcePath + " as " + sEncoding + "\n");
+        if (null!=oStrLog) oStrLog.append("Get resource " + sResourcePath + " as " + sEncoding + "\n");
         oInStrm = getClass().getResourceAsStream(sResourcePath);
       }
 
       if (null == oInStrm) {
         iErrors = 1;
-        oStrLog.append("FileNotFoundException "+sResourcePath);
+        if (null!=oStrLog) oStrLog.append("FileNotFoundException "+sResourcePath);
         if (DebugFile.trace) DebugFile.decIdent();
         throw new FileNotFoundException("executeBulk() " + sResourcePath);
       }
@@ -856,7 +856,7 @@ public class ModelManager {
       }
       catch (IOException ioe) {
         iErrors = 1;
-        oStrLog.append("IOException "+ioe.getMessage());
+        if (null!=oStrLog) oStrLog.append("IOException "+ioe.getMessage());
         if (DebugFile.trace) DebugFile.decIdent();
         throw new IOException(ioe.getMessage());
       }
@@ -902,7 +902,7 @@ public class ModelManager {
           for (int s = 0; s < iStatements; s++) {
             sSQL = aStatements[s];
             if (sSQL.length() > 0) {
-              oStrLog.append(sSQL + "\n");
+              if (null!=oStrLog) oStrLog.append(sSQL + "\n");
               try {
                 oCall = oConn.prepareCall(sSQL);
                 oCall.execute();
@@ -911,7 +911,7 @@ public class ModelManager {
               }
               catch (SQLException sqle) {
                 iErrors++;
-                oStrLog.append("SQLException: " + sqle.getMessage() + "\n");
+                if (null!=oStrLog) oStrLog.append("SQLException: " + sqle.getMessage() + "\n");
                 try { if (null!=oCall) oCall.close(); } catch (SQLException ignore) { }
                 if (bStopOnError) throw new java.lang.InterruptedException();
               }
@@ -930,12 +930,12 @@ public class ModelManager {
               sSQL = translate(aStatements[s]);
             }
             catch (NullPointerException npe) {
-              oStrLog.append (" NullPointerException: at " + sResourcePath + " statement " + String.valueOf(s) + "\n");
+              if (null!=oStrLog) oStrLog.append (" NullPointerException: at " + sResourcePath + " statement " + String.valueOf(s) + "\n");
               sSQL = "";
             }
 
             if (sSQL.length() > 0) {
-              oStrLog.append(sSQL + "\n\\\n");
+              if (null!=oStrLog) oStrLog.append(sSQL + "\n\\\n");
               try {
             	if (!sSQL.startsWith("--")) {
                   oStmt.executeUpdate(sSQL);
@@ -943,7 +943,7 @@ public class ModelManager {
               }
               catch (SQLException sqle) {
                 iErrors++;
-                oStrLog.append ("SQLException: " + sqle.getMessage() + "\n");
+                if (null!=oStrLog) oStrLog.append ("SQLException: " + sqle.getMessage() + "\n");
 
                 if (bStopOnError) {
                   try { if (null!=oStmt) oStmt.close(); } catch (SQLException ignore) { }
@@ -961,13 +961,13 @@ public class ModelManager {
           for (int s = 0; s < iStatements; s++) {
             sSQL = aStatements[s];
             if (sSQL.length() > 0) {
-              oStrLog.append(sSQL + "\n\\\n");
+              if (null!=oStrLog) oStrLog.append(sSQL + "\n\\\n");
               try {
                 oStmt.execute(sSQL);
               }
               catch (SQLException sqle) {
                 iErrors++;
-                oStrLog.append("SQLException: " + sqle.getMessage() + "\n");
+                if (null!=oStrLog) oStrLog.append("SQLException: " + sqle.getMessage() + "\n");
 
                 if (bStopOnError) {
                   try { if (null!=oStmt) oStmt.close(); } catch (SQLException ignore) { }
@@ -990,10 +990,10 @@ public class ModelManager {
             int[] results = oStmt.executeBatch();
             for (int r=0; r<results.length; r++) {
               if (results[r]==1)
-                oStrLog.append(aStatements[r] + "\n\\\n");
+                if (null!=oStrLog) oStrLog.append(aStatements[r] + "\n\\\n");
               else {
                 iErrors++;
-                oStrLog.append("ERROR: " + aStatements[r] + "\n\\\n");
+                if (null!=oStrLog) oStrLog.append("ERROR: " + aStatements[r] + "\n\\\n");
                 if (bStopOnError) {
                   try { if (null!=oStmt) oStmt.close(); } catch (SQLException ignore) { }
                   throw new java.lang.InterruptedException();
@@ -1349,7 +1349,7 @@ public class ModelManager {
 
   }
   } catch (InterruptedException ie) {
-    oStrLog.append("STOP ON ERROR SET TO ON: SCRIPT INTERRUPTED\n");
+    if (null!=oStrLog) oStrLog.append("STOP ON ERROR SET TO ON: SCRIPT INTERRUPTED\n");
     bRetVal = false;
   }
 
@@ -1505,7 +1505,7 @@ public class ModelManager {
 
     }
     } catch (InterruptedException ie) {
-      oStrLog.append("STOP ON ERROR SET TO ON: SCRIPT INTERRUPTED\n");
+      if (null!=oStrLog) oStrLog.append("STOP ON ERROR SET TO ON: SCRIPT INTERRUPTED\n");
       bRetVal = false;
     }
 
@@ -1570,12 +1570,12 @@ public class ModelManager {
 
         while (oRSet.next()) {
           iErrors++;
-          oStrLog.append(oRSet.getString(1) + " " + oRSet.getString(2) + " is invalid after recompile\n");
+          if (null!=oStrLog) oStrLog.append(oRSet.getString(1) + " " + oRSet.getString(2) + " is invalid after recompile\n");
         } // wend
 
       } catch (SQLException sqle) {
         iErrors++;
-        oStrLog.append(sqle + "\n");
+        if (null!=oStrLog) oStrLog.append(sqle + "\n");
 
         if (bStopOnError)
           throw new SQLException("SQLException: " + sqle.getMessage(), sqle.getSQLState(), sqle.getErrorCode());
@@ -1679,13 +1679,13 @@ public class ModelManager {
         oStmt.close();
         oStmt=null;
 
-        oStrLog.append("ALTER DATABASE " + oConn.getCatalog() + " SET ARITHABORT ON\n");
+        if (null!=oStrLog) oStrLog.append("ALTER DATABASE " + oConn.getCatalog() + " SET ARITHABORT ON\n");
       }
       catch (SQLException sqle) {
          if (DebugFile.trace)
            DebugFile.writeln("SQLException " + sqle.getMessage());
          iErrors++;
-         oStrLog.append("SQLException: " + sqle.getMessage() + "\n");
+         if (null!=oStrLog) oStrLog.append("SQLException: " + sqle.getMessage() + "\n");
       }
     }
 
@@ -1726,7 +1726,7 @@ public class ModelManager {
       } catch (SQLException sqle) {
         if (DebugFile.trace) DebugFile.writeln("SQLException " + sqle.getMessage());
         iErrors++;
-        oStrLog.append("SQLException: " + sqle.getMessage() + "\n");
+        if (null!=oStrLog) oStrLog.append("SQLException: " + sqle.getMessage() + "\n");
         try { oStmt.close(); } catch (Exception ignore) {}
       }
     }
@@ -1741,6 +1741,14 @@ public class ModelManager {
 
   // ---------------------------------------------------------------------------
 
+  /**
+   * Create INSERT SQL statements for the data of a table
+   * @param sTableName Table Name
+   * @param sWhere SQL filter clause
+   * @param sFilePath Path for file where INSERT statements are to be written
+   * @throws SQLException
+   * @throws IOException
+   */
   public void scriptData (String sTableName, String sWhere, String sFilePath)
     throws SQLException, IOException {
 
@@ -1934,7 +1942,7 @@ public class ModelManager {
     sqlgencmd += "                FROM USER_OBJECTS ";
     sqlgencmd += "                WHERE object_type = 'PACKAGE' AND status = 'INVALID'))";
 
-    oStrLog.append(sqlgencmd+"\n");
+    if (null!=oStrLog) oStrLog.append(sqlgencmd+"\n");
 
     oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
     oRSet = oStmt.executeQuery(sqlgencmd);
@@ -1947,13 +1955,13 @@ public class ModelManager {
            oCall.execute();
            oCall.close();
 
-           oStrLog.append(sAlterSql+"\n");
+           if (null!=oStrLog) oStrLog.append(sAlterSql+"\n");
       }
       catch (SQLException sqle) {
 
            iErrors++;
-           oStrLog.append("SQLException: " + sqle.getMessage() + "\n");
-           oStrLog.append(sAlterSql + "\n");
+           if (null!=oStrLog) oStrLog.append("SQLException: " + sqle.getMessage() + "\n");
+           if (null!=oStrLog) oStrLog.append(sAlterSql + "\n");
 
            if (bStopOnError) {
              oRSet.close();
@@ -2023,7 +2031,7 @@ public class ModelManager {
 
     if (0==iSourceDomainId) {
       iErrors++;
-      oStrLog.append("Domain " + aOriginWrkA[0] + " not found\n");
+      if (null!=oStrLog) oStrLog.append("Domain " + aOriginWrkA[0] + " not found\n");
       return null;
     }
 
@@ -2031,7 +2039,7 @@ public class ModelManager {
 
     if (0==iTargetDomainId) {
       iErrors++;
-      oStrLog.append("Domain " + aTargetWrkA[0] + " not found\n");
+      if (null!=oStrLog) oStrLog.append("Domain " + aTargetWrkA[0] + " not found\n");
       return null;
     }
 
@@ -2039,7 +2047,7 @@ public class ModelManager {
 
     if (null==sSourceWorkAreaId) {
       iErrors++;
-      oStrLog.append("WorkArea " + aOriginWrkA[1] + " not found at Domain " + aOriginWrkA[0] + "\n");
+      if (null!=oStrLog) oStrLog.append("WorkArea " + aOriginWrkA[1] + " not found at Domain " + aOriginWrkA[0] + "\n");
       return null;
     }
 
@@ -2048,7 +2056,7 @@ public class ModelManager {
     if (null==sTargetWorkAreaId)
       sTargetWorkAreaId = Gadgets.generateUUID();
 
-    oStrLog.append("SELECT gu_owner,gu_admins FROM k_domains WHERE id_domain=" + String.valueOf(iTargetDomainId));
+    if (null!=oStrLog) oStrLog.append("SELECT gu_owner,gu_admins FROM k_domains WHERE id_domain=" + String.valueOf(iTargetDomainId));
 
     oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
@@ -2099,7 +2107,7 @@ public class ModelManager {
     oDS.update(oPKOr, oPKTr, 0);
     oDS.clear();
 
-    oStrLog.append("New WorkArea " + sTargetWorkAreaId + " created successfully\n");
+    if (null!=oStrLog) oStrLog.append("New WorkArea " + sTargetWorkAreaId + " created successfully\n");
 
     // ***********************************************************
     // Give permissions to domain administrators over applications
@@ -2126,7 +2134,7 @@ public class ModelManager {
     oStmt = oConn.createStatement();
     sSQL = "INSERT INTO k_x_app_workarea (id_app,gu_workarea,gu_admins,path_files) SELECT id_app,'" + sTargetWorkAreaId + "','" + sAdminId + "','" + aTargetWrkA[1].toLowerCase() + "' FROM k_x_app_workarea  WHERE gu_workarea='" + sSourceWorkAreaId + "'";
 
-    oStrLog.append("Statement.executeUpdate(" + sSQL + ")\n");
+    if (null!=oStrLog) oStrLog.append("Statement.executeUpdate(" + sSQL + ")\n");
     if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(" + sSQL + ")");
 
     oStmt.executeUpdate(sSQL);
@@ -2217,7 +2225,7 @@ public class ModelManager {
 
     if (oCodError.compareTo(new Integer (0))!=0) {
       iErrors++;
-      oStrLog.append("EvalError: " + oInterpreter.get("ErrorMessage") + "\n");
+      if (null!=oStrLog) oStrLog.append("EvalError: " + oInterpreter.get("ErrorMessage") + "\n");
 
       throw new SQLException((String) oInterpreter.get("ErrorMessage"));
     }
@@ -2275,7 +2283,7 @@ public class ModelManager {
     if (oCodError.intValue()!=0) {
       sErrMsg = (String) oInterpreter.get("ErrorMessage");
       iErrors++;
-      oStrLog.append("EvalError: " + sErrMsg + "\n");
+      if (null!=oStrLog) oStrLog.append("EvalError: " + sErrMsg + "\n");
       if (DebugFile.trace) {
         DebugFile.writeln("SQLException "+sErrMsg);
         DebugFile.decIdent();
@@ -2293,11 +2301,11 @@ public class ModelManager {
       oStmt.executeUpdate("UPDATE k_workareas SET nm_workarea='" + sDomainNm.toLowerCase() + "_default' WHERE id_domain=" + String.valueOf(iDominId) + " AND nm_workarea='model_default'");
       oStmt.close();
 
-      oStrLog.append("New Domain " + oInterpreter.get("ReturnValue") + " created successfully\n");
+      if (null!=oStrLog) oStrLog.append("New Domain " + oInterpreter.get("ReturnValue") + " created successfully\n");
       iRetVal = iDominId;
     }
     else {
-      oStrLog.append( oInterpreter.get("ErrorMessage") + ": Domain not created.");
+      if (null!=oStrLog) oStrLog.append( oInterpreter.get("ErrorMessage") + ": Domain not created.");
       iRetVal = 0;
     }
 
@@ -2358,7 +2366,7 @@ public class ModelManager {
 
     if (oCodError.intValue()!=0) {
       iErrors++;
-      oStrLog.append("EvalError: " + sErrMsg + "\n");
+      if (null!=oStrLog) oStrLog.append("EvalError: " + sErrMsg + "\n");
       if (DebugFile.trace) {
         DebugFile.writeln("SQLException "+sErrMsg);
         DebugFile.decIdent();
@@ -2530,7 +2538,7 @@ public class ModelManager {
      catch (SQLException sqle) {
        DebugFile.writeln("SQLException: " + sqle.getMessage() + " " + sSQL + "\n");
        iErrors++;
-       oStrLog.append("SQLException: " + sqle.getMessage() + " " + sSQL + "\n");
+       if (null!=oStrLog) oStrLog.append("SQLException: " + sqle.getMessage() + " " + sSQL + "\n");
      }
 
      // ********************************************
@@ -2544,13 +2552,13 @@ public class ModelManager {
 
          int iAppended = oCopy.append (jCon1, jCon2, sTables[t], sTables[t], null);
 
-         oStrLog.append(String.valueOf(iAppended) + " registers appended or updated at table " + sTables[t] + "\n");
+         if (null!=oStrLog) oStrLog.append(String.valueOf(iAppended) + " registers appended or updated at table " + sTables[t] + "\n");
        }
        catch (SQLException sqle) {
          DebugFile.writeln("SQLException: CopyRegisters.append(" + sTables[t] + ") " + sqle.getMessage() + "\n");
          DebugFile.decIdent();
          iErrors++;
-         oStrLog.append("SQLException: CopyRegisters.append(" + sTables[t] + ") " + sqle.getMessage() + " " + "\n");
+         if (null!=oStrLog) oStrLog.append("SQLException: CopyRegisters.append(" + sTables[t] + ") " + sqle.getMessage() + " " + "\n");
        }
      } // next (t)
 
@@ -2657,7 +2665,7 @@ public class ModelManager {
      catch (SQLException sqle) {
        DebugFile.writeln("SQLException: " + sqle.getMessage() + " " + sSQL + "\n");
        iErrors++;
-       oStrLog.append("SQLException: " + sqle.getMessage() + " " + sSQL + "\n");
+       if (null!=oStrLog) oStrLog.append("SQLException: " + sqle.getMessage() + " " + sSQL + "\n");
      }
 
      if (DebugFile.trace) {
@@ -2787,7 +2795,7 @@ public class ModelManager {
         throw new SQLException ("ERROR: ModelManager.upgrade() Source or Target version not recognized.");
 
     } catch (InterruptedException ie) {
-      oStrLog.append("STOP ON ERROR SET TO ON: SCRIPT INTERRUPTED\n");
+      if (null!=oStrLog) oStrLog.append("STOP ON ERROR SET TO ON: SCRIPT INTERRUPTED\n");
     }
   } // upgrade
 
@@ -2818,7 +2826,7 @@ public class ModelManager {
 	       } //next
 	       if (!bFound) {
 	         oAltr.execute("ALTER TABLE "+aTableLookUps[t]+" ADD "+aTrColLookUps[tc]+" "+VarChar[iDbms]+"(50) NULL");
-		     oStrLog.append("Added column " + aTrColLookUps[tc] + "to table " + aTableLookUps[t] + "\n");
+		     if (null!=oStrLog) oStrLog.append("Added column " + aTrColLookUps[tc] + "to table " + aTableLookUps[t] + "\n");
 		     nFixes++;
 	       } // fi
 	     } // next
@@ -2984,19 +2992,19 @@ public class ModelManager {
         switch (argv.length) {
           case 3:
             if (argv[2].equals("verbose"))
-              System.out.println(oMan.oStrLog.toString());
+              if (null!=oMan.oStrLog) System.out.println(oMan.oStrLog.toString());
             break;
           case 4:
             if (argv[3].equals("verbose"))
-              System.out.println(oMan.oStrLog.toString());
+              if (null!=oMan.oStrLog) System.out.println(oMan.oStrLog.toString());
             break;
           case 5:
             if (argv[4].equals("verbose"))
-              System.out.println(oMan.oStrLog.toString());
+              if (null!=oMan.oStrLog) System.out.println(oMan.oStrLog.toString());
             break;
           case 6:
             if (argv[5].equals("verbose"))
-              System.out.println(oMan.oStrLog.toString());
+              if (null!=oMan.oStrLog) System.out.println(oMan.oStrLog.toString());
             break;
         }
 
