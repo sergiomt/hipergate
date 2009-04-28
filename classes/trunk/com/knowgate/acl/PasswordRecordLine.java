@@ -32,6 +32,17 @@
 
 package com.knowgate.acl;
 
+import java.io.File;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.BufferedInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import com.knowgate.misc.Base64Encoder;
+import com.knowgate.misc.Base64Decoder;
+
 public class PasswordRecordLine {
 
   public String ValueId;
@@ -40,8 +51,26 @@ public class PasswordRecordLine {
 
   public String ValueLabel;
 
-  public String ValueText;
+  public String ValueFileName;
 
+  public String ValueText;  
+
+  public PasswordRecordLine(String sId, char cType, String sLabel) {
+    ValueId = sId;
+    ValueType = cType;
+    ValueLabel = sLabel;
+    ValueFileName = null;
+    ValueText = null;
+  }
+
+  public char getType() {
+  	return ValueType;
+  }
+
+  public void setType(char cType) {
+  	ValueType = cType;
+  }
+  
   public String getId() {
   	return ValueId;
   }
@@ -59,31 +88,44 @@ public class PasswordRecordLine {
   	ValueLabel = sLabel;
   }
 
+  public String getFileName() {
+  	return ValueFileName;
+  }
+
+  public void setFileName(String sFileName) {
+  	ValueFileName = sFileName;
+  }
+
   public String getValue() {
   	return ValueText;
   }
 
   public void setValue(char cType, String sText) {
   	switch (cType) {
-  	  case PasswordRecordTemplate.TYPE_TEXT:
-	  case PasswordRecordTemplate.TYPE_PASS:
-	  case PasswordRecordTemplate.TYPE_DATE:
+  	  case TYPE_NAME:
+  	  case TYPE_TEXT:
+	  case TYPE_PASS:
+	  case TYPE_DATE:
   	    ValueType = cType;
 		ValueText = sText;
 		break;
-	  case PasswordRecordTemplate.TYPE_INT:
+	  case TYPE_INT:
   	    ValueType = cType;
 		ValueText = sText;
 		break;
-	  case PasswordRecordTemplate.TYPE_MAIL:
+	  case TYPE_MAIL:
   	    ValueType = cType;
 		ValueText = sText;
 		break;
-	  case PasswordRecordTemplate.TYPE_URL:
+	  case TYPE_URL:
   	    ValueType = cType;
 		ValueText = sText;
 		break;
-	  case PasswordRecordTemplate.TYPE_ADDR:
+	  case TYPE_ADDR:
+  	    ValueType = cType;
+		ValueText = sText;
+		break;
+	  case TYPE_BIN:
   	    ValueType = cType;
 		ValueText = sText;
 		break;
@@ -91,9 +133,54 @@ public class PasswordRecordLine {
 	  	throw new IllegalArgumentException("PasswordRecordLine.setValue() Invalid type for value");
   	} // end switch
   } // setValue
-    
-  public String toString() {
-  	return ValueId+"|"+ValueType+"|"+ValueLabel+"|"+ValueText;
+
+  public byte[] getBinaryValue() {
+  	return Base64Decoder.decodeToBytes(ValueText);
   }
+
+  public void setBinaryValue(String sName, byte[] byValue) {
+    ValueType = TYPE_BIN;
+    ValueText = "/"+sName+"/"+Base64Encoder.encode(byValue);
+  }
+
+  public void setBinaryValue(String sName, InputStream oInStrm)
+  	throws IOException {
+    ValueType = TYPE_BIN;
+    StringBuffer oBuffer = new StringBuffer();
+    ByteArrayOutputStream oBy = new ByteArrayOutputStream();    
+    int by = oInStrm.read();
+    while (by!=-1) {
+      oBy.write(by);      
+      by = oInStrm.read();
+    } // wend
+    ValueText = "/"+sName+"/"+Base64Encoder.encode(oBy.toByteArray());
+  } // setBinaryValue
+
+  public void setBinaryValue(File oFile)
+  	throws FileNotFoundException, IOException {
+    ValueType = TYPE_BIN;
+    FileInputStream oFio = new FileInputStream(oFile);
+    BufferedInputStream oBio = new BufferedInputStream(oFio);
+    setBinaryValue(oFile.getName(), oBio);
+    oBio.close();
+    oFio.close();
+  }
+
+  public String toString() {
+  	if (TYPE_BIN==ValueType)
+  	  return ValueId+"|"+ValueType+"|"+ValueLabel+"|"+"/"+ValueFileName+"/"+ValueText;
+  	else
+  	  return ValueId+"|"+ValueType+"|"+ValueLabel+"|"+ValueText;
+  }
+
+  public static final char TYPE_NAME = '!';
+  public static final char TYPE_TEXT = '$';
+  public static final char TYPE_DATE = '#';
+  public static final char TYPE_PASS = '*';
+  public static final char TYPE_INT  = '%';
+  public static final char TYPE_MAIL = '@';
+  public static final char TYPE_URL  = '&';
+  public static final char TYPE_ADDR = '~';
+  public static final char TYPE_BIN  = '/';
 
 }

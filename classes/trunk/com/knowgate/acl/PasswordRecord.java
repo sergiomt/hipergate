@@ -51,13 +51,20 @@ public class PasswordRecord extends DBPersist {
   private RC4 oCrypto;
   
   private ArrayList<PasswordRecordLine> aRecordLines;
+
+  public PasswordRecord() {
+    super(DB.k_user_pwd, "PasswordRecord");
+  }
   
   public PasswordRecord(String sKey) {
-    super(DB.k_user_pwd, "PasswordRecord");
-  	RC4 oCrypto = new RC4(sKey);
-  	
+    super (DB.k_user_pwd, "PasswordRecord");
+  	setKey(sKey);  	
   }
 
+  public void setKey (String sKey) {
+    oCrypto = new RC4(sKey); 	
+  }
+  
   public ArrayList<PasswordRecordLine> lines() {
     return aRecordLines;
   }
@@ -76,10 +83,13 @@ public class PasswordRecord extends DBPersist {
   	  	  	throw new AccessControlException("Invalid password"); 
   	  	  for (int l=1; l<aLines.length; l++) {
   	  	    String[] aLine = aLines[l].split("|");
-  	  	    PasswordRecordLine oRecLin = new PasswordRecordLine();
-  	  	    oRecLin.setId(aLine[0]);
-  	  	    oRecLin.setLabel(aLine[2]);
-  	  	    oRecLin.setValue(aLine[1].charAt(0), aLine[3]);
+  	  	    PasswordRecordLine oRecLin = new PasswordRecordLine(aLine[0],aLine[1].charAt(0),aLine[2]);
+  	  	    if (aLine[1].charAt(0)==PasswordRecordLine.TYPE_BIN) {
+  	  	      oRecLin.setFileName(Gadgets.substrBetween(aLine[3], "/", "/"));
+  	  	      oRecLin.setValue(aLine[1].charAt(0), aLine[3].substring(aLine[3].lastIndexOf('/')+1));
+  	  	    } else {
+  	  	      oRecLin.setValue(aLine[1].charAt(0), aLine[3]);
+  	  	    }
   	  	    aRecordLines.add(oRecLin);
   	  	  } // next
   	  	} // fi
@@ -105,7 +115,7 @@ public class PasswordRecord extends DBPersist {
   	
   	StringBuffer oLines = new StringBuffer("# Password record v5.0");
   	for (PasswordRecordLine rcl : aRecordLines) {
-  	  oLines.append(rcl);
+  	  oLines.append(rcl.toString());
   	  oLines.append("\n");
   	} // next
   	  

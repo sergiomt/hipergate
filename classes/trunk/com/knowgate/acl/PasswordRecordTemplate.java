@@ -39,46 +39,69 @@ import java.util.ArrayList;
 
 import com.enterprisedt.net.ftp.FTPException;
 import com.knowgate.dfs.FileSystem;
-import com.knowgate.misc.NameValuePair;
 
+/**
+ * <p>Password Record Template</p>
+ * A password record template is a plain text file which contains one line for each password record field.<br/>
+ * Each field line has three columns delimited by a vertical pipe: id|type|label<br/>
+ * The id column is the internal name for the field.<br/>
+ * The type column is a single character that can have one of the following values:<br/>
+ * <table summary="Password field types">
+ * <tr><td>!</td><td>Type Name</td></tr>
+ * <tr><td>$</td><td>Type Text</td></tr>
+ * <tr><td>#</td><td>Type Date</td></tr>
+ * <tr><td>*</td><td>Type Password</td></tr>
+ * <tr><td>%</td><td>Type Integer</td></tr>
+ * <tr><td>@</td><td>Type e-Mail</td></tr>
+ * <tr><td>&</td><td>Type URL</td></tr>
+ * <tr><td>~</td><td>Type Postal Address</td></tr>
+ * <tr><td>/</td><td>Type Binary</td></tr>
+ * </table>
+ */
 public class PasswordRecordTemplate {
 
-  private ArrayList<NameValuePair> oItems;
+  private PasswordRecord oMasterRecord;
   
   public PasswordRecordTemplate() {
-    oItems = new ArrayList<NameValuePair>();  
+    oMasterRecord = new PasswordRecord();
   }
 
-  public int size() {
-  	return oItems.size();
+  /**
+   * Create a new password record for this template
+   */
+  public PasswordRecord createRecord() {
+    PasswordRecord oNewRec = new PasswordRecord();
+    for (PasswordRecordLine l : oMasterRecord.lines()) {
+      oNewRec.lines().add(new PasswordRecordLine(l.getId(), l.getType(), l.getLabel()));
+    } // next
+    return oNewRec;
   }
 
-  public String getItemId(int nLine) {
-  	return oItems.get(nLine).getName();
-  }
-
-  public String getItemLabel(int nLine) {
-  	return oItems.get(nLine).getValue().substring(1);
-  }
-
-  public char getItemType(int nLine) {
-  	return oItems.get(nLine).getValue().charAt(0);
-  }
-
+  /**
+   * Parse template from string
+   */
   public void parse(String sText) {
   	String[] aLines = sText.split("\n");
 	int nLines = aLines.length;
-	oItems.clear();    
+	oMasterRecord.lines().clear();  
     for (int n=0; n<nLines; n++) {
 	  String sLine = aLines[n].trim();
 	  if (sLine.length()>0) {
-		String[] aLine = sLine.split("=");
-		if (aLine.length>1)
-		  oItems.add(new NameValuePair(aLine[0],aLine[1]));
+		String[] aLine = sLine.split("|");
+		if (aLine.length>1) {
+		  oMasterRecord.lines().add(new PasswordRecordLine(aLine[0],aLine[1].charAt(0),aLine[2]));
+		} // fi		  
       } // fi
     } // next
   } // parse
 
+  /**
+   * Load template from UTF-8 text file
+   * @param File Path including protocol, for example: file:///tmp/template1.txt
+   * @throws MalformedURLException
+   * @throws FTPException
+   * @throws IOException
+   */
   public void load(String sFilePath)
   	throws MalformedURLException, FTPException, IOException {
 
@@ -91,7 +114,7 @@ public class PasswordRecordTemplate {
 
   	String sTemplate = oFs.readfilestr(sFilePath, "UTF-8");
 
-	oItems.clear();
+	oMasterRecord.lines().clear();
 
 	if (sTemplate!=null) {
 	  if (sTemplate.length()>0) {
@@ -100,12 +123,25 @@ public class PasswordRecordTemplate {
 	} // fi
   } // load
 
+  /**
+   * Store template into a text file encoded in UTF-8 character set
+   * @param File Path including protocol, for example: file:///tmp/template1.txt
+   * @throws MalformedURLException
+   * @throws FTPException
+   * @throws IOException
+   */
   public void store(String sFilePath)
   	throws MalformedURLException, FTPException, IOException {
 
-    StringBuffer oTemplate = new StringBuffer();
-	for (NameValuePair oNvp : oItems) {
-	  oTemplate.append(oNvp.getName()+"="+oNvp.getValue()+"\n");
+    StringBuffer oTemplate = new StringBuffer(4000);
+
+	for (PasswordRecordLine oLin : oMasterRecord.lines()) {
+	  if (oTemplate.length()>0) oTemplate.append("\n");
+	  oTemplate.append(oLin.getId());
+	  oTemplate.append('|');
+	  oTemplate.append(oLin.getType());
+	  oTemplate.append('|');
+	  oTemplate.append(oLin.getLabel());
 	} // next
 
   	if (!sFilePath.startsWith("file://") && !sFilePath.startsWith("ftp://") &&
@@ -119,12 +155,5 @@ public class PasswordRecordTemplate {
 	
   } // store
 
-  public static final char TYPE_TEXT = '$';
-  public static final char TYPE_DATE = '#';
-  public static final char TYPE_PASS = '*';
-  public static final char TYPE_INT = '%';
-  public static final char TYPE_MAIL = '@';
-  public static final char TYPE_URL = '&';
-  public static final char TYPE_ADDR = '~';
-  	
+    	
 }
