@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003-2007  Know Gate S.L. All rights reserved.
-                           C/Oña, 107 1º2 28050 Madrid (Spain)
+                           C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.TreeMap;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileInputStream;
@@ -63,21 +64,21 @@ import com.knowgate.misc.CSVParser;
 
 import com.enterprisedt.net.ftp.FTPException;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpConnection;
-import org.apache.commons.httpclient.HttpState;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpEntity;
 
-import org.apache.commons.httpclient.auth.AuthPolicy;
-import org.apache.commons.httpclient.auth.AuthScope;
-
-import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 
 /**
  * <p>Robot for translating text files using k_translations table</p>
  * @author Sergio Montoro Ten
- * @version 1.0
+ * @version 2.0
  */
 public class Translate {
 
@@ -89,14 +90,14 @@ public class Translate {
    */
   private String[] aExtensions = new String[]{".htm",".html",".inc",".jsp",".jspf",".xml",".xsl"};
   private HashMap oEncodings;
-  private HttpClient oHttpCli;
+  private DefaultHttpClient oHttpCli;
 
   // ---------------------------------------------------------------------------
 
   public Translate() {
     aTags=aWords=null;
     oHttpFs = new FileSystem();
-    oHttpCli = new HttpClient();
+    oHttpCli = new DefaultHttpClient();
     oEncodings = new HashMap(4093);
     Arrays.sort(aExtensions, String.CASE_INSENSITIVE_ORDER);
   }
@@ -106,9 +107,9 @@ public class Translate {
   public Translate(String sAuthUsr, String sAuthStr, String sRealm, String sHost) {
     aTags=aWords=null;
     oHttpFs = new FileSystem(sAuthUsr, sAuthStr, sRealm);
-    oHttpCli = new HttpClient();
-	oHttpCli.getState().setCredentials(sRealm, sHost,
-                					   new UsernamePasswordCredentials(sAuthUsr, sAuthStr));
+    oHttpCli = new DefaultHttpClient();
+	oHttpCli.getCredentialsProvider().setCredentials(new AuthScope(sHost, AuthScope.ANY_PORT, sRealm), 
+													new UsernamePasswordCredentials(sAuthUsr, sAuthStr));
     oEncodings = new HashMap(4093);
     Arrays.sort(aExtensions, String.CASE_INSENSITIVE_ORDER);
   }
@@ -142,6 +143,7 @@ public class Translate {
   /**
    * This routine is currently unstable and must not be used
    */
+  /*
   private void autoFill(String sDrv, String sUrl, String sUsr, String sPwd, String sCnf)
     throws MalformedURLException,FileNotFoundException,IOException {
 
@@ -170,8 +172,8 @@ public class Translate {
 
     // Iterate throught all lines and fill oTagsMap
     for (int l=0; l<nLines; l++) {
-      if (aTranslationLines[l].indexOf('¨')>0) {
-        String[] aLine = Gadgets.split(aTranslationLines[l],'¨');
+      if (aTranslationLines[l].indexOf('Â¨')>0) {
+        String[] aLine = Gadgets.split(aTranslationLines[l],'Â¨');
         if (oTagsMap.containsKey(aLine[2])) {
           oTagList = (ArrayList) oTagsMap.get(aLine[2]);
           oTagList.add(aLine);
@@ -228,24 +230,27 @@ public class Translate {
           } // next
           // If the line was autocompleted then re-write it at the database
           if (bAutocompleted) {
-            PostMethod oPost = new PostMethod(sUrl);
-            oPost.addParameter(new NameValuePair("profile", sCnf));
-            oPost.addParameter(new NameValuePair("user", sUsr));
-            oPost.addParameter(new NameValuePair("password", sPwd));
-            oPost.addParameter(new NameValuePair("command", "update"));
-            oPost.addParameter(new NameValuePair("table", "k_translations"));
+
+            ArrayList oParams = new ArrayList();
+            oParams.add(new BasicNameValuePair("profile", sCnf));
+            oParams.add(new BasicNameValuePair("user", sUsr));
+            oParams.add(new BasicNameValuePair("password", sPwd));
+            oParams.add(new BasicNameValuePair("command", "update"));
+            oParams.add(new BasicNameValuePair("table", "k_translations"));            
+			
             for (int n=0; n<nCols; n++) {
               if (aTagLine[n]!=null) {
                 if (!aTagLine[n].equalsIgnoreCase("null")) {
-                  oPost.addParameter(new NameValuePair(aCols[n], aTagLine[n]));
+                  oParams.add(new BasicNameValuePair(aCols[n], aTagLine[n]));
                 } // fi
               } // fi
             } // next (n)
-            //HttpConnection oHonn = new HttpConnection("www.hipergate.org", 80);
-            //oHonn.open();
+
+            HttpPost oPost = new HttpPost(sUrl);
+            oPost.setEntity(new UrlEncodedFormEntity(oParams));
+
             try {
-			  oHttpCli.executeMethod(oPost);
-              //oPost.execute(new HttpState(), oHonn);
+			  oHttpCli.execute(oPost);
               String sResponse = oPost.getResponseBodyAsString();
               if (null!=sResponse) {
                 if (sResponse.equals("SUCCESS")) {
@@ -262,12 +267,12 @@ public class Translate {
             } finally {
               oPost.releaseConnection();
             }
-            //oHonn.close();
           } // fi (bAutocompleted)
         } // next (i)
       } // fi
     } // wend
   } // autoFill
+  */
 
   // ---------------------------------------------------------------------------
 
@@ -289,7 +294,7 @@ public class Translate {
         aTagWords = oHttpFs.readfilestr(sUrl+"?profile="+sCnf+"&user="+sUsr+"&password="+sPwd+"&command=query&coldelim=%A8&rowdelim=%0A&table=k_translations&fields=tx_tag,tr_"+sLng+"&where=tx_directory"+Gadgets.URLEncode("='"+sDir+"' AND tx_filename='"+sFle+"' AND tr_"+sLng+" IS NOT NULL"),"UTF-8").toCharArray();
       } catch (com.enterprisedt.net.ftp.FTPException neverthrown) { aTagWords=null; }
       CSVParser oPrs = new CSVParser("UTF-8");
-      oPrs.parseData(aTagWords, "tag¨tr");
+      oPrs.parseData(aTagWords, "tagÂ¨tr");
       final int nLin = oPrs.getLineCount();
       aTags = new ArrayList(nLin);
       aWords = new ArrayList(nLin);
@@ -454,8 +459,8 @@ public class Translate {
 
       if (sTags!=null) {
         if (sTags.trim().length()>0) {
-          // Tags are delimited by '¨'
-          String[] aExistingTagList = Gadgets.split(sTags, '¨');
+          // Tags are delimited by 'Â¨'
+          String[] aExistingTagList = Gadgets.split(sTags, 'Â¨');
           final int nTags = aExistingTagList.length;
           for (int t=0; t<nTags; t++) {
             // For those tags of this file already stored at the database
@@ -475,41 +480,36 @@ public class Translate {
           // If the tag was not already present at the database then add it
           if (oTagMap.get(sTag).equals(Boolean.FALSE)) {
             String sEscapedTag = Gadgets.replace(sTag, "'", "''");
-            PostMethod oPost = new PostMethod(sUrl);
-            oPost.setRequestBody(new NameValuePair[] {
-              new NameValuePair("profile", sCnf),
-              new NameValuePair("user", sUsr),
-              new NameValuePair("password", sPwd),
-              new NameValuePair("command", "update"),
-              new NameValuePair("table", "k_translations"),
-              new NameValuePair("tx_directory", sDir),
-              new NameValuePair("tx_filename", sFle),
-              new NameValuePair("tx_tag", sEscapedTag),
-              new NameValuePair("tr_es", sEscapedTag.substring(2, sEscapedTag.length()-2))});
-              
-            // Open HTTP connection
-            //HttpConnection oHonn = new HttpConnection(oUrl.getHost(), oUrl.getPort());
+            ArrayList oParams = new ArrayList();
+            oParams.add(new BasicNameValuePair("profile", sCnf));
+            oParams.add(new BasicNameValuePair("user", sUsr));
+            oParams.add(new BasicNameValuePair("password", sPwd));
+            oParams.add(new BasicNameValuePair("command", "update"));
+            oParams.add(new BasicNameValuePair("table", "k_translations"));
+            oParams.add(new BasicNameValuePair("tx_directory", sDir));
+            oParams.add(new BasicNameValuePair("tx_filename", sFle));
+            oParams.add(new BasicNameValuePair("tx_tag", sEscapedTag));
+            oParams.add(new BasicNameValuePair("tr_es", sEscapedTag.substring(2, sEscapedTag.length()-2)));
 
-            //oHonn.setHttpConnectionManager(oHttpConMan);
-            //oHonn.open();
+            HttpPost oPost = new HttpPost(sUrl);
+            oPost.setEntity(new UrlEncodedFormEntity(oParams));
 
-            try {			  
-			  oPost.setDoAuthentication(true);
-			  oHttpCli.executeMethod(oPost);
-              //oPost.execute(oHttpCli.getState(), oHonn);
-              sResponse = oPost.getResponseBodyAsString();
+			  HttpResponse oResp = oHttpCli.execute(oPost);
+	      	  HttpEntity oEnty = oResp.getEntity();
+	          int nLen = (int) oEnty.getContentLength();
+	      	  if (nLen>0) {
+	            byte[] aRetVal = new byte[nLen];
+	            InputStream oBody = oEnty.getContent();
+			    oBody.read(aRetVal,0,nLen);
+			    oBody.close();
+			    sResponse = new String(aRetVal);
+	          } else {
+	      	    sResponse = null;
+	          } // fi	      
 
               if (null!=sResponse) {
                 System.out.println(sResponse);
-              } else {
-                System.out.println(String.valueOf(oPost.getStatusText()));
-                System.out.println(oPost.getStatusText());
-                System.out.println(oPost.getStatusLine());
               }
-            } finally {
-              oPost.releaseConnection();
-            }
-            //oHonn.close();
           } // fi
         }
         catch (org.apache.oro.text.regex.MalformedPatternException neverthrown) { }
@@ -802,7 +802,7 @@ public class Translate {
               } // fi
             } // next
           } else if (args[0].equalsIgnoreCase("autofill")) {
-            oTrn.autoFill (sDrv, sUrl, sUsr, sPwd, sCnf);
+            // oTrn.autoFill (sDrv, sUrl, sUsr, sPwd, sCnf);
           } // fi
         } // fi
       } // fi
