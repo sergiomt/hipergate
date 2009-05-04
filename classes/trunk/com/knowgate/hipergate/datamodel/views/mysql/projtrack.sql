@@ -1,9 +1,9 @@
 CREATE VIEW v_project_company AS
-(SELECT p.gu_project,p.dt_created,p.nm_project,p.id_parent,p.id_dept,p.dt_start,p.dt_end,p.pr_cost,p.gu_owner,p.de_project,p.gu_company,p.gu_contact,e.od_level,e.od_walk,c.nm_legal,CONCAT(COALESCE(d.tx_name,''),' ',COALESCE(d.tx_surname,'')) AS full_name, p.id_status
+(SELECT p.gu_project,p.dt_created,p.nm_project,p.id_parent,p.id_dept,p.dt_start,p.dt_end,p.pr_cost,p.gu_owner,p.de_project,p.gu_company,p.gu_contact,e.od_level,e.od_walk,c.nm_legal,CONCAT(COALESCE(d.tx_name,''),' ',COALESCE(d.tx_surname,'')) AS full_name, p.id_status, p.id_ref
 FROM k_project_expand e, k_contacts d, k_projects p LEFT OUTER JOIN k_companies c ON c.gu_company=p.gu_company
 WHERE e.gu_project=p.gu_project AND d.gu_contact=p.gu_contact)
 UNION
-(SELECT p.gu_project,p.dt_created,p.nm_project,p.id_parent,p.id_dept,p.dt_start,p.dt_end,p.pr_cost,p.gu_owner,p.de_project,p.gu_company,p.gu_contact,e.od_level,e.od_walk,c.nm_legal,NULL AS full_name, p.id_status
+(SELECT p.gu_project,p.dt_created,p.nm_project,p.id_parent,p.id_dept,p.dt_start,p.dt_end,p.pr_cost,p.gu_owner,p.de_project,p.gu_company,p.gu_contact,e.od_level,e.od_walk,c.nm_legal,NULL AS full_name, p.id_status, p.id_ref
 FROM k_project_expand e,
 k_projects p LEFT OUTER JOIN k_companies c ON c.gu_company=p.gu_company
 WHERE e.gu_project=p.gu_project AND p.gu_contact IS NULL);
