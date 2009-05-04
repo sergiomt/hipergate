@@ -937,19 +937,19 @@ public final class Gadgets {
    * the returned value will be something like [AÁÀÄÂAÅAAAÃ]ndr[eéàëêeeeee]s L[oóòöôoooøõo]z[aáàäâaåaaaã]n[oóòöôoooøõo]
    */
   public static String accentsToPosixRegEx(String sText) {
-    String[] aSets = new String[]{"aáàäâaåaaaã?",
-    							  "eéàëêeeeee",
-    							  "iíàïîiiiiii",
-    							  "oóòöôoooøõo",
-    							  "uúùüûuuuuuuuuu",
-    							  "yýyÿy"};
+    String[] aSets = new String[]{"aáàäâaåaaaã",
+    							                "eéèëêeeeee",
+    							                "iíìïîiiiiii",
+    							                "oóòöôoooøõō",
+    							                "uúùüûuuuuuuuuu",
+    							                "yýyÿy"};
     if (null==sText) return null;
     final int nSets = aSets.length;
     final int lText = sText.length();
     final String sLext = sText.toLowerCase();
     StringBuffer oText = new StringBuffer();
     for (int n=0; n<lText; n++) {
-      char c = sText.charAt(n);
+      char c = sLext.charAt(n);
       int iMatch = -1;
       for (int s=0; s<nSets && -1==iMatch; s++) {
         if (aSets[s].indexOf(c)>=0) iMatch=s;
