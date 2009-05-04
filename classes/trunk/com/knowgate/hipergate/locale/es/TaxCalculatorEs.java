@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2006  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -56,7 +56,7 @@ public class TaxCalculatorEs implements ITaxCalculator {
    */
   public static final BigDecimal IGICCanarias = new BigDecimal("0.05");
   /**
-   * IVA Península y Baleares 16%
+   * IVA PenÃ­nsula y Baleares 16%
    */
   public static final BigDecimal IVAPeninsula = new BigDecimal("0.16");
 
@@ -64,7 +64,7 @@ public class TaxCalculatorEs implements ITaxCalculator {
 
   /**
    * Get tax that applies to a given zip code.
-   * @param sCodPost String Código Postal o Nombre de Provincia
+   * @param sCodPost String CÃ³digo Postal o Nombre de Provincia
    * @param sTipo String Tax type (currently not used)
    * @return BigDecimal IGICCanarias if sCodPost IN
    * {'38','35',TENERIFE','PALMAS, LAS','LAS PALMAS','GRAN CANARIA'}
@@ -105,7 +105,7 @@ public class TaxCalculatorEs implements ITaxCalculator {
   /**
    * Get tax amount for a base price
    * @param oBasePrice BigDecimal Base Price
-   * @param sCodPost String Código Postal o Nommbre de Provincia
+   * @param sCodPost String CÃ³digo Postal o Nommbre de Provincia
    * @param sItemType String Not used
    * @return BigDecimal oBasePrice * getTaxPct(sCodPost, sItemType)
    * @throws NullPointerException
