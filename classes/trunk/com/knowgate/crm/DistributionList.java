@@ -50,7 +50,7 @@ import com.knowgate.hipergate.QueryByForm;
 /**
  * <p>Distribution List</p>
  * @author Sergio Montoro Ten
- * @version 3.0
+ * @version 5.0
  */
 public class DistributionList extends DBPersist {
 
@@ -582,6 +582,47 @@ public class DistributionList extends DBPersist {
     return sBlackListId;
   } // blackList()
 
+  // ----------------------------------------------------------
+
+  /**
+   * <p>Add Contact e-mails to Static, Direct or Black List</p>
+   * If Contact has several addresses then all of them are added to the list
+   * @param oConn Database Connection
+   * @param Contact GUID
+   * @return Black List GUID or <b>null</b> if there is no associated Black List.
+   * @throws SQLException
+   * @throws IllegalStateException if this DistributionList has not been previously loaded
+   * @since 5.0
+   */
+  public int addContact(JDCConnection oConn, String sContactGUID)
+  	throws IllegalStateException,SQLException {
+    
+    if (isNull(DB.gu_list)) throw new IllegalStateException("DistributionList.addContact() List GUID not set");
+    if (isNull(DB.gu_workarea)) throw new IllegalStateException("DistributionList.addContact() List Work Area not set");
+    if (isNull(DB.tp_list)) throw new IllegalStateException("DistributionList.addContact() List Type not set");
+	if (getShort(DB.tp_list)==TYPE_DYNAMIC) throw new SQLException ("DistributionList.addContact() Dynamic list "+getString(DB.gu_list)+" does not allow manual addition of contact members");
+
+  	String sSQL = "INSERT INTO " + DB.k_x_list_members + " (gu_list,tx_email,tx_name,tx_surname,dt_created,gu_company,gu_contact) SELECT '" + getString(DB.gu_list) + "',tx_email,tx_name,tx_surname,dt_created,gu_company,gu_contact FROM "+DB.k_member_address+" WHERE gu_workarea='"+getString(DB.gu_workarea)+"' AND gu_contact='"+sContactGUID+"' AND tx_email IS NOT NULL";
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin DistributionList.addContact([JDCConnection], "+sContactGUID+")");
+      DebugFile.incIdent();
+      DebugFile.writeln("Statement.executeUpdate("+sSQL+")");
+    }
+  	
+  	Statement oStmt = oConn.createStatement();
+  	int iAffected = oStmt.executeUpdate(sSQL);
+  	oStmt.close();
+
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End DistributionList.addContact() : "+String.valueOf(iAffected));
+    }
+
+	return iAffected;
+  } // addContact
+  
   // ----------------------------------------------------------
 
   /**
