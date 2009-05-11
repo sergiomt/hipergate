@@ -387,6 +387,7 @@ public final class DB {
   public static final String gu_pwd = "gu_pwd";
   public static final String tl_pwd = "tl_pwd";
   public static final String tp_pwd = "tp_pwd";
+  public static final String id_enc_method = "id_enc_method";
   public static final String id_pwd = "id_pwd";
   public static final String tx_account = "tx_account";
   public static final String tx_prk = "tx_prk";
