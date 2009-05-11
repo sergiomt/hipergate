@@ -1156,7 +1156,7 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
       }
 
       if (!bHasPlainTextVersion) {
-        oPart = (MimeBodyPart) oParts.getBodyPart(0);
+        oPart = (MimePart) oParts.getBodyPart(0);
         StringBuffer oHtml = new StringBuffer();
         DBMimePart.parseMimePart (oHtml, null, getFolder().getName(), getMessageID()!=null ? getMessageID() : getContentID(), oPart, 0);
 
@@ -1357,7 +1357,7 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
 
     oText.append("</P><BR>");
 
-    this.getTextPlain(oText);
+    getTextPlain(oText);
 
     if (DebugFile.trace) {
       DebugFile.decIdent();
