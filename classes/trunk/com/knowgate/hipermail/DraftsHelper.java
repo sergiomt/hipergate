@@ -39,7 +39,9 @@ import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import javax.mail.internet.InternetAddress;
 import javax.mail.MessagingException;
+import javax.mail.Message.RecipientType;
 import javax.mail.internet.MimeBodyPart;
 
 import com.knowgate.debug.DebugFile;
@@ -169,6 +171,7 @@ public class DraftsHelper {
       DebugFile.incIdent();
     }
 
+	String sSQL;
     PreparedStatement oStmt;
 
     JDCConnection oConn = oDraftsFldr.getConnection();
@@ -202,21 +205,40 @@ public class DraftsHelper {
     oStmt.executeUpdate();
     oStmt.close();
 
-    oStmt = oConn.prepareStatement("INSERT INTO "+DB.k_inet_addrs+" ("+DB.gu_mimemsg+","+DB.id_message+","+DB.tx_email+","+DB.tp_recipient+","+DB.tx_personal+","+DB.gu_user+","+DB.gu_contact+","+DB.gu_company+") (SELECT '"+oDraft.getMessageGuid()+"','"+sIdMsg+"',"+DB.tx_email+",'to',"+DB.tx_personal+","+DB.gu_user+","+DB.gu_contact+","+DB.gu_company+" FROM "+DB.k_inet_addrs+" WHERE "+DB.gu_mimemsg+"=? AND "+DB.tp_recipient+"='from')");
-    oStmt.setString (1,sGuOriginalMsg);
+	sSQL = "INSERT INTO "+DB.k_inet_addrs+" ("+DB.gu_mimemsg+","+DB.id_message+","+DB.tx_email+","+DB.tp_recipient+","+DB.tx_personal+","+DB.gu_user+","+DB.gu_contact+","+DB.gu_company+") (SELECT '"+oDraft.getMessageGuid()+"','"+sIdMsg+"',"+DB.tx_email+",'to',"+DB.tx_personal+","+DB.gu_user+","+DB.gu_contact+","+DB.gu_company+" FROM "+DB.k_inet_addrs+" WHERE "+DB.gu_mimemsg+"=? AND "+DB.tp_recipient+"='from')";
+
+    if (DebugFile.trace) DebugFile.writeln("JDCConnection.prepareStatement("+sSQL+")");
+
+    oStmt = oConn.prepareStatement(sSQL);
+    oStmt.setString (1, sGuOriginalMsg );
     oStmt.executeUpdate();
     oStmt.close();
+    
+    if (oFrom!=null) {
+      if (DebugFile.trace)
+      	DebugFile.writeln("DBMimeMessage.addRecipient(RecipientType.TO, "+oFrom.getAddress()+")");
+      oDraft.addRecipient(RecipientType.TO, oFrom);
+    }
 
     if (bReplyAll) {
-      oStmt = oConn.prepareStatement("INSERT INTO "+DB.k_inet_addrs+" ("+DB.gu_mimemsg+","+DB.id_message+","+DB.tx_email+","+DB.tp_recipient+","+DB.tx_personal+","+DB.gu_user+","+DB.gu_contact+","+DB.gu_company+") (SELECT '"+oDraft.getMessageGuid()+"','"+sIdMsg+"',"+DB.tx_email+",'to',"+DB.tx_personal+","+DB.gu_user+","+DB.gu_contact+","+DB.gu_company+" FROM "+DB.k_inet_addrs+" WHERE "+DB.gu_mimemsg+"=? AND "+DB.tp_recipient+"='to')");
+      sSQL = "INSERT INTO "+DB.k_inet_addrs+" ("+DB.gu_mimemsg+","+DB.id_message+","+DB.tx_email+","+DB.tp_recipient+","+DB.tx_personal+","+DB.gu_user+","+DB.gu_contact+","+DB.gu_company+") (SELECT '"+oDraft.getMessageGuid()+"','"+sIdMsg+"',"+DB.tx_email+",'to',"+DB.tx_personal+","+DB.gu_user+","+DB.gu_contact+","+DB.gu_company+" FROM "+DB.k_inet_addrs+" WHERE "+DB.gu_mimemsg+"=? AND "+DB.tp_recipient+"='to')";
+      if (DebugFile.trace) DebugFile.writeln("JDCConnection.prepareStatement("+sSQL+")");
+      oStmt = oConn.prepareStatement(sSQL);
       oStmt.setString (1,sGuOriginalMsg);
       oStmt.executeUpdate();
       oStmt.close();
-      oStmt = oConn.prepareStatement("INSERT INTO "+DB.k_inet_addrs+" ("+DB.gu_mimemsg+","+DB.id_message+","+DB.tx_email+","+DB.tp_recipient+","+DB.tx_personal+","+DB.gu_user+","+DB.gu_contact+","+DB.gu_company+") (SELECT '"+oDraft.getMessageGuid()+"','"+sIdMsg+"',"+DB.tx_email+",'cc',"+DB.tx_personal+","+DB.gu_user+","+DB.gu_contact+","+DB.gu_company+" FROM "+DB.k_inet_addrs+" WHERE "+DB.gu_mimemsg+"=? AND "+DB.tp_recipient+"='cc')");
+
+      oDraft.addRecipients(RecipientType.TO, oOrMsg.getRecipients(RecipientType.TO));
+
+	  sSQL = "INSERT INTO "+DB.k_inet_addrs+" ("+DB.gu_mimemsg+","+DB.id_message+","+DB.tx_email+","+DB.tp_recipient+","+DB.tx_personal+","+DB.gu_user+","+DB.gu_contact+","+DB.gu_company+") (SELECT '"+oDraft.getMessageGuid()+"','"+sIdMsg+"',"+DB.tx_email+",'cc',"+DB.tx_personal+","+DB.gu_user+","+DB.gu_contact+","+DB.gu_company+" FROM "+DB.k_inet_addrs+" WHERE "+DB.gu_mimemsg+"=? AND "+DB.tp_recipient+"='cc')";
+      if (DebugFile.trace) DebugFile.writeln("JDCConnection.prepareStatement("+sSQL+")");
+      oStmt = oConn.prepareStatement(sSQL);
       oStmt.setString (1,sGuOriginalMsg);
       oStmt.executeUpdate();
       oStmt.close();
-    }
+
+      oDraft.addRecipients(RecipientType.CC, oOrMsg.getRecipients(RecipientType.CC));
+    } // bReplyAll
 
     if (!oConn.getAutoCommit()) oConn.commit();
 
@@ -295,9 +317,9 @@ public class DraftsHelper {
 
     if (com.knowgate.debug.DebugFile.trace)
       com.knowgate.debug.DebugFile.writeln("Connection.prepareStatement(INSERT INTO "+DB.k_mime_parts+" ("+DB.gu_mimemsg+","+DB.id_message+","+DB.pg_message+","+DB.nu_offset+","+DB.id_part+","+DB.id_content+","+DB.id_type+","+DB.id_disposition+","+DB.id_encoding+","+DB.len_part+","+DB.de_part+","+DB.tx_md5+","+DB.file_name+","+DB.id_compression+","+DB.by_content+") (SELECT '"+oDraft.getMessageGuid()+"','"+sIdMsg+"',NULL,"+DB.nu_offset+","+DB.id_part+","+DB.id_content+","+DB.id_type+",'pointer',"+DB.id_encoding+","+DB.len_part+","+DB.file_name+","+DB.tx_md5+",'"+oOriginalFldr.getFilePath()+"',"+DB.id_compression+",NULL FROM "+DB.k_mime_parts+" WHERE "+DB.gu_mimemsg+"='"+sGuOriginalMsg+"'))");
-
-    oStmt = oConn.prepareStatement("INSERT INTO "+DB.k_mime_parts+" ("+DB.gu_mimemsg+","+DB.id_message+","+DB.pg_message+","+DB.nu_offset+","+DB.id_part+","+DB.id_content+","+DB.id_type+","+DB.id_disposition+","+DB.id_encoding+","+DB.len_part+","+DB.de_part+","+DB.tx_md5+","+DB.file_name+","+DB.id_compression+","+DB.by_content+") (SELECT '"+oDraft.getMessageGuid()+"','"+sIdMsg+"',NULL,"+DB.nu_offset+","+DB.id_part+","+DB.id_content+","+DB.id_type+",'pointer',"+DB.id_encoding+","+DB.len_part+","+DB.file_name+","+DB.tx_md5+",'"+oOriginalFldr.getFilePath()+"',"+DB.id_compression+",NULL FROM "+DB.k_mime_parts+" WHERE "+DB.gu_mimemsg+"=? AND "+DB.id_disposition+"='attachment')");
+    oStmt = oConn.prepareStatement("INSERT INTO "+DB.k_mime_parts+" ("+DB.gu_mimemsg+","+DB.id_message+","+DB.pg_message+","+DB.nu_offset+","+DB.id_part+","+DB.id_content+","+DB.id_type+","+DB.id_disposition+","+DB.id_encoding+","+DB.len_part+","+DB.de_part+","+DB.tx_md5+","+DB.file_name+","+DB.id_compression+","+DB.by_content+") (SELECT '"+oDraft.getMessageGuid()+"','"+sIdMsg+"',NULL,"+DB.nu_offset+","+DB.id_part+","+DB.id_content+","+DB.id_type+",'pointer',"+DB.id_encoding+","+DB.len_part+","+DB.file_name+","+DB.tx_md5+",?,"+DB.id_compression+",NULL FROM "+DB.k_mime_parts+" WHERE "+DB.gu_mimemsg+"=? AND "+DB.id_disposition+"='attachment')");
     oStmt.setString (1,sGuOriginalMsg);
+    oStmt.setString (2,oOriginalFldr.getFilePath());    	
     oStmt.executeUpdate();
     oStmt.close();
 

@@ -509,6 +509,7 @@ public class DBFolder extends Folder {
             sFolderDir = sFolderUrl.substring(7);
           else
             sFolderDir = sFolderUrl;
+          if (File.separator.equals("\\")) sFolderDir = sFolderDir.replace('/','\\');
         } catch (SQLException sqle) {
           iOpenMode = 0;
           oConn = null;
@@ -2591,8 +2592,8 @@ public class DBFolder extends Folder {
 
 	if (iMsgs>0) {
 	  aMsgsXml = new String[iMsgs];
-	  oBuffXml.append("<msg>");
 	  for (int m=0; m<iMsgs; m++) {
+	    oBuffXml.append("<msg>");
         oBuffXml.append("<num>"+String.valueOf(oMsgs.getInt(DB.pg_message,m))+"</num>");
         oBuffXml.append("<id><![CDATA["+oMsgs.getStringNull(DB.id_message,m,"").replace('\n',' ')+"]]></id>");
         oBuffXml.append("<len>"+String.valueOf(oMsgs.getInt(DB.len_mimemsg,m))+"</len>");
@@ -2617,6 +2618,7 @@ public class DBFolder extends Folder {
         else
           oBuffXml.append("<kb>"+String.valueOf(oMsgs.getInt(DB.len_mimemsg,m)/1024)+"</kb>");
         oBuffXml.append("<err/>");
+	    oBuffXml.append("</msg>");
 	    aMsgsXml[m] = oBuffXml.toString();
 	    oBuffXml.setLength(0);
 	  } // next
