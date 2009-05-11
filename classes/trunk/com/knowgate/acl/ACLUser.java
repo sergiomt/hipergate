@@ -32,6 +32,7 @@
 
 package com.knowgate.acl;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.StringTokenizer;
 
@@ -61,12 +62,14 @@ import com.knowgate.hipergate.Category;
 import com.knowgate.hipergate.datamodel.ModelManager;
 import com.knowgate.cache.DistributedCachePeer;
 
+import com.knowgate.misc.Base64Encoder;
+import com.knowgate.misc.Base64Decoder;
 import com.knowgate.misc.Gadgets;
 
 /**
  * <p>Object mapping for k_users table registers</p>
  * @author Sergio Montoro Ten
- * @version 4.0
+ * @version 5.0
  */
 
 public final class ACLUser extends DBPersist {
@@ -1705,7 +1708,71 @@ public final class ACLUser extends DBPersist {
 	} // fi (bRetVal)
 	return bRetVal;
   } // resetPassword
+
+  /**
+   * Checks if a given signature password matches the one previously assigned
+   * @param JDCConnection
+   * @param sUserId User GUID
+   * @param sSign Signature Password to be checked
+   * @throws SQLException if no user with given GUID exists at the database
+   * @throws NullPointerException is sSign is null
+   * @since 5.0
+   */
+  public static boolean checkSignature(JDCConnection oConn, String sUserId, String sSign)
+  	throws SQLException,NullPointerException {
+  	
+  	if (sSign==null) throw new NullPointerException("ACLUser.checkSignature() Signature password to be checked may not be null");
+  	
+  	boolean bCheck = false;
+  	
+    PreparedStatement oStmt = oConn.prepareStatement("SELECT "+DB.tx_pwd_sign+" FROM "+DB.k_users+" WHERE "+DB.gu_user+"=?");
+    oStmt.setString(1, sUserId);
+    ResultSet oRSet = oStmt.executeQuery();
+    boolean bFound = oRSet.next();
+    if (bFound) {
+	  bCheck = Arrays.equals(Base64Decoder.decodeToBytes(oRSet.getString(1)),
+	                         new RC4(sSign).rc4("Signature password test string"));
+    }
+    oRSet.close();
+    oStmt.close();
+    
+    if (!bFound) throw new SQLException("ACLUser.checkSignature() User "+sUserId+" not found");
+
+    return bCheck;
+  } // checkSignature
   
+  /**
+   * Change signature password and delete any previous entries encrypted with former password
+   * @param JDCConnection
+   * @param sUserId User GUID
+   * @param sNewSign New Signature Password
+   * @throws SQLException if no user with given GUID exists at the database
+   * @throws NullPointerException is sSign is null
+   */
+  public static boolean resetSignature(JDCConnection oConn, String sUserId, String sNewSign)
+  	throws SQLException {
+
+  	if (sNewSign==null) throw new NullPointerException("ACLUser.checkSignature() Signature password to be checked may not be null");
+  	
+  	if (!checkSignature(oConn, sUserId, sNewSign)) {
+  	  RC4 oCrypto = new RC4(sNewSign);
+      PreparedStatement oStmt = oConn.prepareStatement("UPDATE "+DB.k_users+" SET "+DB.tx_pwd_sign+"=?, "+DB.dt_last_update+"=? WHERE "+DB.gu_user+"=?");
+      oStmt.setString(1, Base64Encoder.encode(oCrypto.rc4("Signature password test string")));
+	  oStmt.setTimestamp(2, new Timestamp(new Date().getTime()));
+      oStmt.setString(3, sUserId);
+      int iAffected = oStmt.executeUpdate();
+      oStmt.close();
+      
+      if (iAffected==0) throw new SQLException("ACLUser.resetSignature() User "+sUserId+" not found");
+
+      oStmt = oConn.prepareStatement("DELETE FROM "+DB.k_user_pwd+" WHERE "+DB.id_enc_method+"='RC4' AND "+DB.gu_user+"=?");
+      oStmt.setString(1, sUserId);
+      oStmt.executeUpdate();
+      oStmt.close();      
+  	} // fi
+  	return true;
+  } // resetSignature
+  	
   // **********************************************************
   // Public Constants
 

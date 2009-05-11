@@ -75,12 +75,19 @@ public class PasswordRecord extends DBPersist {
   	aRecordLines = new ArrayList<PasswordRecordLine>();
   	if (bRetVal) {
   	  if (!isNull("tx_lines")) {
-  	    byte[] byLines = Base64Decoder.decodeToBytes(getString(DB.tx_lines));
-  	  	String sLines = new String(oCrypto.rc4(byLines));
-  	  	String[] aLines = sLines.split("\n");
+  	    String sLines;
+  	    String[] aLines;
+  	    final String sEncMethod = getStringNull(DB.id_enc_method,"RC4");
+  	    if (sEncMethod.equalsIgnoreCase("RC4")) {
+  	      byte[] byLines = Base64Decoder.decodeToBytes(getString(DB.tx_lines));
+  	  	  sLines = new String(oCrypto.rc4(byLines));
+  	  	  aLines = sLines.split("\n");
+  	    } else if (sEncMethod.equalsIgnoreCase("NONE")) {
+  	      aLines = getString(DB.tx_lines).split("\n");
+  	    }
   	  	if (aLines!=null) {
   	  	  if (!aLines[0].startsWith("# Password record"))
-  	  	  	throw new AccessControlException("Invalid password"); 
+  	  	  	throw new AccessControlException("Invalid password or encryption method"); 
   	  	  for (int l=1; l<aLines.length; l++) {
   	  	    String[] aLine = aLines[l].split("|");
   	  	    PasswordRecordLine oRecLin = new PasswordRecordLine(aLine[0],aLine[1].charAt(0),aLine[2]);
