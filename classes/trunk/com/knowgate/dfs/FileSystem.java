@@ -572,10 +572,37 @@ public class FileSystem {
       else {
         if (DebugFile.trace) DebugFile.writeln("copyFileNFS(" + sSourcePath + "," + sTargetPath + ")");
 
-        copyFileNFS(sSourcePath, sTargetPath);
+        if (oSourceFile.isDirectory()) {
+		  File[] oFiles = oSourceFile.listFiles();
+		  if (oFiles!=null) {
+		  	final int nFiles = oFiles.length;
+            if (DebugFile.trace) DebugFile.writeln(String.valueOf(nFiles)+" files found");
+		  	for (int f=0; f<nFiles; f++) {
+		  	  if (oFiles[f].isDirectory()) {
+		  	  	String sSourceDir = Gadgets.chomp(sSourceURI,File.separator)+oFiles[f].getName();		  	  	
+		  	  	String sTargetDir = Gadgets.chomp(sTargetURI,File.separator)+oFiles[f].getName();
+    		    if (DebugFile.trace) {
+      			  DebugFile.writeln("  Copying directory "+sSourceDir+" to "+sTargetDir);
+    		    }
+		  	  	mkdirs(sTargetDir);
+				copy(sSourceDir,sTargetDir);
+		  	  } else {
+    		    if (DebugFile.trace) {
+      			  DebugFile.writeln("  Copying file "+Gadgets.chomp(sSourcePath,File.separator)+oFiles[f].getName()+" to "+Gadgets.chomp(sTargetPath,File.separator)+oFiles[f].getName());
+    		    }
+                copyFileNFS(Gadgets.chomp(sSourcePath,File.separator)+oFiles[f].getName(),
+                			Gadgets.chomp(sTargetPath,File.separator)+oFiles[f].getName());
+		  	  }
+		  	} // next
+		  }
+        } else {
+          copyFileNFS(sSourcePath, sTargetPath);
+        }
       }
       bRetVal = exists(sTargetURI);
+
     } // fi(Source==file AND Target==file)
+    
     else if (sSourceURI.startsWith("file://") && sTargetURI.startsWith("ftp://")) {
       sSourcePath = sSourceURI.substring(7);
       sTargetPath = sTargetURI.substring(6);
