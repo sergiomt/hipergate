@@ -11,6 +11,7 @@ INSERT INTO k_classes VALUES(10,'Category');
 INSERT INTO k_classes VALUES(11,'CategoryLabel');
 INSERT INTO k_classes VALUES(12,'MetaAttribute');
 INSERT INTO k_classes VALUES(13,'Image');
+INSERT INTO k_classes VALUES(14,'PasswordRecord');
 INSERT INTO k_classes VALUES(15,'Product');
 INSERT INTO k_classes VALUES(16,'ProductLocation');
 INSERT INTO k_classes VALUES(17,'ProductAttribute');
