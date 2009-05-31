@@ -64,10 +64,12 @@ import com.knowgate.dataobjs.DBSubset;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.dfs.FileSystem;
 
+import com.knowgate.hipergate.DBLanguages;
+
 /**
  * Categories from k_categories database table
  * @author Sergio Montoro Ten
- * @version 4.0
+ * @version 5.0
  */
 public class Category  extends DBPersist {
 
@@ -1128,6 +1130,39 @@ public class Category  extends DBPersist {
     return sTr;
   } // getLabel()
 
+  // ----------------------------------------------------------
+
+  /**
+   * Set category label for all supported languages
+   * @param oConn Database connection
+   * @param sTr Label
+   * @throws SQLException
+   * @throws NullPointerException if label is null or empty string
+   * @since 5.0
+   */
+  public void setLabel(Connection oConn, String sTr) throws SQLException {
+	
+	if (null==sTr) throw new NullPointerException("Category.setLabel() Label string may not be null");
+	if (null==sTr) throw new NullPointerException("Category.setLabel() Label string may not be empty");
+
+    sTr = Gadgets.left(sTr,30);
+    
+    PreparedStatement oStmt = oConn.prepareStatement("DELETE FROM "+DB.k_cat_labels+" WHERE "+DB.gu_category+"=?");
+    oStmt.setString(1, getString(DB.gu_category));
+    oStmt.executeUpdate();
+    oStmt.close();
+
+    oStmt = oConn.prepareStatement("INSERT INTO "+DB.k_cat_labels+" ("+DB.gu_category+","+DB.id_language+","+DB.tr_category+") VALUES (?,?,?)");
+    final int nLangs = DBLanguages.SupportedLanguages.length;
+    for (int l=0; l<nLangs; l++) {
+      oStmt.setString(1, getString(DB.gu_category));
+      oStmt.setString(2, DBLanguages.SupportedLanguages[l]);
+      oStmt.setString(3, sTr);
+      oStmt.executeUpdate();
+    } // next
+    oStmt.close();    
+  } // setLabel
+  
   // ----------------------------------------------------------
 
   /**
