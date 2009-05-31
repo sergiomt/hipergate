@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2007  Know Gate S.L. All rights reserved.
+  Copyright (C) 2009  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
@@ -35,23 +35,29 @@ package com.knowgate.crm;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import java.util.HashMap;
+import java.util.Iterator;
+
+import com.knowgate.misc.Gadgets;
+import com.knowgate.dataobjs.DB;
 import com.knowgate.hipergate.datamodel.ImportLoader;
 import com.knowgate.hipergate.datamodel.ColumnList;
 
 /**
- * <p>Load Company and Address data from a single source</p>
- * Company loader creates or updates simultaneously registers at k_companies and k_addresses tables and the links between them k_x_contact_addr.
- * Loading a Company is a special case of loading a contact, and thus this class delegates all its behavious to a private ContactLoader member.
+ * <p>Load Company and Address data from a VCard Record</p>
+ * Company loader creates or updates simultaneously registers at k_contacts, k_companies and k_addresses tables and the links between them k_x_contact_addr.
  * @author Sergio Montoro Ten
- * @version 4.0
+ * @version 5.0
  */
-public class CompanyLoader implements ImportLoader {
+
+public class VCardLoader implements ImportLoader {
 	
 	private ContactLoader oDelegateTo;
+
 	/**
 	 * Default Constructor
 	 */
-	public CompanyLoader() {
+	public VCardLoader() {
 		oDelegateTo = new ContactLoader();
 	}
 
@@ -62,7 +68,7 @@ public class CompanyLoader implements ImportLoader {
      * @param oConn Connection
      * @throws SQLException
     */
-    public CompanyLoader(Connection oConn) throws SQLException {
+    public VCardLoader(Connection oConn) throws SQLException {
 	  oDelegateTo = new ContactLoader();
 	  oDelegateTo.prepare(oConn, null);
     }
@@ -136,6 +142,33 @@ public class CompanyLoader implements ImportLoader {
 	  oDelegateTo.put(sColumnName, oValue);
 	}
 
+	public void put (HashMap<String,String> oVCard) {
+	  setAllColumnsToNull();
+	  String[] aLine;
+	  Iterator oKeys = oVCard.keySet().iterator();
+	  while (oKeys.hasNext()) {
+	  	String sKey = (String) oKeys.next();
+	  	String sVal = (String) oVCard.get(sKey);
+	  	if (sKey.equalsIgnoreCase("N")) {
+	  	  if (sVal.indexOf(';')>0 && sVal.indexOf(';')<sVal.length()-1) {
+	        aLine = Gadgets.split(sVal,';');
+	        put(DB.tx_surname, Gadgets.left(aLine[0],100));     
+	        put(DB.tx_name, Gadgets.left(aLine[1],100));
+	  	  } else {
+	        put(DB.tx_name, Gadgets.left(Gadgets.removeChar(sVal,';'),100));
+	  	  }	      
+	  	} else if (sKey.equalsIgnoreCase("FN")) {
+	        put(DB.contact_person, Gadgets.left(sVal,100));
+	  	} else if (sKey.equalsIgnoreCase("TITLE")) {
+	        put(DB.de_title, Gadgets.left(sVal,50));
+	  	} else if (sKey.equalsIgnoreCase("ORG")) {
+	        put(DB.nm_legal, Gadgets.left(sVal,70));
+	  	} else if (sKey.equalsIgnoreCase("EMAIL;INTERNET")) {
+	        put(DB.tx_email, Gadgets.left(sVal,100));
+	  	}
+	  } // wend
+	} // put
+
 	/**
 	 * Method setAllColumnsToNull
 	 */
@@ -173,8 +206,15 @@ public class CompanyLoader implements ImportLoader {
 	 */
 	public void store(Connection oConn, String sWorkArea, int iFlags)
 	  throws SQLException, IllegalArgumentException, NullPointerException {
-	  oDelegateTo.store(oConn, sWorkArea, iFlags|ContactLoader.WRITE_COMPANIES); 
+	  oDelegateTo.store(oConn, sWorkArea, iFlags); 
 	}	
+
+	public void store(Connection oConn, String sWorkArea)
+	  throws SQLException, IllegalArgumentException, NullPointerException {
+	  oDelegateTo.store(oConn, sWorkArea,
+	  					MODE_APPENDUPDATE|WRITE_LOOKUPS|WRITE_ADDRESSES|WRITE_COMPANIES|
+	  					WRITE_CONTACTS|NO_DUPLICATED_NAMES|NO_DUPLICATED_MAILS); 
+	} // store	
 
     // ---------------------------------------------------------------------------
 
@@ -183,5 +223,11 @@ public class CompanyLoader implements ImportLoader {
     public static final int MODE_APPENDUPDATE = ImportLoader.MODE_APPENDUPDATE;
     public static final int WRITE_LOOKUPS = ImportLoader.WRITE_LOOKUPS;
 
-    public static final int WRITE_ADDRESSES = 128;
+    public static final int WRITE_CONTACTS  = ContactLoader.WRITE_CONTACTS;
+    public static final int WRITE_ADDRESSES = ContactLoader.WRITE_ADDRESSES;
+    public static final int WRITE_COMPANIES = ContactLoader.WRITE_COMPANIES;
+
+    public static final int NO_DUPLICATED_NAMES = ContactLoader.NO_DUPLICATED_NAMES;
+    public static final int NO_DUPLICATED_MAILS = ContactLoader.NO_DUPLICATED_MAILS;
+	
 }
