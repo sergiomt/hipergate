@@ -43,10 +43,11 @@ import java.io.BufferedOutputStream;
 import java.io.Reader;
 import java.io.FileReader;
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.FileInputStream;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import com.knowgate.debug.DebugFile;
 import com.knowgate.misc.Gadgets;
@@ -55,7 +56,7 @@ public class LINParser {
 
   // ----------------------------------------------------------
 
-  private Vector oLines;   // Array de lineas del fichero
+  private ArrayList<String> oLines;   // Array de lineas del fichero
   private int  iRows;      // Número de filas encontradas en el fichero leído
   private String sCharSet; // Juego de caracteres
 
@@ -64,13 +65,13 @@ public class LINParser {
   public LINParser() {
 	iRows = 0;
     sCharSet = null;
-    oLines = new Vector();
+    oLines = new ArrayList<String>();
   }
 
   public LINParser(String sCharsetName) {
 	iRows = 0;
     sCharSet = sCharsetName;
-    oLines = new Vector();
+    oLines = new ArrayList<String>();
   }
     
   // ----------------------------------------------------------
@@ -96,6 +97,48 @@ public class LINParser {
   }
 
   // ----------------------------------------------------------
+
+  public void parseString(String sStr) throws NullPointerException {
+  	String[] aLines = Gadgets.split(sStr, '\n');
+  	
+	if (aLines!=null) {
+	  iRows = aLines.length;
+	  for (int r=0; r<iRows; r++) {
+	    oLines.add(Gadgets.removeChar(aLines[r],'\r'));
+	  } // next
+	} // fi 	
+  } // parseString
+
+  // ----------------------------------------------------------
+
+  public void parseStream(InputStream oInStrm)
+    throws IOException, NullPointerException {
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin LINParser.parseStream([InputStream])");
+      DebugFile.incIdent();
+    }
+
+	String sLine;
+	Reader oRder = new InputStreamReader(oInStrm,sCharSet);		
+    BufferedReader oBuff = new BufferedReader(oRder);
+
+    iRows = 0;
+    while (null!=(sLine=oBuff.readLine())) {
+      oLines.add(sLine);
+      iRows++;
+    } // wend
+    oBuff.close();
+    if (null!=oInStrm) oInStrm.close();
+    oRder.close();
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End LINParser.parseStream()");
+    }
+  } // parseStream
+  
+  // ----------------------------------------------------------
   
   public void parseFile(File oInFile)
     throws FileNotFoundException, IOException,NumberFormatException,
@@ -108,7 +151,7 @@ public class LINParser {
     FileInputStream oInStrm;
   
     if (DebugFile.trace) {
-      DebugFile.writeln("Begin LINParser.parseFile(" + oInFile.getName() + "], [TreeSet])");
+      DebugFile.writeln("Begin LINParser.parseFile(" + oInFile.getName() + ")");
       DebugFile.incIdent();
     }
 
