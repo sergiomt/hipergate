@@ -90,6 +90,7 @@ bo_restricted  SMALLINT    DEFAULT 0,
 nm_commercial  VARCHAR(70)     NULL,
 dt_modified    DATETIME        NULL,
 dt_founded     DATETIME        NULL,
+id_batch       VARCHAR(32)     NULL,
 id_legal       VARCHAR(16)     NULL,
 id_sector      VARCHAR(16)     NULL,
 id_status      VARCHAR(30)     NULL,
@@ -228,6 +229,7 @@ dt_pwd_expires DATETIME	    NULL,  /* New for v2.1 */
 dt_modified    DATETIME     NULL,  /* Fecha de Modificación del registro */
 gu_writer      CHAR(32)     NULL,  /* GUID del usuario propietario del registro */
 gu_company     CHAR(32)     NULL,  /* GUID de la compañía a la que pertenece el individuo */
+id_batch       VARCHAR(32)  NULL,  /* Lote de trabajo del cual provenia la carga del registro */
 id_status      VARCHAR(30)  NULL,  /* Estado, activo, cambio de trabajo, etc. */
 id_ref         VARCHAR(50)  NULL,  /* Identificador externo de registro (para interfaz con otras applicaciones) */
 id_fare        VARCHAR(32)  NULL,  /* Tarifa aplicable al contacto */

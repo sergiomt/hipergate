@@ -77,13 +77,14 @@ CREATE TABLE k_users
 
     /* Personal Data */
     dt_birth        DATETIME     NULL, /* Date of Birth */
-    ny_age	    SMALLINT     NULL, /* Age */
+    ny_age	        SMALLINT     NULL, /* Age */
     marital_status  CHAR(1)      NULL, /* Civil Status */
     tx_education    VARCHAR(100) NULL, /* Formation */
 
-    icq_id	    VARCHAR(50)  NULL,
+    icq_id	        VARCHAR(50)  NULL,
     sn_passport	    VARCHAR(16)  NULL,
     tp_passport     CHAR(1)      NULL,
+    mov_phone       VARCHAR(16)  NULL,
 
     tx_comments     VARCHAR(254) NULL,
 
@@ -109,16 +110,16 @@ CREATE TABLE k_user_mail
     incoming_account    CHARACTER VARYING(100) NULL,
     incoming_password   CHARACTER VARYING(50)  NULL,
     incoming_server     CHARACTER VARYING(100) NULL,
-    incoming_spa	SMALLINT DEFAULT 0,
-    incoming_ssl	SMALLINT DEFAULT 0,
-    incoming_port	SMALLINT DEFAULT 110,
+    incoming_spa	    SMALLINT DEFAULT 0,
+    incoming_ssl	    SMALLINT DEFAULT 0,
+    incoming_port	    SMALLINT DEFAULT 110,
     outgoing_protocol   CHARACTER VARYING(6)   DEFAULT 'smtp',
     outgoing_account    CHARACTER VARYING(100) NULL,
     outgoing_password   CHARACTER VARYING(50)  NULL,
     outgoing_server     CHARACTER VARYING(100) NULL,
-    outgoing_spa	SMALLINT DEFAULT 0,
-    outgoing_ssl	SMALLINT DEFAULT 0,
-    outgoing_port	SMALLINT DEFAULT 25,
+    outgoing_spa	    SMALLINT DEFAULT 0,
+    outgoing_ssl	    SMALLINT DEFAULT 0,
+    outgoing_port	    SMALLINT DEFAULT 25,
     
     CONSTRAINT pk_user_mail PRIMARY KEY (gu_account),
     CONSTRAINT u1_user_mail UNIQUE (gu_user,tl_account)
@@ -127,22 +128,15 @@ GO;
 
 CREATE TABLE k_user_pwd
 (
-    gu_pwd              CHAR(32)      NOT NULL,
-    gu_user             CHAR(32)      NOT NULL,
-    tl_pwd              VARCHAR(50)   NOT NULL,
-    tp_pwd              VARCHAR(30)   NOT NULL,
-    dt_created          DATETIME      DEFAULT CURRENT_TIMESTAMP,
-    tx_nickname         VARCHAR(100)  NOT NULL,
-    tx_pwd              VARCHAR(50)   NOT NULL,
-    tx_pwd_sign         VARCHAR(50)   NULL,
-    tx_account          VARCHAR(50)   NULL,
-    tx_expire           VARCHAR(10)   NULL,
-    nu_cvv2             VARCHAR(4)    NULL,
-    url_addr            CHARACTER VARYING(254) NULL,
-    tx_comments         VARCHAR(254)  NULL,
-    tx_prk              VARCHAR(2000) NULL,
-    tx_pbk              VARCHAR(2000) NULL,
-    bin_key             LONGVARBINARY NULL,
+    gu_pwd        CHAR(32)      NOT NULL,
+    gu_user       CHAR(32)      NOT NULL,
+    tl_pwd        VARCHAR(50)   NOT NULL,
+    id_enc_method VARCHAR(30)   DEFAULT 'RC4',
+    id_pwd        CHARACTER VARYING(12) NULL,
+    dt_created    DATETIME      DEFAULT CURRENT_TIMESTAMP,
+    dt_modified   DATETIME      NULL,
+    tx_comments   VARCHAR(254)  NULL,
+    tx_lines      CHARACTER VARYING(4000) NULL,
     
     CONSTRAINT pk_user_pwd PRIMARY KEY (gu_pwd)
 )
