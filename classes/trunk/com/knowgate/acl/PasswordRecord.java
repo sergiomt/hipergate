@@ -54,10 +54,12 @@ public class PasswordRecord extends DBPersist {
 
   public PasswordRecord() {
     super(DB.k_user_pwd, "PasswordRecord");
+  	aRecordLines = new ArrayList<PasswordRecordLine>();
   }
   
   public PasswordRecord(String sKey) {
     super (DB.k_user_pwd, "PasswordRecord");
+  	aRecordLines = new ArrayList<PasswordRecordLine>();
   	setKey(sKey);  	
   }
 
@@ -69,27 +71,23 @@ public class PasswordRecord extends DBPersist {
     return aRecordLines;
   }
   
-  public boolean load (JDCConnection oConn, Object[] aPK)
-  	throws SQLException, AccessControlException {
-  	boolean bRetVal = super.load(oConn, aPK);
-  	aRecordLines = new ArrayList<PasswordRecordLine>();
-  	if (bRetVal) {
+  protected void parse() {
   	  if (!isNull("tx_lines")) {
   	    String sLines;
-  	    String[] aLines;
+  	    String[] aLines = null;
   	    final String sEncMethod = getStringNull(DB.id_enc_method,"RC4");
   	    if (sEncMethod.equalsIgnoreCase("RC4")) {
   	      byte[] byLines = Base64Decoder.decodeToBytes(getString(DB.tx_lines));
   	  	  sLines = new String(oCrypto.rc4(byLines));
-  	  	  aLines = sLines.split("\n");
+  	  	  aLines = Gadgets.split(sLines,'\n');
   	    } else if (sEncMethod.equalsIgnoreCase("NONE")) {
-  	      aLines = getString(DB.tx_lines).split("\n");
+  	      aLines = Gadgets.split(getString(DB.tx_lines),'\n');
   	    }
   	  	if (aLines!=null) {
   	  	  if (!aLines[0].startsWith("# Password record"))
   	  	  	throw new AccessControlException("Invalid password or encryption method"); 
   	  	  for (int l=1; l<aLines.length; l++) {
-  	  	    String[] aLine = aLines[l].split("|");
+  	  	    String[] aLine = Gadgets.split(aLines[l],'|');
   	  	    PasswordRecordLine oRecLin = new PasswordRecordLine(aLine[0],aLine[1].charAt(0),aLine[2]);
   	  	    if (aLine[1].charAt(0)==PasswordRecordLine.TYPE_BIN) {
   	  	      oRecLin.setFileName(Gadgets.substrBetween(aLine[3], "/", "/"));
@@ -100,7 +98,15 @@ public class PasswordRecord extends DBPersist {
   	  	    aRecordLines.add(oRecLin);
   	  	  } // next
   	  	} // fi
-  	  } // fi
+  	  } // fi (tx_lines)
+  }
+
+  public boolean load (JDCConnection oConn, Object[] aPK)
+  	throws SQLException, AccessControlException {
+  	boolean bRetVal = super.load(oConn, aPK);
+  	aRecordLines.clear();
+  	if (bRetVal) {
+	  parse();
   	} // fi  	
   	return bRetVal;
   } // load

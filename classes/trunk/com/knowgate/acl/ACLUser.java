@@ -1034,8 +1034,9 @@ public final class ACLUser extends DBPersist {
    * <p>Get User Unique Id. from its nickname.</p>
    * <p>This method executes a SQL query with a ResultSet</p>
    * @param oConn Database Connection
-   * @param sUserEMail User nickname (tx_nickname from k_users table)
-   * @return User Unique Id. or <b>null</b> if no user was found with such e-mail.
+   * @param iDomainId Domain Numeric Id. (id_domain from k_users table)
+   * @param sUserNick User nickname (tx_nickname from k_users table)
+   * @return User Unique Id. or <b>null</b> if no user was found with such e-mail at given domain.
    * @throws SQLException
    */
 
@@ -1055,6 +1056,44 @@ public final class ACLUser extends DBPersist {
       sRetVal = null;
     oRSet.close();
     oStmt.close();
+    return sRetVal;
+  } // getIdFromNick
+
+// ----------------------------------------------------------
+
+  /**
+   * <p>Get User Unique Id. from its nickname.</p>
+   * <p>This method executes a SQL query with a ResultSet</p>
+   * @param oConn Database Connection
+   * @param sUserNick User nickname (tx_nickname from k_users table)
+   * @return User Unique Id. or <b>null</b> if no user was found with such e-mail at any domain.
+   * @throws SQLException If more than one user is found with the same nickname at
+   * different domains.
+   * @since 5.0
+   */
+
+  public static String getIdFromNick(Connection oConn, String sUserNick)
+    throws SQLException {
+    String sRetVal;
+    PreparedStatement oStmt;
+    ResultSet oRSet;
+    boolean bAmbiguousNick = false;
+    
+    oStmt = oConn.prepareStatement("SELECT " + DB.gu_user + " FROM " + DB.k_users + " WHERE " + DB.tx_nickname + "=?", ResultSet.TYPE_FORWARD_ONLY,  ResultSet.CONCUR_READ_ONLY);
+    oStmt.setString(1, sUserNick);
+    oRSet = oStmt.executeQuery();
+    if (oRSet.next()) {
+      sRetVal = oRSet.getString(1);
+      bAmbiguousNick = oRSet.next();
+    }
+    else {
+      sRetVal = null;
+    }
+    oRSet.close();
+    oStmt.close();
+
+    if (bAmbiguousNick) throw new SQLException ("ACLUser.getIdFromNick("+sUserNick+") Ambiguous nickname");
+
     return sRetVal;
   } // getIdFromNick
 

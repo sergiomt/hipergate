@@ -39,6 +39,8 @@ import java.util.ArrayList;
 
 import com.enterprisedt.net.ftp.FTPException;
 import com.knowgate.dfs.FileSystem;
+import com.knowgate.debug.DebugFile;
+import com.knowgate.misc.Gadgets;
 
 /**
  * <p>Password Record Template</p>
@@ -61,9 +63,15 @@ import com.knowgate.dfs.FileSystem;
 public class PasswordRecordTemplate {
 
   private PasswordRecord oMasterRecord;
+  private String sName;
   
   public PasswordRecordTemplate() {
     oMasterRecord = new PasswordRecord();
+    sName = "";
+  }
+
+  public String getName() {
+    return sName;
   }
 
   /**
@@ -77,22 +85,45 @@ public class PasswordRecordTemplate {
     return oNewRec;
   }
 
+  public ArrayList<PasswordRecordLine> lines() {
+    return oMasterRecord.lines();
+  }
+
   /**
    * Parse template from string
    */
-  public void parse(String sText) {
+  public void parse(String sText) throws NullPointerException {
+
+	if (null==sText) throw new NullPointerException("PasswordRecordTemplate.parse() Input text to be parsed is null");
+	
+  	if (DebugFile.trace) {
+  	  if (sText.indexOf('\n')>0)
+  	    DebugFile.writeln("Begin PasswordRecordTemplate.parse("+Gadgets.substrUpTo(sText,0,'\n')+")");
+	  else
+  	    DebugFile.writeln("Begin PasswordRecordTemplate.parse("+sText+")");
+  	  DebugFile.incIdent();
+  	}
+  	
   	String[] aLines = sText.split("\n");
 	int nLines = aLines.length;
-	oMasterRecord.lines().clear();  
-    for (int n=0; n<nLines; n++) {
-	  String sLine = aLines[n].trim();
+	oMasterRecord.lines().clear();      
+    sName = Gadgets.removeChars(aLines[0].trim(),"\r");
+    for (int n=1; n<nLines; n++) {
+	  String sLine = Gadgets.removeChars(aLines[n].trim(),"\r");
 	  if (sLine.length()>0) {
-		String[] aLine = sLine.split("|");
+        if (DebugFile.trace) DebugFile.writeln("Parsing line "+String.valueOf(n)+" "+sLine);
+		String[] aLine = Gadgets.split(sLine,'|');
 		if (aLine.length>1) {
-		  oMasterRecord.lines().add(new PasswordRecordLine(aLine[0],aLine[1].charAt(0),aLine[2]));
+		  lines().add(new PasswordRecordLine(aLine[0],aLine[1].charAt(0),aLine[2]));
 		} // fi		  
       } // fi
     } // next
+
+  	if (DebugFile.trace) {
+  	  DebugFile.decIdent();
+  	  DebugFile.writeln("End PasswordRecordTemplate.parse() " + String.valueOf(oMasterRecord.lines().size()));
+  	}
+
   } // parse
 
   /**
@@ -104,6 +135,11 @@ public class PasswordRecordTemplate {
    */
   public void load(String sFilePath)
   	throws MalformedURLException, FTPException, IOException {
+
+  	if (DebugFile.trace) {
+  	  DebugFile.writeln("Begin PasswordRecordTemplate.load("+sFilePath+")");
+  	  DebugFile.incIdent();
+  	}
 
   	FileSystem oFs = new FileSystem();
 
@@ -121,6 +157,12 @@ public class PasswordRecordTemplate {
 	    parse(sTemplate);
 	  }
 	} // fi
+
+  	if (DebugFile.trace) {
+  	  DebugFile.decIdent();
+  	  DebugFile.writeln("End PasswordRecordTemplate.load()");
+  	}
+
   } // load
 
   /**
