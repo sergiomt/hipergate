@@ -1,0 +1,628 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>hipergate :: Help</title>
+<style type="text/css">
+  
+  h1,h2,h3,h4 { font-family:Arial,Helvetica,sans-serif; }
+  p { color:black;font-family:Arial,Helvetica,sans-serif;font-size:9pt }
+  li { color:black;font-family:Arial,Helvetica,sans-serif;font-size:9pt }
+  
+</style>
+</head>
+
+<body>
+
+<font face="Arial Alternative,Arial,Helvetica,sans-serif" size="4">hipergate v1.2.0</font><br>
+<font face="Arial,Helvetica,sans-serif" size="6"><b>User Manual</b></font>
+
+<p align="right"><a href="javascript:window.history.back()">back</a></p>
+
+<h2 align="left">Table of Contents</h2>
+
+<ol>
+  <li>
+    <p align="left"><a href="#configuration">Configuration</a></li>
+  <li>
+    <p align="left"><a href="#concepts">General Concepts</a></li>
+  <li>
+    <p align="left"><a href="#contacts">Contact Management</a></li>
+  <li>
+    <p align="left"><a href="#projects">Project Management</a></li>
+  <li>
+    <p align="left"><a href="#vdisk">Virtual Disk</a></li>
+  <li>
+    <p align="left"><a href="#cms">Content Production</a></li>
+</ol>
+
+<p align="left">&nbsp;
+
+<hr>
+
+<h1><a name="configuration">Configuration</a></h1>
+
+<h2><a name="configuration_security">Security Administration</a></h2>
+
+<h3>Domains</h3>
+<h4>System Domain and Model Domain</h4>
+<p>When an hiperate database is loaded for the first time, two Domains required for system internal purposes are created: SYSTEM (1024) and MODEL (1025). These
+domains exist only for administrative purposes and must not be used for testing
+nor programming tasks.</p>
+<p>Default database setup also generates three other domains: TEST,
+DEMO y REAL; designed for serving as support for rapid application development
+and testing.</p>
+<p>SYSTEM domain is used for administrating other domains with full permissions.
+Default user and password for SYSTEM is &quot;administrator@hipergate-system.com&quot;
+/ &quot;hipergate&quot;.</p>
+<p>MODEL domain is used as a template for creating new domains. Default user and
+password for MODEL is &quot;administrator@hipergate-model.com&quot;
+/ &quot;model&quot;.</p>
+<p><font face="Wingdings" size="5">F</font>  Changing SYSTEM and MODEL default
+passwords is a MUST if a minimum security is to be granted.</p>
+<p><font face="Wingdings" size="5">F</font>  Data on MODEL domain MUST NOT be
+modified in any way. In MODEL is modified the cloning process may fail making
+impossible the creation of new domains and workareas.</p>
+
+<h4>Users and Groups owners of a Domain</h4>
+
+<p>Each domain has a single Owner User and Administrators Group with full
+control over that domain. These User and group are generated automatically upon
+domain creation. It is not allowed to delete a domain owner nor the
+administrators group (althought it is possible to change their configuration)
+because if owner is deleted the domain will become impossible to administrate
+from the application front-end.</p>
+
+<h4>How to create domains</h4>
+<p>hipergate domains can only be created logged to the SYSTEM domain.</p>
+<p>Once connected go to Configuration tab and select domains radio button. This
+radio only appears on SYSTEM Domain.</p>
+<p>Each domain has a fixed unique integer identifier that is automatically
+assigned when it is created, and a name that can be changed at any moment. New
+domains start on 2048. All domains identifiers from 0 to 2048 are reserved for
+internal purposes and must not be used.</p>
+<p>When a new domain is created, a default WorkArea is automatically generated
+with name &quot;<i>domainname</i>_default&quot;. This WorkArea contains a copy
+of default lookup values from model_default WorkArea.</p>
+
+<p>After creating the new domain disconnect from SYSTEM and re-connect to your new domain.<br>
+If your new domain name is, for example, <i>ENTERPRISE</i> then its administrator's default login will be:
+user: <i>administrator@hipergate-enterprise.com</i> password: <i>ENTERPRISE</i>.
+You can change this later by editing user properties from the Configuration tab.</p>
+
+<h3><a name="configuration_workareas">WorkAreas</a></h3>
+<p>Each domain can have one or more WorkAreas. By default domains TEST, DEMO and
+REAL are pre-loaded with a WorkArea.</p>
+
+
+<h4>How to create WorkAreas</h4>
+<p>Connect to any domain except SYSTEM or MODEL (it is not permitted to created
+WorkAreas on SYSTEM and MODEL for integrity reasons). Go to Configuration tab
+and select WorkAreas radio button. A form for WorkArea creation will appear.
+Choose a unique name for WorkArea. WorkArea names may not be repeated across
+different domains. A good policy is to name the WorkArea using the domain name
+as prefix, for example &quot;test_workarea1&quot;. Only ASCII-7 characters are
+allowed for WorkArea names.</p>
+
+<h4>How to assign Users to WorkAreas</h4>
+<p>Connect as Administrator of the Domain. Go to Configuration tab. Select Users
+radio button. Edit user witch default WorkArea is to be changed. Change WorkArea
+at the combo box.</p>
+<p><font face="Wingdings" size="5">F</font>   Users can only be assigned to
+WorkAreas that belong to the same domain and they do.</p>
+<h4>How to activate and deactivate modules</h4>
+<p>hiperate modules are independent and can be used stand alone. For activating
+or deactivating a module, connect as Domain Administrator. Go to Configuration
+tab. Select WorkAreas radio button. Select desired WorkArea. A list with all
+installed applications will appear. For each application decide whether it
+should be visible at main menu or not and witch User Groups must have one of the
+four roles for the WorkArea.</p>
+<h3><a name="configuration_roles">Roles</a></h3>
+<p>A WorkArea always have 4 fixed roles: Administrators, Power Users, Users and
+Guests. For each Role and WorkArea there is a single User Group with that role.</p>
+<h4>How to assign Roles to User Groups</h4>
+<p>Connect as administrator of domain. Go to Configuration tab. Select WorkAreas
+radio button. Choose a WorkArea. A list of installed applications will appear.
+Assign roles for each active application using its combo boxes.</p>
+<h4>The Administrador role</h4>
+<p>Administrators of a WorkArea have special privileges that may vary from one
+application to another. Administrators are the only users that can:</p>
+<ul>
+  <li>Add or remove lookup values.</li>
+  <li>Add or remove user defined fields..&nbsp;</li>
+</ul>
+<h4>The Guest Role</h4>
+<p>Guests can only perform read operations, being disabled for them all
+modifications at the database.&nbsp;</p>
+<h3><a name="configuration_users">Users</a></h3>
+<p>It is possible to create an unlimited number of users per domain. Each user
+is associated to a WorkArea. Usually a user only sees information from a single
+WorkArea. The normal login process sends the user to a particular WorkArea, although
+it is possible to write other login protocols that make data from different WorkaAreas visible to a user.</p>
+<h4>User Home Category</h4>
+<p>Each user has a home <a href="#category">Category</a>
+home that contains his personal files and other objects.</p>
+<h3><a name="configuration_groups">Groups</a></h3>
+<p>It is possible to create an unlimited number of user groups per domain. A
+user obtain his permission as the sum of all permission of the groups to witch
+he belongs. There are no &quot;deny&quot; permissions. Once a user is granted a
+permission through a group there cannot be revoked by another directive.</p>
+<hr>
+
+<h1><a name="concepts">General Concepts</a></h1>
+<h2>Data Isolation for Domains and WorkAreas</h2>
+<p>hipergate is a multi-entity application suitable for working in ASP
+(Application Service Provider) mode for multiple customer groups at a time.
+Information is stored in a way that allows to use the same database for several
+independent customers that are not aware of each other.</p>
+<p>Broadly speaking, Domains represent enterprises whilst WorkAreas represent
+departments inside enterprises.</p>
+<h2>Lookup values</h2>
+<p>hipergate uses a standard system for selection look up values on all screens.
+For each base table hipergate have another table with all look up values.&nbsp;</p>
+<p>Each look up value have an internal value (or code) and a translated label
+for each supported language.</p>
+<p>Look up values may only be of character type. It is possible to set numeric
+or date values but they will be internally stored as character arrays.</p>
+<h2>Queries</h2>
+<p>Queries are another common functionality for all modules. They are reachable
+from the top right menu. Available queries depend on what applications are
+active. Queries are a simple method for retrieving information from the
+database.</p>
+<p>For the sake of simplicity queries may only retrieve information from a
+single table or view at a time. The user interface allows only 3 search criteria
+per query.</p>
+<p>At standard product setup there are complex database views that allow to
+retrieve most common information with one of the predefined queries.</p>
+<hr>
+<h1><a name="contacts">Contact Management</a></h1>
+
+<p>hipergate provides a complete system for contact management, including
+companies, individuals and sales opportunities.</p>
+
+<h2>Companies</h2>
+
+<p>Companies can represent customers, suppliers, competitors, partners, etc.</p>
+
+<p>Each company have a set of Addresses and Contacts. Contacts can also have
+their own contact addresses. When filling the database take into account whether
+to associate an address to a company or to a contact.</p>
+
+<p><font face="Wingdings" size="5">F</font>   It is a good practice to use only
+uppercase letters with no punctuation symbols for Company and Contact names. The
+default search is case sensitive.</p>
+
+<h4>How to add addresses</h4>
+<p>Addresses cannot be added to a company until it has been saved for the first
+time. Once saved, addresses may be added from the top left icon or from company by clicking the right mouse button on the company name.</p>
+
+<h4>How to add bank accounts</h4>
+<p>Bank accounts cannot be added to a company until it has been saved for the
+first time.&nbsp; Once saved, bank accounts may be added from the wallet icon at
+the top of the edition form.</p>
+<h4>How to duplicate companies</h4>
+<p>Click right mouse button at company listing over the company name. On the
+context menu select clone. When a company is duplicated its addresses are also
+duplicated but not its contacts nor bank accounts.</p>
+<h4>How to categorize companies</h4>
+<p>If Directory application is activated, it is possible to add companies to
+categories. Using also address per company, this feature can be used for
+creating hierarchical directories of companies.</p>
+
+<h4>How to classify companies from the products they buy</h4>
+
+<p>If Virtual Shop module is activated, list box will appear at Company edition
+form.</p>
+
+<h2>Individual Contacts</h2>
+<p>Individual Contacts can be created company employees or as standalone
+entities. A contact can have its own addresses or inherit those from its
+company.</p>
+<h4>How to write notes and attach files for a contact</h4>
+<p>Click right mouse button over contact name at contact listing page.</p>
+<h4>How to duplicate individuals</h4>
+<p>At contact listing click right mouse button over contact name. Select clone
+option. When a contact is duplicated its addresses are also duplicated but not
+its bank accounts.</p>
+<h4>How to see contact subscriptions to all distribution lists</h4>
+<p>From Contact Edition form select the Subscriptions link. A page with all lists
+and status of user per list will be shown. A contact can only be subscribed or
+unsubscribed from static or direct lists, not from dynamic lists that will be
+grayed.</p>
+<h2>Opportunities</h2>
+
+<h4>How to create opportunities</h4>
+<p>Opportunities cannot be created independently, they must be associated with a
+contact or company. For creating an oportunity go to contact list, click right
+mouse button over the contact name, select Create Opportunity from context menu.</p>
+
+<h4>Public and Private Opportunities</h4>
+
+<p>Opportunities can be visible to all users of a workarea (public) or restricted
+to the user that created them (private).</p>
+
+<h2>Distribution Lists</h2>
+
+<p>Distribution Lists are sets of Contacts or Companies grouped for
+communication purposes (typically e-mailing, fax or mail).</p>
+
+<p>A distribution list can be of one of three different types:</p>
+
+<ol>
+  <li><b>Dynamic Lists</b></li>
+  <li><b>Static Lists</b></li>
+  <li><b>Direct lists</b></li>
+</ol>
+<h4>Dynamic Lists</h4>
+<p>Dynamic lists are based on queries from the Individual Contacts table.
+Members of a dynamic list are extracted from contacts table on the fly each type
+the query is used. Thus members of a dynamic list vary over time as the contacts
+table changes and evolves. It is not possible to add or remove members from al
+dynamic lists, although it is possible to add them to an associated black list
+as we shall see later.</p>
+<p>Dynamic lists are useful when performing recurrent communications and it is
+not necessary to keep a record of communicates sent in the past.</p>
+<h4>Static Lists</h4>
+<p>As dynamic lists, static lists are based on predefined queries. The
+difference is that members of a static list are set once and then never change
+over time even if the contacts or companies table change.</p>
+<p>Of all data from a Contact or Company, only its Full Name, e-mail and
+Salutation are stored separately on the static list. Other information -such as
+postal address- is retrieved at runtime each time the query is used.&nbsp;</p>
+<p>Static lists are useful when it is necessary to keep a historic record of
+all recipients contacted in a particular communication.</p>
+<h4>Direct Lists</h4>
+<p>Direct Lists are created by loading data directly from a text file. Whilst
+members of dynamic or static lists are always contacts or companies managed by
+the application, members of direct lists are external e-mail addresses injected directly into the list.</p>
+<p>The only possible information for direct lists is Full Name, e-mail and
+Salutation. Direct lists, thus are not suitable for postal or fax
+communications.</p>
+<h4>Black Lists</h4>
+<p>Each dynamic, static or black list have always an associated black list.
+Black list contains blocked users that must not receive any e-mails. Black lists
+are never edited directly because their are always associated to a dynamic,
+static or direct list.</p>
+<h4>How to create a dynamic or static list</h4>
+<ol>
+  <li>Go to Contact Management&nbsp;<font face="Wingdings">&agrave;</font>&nbsp;Lists.</li>
+  <li>Click <u>New</u> link. The List Creation Wizard will appear.</li>
+  <li>Choose list type -Static or Dynamic-</li>
+  <li>Go to next screen and choose a base query for the list or create a new
+    base query first and then use it.</li>
+  <li>On next page, set sender e-mail address, return e-mail address and display
+    name.</li>
+  <li>Set subject and description.</li>
+</ol>
+<h4>How to create a direct list</h4>
+<p>Direct list are created by loading delimited text files. The loaded file must
+have an e-mail column that will be used as member primary key. The file can have
+up to other 3 columns with name, surname and salutation in any order. Fields
+must be delimited by commas with one register per line.</p>
+<p>For creating a new direct list:</p>
+<ol>
+  <li>Go to Contact Management&nbsp;<font face="Wingdings">&agrave;</font>&nbsp;Lists.</li>
+  <li>Click <u>New</u> link. The List Creation Wizard will appear.</li>
+  <li>Choose Direct List Type</li>
+  <li>Go to next screen and set delimiter and column order at the text file.</li>
+  <li>On next page, set sender e-mail address, return e-mail address and display
+    name.</li>
+  <li>Set subject and description</li>
+</ol>
+<h4>Possible status of a member at a list</h4>
+<p>A member may be in one of three status:</p>
+<ol>
+  <li><b>Active</b>. Member is present at list and may receive e-mails.</li>
+  <li><b>Unactive</b>. Member is present at list but for some reason has been
+    deactivated (for example its e-mail address returned persistent errors)</li>
+  <li><b>Blocked</b>. Member is present at list and his e-mail is valid but he
+    has requested not to receive any communications.</li>
+</ol>
+<p>When performing an e-mail sending the application automatically excludes inactive
+and blocked members from processing.</p>
+<hr>
+
+<h1><a name="projects">Project Management</a></h1>
+
+<h2>Projects</h2>
+
+<p>Project is the the base entity for managing tasks and incidences on
+hipergate. Projects can exist standalone or be linked to a Company or
+Individual. A project can represent the classic notion of a set of tasks to be
+performed but also can be other things like a support contract.&nbsp;</p>
+
+<h4>Project List vs. Tree&nbsp;</h4>
+
+<p>Projects may be browsed with a conventional list or with a Project Tree. As
+the projects have a hierarchical structure it is usually useful to browse them
+with an interface that reflects it.</p>
+
+<h4>How to create a project</h4>
+
+<p>Go to Projects tab and click on <u>New</u> link. The project creation form
+will appear. On the left there is an hierarchical list of all available
+projects. On the right there is the basic data of the project to be created. A
+parent project must be selected on the left, then assign a name to the new
+project and click Save. If no parent project is specified a root project will be
+created.</p>
+
+<h4>How to change a project's parent</h4>
+
+<ol>
+  <li>Go to Project Management&nbsp;<font face="Wingdings">&agrave;</font>&nbsp;Projects.</li>
+  <li>Click on the <u>Tree</u> link.</li>
+  <li>A Tree with all projects and subprojects for current WorkArea will appear.</li>
+  <li>Select desired project on tree.</li>
+  <li>A new combo box will appear on the right. Select desired new parent and
+    Save.</li>
+</ol>
+
+<h4>How to assign a project to a client</h4>
+<p>If the Sales module is activated, the proper lookups will be shown at the
+Project Creation form.</p>
+
+<h2>Duties</h2>
+
+<p>Duties are always associated to a project or subproject.</p>
+
+<h4>How to set costs for a project</h4>
+
+<p>Create a new Duty for the Project. Assign a cost to the Duty. Project cost is
+the sum of all costs from its duties.</p>
+
+<h4>How to set resource for a project</h4>
+
+<p>Resources must be assigned to duties and not to projects directly.</p>
+
+<p>Project Resources are not related in any way to application users or
+contacts.</p>
+
+<h2>Incidences</h2>
+
+<p>Incidences, as duties, must be associated to a project. This way is possible
+to link indirectly an incidence to a client by assigning the incidence to a
+project and the project to a company or contact.</p>
+
+<hr>
+
+<h1><a name="vdisk"> Virtual</a> Disk</h1>
+
+<h3>Directory</h3>
+
+<p>Categories are the equivalent at the virtual disk to standard operating system
+directories. The difference is that hipergate categories are generic containers
+that can contain objects other than files. Another differential aspect of
+categories is that they have translation labels for different languages. Each
+category can show a different name depending on the selected language. This
+feature allows the creation of multi-lingual hierarchical directories.</p>
+
+<p>From the virtual disk, categories contain to object types: documents and
+links.</p>
+
+<h4>How to browse categories</h4>
+
+<p>You can browse categories either using the left tree menu or clicking on the
+links shown in the right part of the page. Both kinds of navigation are
+equivalent, but left menu is not automatically updated when using the right
+navigation.</p>
+
+<p>The categories tree can be huge. It has a root node where all child
+categories from all WorkAreas are placed. By default, each user can see only his
+personal categories and the shared hives for his domain and WorkArea.</p>
+
+<h4>How to see all categories</h4>
+
+<p>Login as administrator in the SYSTEM domain and open Virtual Disk. hipergate
+recognizes the SYSTEM domain as a special domain and shows all available
+categories from all domain. The SYSTEM domain also shows the internal names for
+each category instead of the translated labels as other domains do.</p>
+
+<h4>How to create a new category</h4>
+
+<ol>
+  <li>Open Virtual Disk and choose a parent folder in the left tree menu.</li>
+  <li>Click on the selected category and choose New.</li>
+  <li>Alternatively, you can choose the parent category using the right
+    navigation.</li>
+  <li>You will see a form where you can place the translation labels for this
+    domain</li>
+  <li>Click on the plus symbol and select the language for the label you are
+    creating.&nbsp;</li>
+</ol>
+<p><font face="Wingdings" size="5">F</font>    When you assign a label to a
+category, be careful to add at least your current language in the browser you
+are using. You can have visualization problems if you don't do so.&nbsp;</p>
+<h4>How to remove a category</h4>
+
+<p>Categories are deleted with the link over the left tree menu. When you delete
+a category all child objects are also removed.</p>
+
+<h4>Finding files and links</h4>
+
+<p>You can search files and link using the text box placed in the upper right
+part of the Virtual Disk module. The search will return matching file names
+and/or descriptions, and is case-sensitive.</p>
+
+<h3>Document version tracking</h3>
+
+
+
+<p>Each document keeps an history of its changes. In fact, documents are
+versioned internally even if no version number is selected. Each version is
+identified by a label placed when you upload the file. In the list of files of a
+category you will see only the latest version for each document.</p>
+
+
+
+<hr>
+
+<h1><a name="cms">Content Production</a></h1>
+
+<h2>Template based documents</h2>
+
+<p>Managed documents can be of two kinds: single-page (Newsletters and some
+other documents) or multi-page (Websites).</p>
+
+<p>hipergate comes with a set of predefined XSL templates to create documents.
+You cannot add new templates from the web interface, but you can easily create a
+template from an HTML document and ask your system administrator to install it.</p>
+
+<h2>How to create a new document</h2>
+
+<p>When you enter in the content production module you will have de opportunity
+to create a new Newsletter or Website.</p>
+
+<p>Click on one of the two available options. In the first screen you must
+choose a document template to use, the language for the contents and optionally
+add some comments about the document you are creating.&nbsp;&nbsp;</p>
+
+<p>In the next step you will have the chance to upload images to the web server
+to be added to the template. When you have finished adding files to the list of
+files to upload, click Finish.</p>
+
+<p>The window will close and you will be redirected to the documents listing.
+You will see the document you have just created, and from this window you will
+be able to edit, delete or schedule a mailing (Newsletters)</p>
+
+<h2>Modifying a document&nbsp;</h2>
+
+<h3>Modifying a Newsletter</h3>
+
+<p>To edit a document, click with the right button over the selected document
+and choose Edit. A new window will open with the document and a floating control
+panel with the following options:</p>
+
+<ul>
+  <li>Add a new information block</li>
+  <li>Remove an existing block</li>
+  <li>Change the style (color, font)</li>
+  <li>Edit a block</li>
+</ul>
+<h4>Add a new block</h4>
+<p>Click on the New option in the Control Panel. A new window will open asking
+you which kind of block you want to edit. Once added you can modify it.</p>
+<h4>Remove an existing block</h4>
+<p>Click on the check boxes of the blocks you wish to remove and click on the
+Remove option.</p>
+<h4>Change the style</h4>
+<p>The Style option in the Control Panel allows you to modify the colors (CSS)
+and fonts of the document you are editing.</p>
+<h4>Edit a block</h4>
+<p>When you edit an existing block, a new window will open with the following
+items:</p>
+<ul>
+  <li><b>Button Bar:</b> with the options: Save (stores the modifications),
+    Restore (recovers stored data and keeps the window open ), and Close (closes
+    the current window losing changes).</li>
+  <li><b>Text edition zone:</b> There is a text box for each content zone in the
+    current editing block. In each text you can edit the contents, remove the
+    text, surround the current text with a Link and add variable text data with
+    the lower right combo box (this last option is only suitable in Newsletters)</li>
+  <li><b>Image edition zone:</b>  You can use an existing image in the Image
+    Management module, see the current selected image, remove the image, add the
+    width and height for this image y surround the image with a link. If you
+    leave the height and width empty the application will get them from the
+    selected image and modify them.&nbsp;</li>
+</ul>
+<p><font face="Wingdings" size="5">F</font>&nbsp; In most scenarios, you will
+edit a block, change the texts and click on the Save button. The window will
+close automaticaly and the document will be regenerated to reflect your changes.</p>
+<h4>Inserting variable (personalized) data</h4>
+<p>You can add personalized data on any text field in a newsletter. This
+information is retrieved from the database and replaced when a message is sent.
+This table shows the possible fields and its values:</p>
+<table border="1" width="100%" cellspacing="0">
+  <tr>
+    <td width="20%"><b><font face="Arial" size="2">Variable Field</font></b></td>
+    <td width="46%"><b><font face="Arial" size="2">Description</font></b></td>
+    <td width="34%"><b><font face="Arial" size="2">Effect</font></b></td>
+  </tr>
+  <tr>
+    <td width="20%"><font face="Arial" size="2">Name</font></td>
+    <td width="46%"><font face="Arial" size="2">Name of the person the
+      newsletter is sent to</font></td>
+    <td width="34%"><font face="Arial" size="2">When the message is sent, the
+      tag {#Data.Name} will be replaced with the corresponding value.</font></td>
+  </tr>
+  <tr>
+    <td width="20%"><font face="Arial" size="2">Surname</font></td>
+    <td width="46%"><font face="Arial" size="2">Surname of the person the
+      newsletter is sent to</font></td>
+    <td width="34%"><font face="Arial" size="2">When the message is sent, the
+      tag {#Data.Surname} will be replaced with the corresponding value.</font></td>
+  </tr>
+  <tr>
+    <td width="20%"><font face="Arial" size="2">Email Address</font></td>
+    <td width="46%"><font face="Arial" size="2">Email address of the person the
+      newsletter is sent to</font></td>
+    <td width="34%"><font face="Arial" size="2">When the message is sent, the
+      tag {#Data.Email} will be replaced with the corresponding value.</font></td>
+  </tr>
+  <tr>
+    <td width="20%"><font face="Arial" size="2">Date</font></td>
+    <td width="46%"><font face="Arial" size="2">Current Date</font></td>
+    <td width="34%"><font face="Arial" size="2">When the message is sent, the
+      tag {#Data.Date} will be replaced with the corresponding value.</font></td>
+  </tr>
+  <tr>
+    <td width="20%"><font face="Arial" size="2">Time</font></td>
+    <td width="46%"><font face="Arial" size="2">Current Time</font></td>
+    <td width="34%"><font face="Arial" size="2">When the message is sent, the
+      tag {#Data.Time} will be replaced with the corresponding value.</font></td>
+  </tr>
+</table>
+<p><font face="Wingdings" size="5">F</font><font face="Arial" size="2"> Although
+you can add variable fields in both Newsletters and Websites, this feature only
+makes sense in Newsletters you want to sent to a distribution list.</font></p>
+<h3>Modifying a Website</h3>
+<p>Among the tasks available in the Newsletter editor, you can perform the
+following actions when editing a Website:</p>
+<h4>Add a new page</h4>
+<p>To add a new page to a website, click on the New Page option in the top menu
+of the edition page. A new window will open asking you for the name of the
+page/tab you want to add, and choose the kind of content you will use in this
+page.</p>
+<h4>Remove an existing page</h4>
+<p>Click on the Remove Page link to delete a page from your Website.</p>
+<h4>Choose a page to edit</h4>
+<p>To modify a page on the Website, select its name from the combo box and click
+on the Edit Page link.</p>
+<h4>Shared Resources</h4>
+<p>Websites can include a Shared Resources page. Elements contained in this page
+can be used from any page in your Website. You can add or remove shared
+resources by selecting the appropriated page in the combo box and clicking on
+the Edit Page link.</p>
+<p><font face="Wingdings" size="5">F</font> The Shared Resources page is not
+visible when you publish your website. Instead, it is used to create common
+elements to all pages, for example a menu that should be included somewhere in
+all pages. To edit this menu, choose the appropriate item from the Edition Menu
+and open the editor. You can add or remove items from the menu and edit the
+links for each option.</p>
+<h2>Schedule an e-mailing</h2>
+<p>Clicking with the right button over any Newsletter in the main list will show
+the Schedule option. A new window will appear with the following steps to send
+the Newsletter to a distribution list:</p>
+<ol>
+  <li>Choose the distribution list to send the email.</li>
+  <li>
+    <p align="left">Confirm the Newsletter and recipients list. You can add a
+    description for this scheduled job and choose when you want to start sending
+    messages (as soon as possible or at a certain date/time). You can also
+    select if you want to attach the images inside the message or leave them as
+    absolute links.</li>
+</ol>
+<p align="left"><font face="Wingdings" size="5">F</font> When you finish, the
+Newsletter will be regenerated and queued as a scheduled job. You can see the
+resulting Newsletter opening it in the Scheduled Jobs window or in the
+Newsletter List window.</p>
+
+<hr>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

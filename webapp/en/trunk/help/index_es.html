@@ -1,0 +1,923 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="es">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>hipergate :: Ayuda</title>
+<style type="text/css">
+  h1,h2,h3,h4 { font-family:Arial,Helvetica,sans-serif; }
+  p { color:black;font-family:Arial,Helvetica,sans-serif;font-size:9pt }
+  li { color:black;font-family:Arial,Helvetica,sans-serif;font-size:9pt }
+</style>
+</head>
+
+<body>
+
+<font face="Arial Alternative,Arial,Helvetica,sans-serif" size="4">hipergate v4.0</font><br>
+<font face="Arial,Helvetica,sans-serif" size="6"><b>Manual de Usuario</b></font>
+
+<p align="right"><a href="javascript:window.history.back()">volver</a></p>
+
+<h2 align="left">Índice</h2>
+
+<ol>
+  <li>
+    <p align="left"><a href="#configuration">Configuración</a></li>
+  <li>
+    <p align="left"><a href="#concepts">Conceptos Generales</a></li>
+  <li>
+    <p align="left"><a href="#cycle">Ciclo Comercial y de Postventa</a></li>
+  <li>
+    <p align="left"><a href="#contacts">Gestión de Contactos</a></li>
+  <li>
+    <p align="left"><a href="#projects">Gestión de Proyectos</a></li>
+  <li>
+    <p align="left"><a href="#vdisk">Disco Virtual</a></li>
+  <li>
+    <p align="left"><a href="#cms">Producción de Contenidos</a></li>
+</ol>
+
+<p align="left">&nbsp;
+
+<hr>
+
+<h1><a name="configuration">Configuración</a></h1>
+
+<h2><a name="configuration_security">Administración de Seguridad</a></h2>
+
+<h3>Dominios</h3>
+<h4>Dominio del Sistema y Dominio Modelo</h4>
+<p>Cuando se carga por primera vez la base de datos de hipergate, se crean dos
+Dominios imprescindibles para el funcionamiento de la suite: el Dominio SYSTEM
+(1024) y el Dominio MODEL (1025) . Estos dominios existen sólo con fines
+administrativos y no deben utilizarse para pruebas ni tareas de programación.</p>
+<p>El proceso de creación por defecto generar, además, otros 3 dominios: TEST,
+DEMO y REAL; diseñados para servir de soporte rápido al desarrollo, pruebas de
+aceptación y explotación en real de la suite.</p>
+<p>El Dominio SYSTEM sirve para administrar el resto de los dominios con
+permisos totales. El usuario y clave por defecto para acceder a SYSTEM es &quot;administrator@hipergate-system.com&quot;
+/ &quot;hipergate&quot;.</p>
+<p>El Dominio MODEL sirve como base para realizar copiar clónicas y generar
+nuevos dominios. El usuario y clave por defecto para acceder a MODEL es &quot;administrator@hipergate-model.com&quot;
+/ &quot;model&quot;.</p>
+<p>&bull; Es imprescindible cambiar las claves
+de acceso por defecto a SYSTEM y MODEL para garantizar un mínimo de seguridad.</p>
+<p>&bull; No deben modificarse los datos
+maestros del dominio MODEL, si se hace incorrectamente puede provocarse un fallo
+en el proceso de clonado y la generación de nuevos Dominios y Áreas de Trabajo
+dejará de funcionar.</p>
+
+<h4>Usuario y Grupo propietarios del Dominio</h4>
+
+<p>Cada Dominio tiene un único Usuario Propietario y Grupo de Administradores
+plenipotenciarios para ese Dominio. Este Usuario y Grupo se generan
+automáticamente al crear el dominio. La aplicación no permite borrar el
+Propietario del dominio ni el Grupo de Administradores (aunque si cambiar su
+configuración) por el Dominio quedaría en un estado imposible de administrar
+desde el front-end HTML.</p>
+
+<h4>Cómo crear Dominios</h4>
+<p>Los Dominios se hipergate sólo pueden crearse conectándose al Dominio
+SYSTEM.</p>
+<p>Una vez conectado, hay que entrar en la pestaña de Configuración y
+seleccionar la radio button de Dominios. Esta radio button sólo aparece en el
+Dominio SYSTEM.</p>
+<p>Cada Dominio tiene un identificador numérico único que se asigna
+automáticamente y un nombre que puede cambiarse en cualquier momento. Los
+dominios nuevos empiezan a numerarse a partir del 2048. Todos los dominio de 0 a
+2048 están reservados para uso interno de hipergate y no deben asignarse a
+aplicaciones de usuario.</p>
+<p>Cuando se crea un Dominio nuevo, se genera automáticamente un Área de
+Trabajo llamada &quot;<i>nombredominio</i>_default&quot;. Esta Área de Trabajo
+contiene una copia de los valores de remonte por defecto del Área de trabajo
+model_default.
+Parauna explicación detallada del proceso de clonación&nbsp; de dominios y
+Área de Trabajo véase el método createDomain() de la clase
+com.knowgate.hipergate.datamodel.ModelManager de la referencia del API JavaDoc.</p>
+<h3><a name="configuration_workareas">Áreas de Trabajo</a></h3>
+<p>Cada Dominio puede tener una o más Áreas de Trabajo. Por defecto, los
+dominios TEST, DEMO y REAL vienen pre-cargados con un Área de Trabajo. Estas
+Áreas de Trabajo predefinidas contienen valores en las tablas de remonte para
+que sea más sencillo comenzar con la explotación de la suite.</p>
+<h4>Cómo crear Áreas de Trabajo</h4>
+<p>Conectarse a cualquier dominio excepto SYSTEM y MODEL&nbsp; (no está
+permitido crear Áreas de Trabajo en los Dominios del sistema por motivos de
+salvaguarda de integridad). Entrar en la pestaña de Configuración y
+seleccionar la radio button de Áreas de Trabajo. Aparecerá la pantalla de
+creación de Áreas de Trabajo. Elegir un nombre único para el Área de
+Trabajo. Los nombres de las Áreas de Trabajo deben ser globalmente únicos para
+toda la base de datos, aunque dos las Áreas de Trabajo pertenezcan a diferentes
+dominios, no pueden tener el mismo nombre. Por este motivo, se recomienda usar
+como nombre para el Área el nombre del dominio en minúsculas seguido por un
+guión bajo y el nombre del Área de Trabajo -por ejemplo test_miarea- Sólo se
+permiten caracteres ASCII-7 en los nombres de las Áreas.</p>
+<h4>Cómo asignar usuarios a Áreas de Trabajo</h4>
+<p>Conectado como administrador del dominio al que pertenezca el usuario, ir a
+la pestaña de Configuración, seleccionar el radio button de Usuarios, editar
+el usuario cuya Área de Trabajo por defecto se desee cambiar. Cambiar el Área
+de Trabajo en la combobox donde aparece la lista de Áreas de Trabajo
+disponibles.</p>
+<p>&bull;  Sólo se pueden asignar Áreas de
+Trabajo que pertenezcan al mismo dominio que el usuario.</p>
+<h4>Cómo activar y desactivar módulos</h4>
+<p>Los módulos de hipergate son independientes y pueden utilizarse por separado
+haciendo desaparecer los módulos innecesarios del menú principal. Para activar
+o desactivar un módulo, conectarse como administrador al dominio deseado. Entrar en la pestaña de Configuración y
+seleccionar la radio button de Áreas de Trabajo. Elegir el Área de Trabajo
+deseada. Aparecerá la lista de aplicaciones instaladas. Para cada aplicación
+seleccionar en su checkbox si estará visible en el menú o no.&nbsp;</p>
+<h3><a name="configuration_roles">Roles</a></h3>
+<p>Un Área de Trabajo siempre dispone de 4 roles de acceso: Administradores,
+Usuarios Avanzados, Usuarios e Invitados. Para cada Rol y Área de Trabajo
+existe un único Grupo de Usuarios que tienen dicho rol.</p>
+<h4>Cómo asignar Roles a las Áreas de Trabajo</h4>
+<p>Conectarse como administrador al dominio deseado. Entrar en la pestaña de Configuración y
+seleccionar la radio button de Áreas de Trabajo. Elegir el Área de Trabajo
+deseada. Aparecerá la lista de aplicaciones instaladas. Para cada aplicación
+seleccionar en su checkbox si estará visible en el menú o no. Para cada
+aplicación activa asignar un grupo de permisos del dominio a cada rol.</p>
+<h4>El rol de Administrador</h4>
+<p>Los administradores de un Área de Trabajo poseen privilegios especiales que
+pueden variar de una aplicación a otra. En particular, y para todas las
+aplicaciones estándar, los administradores son los únicos que pueden:</p>
+<ul>
+  <li>Añadir o eliminar valores de remonte.</li>
+  <li>Añadir o eliminar campos definidos por el usuario.&nbsp;</li>
+</ul>
+<h4>El rol de Invitado de sólo lectura</h4>
+<p>El Grupo de Usuarios designado como invitados en una aplicación sólo puede
+efectuar operaciones de lectura, estando deshabilitadas todas las modificaciones
+en la base de datos.</p>
+<h3><a name="configuration_users">Usuarios</a></h3>
+<p>Para cada dominio puede definirse una cantidad arbitraria de usuarios. Cada
+usuario está asociado a un Área de Trabajo determinada. Normalmente un usuario
+sólo ve la información de su Área de Trabajo. El proceso de login estándar
+coloca a cada usuario automáticamente en su área de trabajo predeterminada,
+pero es posible escribir otros protocolos de conexión que permitan los usuarios
+conectarse a cualquier Área de Trabajo arbitrariamente.</p>
+<h4>Categoría home del usuario</h4>
+<p>Para cada nuevo usuario se genera automáticamente una <a href="#category">Categoría</a>
+home destinada a almacenar los objetos propietarios del usuario.</p>
+
+<h4>Empleado asociado al usuario</h4>
+<p>Como parte del proceso de creaci&oacute;n de un usuario, es posible crear
+autom&aacute;ticamente un empleado asociado en el m&oacute;dulo de herramientas
+colaborativas.<br/>
+Antes de la versi&oacutye;n 4.0 la creaci&oacute;n de empleados deb&iacute;a
+realizarse separadamente desde el submenu de Directorio en el m&oacute;dulo
+de herramientas colaborativas.
+Aunque no se cree expl&iacute;citamente un empleado, la aplicaci&oacute;n
+generar&aacute; uno autom&aacute;ticamente para cada usuario que intente
+abrir su calendario. Esta generaci&oacute;n se produce din&aacute;micamente
+s&oacute;lo en el momento en el cual el usuario intenta acceder a su calendario.</p>
+
+<h4>Cuentas de WebMail para el usuario</h4>
+<p>Cada usuario puede, opcionalmente, tener asociada una o m&aacute;s cuentas
+de correo en el m&oacute;dulo de WebMail.<br/>
+La primera de estas cuentas de correo puede crearse en el mismo proceso
+en el cual se crea el usuario propietario de la misma.</p>
+<p>Para crear cuentas adicionales de correo, o si no se cre&oacute; una cuenta
+	de correo para el usuario en el momento de la creación de éste último,
+hay que ir a Herramientas Colaborativas &rarr; Correo | Administrar Cuentas</p>
+
+<h3><a name="configuration_groups">Grupos</a></h3>
+<p>Cada dominio puede contener un número indefinido de Grupos de Usuarios. Cada
+usuario obtiene el máximo número de privilegios como resultado de todos los
+grupos a los que pertenezca.</p>
+<hr>
+
+<h1><a name="concepts">Conceptos Generales</a></h1>
+<h2>Separación de datos en Dominios y Áreas de Trabajo</h2>
+<p>hipergate es una suite de aplicaciones multi-entidad. La información se
+almacena de tal amanera que es posible emplear la misma base de datos para
+guardar información de diferentes empresas, o diferentes departamentos dentro
+de la misma empresa sin que los datos colisionen unos con otros.</p>
+<p>A grandes rasgos, los Dominios representan empresas (u otro tipo de
+organizaciones) y las Áreas de Trabajo representan departamentos dentro de las
+empresas.</p>
+<p>En un momento dado, cada usuario está conectado a un Área de Trabajo
+específica y sólo ve la información propia de dicha Área.</p>
+<h2>Valores de remonte</h2>
+<p>La suite utiliza un sistema estándar de selección de valores de remonte
+para todas las pantallas. Para cada tabla base (compañías, contactos,
+proyectos, tareas, etc) la suite maneja internamente una tabla con todos los
+valores de remonte para todos los campos de la tablas base.</p>
+<p>Para cada valor de remonte, se almacena un valor interno y una serie de
+etiquetas traducidas para cada idioma soportado.</p>
+<p>Los remontes sólo pueden ser de tipo carácter. Es posible especificar
+valores numéricos y fechas en los campos de remonte, pero internamente
+hipergate los guardará como cadenas de caracteres.</p>
+<h2>Consultas</h2>
+<p>Las consultas son otra de las funcionalidades comunes a todos los módulos.
+Son accesibles desde una opción del submenú superior derecho. Las consultas
+disponibles varían en función de los módulos de la aplicación que se tengan
+activados. Las consultas son una forma sencilla, aunque limitada, de recuperar
+información de la base de datos.</p>
+<p>Por simplicidad, una consulta sólo puede
+recuperar datos de una tabla o vista simultáneamente, y el interfaz sólo
+admite 3 criterios de filtrado simultáneos.</p>
+<p>&nbsp;En la instalación del producto
+estándar existen vistas complejas sobre las tablas que permiten efectuar las
+consultas más comunes directamente. También es posible crear nuevas
+consultas.&nbsp;</p>
+<hr>
+
+<h1><a name="cycle">El ciclo comercial y de postventa</a></h1>
+
+<h2><a name="cycle_overview">Visión Global</a></h2>
+
+<p>El ciclo completo de gestión de clientes en hipergate se compone de:
+</p>
+  <ol>
+  	<li>Creación de una campaña.</li>
+  	<li>Pre-carga inicial de clientes potenciales.</li>
+  	<li>Creación de listas para segmentar a los clientes.</li>
+  	<li>Alta de oportunidades para las listas de clientes potenciales.</li>
+  	<li>Captación de clientes potenciales</li>
+  	<li>Seguimiento de visitas comerciales</li>
+  	<li>Cierre de ventas</li>
+  	<li>Creación de pedidos</li>
+  	<li>Preparación de proyectos de soporte y postventa</li>
+  </ol>
+
+<h2><a name="campaign_creation">Creación de una campaña</a></h2>
+  <p>El primer paso para empezar a realizar la acción comercial es sistemática
+  es crear una campaña comercial desde la opción de menú de Marketing</p>
+  <p>La campaña es el contendor que agrupa conjuntos de acciones comerciales por temporadas de ventas,
+  fases de proyecto, oleadas de comunicación o cualquier otro método que se emplee para periodificar las ventas.</p>
+  <p>Cada campaña contiene un número variable de objetivos.
+  Un objetivo consisten en vender un determinado producto a un conjunto de clientes durante un intervalo de tiempo</p>
+
+<h2><a name="customer_preloading">Pre-carga de clientes potenciales</a></h2>
+  <p>Los clientes potenciales pueden introducirse manualmente uno a uno o mediante un fichero 
+  	de texto plano delimitado.<br/>
+  	Para cargar un fichero de texto hay que utilizar el enlace <u>Importar Contactos desde Texto</u> 
+  que se encuentra en la página de entrada de la opción de menú de Gestión de Contactos.</p>
+
+<h2><a name="customer_grouping">Creación de listas</a></h2>
+  <p>Para trabajar con grupos de clientes se recomienda crear listas.
+  	Un cliente puede pertenecer a una o varias listas,
+  	y para cada lista es posible realizar acciones como crear una oportunidad o un proyecto tipo 
+    para todos los miembros de la lista.</p>
+
+<h2><a name="lead_generation">Alta de Oportunidades</a></h2>
+  <p>La oportunidad es una entidad que vincula un cliente potencial con un producto o servicio.<br>
+  	Así pues para cada cliente puede haber un número variable de oportunidades,
+  cada una de ellas con su propio estado de madurez.<br>
+  La oportunidad se abre cuando se decide intentar contactar con un cliente para tratar de venderle algo,
+  y se cierra cuando bien se gana la venta bien se pierde definitivamente la opción de que el cliente
+  compre el producto en cuestión.</p>
+
+  <p>Una de las opciones que permiten las listas es la de de crear una oportunidad de venta 
+  para cada miembro de la lista. Las oportunidades se generan de forma masiva (la misma para 
+  todos los miembros de la lista) y luego se realiza su seguimiento de forma indivizualizada.</p>
+
+<h2><a name="lead_conversion">Captación de clientes potenciales</a></h2>
+  <p>La captación es el proceso de contactar con los clientes potenciales
+  	para los que existen oportunidades abiertas con el fin de venderles un producto o servicio.<br>
+  	Este proceso consiste principalmente en enviar e-mails, hacer llamadas telefónicas,
+  	enviar ofertas comerciales y realizar visitas.<br>
+  	El seguimiento de todas estas acciones captación puede hacerse desde hipergate,
+  que permite llevar un registro de e-mails, llamadas, documentos y visitas.</p>
+
+<h2><a name="lead_followup">Seguimiento de Visitas</a></h2>
+  <p>El calendario de hipergate está estrechamente vinculado con el módulo de gestión de clientes
+  y permite llevar un registro de todas las visitas que haya realizado cada comercial a cada cliente.</p>
+  <p>Desde el propio formulario de mantenimiento de oportunidades, el gestor comercial puede
+  concertar una visita, bien para el mismo, bien para otro preventista.</p>
+
+<h2><a name="lead_to_sale">Cierre de Ventas</a></h2>
+  <p>Cuando una oportunidad se asigna como ganada la aplicación ofrece automáticamente
+  la posibilidad de :</p>
+<ul>
+	<li>Enviar un e-mail de notificación</li>
+	<li>Crear un proyecto de post-venta a partir de una plantilla</li>
+	<li>Realizar un pedido</li>	
+</ul>	
+<hr>
+
+<h1><a name="contacts">Gestión de Contactos</a></h1>
+
+<p>hipergate proporciona un completo sistema de gestión de relaciones con
+clientes, incluyendo base de datos de contactos, gestión de oportunidades de
+venta y mantenimiento de listas de distribución.</p>
+
+<h2>Compañías</h2>
+
+<p>Las Compañías pueden representar tanto clientes como competidores.</p>
+
+<p>Cada compañía contiene un conjunto discreto de Direcciones e Individuos de
+Contacto. Los contactos, pueden, a su vez y de forma independiente, tener sus
+propias direcciones, de modo que una de las primeras decisiones a tomar cuando
+se puebla la base de datos es si las direcciones postales irán asociadas a las
+Compañías a los Individuos o a ambos.</p>
+
+<h4>C&oacute;mo crear compa&ntilde;&iacute;as</h4>
+<p>Es posible crear una nueva compa&ntilde;&iacute;a desde la p&aacute;gina de
+entrada del m&oacute;dulo de esti&oacute;n de contactos o desde la p&aacute;gina
+de listado de compa&ntilde;&iacute;as.</p>
+
+<p>&bull;  Se recomienda utilizar sólo letras
+mayúsculas para los nombres de compañías, individuos y direcciones, ello
+facilita la posterior búsqueda y recuperación de la información de forma
+homogénea.</p>
+
+<h4>Cómo añadir direcciones</h4>
+<p>Las direcciones no pueden añadirse a una compañía hasta que no se ha
+grabado por primera vez. Una vez grabada las direcciones pueden añadirse desde
+el icono que aparece en la parte superior izquierda del formulario o desde la
+lista de compañías con el botón derecho del ratón.</p>
+
+<h4>Cómo añadir cuentas bancarias</h4>
+<p>Las cuentas banacarias no pueden añadirse a una compañía hasta que no se ha
+grabado por primera vez. Una vez grabada las cuentas bancarias pueden añadirse desde
+el icono que aparece en la parte superior del formulario.</p>
+
+<h4>Cómo duplicar compañías</h4>
+<p>En la lista de compañías, pulsar el botón derecho del ratón sobre la
+razón social y seleccionar la opción Duplicar. Cuando se duplica una
+compañía se duplican también sus direcciones asociadas.</p>
+
+<h4>Cómo categorizar compañías</h4>
+<p>Si está activada la aplicación de Directorio, es posible adscribir las
+compañías a categorías creadas desde la aplicación de Disco Virtual /
+Biblioteca Corporativa. Usando las direcciones de cada compañía, esta
+categorización puede servir para crear directorios jerárquicos de direcciones
+y enlaces.</p>
+
+<h4>C&oacute;mo asignar una tarifa a una compa&ntilde;&iacute;a</h4>
+<p>Cada compa&ntilde;&iacute;a puede tener una tarifa asignada.</p>
+
+<h4>Cómo clasificar compañías por familias de productos que compran</h4>
+
+<p>Si está activada la aplicación de Tienda Virtual, es posible clasificar las
+compañías según las categorías de productos que compran.</p>
+
+<h2>Individuos</h2>
+<p>Los individuos pueden crearse de forma independiente o adscritos a una
+compañía. Un contacto puede tener sus propias direcciones o heredar la
+dirección de la compañía a la que pertenece, aunque se recomienda emplear una
+dirección independiente por cada contacto porque ello facilita la explotación
+de datos a posteriori.</p>
+
+<h4>Cómo crear un individuo</h4>
+<p>Para crear un individuo que pertenezca a una compañía y tenga una dirección
+	de contacto usar el enlace <u>Nuevo Individuo</u> que se encuentra en la
+  página de entrada de la sección de Gestión de Contactos.<br/>
+  Este formulario permite crear, simultáneamente un individuo, su dirección
+  de contacto principal y la compañía para la que trabaja.</p>
+
+<h4>Entrada rápido de individuos</h4>
+  <p>Para crear rápidamente más de un individuo, utilizar la opción de <u>Edición Rápida</u>
+que se encuentra en el listado de individuos.</p>
+
+<h4>Cómo asociar notas</h4>
+<p>En la lista de individuos, pulsar el botón derecho del ratón sobre los
+apellidos y seleccionar la opción de Añadir Nota.</p>
+<h4>Cómo asociar archivos adjuntos</h4>
+<p>En la lista de individuos, pulsar el botón derecho del ratón sobre los
+apellidos y seleccionar la opción de Adjuntar Archivo.</p>
+<h4>Cómo duplicar individuos</h4>
+<p>En la lista de individuos, pulsar el botón derecho del ratón sobre los
+apellidos y seleccionar la opción Duplicar. Cuando se duplica un individuo se
+duplican también sus direcciones asociadas, pero no sus oportunidades, ni sus
+notas ni sus archivos adjuntos.</p>
+<h4>Cómo ver las suscripciones de un Individuo a todas las listas de
+distribución</h4>
+<p>En el formulario de edición de individuos, seleccionar el icono de
+Suscripciones en la parte superior izquierda. Aparecerán todas las listas
+disponibles junto con el estado de suscripción a cada una de ellas. Nótese que
+sólo es posible suscribir o dar de baja al individuo de listas estáticas o
+directas.</p>
+<h2>Oportunidades</h2>
+
+<h4>Cómo crear oportunidades</h4>
+<p>Las oportunidades no pueden crearse de forma independiente, sino que deben ir
+siempre asociadas a un contacto individual. Para crear una oportunidad, ir a la
+lista de contactos, pulsar el botón derecho del ratón sobre el enlace de un
+contacto y seleccionar la opción del menú contextual Crear Oportunidad.</p>
+
+<h4>Oportunidades públicas y privadas</h4>
+
+<p>Las oportunidades pueden ser de tipo público o privado. Las de tipo público
+son visibles por todos los usuarios del área de trabajo. Las de tipo privado
+sólo son visibles por el usuario que las creó.</p>
+
+<h4>Cómo enviar una oferta comercial asociada a una oportunidad</h4>
+<p>Desde el formulario de edición de oportunidades, es posible enviar por e-mail
+uno o varios archivos que contengan una oferta comercial formal.</p>
+<p>Para que sea posible enviar una oferta por correo, el usuario actual debe tener
+ configurada al menos una cuenta de WebMail. Esto se hace desde
+ Herramientas Colaborativas &rarr; Correo | Administrar Cuentas</p>
+<p>Los archivos enviados por e-mail desde el formulario de oportunidades
+	quedan adjuntados automáticamente al contacto destinatario</p>
+
+<h4>Cómo planificar una visita para la oportunidad</h4>
+<p>Cuando se está editando la oportunidad, es posible crear visitas asociadas a la misma.</p>
+<p>Las visitas se pueden crear de dos maneras:</p>
+<ol>
+	<li>Automáticamente como una actividad para la siguiente fecha de actuación.</li>
+	<li>Manualmente como una visita organizada para uno mismo o para un tercero.</li>
+</ol>	
+
+<p>En el caso de la creación automática, hay que introducir una fecha en (Sig. Fecha)
+	y marcar la checkbox Crear una actividad en el calendario para la siguiente acción,
+	al grabar la oportunidad se generará en segundo plano una cita en el calendario
+	el día designado en Sig. Fecha a la cual estarán invitados el contacto cliente y
+	el usuario actual.</p>
+
+<p>En el caso de la creación manual, al pinchar en el enlace <u>Organizar Visita</u>
+ se abrirá el formulario de edición de actividades y habrá que rellenar manualmente
+ los datos de la cita: fecha, asistentes, etc.</p>
+	
+<h2>Listas de Distribución</h2>
+
+<p>Las listas de distribución son conjuntos arbitrarios de Compañías o
+Individuos. Se pueden tener tantas listas diferentes como se desee.</p>
+
+<p>Las listas de distribución pueden ser de 3 tipos:</p>
+
+<ol>
+  <li><b>Listas Dinámicas</b></li>
+  <li><b>Listas Estáticas</b></li>
+  <li><b>Listas Directas</b></li>
+</ol>
+<h4>Listas Dinámicas</h4>
+<p>Las listas dinámicas están basadas en consultas sobre la tabla de
+Individuos. Los miembros de una lista dinámica se extraen de la tabla de
+Individuos cada vez que se pide la lista. Por consiguiente los miembros de una
+lista dinámica varían en el tiempo según cambia la tabla de Individuos. No es
+posible añadir o quitar miembros individualmente en una lista dinámica pero es
+posible agregarlos a la lista negra asociada como veremos más adelante.</p>
+<p>Las listas dinámicas son útiles cuando hay que realizar envíos recurrentes
+en los que no es necesario mantener un historial de los destinatarios de cada
+envío.</p>
+<h4>Listas Estáticas</h4>
+<p>Igual que las listas dinámicas las listas estáticas están basadas en
+consultas predefinidas. La diferencia estriba en que los miembros de una lista
+estática se leen una vez y se almacenan de forma separada a las tablas de
+Individuos y Compañía. Por lo tanto, los miembros de una lista estática
+permanecen inalterados aunque se realicen cambio en la tabla de Individuos o en
+la tabla de Compañías.</p>
+<p>De todos los datos de la Compañía o Individuo, sólo su e-mail, nombre y
+saludo se almacenan junto con la lista. El resto de la información que puede
+ser necesaria -dirección postal, fax, etc- se siguen leyendo dinámicamente de
+las tablas bases cuando se utiliza la lista.</p>
+<p>Las listas estáticas son útiles cuando hay que realizar un envío y guardar
+la lista de todos los destinatarios.</p>
+<h4>Listas Directas</h4>
+<p>Las listas directas se crean cargando datos directamente desde un archivo de
+texto. Mientras que los miembros de las listas dinámicas o estáticas son
+siempre Contactos o Compañías gestionados por la aplicación, los miembros de
+una lista directa no tienen nada que que ver con los Contactos ni las
+Compañías. Es decir, no es preciso crear un Contacto con todos sus datos para
+poder enviarle un e-mail sino que puede ser directamente añadido a una lista
+directa.</p>
+<p>La única información&nbsp; que es posible cargar para los miembros de
+listas directas es el e-mail, el nombre y apellidos y el saludo.</p>
+<p>Los archivos utilizados para cargar listas directas deben tener un formato
+específico. Cada línea debe tener entre 1 y 4 campos</p>
+<h4>Listas Negras</h4>
+<p>Cada lista dinámica, estática o directa lleva siempre asociada otra lista
+llamada lista negra o lista de usuarios bloqueados. Las listas negras no se
+editan ni se mantienen directamente sino que van siempre asociadas a una lista
+blanca. Cuando se realizan las consultas para los envíos se eliminan de la
+lista blanca los miembros que también estén en la correspondiente lista negra
+antes de procesarlos.</p>
+<h4>Cómo crear una lista dinámica o estática</h4>
+<ol>
+  <li>Entrar en Gestión de Contactos&nbsp;<font face="Wingdings">&agrave;</font>&nbsp;Listas.</li>
+  <li>Pinchar en el enlace de Nueva, se abrirá el Asistente de Creación de
+    Listas.</li>
+  <li>Elegir el tipo de lista -Estática o Dinámica-</li>
+  <li>Pasar a la siguiente pantalla y elegir la consulta base para la lista, si
+    no hay ninguna consulta idónea es posible crearla en caliente desde el
+    enlace Crear Nueva Consulta. Una vez creada la consulta regresar al
+    Asistente y escogerla.</li>
+  <li>En la siguiente pantalla, especificar la dirección de e-mail del
+    remitente, el nombre que se mostrará en la bandeja de entrada de los
+    destinatarios y la dirección de e-mail de retorno.</li>
+  <li>Por último, especificar un Asunto para los correos y una Descripción
+    para la lista de distribución.</li>
+</ol>
+<h4>Cómo crear una lista directa</h4>
+<p>Las listas directas se crean cargando archivos de texto simple. El archivo
+debe contener al menos una columna con el e-mail del destinatario ya que este
+e-mail será utilizado como clave primaria. El archivo puede contener otras 3
+columnas con el nombre, los apellidos y el saludo del miembro en cualquier
+orden. Las columnas deben ir separadas por comas o puntos y comas con cada
+miembro en una fila separada de la anterior por un salto de línea.</p>
+<ol>
+  <li>Entrar en Gestión de Contactos&nbsp;&rarr;&nbsp;Listas.</li>
+  <li>Pinchar en el enlace de Nueva, se abrirá el Asistente de Creación de
+    Listas.</li>
+  <li>Elegir el tipo de lista Directa.</li>
+  <li>Pasar a la siguiente pantalla y especificar el delimitador y el orden de
+    las columnas en el archivo de texto.</li>
+  <li>En la siguiente pantalla, especificar la dirección de e-mail del
+    remitente, el nombre que se mostrará en la bandeja de entrada de los
+    destinatarios y la dirección de e-mail de retorno.</li>
+  <li>Por último, especificar un Asunto para los correos y una Descripción
+    para la lista de distribución.</li>
+</ol>
+<h4>Posibles estados de un miembro de una lista</h4>
+<p>Cada miembro de una lista puede estar en uno de 3 estados:</p>
+<ol>
+  <li><b>Activado</b>. El miembro pertenece a la lista y puede recibir correos.</li>
+  <li><b>Desactivado</b>. El miembro pertenece a la lista pero a sido
+    desactivado por alguna causa (por ejemplo sus e-mail fallo sistemáticamente
+    en la recepción de mensajes.)</li>
+  <li><b>Bloqueado</b>. El miembro pertenece a la lista y su dirección de
+    e-mail es válida pero solicitó expresamente que no se le enviase ningún
+    comunicado.</li>
+</ol>
+
+<h2>El ciclo comercial completo</h2>
+<p>El ciclo comercial completo recomendado se compone de los siguientes pasos:</p>
+<ol>
+  <li>Cargar los clientes potenciales (manualmente o desde un fichero de texto externo).</li>
+  <li>Crear una lista estática de distribución para los clientes cargados.</li>
+  <li>Crear una oportunidad para todos los clientes de la lista anterior.</li>
+  <li>Sobre cada oportunidad realizar el seguimiento de llamadas y archivos enviados.</li>
+  <li>Cuando el cliente haga una expresión de interés, concertar una visita en el calendario.</li>
+  <li>.</li>
+</ol>
+
+<hr>
+
+<h1><a name="projects">Gestión de Proyectos</a></h1>
+
+<h2>Proyectos</h2>
+
+<p>El Proyecto es la entidad base para la gestión de tareas e incidencias en
+hipergate. Los proyectos pueden existir de forma autónoma en un Area de Trabajo
+o estar vinculados a una Compañía o Individuo. Un Proyecto puede representar
+la noción clásica de un conjunto secuencial de tareas a realizar en un periodo
+de tiempo determinado, pero también puede representar otras cosas, como, por
+ejemplo, un contrato de mantenimiento con un cliente o un trabajo indefinido de
+desarrollo continuo.</p>
+
+<h4>Lista vs. Árbol de Proyectos</h4>
+
+<p>Los proyectos pueden examinarse mediante la lista convencional en formato
+plano con navegación haccia abajo o hacia arriba, o a través del Árbol de Proyectos.
+Dado que los proyectos están organizados jerárquicamente en proyectos y subproyectos,
+es útil disponer de una visualización en pantalla que refleje esta estructura.</p>
+
+<h4>Cómo crear un proyecto</h4>
+
+<p>Los proyectos son jerárquicos y pueden estar anidados unos dentro de otros.</p>
+
+<p>Para crear un proyecto ir a la pestaña de proyectos y pinchar el enlace
+Nuevo. Se abrirá el formulario de creación de proyectos. A la izquierda
+aparece una lista jerárquica de todos los proyectos disponibles y a la derecha
+aparecen los datos básicos del proyecto a crear. Hay que seleccionar un
+proyecto padre a la izquierda, introducir el nombre del nuevo proyecto y pinchar
+en Guardar. Si no se especifica ningún proyecto padre el nuevo proyecto se
+creará como raiz.</p>
+
+<h4>Cómo asignar un proyecto a un cliente</h4>
+
+<p>Los proyectos pueden ser asignados a una Compa&ntilde;&iacute;a o a un contacto
+	en concreto. Estos proyectos asignados a un cliente son alcanzables directamente
+	desde la ficha del cliente.</p>
+
+<h4>Cómo cambiar el padre de un proyecto</h4>
+
+<ol>
+  <li>Entrar en Gestión de Proyectos&nbsp;&rarr;&nbsp;Proyectos.</li>
+  <li>Pinchar en el enlace Árbol.</li>
+  <li>Aparecerá el árbol de todos los proyectos del área de trabajo actual.</li>
+  <li>Seleccionar el proyecto deseado en el árbol.</li>
+  <li>En la combobox que aparecerá a la derecha, seleccionar el nuevo padre y
+    pinchar Guardar.</li>
+</ol>
+
+<h4>Cómo asignar un proyecto a un cliente</h4>
+<p>Si está activado el módulo de Gestión de Contactos, aparecerán los
+remontes adecuados en el formulario de Nuevo Proyecto para asignar dicho
+proyecto a una Compañía y Contacto específicos.</p>
+
+<h2>Tareas</h2>
+
+<p>Las tareas en hipergate van siempre asociadas a un proyecto o subproyecto.</p>
+
+<p>Existen dos vistas estándar de tareas: tareas por proyecto y tareas por recurso.<br/>
+	Cada una de ellas está pensada para disponer de una vista rápida bien de qué está 
+	sucediendo en un proyecto, bien de qué está haciendo cada persona.</p>
+
+<h4>Cómo grabar un parte de trabajo semanal</h4>
+
+<p>Existe una pantalla específica para reportar las tareas realizadas durante una semana
+o, en general, durante un periodo de tiempo.</p>
+
+<h4>Cómo imputar costes a un proyecto o subproyecto</h4>
+
+<p>Crear una tarea asociada al proyecto o subproyecto. Asignar un coste a la
+tarea y grabarla.</p>
+
+<h4>Como asignar recursos a un proyecto.</h4>
+
+<p>Los recursos deben asignarse a las tareas de los proyectos y no a los
+proyectos directamente.</p>
+
+<p>Los recursos asignables a los proyectos están vinculados
+a las listas de usuarios, empleados, contactos o proveedores de hipergate.<br/>
+Asimismo, se permite crear recursos genéricos que no sean ninguna
+entidad estádar de hipergate y vincular estos nuevos recursos a las tareas.</p>
+
+<p>La asignación de recursos a las tareas es meramente declarativa, no existe
+ningún control de solapamiento o sobreasignación.</p>
+
+<h2>Incidencias</h2>
+
+<p>Las incidencias, igual que las tareas, deben imputarse a un proyecto. De esta
+forma es posible vincular indirectamente una inicdencia con un cliente,
+asignando la incidencia a un proyecto y el proyecto a un cliente.</p>
+
+<hr>
+
+<h1><a name="vdisk">Disco Virtual</a></h1>
+
+<h3>Directorio</h3>
+
+<p>Las <a name="category"> categorías</a> son el equivalente en el disco virtual de los directorios
+clásicos del sistema operativo. La diferencia estriba en que en hipergate las
+categorías son contenedores genéricos que pueden contener otros objetos aparte
+de archivos. Otro aspecto diferencial de las categorías es que admiten
+etiquetas&nbsp; traducidas a distintos idiomas, es decir, cada categorías puede
+mostrar diferentes nombres en función del idioma escogido, esto permite crear
+fácilmente directorios jerárquicos multilingües.</p>
+
+<p>Desde el disco virtual las categorías contiene dos tipos de objetos:
+documentos y enlaces.</p>
+
+<h4>Cómo navegar por las categorías</h4>
+
+<p>La navegación por las categorías puede hacerse de dos formas, desde al
+árbol de la izquierda o pinchando en los enlaces del marco derecho de
+contenidos de la categoría. Ambos tipos de navegación son equivalentes, pero
+el árbol izquierdo no se actualiza automáticamente cuando se navega desde la
+derecha.</p>
+
+<p>El árbol de categorías puede ser muy extenso, tiene una único nodo raíz
+del cual cuelgan todas las categorías de todas las áreas de trabajo. No
+obstante, cada usuario sólo ve por defecto sus categorías personales y las
+ramas de categorías compartidas para su dominio y área de trabajo.</p>
+
+<h4>Cómo ver todas las categorías</h4>
+
+<p>Conectarse como administrador al dominio SYSTEM e ir a la Biblioteca
+Corporativa. La aplicación reconoce el dominio SYSTEM de una forma especial y
+muestra todas las categorías de todos los dominios al entrar en vez de mostrar
+sólo las categorías personales del usuario conectado como en el resto de los
+dominios. En el dominio SYSTEM, además, se muestran en el árbol los nombres
+internos de las categorías en lugar de sus etiquetas traducidas al idioma del
+navegador como en el resto de los dominios.</p>
+
+<h4>Cómo crear nuevas categorías</h4>
+
+<ol>
+  <li>Ir a Biblioteca Corporativa <font face="Wingdings">¿</font>&nbsp;Directorio.</li>
+  <li>Moverse por el árbol izquierdo hasta la categoría padre y pinchar el
+    enlace Nueva.</li>
+  <li>Alternativamente navegar por los enlaces de contenidos de la derecha y
+    pinchar el enlace Nueva Categoría.</li>
+  <li>Aparecerá el formulario de creación de categorías.</li>
+  <li>En este punto se deben introducir las etiquetas de traducción, para ello
+    pulsar el icono con el símbolo&nbsp;<font face="Symbol">Å</font>&nbsp;y
+    seleccionar en la combobox inferior izquierda el idioma deseado para la
+    etiqueta. </li>
+</ol>
+<p>&bull;   Cuando se asignan etiquetas a una
+categoría hay que especificar siempre una etiqueta para el idioma actualmente
+prioritario en el navegador web, delo contrario puede haber problemas de
+visualización de la categoría en el árbol.</p>
+<h4>Cómo eliminar una categoría</h4>
+
+<p>Las categorías se eliminan desde el enlace que hay encima del árbol de
+navegación. Cuando se elimina una categoría se elimina también todo su
+contenido.</p>
+
+<h4>Buscador de archivos y enlaces</h4>
+
+<p>El buscador archivos y enlaces que hay en la parte superior derecha del
+árbol de navegación de categorías busca subcadenas dentro del nombre o la
+descripción del documento o enlace. La cadena buscada es sensible a mayúsculas
+y minúsculas.</p>
+
+<h3>Control de versiones para documentos</h3>
+
+
+
+<p>La Biblioteca Corporativa permite mantener un histórico de versiones para
+cada documento. De hecho todos los documentos están versionados internamente
+aunque no se especifique una versión explícitamente. Cada versión se
+identifica con una etiqueta que se establece a la hora de subir el documento por
+primera vez. En la lista de contenidos de cada categoría se muestra sólo la versión
+subida más recientemente del documento.</p>
+
+
+
+<p>&nbsp;</p>
+
+
+
+<hr>
+
+<h1><a name="cms">Producción de Contenidos</a></h1>
+
+<h2>Documentos basados en plantillas</h2>
+
+<p>Los documentos basados en plantillas pueden ser de 2 tipos: mono-página (Newsletters
+y otros Documentos) o multi-página (Websites).</p>
+
+<p>Las plantillas son hojas de estilo XSL que vienen pre-cargadas en la
+aplicación. Desde la propia aplicación no pueden crearse nuevas plantillas,
+pero existe un procedimiento bien definido para crear plantillas a partir de
+archivos HTML comunes.</p>
+
+<h2>Cómo crear un nuevo documento</h2>
+
+<p>Al acceder el módulo de Producción de Contenidos aparece una ficha de
+Documentos donde podemos acceder a la creación de Newsletters (Nuevo Documento)
+y Websites (Nuevo Website).&nbsp;</p>
+
+<p>Seleccionamos una de las dos opciones y se abre una ventana de Creación en 2
+pasos. En ésta ventana (Paso 1) debemos seleccionar el tipo de documento que
+queremos crear (plantilla), el idioma y opcionalmente rellenar un campo de
+comentarios. A continuación pulsamos sobre el botón Siguiente&quot; y el
+documento se crea automáticamente.&nbsp;</p>
+
+<p>La siguiente ventana (Paso 2) nos ofrece la posibilidad de cargar en el
+servidor archivos de imágenes que estarán disponibles desde la aplicación
+cuando entremos a modificar el documento en modo edición. Una vez seleccionados
+los archivos gráficos deseados pulsamos sobre el botón Terminar.</p>
+
+<p>La ventana se cierra y en pantalla nos aparece el listado de documentos, con
+el que acabamos de crear. Desde aquí podemos efectuar varias operaciones con el
+nuevo documento: editar, eliminar, ver propiedades, vista previa y programar
+envío (en el caso de Newsletter).</p>
+
+<h2>Edición de un documento</h2>
+
+<h3>Edición de Newsletters</h3>
+
+<p>Para editar el documento pulsamos el botón derecho del ratón sobre el
+documento deseado en la pantalla de listado de documentos y seleccionamos la
+opción Editar. Se abre la ventana de edición donde aparece el documento con el
+Panel de Edición flotante. Desde el Panel de Edición podemos efectuar las
+siguientes operaciones:&nbsp;</p>
+
+<ul>
+  <li>Añadir un nuevo bloque de información</li>
+  <li>Eliminar un Bloque de Información existente</li>
+  <li>Cambiar el Estilo</li>
+  <li>Editar un bloque de información</li>
+</ul>
+<h4>Añadir un nuevo bloque de información</h4>
+<p>Debemos pulsar sobre la opción Nuevo del Panel de Control y aparece una
+ventana de selección de tipo de bloque de información. Una vez seleccionado el
+tipo de bloque de información que queremos añadir se abre la ventana de
+edición de bloque de información.</p>
+<h4>Eliminar bloques de información existentes</h4>
+<p>Debemos seleccionar el/los checkbox que aparecen a la derecha de los bloques
+que deseamos eliminar en el Panel de Control y pulsar sobre la opción Eliminar.</p>
+<h4>Cambiar el estilo</h4>
+<p>La opción Estilo del Panel de Control permite cambiar la gama cromática y
+tipografía que se utilizará en el documento.</p>
+<h4>Editar un bloque de información</h4>
+<p>Al crear un nuevo bloque de información o editar uno existente se abre la
+venta de Edición de Bloque de Información compuesta por:</p>
+<ul>
+  <li><b>Barra de botones:</b> botón Guardar (almacena los cambios realizados),
+    botón Restaurar (anula los cambios realizados manteniendo la ventana de
+    edición abierta), botón Cerrar (cierra la ventana de Edición ignorando
+    los cambios realizados).</li>
+  <li><b>Zona de edición de textos:</b> presenta un formulario para editar
+    todos los textos del bloque de información. En cada texto podemos editar el
+    contenido, vaciar el contenido con la opción Limpiar Contenido, asociar un
+    hipervínculo en el cuadro de texto Enlace e insertar valores de campos de
+    base de datos mediante el desplegable de campo variable (esta opción tiene
+    utilidad en newsletter para personalizar los envíos programados).</li>
+  <li>&nbsp;<b>Zona de edición de imágenes:</b> permite insertar una imagen
+    del repositorio de imágenes del usuario, ver la imágen actual, vaciar el
+    contenido actual, insertar las dimensiones deseadas (si dejamos los campos
+    ancho y alto en blanco se utilizarán las dimensiones reales del archivo de
+    imagen) y asociar un hipervínculo en el cuadro de texto Enlace.&nbsp;</li>
+</ul>
+<p>&bull;El caso típico de uso es entrar en
+la edición del bloque de información, completar los textos, completar las
+imágenes y pulsar sobre el botón Guardar de la barra de botones. Al finalizar
+la edición se cerrará la ventana de edición y se recargará el documento,
+presentando los cambios.</p>
+<h4>Inserción de campos variables en textos</h4>
+<p>La edición de textos permite la inserción de valores que se obtienen de
+base de datos y se personalizan a la hora de realizar un envío programado
+según sea el destinatario de una newsletter. La siguiente tabla muestra los
+posibles campos insertables y su efecto:</p>
+<table border="1" width="100%" cellspacing="0">
+  <tr>
+    <td width="20%"><b><font face="Arial" size="2">Campo variable</font></b></td>
+    <td width="46%"><b><font face="Arial" size="2">Descripción</font></b></td>
+    <td width="34%"><b><font face="Arial" size="2">Efecto</font></b></td>
+  </tr>
+  <tr>
+    <td width="20%"><font face="Arial" size="2">Nombre</font></td>
+    <td width="46%"><font face="Arial" size="2">Nombre del destinatario de la
+      newsletter</font></td>
+    <td width="34%"><font face="Arial" size="2">Al enviar la newsletter a un
+      individuo reemplaza el código insertado {#Datos.Nombre} por el nombre del
+      individuo.</font></td>
+  </tr>
+  <tr>
+    <td width="20%"><font face="Arial" size="2">Apellidos</font></td>
+    <td width="46%"><font face="Arial" size="2">Apellidos del destinatario de la
+      newsletter</font></td>
+    <td width="34%"><font face="Arial" size="2">Al enviar la newsletter a un
+      individuo reemplaza el código insertado {#Datos.Apellidos} por los
+      apellidos del individuo.</font></td>
+  </tr>
+  <tr>
+    <td width="20%"><font face="Arial" size="2">Correo electrónico</font></td>
+    <td width="46%"><font face="Arial" size="2">Mail del destinatario de la
+      newsletter</font></td>
+    <td width="34%"><font face="Arial" size="2">Al enviar la newsletter a un
+      individuo reemplaza el código insertado {#Datos.Email} por el correo
+      electrónico del individuo.</font></td>
+  </tr>
+  <tr>
+    <td width="20%"><font face="Arial" size="2">Fecha</font></td>
+    <td width="46%"><font face="Arial" size="2">Fecha del sistema</font></td>
+    <td width="34%"><font face="Arial" size="2">Al enviar la newsletter a un
+      individuo reemplaza el código insertado {#Datos.Fecha} por la fecha del
+      sistema en el momento del envío.</font></td>
+  </tr>
+  <tr>
+    <td width="20%"><font face="Arial" size="2">Hora</font></td>
+    <td width="46%"><font face="Arial" size="2">Hora del sistema</font></td>
+    <td width="34%"><font face="Arial" size="2">Al enviar la newsletter a un
+      individuo reemplaza el código insertado {#Datos.Hora} por la hora del
+      sistema en el momento del envío.</font></td>
+  </tr>
+</table>
+<p>&bull;<font face="Arial" size="2">Aunque el
+editor de bloques de información permite insertar campos variables tanto en
+newsletters como en websites, esta caracerística sólo tiene efecto en
+newsletters, ya que es el único tipo de documento susceptible de ser programado
+para su envío a una lista de distribución.&nbsp;&nbsp;</font></p>
+<h3>Edición de Websites</h3>
+<p>La edición de websites comparte todas las operaciones de la edición de
+Newsletters, que están disponibles para cada una de las páginas del website.
+Además proporciona un conjunto adicional de opciones:</p>
+<h4>Crear una nueva página</h4>
+<p>Para incorporar una nueva página al website debemos seleccionar la opción
+del menú superior Nueva Página. Se abre una ventana donde debemos rellenar un
+campo con el nombre/pestaña para dicha página y seleccionar el tipo de
+contenedor que vamos a emplear para dicha página.</p>
+<h4>Eliminar página actual</h4>
+<p>Pulsando sobre la opción Eliminar Página se borra la página que estemos
+editando.</p>
+<h4>Seleccionar la página a editar</h4>
+<p>Para cambiar la página a editar debemos seleccionar en el desplegable del
+menú superior la página deseada y pulsar sobre la opción Editar Página.</p>
+<h4>Página de recursos comunes</h4>
+<p>&nbsp;La página de recursos comunes es un agregador de recursos que pueden
+ser referenciados desde todas las páginas del website. Se accede a su edición
+seleccionando la página Recursos en el desplegable de páginas del menú
+superior y pulsando sobre la opción Editar Página.</p>
+<p>&bull;La característica más importante
+que diferencia esta página del resto es que no es visible directamente desde el
+website, sino sólo en modo edición y permite editar el menú de pestañas de
+navegación del website. Para incorporar nuevas pestañas debemos editar en el
+Panel de Control el bloque de información Menu. Podemos incorporar nuevas
+opciones de menú y asociar hipervínculos a las páginas del website.</p>
+<h2>Programar un envío de newsletter</h2>
+<p>En la lista de newsletters podemos seleccionar la opción del menú emergente
+de un documento Programar Envío. Al pulsar dicha opción se abre la ventana de
+Programación de Envíos que consta de dos pasos:&nbsp;</p>
+<ol>
+  <li>El primer paso es seleccionar la lista de distribución a la que se
+    dirigirá el envío de la newsletter.</li>
+  <li>
+    <p align="left">El segundo y último paso nos muestra un resumen de la
+    operación de envío que se programa donde podemos insertar una
+    descripción, la fecha de envío deseada&nbsp; e indicar el modo de
+    referencia a las imágenes de la newsletter.</li>
+</ol>
+<p align="left">&bull;Una vez pulsado Terminar
+en la ventana de Programación de Envíos la newsletter se regenera y se encola
+la petición de envío. La newsletter resultante podemos verla editando la tarea
+en la pantalla de Tareas Programadas y pulsando sobre el Documento a Enviar, o
+desde la lista de documentos, seleccionando Vista Previa en el menú emergente
+del documento de newsletter.</p>
+
+<hr>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>
