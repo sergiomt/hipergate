@@ -1,0 +1,9 @@
+[~Bank~]
+url|&|[~URL~]
+user|$|[~User~]
+pwd|*|[~Password~]
+sign|$|[~Signature Password~]
+contract|$|[~Contract~]
+
+
+

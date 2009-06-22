@@ -1,0 +1,11 @@
+[~e-Mail~]
+email|@|[~e-mail~]
+pwd|*|[~Password~]
+url|&|[~URL~]
+host|$|[~Host~]
+user|$|[~User~]
+pop_port|%|[~POP3 Port~]
+smtp_port|%|[~SMTP Port~]
+
+
+

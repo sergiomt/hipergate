@@ -1,0 +1,7 @@
+[~Telnet/FTP~]
+host|$|[~Host~]
+user|$|[~User~]
+pwd|*|[~Password~]
+
+
+

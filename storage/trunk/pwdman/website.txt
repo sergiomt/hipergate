@@ -1,0 +1,7 @@
+[~Website~]
+url|&|[~URL~]
+user|$|[~User~]
+pwd|*|[~Password~]
+realm|$|[~Realm~]
+
+
