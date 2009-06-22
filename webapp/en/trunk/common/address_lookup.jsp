@@ -35,7 +35,7 @@
   if (null==oConn) return;    
   oConn = null;
 
-  if (null==sUserGuid)
+  if (null==sAddrGuid)
     out.write ("notfound");
   else
     out.write ("found "+sAddrGuid);

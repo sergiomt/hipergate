@@ -1,8 +1,7 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%  response.setHeader("Cache-Control","no-cache");response.setHeader("Pragma","no-cache"); response.setIntHeader("Expires", 0); %>
-<%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %>
-<%
+<%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -98,7 +97,7 @@
 %>    
 <HTML LANG="<%=sLanguage%>">
   <HEAD>
-    <TITLE>hipergate :: [~Mantenimiento de Incidencias~]</TITLE>
+    <TITLE>hipergate :: Incident Maintenance</TITLE>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
@@ -157,7 +156,7 @@
 	
 	str = rtrim(frm.tl_bug.value);
 	if (str.length==0) {
-	  alert ("[~El campo Asunto es Obligatorio~]");
+	  alert ("Subject is mandatory");
 	  return false;
 	}
 	else
@@ -165,7 +164,7 @@
 
 	str = rtrim(frm.nm_reporter.value);
 	if (str.length==0) {
-	  alert ("[~El campo Reportado Por es Obligatorio~]");
+	  alert ("Field Reported by is mandatory");
 	  return false;
 	}
 	else
@@ -173,7 +172,7 @@
         
 	str = rtrim(frm.tx_rep_mail.value);
 	if (str.length==0) {
-	  alert ("[~El e-mail de contacto es Obligatorio~]");
+	  alert ("Contact e-mail is mandatory");
 	  return false;
 	}
 	else
@@ -181,23 +180,23 @@
 
 	str = frm.tx_bug_brief.value;
 	if (str.length==0) {
-	  alert ("[~La descripcion de la incidencia es Obligatoria~]");
+	  alert ("Incident description is mandatory");
 	  return false;
 	}
 
 	if (str.length>2000) {
-	  alert ("[~La descripcion del la incidencia no puede exceder de 2000 caracteres~]");
+	  alert ("Incident description may not be longer than 2000 characters");
 	  return false;
 	}
 
 	str = frm.dt_closed.value;
 	if (str.length>0 && getCombo(frm.tx_status)=="") {
-	  alert ("[~El estado no puede ser PENDIENTE si se especifica fecha de cierre~]");
+	  alert ("Status cannot be PENDING if a close date is not set");
 	  return false;
 	}
 	
 	if (str.length==0 && getCombo(frm.tx_status)=="CORREGIDO") {
-	  alert ("[~Es Obligatorio especificar una Fecha de Cierre para el estado CORREGIDO~]");
+	  alert ("It is mandatory to set a close date for Closed Status");
 	  return false;
 	}
 	
@@ -209,7 +208,7 @@
 	frm.nm_assigned.value = getCombo(frm.sel_assigned);
 	
 	if (frm.tx_comments.value.length>1000) {
-	  alert ("[~Los comentarios no pueden exceder 1000 caracteres~]");
+	  alert ("Comments may not be longer than 1000 characters");
 	  return false;
 	}
 	
@@ -231,15 +230,15 @@
     </SCRIPT>
   </HEAD>
   <BODY  onLoad="setCombos()">
-    <TABLE WIDTH="90%"><TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Mantenimiento de Incidencias~]</FONT></TD></TR></TABLE>  
-    <IMG SRC="../images/images/crm/history16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Historial~]">&nbsp;
-    <A HREF="bug_changelog.jsp?gu_bug=<%=request.getParameter("gu_bug")%>&tl_bug=<%=Gadgets.URLEncode(oBug.getStringNull(0,0,""))%>" CLASS="linkplain">[~Historial~]</A>
+    <TABLE WIDTH="90%"><TR><TD CLASS="striptitle"><FONT CLASS="title1">Incident Maintenance</FONT></TD></TR></TABLE>  
+    <IMG SRC="../images/images/crm/history16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="History">&nbsp;
+    <A HREF="bug_changelog.jsp?gu_bug=<%=request.getParameter("gu_bug")%>&tl_bug=<%=Gadgets.URLEncode(oBug.getStringNull(0,0,""))%>" CLASS="linkplain">History</A>
 <% if (bCollabToolsEnabled) { %>
     &nbsp;&nbsp;&nbsp;&nbsp;
-    <IMG SRC="../images/images/addrbook/telephone16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Llamadas~]">&nbsp;
-    <A HREF="../addrbook/phonecall_listing.jsp?field=pg_bug&find=<%=String.valueOf(oBug.getInt(12,0))%>" TARGET="_blank" CLASS="linkplain">[~Llamadas~]</A>
+    <IMG SRC="../images/images/addrbook/telephone16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Calls">&nbsp;
+    <A HREF="../addrbook/phonecall_listing.jsp?field=pg_bug&find=<%=String.valueOf(oBug.getInt(12,0))%>" TARGET="_blank" CLASS="linkplain">Calls</A>
 <% } %>
-    &nbsp;&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/printer16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0">&nbsp;<A HREF="bug_report.jsp?pg_bug=<% out.write(String.valueOf(oBug.getInt(DB.pg_bug,0))); %>" CLASS="linkplain">[~Imprimir~]</A>
+    &nbsp;&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/printer16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0">&nbsp;<A HREF="bug_report.jsp?pg_bug=<% out.write(String.valueOf(oBug.getInt(DB.pg_bug,0))); %>" CLASS="linkplain">Print</A>
     <FORM NAME="frmReportBug" ENCTYPE="multipart/form-data" METHOD="post" ACTION="bugedit_store.jsp" onSubmit="return validate()">
       <INPUT TYPE="hidden" NAME="is_new" VALUE="0">
       <INPUT TYPE="hidden" NAME="gu_bug" VALUE="<%=request.getParameter("gu_bug")%>">
@@ -254,11 +253,11 @@
             <!-- Datos de Alta -->
             <TABLE SUMMARY="Datos de Alta" CLASS="formfront">
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formstrong">[~Asunto~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formstrong">Subject</FONT></TD>
                 <TD><INPUT TYPE="text" MAXLENGTH="250" SIZE="36" NAME="tl_bug" STYLE="text-transform:uppercase" VALUE="<%=oBug.getString(0,0)%>"></TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formstrong">[~Afecta a~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formstrong">Applies to&nbsp;</FONT></TD>
                 <TD><SELECT NAME="gu_project">
                     <%                    
 		      for (int r=0; r<iPrjRoot; r++) {
@@ -290,26 +289,26 @@
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right" VALIGN="TOP"><FONT CLASS="formstrong">[~Versiones~]</FONT></TD>
+                <TD ALIGN="right" VALIGN="TOP"><FONT CLASS="formstrong">Versions</FONT></TD>
                 <TD VALIGN="top">
                   <INPUT TYPE="hidden" NAME="vs_found">
 		  <INPUT TYPE="hidden" NAME="vs_closed">
 		  <TABLE BORDER="0">
 		    <TR>
-		      <TD><FONT CLASS="formplain">[~Detectado~]</FONT></TD>
-		      <TD><FONT CLASS="formplain">[~Corregido~]</FONT></TD>
+		      <TD><FONT CLASS="formplain">Detected</FONT></TD>
+		      <TD><FONT CLASS="formplain">Solved</FONT></TD>
 		    </TR>
 		    <TR>
 		      <TD>
                         <SELECT NAME="sel_found"><OPTION VALUE=""></OPTION><%=sVsFoundLookUp%></SELECT>
 <%  if (bIsAdmin) { %>     
-                        &nbsp;<A HREF="#" onclick="lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Valores~]"></A>
+                        &nbsp;<A HREF="#" onclick="lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Values List"></A>
 <%  } %>
 		      </TD>
 		      <TD>
                         <SELECT NAME="sel_closed"><OPTION VALUE=""></OPTION><%=sVsClosedLookUp%></SELECT>
 <%  if (bIsAdmin) { %>     
-                        &nbsp;<A HREF="#" onclick="lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Valores~]"></A>
+                        &nbsp;<A HREF="#" onclick="lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Values List"></A>
 <%  } %>
 		      </TD>
 		    </TR>
@@ -317,30 +316,30 @@
     	        </TD>
     	      </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formstrong">[~Severidad~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formstrong">Severity</FONT></TD>
                 <TD><SELECT NAME="od_severity"><%=sSeverityLookUp%></SELECT>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formstrong">[~Prioridad~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formstrong">Priority</FONT></TD>
                 <TD><SELECT NAME="od_priority"><%=sPriorityLookUp%></SELECT>
                     <INPUT TYPE="hidden" VALUE="R">
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formstrong">[~Reportado por:~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formstrong">Reported by:</FONT></TD>
                 <TD><INPUT TYPE="text" MAXLENGTH="50" SIZE="34" NAME="nm_reporter" VALUE="<%=oBug.getString(4,0)%>"></TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formstrong">[~e-mail:~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formstrong">e-mail:</FONT></TD>
                 <TD>
                   <INPUT TYPE="text" MAXLENGTH="100" SIZE="32" NAME="tx_rep_mail" VALUE="<%=oBug.getString(5,0)%>">
-                  <A HREF="mailto:<%=oBug.getString(5,0)%>" TITLE="[~Enviar e-mail~]"><IMG SRC="../images/images/mailto16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Enviar e-mail~]"></A>
+                  <A HREF="mailto:<%=oBug.getString(5,0)%>" TITLE="Send e-mail"><IMG SRC="../images/images/mailto16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Send e-mail"></A>
 
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formstrong">[~Descripci&oacute;n:~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formstrong">Description:</FONT></TD>
                 <TD><TEXTAREA NAME="tx_bug_brief" ROWS="9" COLS="40" CLASS="textsmall"><%=oBug.getString(6,0)%></TEXTAREA></TD>
               </TR>
             </TABLE> <!-- Fin Datos de Alta -->            
@@ -349,50 +348,50 @@
           <TD VALIGN="top" CLASS="formfront">
 	    <TABLE SUMMARY="Datos de Mantenimiento">
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formstrong">[~Identificador~]</FONT><BR></TD>
+                <TD ALIGN="right"><FONT CLASS="formstrong">Identifier</FONT><BR></TD>
                 <TD><FONT CLASS="formplain"><%=String.valueOf(oBug.getInt(12,0))%></FONT><BR></TD>
               </TR>
               <TR>
-                <TD ALIGN="right" VALIGN="top"><FONT CLASS="formstrong">[~Fechas~]</FONT></TD>
+                <TD ALIGN="right" VALIGN="top"><FONT CLASS="formstrong">Dates</FONT></TD>
                 <TD VALIGN="top">
                   <TABLE BORDER="0">
                     <TR>
-                      <TD><FONT CLASS="formplain">[~Alta~]</FONT></TD>
-                      <TD><FONT CLASS="formplain">[~Cierre~]</FONT></TD>
+                      <TD><FONT CLASS="formplain">Open</FONT></TD>
+                      <TD><FONT CLASS="formplain">Closed</FONT></TD>
                     </TR>
                     <TR>
                       <TD><INPUT TYPE="text" MAXLENGTH="10" SIZE="10" NAME="dt_created" VALUE="<% if (oBug.get(7,0)!=null) out.write(oSimpleDate.format((Date)oBug.get(7,0))); %>" TABINDEX="-1" onfocus="document.forms[0].dt_closed.focus()"></TD>
-                      <TD><INPUT TYPE="text" MAXLENGTH="10" SIZE="10" NAME="dt_closed" VALUE="<% if (oBug.get(8,0)!=null) out.write(oSimpleDate.format((Date)oBug.get(8,0))); %>">&nbsp;&nbsp;<A HREF="javascript:showCalendar('dt_closed')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A></TD>
+                      <TD><INPUT TYPE="text" MAXLENGTH="10" SIZE="10" NAME="dt_closed" VALUE="<% if (oBug.get(8,0)!=null) out.write(oSimpleDate.format((Date)oBug.get(8,0))); %>">&nbsp;&nbsp;<A HREF="javascript:showCalendar('dt_closed')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A></TD>
                     </TR>
                   </TABLE>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">[~Estado~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">Status</FONT></TD>
                 <TD>
                   <SELECT NAME="tx_status"><%=sStatusLookUp%></SELECT>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">[~Asignado a~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">Assigned to&nbsp;</FONT></TD>
                 <TD>
                   <INPUT TYPE="hidden" MAXLENGTH="255" SIZE="33" NAME="nm_assigned" VALUE="<% if (oBug.get(10,0)!=null) out.write(oBug.getString(10,0)); %>">
                   <SELECT NAME="sel_assigned" STYLE="width:210"><OPTION VALUE=""></OPTION><%=sAssignedLookUp%></SELECT>
-                  &nbsp;&nbsp;<A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Valores~]"></A>
+                  &nbsp;&nbsp;<A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Values List"></A>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">[~Comentarios~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">Comments</FONT></TD>
                 <TD><TEXTAREA NAME="tx_comments" ROWS="6" COLS="38" CLASS="textsmall"><% if (oBug.get(11,0)!=null) out.write(oBug.getString(11,0)); %></TEXTAREA></TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">[~Archivo 1~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">File 1</FONT></TD>
                 <TD><INPUT TYPE="file" SIZE="16" NAME="bugfile1_<%=sUserId%>"></TD>
               </TR>
 	      <%
 	        for (int a=0; a<iAttachs; a++) {
 	          out.write ("              <TR>\n");
-	          out.write ("                <TD VALIGN=\"middle\" ALIGN=\"right\"><FONT CLASS=\"formplain\">[~Borrar~]</FONT>&nbsp;<INPUT TYPE=\"checkbox\" VALUE=\"" + oAttachs.getString(0,a) + "\"></TD>\n");
+	          out.write ("                <TD VALIGN=\"middle\" ALIGN=\"right\"><FONT CLASS=\"formplain\">Delete</FONT>&nbsp;<INPUT TYPE=\"checkbox\" VALUE=\"" + oAttachs.getString(0,a) + "\"></TD>\n");
 	          out.write ("                <TD VALIGN=\"middle\">\n");
 	          out.write ("                  <A HREF=\"../servlet/HttpBLOBServlet?nm_table=" + DB.k_bugs_attach + "&nm_field=" +  DB.tx_file + "&bin_field=" + DB.bin_file + "&pk_field=" + DB.gu_bug + "," + DB.tx_file + "&pk_value=" + request.getParameter("gu_bug") + "," + Gadgets.URLEncode(oAttachs.getString(0,a)) + "\" TARGET=\"_blank\" CLASS=\"linknodecor\" TITLE=\"Ver Archivo\"><IMG SRC=\"../images/images/viewtxt.gif\" BORDER=\"0\">&nbsp;<I>" + oAttachs.getString(0,a) + "</I></A>");
 	          out.write ("                </TD>\n");
@@ -404,12 +403,12 @@
                 <TD>
                   <BR>
 <% if (bIsGuest) { %>
-                  <INPUT TYPE="submit" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="[~Guardar~]" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
+                  <INPUT TYPE="submit" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="Save" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
 <% } else { %>
-                  <INPUT TYPE="submit" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="[~Guardar~]">
+                  <INPUT TYPE="submit" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="Save">
 <% } %>
                   &nbsp;&nbsp;&nbsp;
-                  <INPUT TYPE="button" CLASS="closebutton" STYLE="WIDTH:80" VALUE="[~Cerrar~]" onClick="javascript:window.close()">
+                  <INPUT TYPE="button" CLASS="closebutton" STYLE="WIDTH:80" VALUE="Close" onClick="javascript:window.close()">
                 </TD>
               </TR>              
             </TABLE>

@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.CallableStatement,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.workareas.WorkArea,com.knowgate.billing.Account,com.knowgate.cache.DistributedCachePeer,com.knowgate.misc.Environment,com.knowgate.misc.MD5" language="java" session="false" buffer="8kb" autoFlush="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.CallableStatement,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.workareas.WorkArea,com.knowgate.billing.Account,com.knowgate.cache.DistributedCachePeer,com.knowgate.misc.Environment,com.knowgate.misc.MD5" language="java" session="false" buffer="8kb" autoFlush="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -140,7 +140,7 @@
   // Get Database Connection pool
   
   if (null==GlobalDBBind) {
-    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Error Bean~]&desc=[~GlobalDBBind.getConnection() - Imposible referenciar bean de conexion con base de datos~]&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Error Bean&desc=GlobalDBBind.getConnection() - Impossible to reference bean for connecting to database&resume=_back"));
     return;
   }
 
@@ -157,7 +157,7 @@
     
     if (DebugFile.trace) DebugFile.writeln("ERROR: login_chk.jsp -> Error leyendo cookies nickcookie=\""+sNickCookie+"\" nickname="+request.getParameter("nickname")+"\"");
     
-    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Imposible Iniciar Sesion~]&desc=[~No se puede conectar con el sistema porque su navegador tiene deshabilitadas las cookies de sesión~]<BR>authmethod="+sAuthMethod+"<BR>context="+sContext+"<BR>nickname="+request.getParameter("nickname")+"<BR>nickcookie="+sNickCookie+"&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Impossible to start session&desc=[~No se puede conectar con el sistema porque su navegador tiene deshabilitadas las cookies de sesión~]<BR>authmethod="+sAuthMethod+"<BR>context="+sContext+"<BR>nickname="+request.getParameter("nickname")+"<BR>nickcookie="+sNickCookie+"&resume=_back"));
     return;
   }
   */
@@ -214,7 +214,7 @@
   if (null==oConn) {
     if (DebugFile.trace) DebugFile.writeln("ERROR: login_chk.jsp -> Impossible to get connection to the database");
 
-    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Error SQL~]&desc=[~GlobalDBBind.getConnection() - Imposible obtener la conexion a la base de datos~]&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Error SQL&desc=GlobalDBBind.getConnection() - Impossible to get connection to database&resume=_back"));
   } else {  
     try {
 
@@ -249,7 +249,7 @@
             sUserId = ACL.getUserIdFromNick(oConn, sNickName, idDomain);
 
             if (null==sUserId) {
-    	      response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~User not found~]&desc=[~Cannot find user~] " + sNickName + " [~at domain~] " + String.valueOf(idDomain) + "&resume=_back"));
+    	      response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=User not found&desc=No se puedo encontrar el usuario " + sNickName + " at domain " + String.valueOf(idDomain) + "&resume=_back"));
               oConn.close("login");
               return;
             }
@@ -531,7 +531,7 @@
         if (!oConn.isClosed())
           oConn.close("login");
       oConn = null;  
-      response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Sistema de Autentificacion de Usuarios Fuera de Servicio~]&desc=" + e.getMessage() + "  [~El sistema de autentificación de usuarios esta temporalmente fuera de servicio por favor vuelva a intentarlo mas tarde.~]" + "&resume=_back"));
+      response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=User Authentification Service Out of Order&desc=" + e.getMessage() + "  [~El sistema de autentificación de usuarios esta temporalmente fuera de servicio por favor vuelva a intentarlo mas tarde.~]" + "&resume=_back"));
     }
 
     catch (IllegalStateException e) {
@@ -554,37 +554,37 @@
     
     switch (iStatus) {
       case ACL.USER_NOT_FOUND:      
-        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Usuario No Valido~]&desc=[~El nombre de usuario especificado no se encuentra en la base de datos~]&resume=_back"));  
+        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Invalid User&desc=User not found at database&resume=_back"));  
         return;
       case ACL.INVALID_PASSWORD:
         response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Contraseña No Válida~]&desc=[~La contraseña especificada para el usuario no es válida~]&resume=_back"));  
         return;
       case ACL.ACCOUNT_DEACTIVATED:
-        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Cuenta Desactivada~]&desc=[~La cuenta de este usuario se halla desactivada~]&resume=_back"));
+        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Account was deactivated&desc=User account disabled&resume=_back"));
         return;    
       case ACL.DOMAIN_NOT_FOUND:
-        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Dominio no valido~]&desc=[~No existe ningun dominio llamado~] " + nmDomain + "&resume=_back"));
+        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Invalid Domain&desc=No such domain: " + nmDomain + "&resume=_back"));
         return;    
       case ACL.WORKAREA_NOT_FOUND:
-        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Area de trabajo no valida~]&desc=[~No existe ningun area de trabajo llamada~] " + nmWorkArea + "&resume=_back"));
+        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Invalid WorkArea&desc=No such workarea: " + nmWorkArea + "&resume=_back"));
         return;    
       case ACL.WORKAREA_NOT_SET:
-        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Area de trabajo no valida~]&desc=[~El usuario no esta asignado a ningun area de trabajo~]&resume=_back"));
+        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Invalid WorkArea&desc=User not assigned to workarea&resume=_back"));
         return;
       case ACL.ACCOUNT_CANCELLED:      
-        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Cuenta Cancelada~]&desc=[~La cuenta de este usuario ha sido cancelada~]&resume=_back"));
+        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Account was cancelled&desc=This account has been canceled&resume=_back"));
         return;
       case ACL.PASSWORD_EXPIRED:
         if (sAuthMethod.equals("ldap") || sAuthMethod.equals("ntlm"))
-          response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Clave caducada~]&desc=[~La validez de la clave de acceso a expirado~]&resume=_back"));
+          response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Expired Password&desc=This password has expired&resume=_back"));
         else
           response.sendRedirect (response.encodeRedirectUrl ("pwd_unexpire.jsp?userid="+sUserId+"&context"+sContext+"&skin="+sSkin+"&face="+sFace));
         return;
       case ACL.CAPTCHA_MISMATCH:
-        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~La clave grafica no coincide~]&desc=[~La clave grafica no coincide con el valor introducido~]&resume=_back"));
+        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=The graphic key does not match the typed value&desc=The graphic key does not match the typed value&resume=_back"));
         return;
       case ACL.CAPTCHA_TIMEOUT:
-        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Clave grafica caducada~]&desc=[~La clave grafica ha caducado~]&resume=_back"));
+        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=The graphic key has expired&desc=The graphic key has expired&resume=_back"));
         return;      
     } // end switch(iStatus)
   } // fi (oConn)
@@ -598,7 +598,7 @@
 %>
 <HTML>
   <HEAD>
-    <TITLE>[~Espere~]...</TITLE>
+    <TITLE>Wait...</TITLE>
     <SCRIPT LANGUAGE="javascript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
       <!--

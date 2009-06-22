@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataxslt.db.*,com.knowgate.dataobjs.*,com.knowgate.misc.Gadgets,com.knowgate.scheduler.Job" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataxslt.db.*,com.knowgate.dataobjs.*,com.knowgate.misc.Gadgets,com.knowgate.scheduler.Job" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -50,8 +50,8 @@
   String sFilter = "";
   String id_command = request.getParameter("id_command");
   
-  if (id_command!=null)
-    sFilter = " AND id_command='" + id_command + "'";
+  //if (id_command!=null)
+  //  sFilter = " AND id_command='" + id_command + "'";
 
   if (screen_width==null)
     iScreenWidth = 800;
@@ -195,37 +195,40 @@
         // ----------------------------------------------------
 	
 	function cancelJobs() {
-	  // [~//Borrar las instancias marcadas con checkboxes~]
+	  // Borrar las instancias marcadas con checkboxes
 	  
 	  var offset = 0;
 	  var frm = document.forms[0];
 	  var chi = frm.checkeditems;
 	  	  
-	  if (window.confirm("Pending task will be cancelled. Are you sure?")) {
+	  if (window.confirm("[~Sólo se cancelarán las tareas seleccionadas con estado Pendiente. ¿Está seguro?~]")) {
 	  	  
-	    chi.value = "void,";	  	  
-	    frm.action = "job_cancel.jsp";
+      cac = createXMLHttpRequest();
+      if (cac) {
+
+       document.getElementById("loading").src="../images/images/jobs/loading.gif";
 	  	
-	    while (frm.elements[offset].type!="checkbox") offset++;
+	     while (frm.elements[offset].type!="checkbox") offset++;
 	      
-	    for (var i=0;i<jsInstances.length; i++) {              
-    	      if (frm.elements[offset].type=="checkbox")
-    	        if (frm.elements[offset].checked)
-                  chi.value += jsInstances[i] + ",";
-              offset++;
-	    } // next()
-	    
-	    if (chi.value.length>5) {
-	      chi.value = chi.value.substr(0,chi.value.length-1);
-              frm.submit();
-            } // fi(chi!="")
-            else {
-              alert("Must check at least one task");
-            }
-          } // fi (confirm)
-	} // deleteInstances()
+	      for (var i=0;i<jsInstances.length; i++) {              
+    	    if (frm.elements[offset].type=="checkbox") {
+    	      if (frm.elements[offset].checked) {
+              cac.open("GET", "../servlet/HttpSchedulerServlet?action=abort&id="+jsInstances[i], false);
+              cac.send(null);    	      
+    	      } // fi
+          } // fi
+          offset++;
+	      } // next()
+	      cac = null;
+
+        document.getElementById("loading").src="../images/images/spacer.gif";
+        
+        window.document.location.reload();
+	    } // fi (cac)
+	  } // fi (confirm)
+	} // cancelJobs()
 	
-        // ----------------------------------------------------
+  // ----------------------------------------------------
 
 	function delayJobs()
 	{
@@ -252,7 +255,7 @@
 	    }
 	    
    	    if (counter>1) {
-	     alert("Must check only one task");
+	     alert("[~Debe seleccionar sólo una tarea~]");
 	     return(false);
 	    }
             window.open("job_delay.jsp?gu_job="+chi.value+"&id_domain=<%=id_domain%>","delay","top=100,left=100,width=320,height=280,menubar=no,toolbar=no,directories=no");
@@ -283,7 +286,7 @@
                 scheduler_status = getElementText(sch[0],"status");
                 if (scheduler_status=="running" || scheduler_status=="started" || scheduler_status=="start") {
                   frm.switcher.value = "Stop";
-                  frm.status.value = "Executing";
+                  frm.status.value = "[~En ejecución~]";
                 } else if (scheduler_status=="stop" || scheduler_status=="stopped") {
                   frm.switcher.value = "Start";
                   frm.status.value = "Stopped";
@@ -375,7 +378,7 @@
         <TD VALIGN="middle"><!--<A HREF="#" onclick="createInstance()" CLASS="linkplain">New</A>--></TD>
         <TD><IMG SRC="../images/images/jobs/cancel.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Cancel"></TD>
         <TD><A HREF="javascript:cancelJobs()" CLASS="linkplain">Cancel</A></TD>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/jobs/sandclock.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delay Execution"></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/jobs/sandclock.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Reatrasar ejecución~]"></TD>
         <TD><A HREF="javascript:void(0)" onclick="delayJobs()" CLASS="linkplain">Chage execution date</A></TD>
         <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/refresh.gif" HEIGHT="16" BORDER="0" ALT="Refresh"></TD>
         <TD><A HREF="#" onclick="window.document.location.reload()" CLASS="linkplain">Refresh</A></TD>
@@ -404,8 +407,8 @@
         <TR>
           <TD CLASS="tableheader"  BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;&nbsp;<B>Task</B></TD>
           <TD CLASS="tableheader" WIDTH="90px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>Status</B></TD>
-          <TD CLASS="tableheader" WIDTH="110px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(6);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==6 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>New</B></TD>
-          <TD CLASS="tableheader" WIDTH="160px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(5);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>Execution</B></TD>
+          <TD CLASS="tableheader" WIDTH="110px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(6);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==6 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>[~Creación~]</B></TD>
+          <TD CLASS="tableheader" WIDTH="160px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(5);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>[~Ejecución~]</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;</TD>
 <%
 	  String sStrip;

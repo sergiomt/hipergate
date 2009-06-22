@@ -1,4 +1,4 @@
-<%@ page import="java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -140,7 +140,7 @@
 %>
 <HTML>
   <HEAD>
-    <TITLE>hipergate :: [~Editar Proyecto ~]<%=oPrj.getString(DB.nm_project)%></TITLE>
+    <TITLE>hipergate :: Edit Project<%=oPrj.getString(DB.nm_project)%></TITLE>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
@@ -198,7 +198,7 @@
             if (frm.nm_legal.value.indexOf("'")>=0)
               alert("[~El nombre de la compañía contiene caracteres no permitidos~]");
             else
-              window.open("../common/reference.jsp?nm_table=k_companies&tp_control=1&nm_control=nm_legal&nm_coding=gu_company"+(frm.nm_legal.value.length==0 ? "" : "&where=" + escape(" (<%=DB.nm_legal%> <%=DBBind.Functions.ILIKE%> '"+frm.nm_legal.value+"%' OR <%=DB.nm_commercial%> <%=DBBind.Functions.ILIKE%> '"+frm.nm_legal.value+"%') ")), "", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
+              window.open("../common/reference.jsp?nm_table=k_companies&tp_control=1&nm_control=nm_legal&nm_coding=gu_company"+(frm.nm_legal.value.length==0 ? "" : "&where=" + escape(" (<%=DB.nm_legal%> <%=DBBind.Functions.ILIKE%> '"+frm.nm_legal.value+"%' OR <%=DB.nm_commercial%> <%=DBBind.Functions.ILIKE%> '"+frm.nm_legal.value+"%') ")), "", "scrollbars=yes,toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
             break;
           case 3:
             if (frm.gu_company.value=="")
@@ -208,9 +208,9 @@
 	            c2 = frm.tx_contact.value.length==0 ? "" : " (<%=DB.tx_name%> <%=DBBind.Functions.ILIKE%> '"+frm.tx_contact.value+"%' OR <%=DB.tx_surname%> <%=DBBind.Functions.ILIKE%> '"+frm.tx_contact.value+"') ";
 	            c12 = (c1.length==0 || c2.length==0 ? c1+c2 : c1+" AND "+c2);
               if (frm.tx_contact.value.indexOf("'")>=0)
-                alert("[~El nombre del contacto contiene caracteres no permitidos~]");
+                alert("Contact name contains forbidden characters");
               else
-                window.open("../common/reference.jsp?nm_table=k_contacts&tp_control=1&nm_control=" + "tx_name%2B%27%20%27%2Btx_surname%20AS%20tx_contact" + "&nm_coding=gu_contact&where=" + escape(c12), "", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
+                window.open("../common/reference.jsp?nm_table=k_contacts&tp_control=1&nm_control=" + "tx_name%2B%27%20%27%2Btx_surname%20AS%20tx_contact" + "&nm_coding=gu_contact&where=" + escape(c12), "", "scrollbars=yes,toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
             }
             break;
           case 4:
@@ -220,9 +220,9 @@
 	          c2 = frm.tx_user.value.length==0 ? "" : " (<%=DB.nm_user%> <%=DBBind.Functions.ILIKE%> '"+frm.tx_user.value+"%' OR <%=DB.tx_surname1%> <%=DBBind.Functions.ILIKE%> '"+frm.tx_user.value+"') ";
 	          c12 = (c1.length==0 || c2.length==0 ? c1+c2 : c1+" AND "+c2);
             if (frm.tx_user.value.indexOf("'")>=0) {
-              alert("[~El nombre del propietario contiene caracteres no permitidos~]");
+              alert("The owner's name contains invalid characters");
             } else {
-              window.open("../common/reference.jsp?nm_table=k_users&tp_control=1&nm_control=" + "nm_user%2B%27%20%27%2Btx_surname1%20AS%20tx_user" + "&nm_coding=gu_user&where=" + escape(c12), "", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
+              window.open("../common/reference.jsp?nm_table=k_users&tp_control=1&nm_control=" + "nm_user%2B%27%20%27%2Btx_surname1%20AS%20tx_user" + "&nm_coding=gu_user&where=" + escape(c12), "", "scrollbars=yes,toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
             }
             break;
         }
@@ -239,12 +239,12 @@
       	var dtEnd;
       	
       	if (rtrim(frm.nm_project.value)=="") {
-      	  alert ("[~El nombre del proyecto es obligatorio~]");
+      	  alert ("Project name is mandatory");
       	  return false;
       	}
       
       	if (frm.nm_project.value.indexOf("'")>=0 || frm.nm_project.value.indexOf('"')>=0 || frm.nm_project.value.indexOf(";")>=0 || frm.nm_project.value.indexOf(",")>=0 || frm.nm_project.value.indexOf("|")>=0) {
-      	  alert ("[~El nombre del proyecto contiene caracteres no permitidos~]");
+      	  alert ("The project name contains invalid characters");
       	  return false;	
       	}
       			  	
@@ -268,13 +268,13 @@
       	  dtStart = new Date(parseInt(aStart[0]), parseInt(parseFloat(aStart[1]))-1, parseInt(parseFloat(aStart[2])));
       	  dtEnd = new Date(parseInt(aEnd[0]), parseFloat(aEnd[1])-1, parseFloat(aEnd[2]));
       	  if (dtStart>dtEnd) {
-      	    alert ("[~La fecha de inicio debe ser anterior a la fecha de fin~]");
+      	    alert ("Start date must be previous to end date");
       	    return false;
       	  }
       	}
       	
       	if (frm.de_project.value.length>1000) {
-      	  alert ("[~La descripci&oacute;n no debe exceder los 1000 caracteres~]");
+      	  alert ("Description must not be longer than 1000 characters");
       	  return false;
       	}
       
@@ -341,7 +341,7 @@
     </SCRIPT>
   </HEAD>
   <BODY  onLoad="setCombos()">
-    <TABLE WIDTH="90%"><TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Editar Proyecto~]</FONT></TD></TR></TABLE>       
+    <TABLE WIDTH="90%"><TR><TD CLASS="striptitle"><FONT CLASS="title1">Edit Project</FONT></TD></TR></TABLE>       
     <FORM NAME="frmReportBug" METHOD="post" ACTION="prjedit_store.jsp" onSubmit="return validate();">
       <INPUT TYPE="hidden" NAME="is_new" VALUE="0">
       <INPUT TYPE="hidden" NAME="is_standalone" VALUE="<%=(request.getParameter("standalone")!=null ? "1" : "0")%>">
@@ -357,15 +357,15 @@
           <TD VALIGN="top" CLASS="formfront">
 	          <TABLE SUMMARY="Project Data">
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formstrong">[~Nombre~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formstrong">Name</FONT></TD>
                 <TD>
                   <INPUT TYPE="text" MAXLENGTH="50" SIZE="30" NAME="nm_project" VALUE="<%=oPrj.getString(DB.nm_project)%>" TABINDEX="-1" onfocus="//document.forms[0].dt_closed.focus()">
                 </TD>
                 <TD ROWSPAN="11" CLASS="formback" WIDTH="1"></TD>
-                <TD><FONT CLASS="formstrong">[~Sumario~]</FONT></TD>
+                <TD><FONT CLASS="formstrong">Summary</FONT></TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formstrong">[~Padre~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formstrong">Parent</FONT></TD>
                 <TD>
                   <SELECT NAME="sel_parent">
                   <OPTION VALUE=""></OPTION>
@@ -415,7 +415,7 @@
                   </SELECT>
                 </TD>
                 <TD ROWSPAN="10" VALIGN="top">                	
-                  <FONT CLASS="formplain">[~Incidencias~]</FONT>
+                  <FONT CLASS="formplain">Incidents</FONT>
                   <TABLE SUMMARY="Incidents" CLASS="formfront">
 <% for (int b=0; b<nBugs; b++) { %>
                   	<TR>
@@ -426,9 +426,9 @@
                     </TR>
 <% } %>
                   </TABLE>
-<% if (0==nBugs) out.write ("<FONT CLASS=\"textsmall\">[~ninguna~]</FONT><BR>"); %>
+<% if (0==nBugs) out.write ("<FONT CLASS=\"textsmall\">none</FONT><BR>"); %>
                   <BR>
-                  <FONT CLASS="formplain">[~Tareas~]</FONT>
+                  <FONT CLASS="formplain">Duties</FONT>
                   <TABLE SUMMARY="Duties" CLASS="formfront">
 <% for (int d=0; d<nDuts; d++) { %>
                   	<TR>
@@ -438,80 +438,83 @@
                     </TR>
 <% } %>
                   </TABLE>
-<% if (0==nDuts) out.write ("<FONT CLASS=\"textsmall\">[~ninguna~]</FONT>"); %>
+<% if (0==nDuts) out.write ("<FONT CLASS=\"textsmall\">none</FONT>"); %>
+									<BR><BR>
+									<IMG SRC="../images/images/projtrack/ganttproject16.gif" WIDTH"=16" HEIGHT="16" ALT="Gantt File Export">&nbsp;
+    						  <A HREF="#" onclick="window.open('prj_gantt_export.jsp?gu_project=<%=request.getParameter("gu_project")%>')" CLASS="linkplain">[~Exportar a Gantt~]</A>
 									<BR><BR>
 									<IMG SRC="../images/images/projtrack/projsnapshot.gif" WIDTH"=16" HEIGHT="16" ALT="Project Snapshots">&nbsp;
-    						  <A HREF="prj_snapshot_list.jsp?gu_project=<%=request.getParameter("gu_project")%>&standalone=<%=(request.getParameter("standalone")!=null ? "1" : "0")%>" CLASS="linkplain">[~Instant&aacute;neas de Proyecto~]</A><BR>
+    						  <A HREF="prj_snapshot_list.jsp?gu_project=<%=request.getParameter("gu_project")%>&standalone=<%=(request.getParameter("standalone")!=null ? "1" : "0")%>" CLASS="linkplain">Project Snapshots</A><BR>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">[~Inicio~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">Start</FONT></TD>
                 <TD>
                   <INPUT TYPE="text" MAXLENGTH="10" SIZE="10" NAME="dt_start" VALUE="<% if (oPrj.get(DB.dt_start)!=null) out.write(oSimpleDate.format((Date)oPrj.get(DB.dt_start))); %>">&nbsp;&nbsp;
-                  <A HREF="javascript:showCalendar('dt_start')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>
+                  <A HREF="javascript:showCalendar('dt_start')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
                   <IMG SRC="../images/images/spacer.gif" WIDTH="8" HEIGHT="1" BORDER="0">
-		  <FONT CLASS="formplain">[~Fin~]</FONT>                  
+		  <FONT CLASS="formplain">End</FONT>                  
                   <INPUT TYPE="text" MAXLENGTH="10" SIZE="10" NAME="dt_end" VALUE="<% if (oPrj.get(DB.dt_end)!=null) out.write(oSimpleDate.format((Date)oPrj.get(DB.dt_end))); %>">&nbsp;&nbsp;
-                  <A HREF="javascript:showCalendar('dt_end')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>
+                  <A HREF="javascript:showCalendar('dt_end')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">[~Referencia~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">Reference</FONT></TD>
                 <TD>
                   <INPUT TYPE="text" MAXLENGTH="50" SIZE="20" NAME="id_ref" VALUE="<% if (oPrj.get(DB.id_ref)!=null) out.write(oPrj.getString(DB.id_ref)); %>">
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">[~Estado~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">Status</FONT></TD>
                 <TD>
                   <INPUT TYPE="hidden" MAXLENGTH="16" NAME="id_status" VALUE="<% if (oPrj.get(DB.id_status)!=null) out.write(oPrj.getString(DB.id_status)); %>">
                   <SELECT NAME="sel_status"><OPTION VALUE=""></OPTION><%=sStatusLookUp%></SELECT>
-                  &nbsp;&nbsp;<A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Estados~]"></A>
+                  &nbsp;&nbsp;<A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Status List"></A>
                 </TD>
               </TR>              
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">[~Coste~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">Cost</FONT></TD>
                 <TD>
                   <FONT CLASS="formplain"><% out.write(String.valueOf(fCost)); %></FONT>
 <% if (!bIsGuest) { %>
                   &nbsp;
-                  <A CLASS="linkplain" HREF="prj_costs.jsp?gu_project=<%=gu_project%>" TARGET="_blank">[~Editar costes~]</A>
+                  <A CLASS="linkplain" HREF="prj_costs.jsp?gu_project=<%=gu_project%>" TARGET="_blank">Edit Costs</A>
 <% } %>
                 </TD>
               </TR>
 <% if ((iAppMask & (1<<Sales))!=0) { %>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">[~Departamento~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">Department</FONT></TD>
                 <TD>
                   <INPUT TYPE="hidden" MAXLENGTH="255" NAME="id_dept" VALUE="<% if (oPrj.get(DB.id_dept)!=null) out.write(oPrj.getString(DB.id_dept)); %>">
                   <SELECT NAME="sel_dept" STYLE="width:230"><OPTION VALUE=""></OPTION><%=sDeptsLookUp%></SELECT>
-                  &nbsp;&nbsp;<A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Departamentos~]"></A>
+                  &nbsp;&nbsp;<A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Department Listing"></A>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">[~Compa&ntilde;&iacute;a~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">Company</FONT></TD>
                 <TD>
                   <INPUT TYPE="text" SIZE="34" NAME="nm_legal" VALUE="<% if (oPrj.get(DB.tx_company)!=null) out.write(oPrj.getString(DB.tx_company)); %>" onchange="document.forms[0].gu_company.value='';">
-                  &nbsp;&nbsp;<A HREF="javascript:reference(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Compa&ntilde;&iacute;as~]"></A>
+                  &nbsp;&nbsp;<A HREF="javascript:reference(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Companies List"></A>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">[~Contacto~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">Contact</FONT></TD>
                 <TD>
                   <INPUT TYPE="text" SIZE="34" NAME="tx_contact" VALUE="<% if (oPrj.get(DB.tx_contact)!=null) out.write(oPrj.getString(DB.tx_contact)); %>">
-                  &nbsp;&nbsp;<A HREF="javascript:reference(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Contactos~]"></A>
+                  &nbsp;&nbsp;<A HREF="javascript:reference(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Contacts List"></A>
                 </TD>
               </TR>
 <% } %>             
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">[~Propietario~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">Oowner</FONT></TD>
                 <TD>
                   <INPUT TYPE="text" SIZE="34" NAME="tx_user" VALUE="<%=sUserFullName%>">
-                  &nbsp;&nbsp;<A HREF="javascript:reference(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Usuarios~]"></A>
+                  &nbsp;&nbsp;<A HREF="javascript:reference(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View list of users"></A>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right" VALIGN="top"><FONT CLASS="formplain">[~Descripci&oacute;n~]</FONT></TD>
+                <TD ALIGN="right" VALIGN="top"><FONT CLASS="formplain">Description</FONT></TD>
                 <TD><TEXTAREA NAME="de_project" ROWS="5" COLS="40" STYLE="font-family:Arial;font-size:9pt"><% if (oPrj.get(DB.de_project)!=null) out.write(oPrj.getString(DB.de_project)); %></TEXTAREA></TD>
               </TR>
               <TR>
@@ -520,16 +523,16 @@
               <TR>
                 <TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>
-                  <INPUT TYPE="button" CLASS="pushbutton" STYLE="WIDTH:80" ACCESSKEY="s" TITLE="ALT+s" VALUE="[~Guardar~]" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
+                  <INPUT TYPE="button" CLASS="pushbutton" STYLE="WIDTH:80" ACCESSKEY="s" TITLE="ALT+s" VALUE="Save" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
 <% } else { %>                  
-                  <INPUT TYPE="submit" CLASS="pushbutton" STYLE="WIDTH:80" ACCESSKEY="s" TITLE="ALT+s" VALUE="[~Guardar~]">
+                  <INPUT TYPE="submit" CLASS="pushbutton" STYLE="WIDTH:80" ACCESSKEY="s" TITLE="ALT+s" VALUE="Save">
 <% } %>
 <% if (request.getParameter("standalone")==null && !bIsGuest) { %>
                   &nbsp;&nbsp;&nbsp;
-                  <INPUT TYPE="button" CLASS="pushbutton" STYLE="WIDTH:80" ACCESSKEY="d" TITLE="ALT+d" VALUE="[~Eliminar~]" onClick="javascript:deleteProject()">
+                  <INPUT TYPE="button" CLASS="pushbutton" STYLE="WIDTH:80" ACCESSKEY="d" TITLE="ALT+d" VALUE="Delete" onClick="javascript:deleteProject()">
 <% } %>
                   &nbsp;&nbsp;&nbsp;
-                  <INPUT TYPE="button" CLASS="closebutton" STYLE="WIDTH:80" ACCESSKEY="c" TITLE="ALT+c" VALUE="[~Cerrar~]" onClick="javascript:window.parent.close()">
+                  <INPUT TYPE="button" CLASS="closebutton" STYLE="WIDTH:80" ACCESSKEY="c" TITLE="ALT+c" VALUE="Close" onClick="javascript:window.parent.close()">
                 </TD>
                 <TD COLSPAN="2"></TD>
               </TR>              

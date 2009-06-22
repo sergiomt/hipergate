@@ -1,4 +1,4 @@
-<%@ page import="java.util.*,java.io.*,java.math.*,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.dataxslt.db.*,com.knowgate.dfs.FileSystem,com.knowgate.misc.*" language="java" session="false" %>
+﻿<%@ page import="java.util.*,java.io.*,java.math.*,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.dataxslt.db.*,com.knowgate.dfs.FileSystem,com.knowgate.misc.*" language="java" session="false" %>
 <%@ include file="../methods/dbbind.jsp" %>
 <%@ include file="../methods/cookies.jspf" %>
 <%@ include file="../methods/authusrs.jspf" %>
@@ -41,17 +41,16 @@
   String id_domain = getCookie(request,"domainid","");
   String n_domain = request.getParameter("n_domain");
   String gu_workarea = request.getParameter("gu_workarea");
-  String sStorage = Environment.getProfileVar(GlobalDBBind.getProfileName(),"storage","/opt/knowgate/knowgate/storage");
+  String sStorage = Environment.getProfileVar(GlobalDBBind.getProfileName(),"storage");
   
   //Inicializaciones
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
   String id_user = getCookie (request, "userid", null);
   FileSystem oFs = new FileSystem();
-  oFs.os(FileSystem.OS_UNIX);
     
   //Recuperar datos de formulario
   String chkItems = request.getParameter("checkeditems");  
-  String a_items[] = Gadgets.split(chkItems, ',');
+  String a_items[] = Gadgets.split(chkItems, ':');
   
   JDCConnection oConn = GlobalDBBind.getConnection("images_delete");  
   oConn.setAutoCommit (false);
@@ -69,7 +68,7 @@
   oConn.close("images_delete");
   oConn = null;
 %>
-<HTML><HEAD><TITLE>[~Espere~]...</TITLE>
+<HTML><HEAD><TITLE>Wait...</TITLE>
 <script>
 history.back();
 </script>

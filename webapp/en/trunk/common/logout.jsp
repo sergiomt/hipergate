@@ -31,7 +31,7 @@
 %>
 <HTML>
   <HEAD>
-    <TITLE>[~Espere~]...</TITLE>
+    <TITLE>Wait...</TITLE>
     <SCRIPT LANGUAGE="javascript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
       <!--      

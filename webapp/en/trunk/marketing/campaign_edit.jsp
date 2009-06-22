@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.marketing.Campaign" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.marketing.Campaign" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*  
@@ -87,7 +87,7 @@
         var frm = window.document.forms[0];
 
 			  if (frm.nm_campaign.value.length==0) {
-			    alert ("Campaign name is required");
+			    alert ("[~El nombre de la campaña es obligatorio~]");
 				  frm.nm_campaign.focus();
 				  return false;
 			  }

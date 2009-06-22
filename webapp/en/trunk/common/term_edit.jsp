@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*
@@ -86,7 +86,10 @@
 
     if (null!=gu_parent) {
       oPrnt = new Term();
-      oPrnt.load(oConn, new Object[]{gu_parent});
+      if (!oPrnt.load(oConn, new Object[]{gu_parent}))
+        throw new SQLException("Could not find parent "+gu_parent);
+      if (oPrnt.isNull(DB.tx_term))
+        throw new SQLException(DB.tx_term+" for parent "+gu_parent+" is null");      
       tx_parent = oPrnt.getString(DB.tx_term);
       oPrnt = null;
     }
@@ -140,14 +143,14 @@
         var frm = window.document.forms[0];
 
 	if (rtrim(frm.tx_term.value)=="") {
-	  alert ("[~El texto singular del termino es obligatorio~]");
+	  alert ("Singular text for term is mandatory");
 	  return false;
 	}
 
 <%      if (null==gu_term && null!=gu_parent) { %>
 		  
 	  if (!frm.relationship[0].checked && !frm.relationship[1].checked) {
-	    alert("[~Debe seleccionar el tipo de relacion: hijo o sinonimo~]");
+	    alert("You must select a relation type: child or synonym");
 	    return false;
 	  }
 
@@ -210,46 +213,46 @@
 <% if (null==gu_term && null==gu_parent) {
      out.write ("	    <TD ALIGN=\"right\"><IMG SRC=\"../images/images/new16x16.gif\" BORDER=\"0\"></TD>\n");
      out.write ("	    <TD>\n");
-     out.write ("	      <FONT CLASS=\"formplain\">[~Nuevo T&eacute;rmino Ra&iacute;z~]</FONT>");
+     out.write ("	      <FONT CLASS=\"formplain\">New Root Term</FONT>");
      out.write ("	    </TD>\n");
    } else if (null==gu_term && null!=gu_parent) {
      out.write ("	    <TD></TD>\n");
      out.write ("	    <TD>\n");
-     out.write ("	      <INPUT TYPE=\"radio\" NAME=\"relationship\">&nbsp;<FONT CLASS=\"formplain\">[~Hijo de~]&nbsp;" + tx_parent + "</FONT><BR>\n");
-     out.write ("	      <INPUT TYPE=\"radio\" NAME=\"relationship\">&nbsp;<FONT CLASS=\"formplain\">[~Sinonimo de~]&nbsp;" + tx_parent + "</FONT>\n");
+     out.write ("	      <INPUT TYPE=\"radio\" NAME=\"relationship\">&nbsp;<FONT CLASS=\"formplain\">Son of&nbsp;" + tx_parent + "</FONT><BR>\n");
+     out.write ("	      <INPUT TYPE=\"radio\" NAME=\"relationship\">&nbsp;<FONT CLASS=\"formplain\">Synonym of&nbsp;" + tx_parent + "</FONT>\n");
      out.write ("	    </TD>\n");
    }
 %>
 	    </TD>
 	  </TR>
           <TR>
-            <TD ALIGN="right"><FONT CLASS="textsmall"><B>[~Singular~]</B></FONT></TD>
+            <TD ALIGN="right"><FONT CLASS="textsmall"><B>Singular</B></FONT></TD>
             <TD ALIGN="left" >
               <INPUT CLASS="combomini" TYPE="text" NAME="tx_term" MAXLENGTH="100" SIZE="30" STYLE="text-transform:uppercase" VALUE="<%=oTerm.getStringNull(DB.tx_term,"")%>">
-              &nbsp;&nbsp;&nbsp;<FONT CLASS="textsmall">[~Plural~]</FONT>&nbsp;
+              &nbsp;&nbsp;&nbsp;<FONT CLASS="textsmall">Plural</FONT>&nbsp;
               <INPUT CLASS="combomini" TYPE="text" NAME="tx_term2" MAXLENGTH="100" SIZE="30" STYLE="text-transform:uppercase" VALUE="<%=oTerm.getStringNull("tx_term","")%>">
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" ><FONT CLASS="textsmall">[~Idioma~]</FONT></TD>
+            <TD ALIGN="right" ><FONT CLASS="textsmall">Language</FONT></TD>
             <TD ALIGN="left" >
               <SELECT CLASS="combomini" NAME="sel_language"><%=sSelLang%></SELECT>
               <INPUT TYPE="hidden" NAME="id_language" VALUE="<%=oTerm.getStringNull(DB.id_language,"")%>">
               &nbsp;&nbsp;&nbsp;&nbsp;
-              <FONT CLASS="textsmall">[~&Aacute;mbito~]</FONT>
+              <FONT CLASS="textsmall">Scope</FONT>
               &nbsp;
               <SELECT CLASS="combomini" NAME="sel_scope"><OPTION VALUE="all">all</OPTION></SELECT>
               <INPUT TYPE="hidden" NAME="id_scope" VALUE="<%=oTerm.getStringNull(DB.id_scope,"")%>">
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right"><FONT CLASS="textsmall"><B>[~Descripci&oacute;n~]</B></FONT></TD>
+            <TD ALIGN="right"><FONT CLASS="textsmall"><B>Description</B></FONT></TD>
             <TD ALIGN="left" >
               <INPUT CLASS="combomini" TYPE="text" NAME="de_term" MAXLENGTH="200" SIZE="60" VALUE="<%=oTerm.getStringNull(DB.de_term,"")%>">
             </TD>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">
     	      <BR><BR>
     	    </TD>
     	  </TR>            

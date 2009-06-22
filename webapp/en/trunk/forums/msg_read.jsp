@@ -1,4 +1,4 @@
-<%@ page import="java.text.SimpleDateFormat,java.net.URLDecoder,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets,com.knowgate.forums.NewsMessage" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.text.SimpleDateFormat,java.net.URLDecoder,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets,com.knowgate.forums.NewsMessage" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <HTML>
 <HEAD>
@@ -61,29 +61,29 @@
     
     oMsg.load(oConn, gu_msg);
  
-    out.write("  <TITLE>hipergate :: [~Leer Mensaje ~]" + oMsg.getStringNull(DB.tx_subject,"") + "</TITLE>\n");
+    out.write("  <TITLE>hipergate :: Read Message" + oMsg.getStringNull(DB.tx_subject,"") + "</TITLE>\n");
     out.write("</HEAD>\n");
     out.write("<BODY CLASS=\"htmlbody\" LEFTMARGIN=\"16\" MARGINWIDTH=\"16\">\n");
     out.write("  <IMG SRC=\"../skins/" + sSkin + "/" + sPathLogo + "\" BORDER=\"0\">\n");
 
     out.write("  <TABLE WIDTH=\"100%\" CELLSPACING=\"2\" CELLPADDING=\"2\">\n");
     out.write("    <TR><TD BACKGROUND=\"../images/images/loginfoot_med.gif\" HEIGHT=\"3\"></TD></TR>\n");
-    out.write("    <TR><TD><FONT CLASS=\"textplain\"><B>[~De~]</B>: <A HREF=\"mailto:" + oMsg.getStringNull(DB.tx_email,"") + "\">" + oMsg.getStringNull(DB.nm_author,"") + "</A></TD></TR>\n");
-    out.write("    <TR><TD><FONT CLASS=\"textplain\"><B>[~Fecha de publicaci&oacute;n~]</B>: " + oMsg.getDateFormated(DB.dt_published, "yyy-MM-dd hh:mm:ss") + "</TD></TR>\n");
-    if (!oMsg.isNull(DB.dt_start) ) out.write("    <TR><TD><FONT CLASS=\"textplain\"><B>[~Fecha de inicio de visibilidad:~]</B>: " + oMsg.getDateFormated(DB.dt_start, "yyy-MM-dd") + "</TD></TR>\n");
-    if (!oMsg.isNull(DB.dt_expire)) out.write("    <TR><TD><FONT CLASS=\"textplain\"><B>[~Fecha de caducidad:~]</B>: " + oMsg.getDateFormated(DB.dt_expire, "yyy-MM-dd") + "</TD></TR>\n");
-    out.write("    <TR><TD><FONT CLASS=\"textplain\">[~Hay ~]" + String.valueOf(oMsg.getInt(DB.nu_thread_msgs)) + (oMsg.getInt(DB.nu_thread_msgs)==1 ? "[~ mensaje~]" : "[~ mensajes~]") + " [~en esta conversaci&oacute;n~]&nbsp;&nbsp;<A CLASS=\"linkplain\" HREF=\"msg_thread.jsp?gu_thread_msg=" + oMsg.getStringNull(DB.gu_thread_msg,"") + "\">[~Ver conversaci&oacute;n completa~]</A></TD></TR>\n");
+    out.write("    <TR><TD><FONT CLASS=\"textplain\"><B>From</B>: <A HREF=\"mailto:" + oMsg.getStringNull(DB.tx_email,"") + "\">" + oMsg.getStringNull(DB.nm_author,"") + "</A></TD></TR>\n");
+    out.write("    <TR><TD><FONT CLASS=\"textplain\"><B>Publishing Date</B>: " + oMsg.getDateFormated(DB.dt_published, "yyy-MM-dd hh:mm:ss") + "</TD></TR>\n");
+    if (!oMsg.isNull(DB.dt_start) ) out.write("    <TR><TD><FONT CLASS=\"textplain\"><B>Start been visible at date:</B>: " + oMsg.getDateFormated(DB.dt_start, "yyy-MM-dd") + "</TD></TR>\n");
+    if (!oMsg.isNull(DB.dt_expire)) out.write("    <TR><TD><FONT CLASS=\"textplain\"><B>Expiration Date:</B>: " + oMsg.getDateFormated(DB.dt_expire, "yyy-MM-dd") + "</TD></TR>\n");
+    out.write("    <TR><TD><FONT CLASS=\"textplain\">There are&nbsp;" + String.valueOf(oMsg.getInt(DB.nu_thread_msgs)) + (oMsg.getInt(DB.nu_thread_msgs)==1 ? " message" : " messages") + " on this thread&nbsp;&nbsp;&nbsp;<A CLASS=\"linkplain\" HREF=\"msg_thread.jsp?gu_thread_msg=" + oMsg.getStringNull(DB.gu_thread_msg,"") + "\">View complete thread</A></TD></TR>\n");
     
     if (bIsGuest)
-      out.write("    <TR><TD><IMG SRC=\"../images/images/forums/replytoall.gif\" ALT=\"[~Responder a Todos~]\">&nbsp;<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')\">[~Responder a Todos~]</A></TD></TR>\n");
+      out.write("    <TR><TD><IMG SRC=\"../images/images/forums/replytoall.gif\" ALT=\"Reply to All\">&nbsp;<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')\">Reply to All</A></TD></TR>\n");
     else
-      out.write("    <TR><TD><IMG SRC=\"../images/images/forums/replytoall.gif\" ALT=\"[~Responder a Todos~]\">&nbsp;<A CLASS=\"linkplain\" HREF=\"msg_edit.jsp?id_domain=" + id_domain + "&gu_workarea=" + gu_workarea + "&gu_newsgrp=" + gu_newsgrp + "&nm_newsgrp=" + nm_newsgrp + "&gu_parent_msg=" + gu_msg + "\">[~Responder a Todos~]</A></TD></TR>\n");
+      out.write("    <TR><TD><IMG SRC=\"../images/images/forums/replytoall.gif\" ALT=\"Reply to All\">&nbsp;<A CLASS=\"linkplain\" HREF=\"msg_edit.jsp?id_domain=" + id_domain + "&gu_workarea=" + gu_workarea + "&gu_newsgrp=" + gu_newsgrp + "&nm_newsgrp=" + nm_newsgrp + "&gu_parent_msg=" + gu_msg + "\">Reply to All</A></TD></TR>\n");
         
     if (!oMsg.isNull(DB.gu_product)) {
       DBSubset oLocs = oMsg.getAttachments(oConn);
       out.write("    <TR><TD>");
       for (int a=0; a<oLocs.getRowCount(); a++)
-        out.write("<A HREF=\"../servlet/HttpBinaryServlet?id_user=" + sUserId + "&id_product=" + oMsg.getString(DB.gu_product) + "&id_location=" + oLocs.getString(DB.gu_location,a) + "\" CLASS=\"linkplain\" TARGET=\"blank\" TITLE=\"[~Abrir/Descargar~]\">" + oLocs.getStringNull(DB.xfile,a,"[~archivo adjunto ~]" + String.valueOf(a)) + "</A>&nbsp;<FONT CLASS=\"textsmall\">(" + String.valueOf(oLocs.getInt(DB.len_file,a)/1024) + " Kb)</FONT>&nbsp;&nbsp;&nbsp;&nbsp;");        
+        out.write("<A HREF=\"../servlet/HttpBinaryServlet?id_user=" + sUserId + "&id_product=" + oMsg.getString(DB.gu_product) + "&id_location=" + oLocs.getString(DB.gu_location,a) + "\" CLASS=\"linkplain\" TARGET=\"blank\" TITLE=\"Open/Download\">" + oLocs.getStringNull(DB.xfile,a,"attached File" + String.valueOf(a)) + "</A>&nbsp;<FONT CLASS=\"textsmall\">(" + String.valueOf(oLocs.getInt(DB.len_file,a)/1024) + " Kb)</FONT>&nbsp;&nbsp;&nbsp;&nbsp;");        
       out.write("</TD></TR>");
     } // fi
 

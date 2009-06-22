@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.crm.Contact" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.crm.Contact" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -54,14 +54,14 @@
   boolean bIsAdmin = isDomainAdmin (GlobalCacheClient, GlobalDBBind, request, response);
 
   if (!bIsAdmin) {
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SecurityException&desc=[~Administrator role is required for editing company access restrictions~]&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SecurityException&desc=Having administrator role is required for editing company access restrictions&resume=_back"));
     return;
   }
 
   try {
 
       if (!bIsAdmin) {
-        throw new SQLException("[~Debe tener el rol de administrador para poder editar permisos~]", "28000", 28000);
+        throw new SQLException("Having administrator role is required for editing permissions", "28000", 28000);
       }
 
       oConn = GlobalDBBind.getConnection("contact_security");
@@ -121,7 +121,7 @@
   <!-- +------------------------------------------+ -->
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: [~Editar restricciones de acceso~]</TITLE>  
+  <TITLE>hipergate :: Edit access restrictions</TITLE>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
@@ -202,11 +202,11 @@
 
 <BODY  SCROLL="no" TOPMARGIN="4" MARGINHEIGHT="4" >
   <DIV class="cxMnu1" style="width:200px"><DIV class="cxMnu2">
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Actualizar~]"> [~Actualizar~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Refresh"> Refresh</SPAN>
   </DIV></DIV>
 
-  <TABLE WIDTH="100%"><TR><TD CLASS="strip1"><FONT CLASS="title1">[~Editar restricciones de acceso~]</FONT></TD></TR></TABLE>
+  <TABLE WIDTH="100%"><TR><TD CLASS="strip1"><FONT CLASS="title1">Edit access restrictions</FONT></TD></TR></TABLE>
   <FORM NAME="compsecedit" METHOD="post" ACTION="contact_security_store.jsp" onSubmit="return validate();">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
     <INPUT TYPE="hidden" NAME="gu_contact" VALUE="<%=gu_contact%>">
@@ -222,23 +222,23 @@
   	      </TR>
           <TR>
           	<TD ALIGN="right"><INPUT TYPE="radio" NAME="restricted" <%=oCont.getShort(DB.bo_restricted)==(short)0 && oCont.getShort(DB.bo_private)==(short)0 ? "CHECKED" : ""%> onclick="hideLayer('groupselection')"></TD>
-    	      <TD CLASS="formplain">[~Este individuo es visible para todo el mundo~]</TD>
+    	      <TD CLASS="formplain">This individual is visible by everyboy</TD>
   	      </TR>
           <TR>
           	<TD ALIGN="right"><INPUT TYPE="radio" NAME="restricted" <%=oCont.getShort(DB.bo_private)!=(short)0 ? "CHECKED" : ""%> onclick="hideLayer('groupselection')"></TD>
-    	      <TD CLASS="formplain">[~Este individuo es visible s&oacute;lo por mi~]</TD>
+    	      <TD CLASS="formplain">This individual is visible only by me</TD>
   	      </TR>
           <TR>
           	<TD ALIGN="right"><INPUT TYPE="radio" NAME="restricted" <%=oCont.getShort(DB.bo_restricted)!=(short)0 && oCont.getShort(DB.bo_private)==(short)0 ? "CHECKED" : ""%> onclick="showLayer('groupselection')"></TD>
-    	      <TD CLASS="formplain">[~Este individuo es visible s&oacute;lo para miembros de los grupos~]</TD>
+    	      <TD CLASS="formplain">This individual is visible only by members of groups</TD>
   	      </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90" VALIGN="top"></TD>
             <TD ALIGN="left" WIDTH="470">
             	<DIV id="groupselection" style="visibility:<%=oCont.getShort(DB.bo_restricted)==(short)0 ? "hidden" : "visible"%>">
                 <TABLE CELLSPACING="0" CELLPADDING="0" BACKGROUND="../skins/<%=sSkin%>/fondoc.gif">
-                  <TR HEIGHT="20"><TD WIDTH="8">&nbsp;</TD><TD><FONT CLASS="textsmallfront">[~Todos los grupos~]</FONT></TD><TD WIDTH="50"</TD><TD><FONT CLASS="textsmallfront">[~Accesible por~]</FONT></TD><TD WIDTH="8">&nbsp;</TD></TR>
-                  <TR><TD WIDTH="8">&nbsp;</TD><TD><SELECT NAME="groups" CLASS="textsmall" STYLE="width:160" SIZE="9" MULTIPLE><%=oGrps.toString()%></SELECT></TD><TD ALIGN="center" VALIGN="middle"><INPUT TYPE="button" NAME="AddGrps" VALUE="++ >>" TITLE="[~Agregar~]" STYLE="width:40" onclick="addGrps()"><BR><BR><INPUT TYPE="button" NAME="RemGrps" VALUE="<< - -" TITLE="[~Quitar~]" STYLE="width:40" onclick="remGrps()"></TD><TD><SELECT NAME="group2" CLASS="textsmall" STYLE="width:160" SIZE="9" MULTIPLE><%=sGrpx%></SELECT></TD><TD WIDTH="8">&nbsp;</TD></TR>
+                  <TR HEIGHT="20"><TD WIDTH="8">&nbsp;</TD><TD><FONT CLASS="textsmallfront">All groups</FONT></TD><TD WIDTH="50"</TD><TD><FONT CLASS="textsmallfront">Visible to</FONT></TD><TD WIDTH="8">&nbsp;</TD></TR>
+                  <TR><TD WIDTH="8">&nbsp;</TD><TD><SELECT NAME="groups" CLASS="textsmall" STYLE="width:160" SIZE="9" MULTIPLE><%=oGrps.toString()%></SELECT></TD><TD ALIGN="center" VALIGN="middle"><INPUT TYPE="button" NAME="AddGrps" VALUE="++ >>" TITLE="Add" STYLE="width:40" onclick="addGrps()"><BR><BR><INPUT TYPE="button" NAME="RemGrps" VALUE="<< - -" TITLE="Remove" STYLE="width:40" onclick="remGrps()"></TD><TD><SELECT NAME="group2" CLASS="textsmall" STYLE="width:160" SIZE="9" MULTIPLE><%=sGrpx%></SELECT></TD><TD WIDTH="8">&nbsp;</TD></TR>
                   <TR HEIGHT="8"><TD COLSPAN="5"></TD></TR>
                 </TABLE>
               </DIV>
@@ -249,8 +249,8 @@
   	      </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>
     	    </TD>	    
           </TR>           

@@ -1,4 +1,4 @@
-<%@ page import="java.math.BigDecimal,java.net.URLDecoder,java.util.Date,java.util.HashMap,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.*,com.knowgate.hipergate.QueryByForm,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><% 
+﻿<%@ page import="java.math.BigDecimal,java.net.URLDecoder,java.util.Date,java.util.HashMap,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.*,com.knowgate.hipergate.QueryByForm,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><% 
 
 /*  
   Copyright (C) 2006  Know Gate S.L. All rights reserved.
@@ -31,6 +31,8 @@
   You should have received a copy of hipergate License with this code;
   if not, visit http://www.hipergate.org or mail to info@hipergate.org
 */
+
+  if (autenticateSession(GlobalDBBind, request, response)<0) return;
 
   String sLanguage = getNavigatorLanguage(request);
 
@@ -428,6 +430,8 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/autosuggest20.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/dynapi.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     DynAPI.setLibraryPath('../javascript/dynapi/lib/');
@@ -489,7 +493,7 @@
 	  var frm = document.forms[0];
 	  var chi = frm.checkeditems;
 	  	  
-	  if (window.confirm("Are you sure that you want to delete selected invoices?")) {
+	  if (window.confirm("[~¿Está seguro de que desea eliminar las facturas seleccionadas?~]")) {
 	  	  
 	    chi.value = "";	  	  
 	    frm.action = "invoice_edit_delete.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
@@ -521,7 +525,7 @@
 	    return false;
 	  }
 	  
-	  if (window.confirm("Are you sure that you want to change the status of selected invoices?")) {
+	  if (window.confirm("[~¿Está seguro de que desea cambiar el estado de las facturas seleccionadas?~]")) {
 	  	  
 	    chi.value = "";	  	  
 	    frm.action = "invoice_status_updt.jsp?id_status="+getCombo(frm.sel_status)+"&id_payment="+getCombo(frm.sel_payment)+"&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
@@ -608,17 +612,17 @@
           var fnd = "";
           
           if (frm.tx_search.value.indexOf("'")>=0 || frm.tx_search.value.indexOf(",")>=0 || frm.tx_search.value.indexOf(";")>=0) {
-	    alert ("Invalid characters at field "+getComboText(frm.sel_searched));
+	    alert ("[~Caracteres no válidos en el campo~] "+getComboText(frm.sel_searched));
 	    return null;
           }
 
           if (frm.tx_start.value.indexOf("'")>=0 || frm.tx_start.value.indexOf(",")>=0 || frm.tx_start.value.indexOf(";")>=0) {
-	    alert ("Start date contains invalid characters");
+	    alert ("[~La fecha de inicio contiene caracteres no válidos~]");
 	    return null;
           }
 
           if (frm.tx_end.value.indexOf("'")>=0 || frm.tx_end.value.indexOf(",")>=0  || frm.tx_end.value.indexOf(";")>=0) {
-	    alert ("End date contains invalid characters");
+	    alert ("[~La fecha de fin contiene caracteres no válidos~]");
 	    return null;
           }
 
@@ -634,21 +638,21 @@
           
 	  if (getCombo(frm.sel_between)=="im_total") {
 	    if (frm.tx_start.value.length>0 && isNaN(frm.tx_start.value)) {
-	      alert ("Initial amount is not a valid quantity");
+	      alert ("[~El importe inicial no es una cantidad válida~]");
 	      return null;
 	    }
 	    if (frm.tx_end.value.length>0 && isNaN(frm.tx_end.value)) {
-	      alert ("Final amount is not a valid quantity");
+	      alert ("[~El importe final no es una cantidad válida~]");
 	      return null;
 	    }
 	  }
 	  else if (getCombo(frm.sel_between)=="dt_modified" || getCombo(frm.sel_between)=="dt_payment") {
 	    if (frm.tx_start.value.length>0 && !isDate(frm.tx_start.value, "d")) {
-	      alert ("Start date is not valid");
+	      alert ("[~La fecha de inicio no es válida, debe ser en formato AAAA-MM-DD~]");
 	      return null;
 	    }
 	    if (frm.tx_end.value.length>0 && !isDate(frm.tx_end.value, "d")) {
-	      alert ("End date is not valid");
+	      alert ("[~La fecha de fin no es válida, debe ser en formato AAAA-MM-DD~]");
 	      return null;
 	    }
 	  }
@@ -785,7 +789,7 @@
             <TABLE SUMMARY="Bottom Options Line" BORDER="0" WIDTH="100%">
               <TR>
 		<TD>
-                  <SELECT NAME="sel_searched" CLASS="combomini"><OPTION VALUE=""></OPTION><OPTION VALUE="pg_invoice">Invoice Num</OPTION><OPTION VALUE="id_ref">Reference</OPTION><OPTION VALUE="nm_client">Client</OPTION><OPTION VALUE="id_legal">Legal Id</OPTION><OPTION VALUE="tx_comments">Comments</OPTION></SELECT>
+                  <SELECT NAME="sel_searched" CLASS="combomini"><OPTION VALUE=""></OPTION><OPTION VALUE="pg_invoice">[~Nº Factura~]</OPTION><OPTION VALUE="id_ref">Reference</OPTION><OPTION VALUE="nm_client">Client</OPTION><OPTION VALUE="id_legal">Legal Id</OPTION><OPTION VALUE="tx_comments">Comments</OPTION></SELECT>
                   <INPUT CLASS="textmini" TYPE="text" NAME="tx_search" MAXLENGTH="30" SIZE="10" VALUE="">
                   &nbsp;<FONT CLASS="textsmall">and</FONT>&nbsp;
                   <SELECT NAME="sel_lookup" CLASS="combomini" onchange="fillLooked()"><OPTION VALUE=""></OPTION><OPTION VALUE="id_status">Status</OPTION><OPTION VALUE="id_pay_status">Paydate</OPTION><OPTION VALUE="tx_location">Subsidiary</OPTION></SELECT>
@@ -797,7 +801,7 @@
                   &nbsp;<FONT CLASS="textsmall">and</FONT>&nbsp;
                   <INPUT CLASS="textmini" TYPE="text" NAME="tx_end" MAXLENGTH="10" SIZE="10" VALUE="">
 	          &nbsp;<A HREF="javascript:findInvoice();" TITLE="Buscar"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Search Invoices"></A>
-	          &nbsp;&nbsp;&nbsp;<A HREF="javascript:discardFind();" TITLE="Discard Find Filter"><IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard Find Filter"></A>
+	          &nbsp;&nbsp;&nbsp;<A HREF="javascript:discardFind();" TITLE="[~Descartar búsqueda~]"><IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="[~Descartar búsqueda~]"></A>
                 </TD>
               </TR>
             <TABLE>
@@ -922,11 +926,25 @@
       addMenuSeparator();
     </SCRIPT>
 </BODY>
+<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <!--
+	  var qry = new Array ("nm_table=v_invoices&nm_valuecolumn=pg_invoice&nm_textcolumn=pg_invoice&tx_where=",
+												 "nm_table=v_invoices&nm_valuecolumn=id_ref&nm_textcolumn=id_ref&tx_where=",
+												 "nm_table=v_invoices&nm_valuecolumn=nm_legal&nm_textcolumn=nm_legal&tx_where=",
+												 "nm_table=v_invoices&nm_valuecolumn=id_legal&nm_textcolumn=id_legal&tx_where=",
+												 "nm_table=v_invoices&nm_valuecolumn=tx_comments&nm_textcolumn=tx_comments&tx_where=",
+												 );
+    	  
+    var asr = new AutoSuggest("tx_search", { script:"'../common/autocomplete.jsp?gu_workarea=<%=gu_workarea%>&'+qry[document.forms[0].sel_searched.selectedIndex>=0 ? document.forms[0].sel_searched.selectedIndex : 0]+escape(document.tx_search.value)+'&'",
+    													varname:"tx_like", form:0, minchars:2, callback: function (obj) { } });
+    
+    //-->
+</SCRIPT>
 </HTML><% } else { // output=="csv"
    response.setContentType("text/tab-separated-values");
    response.setHeader("Content-Disposition", "attachment; filename=\"invoices.tsv\"");
 
-   out.write("Number\tStatus\tInvoicing Date\tDue Date\tLegal Name\tLegal Id.\tTotal\tCatalog\n");
+   out.write("[~Número~]\tStatus\tInvoicing Date\tDue Date\tLegal Name\tLegal Id.\tTotal\t[~Catálogo~]\n");
    
    for (int i=0; i<iInvoiceCount; i++) {
 	  

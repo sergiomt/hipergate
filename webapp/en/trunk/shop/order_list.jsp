@@ -1,4 +1,4 @@
-<%@ page import="java.math.BigDecimal,java.net.URLDecoder,java.util.Date,java.util.HashMap,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.*,com.knowgate.hipergate.QueryByForm,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.math.BigDecimal,java.net.URLDecoder,java.util.Date,java.util.HashMap,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.*,com.knowgate.hipergate.QueryByForm,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><% 
 
@@ -33,6 +33,8 @@
   You should have received a copy of hipergate License with this code;
   if not, visit http://www.hipergate.org or mail to info@hipergate.org
 */
+
+  if (autenticateSession(GlobalDBBind, request, response)<0) return;
 
   response.addHeader ("Pragma", "no-cache");
   response.addHeader ("cache-control", "no-store");
@@ -479,7 +481,7 @@
       	  var frm = document.forms[0];
       	  var chi = frm.checkeditems;
       	  	  
-      	  if (window.confirm("Are you sure that you want to delete the selected orders?")) {
+      	  if (window.confirm("[~¿Está seguro de que desea eliminar los pedidos seleccionados?~]")) {
       	  	  
       	    chi.value = "";	  	  
       	    frm.action = "order_edit_delete.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
@@ -569,17 +571,17 @@
           var fnd = "";
           
           if (frm.tx_search.value.indexOf("'")>=0 || frm.tx_search.value.indexOf(",")>=0 || frm.tx_search.value.indexOf(";")>=0) {
-	          alert ("The&nbsp;" + getComboText(frm.sel_searched) + "contains invalid characters");
+	          alert ("The&nbsp;" + getComboText(frm.sel_searched) + "[~ contiene caracteres no válidos~]");
 	          return null;
           }
 
           if (frm.tx_start.value.indexOf("'")>=0 || frm.tx_start.value.indexOf(",")>=0 || frm.tx_start.value.indexOf(";")>=0) {
-	          alert ("Amount or initial date contain invalid characters");
+	          alert ("[~El importe o fecha de inicio contiene caracteres no válidos~]");
 	          return null;
           }
 
           if (frm.tx_end.value.indexOf("'")>=0 || frm.tx_end.value.indexOf(",")>=0  || frm.tx_end.value.indexOf(";")>=0) {
-	          alert ("Amount or end date contain invalid characters");
+	          alert ("[~El importe o fecha de fin contiene caracteres no válidos~]");
 	          return null;
           }
 
@@ -590,21 +592,21 @@
           
 	  if (getCombo(frm.sel_between)=="im_total") {
 	    if (frm.tx_start.value.length>0 && isNaN(frm.tx_start.value)) {
-	      alert ("Initial amount is not a valid quantity");
+	      alert ("[~El importe inicial no es una cantidad válida~]");
 	      return null;
 	    }
 	    if (frm.tx_end.value.length>0 && isNaN(frm.tx_end.value)) {
-	      alert ("Final amount is not a valid quantity");
+	      alert ("[~El importe final no es una cantidad válida~]");
 	      return null;
 	    }
 	  }
 	  else if (getCombo(frm.sel_between)=="dt_modified" || getCombo(frm.sel_between)=="dt_payment") {
 	    if (frm.tx_start.value.length>0 && !isDate(frm.tx_start.value, "d")) {
-	      alert ("Start date is not valid");
+	      alert ("[~La fecha de inicio no es válida, debe ser en formato AAAA-MM-DD~]");
 	      return null;
 	    }
 	    if (frm.tx_end.value.length>0 && !isDate(frm.tx_end.value, "d")) {
-	      alert ("End date is not valid");
+	      alert ("[~La fecha de fin no es válida, debe ser en formato AAAA-MM-DD~]");
 	      return null;
 	    }
 	  }
@@ -739,7 +741,7 @@
         <TD COLSPAN="5">
           <SELECT NAME="sel_searched" CLASS="combomini">
             <OPTION VALUE=""></OPTION>
-            <OPTION VALUE="pg_order">Order number</OPTION>
+            <OPTION VALUE="pg_order">[~Nº Pedido~]</OPTION>
             <OPTION VALUE="id_ref">Reference</OPTION>
             <OPTION VALUE="de_order">Description</OPTION>
             <OPTION VALUE="nm_client">Client</OPTION>
@@ -757,7 +759,7 @@
           &nbsp;<FONT CLASS="textsmall">and</FONT>&nbsp;
           <INPUT CLASS="textmini" TYPE="text" NAME="tx_end" MAXLENGTH="10" SIZE="10" VALUE="">
 	  &nbsp;<A HREF="javascript:findOrder();" TITLE="Search"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Find Orders"></A>
-	  &nbsp;&nbsp;&nbsp;<A HREF="javascript:discardFind();" TITLE="Discard Find Filter"><IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard Find Filter"></A>
+	  &nbsp;&nbsp;&nbsp;<A HREF="javascript:discardFind();" TITLE="[~Descartar búsqueda~]"><IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="[~Descartar búsqueda~]"></A>
         </TD>
       </TR>      
       <TR><TD COLSPAN="5" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
@@ -868,7 +870,7 @@
       addMenuSeparator();
       addMenuOption("Duplicate","clone()",0);
       addMenuSeparator();
-      addMenuOption("New Despatch Advice","createDespatchAdvice(jsOrderId)",0);
+      addMenuOption("[~Crear Albarán~]","createDespatchAdvice(jsOrderId)",0);
       addMenuOption("New Invoice","createInvoice(jsOrderId)",0);
     </SCRIPT>
 </BODY>

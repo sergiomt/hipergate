@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.io.File,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.QueryByForm" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder,java.io.File,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.QueryByForm" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -165,12 +165,12 @@
        
     //-->    
   </SCRIPT>
-  <TITLE>hipergate :: [~Listado de Microsites~]</TITLE>
+  <TITLE>hipergate :: Microsites List</TITLE>
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8">
     <%@ include file="../common/tabmenu.jspf" %>
     <FORM METHOD="post">
-      <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Listado de Microsites~]</FONT></TD></TR></TABLE>  
+      <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">Microsites List</FONT></TD></TR></TABLE>  
       <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
       <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
       <INPUT TYPE="hidden" NAME="gu_microsite">
@@ -178,17 +178,17 @@
       <TABLE CELLSPACING="2" CELLPADDING="2">
       <TR><TD COLSPAN="2" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       <TR>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nuevo~]"></TD>
-        <TD VALIGN="middle"><A HREF="#" onclick="createMicrosite()" CLASS="linkplain">[~Nuevo~]</A></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
+        <TD VALIGN="middle"><A HREF="#" onclick="createMicrosite()" CLASS="linkplain">New</A></TD>
       </TR>
       <TR><TD COLSPAN="2" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       </TABLE>
 <% } %>
       <TABLE CELLSPACING="1" CELLPADDING="0">
         <TR>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(2);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Ordenar por este campo"></A>&nbsp;<B>[~Nombre~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Ordenar por este campo"></A>&nbsp;<B>[~Tipo~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Ordenar por este campo"></A>&nbsp;<B>[~Fecha Creaci&oacute;n~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(2);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Ordenar por este campo"></A>&nbsp;<B>Name</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Ordenar por este campo"></A>&nbsp;<B>Type</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Ordenar por este campo"></A>&nbsp;<B>Creation Date</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"></TD></TR>
 <%
     	  // 21. List rows
@@ -203,13 +203,13 @@
             
             switch (iTpMSite) {
               case (short)1:
-                sTpMSite = "[~Newsletter~]";
+                sTpMSite = "Newsletter";
                 break;
               case (short)2:
-                sTpMSite = "[~WebSite~]";
+                sTpMSite = "WebSite";
                 break;
               case (short)4:
-                sTpMSite = "[~Cuestionario~]";
+                sTpMSite = "Questionnaire";
                 break;
               default:
                 sTpMSite = "";              
@@ -221,7 +221,7 @@
               <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<A HREF="#" onclick="modifyMicrosite('<%=sGuMSite%>')"><%=sNmMSite%></A></TD>
               <TD CLASS="strip<% out.write (sStrip); %>" ALIGN="right">&nbsp;<%=sTpMSite%></TD>
               <TD CLASS="strip<% out.write (sStrip); %>" ALIGN="right"><%=sDtMSite%></TD>
-              <TD CLASS="strip<% out.write (sStrip); %>" ALIGN="center"><A HREF="microsite_delete.jsp?gu_microsite=<%=sGuMSite%>&selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>" TITLE="[~Eliminar~]"><IMG SRC="../images/images/delete.gif" WIDTH="13" HEIGHT="13" HSPACE="4" BORDER="0" ALT="[~Eliminar~]"></A></TD>              
+              <TD CLASS="strip<% out.write (sStrip); %>" ALIGN="center"><A HREF="microsite_delete.jsp?gu_microsite=<%=sGuMSite%>&selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>" TITLE="Delete"><IMG SRC="../images/images/delete.gif" WIDTH="13" HEIGHT="13" HSPACE="4" BORDER="0" ALT="Delete"></A></TD>              
             </TR>
 <%        } // next(i) %>          	  
       </TABLE>

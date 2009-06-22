@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.Timestamp,java.sql.Statement,java.sql.PreparedStatement,java.sql.ResultSet,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.projtrack.*,com.knowgate.misc.Gadgets" language="java" session="false" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.Timestamp,java.sql.Statement,java.sql.PreparedStatement,java.sql.ResultSet,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.projtrack.*,com.knowgate.misc.Gadgets" language="java" session="false" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -94,8 +94,8 @@
       oRSet = oStmt.executeQuery();
     
       if (oRSet.next()) {
-        out.write ("<HTML><HEAD><TITLE>[~Wait...~]</TITLE><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>");
-        out.write ("alert('[~Ya existe otro proyecto con el mismo Nombre bajo el mismo Padre~]');"); 
+        out.write ("<HTML><HEAD><TITLE>Wait...</TITLE><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>");
+        out.write ("alert('Another Project with the same name already exists');"); 
         out.write ("window.opener.location.reload();");
         out.write ("window.history.back();");  
         out.write ("<" + "/SCRIPT" +"></HEAD></HTML>");
@@ -178,7 +178,7 @@
   oCon1 = null;
   
   if (!bAlreadyExists) {    
-    out.write ("<HTML><HEAD><TITLE>[~Espere~]...</TITLE><" + "SCRIPT LANGUAGE='JavaScript1.2' TYPE='text/javascript'>");
+    out.write ("<HTML><HEAD><TITLE>Wait...</TITLE><" + "SCRIPT LANGUAGE='JavaScript1.2' TYPE='text/javascript'>");
 
     if (nullif(request.getParameter("is_subproject")).equals("1"))
       out.write ("window.document.location.href = 'prj_edit.jsp?gu_project="+oPrj.getString(DB.gu_project)+"&n_project="+Gadgets.URLEncode(oPrj.getString(DB.nm_project))+"&standalone=1';");

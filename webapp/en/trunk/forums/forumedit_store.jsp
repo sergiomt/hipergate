@@ -1,6 +1,5 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.Category,com.knowgate.forums.NewsGroup" language="java" session="false" %>
-<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
-<%
+﻿<%@ page import="java.io.IOException,java.io.FileNotFoundException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.Category,com.knowgate.forums.NewsGroup,com.knowgate.forums.NewsGroupJournal,com.knowgate.lucene.Indexer" language="java" session="false" %>
+<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -51,12 +50,16 @@
   String nm_icon1 = request.getParameter("nm_icon1");
   String nm_icon2 = request.getParameter("nm_icon2");
   String names_subset = request.getParameter("names_subset");
-    
+  String de_newsgrp = request.getParameter("de_newsgrp");
+  String tx_journal = request.getParameter("tx_journal");
+  boolean bo_binaries = (nullif(request.getParameter("bo_binaries"),"0").equals("0") ? false : true);
+  boolean bo_rebuild = (nullif(request.getParameter("bo_rebuild"),"0").equals("0") ? false : true);
+
   String sCatg = "";
   ACLDomain oDom;
   NewsGroup oForumsGrp;
   
-  JDCConnection oCon1 = GlobalDBBind.getConnection("forumedit_store.jsp");
+  JDCConnection oCon1 = GlobalDBBind.getConnection("forumedit_store");
   Statement oStm1;
            
   try {
@@ -69,9 +72,13 @@
     oCon1.setAutoCommit (false);    
     
     if (id_category==null) {
-      sCatg = NewsGroup.store(oCon1, id_domain, gu_workarea, null, id_parent_cat, Category.makeName(oCon1, request.getParameter("tr1st")), is_active, id_doc_status, gu_owner, nm_icon1, nm_icon2);
+      sCatg = NewsGroup.store(oCon1, id_domain, gu_workarea, null, id_parent_cat, Category.makeName(oCon1, request.getParameter("tr1st")),
+      												is_active, id_doc_status, gu_owner, nm_icon1, nm_icon2, bo_binaries, de_newsgrp, tx_journal);
       
-      oForumsGrp = new NewsGroup(sCatg);
+      if (bo_rebuild)
+        oForumsGrp = new NewsGroup(oCon1, sCatg);
+      else
+        oForumsGrp = new NewsGroup(sCatg);
 
       oForumsGrp.setGroupPermissions(oCon1, oDom.getString(DB.gu_admins), ACL.PERMISSION_FULL_CONTROL, (short)0, (short)0);
       
@@ -83,13 +90,18 @@
             
     }
     else {        
-      sCatg = NewsGroup.store(oCon1, id_domain, gu_workarea, id_category, id_parent_cat, Category.makeName(oCon1, request.getParameter("tr1st")), is_active, id_doc_status, gu_owner, nm_icon1, nm_icon2);
+      sCatg = NewsGroup.store(oCon1, id_domain, gu_workarea, id_category, id_parent_cat,
+      												Category.makeName(oCon1, request.getParameter("tr1st")), is_active, id_doc_status, gu_owner, nm_icon1, nm_icon2,
+      												bo_binaries, de_newsgrp, tx_journal);
 
       oStm1 = oCon1.createStatement();
       oStm1.execute("DELETE FROM " + DB.k_cat_labels + " WHERE " + DB.gu_category + "='" + sCatg + "'");
       oStm1.close();
             
-      oForumsGrp = new NewsGroup(sCatg);
+      if (bo_rebuild)
+        oForumsGrp = new NewsGroup(oCon1, sCatg);
+      else
+        oForumsGrp = new NewsGroup(sCatg);
 	      
       oForumsGrp.storeLabels(oCon1, names_subset, "¨", "`");
     }
@@ -97,19 +109,34 @@
     oCon1.commit();
 
     oCon1.setAutoCommit (true);
-    
+
     com.knowgate.http.portlets.HipergatePortletConfig.touch(oCon1, id_user, "com.knowgate.http.portlets.RecentPostsTab", gu_workarea);
 
+		if (bo_rebuild) {
+		  NewsGroupJournal oJour = oForumsGrp.getJournal();
+		  if (null!=oJour) {
+		    oJour.rebuild(oCon1, true);
+		  }
+		  if (null!=GlobalDBBind.getProperty("luceneindex")) {
+  			try {
+  			  Indexer.optimize(GlobalDBBind.getProperties(), "k_newsmsgs", gu_workarea);
+  			} catch (FileNotFoundException ignore) { }
+  	  } // fi
+		} // fi
+
+	  oCon1.close("forumedit_store");
+
     oCon1 = null;
-        
+    
     out.write ("<HTML><HEAD><TITLE>Wait...</TITLE><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>window.opener.parent.document.location.reload(true); self.close();<" + "/SCRIPT" +"></HEAD></HTML>");
   }
   catch (SQLException d) {
     if (null!=oCon1)
       if (!oCon1.isClosed()) {
-        oCon1.rollback();
+        if (oCon1.getAutoCommit()) oCon1.rollback();
+        oCon1.close("forumedit_store");
         oCon1 = null;
       }
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + d.getLocalizedMessage() + "&resume=_back"));    
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title="+d.getClass().getName()+"&desc=" + d.getMessage() + "&resume=_back"));    
   }      
 %>

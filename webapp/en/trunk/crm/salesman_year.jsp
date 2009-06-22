@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.SalesObjectives,java.math.BigDecimal" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.SalesObjectives,java.math.BigDecimal" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/cookies.jspf" %>
@@ -335,7 +335,7 @@
       <TR><TD COLSPAN="2" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       <TR>
         <TD VALIGN="middle"><IMG SRC="../images/images/crm/history16.gif" WIDTH="16" HEIGHT="16" BORDER="0"></TD>
-        <TD VALIGN="middle"><A HREF="#" onclick="viewSalesHistory()" CLASS="linkplain">[~Hist&oacute;rico de Pedidos~]</A></TD>
+        <TD VALIGN="middle"><A HREF="#" onclick="viewSalesHistory()" CLASS="linkplain">Order History</A></TD>
       </TR>
       <TR><TD COLSPAN="2" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
     </TABLE>    
@@ -349,72 +349,72 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD><FONT CLASS="formstrong">[~Mes~]</FONT></TD>
-            <TD><FONT CLASS="formstrong">[~Previsto~]</FONT></TD>
-            <TD><FONT CLASS="formstrong">[~Alcanzado~]</FONT></TD>
+            <TD><FONT CLASS="formstrong">Month</FONT></TD>
+            <TD><FONT CLASS="formstrong">Forseen</FONT></TD>
+            <TD><FONT CLASS="formstrong">Achieved</FONT></TD>
           </TR>
           <TR>
-            <TD><FONT CLASS="formplain">[~Enero~]</FONT></TD>
+            <TD><FONT CLASS="formplain">January</FONT></TD>
             <TD><INPUT TYPE="text" NAME="im_jan_planed" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_jan_planed"))); %>"></TD>
             <TD><INPUT TYPE="text" NAME="im_jan_achieved" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_jan_achieved"))); %>"></TD>
           </TR>
           <TR>
-            <TD><FONT CLASS="formplain">[~Febrero~]</FONT></TD>
+            <TD><FONT CLASS="formplain">February</FONT></TD>
             <TD><INPUT TYPE="text" NAME="im_feb_planed" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_feb_planed"))); %>"></TD>
             <TD><INPUT TYPE="text" NAME="im_feb_achieved" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_feb_achieved"))); %>"></TD>
           </TR>
           <TR>
-            <TD><FONT CLASS="formplain">[~Marzo~]</FONT></TD>
+            <TD><FONT CLASS="formplain">March</FONT></TD>
             <TD><INPUT TYPE="text" NAME="im_mar_planed" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_mar_planed"))); %>"></TD>
             <TD><INPUT TYPE="text" NAME="im_mar_achieved" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_mar_achieved"))); %>"></TD>
           </TR>
           <TR>
-            <TD><FONT CLASS="formplain">[~Abril~]</FONT></TD>
+            <TD><FONT CLASS="formplain">April</FONT></TD>
             <TD><INPUT TYPE="text" NAME="im_apr_planed" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_apr_planed"))); %>"></TD>
             <TD><INPUT TYPE="text" NAME="im_apr_achieved" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_apr_achieved"))); %>"></TD>
           </TR>
           <TR>
-            <TD><FONT CLASS="formplain">[~Mayo~]</FONT></TD>
+            <TD><FONT CLASS="formplain">May</FONT></TD>
             <TD><INPUT TYPE="text" NAME="im_may_planed" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_may_planed"))); %>"></TD>
             <TD><INPUT TYPE="text" NAME="im_may_achieved" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_may_achieved"))); %>"></TD>
           </TR>
           <TR>
-            <TD><FONT CLASS="formplain">[~Junio~]</FONT></TD>
+            <TD><FONT CLASS="formplain">June</FONT></TD>
             <TD><INPUT TYPE="text" NAME="im_jun_planed" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_jun_planed"))); %>"></TD>
             <TD><INPUT TYPE="text" NAME="im_jun_achieved" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_jun_achieved"))); %>"></TD>
           </TR>
           <TR>
-            <TD><FONT CLASS="formplain">[~Julio~]</FONT></TD>
+            <TD><FONT CLASS="formplain">July</FONT></TD>
             <TD><INPUT TYPE="text" NAME="im_jul_planed" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_jul_planed"))); %>"></TD>
             <TD><INPUT TYPE="text" NAME="im_jul_achieved" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_jul_achieved"))); %>"></TD>
           </TR>
           <TR>
-            <TD><FONT CLASS="formplain">[~Agosto~]</FONT></TD>
+            <TD><FONT CLASS="formplain">August</FONT></TD>
             <TD><INPUT TYPE="text" NAME="im_aug_planed" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_aug_planed"))); %>"></TD>
             <TD><INPUT TYPE="text" NAME="im_aug_achieved" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_aug_achieved"))); %>"></TD>
           </TR>
           <TR>
-            <TD><FONT CLASS="formplain">[~Septiembre~]</FONT></TD>
+            <TD><FONT CLASS="formplain">September</FONT></TD>
             <TD><INPUT TYPE="text" NAME="im_sep_planed" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_sep_planed"))); %>"></TD>
             <TD><INPUT TYPE="text" NAME="im_sep_achieved" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_sep_achieved"))); %>"></TD>
           </TR>
           <TR>
-            <TD><FONT CLASS="formplain">[~Octubre~]</FONT></TD>
+            <TD><FONT CLASS="formplain">October</FONT></TD>
             <TD><INPUT TYPE="text" NAME="im_oct_planed" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_oct_planed"))); %>"></TD>
             <TD><INPUT TYPE="text" NAME="im_oct_achieved" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_oct_achieved"))); %>"></TD>
           </TR>
           <TR>
-            <TD><FONT CLASS="formplain">[~Noviembre~]</FONT></TD>
+            <TD><FONT CLASS="formplain">November</FONT></TD>
             <TD><INPUT TYPE="text" NAME="im_nov_planed" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_nov_planed"))); %>"></TD>
             <TD><INPUT TYPE="text" NAME="im_nov_achieved" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_nov_achieved"))); %>"></TD>
           </TR>
           <TR>
-            <TD><FONT CLASS="formplain">[~Diciembre~]</FONT></TD>
+            <TD><FONT CLASS="formplain">December</FONT></TD>
             <TD><INPUT TYPE="text" NAME="im_dec_planed" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_dec_planed"))); %>"></TD>
             <TD><INPUT TYPE="text" NAME="im_dec_achieved" SIZE="8" onkeypress="return acceptOnlyNumbers();" onchange="sum()" VALUE="<% out.write(dectostr(oSalesYear.getDecimal("im_dec_achieved"))); %>"></TD>
           </TR>
           <TR>
-            <TD><FONT CLASS="formstrong">[~Total~]</FONT></TD>
+            <TD><FONT CLASS="formstrong">Total</FONT></TD>
             <TD><INPUT TYPE="text" NAME="im_tot_planed" SIZE="8" onkeypress="return acceptOnlyNumbers();"></TD>
             <TD><INPUT TYPE="text" NAME="im_tot_achieved" SIZE="8" onkeypress="return acceptOnlyNumbers();"></TD>
           </TR>
@@ -423,11 +423,11 @@
     </TABLE>
     <BR>
 <% if (bIsGuest) { %>
-    <INPUT TYPE="submit" CLASS="pushbutton" ACCESSKEY="s" TITLE="ALT+s" VALUE="[~Guardar~]">
+    <INPUT TYPE="submit" CLASS="pushbutton" ACCESSKEY="s" TITLE="ALT+s" VALUE="Save">
 <% } else { %>
-    <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
+    <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
 <% } %>
-    &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cerrar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.parent.close()">
+    &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Close" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.parent.close()">
   </FORM>
   </CENTER>
 </BODY>

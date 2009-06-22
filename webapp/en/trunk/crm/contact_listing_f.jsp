@@ -1,4 +1,4 @@
-<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %><%@ include file="../methods/nullif.jspf" %>
+﻿<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %><%@ include file="../methods/nullif.jspf" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//EN" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">
 <!-- +-------------------------------------------+ -->
 <!-- | Marco principal de listado de alumnos     | -->
@@ -7,7 +7,7 @@
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <TITLE>hipergate :: [~Listado de Individuos~]</TITLE>
+    <TITLE>hipergate :: Contact Listing</TITLE>
     <SCRIPT LANGUAGE="javascript" SRC="../javascript/getparam.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
@@ -26,7 +26,7 @@
   </FRAMESET>
   <NOFRAMES>
     <BODY>
-      <P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
+      <P>This page use frames, but your web browser does not handle them</P>
     </BODY>
   </NOFRAMES>
 </HTML>

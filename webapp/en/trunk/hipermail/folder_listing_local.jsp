@@ -1,4 +1,4 @@
-<%@ page import="java.math.BigDecimal,java.net.URLDecoder,javax.mail.internet.MimeUtility,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.Category,com.knowgate.hipermail.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.math.BigDecimal,java.net.URLDecoder,javax.mail.internet.MimeUtility,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.Category,com.knowgate.hipermail.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="fldr_combo.jspf" %><%@ include file="mail_env.jspf" %><%
 /*
   Copyright (C) 2004  Know Gate S.L. All rights reserved.
@@ -276,7 +276,7 @@
 	
 	function deleteSingleMessage(num, id, guid) {
 	  	  
-	  if (window.confirm("Are you sure that you want to delete message?")) {
+	  if (window.confirm("[~Está seguro de que desea eliminar el mensaje?~]")) {
 
 	    var frm = document.forms[0];
 	    frm.guids.value = (guid==null ? "null" : guid);
@@ -304,7 +304,7 @@
 	
 	function deleteMessages() {
 	  	  
-	  if (window.confirm("Are you sure that you want to delete messages:")) {
+	  if (window.confirm("[~Está seguro de que desea eliminar los mensajes seleccionados~]")) {
 
 	    var frm = document.forms[0];
 	    var uid = frm.guids;
@@ -369,9 +369,9 @@
 	  }
 	  	  
 	  if (action=="move")
-	    msg = "Are you sure that you want to move selected messages?";
+	    msg = "[~Está seguro de que desea mover los mensajes seleccionados?~]";
 	  else
-	    msg = "Are you sure that you want to copy selected messages?";
+	    msg = "[~Está seguro de que desea copiar los mensajes seleccionados?~]";
 	  
 	  if (window.confirm(msg)) {
 

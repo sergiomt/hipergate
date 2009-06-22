@@ -1,4 +1,4 @@
-<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -10,8 +10,8 @@
 <body class="htmlbody">
 <table align="left">
   <tr>
-    <td align="left" width="20"><img src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="[~Imprimir~]"></td>
-    <td align="left"><a href="#" class="linkplain" title="[~Imprimir Instantánea~]" onclick="window.parent.frames[1].print(); return false;"><big>[~Imprimir~]</big></a>
+    <td align="left" width="20"><img src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"></td>
+    <td align="left"><a href="#" class="linkplain" title="[~Imprimir Instantánea~]" onclick="window.parent.frames[1].print(); return false;"><big>Print</big></a>
   </tr>
 </table>
 </body>

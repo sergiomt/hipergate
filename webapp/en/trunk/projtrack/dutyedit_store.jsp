@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.io.File,java.io.FileInputStream,java.net.URLDecoder,java.util.StringTokenizer,java.util.Enumeration,java.sql.SQLException,java.sql.Timestamp,java.sql.PreparedStatement,java.sql.ResultSet,java.text.SimpleDateFormat,javax.mail.Message,javax.mail.internet.InternetAddress,javax.mail.SendFailedException,javax.mail.MessagingException,javax.mail.internet.ParseException,javax.mail.internet.MimeUtility,com.sun.mail.smtp.SMTPMessage,com.oreilly.servlet.MultipartRequest,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.hipermail.MailAccount,com.knowgate.hipermail.SessionHandler,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.io.File,java.io.FileInputStream,java.net.URLDecoder,java.util.StringTokenizer,java.util.Enumeration,java.sql.SQLException,java.sql.Timestamp,java.sql.PreparedStatement,java.sql.ResultSet,java.text.SimpleDateFormat,javax.mail.Message,javax.mail.internet.InternetAddress,javax.mail.SendFailedException,javax.mail.MessagingException,javax.mail.internet.ParseException,javax.mail.internet.MimeUtility,com.sun.mail.smtp.SMTPMessage,com.oreilly.servlet.MultipartRequest,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.hipermail.MailAccount,com.knowgate.hipermail.SessionHandler,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -290,7 +290,7 @@
       SMTPMessage oMsg = new SMTPMessage(oHndlr.getSession());
       oMsg.setHeader("Content-Transfert-Encoding", "8Bit");
       oMsg.setFrom(new InternetAddress(oMacc.getString(DB.tx_main_email),oMacc.getString(DB.tl_account)));
-      oMsg.setSubject(MimeUtility.encodeText("[~New Duty~] "+nm_duty));
+      oMsg.setSubject(MimeUtility.encodeText("New Duty "+nm_duty));
       oMsg.setText(nullif(de_duty)+"\n\n"+nullif(tx_comments), "utf-8");
       if (null!=od_priority) {
         switch ((int) od_priority.shortValue()) {

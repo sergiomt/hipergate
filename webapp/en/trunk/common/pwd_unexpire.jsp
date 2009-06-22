@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/dbbind.jsp" %><%
 
 
@@ -30,7 +30,7 @@
 <head>
   <meta name="robots" content="noindex,nofollow">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>hipergate :: [~Cambio de Contrase&ntilde;a~]</title>
+  <title>hipergate :: Password Change</title>
   <link rel=stylesheet type=text/css HREF=../skins/xp/styles.css>
   <script language="JavaScript" type="text/javascript" src="../javascript/cookies.js"></script>
   <script language="JavaScript" type="text/javascript" src="../javascript/trim.js"></script>
@@ -101,7 +101,7 @@
       <tr>
 	      <td width="9" background="../images/images/login/bg_left.gif"><img src="../images/images/login/transp.gif" width="9" height="1" alt=""></td>
 	      <td width="26" bgcolor="white" align="right"><img id="triangles" src="../images/images/login/transp.gif" width="15" height="8" alt="Triangles"></td>
-	      <td colspan="5" width="435" bgcolor="white" class="textstrong" align="center"><img src="../images/images/login/transp.gif" width="5" height="1" alt="">[~Cambio de Contrase&ntilde;a Requerido~]</td>
+	      <td colspan="5" width="435" bgcolor="white" class="textstrong" align="center"><img src="../images/images/login/transp.gif" width="5" height="1" alt="">Changing the password is required</td>
 	      <td width="9" background="../images/images/login/bg_right.gif"><img src="../images/images/login/transp.gif" width="9" height="1" alt=""></td>
       </tr>
 
@@ -129,7 +129,7 @@
       <tr>
         <td width="9" background="../images/images/login/bg_left.gif"><img src="../images/images/login/transp.gif" width="9" height="1" alt=""></td>
         <td width="26" bgcolor="#eeeeee" align="right"><img id="deco1" src="../images/images/login/transp.gif" width="11" height="22" alt="Decoration"></td>
-        <td width="200" bgcolor="#eeeeee" class="login"><img src="../images/images/login/transp.gif" width="5" height="1" alt="">[~Contrase&ntilde;a Actual~]</td>
+        <td width="200" bgcolor="#eeeeee" class="login"><img src="../images/images/login/transp.gif" width="5" height="1" alt="">Current Password</td>
         <td width="1" bgcolor="#808080"><img src="../images/images/login/transp.gif" width="1" height="1" alt=""></td>
         <td width="223" background="../images/images/login/login_bg.gif" align="left" valign="middle">
           <!-- this is the actual input textbox for the email -->
@@ -151,7 +151,7 @@
       <tr>
         <td width="9" background="../images/images/login/bg_left.gif"><img src="../images/images/login/transp.gif" width="9" height="1" alt=""></td>
         <td width="26" bgcolor="#eeeeee" align="right"><img id="deco2" src="../images/images/login/transp.gif" width="11" height="22" alt="Decoration"></td>
-        <td width="200" bgcolor="#eeeeee" class="login"><img src="../images/images/login/transp.gif" width="5" height="1" alt="">[~Nueva Contrase&ntilde;a~]</td>
+        <td width="200" bgcolor="#eeeeee" class="login"><img src="../images/images/login/transp.gif" width="5" height="1" alt="">New password</td>
         <td width="1" bgcolor="#808080"><img src="../images/images/login/transp.gif" width="1" height="1" alt=""></td>
         <td width="223" background="../images/images/login/login_bg.gif" align="left" valign="middle">
           <img src="../images/images/login/transp.gif" width="16" height="1" alt="">
@@ -172,7 +172,7 @@
       <tr>
         <td width="9" background="../images/images/login/bg_left.gif"><img src="../images/images/login/transp.gif" width="9" height="1" alt=""></td>
         <td width="26" bgcolor="#eeeeee" align="right"><img id="deco3" src="../images/images/login/transp.gif" width="11" height="22" alt="Decoration"></td>
-        <td width="200" bgcolor="#eeeeee" class="login"><img src="../images/images/login/transp.gif" width="5" height="1" alt="">[~Repetir Contrase&ntilde;a~]</td>
+        <td width="200" bgcolor="#eeeeee" class="login"><img src="../images/images/login/transp.gif" width="5" height="1" alt="">Repeat password</td>
         <td width="1" bgcolor="#808080"><img src="../images/images/login/transp.gif" width="1" height="1" alt=""></td>
         <td width="223" background="../images/images/login/login_bg.gif" align="left" valign="middle">
           <img src="../images/images/login/transp.gif" width="16" height="1" alt="">
@@ -206,7 +206,7 @@
         <td width="200" bgcolor="white">
           <img src="../images/images/login/transp.gif" width="200" height="1" alt="">
         </td>
-        <td colspan="4" width="235" bgcolor="white" align="center"><input type="submit" class="pushbutton" value="[~Cambiar~]" accesskey="e"></td>
+        <td colspan="4" width="235" bgcolor="white" align="center"><input type="submit" class="pushbutton" value="Change" accesskey="e"></td>
         <td width="9" background="../images/images/login/bg_right.gif"><img src="../images/images/login/transp.gif" width="9" height="1" alt=""></td>
       </tr>
 

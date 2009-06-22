@@ -1,4 +1,4 @@
-<%@ page import="java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.Contact,com.knowgate.misc.Gadgets,com.knowgate.crm.PhoneCall,com.knowgate.projtrack.Bug" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.Contact,com.knowgate.misc.Gadgets,com.knowgate.crm.PhoneCall,com.knowgate.projtrack.Bug" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <% 
@@ -278,12 +278,12 @@
 	}
 
         if (frm.tp_phonecall[0].checked && frm.contact_person.value.length==0) {
-	  if (!window.confirm("Received call lacks origin specification. Save it anyway?")) 
+	  if (!window.confirm("[~La llamda recibida no tiene origen. ¿Esta seguro de que desea guardarla?~]")) 
 	    return false;
         }
 
 			  if (!isDate(frm.tx_start.value,"d")) {
-	  	    alert ("Call date is not valid");
+	  	    alert ("[~La fecha de la llamada no es válida~]");
 	        frm.tx_start.focus();
 	        return false;
 			  }	

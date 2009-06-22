@@ -1,7 +1,7 @@
-<%@ page import="java.net.URLDecoder,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.forums.NewsGroup" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
-<jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
-<%!
+<jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%!
+
   public static int findLanguage(DBSubset oRowset, String sLang) {
     
     int iLang;
@@ -18,8 +18,8 @@
     }
     return iLang;
   }
-%>
-<%
+
+%><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -78,13 +78,16 @@
   String n_category;
   Short  is_active;
   Short  id_doc_status;
+  boolean bo_binaries = true;
   String nm_icon1;
   String nm_icon2;
+  String de_newsgrp;
+  String tx_journal;
   int iRowCount; // Nº de filas en la matriz de nombres traducidos
   int iColCount; // Nº de columnas en la matriz de nombres traducidos
   boolean bAdmin;
     
-  Category   oCatg; // Categoria  
+  NewsGroup  oCatg; // Grupo
   ACLUser    oUser; // Usuario logado
   DBSubset   oName; // Nombres traducidos de la categoria (etiquetas)
   DBSubset   oPrnt; // Lista de nodos padre de esta categoria
@@ -112,11 +115,11 @@
   String sSelLang = GlobalDBLang.toHTMLSelect(oConn, sLanguage);
   
   if (0!=id_category.length()) {
-    sHeadStrip = "[~Editar Foro~]";
+    sHeadStrip = "Edit this address";
     
-    oCatg = new Category(oConn, id_category);
+    oCatg = new NewsGroup(oConn, id_category);
     n_category = oCatg.getString(DB.nm_category);
-    
+    if (!oCatg.isNull(DB.bo_binaries)) bo_binaries = (oCatg.getShort(DB.bo_binaries)!=(short)0);
     is_active = new Short(String.valueOf(oCatg.get(DB.bo_active)));
     
     if (oCatg.isNull(DB.id_doc_status))
@@ -126,6 +129,8 @@
     
     nm_icon1 = oCatg.getString(DB.nm_icon);
     nm_icon2 = oCatg.getString(DB.nm_icon2);
+    de_newsgrp = oCatg.getStringNull(DB.de_newsgrp,"");
+    tx_journal = oCatg.getStringNull(DB.tx_journal,"");
 
     if (id_parent.equals(id_category)) {
       oPrnt = oCatg.getParents(oConn);
@@ -140,13 +145,15 @@
     oCatg = null;
   }
   else {
-    sHeadStrip = "[~Nuevo Foro~]";
+    sHeadStrip = "New Forum";
 
     n_category = new String("");
     is_active = new Short((short)1);
     id_doc_status = new Short((short)0);
     nm_icon1 = "groupf.gif";
     nm_icon2 = "groupf.gif";
+    de_newsgrp = "";
+    tx_journal = "";
 
     oName = new DBSubset(DB.k_cat_labels,"","",0);    
   
@@ -154,7 +161,7 @@
   }
   
   if (id_parent.length()>0) {
-    oCatg = new Category(oConn, id_parent);
+    oCatg = new NewsGroup(oConn, id_parent);
     oPrnt = oCatg.getNames(oConn);    
     int iTranslation = findLanguage(oPrnt,sLanguage);
     if (iTranslation!=-1) tr_parent = oPrnt.getString(1,iTranslation);
@@ -166,20 +173,21 @@
   oConn = null;
 %>
 
-  <!-- +-----------------------+ -->
-  <!-- | Edición de categorias | -->
-  <!-- | © KnowGate 2001       | -->
-  <!-- +-----------------------+ -->
+  <!-- +------------------------+ -->
+  <!-- | Propiedades de un foro | -->
+  <!-- | © KnowGate 2001-2009   | -->
+  <!-- +------------------------+ -->
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: <%=sHeadStrip%></TITLE>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/layer.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/layer.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
   <!--
     // Posicion actual dentro de la lista de etiquetas de traduccion
@@ -191,7 +199,7 @@
     // Matriz con los nombres de la imagenes de la toolbar
     var aButtonName = new Array("newreg","delreg","left2","left","right","right2");
     // Matriz con los tips de la imagenes de la toolbar
-    var aButtonTips = new Array("[~Nueva etiqueta traducida~]","[~Eliminar etiqueta traducida~]","[~Ir a la primera etiqueta~]","[~Etiqueta anterior~]","[~Etiqueta siguiente~]","[~Ir a la ultima etiqueta~]");
+    var aButtonTips = new Array("New translated Label","Remove translated label","Go to first label","Previous Label","Next Label","Go to last label");
     // Imagenes de los botones sin pinchar
     var aButtonDown = new Array(aButtonName.length);
     // Imagenes de los botones pinchados
@@ -202,7 +210,6 @@
     var oTrCt = new Array(<% out.write(String.valueOf(iColCount)); %>);
     
     <%
-      // Recorrer la lista de nombres traducidos y asignarlos al array aName
       for (int iRow=0; iRow<iRowCount; iRow++) {
         out.write("    aName[" + String.valueOf(iRow) + "] = new Array(");
         
@@ -223,7 +230,6 @@
     // --------------------------------------------------------
     
     function writePos() {
-      // [~//Escribir en una capa HTML la posicion actual dentro de la lista de etiquetas~]
       var sInnerHTML = '<FONT CLASS="textplain"><B>' + String(iLabelIndex+1) + "/" + String (iMaxLabel+1) + '</B></FONT>'
       
       if (iLabelIndex>=0) {
@@ -247,7 +253,6 @@
     // --------------------------------------------------------
 
     function preCache() {
-      // [~//Precargar la imagenes de los botones de la toolbar~]
       for (var i=0; i<aButtonName.length; i++) {
         aButtonUp[i] = new Image();
         aButtonUp[i].src = sSkinPath + aButtonName[i] + ".gif";
@@ -259,27 +264,27 @@
       
       if (getURLParam("id_category")==null) createLabel();
     }
+
   //-->
   </SCRIPT>
   
   <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript">
   <!--
     function validate() {
-      // [~//Validar datos y hacer post contra forumedit_store~]
       var frm = document.forms[0];
       var alias = frm.n_category.value;
       var parnt = frm.id_parent_cat.value;
             
       if (alias.indexOf(";")>=0 || alias.indexOf(",")>=0 || alias.indexOf(".")>=0 || alias.indexOf("?")>=0 || alias.indexOf("$")>=0 || alias.indexOf("%")>=0 || alias.indexOf("/")>=0 || alias.indexOf("¨")>=0 || alias.indexOf("`")>=0) {
-        alert ("[~El Alias del foro contiene caracteres no permitidos~]");
+        alert ("NewsGroup Alias contains forbidden characters");
         return false;        
       }
       else
         frm.n_category.value = alias;
 
       if (aName.length==0) {
-        alert ("[~Debe especificar el menos una Etiqueta de Nombre Traducido~]");
-	return false;
+        alert ("Must specify at least one Translated Label");
+	      return false;
       }
 
       var bLocalLabel = false;
@@ -288,7 +293,7 @@
         if (bLocalLabel) break;
       }
       if (!bLocalLabel) {
-        alert ("[~Debe especificar una Etiqueta de Nombre Traducido en el idioma de su navegador cliente ~]'" + getUserLanguage() + "'");
+        alert ("Must specify a Translated Label in your browser current language'" + getUserLanguage() + "'");
 	      return false;
       }
 
@@ -311,7 +316,7 @@
       
       for (var n=0; n<aName.length; n++) {
         if (ltrim(aName[n][1]).length==0) {
-          alert ("[~La etiqueta para el idioma ~]" + getComboText(frm.sel_language) + "[~ no puede estar vacía~]");
+          alert ("Label for language&nbsp;" + getComboText(frm.sel_language) + "[~ no puede estar vacía~]");
           return false;
         }
       }
@@ -456,14 +461,15 @@
 
     <INPUT TYPE="hidden" NAME="id_parent_cat" VALUE="<% out.write(id_parent); %>">
     <INPUT TYPE="hidden" NAME="id_parent_old" VALUE="<% out.write(id_parent); %>">
-    
+    <INPUT TYPE="hidden" NAME="bo_rebuild" VALUE="0">
+
     <TABLE CLASS="formback">
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
 
 <% if (1024==id_domain || 1025==id_domain) { %>
           <TR>
-            <TD ALIGN="right" WIDTH="150"><SPAN onmouseover="popover('[~El alias es un nombre simb&oacute;lico para la categor&iacute;a independiente del idioma en que se muestren su etiquetas.~]<BR><STRONG>[~M&aacute;x 30 caracteres sin espacios.~]</STRONG>')" onmouseout="popout()"><FONT CLASS="formplain">[~Alias:~]</FONT></SPAN></TD>
+            <TD ALIGN="right" WIDTH="150"><SPAN onmouseover="popover('Alias is a language independent symbolic name for category.<BR><STRONG>Max 30 characters without spaces</STRONG>')" onmouseout="popout()"><FONT CLASS="formplain">Alias:</FONT></SPAN></TD>
             <TD ALIGN="left" WIDTH="290">
               <INPUT TYPE="text" NAME="n_category" MAXLENGTH="30" SIZE="34" VALUE="<% out.write(n_category); %>">
             </TD>
@@ -471,20 +477,21 @@
 <% } else out.write("<INPUT TYPE=\"hidden\" NAME=\"n_category\" VALUE=\"" + n_category + "\">"); %>
 	      
           <TR>
-            <TD ALIGN="right" WIDTH="150">
-              <SPAN onmouseover="popover('[~Este control indica si el foro ser&aacute; visible para los usuarios durante la navegaci&oacute;n convencional~]')" onmouseout="popout()"><FONT CLASS="formstrong">[~Visible:~]</FONT></SPAN>
-            </TD>
-            <TD ALIGN="left" WIDTH="290">
+            <TD COLSPAN="2">
+              &nbsp;&nbsp;<SPAN onmouseover="popover('Visibility')" onmouseout="popout()"><FONT CLASS="formstrong">Visible:</FONT></SPAN>
               <INPUT TYPE="checkbox" NAME="is_active" VALUE="1" <% if (is_active.intValue()!=0) out.write(" CHECKED=\"true\" "); %>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <SPAN onmouseover="popover('[~Establece si los archivos y enlaces<BR>deben ser aprobados antes de resultar visibles.~]')" onmouseout="popout()"><FONT CLASS="formstrong">[~Moderado:~]</FONT></SPAN>&nbsp;
+              <SPAN onmouseover="popover('Set whether links and files<BR>must be approved before becoming visible.')" onmouseout="popout()"><FONT CLASS="formstrong">Moderated:</FONT></SPAN>&nbsp;              
               <INPUT TYPE="checkbox" NAME="id_doc_status" VALUE="1" <% if (id_doc_status.intValue()!=0) out.write(" CHECKED "); %>>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <SPAN onmouseover="popover('[~Establece si el foro admite archivos adjuntos binarios.~]')" onmouseout="popout()"><FONT CLASS="formstrong">[~Admite Binarios:~]</FONT></SPAN>&nbsp;
+              <INPUT TYPE="checkbox" NAME="bo_binaries" VALUE="1" <% if (bo_binaries) out.write(" CHECKED "); %>>
             </TD>
           </TR>
           <TR>
             <TD COLSPAN="2">
               <TABLE ALIGN="center" WIDTH="92%" BACKGROUND="../skins/<%=sSkin%>/fondoc.gif">
                 <TR><TD>
-		  <SPAN CLASS="lightshadow" STYLE="position:relative;top:-8;left:0;width:48;height=23;" TITLE="[~Las etiquetas son los titulares de los foros que se visualizan en cada idioma.~]"><FONT CLASS="formstrong"><BIG>[~ETIQUETAS~]</BIG></FONT></SPAN>
+		  <SPAN CLASS="lightshadow" STYLE="position:relative;top:-8;left:0;width:48;height=23;" TITLE="Labels are NewsGroup titles shown for each language."><FONT CLASS="formstrong"><BIG>LABELS</BIG></FONT></SPAN>
 		  <IMG SRC="../images/images/spacer.gif" WIDTH="24" HEIGHT="23" BORDER="0" oncontextmenu="return false;">
 		  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
 		    <!--
@@ -492,10 +499,7 @@
 		      document.write ('<IMG SRC="' + sSkinPath + aButtonName[b] + '.gif"' + ' WIDTH="26" HEIGHT="23" BORDER="0" VSPACE="3" ALT="' + aButtonTips[b] + '" oncontextmenu="return false;" onmousedown="this.src=aButtonDown[' + String(b) + '].src" onmouseout="leaveButton(this,' + String(b) + ')" onmouseup="pressButton(this,' + String(b) + ')">');
 		      if (b==1) document.write ("&nbsp;");		      
 		    }
-		    // if (navigator.appName=="Microsoft Internet Explorer")
-		      document.write('<DIV ID="trpos" CLASS="formfront" STYLE="position:relative;top:-28;left:330;width:40;height:10;"></DIV>');
-		    // else
-		    //  document.write('<LAYER NAME="trpos" CLASS="formfront" STYLE="position:relative;top:-28;left:330;width:40;height:10;"></LAYER>');
+		    document.write('<DIV ID="trpos" CLASS="formfront" STYLE="position:relative;top:-28;left:330;width:40;height:10;"></DIV>');
 		    //-->
 		  </SCRIPT>
 		</TD></TR>
@@ -504,13 +508,23 @@
             	    <INPUT TYPE="hidden" NAME="id_language">
             	    <TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
             	      <TR>            	      
-            	        <TD><FONT CLASS="formstrong">[~Idioma:~]</FONT></TD>
-            	        <TD>&nbsp;&nbsp;&nbsp;<FONT CLASS="formstrong">[~Texto de la Etiqueta:~]</FONT></TD>            	      
+            	        <TD><FONT CLASS="formstrong">Language:</FONT></TD>
+            	        <TD>&nbsp;&nbsp;&nbsp;<FONT CLASS="formstrong">Text for Label:</FONT></TD>            	      
             	      </TR>  
             	      <TR>
             	        <TD><SELECT NAME="sel_language" onchange="changeName()"><OPTION VALUE="" SELECTED><% out.write (sSelLang); %></SELECT></TD>
-		        <TD>&nbsp;&nbsp;&nbsp;<INPUT TYPE="text" NAME="tr_category" MAXLENGTH="30" SIZE="34" VALUE="" onblur="changeName()" onchange="changeName()" onkeypress="changeName()"></TD>
-		      </TR>
+		        					<TD>&nbsp;&nbsp;&nbsp;<INPUT TYPE="text" NAME="tr_category" MAXLENGTH="30" SIZE="33" VALUE="" onblur="changeName()" onchange="changeName()" onkeypress="changeName()"></TD>
+		      					</TR>
+            	      <TR>
+            	        <TD CLASS="formplain" COLSPAN="2">[~Descripci&oacute;n:~]<BR/>
+            	        	<INPUT TYPE="text" NAME="de_newsgrp" MAXLENGTH="254" SIZE="58" VALUE="<%=de_newsgrp%>">
+            	        </TD>
+            	      </TR>
+            	      <TR>
+            	        <TD CLASS="formplain" COLSPAN="2">[~Definición del archivo estático:~]<BR/>
+            	        	<TEXTAREA NAME="tx_journal" ROWS="6" COLS="44" VALUE=""><%=tx_journal%></TEXTAREA>
+            	        </TD>
+            	      </TR>
 		    </TABLE>
 		    <IMG SRC="../images/images/spacer.gif" WIDTH="4" HEIGHT="4" BORDER="0" oncontextmenu="return false;">
 		  </DIV>
@@ -521,14 +535,17 @@
     	    <TD COLSPAN="2"><HR></TD>
   	  </TR>
           <TR>
-    	    <TD WIDTH="150">&nbsp;</TD>
-    	    <TD WIDTH="290">
+    	    <TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:100" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
+							&nbsp;&nbsp;&nbsp;
+              <INPUT TYPE="button" ACCESSKEY="r" VALUE="[~Reconstruir~]" CLASS="pushbutton" STYLE="width:100" TITLE="ALT+r" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
 <% } else { %>
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:100" TITLE="ALT+s">
+							&nbsp;&nbsp;&nbsp;
+              <INPUT TYPE="button" ACCESSKEY="r" VALUE="[~Reconstruir~]" CLASS="pushbutton" STYLE="width:100" TITLE="ALT+r" onclick="if (validate()) { document.forms[0].bo_rebuild.value='1'; document.forms[0].submit(); } ">
 <% } %>
-    	      &nbsp;&nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+    	      &nbsp;&nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:100" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>
     	    </TD>	    
           </TR>           

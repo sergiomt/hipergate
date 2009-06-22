@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.sql.SQLException,java.sql.ResultSet,java.sql.PreparedStatement,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.misc.Gadgets,com.knowgate.debug.DebugFile" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,java.sql.ResultSet,java.sql.PreparedStatement,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.misc.Gadgets,com.knowgate.debug.DebugFile" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <%
 /*
@@ -46,26 +46,203 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=Domain or User Cookies not set&resume=_back"));
   }
   boolean bIsGuest = isDomainGuest (GlobalDBBind, request, response);
+
+  String sUri = null; 
+  if (sDomainId.equals("1024")) { sParentId = "";
+	    sUri = "pickchilds.jsp?Skin="+sSkin+"&Lang="+sLanguage+"&Uid="+sUserId;
+  } else if (sDomainId.equals("1025")) { sParentId = "";
+	    sUri = "pickchilds.jsp?Skin="+sSkin+"&Lang="+sLanguage+"&Parent=ecd80abbb4b24668aa75d45a58c830a6&Label=root&Uid="+sUserId;
+  } else {	
+	  JDCConnection oConn = null;
+	  PreparedStatement oStmt;
+	  ResultSet oRSet;
+	  String sSQL;
+	
+	  try {
+
+	    oConn = GlobalDBBind.getConnection("catdipu3x");		
+	    sSQL = "SELECT " +  DB.gu_category + " FROM " + DB.k_users + " WHERE " + DB.gu_user + "=?";
+	    if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(" + sSQL + ")");
+	    oStmt = oConn.prepareStatement(sSQL, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+	    oStmt.setString(1,sUserId);	  	  
+	    oRSet = oStmt.executeQuery();
+	    if (oRSet.next())
+	      sParentId = oRSet.getString(1);
+	    else
+	      sParentId = "000000000000000000000000000000000";
+	    oRSet.close();
+	    oRSet = null;
+	    oStmt.close();
+	    oStmt = null;
+            
+	    oConn.close("catdipu3x");
+	    oConn = null;
+	  }
+  	catch (NumberFormatException e) {
+    	  sError = "NumberFormatException " + sDomainId;
+	  sParentId = "000000000000000000000000000000000";
+  	}
+	  catch (SQLException sqle) {
+    	  if (oConn!=null)
+      	    if (!oConn.isClosed()) oConn.close("catdipu3x");
+    	  oConn = null;
+    	  sError = "SQLException " + sqle.getMessage();
+	  sParentId = "000000000000000000000000000000000";
+	  }
+	  sUri = "pickchilds.jsp?Skin="+sSkin+"&Lang="+sLanguage+"&Parent="+sParentId+"&Label=root&Uid="+sUserId;
+	}
 %>
   <!-- +---------------------------------------------+ -->
-  <!-- | Página HTML para mostrar el applet DipuTree | -->
-  <!-- | JavaScript compatible con DipuTree v3.x     | -->  
-  <!-- | © KnowGate 2001                             | -->
+  <!-- | Page for showing a JavaScript TreeMenu      | -->
+  <!-- | © KnowGate 2009                             | -->
   <!-- +---------------------------------------------+ -->  
 
 <HTML LANG="<% out.write(sLanguage); %>">
-
 <HEAD>
   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/defined.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
+
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <!--
+    // User-defined tree menu data.
+
+    var treeMenuName       = "VDiskCategories";  // Make this unique for each tree menu.
+    var treeMenuDays       = 1;                 // Number of days to keep the cookie.
+    var treeMenuFrame      = window.parent.response;    // Menu frame window.
+    var treeMenuImgDir     = "../skins/<%=sSkin%>/nav/" // Path to graphics directory.
+    var treeMenuBackground = "../images/images/tree/menu_background.gif";               // Background image for menu frame.   
+    var treeMenuBgColor    = "#FFFFFF";         // Color for menu frame background.   
+    var treeMenuFgColor    = "#000000";         // Color for menu item text.
+    var treeMenuHiBg       = "#034E7A";         // Color for selected item background.
+    var treeMenuHiFg       = "#FFFF00";         // Color for selected item text.
+    var treeMenuFont       = "Arial,Helvetica"; // Text font face.
+    var treeMenuFontSize   = 1;                 // Text font size.
+    var treeMenuRoot       = "[~CATEGOR&Iacute;AS~]"; // Text for the menu root.
+    var treeMenuFolders    = 1;                 // Sets display of '+' and '-' icons.
+    var treeMenuAltText    = false;             // Use menu item text for icon image ALT text.
+
+    var currentCategoryGuid = "000000000000000000000000000000000";
+
+    function selectNode(guid,name) {
+      currentCategoryGuid = guid;
+    }
+
+		function getChildsCollection(uri) {
+		  var doc = httpRequestXML(uri);
+		  var has = doc.getElementsByTagName("has");
+		  return has[0].getElementsByTagName("b");
+	  }
+
+		function loadChilds(mnu,bs) {
+			for (var n=0; n<bs.length; n++) {
+			  var b = bs[n];
+				var id = getElementText(b.getElementsByTagName("target")[0],"s");
+				var lt = getElementText(b, "lt");
+				var sb = new TreeMenuItem(lt,
+									                "catprods.jsp?id_category=" + id + "&tr_category=" + escape(lt),
+				                          "window.parent.frames[1].selectNode(\""+id+"\",\""+lt+"\")", getElementText(b.getElementsByTagName("uri")[0],"s"));
+			  mnu.addItem(sb);
+
+			  var ch = getChildsCollection("pickchilds.jsp?Skin=<%=sSkin%>&Lang=<%=sLanguage%>&Parent="+id+"&Label="+escape(lt)+"&Uid=<%=sUserId%>");
+			  if (ch.length>0) {
+			  	var sm = new TreeMenu();
+			    mnu.items[n].makeSubmenu(sm);
+			    loadChilds(sm, ch);			    
+			  }
+			} // next
+		}
+
+    // ----------------------------------------------------------------
+        
+    function createCategory() {
+      var diputree = window.document.diputree;
+                    
+      if (currentCategoryGuid=="000000000000000000000000000000000") {
+	      alert ("[~Debe seleccionar primero una categoria padre para poder crear otra nueva categoria.~]");        
+      } else {
+        if (currentCategoryGuid=="<%=sParentId%>") {
+          alert ("[~No esta permitido crear categorias raiz~]");
+      	  return false;
+      	}
+
+          self.open ("catedit.jsp?id_domain=" + getCookie("domainid") + "&id_parent_cat=" + currentCategoryGuid, "newcategory", "directories=no,toolbar=no,menubar=no,width=480,height=420");
+      	
+      	/*
+      	if (id_parent_category.length==0) {
+      	} else {
+          if (id_category.charCodeAt(0)==35)
+            self.open ("catedit.jsp?id_domain=" + getCookie("domainid") + "&id_parent_cat=" + id_category.substr(1), "newcategory", "directories=no,toolbar=no,menubar=no,width=480,height=420");
+          else
+            self.open ("catedit.jsp?id_domain=" + getCookie("domainid") + "&id_parent_cat=" + id_category, "newcategory", "directories=no,toolbar=no,menubar=no,width=480,height=420");
+        }
+        */
+      }
+    } // createCategory()
+
+    // ----------------------------------------------------------------
+
+    function modifyCategory() {
+      var diputree = window.document.diputree;
+            	
+      if (currentCategoryGuid=="000000000000000000000000000000000") {
+        alert ("[~Debe seleccionar una categoría en el árbol antes de poder editarla~]");
+      } else {
+        self.open ("catedit.jsp?id_domain=" + getCookie("domainid") + "&id_category=" + currentCategoryGuid + "&id_parent_cat=" + currentCategoryGuid, "", "directories=no,toolbar=no,menubar=no,width=480,height=460");
+      }
+    } // modifyCategory()
+
+    // ----------------------------------------------------------------
+
+    function deleteCategory() {
+      var diputree = window.document.diputree;
+
+      if (currentCategoryGuid=="000000000000000000000000000000000") {
+        alert ("[~Para eliminar una Categoria debe seleccionarla primero en el arbol de navegacion~]");
+      } else {                   
+        if (currentCategoryGuid=="<%=sParentId%>") {
+	        alert ("[~No esta permitido eliminar categorias raiz~]");	  
+        } else if (window.confirm("[~Esta seguro de que desea eliminar la categoria seleccionada?~]")) {
+          self.open ("catedit_del.jsp?checkeditems=" + currentCategoryGuid, "", "directories=no,toolbar=no,menubar=no,width=400,height=300");
+        }
+      }
+    } // deleteCategory()
+      
+    // ----------------------------------------------------------------
+    
+    function showFiles () {
+      var frm = document.forms[0];
+      var cad = window.parent.parent.catadmin;
+      
+      if (frm.catname.value.length>0)     
+        cad.location = "catprods.jsp?id_category=" + id_category + "&tr_category=" + escape(frm.catname.value);
+      } // showFiles()
+
+    // --------------------------------------------------------
+    
+    function searchFile () {
+      var cad = window.parent.parent.catadmin;
+      var sought = window.prompt("[~Introduzca el nombre de archivo, enlace o categoría a buscar~]","");
+      
+      if (null!=sought)
+        if (sought.length>0)
+          cad.location = "catfind.jsp?tx_sought=" + escape(sought);
+    }
+
+  //-->
+  </SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/catdipu3x.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  	<!--
+      var treeMenu = new TreeMenu();
+    //-->
+  </SCRIPT>
+  
 </HEAD>
-
-<BODY ID="pagebody"  LEFTMARGIN="4" RIGHTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="4" MARGINHEIGHT="0" SCROLL="no">
-
+<BODY ID="pagebody"  LEFTMARGIN="4" RIGHTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="4" MARGINHEIGHT="0" SCROLL="no" onload="loadChilds(treeMenu,getChildsCollection('<%=sUri%>'));treeMenuDisplay();">
   <TABLE CELLSPACING="2" CELLPADDING="0" BORDER="0">
     <TR VALIGN="middle">
       <TD ALIGN="center" VALIGN="middle"><IMG SRC="../images/images/newfolder16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Category"><BR><A HREF="#" onclick="createCategory()" CLASS="linkplain">New</A></TD>
@@ -73,7 +250,7 @@
       <TD ALIGN="center" VALIGN="middle">
         <IMG SRC="../images/images/deletefolder.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete Category"><BR>
 <% if (bIsGuest) { %>
-        <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">Delete</A>
+        <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">Delete</A>
 <% } else { %>
         <A HREF="#" onclick="deleteCategory()" CLASS="linkplain">Delete</A>
 <% } %>
@@ -84,103 +261,5 @@
       <TD ALIGN="center" VALIGN="middle"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Find Category"><BR><A HREF="#" onclick="searchFile()" CLASS="linkplain">Search</A></TD>
     </TR>
   </TABLE>  
-  <!-- <DIV STYLE="position:relative;top:-12px"> -->
-  <FORM style="margin:0;padding:0">
-    <TABLE BORDER="2" CELLSPACING="0" CELLPADDING="0">
-      <TR>
-        <TD>
-          <TABLE CELLSPACING="0" CELLPADDING="0" BORDER="0">
-            <TR VALIGN="middle">            
-              <TD><INPUT CLASS="textmini" TYPE="text" MAXLENGTH="50" STYLE="width:250px" NAME="catname"></TD>
-              <TD><A HREF="javascript:showFiles()"><IMG SRC="../images/images/refresh.gif" HSPACE="2" WIDTH="13" HEIGHT="16" BORDER="0" ALT="View Files & Links"></A></TD>
-            </TR>
-          </TABLE>
-        </TD>
-      </TR>
-      <TR><TD WIDTH="280">
-        <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">        
-          <!--
-            var appletheight;
-            switch (screen.height) {
-              case 600:
-                appletheight = "256"; break;
-              case 768:
-                appletheight = "400"; break;
-              case 864:
-                appletheight = "460"; break;
-              case 960:
-                appletheight = "540"; break;
-              default:
-                appletheight = String(Math.floor(286*1.15*(screen.height/600))-80);
-            }            
-            document.write ('        <APPLET NAME="diputree" CODE="diputree.class" ARCHIVE="diputree3.jar" CODEBASE="../applets" WIDTH="260" HEIGHT="' + appletheight + '" MAYSCRIPT>');
-	  //-->
-	</SCRIPT>
-<%    if (sDomainId.equals("1024")) { sParentId = ""; %>
-	<PARAM NAME="xmlsource" VALUE="pickchilds.jsp?Skin=<%=sSkin%>&Lang=<%=sLanguage%>&Uid=<%=sUserId%>">
-<%    } else if (sDomainId.equals("1025")) { sParentId = ""; %>
-	<PARAM NAME="xmlsource" VALUE="pickchilds.jsp?Skin=<%=sSkin%>&Lang=<%=sLanguage%>&Parent=ecd80abbb4b24668aa75d45a58c830a6&Label=root&Uid=<%=sUserId%>">
-<%    } else {
-	JDCConnection oConn = null;
-	PreparedStatement oStmt;
-	ResultSet oRSet;
-	int iDomainId;
-	String sSQL;
-	
-	try {
-	  iDomainId = Integer.parseInt(sDomainId);
-
-	  oConn = GlobalDBBind.getConnection("catdipu3x");
-		
-	  sSQL = "SELECT " +  DB.gu_category + " FROM " + DB.k_users + " WHERE " + DB.gu_user + "=?";
-	  
-	  if (DebugFile.trace)
-	    DebugFile.writeln("Connection.prepareStatement(" + sSQL + ")");
-
-	  oStmt = oConn.prepareStatement(sSQL, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-	  
-	  oStmt.setString(1,sUserId);
-	  	  
-	  oRSet = oStmt.executeQuery();
-
-	  if (oRSet.next())
-	    sParentId = oRSet.getString(1);
-	  else
-	    sParentId = "000000000000000000000000000000000";
-
-	  oRSet.close();
-	  oRSet = null;
-	  oStmt.close();
-	  oStmt = null;
-          
-	  oConn.close("catdipu3x");
-	  oConn = null;
-	}
-  	catch (NumberFormatException e) {
-    	  sError = "NumberFormatException " + sDomainId;
-	  sParentId = "000000000000000000000000000000000";
-  	}
-	catch (SQLException sqle) {
-    	  if (oConn!=null)
-      	    if (!oConn.isClosed()) oConn.close("catdipu3x");
-    	  oConn = null;
-    	  sError = "SQLException " + sqle.getMessage();
-	  sParentId = "000000000000000000000000000000000";
-	}
-%>
-	<PARAM NAME="xmlsource" VALUE="pickchilds.jsp?Skin=<%=sSkin%>&Lang=<%=sLanguage%>&Parent=<%=sParentId%>&Label=root&Uid=<%=sUserId%>">
-<%    } %>	
-        </APPLET></TD></TR>
-    </TABLE>
-  </FORM>      
-  <!-- </DIV> -->
 </BODY>
-<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">        
-  <!--
-    g_defaultparent = "<%=sParentId%>";
-<% if (null!=sError)
-     out.write("    window.parent.parent.cadmframe.catadmin.location.href = \"../common/errmsg.jsp?title=SQLException&desc=" + Gadgets.URLEncode(sError) + "&resume=_close\";\n");
-%>
-  //-->
-</SCRIPT>
 </HTML>

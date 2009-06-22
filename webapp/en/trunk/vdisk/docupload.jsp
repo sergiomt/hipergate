@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/cookies.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -195,7 +195,7 @@
 <% if (request.getParameter("caller")!=null) { %>
     <TABLE width="100%"BORDER="0" CELLSPACING="0" CELLPADDING="2">
       <TR width="100%" VALIGN="middle"><TD align="left" CLASS="striptitle"><FONT CLASS="title1">Creation of <%=sTitle%></FONT></TD><TD ALIGN="right" CLASS="striptitle"><FONT CLASS="title1">Step 2 f 2</font></TD></TR>
-      <TR><TD colspan="2" class="formplain"><p ALIGN="justify">Ths screen allows uploading images to the server. First click Add. When no more images are to be uploaded click Finish.</p></TD></TR>
+      <TR><TD colspan="2" class="formplain"><p ALIGN="justify">[~Esta pantalla le permite subir imagenes al servidor. Para seleccionarlas pulse sobre Añadir. Cuando no quiera subir más pulse Terminar. Si no desea cargar imagenes en el servidor pulse directamente Terminar.~]</p></TD></TR>
     </TABLE>
 <% }
    else 
@@ -217,7 +217,7 @@
   <input type="hidden" name="id_category" value="<% out.write(request.getParameter("id_category")); %>">
   <select name="f_list" class="sBox" size="8" multiple="multiple"></select>
   <br>
-  <span class="cmdDiv"><a class="actLink" href="javascript:;" onClick="fu_add()">Add</a></span>
+  <span class="cmdDiv"><a class="actLink" href="javascript:;" onClick="fu_add()">[~Añadir~]</a></span>
   <span class="cmdDiv"><a class="actLink" href="javascript:;" onClick="fu_rem()">Remove</a></span>
   <span class="cmdDiv"><a class="actLink" href="javascript:;" onClick="fu_remAll()">Erase All</a></span>
 <p>

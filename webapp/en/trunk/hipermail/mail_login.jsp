@@ -1,4 +1,4 @@
-<%@ page import="java.sql.SQLException,com.knowgate.acl.ACLUser,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.sql.SQLException,com.knowgate.acl.ACLUser,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/cookies.jspf" %>
 <%
 /*

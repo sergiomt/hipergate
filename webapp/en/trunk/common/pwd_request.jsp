@@ -1,8 +1,8 @@
-<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <% response.addHeader ("Pragma", "no-cache"); response.addHeader ("cache-control", "no-store"); response.setIntHeader("Expires", 0); %>
 <HTML>
 <HEAD>
-  <TITLE>[~Recuperar contrase&ntilde;a~]</TITLE>
+  <TITLE>Retrieve password</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>
@@ -18,7 +18,7 @@
 			  }
 
 			  if (frm.nickname.value.length==0) {
-          alert ("[~El e-mail o nombre de usuario es obligatorio~]");
+          alert ("The e-mail or username is required");
 					frm.nickname.focus();
 					return false;
 			  }
@@ -45,19 +45,19 @@
 <BODY TOPMARGIN="8" MARGINHEIGHT="8">
   <TABLE WIDTH="420px">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Recuperar contrase&ntilde;a~]</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Retrieve password</FONT></TD></TR>
   </TABLE>  
   <FORM METHOD="get" ACTION="pwd_challenge.jsp" onSubmit="return validate()">
 	  
     <TABLE WIDTH="420px">
       <TR>
         <TD CLASS="textplain" COLSPAN="2">
-          [~Introduzca su nombre de usuario o e-mail junto con el c&oacute;digo de seguridad que encontrar&aacute; en la pantalla~]
+          Type your user or e-mail and the graphic key shown on screen
         </TD>
 		  </TR>
       <TR>
         <TD CLASS="textplain" WIDTH="140px">
-          [~Usuario o e-mail~]
+          User or e-mail
         </TD>
         <TD CLASS="textplain" WIDTH="140px">
           <INPUT TYPE="text" NAME="nickname" MAXLENGTH="100" SIZE="32">
@@ -74,7 +74,7 @@
       <TR>
         <TD></TD>
         <TD CLASS="textplain">
-			    <INPUT TYPE="submit" CLASS="pushbutton" ACCESSKEY="r" TITLE="ALT+r" VALUE="[~Recuperar~]">&nbsp;&nbsp;<INPUT TYPE="button" CLASS="closebutton" ACCESSKEY="c" TITLE="ALT+c" VALUE="[~Cancelar~]" onclick="window.close()">
+			    <INPUT TYPE="submit" CLASS="pushbutton" ACCESSKEY="r" TITLE="ALT+r" VALUE="Retrieve">&nbsp;&nbsp;<INPUT TYPE="button" CLASS="closebutton" ACCESSKEY="c" TITLE="ALT+c" VALUE="Cancel" onclick="window.close()">
         </TD>
 		  </TR>
 		</TABLE>

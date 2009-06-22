@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -37,8 +37,7 @@
   response.setHeader("Pragma","no-cache");
   response.setIntHeader("Expires", 0);
   
-  // [~//Inicio de sesion anónimo permitido~]
-  // if (autenticateSession(GlobalDBBind, request, response)<0) return;
+  if (autenticateSession(GlobalDBBind, request, response)<0) return;
 
   String sUserId = getCookie(request,"userid","");
   String sWorkArea = getCookie(request,"workarea","");  
@@ -77,7 +76,7 @@
 %>
 <HTML>
   <HEAD>
-    <TITLE>hipergate :: [~Reportar Incidencia~]</TITLE>
+    <TITLE>hipergate :: Report Incident</TITLE>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
@@ -117,18 +116,18 @@
 	var str;
 
 	if (frm.gu_project.options.selectedIndex<0) {
-	  alert ("[~Debe dar de alta algun Proyecto antes de poder reportar Incidencias~]");
+	  alert ("Must create at least one Project before reporting Incidents");
 	  return false;
 	}
 
 	if (getCombo(frm.gu_project).length==0) {
-	  alert ("[~El campo 'Afecta a' es Obligatorio~]");
+	  alert ("Field Applies to is mandatory");
 	  return false;
 	}
 	
 	str = rtrim(frm.tl_bug.value);
 	if (str.length==0) {
-	  alert ("[~El campo Asunto es Obligatorio~]");
+	  alert ("Subject is mandatory");
 	  return false;
 	}
 	else
@@ -136,7 +135,7 @@
 
 	str = rtrim(frm.nm_reporter.value);
 	if (str.length==0) {
-	  alert ("[~El campo Reportado Por es Obligatorio~]");
+	  alert ("Field Reported by is mandatory");
 	  return false;
 	}
 	else
@@ -144,7 +143,7 @@
 
 	str = rtrim(frm.tx_rep_mail.value);
 	if (str.length==0) {
-	  alert ("[~El e-mail de contacto es Obligatorio~]");
+	  alert ("Contact e-mail is mandatory");
 	  return false;
 	}
 	else if (str.indexOf("@")<0 || str.indexOf(".")<0) {
@@ -156,12 +155,12 @@
 
 	str = frm.tx_bug_brief.value;
 	if (str.length==0) {
-	  alert ("[~La descripcion de la incidencia es Obligatoria~]");
+	  alert ("Incident description is mandatory");
 	  return false;
 	}
 
 	if (str.length>2000) {
-	  alert ("[~La descripcion del la incidencia no puede exceder de 2000 caracteres~]");
+	  alert ("Incident description may not be longer than 2000 characters");
 	  return false;
 	}
 	
@@ -176,7 +175,7 @@
     </SCRIPT>
   </HEAD>
   <BODY >
-    <TABLE WIDTH="90%"><TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Alta de Incidencia~]</FONT></TD></TR></TABLE>  
+    <TABLE WIDTH="90%"><TR><TD CLASS="striptitle"><FONT CLASS="title1">Report Incident</FONT></TD></TR></TABLE>  
     <BR><CENTER>
     <FORM NAME="frmReportBug" ENCTYPE="multipart/form-data" METHOD="post" ACTION="bugedit_store.jsp" onSubmit="return validate()">
       <INPUT TYPE="hidden" NAME="gu_writer" VALUE="<% out.write(sUserId); %>">
@@ -184,18 +183,18 @@
       <INPUT TYPE="hidden" NAME="tx_status" VALUE="">
       <TABLE SUMMARY="Alta de Incidencia" CLASS="formfront">
         <TR>
-          <TD ALIGN="right"><FONT CLASS="formstrong">[~Asunto~]</FONT></TD>
+          <TD ALIGN="right"><FONT CLASS="formstrong">Subject</FONT></TD>
           <TD><INPUT TYPE="text" MAXLENGTH="250" NAME="tl_bug" SIZE="50" STYLE="text-transform:uppercase"></TD>
         </TR>
         <TR>
-          <TD ALIGN="right"><FONT CLASS="formstrong">[~Tipo~]</FONT></TD>
-          <TD><INPUT TYPE="hidden" NAME="tp_bug"><SELECT NAME="sel_type"></SELECT>
+          <TD ALIGN="right"><FONT CLASS="formstrong">Type</FONT></TD>
+          <TD><INPUT TYPE="hidden" NAME="tp_bug"><SELECT NAME="sel_type"><%=sTypeLookUp%></SELECT>
 <%  if (bIsAdmin) { %>     
-          &nbsp;<A HREF="#" onclick="lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Tipos de Incidencias~]"></A></TD>
+          &nbsp;<A HREF="#" onclick="lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View incident types"></A></TD>
 <%  } %>
         </TR>
         <TR>
-          <TD ALIGN="right"><FONT CLASS="formstrong">[~Afecta a~]</FONT></TD>
+          <TD ALIGN="right"><FONT CLASS="formstrong">Applies to&nbsp;</FONT></TD>
           <TD><SELECT NAME="gu_project">
                     <%
                       oPrj = new Project();
@@ -230,53 +229,53 @@
           </TD>
         </TR>
         <TR>
-          <TD ALIGN="right"><FONT CLASS="formstrong">[~Versi&oacute;n~]</FONT></TD>
+          <TD ALIGN="right"><FONT CLASS="formstrong">Version</FONT></TD>
           <TD>
             <INPUT TYPE="hidden" NAME="vs_found">
             <SELECT NAME="sel_found"><OPTION VALUE=""></OPTION><%=sVersionLookUp%></SELECT>
 <%  if (bIsAdmin) { %>     
-              &nbsp;<A HREF="#" onclick="lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Valores~]"></A>
+              &nbsp;<A HREF="#" onclick="lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Values List"></A>
 <%  } %>
     	  </TD>
     	</TR>
         <TR>
-          <TD ALIGN="right"><FONT CLASS="formstrong">[~Severidad~]</FONT></TD>
+          <TD ALIGN="right"><FONT CLASS="formstrong">Severity</FONT></TD>
           <TD><INPUT TYPE="hidden" NAME="od_severity">
               <SELECT NAME="sel_severity"><%=sSeverityLookUp%></SELECT>
 <%  if (bIsAdmin) { %>     
-              &nbsp;<A HREF="#" onclick="lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Valores~]"></A>
+              &nbsp;<A HREF="#" onclick="lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Values List"></A>
 <%  } %>
               &nbsp;&nbsp;&nbsp;&nbsp;
-              <FONT CLASS="formstrong">[~Prioridad~]&nbsp;</FONT>
+              <FONT CLASS="formstrong">Priority&nbsp;</FONT>
               <INPUT TYPE="hidden" NAME="od_priority">
 	      <SELECT NAME="sel_priority"><%=sPriorityLookUp%></SELECT>
 <% if (1025==iDomainId) { %>
-	      &nbsp;<A HREF="#" onclick="lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Valores~]"></A>
+	      &nbsp;<A HREF="#" onclick="lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Values List"></A>
 <% } %>
           </TD>
         </TR>
         <TR>
-          <TD ALIGN="right"><FONT CLASS="formstrong">[~Reportado por:~]</FONT></TD>
+          <TD ALIGN="right"><FONT CLASS="formstrong">Reported by:</FONT></TD>
           <TD><INPUT TYPE="text" MAXLENGTH="50" NAME="nm_reporter" SIZE="36" STYLE="text-transform:uppercase" VALUE="<%=sFullName%>"></TD>
         </TR>
         <TR>
-          <TD ALIGN="right"><FONT CLASS="formstrong">[~e-mail:~]</FONT></TD>
+          <TD ALIGN="right"><FONT CLASS="formstrong">e-mail:</FONT></TD>
           <TD><INPUT TYPE="text" MAXLENGTH="100" NAME="tx_rep_mail" SIZE="36" STYLE="text-transform:lowercase" VALUE="<%=sTxEMail%>"></TD>
         </TR>
 <!--
         <TR>
           <TD></TD>
-          <TD ALIGN="left"><INPUT TYPE="checkbox" NAME="chk_send_mail" VALUE="1">&nbsp;<FONT CLASS="formplain">[~Enviarme por e-mail una copia de esta incidencia~]</FONT></TD>
+          <TD ALIGN="left"><INPUT TYPE="checkbox" NAME="chk_send_mail" VALUE="1">&nbsp;<FONT CLASS="formplain">Send me a copy of this incident by e-mail</FONT></TD>
         </TR>
 -->
         <TR>
-          <TD ALIGN="right"><FONT CLASS="formstrong">[~Descripci&oacute;n:~]</FONT></TD>
+          <TD ALIGN="right"><FONT CLASS="formstrong">Description:</FONT></TD>
           <TD>
             <TEXTAREA NAME="tx_bug_brief" rows="8" COLS="78" STYLE="font-family:Arial;font-size:9pt"></TEXTAREA>
           </TD>
         </TR>
         <TR>
-          <TD ALIGN="right"><FONT CLASS="formstrong">[~Archivo Adjunto 1:~]</FONT></TD>
+          <TD ALIGN="right"><FONT CLASS="formstrong">Attached File 1:</FONT></TD>
           <TD>
 	    <INPUT TYPE="file" NAME="bugfile1_<%=sUserId%>" SIZE="40">	    
           </TD>
@@ -287,9 +286,9 @@
         <TR>
           <TD ALIGN="right"></TD>
           <TD ALIGN="center">
-            <INPUT TYPE="submit" CLASS="pushbutton" ACCESSKEY="a" TITLE="ALT+a" VALUE="[~Enviar~]" STYLE="width:80">
+            <INPUT TYPE="submit" CLASS="pushbutton" ACCESSKEY="a" TITLE="ALT+a" VALUE="Send" STYLE="width:80">
             &nbsp;&nbsp;&nbsp;
-            <INPUT TYPE="button" CLASS="closebutton" ACCESSKEY="c" TITLE="ALT+c" VALUE="[~Cancelar~]" onClick="window.close()" STYLE="width:80">
+            <INPUT TYPE="button" CLASS="closebutton" ACCESSKEY="c" TITLE="ALT+c" VALUE="Cancel" onClick="window.close()" STYLE="width:80">
             <BR>
           </TD>
         </TR>        
@@ -308,7 +307,7 @@
         oCon1.close("bug_new");
         oCon1 = null;
       }
-    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Error de Acceso a la Base de Datos~]&desc=" + e.getLocalizedMessage() + "&resume=_back"));    
+    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Database access error&desc=" + e.getLocalizedMessage() + "&resume=_back"));    
   }  
 %>
 <%@ include file="../methods/page_epilog.jspf" %>

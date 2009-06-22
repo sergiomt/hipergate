@@ -1,4 +1,4 @@
-<%@ page import="java.util.Date,java.util.GregorianCalendar,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Calendar" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.Date,java.util.GregorianCalendar,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Calendar" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*  
@@ -176,13 +176,13 @@
 				}
 				
 	if (!isDate(frm.dt_from.value, "d") && frm.dt_from.value.length>0) {
-	  alert ("From date is not valid");
+	  alert ("[~La fecha Desde no es válida~]");
 	  frm.dt_from.focus();
 	  return false;
 	}
 
 	if (!isDate(frm.dt_to.value, "d") && frm.dt_to.value.length>0) {
-	  alert ("To date is not valid");
+	  alert ("[~La fecha Hasta no es válida~]");
 	  frm.dt_to.focus();
 	  return false;	  
 	}
@@ -193,7 +193,7 @@
 	}
 
 	if (null==scp) {
-	  alert ("It is required to select a scope to which the calendar must be applied");
+	  alert ("[~Debe seleccionar el ámbito de aplicación del calendario~]");
 	  return false;	  
 	}        
 
@@ -201,7 +201,7 @@
 	        frm.gu_user.value=frm.gu_acl_group.value=frm.id_country.value=frm.id_state.value="";
         } else if (scp=="country") {
           if (frm.sel_country.selectedIndex==-1) {
-	    alert ("It is required to selected a country to which the calendar applies");
+	    alert ("[~Debe seleccionar el pais de aplicación del calendario~]");
 	    frm.sel_country.focus();
 	    return false;	  
           } else {
@@ -210,11 +210,11 @@
 	  frm.gu_user.value=frm.gu_acl_group.value=frm.id_state.value="";
         } else if (scp=="state") {
           if (frm.sel_country.selectedIndex==-1) {
-	    alert ("It is required to selected a country to which the calendar applies");
+	    alert ("[~Debe seleccionar el pais de aplicación del calendario~]");
 	    frm.sel_country.focus();
 	    return false;	  
           } else if (frm.sel_state.selectedIndex==-1) {
-	    alert ("It is required to select a state to which the calendar must be applied");
+	    alert ("[~Debe seleccionar la provincia de aplicación del calendario~]");
 	    frm.sel_state.focus();
 	    return false;  
           } else {
@@ -224,7 +224,7 @@
 	  frm.gu_user.value=frm.gu_acl_group.value="";
         } else if (scp=="group") {
           if (frm.sel_group.selectedIndex==-1) {
-	    alert ("It is required to select a group to which the calendar must be applied");
+	    alert ("[~Debe seleccionar el grupo de aplicación del calendario~]");
 	    frm.sel_group.focus();
 	    return false;	  
           } else {
@@ -233,7 +233,7 @@
 	  frm.gu_user.value=frm.id_country.value=frm.id_state.value="";
         } else if (scp=="user") {
           if (frm.sel_user.selectedIndex==-1) {
-	    alert ("It is required to select a user to which the calendar must be applied");
+	    alert ("[~Debe seleccionar el usuario de aplicación del calendario~]");
 	    frm.sel_user.focus();
 	    return false;	  
           } else {

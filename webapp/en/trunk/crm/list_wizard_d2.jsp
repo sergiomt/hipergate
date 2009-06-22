@@ -1,4 +1,4 @@
-<%@ page import="java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <%
 /*
@@ -94,7 +94,7 @@
         var frm = document.forms[0];
 	
 	if (frm.emails.value.length==0) {
-	  alert ("[~Debe especificar el fichero de texto delimitado a cargar~]");
+	  alert ("Must specify file to be uploaded");
 	  return false;
 	}
 	
@@ -104,7 +104,7 @@
 	}
 	 
 	if (getCombo(frm.sel_column1)!="tx_email" && getCombo(frm.sel_column2)!="tx_email" && getCombo(frm.sel_column3)!="tx_email" && getCombo(frm.sel_column4)!="tx_email") {
-	  alert ("[~Al menos una de las columnas del fichero debe ser el e-mail a cargar~]");
+	  alert ("At least one column must be the e-mail to be loaded");
 	  return false;
 	}
 
@@ -124,7 +124,7 @@
       }
     //-->
   </SCRIPT>
-  <TITLE>hipergate :: [~Crear Lista de Distribuci&oacute;n - Paso 2/4~]</TITLE>
+  <TITLE>hipergate :: Create Distribution List - Step 2 of 4</TITLE>
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setInputs()">
   <FORM ENCTYPE="multipart/form-data" METHOD="post" ACTION="list_wizard_d3.jsp" onSubmit="return validate()">
@@ -135,21 +135,21 @@
     <INPUT TYPE="hidden" NAME="tp_list">
     <INPUT TYPE="hidden" NAME="desc_file">
 
-    <TABLE><TR><TD WIDTH="310px" CLASS="striptitle"><FONT CLASS="title1">[~Crear Lista - Paso 2 de 4~]</FONT></TD></TR></TABLE>
+    <TABLE><TR><TD WIDTH="310px" CLASS="striptitle"><FONT CLASS="title1">Create List - Step 2 of 4</FONT></TD></TR></TABLE>
     <TABLE WIDTH="310px" CLASS="formback">
-      <TR><TD ALIGN="left" CLASS="formstrong">[~Subir Fichero de Direcciones de e-mail~]</TD></TR>
+      <TR><TD ALIGN="left" CLASS="formstrong">Upload e-mail addresses file</TD></TR>
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
             <TD ALIGN="left">
-              <FONT CLASS="textsmall">[~Ahora debe subir un fichero de texto delimitado con las direcciones de e-mail a incluir en la lista.~]</FONT>
+              <FONT CLASS="textsmall">Now you must upload a delimited text file with e-mail addresses to be included in the new list.</FONT>
               <BR>
               <INPUT TYPE="file" CLASS="combomini" SIZE="40" NAME="emails">
               <BR>
               <TABLE>
                 <TR>
-                  <TD><FONT CLASS="textsmall">[~Delimitador~]</FONT></TD>
-                  <TD ALIGN="right"><SELECT CLASS="combomini" NAME="sel_delimiter"><OPTION VALUE="," SELECTED>[~Coma (,)~]</OPTION><OPTION VALUE=";">[~Punto y Coma (;)~]</OPTION><OPTION VALUE="tab">[~Tabulador~]</OPTION><OPTION VALUE="|">[~Barra Vertical (|)~]</OPTION></SELECT></TD>
+                  <TD><FONT CLASS="textsmall">Delimiter</FONT></TD>
+                  <TD ALIGN="right"><SELECT CLASS="combomini" NAME="sel_delimiter"><OPTION VALUE="," SELECTED>Comma (,)</OPTION><OPTION VALUE=";">Semi colon (;)</OPTION><OPTION VALUE="tab">Tab</OPTION><OPTION VALUE="|">Pipe (|)</OPTION></SELECT></TD>
                 </TR>
                 <TR>
                   <TD COLSPAN="2">
@@ -183,57 +183,57 @@
                   </TD>
                 </TR>
                 <TR>
-                  <TD><FONT CLASS="textsmall">[~Campos entre comillas~]</FONT></TD>
-                  <TD><INPUT TYPE="radio" NAME="quotedfields">&nbsp;<FONT CLASS="textsmall">[~Si~]</FONT>&nbsp;&nbsp;&nbsp;<INPUT TYPE="radio" NAME="quotedfields" CHECKED>&nbsp;<FONT CLASS="textsmall">[~No~]</FONT></TD>
+                  <TD><FONT CLASS="textsmall">Quoted fields</FONT></TD>
+                  <TD><INPUT TYPE="radio" NAME="quotedfields">&nbsp;<FONT CLASS="textsmall">Yes</FONT>&nbsp;&nbsp;&nbsp;<INPUT TYPE="radio" NAME="quotedfields" CHECKED>&nbsp;<FONT CLASS="textsmall">No</FONT></TD>
                 </TR>
                 <TR>
-                  <TD><FONT CLASS="textsmall">[~Columna 1~]</FONT></TD>
+                  <TD><FONT CLASS="textsmall">Column 1</FONT></TD>
                   <TD>
                     <SELECT CLASS="combomini" NAME="sel_column1">
                       <OPTION VALUE=""></OPTION>
-                      <OPTION VALUE="tx_email" SELECTED>[~e-mail~]</OPTION>
-                      <OPTION VALUE="tx_name">[~Nombre~]</OPTION>
-                      <OPTION VALUE="tx_surname">[~Apellidos~]</OPTION>
-                      <OPTION VALUE="tx_salutation">[~Saludo~]</OPTION>
-                      <OPTION VALUE="unnamed">[~Otro~]</OPTION>
+                      <OPTION VALUE="tx_email" SELECTED>e-mail</OPTION>
+                      <OPTION VALUE="tx_name">Name</OPTION>
+                      <OPTION VALUE="tx_surname">Surname</OPTION>
+                      <OPTION VALUE="tx_salutation">Salutation</OPTION>
+                      <OPTION VALUE="unnamed">Other</OPTION>
                     </SELECT>
                   </TD>
                 <TR>
-                  <TD><FONT CLASS="textsmall">[~Columna 2~]</FONT></TD>
+                  <TD><FONT CLASS="textsmall">Column 2</FONT></TD>
                   <TD>
                     <SELECT CLASS="combomini" NAME="sel_column2">
                       <OPTION VALUE=""></OPTION>
-                      <OPTION VALUE="tx_email">[~e-mail~]</OPTION>
-                      <OPTION VALUE="tx_name" SELECTED>[~Nombre~]</OPTION>
-                      <OPTION VALUE="tx_surname">[~Apellidos~]</OPTION>
-                      <OPTION VALUE="tx_salutation">[~Saludo~]</OPTION>
-                      <OPTION VALUE="unnamed">[~Otro~]</OPTION>
+                      <OPTION VALUE="tx_email">e-mail</OPTION>
+                      <OPTION VALUE="tx_name" SELECTED>Name</OPTION>
+                      <OPTION VALUE="tx_surname">Surname</OPTION>
+                      <OPTION VALUE="tx_salutation">Salutation</OPTION>
+                      <OPTION VALUE="unnamed">Other</OPTION>
                     </SELECT>
                   </TD>
                 </TR>
                 <TR>
-                  <TD><FONT CLASS="textsmall">[~Columna 3~]</FONT></TD>
+                  <TD><FONT CLASS="textsmall">Column 3</FONT></TD>
                   <TD>
                     <SELECT CLASS="combomini" NAME="sel_column3">
                       <OPTION VALUE=""></OPTION>
-                      <OPTION VALUE="tx_email">[~e-mail~]</OPTION>
-                      <OPTION VALUE="tx_name">[~Nombre~]</OPTION>
-                      <OPTION VALUE="tx_surname" SELECTED>[~Apellidos~]</OPTION>
-                      <OPTION VALUE="tx_salutation">[~Saludo~]</OPTION>
+                      <OPTION VALUE="tx_email">e-mail</OPTION>
+                      <OPTION VALUE="tx_name">Name</OPTION>
+                      <OPTION VALUE="tx_surname" SELECTED>Surname</OPTION>
+                      <OPTION VALUE="tx_salutation">Salutation</OPTION>
                       <OPTION VALUE="unnamed">Otro</OPTION>
                     </SELECT>
                   </TD>
                 </TR>
                 <TR>
-                  <TD><FONT CLASS="textsmall">[~Columna 4~]</FONT></TD>
+                  <TD><FONT CLASS="textsmall">Column 4</FONT></TD>
                   <TD>
                     <SELECT CLASS="combomini" NAME="sel_column4">
                       <OPTION VALUE="" SELECTED></OPTION>
-                      <OPTION VALUE="tx_email">[~e-mail~]</OPTION>
-                      <OPTION VALUE="tx_name">[~Nombre~]</OPTION>
-                      <OPTION VALUE="tx_surname">[~Apellidos~]</OPTION>
-                      <OPTION VALUE="tx_salutation">[~Saludo~]</OPTION>
-                      <OPTION VALUE="unnamed">[~Otro~]</OPTION>
+                      <OPTION VALUE="tx_email">e-mail</OPTION>
+                      <OPTION VALUE="tx_name">Name</OPTION>
+                      <OPTION VALUE="tx_surname">Surname</OPTION>
+                      <OPTION VALUE="tx_salutation">Salutation</OPTION>
+                      <OPTION VALUE="unnamed">Other</OPTION>
                     </SELECT>
                   </TD>
                 </TR>
@@ -244,7 +244,7 @@
       </TD>
      </TR>
     </TABLE>
-    <TABLE SUMMARY="Buttons"><TR><TD ALIGN="center"><INPUT TYPE="button" CLASS="closebutton" VALUE="[~Cancelar~]" STYLE="width:100px" onClick="self.close()">&nbsp;<INPUT TYPE="button" CLASS="pushbutton" VALUE="[~<< Anterior~]" STYLE="width:100px" onClick="document.forms[0].action='list_wizard_01.jsp';document.forms[0].submit()">&nbsp;<INPUT TYPE="submit" CLASS="pushbutton" VALUE="[~Siguiente >>~]" STYLE="width:100px"></TD></TR></TABLE>
+    <TABLE SUMMARY="Buttons"><TR><TD ALIGN="center"><INPUT TYPE="button" CLASS="closebutton" VALUE="Cancel" STYLE="width:100px" onClick="self.close()">&nbsp;<INPUT TYPE="button" CLASS="pushbutton" VALUE="<< Previous" STYLE="width:100px" onClick="document.forms[0].action='list_wizard_01.jsp';document.forms[0].submit()">&nbsp;<INPUT TYPE="submit" CLASS="pushbutton" VALUE="Next >>" STYLE="width:100px"></TD></TR></TABLE>
   </FORM>
 </BODY>
 </HTML>

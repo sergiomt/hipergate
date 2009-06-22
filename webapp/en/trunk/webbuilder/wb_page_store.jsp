@@ -1,5 +1,5 @@
-<%@ page import="java.util.*,java.math.*,java.io.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*,com.knowgate.misc.*,com.knowgate.dfs.FileSystem" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><% 
+﻿<%@ page import="java.util.*,java.math.*,java.io.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*,com.knowgate.misc.*,com.knowgate.dfs.FileSystem" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -33,6 +33,14 @@
 */
 
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
+
+  boolean bIsPowerUser = isDomainPowerUser (GlobalCacheClient, GlobalDBBind, request, response);
+  boolean bIsAdmin = isDomainAdmin (GlobalCacheClient, GlobalDBBind, request, response);
+
+  if (!bIsAdmin && !bIsPowerUser) {
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Permisos insuficientes~]&desc=[~Su nivel de privilegios no le permite agregar nuevas paginas~]&resume=_close"));       
+    return;
+  }
   
   String id_domain = getCookie(request,"domainid","");
   String n_domain = request.getParameter("n_domain");
@@ -65,7 +73,7 @@
       com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "DOMException", "Container " + request.getParameter("nm_container") + " not found");
     }
 
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=DOMException&desc=[~No se encontro el contenedor~] " + request.getParameter("nm_container") + "&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=DOMException&desc=Container not found " + request.getParameter("nm_container") + "&resume=_back"));
     return;
   }
   
@@ -90,7 +98,7 @@
       com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "StringIndexOutOfBoundsException", sior.getMessage());
     }
     
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=StringIndexOutOfBoundsException&desc=[~El documento XML no es valido~] " + sDataTemplateFile + "&resume=_back"));   
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=StringIndexOutOfBoundsException&desc=XML document is not valid " + sDataTemplateFile + "&resume=_back"));   
   }
   
   if (null==sTemplateData) return;

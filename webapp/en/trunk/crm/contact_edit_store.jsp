@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.util.*,java.math.*,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.crm.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.util.*,java.math.*,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.crm.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.hipergate.RecentlyUsed" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="../methods/customattrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 
@@ -96,6 +96,15 @@
       }
       oStmt.close();
     } // fi (courses!="")
+
+    RecentlyUsed oRecent = new RecentlyUsed (DB.k_contacts_recent, 10, DB.gu_contact, DB.gu_user);
+	  DBPersist oItem = new DBPersist (DB.k_contacts_recent, "RecentContact");		
+	  oItem.put (DB.gu_contact, oContact.getString(DB.gu_contact));
+	  oItem.put (DB.full_name, oContact.getStringNull(DB.tx_name,"") + " " + oContact.getStringNull(DB.tx_surname,""));
+	  oItem.put (DB.gu_user, id_user);
+	  oItem.put (DB.gu_workarea, gu_workarea);	
+	  oItem.put (DB.nm_company, nm_company);	  
+	  oRecent.add (oConn, oItem);
     
     DBAudit.log(oConn, oContact.ClassId, sOpCode, id_user, oContact.getString(DB.gu_contact), null, 0, 0, request.getParameter("nm_legal"), null);
 

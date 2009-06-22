@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%
@@ -263,6 +263,12 @@
 
        // ----------------------------------------------------
 	
+	function exportMembers(id) {
+            window.open('list_members_csv.jsp?gu_list=' + id);
+        }
+
+       // ----------------------------------------------------
+	
 	function editQuery(id,de) {
           if (jsListTp==<% out.write(String.valueOf(DistributionList.TYPE_DYNAMIC)); %>)
             window.open('../common/qbf.jsp?caller=list_listing.jsp&queryspec=listmember&caller=list_listing.jsp?gu_list=' + id + '&de_title=' + escape('Consulta de Miembros: ' + de) + '&queryspec=listmember&queryid=' + jsListQr,'wMemberQuery','height=' + (screen.height>600 ? '600' : '520') + ',width= ' + (screen.width>800 ? '800' : '760') + ',scrollbars=yes,toolbar=no,menubar=no');
@@ -315,7 +321,7 @@
 <% if (bIsGuest) { %>
         alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
 <% } else { %>
-	alert ("[~Debe configurar previamente el servidor de correo para enviar e-mails~]");
+	alert ("Mail server is not properly configured to send e-mails");
 	top.document.location.href="../hipermail/mail_config_f.htm?selected=1&subselected=0"
 <% } %>
       } // configEmail
@@ -374,7 +380,7 @@
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onClick="hideRightMenu()">
     <%@ include file="../common/tabmenu.jspf" %>
     <FORM METHOD="post" onSubmit="findList();return false;">
-      <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Listas de Distribuci&oacute;n~]</FONT></TD></TR></TABLE>      
+      <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">Distribution Lists</FONT></TD></TR></TABLE>      
       <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
       <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
       <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
@@ -386,31 +392,31 @@
       <TABLE CELLSPACING="2" CELLPADDING="2">
         <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
         <TR>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nueva~]"></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
         <TD VALIGN="middle">
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Nueva~]</A>
+          <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">New</A>
 <% } else { %>
-          <A HREF="#" onclick="createList();return false;" CLASS="linkplain">[~Nueva~]</A>
+          <A HREF="#" onclick="createList();return false;" CLASS="linkplain">New</A>
 <% } %>
         </TD>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar~]"></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
         <TD>
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Eliminar~]</A>
+          <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">Delete</A>
 <% } else { %>
-          <A HREF="#" onclick="deleteLists();return false;" CLASS="linkplain">[~Eliminar~]</A>
+          <A HREF="#" onclick="deleteLists();return false;" CLASS="linkplain">Delete</A>
 <% } %>
         </TD>
-        <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Buscar Lista~]"></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Find List"></TD>
         <TD VALIGN="middle">
           <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>">
-	  &nbsp;<A HREF="javascript:findList()" CLASS="linkplain" TITLE="[~Buscar~]">[~Buscar~]</A>	  
+	  &nbsp;<A HREF="javascript:findList()" CLASS="linkplain" TITLE="Search">Search</A>	  
         </TD>
         <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="[~Descartar búsqueda~]"></TD>
         <TD VALIGN="bottom">
-          <A HREF="javascript:document.forms[0].find.value='';findList();" CLASS="linkplain" TITLE="[~Descartar búsqueda~]">[~Descartar~]</A>
-          <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;[~Mostrar~]&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;[~resultados~]&nbsp;</FONT>
+          <A HREF="javascript:document.forms[0].find.value='';findList();" CLASS="linkplain" TITLE="[~Descartar búsqueda~]">Discard</A>
+          <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;Show&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;results&nbsp;</FONT>
         </TD>
         </TR>
         <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
@@ -422,17 +428,17 @@
     	  // [~//Pintar los enlaces de siguiente y anterior~]
     
           if (iSkip>0) // [~//Si iSkip>0 entonces hay registros anteriores~]
-            out.write("            <A HREF=\"list_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;[~Anteriores~]" + "</A>&nbsp;&nbsp;&nbsp;");
+            out.write("            <A HREF=\"list_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
     
           if (!oLists.eof())
-            out.write("            <A HREF=\"list_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">[~Siguientes~]&nbsp;&gt;&gt;</A>");
+            out.write("            <A HREF=\"list_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
 %>
           </TD>
         </TR>
         <TR>
-          <TD CLASS="tableheader" WIDTH="<%=String.valueOf(floor(300f*fScreenRatio))%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(4)" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==4 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este campo~]"></A>&nbsp;<B>[~Asunto~]</B></TD>
-          <TD CLASS="tableheader" WIDTH="<%=String.valueOf(floor(400f*fScreenRatio))%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(5)" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este campo~]"></A>&nbsp;<B>[~Descripci&oacute;n~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Seleccionar todos"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="[~Seleccionar todos~]"></A></TD></TR>
+          <TD CLASS="tableheader" WIDTH="<%=String.valueOf(floor(300f*fScreenRatio))%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(4)" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==4 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>Subject</B></TD>
+          <TD CLASS="tableheader" WIDTH="<%=String.valueOf(floor(400f*fScreenRatio))%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(5)" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>Description</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Seleccionar todos"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select all"></A></TD></TR>
 <%
 	  String sInstId, sInstQr, sInstTp, sInstNm, sInstDe;
 	  for (int i=0; i<iListCount; i++) {
@@ -443,7 +449,7 @@
             sInstDe = oLists.getStringNull(4,i,"");            
 %>
             <TR HEIGHT="14">
-              <TD CLASS="strip<%=(i%2)+1%>" VALIGN="middle">&nbsp;<A HREF="#" oncontextmenu="jsListId='<%=sInstId%>'; jsListTp=<%=sInstTp%>; jsListQr='<%=sInstQr%>'; jsListNm='<%=sInstNm%>'; jsListDe='<%=sInstDe%>'; configureMenu(); return showRightMenu(event);" onmouseover="window.status='[~Editar Lista~]'; return true;" onmouseout="window.status='';" onclick="modifyList('<%=sInstId%>','<%=sInstNm%>')" TITLE="[~Bot&oacute;n Derecho para Ver el Men&uacute; Contextual~]"><%=oLists.getStringNull(3,i,"([~sin asunto~])")%></A></TD>
+              <TD CLASS="strip<%=(i%2)+1%>" VALIGN="middle">&nbsp;<A HREF="#" oncontextmenu="jsListId='<%=sInstId%>'; jsListTp=<%=sInstTp%>; jsListQr='<%=sInstQr%>'; jsListNm='<%=sInstNm%>'; jsListDe='<%=sInstDe%>'; configureMenu(); return showRightMenu(event);" onmouseover="window.status='Edit List'; return true;" onmouseout="window.status='';" onclick="modifyList('<%=sInstId%>','<%=sInstNm%>')" TITLE="Click Right Mouse Button for Context Menu"><%=oLists.getStringNull(3,i,"(no subject)")%></A></TD>
               <TD CLASS="strip<%=(i%2)+1%>">&nbsp;<%=oLists.getStringNull(4,i,"")%></TD>
               <TD CLASS="strip<%=(i%2)+1%>" ALIGN="center"><INPUT VALUE="1" TYPE="checkbox" NAME="<%=sInstId%>">
             </TR>
@@ -452,22 +458,23 @@
     </FORM>
 
     <SCRIPT language="JavaScript" type="text/javascript">
-      addMenuOption("[~Abrir~]","modifyList(jsListId,jsListNm)",1);
-      addMenuOption("[~Duplicar~]","clone()",0);
-      addMenuOption("[~Combinar~]","mergeMembers(jsListId,jsListDe)",0);
+      addMenuOption("Open","modifyList(jsListId,jsListNm)",1);
+      addMenuOption("Duplicate","clone()",0);
+      addMenuOption("Combine","mergeMembers(jsListId,jsListDe)",0);
       addMenuSeparator();
-      addMenuOption("[~Editar Miembros~]","editMembers(jsListId,jsListDe)",0);
-      addMenuOption("[~Editar Consulta~]","editQuery(jsListId,jsListDe)",2);
+      addMenuOption("Edit Members","editMembers(jsListId,jsListDe)",0);
+      addMenuOption("Edit Query","editQuery(jsListId,jsListDe)",2);
+      addMenuOption("[~Exportar Miembros~]","exportMembers(jsListId)",0);
       addMenuSeparator();
-      addMenuOption("[~Nueva Oportunidad~]","createOportunity(jsListId,jsListDe)",0);
+      addMenuOption("New Oportunity","createOportunity(jsListId,jsListDe)",0);
 <% if (((iAppMask & (1<<ProjectManager))!=0)) { %>
-      addMenuOption("[~Nuevo Proyecto~]","createProject(jsListId,jsListDe)",0);
+      addMenuOption("New Project","createProject(jsListId,jsListDe)",0);
 <% } %>
 <% if (((iAppMask & (1<<Hipermail))!=0)) {
       if (bHasAccounts) { %>
-      addMenuOption("[~Enviar e-mail~]","sendEmail(jsListId,jsListDe)",0);
+      addMenuOption("Send e-mail","sendEmail(jsListId,jsListDe)",0);
 <%    } else { %>
-      addMenuOption("[~Enviar e-mail~]","configEmail()",0);
+      addMenuOption("Send e-mail","configEmail()",0);
 <% }  } %>
     </SCRIPT>
 </BODY>

@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.ContactLoader,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.ContactLoader,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <%
 /*
@@ -45,7 +45,7 @@
   else if (request.getParameter("id_mode").equals("appendupdate"))
     iMode = ContactLoader.MODE_APPENDUPDATE;
   else {
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=IllegalArgumentException&desc=[~Modo de insercion o actualizacion no valido~]&resume=_back"));  
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=IllegalArgumentException&desc=Insert or update mode not valid&resume=_back"));  
     return;
   }
 
@@ -99,7 +99,7 @@
         oConn.close("contact_fastedit_store");
       }
     oConn = null;
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=[~Fila~] " + String.valueOf(r+1) + " " + e.getLocalizedMessage() + "&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=Row " + String.valueOf(r+1) + " " + e.getLocalizedMessage() + "&resume=_back"));
   }
   catch (IllegalArgumentException e) {  
     if (oConn!=null)
@@ -108,7 +108,7 @@
         oConn.close("contact_fastedit_store");
       }
     oConn = null;
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=IllegalArgumentException&desc=[~Fila~] " + String.valueOf(r+1) + " " + e.getMessage() + "&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=IllegalArgumentException&desc=Row " + String.valueOf(r+1) + " " + e.getMessage() + "&resume=_back"));
   }
   catch (ArrayIndexOutOfBoundsException e) {  
     if (oConn!=null)
@@ -117,7 +117,7 @@
         oConn.close("contact_fastedit_store");
       }
     oConn = null;
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=ArrayIndexOutOfBoundsException&desc=[~Fila~] " + String.valueOf(r+1) + " " + e.getMessage() + "&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=ArrayIndexOutOfBoundsException&desc=Row " + String.valueOf(r+1) + " " + e.getMessage() + "&resume=_back"));
   }
   /*
   catch (NullPointerException e) {  
@@ -127,7 +127,7 @@
         oConn.close("contact_fastedit_store");
       }
     oConn = null;
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=[~Fila~] " + String.valueOf(r+1) + e.getMessage() + "&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=Row " + String.valueOf(r+1) + e.getMessage() + "&resume=_back"));
   }
   */
   catch (ClassCastException e) {  
@@ -137,7 +137,7 @@
         oConn.close("contact_fastedit_store");
       }
     oConn = null;
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=ClassCastException&desc=[~Fila~] " + String.valueOf(r+1) + e.getMessage() + "&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=ClassCastException&desc=Row " + String.valueOf(r+1) + e.getMessage() + "&resume=_back"));
   }
   if (null==oConn) return;  
   oConn = null;
@@ -166,7 +166,7 @@
         </TD></TR>
         <TR><TD ALIGN="center">
           <FORM>
-            <INPUT TYPE="button" CLASS="pushbutton" VALUE="[~Volver~]" onclick="window.location.href='contact_fastedit.jsp'">
+            <INPUT TYPE="button" CLASS="pushbutton" VALUE="Back" onclick="window.location.href='contact_fastedit.jsp'">
           </FORM>
         </TD></TR>
       </TABLE>

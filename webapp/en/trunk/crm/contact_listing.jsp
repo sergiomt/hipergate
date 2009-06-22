@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.util.Date,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.hipergate.QueryByForm,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder,java.util.Date,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.hipergate.QueryByForm,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -140,8 +140,8 @@
 	    if (null==sUserGroups) {
 	      ACLUser oUser = new ACLUser(id_user);
 	      DBSubset oUserGroups = oUser.getGroups(oConn);
-	      oUserGroups.setColumnDelimiter("','");
-	      sUserGroups = "'" + oUserGroups.toString() + "'";
+	      oUserGroups.setRowDelimiter("','");
+	      sUserGroups = "'" + Gadgets.dechomp(oUserGroups.toString(),"','") + "'";
 	      GlobalCacheClient.put("["+id_user+",groups]", sUserGroups);
 	    }
     	sSecurityFilter = " AND (b.bo_restricted=0 OR EXISTS (SELECT x."+DB.gu_acl_group+" FROM "+DB.k_x_group_contact+" x WHERE x."+DB.gu_contact+"=b."+DB.gu_contact+" AND x."+DB.gu_acl_group+" IN ("+sUserGroups+"))) AND " + (bPrivate ? "(b." + DB.bo_private + "=1 AND b." + DB.gu_writer + "='" + id_user + "') " : "(b." + DB.bo_private + "=0 OR b." + DB.gu_writer + "='" + id_user + "') ") + " ";
@@ -187,12 +187,13 @@
         iContactCount = oContacts.load (oConn, iSkip);
     }
     else if (sFind.length()==0) {
-      oContacts = new DBSubset (DB.v_contact_list + " b",      
-	      		        DB.gu_contact + "," + DB.full_name + "," + DB.tr_ + sLanguage + "," + DB.gu_company +"," + DB.nm_legal + "," + DBBind.Functions.ISNULL + "(" + DB.nu_notes + ",0),"+DBBind.Functions.ISNULL+"("+DB.nu_attachs + ",0)," + DB.dt_modified,
-	      			"(" + DB.gu_owner + "='" + gu_workarea + "' OR " + DB.gu_owner + " IS NULL) AND " + DB.gu_workarea + "='" + gu_workarea + "' "  +
-	      			sSecurityFilter + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
+      oContacts = new DBSubset (DB.v_contact_list + " b, "+DB.k_contacts_recent+" r",      
+	      		        "b."+DB.gu_contact + ",b." + DB.full_name + ",b." + DB.tr_ + sLanguage + ",b." + DB.gu_company +",b." + DB.nm_legal + "," + DBBind.Functions.ISNULL + "(b." + DB.nu_notes + ",0),"+DBBind.Functions.ISNULL+"(b."+DB.nu_attachs + ",0),b." + DB.dt_modified,
+	      			      "(b." + DB.gu_owner + "=? OR b." + DB.gu_owner + " IS NULL) AND b." + DB.gu_workarea + "=? AND " +
+	      			      "b."+DB.gu_contact+"=r."+DB.gu_contact+" AND r."+DB.gu_user+"=? "+
+	      			      sSecurityFilter + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
       oContacts.setMaxRows(iMaxRows);
-      iContactCount = oContacts.load (oConn, iSkip);
+      iContactCount = oContacts.load (oConn, new Object[]{gu_workarea,gu_workarea,id_user}, iSkip);
     }
     else {
 
@@ -356,7 +357,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: <%=face.equals("edu") ? "[~Listado de Alumnos~]" : "[~Listado de Individuos~]"%></TITLE>
+  <TITLE>hipergate :: <%=face.equals("edu") ? "Students Listing" : "Contact Listing"%></TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
@@ -596,7 +597,7 @@
 	chi.value = "";
 
 	if (frm.sel_acourse.slectedIndex<=0) {
-	  alert ("[~Debe seleccionar el curso al cual desea agregar los alumnos~]");
+	  alert ("Select course to which students must be assigned");
 	  frm.sel_acourse.focus();
 	  return false;
 	}
@@ -708,7 +709,7 @@
 <BODY  TOPMARGIN="4" MARGINHEIGHT="4" onClick="hideRightMenu()">
     <%@ include file="../common/tabmenu.jspf" %>
     <FORM METHOD="post" onSubmit="findContact();return false;">
-      <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1"><%=face.equals("edu") ? "[~Listado de Alumnos~]" : "[~Listado de Individuos~]"%></FONT></TD></TR></TABLE>  
+      <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1"><%=face.equals("edu") ? "Students Listing" : "Contact Listing"%></FONT></TD></TR></TABLE>  
       <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
       <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
       <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
@@ -719,44 +720,44 @@
       <TABLE CELLSPACING="2" CELLPADDING="2">
         <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
         <TR>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nuevo~]"></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
         <TD VALIGN="middle">
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Nuevo~]</A>
+          <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">New</A>
 <% } else { %>
-          <A HREF="#" onclick="createContact()" CLASS="linkplain">[~Nuevo~]</A>
+          <A HREF="#" onclick="createContact()" CLASS="linkplain">New</A>
 <% } %>
         </TD>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar~]"></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
         <TD>
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Eliminar~]</A>
+          <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">Delete</A>
 <% } else { %>
-          <A HREF="#" onclick="deleteContacts();return false;" CLASS="linkplain">[~Eliminar~]</A>
+          <A HREF="#" onclick="deleteContacts();return false;" CLASS="linkplain">Delete</A>
 <% } %>
         </TD>
-        <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Buscar Individuo~]"></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Find Individual"></TD>
         <TD VALIGN="middle">
-          <SELECT NAME="sel_searched" CLASS="combomini"><OPTION VALUE="<%=DB.tx_name%>">[~Nombre~]<OPTION VALUE="<%=DB.tx_surname%>">[~Apellidos~]<OPTION VALUE="<%=DB.de_title%>">[~Empleo~]<OPTION VALUE="<%=DB.nm_legal%>">[~Compa&ntilde;&iacute;a~]<OPTION VALUE="<%=DB.tp_company%>">[~Tipo Compa&ntilde;&iacute;a~]<OPTION VALUE="<%=DB.work_phone%>">[~Tel&eacute;fono~]<OPTION VALUE="<%=DB.tx_term%>">[~Zona~]<OPTION VALUE="<%=DB.nm_course%>">[~Curso~]</SELECT>
+          <SELECT NAME="sel_searched" CLASS="combomini"><OPTION VALUE="<%=DB.tx_name%>">Name<OPTION VALUE="<%=DB.tx_surname%>">Surname<OPTION VALUE="<%=DB.de_title%>">Position<OPTION VALUE="<%=DB.nm_legal%>">Company<OPTION VALUE="<%=DB.tp_company%>">Company Type<OPTION VALUE="<%=DB.work_phone%>">Telephone<OPTION VALUE="<%=DB.tx_term%>">Zone<OPTION VALUE="<%=DB.nm_course%>">Course</SELECT>
           <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>">
-	  &nbsp;<A HREF="#" onclick="findContact();return false;" CLASS="linkplain" TITLE="[~Buscar Individuo~]">[~Buscar~]</A>	  
+	  &nbsp;<A HREF="#" onclick="findContact();return false;" CLASS="linkplain" TITLE="Find Individual">Search</A>	  
         </TD>
         <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="[~Descartar búsqueda~]"></TD>
         <TD VALIGN="bottom">
-          <A HREF="#" onclick="document.forms[0].salesman.selectedIndex=0;document.forms[0].find.value='';findContact();return false;" CLASS="linkplain" TITLE="[~Descartar búsqueda~]">[~Descartar~]</A>
-          <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;[~Mostrar~]&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;[~resultados~]&nbsp;</FONT>
+          <A HREF="#" onclick="document.forms[0].salesman.selectedIndex=0;document.forms[0].find.value='';findContact();return false;" CLASS="linkplain" TITLE="[~Descartar búsqueda~]">Discard</A>
+          <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;Show&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;results&nbsp;</FONT>
         </TD>
         </TR>
 	<TR>
-          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/fastedit.gif" WIDTH="20" HEIGHT="16" BORDER="0" ALT="[~Edicion rapida~]"></TD>
+          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/fastedit.gif" WIDTH="20" HEIGHT="16" BORDER="0" ALT="Fast Edit"></TD>
           <TD COLSPAN="4"><A HREF="contact_fastedit_f.jsp" TARGET="_top" CLASS="linkplain">[~Edición R&aacute;pida~]</A></TD>
 	        <TD COLSPAN="3" ALIGN="left" CLASS="textplain">
 <% if (bIsAdmin) { %>
-					  <SELECT NAME="salesman" CLASS="combomini"><OPTION VALUE="">[~Todos los individuos~]</OPTION><OPTGROUP LABEL="[~S&oacute;lo los individuos asignados al vendedor~]"><% for (int s=0; s<iSalesMen; s++) out.write ("<OPTION VALUE=\""+oSalesMen.getString(0,s)+"\">"+oSalesMen.getStringNull(1,s,"")+" "+oSalesMen.getStringNull(2,s,"")+" "+oSalesMen.getStringNull(3,s,"")+"</OPTION>"); %></SELECT>
+					  <SELECT NAME="salesman" CLASS="combomini"><OPTION VALUE="">All individuals</OPTION><OPTGROUP LABEL="Only individuals assigned to salesman"><% for (int s=0; s<iSalesMen; s++) out.write ("<OPTION VALUE=\""+oSalesMen.getString(0,s)+"\">"+oSalesMen.getStringNull(1,s,"")+" "+oSalesMen.getStringNull(2,s,"")+" "+oSalesMen.getStringNull(3,s,"")+"</OPTION>"); %></SELECT>
 <% } else { %>
-	          <INPUT TYPE="radio" NAME="private" VALUE="0" onclick="if (document.forms[0].sel_query.selectedIndex>0) runQuery(); else findContact();" <% if (!bPrivate) out.write("CHECKED"); %>>&nbsp;<FONT CLASS="textplain">[~Todos los Contactos~]</FONT>
+	          <INPUT TYPE="radio" NAME="private" VALUE="0" onclick="if (document.forms[0].sel_query.selectedIndex>0) runQuery(); else findContact();" <% if (!bPrivate) out.write("CHECKED"); %>>&nbsp;<FONT CLASS="textplain">All Contacts</FONT>
 	          &nbsp;&nbsp;
-            <INPUT TYPE="radio" NAME="private" VALUE="1" onclick="if (document.forms[0].sel_query.selectedIndex>0) runQuery(); else findContact();" <% if (bPrivate) out.write("CHECKED"); %>>&nbsp;<FONT CLASS="textplain">[~S&oacute;lo los Contactos Privados~]</FONT>
+            <INPUT TYPE="radio" NAME="private" VALUE="1" onclick="if (document.forms[0].sel_query.selectedIndex>0) runQuery(); else findContact();" <% if (bPrivate) out.write("CHECKED"); %>>&nbsp;<FONT CLASS="textplain">Private Contacts Only</FONT>
 <% } %>
 	        </TD>
 	</TR>
@@ -767,16 +768,16 @@
           <TD COLSPAN="2" ALIGN="left">
 <%
           if (iSkip>0)
-            out.write("            <A HREF=\"contact_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;[~Anteriores~]" + "</A>&nbsp;&nbsp;&nbsp;");
+            out.write("            <A HREF=\"contact_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
     
     	  if (oContacts!=null)
             if (!oContacts.eof())
-              out.write("            <A HREF=\"contact_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">[~Siguientes~]&nbsp;&gt;&gt;</A>");
+              out.write("            <A HREF=\"contact_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
 %>
           </TD>
 <% if (((iAppMask & (1<<Training))!=0) && face.equals("edu") && !bIsGuest) { %>
           <TD COLSPAN="4" ALIGN="right">
-	    <A HREF="#" CLASS="linkplain" onclick="addToCourse();return false;">[~Inscribir en Curso~]</A>&nbsp;
+	    <A HREF="#" CLASS="linkplain" onclick="addToCourse();return false;">Book Place at Course</A>&nbsp;
 	      <SELECT NAME="sel_acourse" CLASS="combomini"><OPTION VALUE=""></OPTION>
 	      <% for (int a=0; a<iACourses; a++) {
 	           out.write("<OPTION VALUE=\"" + oACourses.getString(0,a) + "\">" + oACourses.getString(1,a));
@@ -787,24 +788,24 @@
           </TD>
 <% } else { %>
           <TD COLSPAN="3" ALIGN="right">
-	    <FONT CLASS="textplain">[~Consultas predefinidas~]</FONT>&nbsp;<SELECT NAME="sel_query" CLASS="combomini"><OPTION VALUE=""></OPTION><% for (int q=0; q<iQueries; q++) out.write("<OPTION VALUE=\"" + oQueries.getString(0,q) + "\">" + oQueries.getString(1,q) + "</OPTION>"); %></SELECT>&nbsp;<A HREF="#" onClick="runQuery()" CLASS="linkplain">[~Consultar~]</A>
+	    <FONT CLASS="textplain">Predefined queries</FONT>&nbsp;<SELECT NAME="sel_query" CLASS="combomini"><OPTION VALUE=""></OPTION><% for (int q=0; q<iQueries; q++) out.write("<OPTION VALUE=\"" + oQueries.getString(0,q) + "\">" + oQueries.getString(1,q) + "</OPTION>"); %></SELECT>&nbsp;<A HREF="#" onClick="runQuery()" CLASS="linkplain">Query</A>
           </TD>
           <TD>
 <% if (bIsGuest) { %>
             <IMG SRC="../images/images/spacer.gif" WIDTH="1" HEIGHT="22" BORDER="0">
 <% } else { %>
-            <A HREF="../common/qbf.jsp?queryspec=contacts" TARGET="_top" TITLE="[~Crear Nueva Consulta~]"><IMG SRC="../images/images/newqry16.gif" WIDTH="22" HEIGHT="18" VSPACE="2" BORDER="0" ALT="[~Crear Nueva Consulta~]"></A>&nbsp;
+            <A HREF="../common/qbf.jsp?queryspec=contacts" TARGET="_top" TITLE="New Query"><IMG SRC="../images/images/newqry16.gif" WIDTH="22" HEIGHT="18" VSPACE="2" BORDER="0" ALT="New Query"></A>&nbsp;
 <% } %>
           </TD>	
 <% } %>          
         </TR>
         <TR>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;</TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(2);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por apellido~]"></A>&nbsp;<B>[~Apellidos, Nombre~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="<%=String.valueOf(floor(150f*fScreenRatio))%>">&nbsp;&nbsp;<A HREF="javascript:sortBy(3)"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por empleo del contacto~]"></A>&nbsp;<B><%=(face.equals("edu") ? "[~Tipo~]" : "[~Empleo~]")%></B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="<%=String.valueOf(floor(200f*fScreenRatio))%>">&nbsp;<A HREF="javascript:sortBy(5)"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por nombre de compa&ntilde;&iacute;a~]"></A><B>&nbsp;<%=(face.equals("edu") ? "[~Curso Academico~]" : "[~Compa&ntilde;&iacute;a~]")%></B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="110">&nbsp;<A HREF="javascript:sortBy(8)"><IMG SRC="../skins/<%=sSkin + (iOrderBy==8 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por fecha de modificaci&oacute;n~]"></A><B>&nbsp;[~Fecha Mod.~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" ALIGN="center"><A HREF="#" onclick="selectAll()" TITLE="Seleccionar todos"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="[~Seleccionar todos~]"></A></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(2);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by Surname"></A>&nbsp;<B>Surname, Name</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="<%=String.valueOf(floor(150f*fScreenRatio))%>">&nbsp;&nbsp;<A HREF="javascript:sortBy(3)"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by position"></A>&nbsp;<B><%=(face.equals("edu") ? "Type" : "Position")%></B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="<%=String.valueOf(floor(200f*fScreenRatio))%>">&nbsp;<A HREF="javascript:sortBy(5)"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by company name"></A><B>&nbsp;<%=(face.equals("edu") ? "Academic Course" : "Company")%></B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="110">&nbsp;<A HREF="javascript:sortBy(8)"><IMG SRC="../skins/<%=sSkin + (iOrderBy==8 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by last modified"></A><B>&nbsp;Date Modified</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" ALIGN="center"><A HREF="#" onclick="selectAll()" TITLE="Seleccionar todos"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select all"></A></TD>
         </TR>
 <% out.flush(); %>      
 	<%
@@ -821,7 +822,7 @@
 	  
 	    sContactId = oContacts.getStringNull(0,i,"");
             sName = oContacts.getStringNull(1,i,"");
-            if (sName.equals(", ")) sName = "<I>[~(sin nombre)~]</I>";
+            if (sName.equals(", ")) sName = "<I>(unnamed)</I>";
             sTitle = oContacts.getStringNull(2,i,"");
             sCompanyId= oContacts.getStringNull(3,i,"");
             sCompany_name= oContacts.getStringNull(4,i,"");
@@ -829,8 +830,8 @@
             if (null==sDtModified) sDtModified = "";
             
             out.write ("        <TR HEIGHT=\"5\">\n");
-            out.write ("          <TD CLASS=\"strip" + ((i%2)+1) + "\"><A HREF=\"#\" onContextMenu='return false;' onClick='hideDiv();viewAddrs(event,\"" + sContactId + "\",\"" + sName.replace((char)39,(char)32) + "\");return false'><IMG SRC=\"../images/images/theworld16.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"[~Ver Direcciones~]\"></A></TD>\n");
-            out.write ("          <TD CLASS=\"strip" + ((i%2)+1) + "\">&nbsp;<A HREF=\"#\" oncontextmenu=\"jsContactId='" + sContactId + "'; jsContactNm='" + sName.replace((char)39,(char)32) + "'; jsCompanyId='" + sCompanyId + "'; jsCompanyNm='" + sCompany_name.replace((char)39,(char)32) + "'; jsNotesCount='" + oContacts.getInt(5,i) + "'; jsFilesCount='" + oContacts.getInt(6,i) + "'; configureMenu(); return showRightMenu(event);\" onmouseover=\"window.status='[~Editar Contacto~]'; return true;\" onmouseout=\"window.status='';\" oncontextmenu=\"return false;\" onclick=\"modifyContact('" + sContactId + "'); return false;\" TITLE=\"[~Bot&oacute;n Derecho para Ver Men&uacute; Contextual~]\">" + sName  + "</A></TD>\n");
+            out.write ("          <TD CLASS=\"strip" + ((i%2)+1) + "\"><A HREF=\"#\" onContextMenu='return false;' onClick='hideDiv();viewAddrs(event,\"" + sContactId + "\",\"" + sName.replace((char)39,(char)32) + "\");return false'><IMG SRC=\"../images/images/theworld16.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"View Addresses\"></A></TD>\n");
+            out.write ("          <TD CLASS=\"strip" + ((i%2)+1) + "\">&nbsp;<A HREF=\"#\" oncontextmenu=\"jsContactId='" + sContactId + "'; jsContactNm='" + sName.replace((char)39,(char)32) + "'; jsCompanyId='" + sCompanyId + "'; jsCompanyNm='" + sCompany_name.replace((char)39,(char)32) + "'; jsNotesCount='" + oContacts.getInt(5,i) + "'; jsFilesCount='" + oContacts.getInt(6,i) + "'; configureMenu(); return showRightMenu(event);\" onmouseover=\"window.status='Edit Contact'; return true;\" onmouseout=\"window.status='';\" oncontextmenu=\"return false;\" onclick=\"modifyContact('" + sContactId + "'); return false;\" TITLE=\"Click Right Mouse Button for Context Menu\">" + sName  + "</A></TD>\n");
             out.write ("          <TD CLASS=\"strip" + ((i%2)+1) + "\">&nbsp;" + sTitle + "</TD>\n");                        
             out.write ("          <TD CLASS=\"strip" + ((i%2)+1) + "\">&nbsp;" + sCompany_name + "</TD>\n");
             out.write ("          <TD CLASS=\"strip" + ((i%2)+1) + "\">&nbsp;" + sDtModified + "</TD>\n");
@@ -845,11 +846,11 @@
     	  // [~//Pintar los enlaces de siguiente y anterior~]
     
           if (iSkip>0)
-            out.write("            <A HREF=\"contact_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;[~Anteriores~]" + "</A>&nbsp;&nbsp;&nbsp;");
+            out.write("            <A HREF=\"contact_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
     
     	  if (oContacts!=null)
             if (!oContacts.eof())
-              out.write("            <A HREF=\"contact_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">[~Siguientes~]&nbsp;&gt;&gt;</A>");
+              out.write("            <A HREF=\"contact_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
 %>
           </TD>
         </TR>
@@ -859,27 +860,27 @@
     <IFRAME name="addrIFrame" src="../common/blank.htm" width="0" height="0" border="0" frameborder="0"></IFRAME>
     <SCRIPT language="JavaScript" type="text/javascript">
       <!--
-      addMenuOption("[~Abrir~]","modifyContact(jsContactId)",1);
-      addMenuOption("[~Duplicar~]","clone()",0);
+      addMenuOption("Open","modifyContact(jsContactId)",1);
+      addMenuOption("Duplicate","clone()",0);
       addMenuSeparator();
-      addMenuOption("[~Ver Direcciones~]","listAddresses()",0);
+      addMenuOption("View Addresses","listAddresses()",0);
       addMenuSeparator();
-      addMenuOption("[~Crear Oportunidades~]","createOportunity(jsContactId,jsCompanyId)",0);
-      addMenuOption("[~Ver Oportunidades~]","viewOportunities(jsContactId,jsContactNm)",0);
+      addMenuOption("Create Opportunity","createOportunity(jsContactId,jsCompanyId)",0);
+      addMenuOption("View Opportunities","viewOportunities(jsContactId,jsContactNm)",0);
       addMenuSeparator();
-      addMenuOption("[~A&ntilde;adir Nota~]","addNote(jsContactId)",0);
-      addMenuOption("[~Ver Notas~]","viewNotes(jsContactId,jsCompanyNm)",2);
+      addMenuOption("Add Note","addNote(jsContactId)",0);
+      addMenuOption("View Notes","viewNotes(jsContactId,jsCompanyNm)",2);
       addMenuSeparator();
-      addMenuOption("[~Adjuntar Archivo~]","addAttachment(jsContactId)",0);
-      addMenuOption("[~Ver Archivos~]","viewAttachments(jsContactId)",2);
+      addMenuOption("Attach File","addAttachment(jsContactId)",0);
+      addMenuOption("View Files","viewAttachments(jsContactId)",2);
 <% if ((iAppMask & (1<<CollaborativeTools))!=0) { %>
       addMenuSeparator();
-      addMenuOption("[~Nueva Llamada~]","addPhoneCall(jsContactId)",0);
-      addMenuOption("[~Nueva Actividad~]","addActivity(jsContactId)",0);
+      addMenuOption("New Call","addPhoneCall(jsContactId)",0);
+      addMenuOption("New Activity:","addActivity(jsContactId)",0);
 <% } %>
 <% if ((iAppMask & (1<<ProjectManager))!=0) { %>
       addMenuSeparator();
-      addMenuOption("[~Crear Proyecto~]","addProject(jsContactId,jsCompanyId)",0);
+      addMenuOption("Create Project","addProject(jsContactId,jsCompanyId)",0);
 <% } %>
       //-->
     </SCRIPT>

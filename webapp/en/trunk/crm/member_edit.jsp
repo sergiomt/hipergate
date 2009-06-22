@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.ListMember,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.ListMember,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <% 
@@ -128,7 +128,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: [~Editar Miembro de una Lista~]</TITLE>
+  <TITLE>hipergate :: Edit Member of a List</TITLE>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -160,13 +160,13 @@
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8">
   <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Actualizar~]"> [~Actualizar~]</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="[~Imprimir~]"> [~Imprimir~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
   </DIV></DIV>
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Editar Miembro de la lista: ~]<% out.write(request.getParameter("de_list")); %></FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Edit List Member:<% out.write(request.getParameter("de_list")); %></FONT></TD></TR>
   </TABLE>  
   <FORM NAME="" METHOD="post" ACTION="member_edit_store.jsp" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<% out.write (id_domain); %>">
@@ -183,46 +183,46 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">[~Activo:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Active:</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
               <INPUT TYPE="checkbox" NAME="chk_active" VALUE="1" <% if (bo_active.equals("1")) out.write("CHECKED"); %> TITLE="[~Seleccione esta casilla para desactivar la dirección de correo de este miembro.~]">
-              <FONT CLASS="textsmall"><I>[~La direcci&oacute;n de e-mail es v&aacute;lida y est&aacute; dada de alta~]</I></FONT>
+              <FONT CLASS="textsmall"><I>Mail address is valid</I></FONT>
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Bloqueado:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Blocked:</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
               <INPUT TYPE="checkbox" NAME="chk_bloqued" VALUE="1" <% if (bBlocked) out.write("CHECKED"); %> TITLE="[~Seleccione esta casilla para impedir que este miembro reciba ningún e-mail.~]">
-              <FONT CLASS="textsmall"><I>[~Este miembro no debe recibir ning&uacute;n e-mail~]</I></FONT>
+              <FONT CLASS="textsmall"><I>This member must not receive any e-mail</I></FONT>
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">[~e-mail:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">e-mail:</FONT></TD>
             <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="tx_email" MAXLENGTH="100" SIZE="50" VALUE="<% out.write(oMbr.getStringNull(DB.tx_email,"")); %>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Nombre:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Name:</FONT></TD>
             <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="tx_name" MAXLENGTH="100" SIZE="50" VALUE="<% out.write(oMbr.getStringNull(DB.tx_name,"")); %>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Apellidos:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Surname:</FONT></TD>
             <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="tx_surname" MAXLENGTH="100" SIZE="50" VALUE="<% out.write(oMbr.getStringNull(DB.tx_surname,"")); %>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Saludo:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Salutation:</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
-              <SELECT NAME="sel_salutation"><OPTION SELECTED></OPTION><OPTION>[~Sr.~]</OPTION><OPTION>[~Sra.~]</OPTION><OPTION>[~Srta.~]</OPTION><OPTION>[~Dr.~]</OPTION><OPTION>[~Dra.~]</OPTION><OPTION>[~Mr.~]</OPTION><OPTION>[~Ms.~]</OPTION><OPTION>[~Estimado~]</OPTION><OPTION>[~Estimada~]</OPTION><OPTION>[~Querido~]</OPTION><OPTION>[~Querida~]</OPTION><OPTION>[~Ilmo.~]</OPTION><OPTION>[~Ilma.~]</OPTION><OPTION>[~Excmo. Sr.~]</OPTION><OPTION>[~Excma. Sra.~]</OPTION></SELECT>
+              <SELECT NAME="sel_salutation"><OPTION SELECTED></OPTION><OPTION>Mr.</OPTION><OPTION>Ms.</OPTION><OPTION>Ms.</OPTION><OPTION>Dr.</OPTION><OPTION>Dr.</OPTION><OPTION>Mr.</OPTION><OPTION>Ms.</OPTION><OPTION>Dear</OPTION><OPTION>Dear</OPTION><OPTION>Dear</OPTION><OPTION>Dear</OPTION><OPTION>Mr.</OPTION><OPTION>Ms.</OPTION><OPTION>Mr.</OPTION><OPTION>Ms.</OPTION></SELECT>
               &nbsp;<INPUT TYPE="button" VALUE=">>" onclick="document.forms[0].tx_salutation.value=getComboText(document.forms[0].sel_salutation);">&nbsp;
               <INPUT TYPE="text" NAME="tx_salutation" MAXLENGTH="16" SIZE="16" VALUE="<% out.write(oMbr.getStringNull(DB.tx_salutation,"")); %>">
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Formato:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Format:</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
               <INPUT TYPE="hidden" NAME="id_format">
               <SELECT NAME="sel_format">
-                <OPTION VALUE="TXT" <% if (id_format.equals("TXT")) out.write("SELECTED");%>>[~Texto~]</OPTION>
-                <OPTION VALUE="HTML" <% if (id_format.equals("HTML")) out.write("SELECTED");%>>[~HTML~]</OPTION>
+                <OPTION VALUE="TXT" <% if (id_format.equals("TXT")) out.write("SELECTED");%>>Text</OPTION>
+                <OPTION VALUE="HTML" <% if (id_format.equals("HTML")) out.write("SELECTED");%>>HTML</OPTION>
               </SELECT>
             </TD>
           </TR>
@@ -231,8 +231,8 @@
           </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>
     	    </TD>	            
         </TABLE>

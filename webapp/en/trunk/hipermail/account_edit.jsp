@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.hipermail.MailAccount" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.hipermail.MailAccount" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
 /*
@@ -122,25 +122,25 @@
       	}
       
       	if (frm.tx_main_email.value.length>0 && !check_email(frm.tx_main_email.value)) {
-      	  alert ("Main mail address is not valid");
+      	  alert ("[~La direccion de correo principal no es válida~]");
       	  frm.tx_main_email.focus();
       	  return false;
       	}
       
       	if (frm.tx_reply_email.value.length>0 && !check_email(frm.tx_reply_email.value)) {
-      	  alert ("Reply-To mail address is not valid");
+      	  alert ("[~La direccion de correo de respuesta no es válida~]");
       	  frm.tx_reply_email.focus();
       	  return false;
       	}
       	
         if (!isIntValue(frm.incoming_port.value)) {
-      	  alert ("In Port is not valid");
+      	  alert ("[~El puerto de entrada no es válido~]");
       	  frm.incoming_port.focus();
       	  return false;
         }
       
         if (!isIntValue(frm.outgoing_port.value)) {
-      	  alert ("Out Port is not valid");
+      	  alert ("[~El puerto de salida no es válido~]");
       	  frm.outgoing_port.focus();
       	  return false;
         }
@@ -153,7 +153,7 @@
       	    return false;
 					}
 					if (ltrim(rtrim(frm.tx_main_email.value.toLowerCase()))==emails[t].toLowerCase()) {
-      	    alert ("There is already another account associated to the same e-mail "+titles[t]);
+      	    alert ("[~Ya existe otra cuenta asociada a la misma dirección de e-mail~] "+titles[t]);
       	    frm.tx_main_email.focus();
       	    return false;
 					}

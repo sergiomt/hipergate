@@ -1,4 +1,4 @@
-<%@ page import="java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.Statement,java.sql.SQLException,java.util.Enumeration,com.oreilly.servlet.MultipartRequest,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.misc.Environment,com.knowgate.workareas.FileSystemWorkArea" language="java" session="false" %>
+﻿<%@ page import="java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.Statement,java.sql.SQLException,java.util.Enumeration,com.oreilly.servlet.MultipartRequest,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.misc.Environment,com.knowgate.workareas.FileSystemWorkArea" language="java" session="false" %>
 <%@ include file="../../../../methods/page_prolog.jspf" %><%@ include file="../../../../methods/dbbind.jsp" %><%@ include file="../../../../methods/cookies.jspf" %><%@ include file="../../../../methods/authusrs.jspf" %>
 <%
 /*

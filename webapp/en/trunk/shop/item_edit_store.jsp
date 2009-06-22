@@ -1,8 +1,7 @@
-<%@ page import="com.oreilly.servlet.MultipartRequest,java.io.IOException,java.io.File,java.net.URLDecoder,java.sql.Statement,java.sql.SQLException,com.knowgate.debug.DebugFile,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.dfs.FileSystem,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/dbbind.jsp" %>
-<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
-<%@ include file="../methods/multipartreqload.jspf" %><%@ include file="../methods/multipartcustomattrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
-<% 
+﻿<%@ page import="com.oreilly.servlet.MultipartRequest,java.io.IOException,java.io.File,java.net.URLDecoder,java.sql.Statement,java.sql.SQLException,com.knowgate.debug.DebugFile,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.dfs.FileSystem,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/multipartreqload.jspf" %><%@ include file="../methods/multipartcustomattrs.jspf" %>
+<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
+
   final int ATTACHMENT_OFFSET = 6;
 
   String sDefWrkArPut = request.getRealPath(request.getServletPath());
@@ -265,11 +264,19 @@
 	  else
       	    oImg.remove(DB.gu_image);
       	  
-      	  if (bAutoThumb && aImageTypes[i].equals("thumbview"))
-	    oImg.replace(DB.nm_image, "tn_" + oReq.getOriginalFileName("normalview"));
-      	  else
-            oImg.replace(DB.nm_image, oReq.getOriginalFileName(aImageTypes[i]));
+      	  String sImgName;
+      	  
+      	  if (bAutoThumb && aImageTypes[i].equals("thumbview")) {
+      	    sImgName = "tn_" + oReq.getOriginalFileName("normalview");
+      	  } else {
+      	  	sImgName = oReq.getOriginalFileName(aImageTypes[i]);
+					}
 
+					if (sImgName.length()>30) {
+					  sImgName = sImgName.substring(0, 29-sImgExt.length()) + sImgName.substring(sImgName.lastIndexOf(".")+1);
+					}
+
+	        oImg.replace(DB.nm_image, sImgName);					
           oImg.replace(DB.path_image, sPath + oItm.getString(DB.gu_product) + "_" + aImageTypes[i] + "." + oUploadedFile.getName().substring(oUploadedFile.getName().lastIndexOf(".")+1).toLowerCase());
           oImg.replace(DB.tp_image, aImageTypes[i]);
 

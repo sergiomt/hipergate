@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.io.File,java.net.URLDecoder,java.io.File,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.io.File,java.net.URLDecoder,java.io.File,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%
 
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
@@ -14,7 +14,7 @@
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <TITLE>hipergate :: [~Resultados de la Importaci&oacute;n~]</TITLE>
+    <TITLE>hipergate :: Import Results</TITLE>
   </HEAD>
   <FRAMESET NAME="textload" ROWS="60,200,*">
     <FRAME NAME="msg" MARGINWIDTH="0" MARGINHEIGHT="0" SRC="textloader4m.jsp?id_status=<%=id_status%>">
@@ -22,7 +22,7 @@
     <FRAME NAME="dis" MARGINWIDTH="0" MARGINHEIGHT="0" SRC="textloader4e.jsp?gu_workarea=<%=gu_workarea%>&nm_file=<%=Gadgets.URLEncode(nm_file)%>&id_status=<%=id_status%>&tp_file=dis">
     <NOFRAMES>
       <BODY>
-	<P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
+	<P>This page use frames, but your web browser does not handle them</P>
       </BODY>
     </NOFRAMES>
   </FRAMESET>

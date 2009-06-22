@@ -1,4 +1,4 @@
-<%@ page import="java.util.Date,java.util.HashMap,java.util.ListIterator,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.DBLanguages,com.knowgate.crm.Contact,com.knowgate.misc.Gadgets,com.knowgate.crm.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.Date,java.util.HashMap,java.util.ListIterator,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.DBLanguages,com.knowgate.crm.Contact,com.knowgate.misc.Gadgets,com.knowgate.crm.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
 /*
@@ -168,7 +168,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: [~Nueva Llamada~]</TITLE>
+  <TITLE>hipergate :: New Call</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -227,12 +227,12 @@
         var frm = window.document.forms[0];
         
 	      if (frm.tx_comments.value.length>254) {
-	        alert ("[~Los comentarios no pueden exceder los 254 caracteres~]");
+	        alert ("Comments may not exceed 254 characters");
 	        return false;
 	      }
 
 	      if (frm.tx_comments.value.indexOf('"')>=0 || frm.tx_comments.value.indexOf("'")>=0) {
-	        alert ("[~Los comentarios contienen caracteres no validos~]");
+	        alert ("The comments contain invalid characters");
        	  return false;
 	      }
 	        
@@ -288,7 +288,7 @@
 <BODY TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()" onUnLoad="<% if (sIdPrevStatus!=null && ENABLE_ONGOING_CALLS_HANDLING) { out.write("req=createXMLHttpRequest(); req.open('GET','phonecall_status_update.jsp?gu_oportunity="+gu_oportunity+"&id_status="+sIdPrevStatus+"',true); req.send(null);"); } %>">
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Nueva Llamada~]</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">New Call</FONT></TD></TR>
   </TABLE>  
   <FORM METHOD="post" ACTION="phonecall_record_store.jsp" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
@@ -314,7 +314,7 @@
             <TD ALIGN="left" WIDTH="470" CLASS="formplain"><%=oOprt.getStringNull(DB.tl_oportunity,"")%></TD>
 	        </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">[~Fecha~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Date</FONT></TD>
             <TD ALIGN="left" WIDTH="470">
               <INPUT TYPE="hidden" NAME="dt_start">
               <INPUT TYPE="text" NAME="tx_start" MAXLENGTH="10" SIZE="10" VALUE="<% out.write(DBBind.escape(dtNow, "shortDate")); %>">
@@ -324,43 +324,43 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">[~De~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">From</FONT></TD>
             <TD ALIGN="left" WIDTH="470">
 	            <INPUT TYPE="hidden" NAME="gu_user" VALUE="<%=gu_user%>">
               <SELECT NAME="sel_users" STYLE="width:400px"><% out.write(sUsersCombo); %></SELECT>
 	          </TD>
 	        </TR>
           <TR>
-            <TD VALIGN="top" ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">[~Para~]</FONT></TD>
+            <TD VALIGN="top" ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">For</FONT></TD>
             <TD ALIGN="left" WIDTH="470">
               <INPUT TYPE="text" NAME="tx_name" SIZE="28" MAXLENGTH="200" VALUE="<%=oCont.getStringNull(DB.tx_name,"")%>">&nbsp;
 	            <INPUT TYPE="text" NAME="tx_surname" SIZE="28" MAXLENGTH="200" VALUE="<%=oCont.getStringNull(DB.tx_surname,"")%>">
 	          </TD>
 	        </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90" CLASS="formplain">[~Compa&ntilde;&iacute;a:~]</TD>            
+            <TD ALIGN="right" WIDTH="90" CLASS="formplain">Company:</TD>            
             <TD ALIGN="left" WIDTH="470">
               <INPUT TYPE="text" SIZE="50" NAME="nm_company" MAXLENGTH="70" VALUE="<% if (iCompanyCount>0) out.write(oCmps.getString(DB.nm_legal,0)); %>">
-              &nbsp;&nbsp;<A HREF="javascript:reference(1)" TITLE="[~Ver Lista de Compa&ntilde;&iacute;as~]"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver~]"></A>
-              &nbsp;&nbsp;<A HREF="#" onclick="document.forms[0].gu_company.value=document.forms[0].nm_company.value=''" TITLE="[~Eliminar de la Compa&ntilde;&iacute;a~]"><IMG SRC="../images/images/delete.gif" WIDTH="13" HEIGHT="13" BORDER="0" ALT="[~Eliminar~]"></A>
+              &nbsp;&nbsp;<A HREF="javascript:reference(1)" TITLE="View companies listing"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View"></A>
+              &nbsp;&nbsp;<A HREF="#" onclick="document.forms[0].gu_company.value=document.forms[0].nm_company.value=''" TITLE="Remove from company"><IMG SRC="../images/images/delete.gif" WIDTH="13" HEIGHT="13" BORDER="0" ALT="Delete"></A>
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90" CLASS="formplain">[~Empleo:~]</TD>
+            <TD ALIGN="right" WIDTH="90" CLASS="formplain">Position:</TD>
             <TD ALIGN="left" WIDTH="470">
               <SELECT CLASS="combomini" NAME="sel_title"><OPTION VALUE=""></OPTION><%=sTitleLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(1)" TITLE="Ver Lista de Empleos"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Ver"></A>
               <INPUT TYPE="hidden" NAME="de_title" VALUE="<%=oCont.getStringNull(DB.de_title,"")%>">
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="110" CLASS="formplain">[~Estado:~]</TD>
+            <TD ALIGN="right" WIDTH="110" CLASS="formplain">Status:</TD>
             <TD ALIGN="left" WIDTH="420">
               <SELECT CLASS="combomini" NAME="sel_status"><OPTION VALUE=""></OPTION><%=sStatusLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(2)" TITLE="Ver Lista de Estados"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Ver"></A>
               <INPUT TYPE="hidden" NAME="id_contact_status" VALUE="<%=oCont.getStringNull(DB.id_status,"")%>">              
             </TD>
           </TR>                              
           <TR>
-            <TD ALIGN="right" VALIGN="top" WIDTH="90" CLASS="formstrong">[~Tel&eacute;fono~]</TD>
+            <TD ALIGN="right" VALIGN="top" WIDTH="90" CLASS="formstrong">Telephone</TD>
             <TD ALIGN="left" WIDTH="470" CLASS="formplain">
               <INPUT TYPE="hidden" NAME="tx_phone" VALUE="">
 <%					  for (int a=0; a<iAdrs; a++) {
@@ -368,33 +368,33 @@
 							    out.write("<INPUT TYPE=\"radio\" VALUE=\"P\" NAME=\"telf\" onclick=\"document.forms[0].tx_phone.value='"+oAdrs.getString(2,a)+"'\">&nbsp;");
 							    if (!oAdrs.isNull(1,a))
 							      out.write(nullif((String)oLocationLookUp.get(oAdrs.get(1,a)),oAdrs.getString(1,a))+"&nbsp;");							      
-							    out.write("[~Centralita~]&nbsp;"+oAdrs.getString(2,a)+"<BR/>");
+							    out.write("Work Phone&nbsp;"+oAdrs.getString(2,a)+"<BR/>");
 							  } // fi
 							  if (!oAdrs.isNull(3,a)) {
 							    out.write("<INPUT TYPE=\"radio\" VALUE=\"P\" NAME=\"telf\" onclick=\"document.forms[0].tx_phone.value='"+oAdrs.getString(3,a)+"'\">&nbsp;");
 							    if (!oAdrs.isNull(1,a))
 							      out.write(nullif((String)oLocationLookUp.get(oAdrs.get(1,a)),oAdrs.getString(1,a))+"&nbsp;");							      
-							    out.write("[~Directo~]&nbsp;"+oAdrs.getString(3,a)+"<BR/>");
+							    out.write("Direct Phone&nbsp;"+oAdrs.getString(3,a)+"<BR/>");
 							  } // fi
 							  if (!oAdrs.isNull(4,a)) {
 							    out.write("<INPUT TYPE=\"radio\" VALUE=\"P\" NAME=\"telf\" onclick=\"document.forms[0].tx_phone.value='"+oAdrs.getString(4,a)+"'\">&nbsp;");
 							    if (!oAdrs.isNull(1,a))
 							      out.write(nullif((String)oLocationLookUp.get(oAdrs.get(1,a)),oAdrs.getString(1,a))+"&nbsp;");
-							    out.write("[~Personal~]&nbsp;"+oAdrs.getString(4,a)+"<BR/>");
+							    out.write("Personal&nbsp;"+oAdrs.getString(4,a)+"<BR/>");
 							  } // fi
 							  if (!oAdrs.isNull(5,a)) {
 							    out.write("<INPUT TYPE=\"radio\" VALUE=\"P\" NAME=\"telf\" onclick=\"document.forms[0].tx_phone.value='"+oAdrs.getString(5,a)+"'\">&nbsp;");
 							    if (!oAdrs.isNull(1,a))
 							      out.write(nullif((String)oLocationLookUp.get(oAdrs.get(1,a)),oAdrs.getString(1,a))+"&nbsp;");
-							    out.write("[~M&oacute;vil~]&nbsp;"+oAdrs.getString(5,a)+"<BR/>");
+							    out.write("Mobile Phone&nbsp;"+oAdrs.getString(5,a)+"<BR/>");
 							  } // fi
 							} // next
-							out.write("<INPUT TYPE=\"radio\" NAME=\"telf\" VALUE=\"O\" onclick=\"document.forms[0].tx_phone.value=document.forms[0].tx_other_phone.value\">&nbsp;[~Otro~]&nbsp;<INPUT CLASS=\"combomini\" TYPE=\"text\" MAXLENGTH=\"16\" SIZE=\"16\" NAME=\"tx_other_phone\">&nbsp;<SELECT CLASS=\"combomini\" NAME=\"tp_location\"><OPTION VALUE=\"\"></OPTION>"+sLocationLookUp+"</SELECT>&nbsp;<SELECT CLASS=\"combomini\" NAME=\"tp_phone\"><OPTION VALUE=\""+DB.work_phone+"\">[~Centralita~]</OPTION><OPTION VALUE=\""+DB.direct_phone+"\">[~Directo~]</OPTION><OPTION VALUE=\""+DB.home_phone+"\">[~Personal~]</OPTION><OPTION VALUE=\""+DB.mov_phone+"\">[~M&oacute;vil~]</OPTION></SELECT>");
+							out.write("<INPUT TYPE=\"radio\" NAME=\"telf\" VALUE=\"O\" onclick=\"document.forms[0].tx_phone.value=document.forms[0].tx_other_phone.value\">&nbsp;Other&nbsp;<INPUT CLASS=\"combomini\" TYPE=\"text\" MAXLENGTH=\"16\" SIZE=\"16\" NAME=\"tx_other_phone\">&nbsp;<SELECT CLASS=\"combomini\" NAME=\"tp_location\"><OPTION VALUE=\"\"></OPTION>"+sLocationLookUp+"</SELECT>&nbsp;<SELECT CLASS=\"combomini\" NAME=\"tp_phone\"><OPTION VALUE=\""+DB.work_phone+"\">Work Phone</OPTION><OPTION VALUE=\""+DB.direct_phone+"\">Direct Phone</OPTION><OPTION VALUE=\""+DB.home_phone+"\">Personal</OPTION><OPTION VALUE=\""+DB.mov_phone+"\">Mobile Phone</OPTION></SELECT>");
 %>
 	          </TD>
 	        </TR>
           <TR>
-            <TD VALIGN="top" ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">[~Comentarios~]</FONT></TD>
+            <TD VALIGN="top" ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Comments:</FONT></TD>
             <TD ALIGN="left" WIDTH="470">
 	      <TEXTAREA ROWS="3" STYLE="width:400px" NAME="tx_comments"></TEXTAREA>
 	    </TD>
@@ -404,8 +404,8 @@
           </TR>
           <TR>          	
     	    <TD COLSPAN="2" ALIGN="center" CLASS="formplain">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="<% if (sIdPrevStatus!=null && ENABLE_ONGOING_CALLS_HANDLING) { out.write("req=createXMLHttpRequest(); req.open('GET','phonecall_status_update.jsp?gu_oportunity="+gu_oportunity+"&id_status="+(sIdPrevStatus.equals("ENCURSO") ? "PTE_LLAMAR" : sIdPrevStatus)+"',true); req.send(null);"); } %> window.parent.close()">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="<% if (sIdPrevStatus!=null && ENABLE_ONGOING_CALLS_HANDLING) { out.write("req=createXMLHttpRequest(); req.open('GET','phonecall_status_update.jsp?gu_oportunity="+gu_oportunity+"&id_status="+(sIdPrevStatus.equals("ENCURSO") ? "PTE_LLAMAR" : sIdPrevStatus)+"',true); req.send(null);"); } %> window.parent.close()">
     	      <BR>
     	    </TD>
     	  </TR>            

@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.workareas.WorkArea,com.knowgate.dataobjs.*,com.knowgate.projtrack.*,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.workareas.WorkArea,com.knowgate.dataobjs.*,com.knowgate.projtrack.*,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%  response.setHeader("Cache-Control","no-cache");response.setHeader("Pragma","no-cache"); response.setIntHeader("Expires", 0); %>
@@ -78,7 +78,7 @@
   } // fi (sWhere=="")
   
   if (sOrderBy.length()==0)
-    sOrderBy = ((iApplicationMask & (1<<ProjectMngr))!=0) ? "1" : "7 DESC";
+    sOrderBy = ((iApplicationMask & (1<<ProjectMngr))!=0) ? "1" : "11 DESC, 7 DESC";
 
   DBSubset oBugs = null, oWorkAreas = null;
     
@@ -101,7 +101,7 @@
 
       if (sTxClient.length()==0) {
         oBugs = new DBSubset(DB.k_bugs + " b," + DB.k_projects + " p," + DB.k_workareas + " w",
-  			     "p.nm_project,b.pg_bug,b.od_priority,b.gu_bug,b.od_severity,b.tl_bug,b.dt_created,b.tx_status,w.nm_workarea,w.gu_workarea",
+  			     "p.nm_project,b.pg_bug,b.od_priority,b.gu_bug,b.od_severity,b.tl_bug,b.dt_created,b.tx_status,w.nm_workarea,w.gu_workarea,b.dt_modified",
   			     "(p.gu_project=b.gu_project AND p.gu_owner=w.gu_workarea AND w.id_domain=? AND w.bo_active<>0) " +
   			     sWhere + " ORDER BY " + sOrderBy, 100);
       oBugs.setMaxRows(iMaxRows);
@@ -110,7 +110,7 @@
       }
       else {
         oBugs = new DBSubset(DB.k_bugs + " b," + DB.k_projects + " p," + DB.k_workareas + " w",
-  			     "p.nm_project,b.pg_bug,b.od_priority,b.gu_bug,b.od_severity,b.tl_bug,b.dt_created,b.tx_status,w.nm_workarea,w.gu_workarea",
+  			     "p.nm_project,b.pg_bug,b.od_priority,b.gu_bug,b.od_severity,b.tl_bug,b.dt_created,b.tx_status,w.nm_workarea,w.gu_workarea,b.dt_modified",
   			     "(p.gu_project=b.gu_project AND p.gu_owner=w.gu_workarea AND w.id_domain=? AND w.bo_active<>0) " +
   			     "AND (b."+DB.id_client+" IS NOT NULL " + 
   			     "AND (b."+DB.id_client+" IN (SELECT gu_company FROM k_companies WHERE "+DB.gu_workarea+" IN (SELECT "+DB.gu_workarea+" FROM "+DB.k_workareas+" WHERE "+DB.id_domain+"=?) AND ("+DB.nm_legal+" " + DBBind.Functions.ILIKE + " ? OR "+DB.nm_commercial+" " + DBBind.Functions.ILIKE + " ?)) OR " +
@@ -125,14 +125,14 @@
       
       if (sTxClient.length()==0) {
         oBugs = new DBSubset(DB.k_bugs + " b," + DB.k_projects + " p",
-  			     "p.nm_project,b.pg_bug,b.od_priority,b.gu_bug,b.od_severity,b.tl_bug,b.dt_created,b.tx_status,NULL,p.gu_owner",
+  			     "p.nm_project,b.pg_bug,b.od_priority,b.gu_bug,b.od_severity,b.tl_bug,b.dt_created,b.tx_status,NULL,p.gu_owner,b.dt_modified",
   			     "(p.gu_project=b.gu_project AND p.gu_owner=?) "+ sWhere + " ORDER BY " + sOrderBy, 100);
       oBugs.setMaxRows(iMaxRows);
       iRowCount = oBugs.load(oCon1, new Object[]{sWorkArea});
       }
       else {
         oBugs = new DBSubset(DB.k_bugs + " b," + DB.k_projects + " p",
-  			     "p.nm_project,b.pg_bug,b.od_priority,b.gu_bug,b.od_severity,b.tl_bug,b.dt_created,b.tx_status,NULL,p.gu_owner",
+  			     "p.nm_project,b.pg_bug,b.od_priority,b.gu_bug,b.od_severity,b.tl_bug,b.dt_created,b.tx_status,NULL,p.gu_owner,b.dt_modified",
   			     "(p.gu_project=b.gu_project AND p.gu_owner=?) " +
   			     "AND (b."+DB.id_client+" IS NOT NULL " + 
   			     "AND (b."+DB.id_client+" IN (SELECT gu_company FROM k_companies WHERE "+DB.gu_workarea+"=? AND ("+DB.nm_legal+" " + DBBind.Functions.ILIKE + " ? OR "+DB.nm_commercial+" " + DBBind.Functions.ILIKE + " ?)) OR " +
@@ -259,7 +259,7 @@
 %>
 <HTML>
   <HEAD>
-    <TITLE>hipergate :: [~Listado de Incidencias~]</TITLE>
+    <TITLE>hipergate :: Incident Listing</TITLE>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -318,7 +318,7 @@
 	  var frm = document.forms[0];
 	  var chi = frm.checkeditems;
 	  	  
-	  if (window.confirm("[~Esta seguro de que desea eliminar las incidencias seleccionadas?~]")) {
+	  if (window.confirm("Are you sure that you want to delete the selected incidents?")) {
 	  	  
 	    chi.value = "";	  	  
 	    frm.action = "bugedit_delete.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
@@ -346,11 +346,11 @@
     	  var chi = frm.checkeditems;
     	  	  
     	  if (frm.sel_new_status.selectedIndex<=0 && frm.sel_new_priority.selectedIndex<=0 && frm.sel_new_severity.selectedIndex<=0 && frm.sel_new_assigned.selectedIndex<=0) {
-    	    alert ("[~Debe seleccionar un atributo a actualizar~]");
+    	    alert ("An attribute to be updated must be selected");
     	    return false;
     	  }
     
-    	  if (window.confirm("[~Esta seguro de que desea actualizar las incidencias seleccionadas?~]")) {
+    	  if (window.confirm("Are you sure that you want to update selected incidents?")) {
 	  	  
 	        chi.value = "";	  	  
 	        frm.action = "bugedit_update.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
@@ -426,8 +426,8 @@
 	    whr += (whr.length==0 ? " AND (" : " AND ") + " b.dt_created BETWEEN { ts '" + frm.dt_start.value + " 00:00:00'} AND { ts '" + frm.dt_end.value + " 23:59:59'} ";	  
 	  }
 	  else {
-	    if (!isDate(frm.dt_start.value, "d")) alert ("[~La fecha de inicio no es valida~]");
-	    if (!isDate(frm.dt_end.value, "d")) alert ("[~La fecha de fin no es valida~]");	     
+	    if (!isDate(frm.dt_start.value, "d")) alert ("Invalid Start Date");
+	    if (!isDate(frm.dt_end.value, "d")) alert ("Invalid End date");	     
 	    return;
 	  }
 	}
@@ -435,7 +435,7 @@
 	  if (isDate(frm.dt_start.value, "d"))
 	    whr += (whr.length==0 ? " AND (" : " AND ") + " b.dt_created>={ ts '" + frm.dt_start.value + " 00:00:00'} ";  
 	  else {
-	    alert ("[~La fecha de inicio no es valida~]");
+	    alert ("Invalid Start Date");
 	    return;
 	  }
 	} 
@@ -443,7 +443,7 @@
 	  if (isDate(frm.dt_end.value, "d"))
 	    whr += (whr.length==0 ? " AND (" : " AND ") + " b.dt_created<={ ts '" + frm.dt_end.value + " 23:59:59'} ";	  
 	  else {
-	    alert ("[~La fecha de fin no es valida~]");
+	    alert ("Invalid End date");
 	    return;
 	  }
 	} 
@@ -605,45 +605,45 @@
     <FORM NAME="frmPrinterFriendly" ACTION="bug_list.jsp?selected=4&subselected=4" METHOD="POST">
     <INPUT TYPE="hidden" NAME="checkeditems">
     <INPUT TYPE="hidden" NAME="pg_bug" VALUE="<%=sPgBug%>">
-    <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Listado de Incidencias~]</FONT></TD></TR></TABLE>
+    <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">Incident Listing</FONT></TD></TR></TABLE>
     <BR>    
     <TABLE CLASS="formfront">
       <TR>
-        <TD><FONT CLASS="textplain">[~Referencia~]:</FONT></TD>
+        <TD><FONT CLASS="textplain">Reference:</FONT></TD>
         <TD>
           <TABLE WIDTH="100%">
             <TR>
               <TD><INPUT CLASS="combomini" NAME="id_ref" VALUE="<%=nullif(request.getParameter("id_ref"))%>"></TD>
-              <TD ALIGN="right"><FONT CLASS="textplain">[~Entre~]:</FONT></TD>
+              <TD ALIGN="right"><FONT CLASS="textplain">Between:</FONT></TD>
             </TR>
           </TABLE>
         </TD>
         <TD>
           <INPUT CLASS="combomini" TYPE="text" MAXLENGTH="10" SIZE="12" NAME="dt_start" VALUE="<%=nullif(request.getParameter("dt_start"))%>">&nbsp;
-          <A HREF="javascript:showCalendar('dt_start')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Fecha de Inicio~]"></A>
-          <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;[~y~]&nbsp;&nbsp;&nbsp;</FONT>
+          <A HREF="javascript:showCalendar('dt_start')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Start date"></A>
+          <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;and&nbsp;&nbsp;&nbsp;</FONT>
           <INPUT CLASS="combomini" TYPE="text" MAXLENGTH="10" SIZE="12" NAME="dt_end" VALUE="<%=nullif(request.getParameter("dt_end"))%>">&nbsp;
-          <A HREF="javascript:showCalendar('dt_end')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Fecha de Fin~]"></A>
+          <A HREF="javascript:showCalendar('dt_end')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="End date"></A>
         </TD>
       </TR>
       <TR>
 <% if (((iApplicationMask & (1<<ProjectMngr))!=0)) { %>
-        <TD><FONT CLASS="textplain">[~Proyecto~]:</FONT></TD>
+        <TD><FONT CLASS="textplain">Project:</FONT></TD>
         <TD>
           <TABLE WIDTH="100%">
             <TR>
               <TD><SELECT CLASS="combomini" NAME="sel_project"><OPTION VALUE=""></OPTION><%=oProjCombo.toString()%></SELECT></TD>
-              <TD ALIGN="right"><FONT CLASS="textplain">[~T&iacute;tulo~]:</FONT></TD>
+              <TD ALIGN="right"><FONT CLASS="textplain">Title:</FONT></TD>
             </TR>
           </TABLE>
         </TD>
 <% } else { %>
-        <TD><FONT CLASS="textplain">[~Cliente~]:</FONT></TD>
+        <TD><FONT CLASS="textplain">Customer:</FONT></TD>
         <TD>
           <TABLE WIDTH="100%">
             <TR>
               <TD><INPUT TYPE="text" CLASS="combomini" NAME="tx_client"></TD>
-              <TD ALIGN="right"><FONT CLASS="textplain">[~T&iacute;tulo~]:</FONT></TD>
+              <TD ALIGN="right"><FONT CLASS="textplain">Title:</FONT></TD>
             </TR>
           </TABLE>
         </TD>
@@ -654,13 +654,13 @@
       </TR>
       <TR>
         <TD>
-          <FONT CLASS="textplain">[~Estado~]:</FONT>
+          <FONT CLASS="textplain">Status:</FONT>
         </TD>
         <TD>
           <TABLE WIDTH="100%">
             <TR>
               <TD><SELECT CLASS="combomini" NAME="sel_status"><OPTION VALUE=""></OPTION><%=sStatusLookUp%></SELECT></TD>
-              <TD ALIGN="right"><FONT CLASS="textplain">[~Prioridad~]:</FONT></TD>
+              <TD ALIGN="right"><FONT CLASS="textplain">Priority:</FONT></TD>
             </TR>
           </TABLE>
         </TD>
@@ -668,7 +668,7 @@
           <TABLE WIDTH="100%">
             <TR>
               <TD><SELECT CLASS="combomini" NAME="sel_priority"><OPTION VALUE=""></OPTION><%=sPriorityLookUp%></SELECT></TD>
-              <TD ALIGN="right"><FONT CLASS="textsmall">[~Severidad~]:</FONT>&nbsp;<SELECT CLASS="combomini" NAME="sel_severity"><OPTION VALUE=""></OPTION><%=sSeverityLookUp%></SELECT></TD>
+              <TD ALIGN="right"><FONT CLASS="textsmall">Severity:</FONT>&nbsp;<SELECT CLASS="combomini" NAME="sel_severity"><OPTION VALUE=""></OPTION><%=sSeverityLookUp%></SELECT></TD>
             </TR>
           </TABLE>
         </TD>
@@ -676,20 +676,20 @@
       <TR>
 <% if (bIsAdmin) {
      String sWrkParam = nullif(request.getParameter("gu_workarea")); %>
-        <TD><FONT CLASS="textplain">[~&Aacute;rea~]:</FONT></TD>
+        <TD><FONT CLASS="textplain">Area:</FONT></TD>
         <TD><INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=sWrkParam%>"><SELECT NAME="sel_area"><OPTION VALUE=""></OPTION><% for (int w=0;w<oWorkAreas.getRowCount(); w++) out.write("<OPTION VALUE=\""+oWorkAreas.getString(0,w)+"\""+(oWorkAreas.getString(0,w).equals(sWrkParam) ? " SELECTED" : "")+">"+oWorkAreas.getString(1,w)+"</OPTION>"); %></SELECT></TD>
 <% } else if (bIsPowUser) { %>
         <TD COLSPAN="2">
-	        <INPUT TYPE="radio" NAME="mybugs" <% if (sAssigned.length()==0) out.write("CHECKED"); %>>&nbsp;<FONT CLASS="textplain">[~Ver todas las incidencias~]</FONT>&nbsp;&nbsp;&nbsp;<INPUT TYPE="radio" NAME="mybugs" <% if (sAssigned.equals(sUserId)) out.write("CHECKED"); %>>&nbsp;<FONT CLASS="textplain">[~Ver mis incidencias~]</FONT>
+	        <INPUT TYPE="radio" NAME="mybugs" <% if (sAssigned.length()==0) out.write("CHECKED"); %>>&nbsp;<FONT CLASS="textplain">View all incidents</FONT>&nbsp;&nbsp;&nbsp;<INPUT TYPE="radio" NAME="mybugs" <% if (sAssigned.equals(sUserId)) out.write("CHECKED"); %>>&nbsp;<FONT CLASS="textplain">View my incidents</FONT>
         </TD>
 <% } else { %>
         <TD COLSPAN="2">
-	        <DIV STYLE="display:none"><INPUT TYPE="radio" NAME="mybugs"></DIV><INPUT TYPE="radio" NAME="mybugs" CHECKED>&nbsp;<FONT CLASS="textplain">[~Ver mis incidencias~]</FONT>
+	        <DIV STYLE="display:none"><INPUT TYPE="radio" NAME="mybugs"></DIV><INPUT TYPE="radio" NAME="mybugs" CHECKED>&nbsp;<FONT CLASS="textplain">View my incidents</FONT>
         </TD>
 <% }%>
 <% if (bIsAdmin || bIsPowUser) { %>
         <TD ALIGN="right">
-          <FONT CLASS="textplain">[~Ver asignadas a~]:</FONT>&nbsp;<INPUT TYPE="hidden" NAME="nm_assigned" VALUE="<%=sAssigned%>"><SELECT CLASS="combomini" NAME="sel_assigned"><OPTION VALUE=""></OPTION><%=sAssignedLookUp%></SELECT>
+          <FONT CLASS="textplain">View assigned to:</FONT>&nbsp;<INPUT TYPE="hidden" NAME="nm_assigned" VALUE="<%=sAssigned%>"><SELECT CLASS="combomini" NAME="sel_assigned"><OPTION VALUE=""></OPTION><%=sAssignedLookUp%></SELECT>
 	</TD>
 <% } else { %>
         <TD ALIGN="right"><INPUT TYPE="hidden" NAME="nm_assigned" VALUE=""></TD>
@@ -697,7 +697,7 @@
       </TR>
       <TR>
 <% if (bIsAdmin || bIsPowUser) { %>
-        <TD><FONT CLASS="textplain">[~Reportada por~]:</FONT></TD>
+        <TD><FONT CLASS="textplain">Reported by:</FONT></TD>
         <TD><INPUT CLASS="combomini" TYPE="text" MAXLENGTH="50" NAME="nm_reporter" SIZE="30" STYLE="text-transform:uppercase"></TD>
 <% } else { %>
         <TD COLSPAN="2"><INPUT TYPE="hidden" NAME="nm_reporter" VALUE=""></TD>
@@ -706,22 +706,22 @@
       </TR>
       <TR>
         <TD COLSPAN="3">
-          <FONT CLASS="textplain">[~Ordernar por~]&nbsp;&nbsp;&nbsp;</FONT>
+          <FONT CLASS="textplain">Sort by&nbsp;&nbsp;&nbsp;</FONT>
           <INPUT TYPE="radio" NAME="orderby" VALUE="2" <%=(sOrderBy.equals("2") ? "CHECKED" : "")%>>&nbsp;<FONT CLASS="textplain">[~Nº Incidencia~]</FONT>
           &nbsp;&nbsp;&nbsp;
-          <INPUT TYPE="radio" NAME="orderby" VALUE="3" <%=(sOrderBy.equals("3") ? "CHECKED" : "")%>>&nbsp;<FONT CLASS="textplain">[~Prioridad~]</FONT>
+          <INPUT TYPE="radio" NAME="orderby" VALUE="3" <%=(sOrderBy.equals("3") ? "CHECKED" : "")%>>&nbsp;<FONT CLASS="textplain">Priority</FONT>
           &nbsp;&nbsp;&nbsp;
-          <INPUT TYPE="radio" NAME="orderby" VALUE="7 DESC" <%=(sOrderBy.equals("7 DESC") ? "CHECKED" : "")%>>&nbsp;<FONT CLASS="textplain">[~Fecha~]</FONT>
+          <INPUT TYPE="radio" NAME="orderby" VALUE="7 DESC" <%=(sOrderBy.equals("7 DESC") ? "CHECKED" : "")%>>&nbsp;<FONT CLASS="textplain">Date</FONT>
           &nbsp;&nbsp;&nbsp;
-          <INPUT TYPE="radio" NAME="orderby" VALUE="8 DESC" <%=(sOrderBy.equals("8 DESC") ? "CHECKED" : "")%>>&nbsp;<FONT CLASS="textplain">[~Estado~]</FONT>
+          <INPUT TYPE="radio" NAME="orderby" VALUE="8 DESC" <%=(sOrderBy.equals("8 DESC") ? "CHECKED" : "")%>>&nbsp;<FONT CLASS="textplain">Status</FONT>
           &nbsp;&nbsp;&nbsp;
-          <INPUT TYPE="radio" NAME="orderby" VALUE="1" <%=(sOrderBy.equals("1") ? "CHECKED" : "")%>>&nbsp;<FONT CLASS="textplain">[~Proyecto~]</FONT>
+          <INPUT TYPE="radio" NAME="orderby" VALUE="1" <%=(sOrderBy.equals("1") ? "CHECKED" : "")%>>&nbsp;<FONT CLASS="textplain">Project</FONT>
         </TD>
       </TR>
       <TR>
         <TD COLSPAN="2"></TD>
         <TD ALIGN="right">
-	  <IMG SRC="../images/images/search16x16.gif" BORDER="0">&nbsp;<A HREF="javascript:queryByCombos()" CLASS="linkplain">[~Buscar~]</A>&nbsp;&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/undosearch16x16.gif" BORDER="0">&nbsp;<A HREF="bug_list.jsp?selected=4&subselected=4" CLASS="linkplain">[~Deshacer B&uacute;squeda~]</A>
+	  <IMG SRC="../images/images/search16x16.gif" BORDER="0">&nbsp;<A HREF="javascript:queryByCombos()" CLASS="linkplain">Search</A>&nbsp;&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/undosearch16x16.gif" BORDER="0">&nbsp;<A HREF="bug_list.jsp?selected=4&subselected=4" CLASS="linkplain">Undo Search</A>
         </TD>
       </TR>
     </TABLE>
@@ -731,14 +731,14 @@
       <TR>
         <TD COLSPAN="8">
           <IMG SRC="../images/images/new16x16.gif" BORDER="0">&nbsp;
-          <A HREF="#" onClick="window.open('bug_new.jsp','reportbug','menubar=no,toolbar=no,width=700,height=520')" CLASS="linkplain">[~Crear Incidencia~]</A>
+          <A HREF="#" onClick="window.open('bug_new.jsp','reportbug','menubar=no,toolbar=no,width=700,height=520')" CLASS="linkplain">New Incident</A>
 <% if (bIsAdmin) { %>
-			    &nbsp;&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0">&nbsp;<A HREF="javascript:deleteBugs()" CLASS="linkplain">[~Borrar Incidencias~]</A>
+			    &nbsp;&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0">&nbsp;<A HREF="javascript:deleteBugs()" CLASS="linkplain">Delete Incidents</A>
 <% } %>
           <!--
-          <IMG SRC="../images/images/refresh.gif" BORDER="0">&nbsp;<A HREF="#" onClick="document.forms[0].submit()" CLASS="linkplain">[~Actualizar~]</A>
+          <IMG SRC="../images/images/refresh.gif" BORDER="0">&nbsp;<A HREF="#" onClick="document.forms[0].submit()" CLASS="linkplain">Update</A>
           -->
-          &nbsp;&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/printer16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0">&nbsp;<A HREF="#" onClick="printerVersion()" CLASS="linkplain">[~Versi&oacute;n Imprimible~]</A>
+          &nbsp;&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/printer16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0">&nbsp;<A HREF="#" onClick="printerVersion()" CLASS="linkplain">Printer Friendly Version</A>
         </TD>
       </TR>
 <% } %>
@@ -772,20 +772,20 @@
       	  } // fi (sLastProj==current.gu_project)
       %>
       <TR CLASS="strip<%= (r%2==0 ? "1" : "2") %>">
-        <TD><SPAN TITLE="[~N&uacute;mero de la Incidencia~]"><FONT CLASS="textsmall"><%=oBugs.get(1,r)%></FONT></SPAN></TD>
+        <TD><SPAN TITLE="Incident number"><FONT CLASS="textsmall"><%=oBugs.get(1,r)%></FONT></SPAN></TD>
         <%
            switch (oBugs.getInt(2,r)) {
-             case 1 : out.write("        <TD><IMG SRC=\"../images/images/highimp.gif\" WIDTH=\"12\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"[~Prioridad de la Incidencia~]\"></TD>\n");
+             case 1 : out.write("        <TD><IMG SRC=\"../images/images/highimp.gif\" WIDTH=\"12\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"Priority\"></TD>\n");
 		           break;
-             case 5 : out.write("        <TD><IMG SRC=\"../images/images/lowimp.gif\" WIDTH=\"12\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"[~Prioridad de la Incidencia~]\"></TD>\n");
+             case 5 : out.write("        <TD><IMG SRC=\"../images/images/lowimp.gif\" WIDTH=\"12\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"Priority\"></TD>\n");
 		           break;
-	           default: out.write("        <TD><IMG SRC=\"../images/images/spacer.gif\" WIDTH=\"12\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"[~Prioridad de la Incidencia~]\"></TD>\n");		     
+	           default: out.write("        <TD><IMG SRC=\"../images/images/spacer.gif\" WIDTH=\"12\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"Priority\"></TD>\n");		     
            }
         %>
         <TD><A HREF="#" onClick="javascript:editBug('<%=oBugs.getString(3,r)%>')" CLASS="linkplain"><%=oBugs.getString(5,r)%></A></TD>
         <TD><FONT CLASS="textsmall"><%=oSimpleDate.format((Date) oBugs.get(6,r))%></FONT></TD>	
         <TD><FONT CLASS="textsmall">&nbsp;<%=oBugs.getInt(2,r)%></FONT></TD>
-        <TD><IMG SRC="../images/images/<%=(oBugs.get(7,r)==null ? "pending.gif" : "corrected.gif")%>" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Estado de la Incidencia~]"></TD>
+        <TD><IMG SRC="../images/images/<%=(oBugs.get(7,r)==null ? "pending.gif" : "corrected.gif")%>" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Status"></TD>
 <%
    if (bIsAdmin)
       out.write ("       <TD><FONT CLASS=\"textsmall\">"+(oBugs.getString(8,r).equals(sWorkAreaNm) ? "" : oBugs.getString(8,r)+" ")+oBugs.getString(0,r)+"</FONT></TD>\n");
@@ -806,28 +806,28 @@
 	  <TABLE BORDER="0" SUMMARY="Massive Update">
 	    <TR>
 	      <TD>
-	  	&nbsp;&nbsp;&nbsp;&nbsp;<FONT CLASS="textsmall">[~Cambiar a~]&nbsp;[~Estado~]</FONT>&nbsp;
+	  	&nbsp;&nbsp;&nbsp;&nbsp;<FONT CLASS="textsmall">Change to&nbsp;Status</FONT>&nbsp;
 	      </TD>
 	      <TD>
 	        <SELECT CLASS="combomini" NAME="sel_new_status"><OPTION VALUE=""></OPTION><%=sStatusLookUp%></SELECT>
 	        &nbsp;&nbsp;
-                <FONT CLASS="textsmall">[~Prioridad~]</FONT><SELECT CLASS="combomini" NAME="sel_new_priority"><OPTION VALUE=""></OPTION><%=sPriorityLookUp%></SELECT>
+                <FONT CLASS="textsmall">Priority</FONT><SELECT CLASS="combomini" NAME="sel_new_priority"><OPTION VALUE=""></OPTION><%=sPriorityLookUp%></SELECT>
 	      </TD>
               <TD>
                 &nbsp;&nbsp;
-                <FONT CLASS="textsmall">[~Severidad~]:</FONT>&nbsp;<SELECT CLASS="combomini" NAME="sel_new_severity"><OPTION VALUE=""></OPTION><%=sSeverityLookUp%></SELECT>
+                <FONT CLASS="textsmall">Severity:</FONT>&nbsp;<SELECT CLASS="combomini" NAME="sel_new_severity"><OPTION VALUE=""></OPTION><%=sSeverityLookUp%></SELECT>
 	      </TD>
 	    </TR>
 	    <TR>
 	      <TD>
-	        &nbsp;&nbsp;&nbsp;&nbsp;<FONT CLASS="textsmall">[~Asignar a~]&nbsp;</FONT>
+	        &nbsp;&nbsp;&nbsp;&nbsp;<FONT CLASS="textsmall">Assign to&nbsp;</FONT>
 	      </TD>
 	      <TD>
 	        <SELECT CLASS="combomini" NAME="sel_new_assigned" onchange="setCombo(document.forms[0].sel_assigned,this.options[this.selectedIndex].value);document.forms[0].nm_assigned.value=this.options[this.selectedIndex].value;"><OPTION VALUE=""></OPTION><%=sAssignedLookUp%></SELECT>
-	        &nbsp;<A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Agregar recursos~]"></A>
+	        &nbsp;<A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Add resources"></A>
 	      </TD>
 	      <TD COLSPAN="2" ALIGN="right">
-                <A HREF="javascript:updateBugs()" CLASS="linkplain">[~Cambiar~]</A>
+                <A HREF="javascript:updateBugs()" CLASS="linkplain">Change</A>
 	      </TD>
 	    </TR>
 	  </TABLE>
@@ -839,11 +839,11 @@
     <BR>    
     <% if (sWhere.length()>0) {
       if (0==iRowCount)
-        out.write("    <FONT CLASS=\"textplain\">[~No se encontr&oacute; ninguna incidencia que cumpla el criterio especificado~]</FONT>");
+        out.write("    <FONT CLASS=\"textplain\">No Incident was found matching the specified criteria.</FONT>");
       else if (1==iRowCount)
-        out.write("    <FONT CLASS=\"textplain\">[~Se encontr&oacute; 1 incidencia que cumple el criterio especificado~]</FONT>");
+        out.write("    <FONT CLASS=\"textplain\">1 incident was found matching the specified criteria</FONT>");
       else
-        out.write("    <FONT CLASS=\"textplain\">[~Se encontraron ~]" + String.valueOf(iRowCount) + "[~ incidencias que cumplen el criterio especificado~]</FONT>");
+        out.write("    <FONT CLASS=\"textplain\">&nbsp;" + String.valueOf(iRowCount) + " incidents that match the specified criteria</FONT>");
     }
     %>
     <INPUT TYPE="hidden" NAME="where" VALUE="<%=sWhere%>">

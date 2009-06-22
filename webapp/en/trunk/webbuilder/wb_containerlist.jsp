@@ -1,7 +1,5 @@
-<%@ page import="java.net.URLDecoder,java.sql.SQLException,java.util.*,java.lang.*,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.misc.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf"  %>
-<%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf"   %>
-<%
+﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,java.util.*,java.lang.*,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.misc.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -38,17 +36,23 @@
   response.addHeader ("cache-control", "no-store");
   response.setIntHeader("Expires", 0);
 
-  // Obtener el idioma del navegador cliente
+  if (autenticateSession(GlobalDBBind, request, response)<0) return;
+
+  boolean bIsPowerUser = isDomainPowerUser (GlobalCacheClient, GlobalDBBind, request, response);
+  boolean bIsAdmin = isDomainAdmin (GlobalCacheClient, GlobalDBBind, request, response);
+
+  if (!bIsAdmin && !bIsPowerUser) {
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Permisos insuficientes~]&desc=[~Su nivel de privilegios no le permite agregar nuevas paginas~]&resume=_close"));       
+    return;
+  }
+  
   String sLanguage = getNavigatorLanguage(request);
 
-  // Obtener el skin actual
-  String sSkin = getCookie(request, "skin", "default");
+  String sSkin = getCookie(request, "skin", "xp");
 
-  // Obtener el dominio y la workarea
   String id_domain = getCookie(request,"domainid","");
   String gu_microsite = request.getParameter("gu_microsite");
 
-  // Rutas y parámetros
   String sDefURLRoot = request.getRequestURI();
   sDefURLRoot = sDefURLRoot.substring(0,sDefURLRoot.lastIndexOf("/"));
   sDefURLRoot = sDefURLRoot.substring(0,sDefURLRoot.lastIndexOf("/"));
@@ -96,7 +100,7 @@
 %>
 <html>
 <head>
-<TITLE>hipergate :: [~Nueva p&aacute;gina~]</TITLE>
+<TITLE>hipergate :: New Page</TITLE>
 <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
 <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
 <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
@@ -104,7 +108,7 @@
   function createPage(nm) {
     if (document.forms[0].nm_page.value.length==0)
       document.forms[0].nm_page.value = nm;
-    window.document.location.href = "<%=sURLPageStore%>&nm_page=" + escape(document.forms[0].nm_page.value) + "&nm_container=" +nm; 
+    window.document.location = "<%=sURLPageStore%>&nm_page=" + escape(document.forms[0].nm_page.value) + "&nm_container=" +nm; 
   }
 //-->
 </SCRIPT>
@@ -114,11 +118,11 @@
 <center>
 <table cellspacing="0" cellpadding="0" border="0" width="70%">
 <tr width="80%"><td colspan="2" valign="top" align="center" width="70%" >&nbsp;<img src="<%=sURLRoot%>/skins/xp/hglogopeq.jpg" border="0"></td></tr>
-<tr><td colspan="2" valign="center" align="center"  width="100%" class="title1">&nbsp;[~Nueva p&aacute;gina~]</td></tr>
+<tr><td colspan="2" valign="center" align="center"  width="100%" class="title1">&nbsp;New Page</td></tr>
 <tr><td colspan="2">&nbsp;</td></tr>
-<tr><td colspan="2" class="formplain"><p align="justify">[~Elija un nombre para la nueva p&aacute;gina y haga click sobre el tipo de contenedor que desea utilizar como base.~]</p></td></tr>
+<tr><td colspan="2" class="formplain"><p align="justify">Choose a name for the new page and click on the container type to base the page on.</p></td></tr>
 <tr><td colspan="2">&nbsp;</td></tr>
-<tr><td class="formstrong">[~Nombre:~]&nbsp;&nbsp;</td><td class="formplain"><input size="16" type="text" name="nm_page" id="nm_page"></td></tr>
+<tr><td class="formstrong">Name:&nbsp;&nbsp;</td><td class="formplain"><input size="16" type="text" name="nm_page" id="nm_page"></td></tr>
 <tr><td colspan="2">&nbsp;</td></tr>
 <% 
   for (int i=0; i<oContainers.size(); i++){
@@ -129,7 +133,7 @@
      out.print("<tr>");
      out.print("<td colspan=\"2\" class=\"strip" + counter + "\" width=\"80%\">");
      out.print("<a href=\"javascript:createPage('" + oCurContainer.name() + "')\">");
-     out.print("[~Crear pagina ~] " + oCurContainer.name());
+     out.print("New Page " + oCurContainer.name());
      out.print("</a>");
      out.print("</td>");
      out.print("</tr>");

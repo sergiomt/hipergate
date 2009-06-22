@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.projtrack.*" language="java" session="false" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.projtrack.*" language="java" session="false" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
 <%  response.setHeader("Cache-Control","no-cache");response.setHeader("Pragma","no-cache"); response.setIntHeader("Expires", 0); %>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %>
@@ -70,7 +70,7 @@
 <HEAD>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <TITLE>hipergate :: [~&Aacute;rbol de Proyectos~]</TITLE>
+    <TITLE>hipergate :: Project Tree</TITLE>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
@@ -209,7 +209,7 @@
 </FRAMESET>
 <NOFRAMES>
   <BODY>
-    <P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
+    <P>This page use frames, but your web browser does not handle them</P>
   </BODY>
 </NOFRAMES>
 <HTML>

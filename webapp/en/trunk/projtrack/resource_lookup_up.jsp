@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -92,7 +92,7 @@
           <IMG SRC="../images/images/booknew16.gif" WIDTH="16" HEIGHT="16" BORDER="0">
         </TD>
         <TD>        
-          <A HREF="resource_lookup_new.jsp<%=sQryStr%>" onClick="javascript:window.location.href='../blank.htm';" TARGET="lookupmid" CLASS="linkplain">[~A&ntilde;adir~]</A>
+          <A HREF="resource_lookup_new.jsp<%=sQryStr%>" onClick="javascript:window.location.href='../blank.htm';" TARGET="lookupmid" CLASS="linkplain">Add</A>
         </TD>
         <TD>
           <IMG SRC="../images/images/spacer.gif" WIDTH="16" HEIGHT="16" BORDER="0">
@@ -101,7 +101,7 @@
           <IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0">
         </TD>
         <TD>
-          <A HREF="javascript:deleteSelected();" CLASS="linkplain">[~Borrar~]</A>
+          <A HREF="javascript:deleteSelected();" CLASS="linkplain">Delete</A>
         </TD>
         <TD>
           <IMG SRC="../images/images/spacer.gif" WIDTH="16" HEIGHT="16" BORDER="0">
@@ -110,7 +110,7 @@
           <IMG SRC="../images/images/selall16.gif" WIDTH="16" HEIGHT="16" BORDER="0">        
         </TD>
         <TD>
-          <A HREF="javascript:selectAll();" CLASS="linkplain">[~Seleccionar Todo~]</A>        
+          <A HREF="javascript:selectAll();" CLASS="linkplain">Select All</A>        
         </TD>
       </TR>
       <TR valign="middle">
@@ -119,7 +119,7 @@
         </TD>
         <TD valign="middle" colspan="7">        
 	  <INPUT CLASS="combomini" TYPE="text" NAME="search">&nbsp;
-          <A HREF="#" onClick="top.frames['lookupmid'].findit(document.forms[0].search.value);" CLASS="linkplain">[~Buscar~]</A>
+          <A HREF="#" onClick="top.frames['lookupmid'].findit(document.forms[0].search.value);" CLASS="linkplain">Search</A>
 	</TD>
       </TR>
       </FORM>

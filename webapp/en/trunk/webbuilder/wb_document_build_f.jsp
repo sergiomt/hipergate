@@ -52,7 +52,7 @@
   </FRAMESET>
   <NOFRAMES>
       <BODY>
-	<P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
+	<P>This page use frames, but your web browser does not handle them</P>
       </BODY>
   </NOFRAMES>
   </FRAMESET>

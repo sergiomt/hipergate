@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   
@@ -70,7 +70,7 @@
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: [~A&ntilde;adir recurso~]</TITLE>
+  <TITLE>hipergate :: Add resource</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -100,7 +100,7 @@
 <BODY TOPMARGIN="8" MARGINHEIGHT="8">
   <TABLE WIDTH="100%" SUMMARY="Form Title">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~A&ntilde;adir recurso~]</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Add resource</FONT></TD></TR>
   </TABLE>  
   <FORM METHOD="post" ACTION="../common/lookup_store.jsp" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=sWorkArea%>">
@@ -124,30 +124,30 @@
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90"><INPUT TYPE="radio" NAME="tp_resource" VALUE="0" CHECKED></TD>
-            <TD ALIGN="left" WIDTH="370" CLASS="formplain">[~Un usuario de la aplicaci&oacute;n~]</TD>
+            <TD ALIGN="left" WIDTH="370" CLASS="formplain">A user</TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90"><INPUT TYPE="radio" NAME="tp_resource" VALUE="1"></TD>
-            <TD ALIGN="left" WIDTH="370" CLASS="formplain">[~Un empleado del directorio~]</TD>
+            <TD ALIGN="left" WIDTH="370" CLASS="formplain">An employee</TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90"><INPUT TYPE="radio" NAME="tp_resource" VALUE="2"></TD>
-            <TD ALIGN="left" WIDTH="370" CLASS="formplain">[~Un individuo externo~]</TD>
+            <TD ALIGN="left" WIDTH="370" CLASS="formplain">An external contact</TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90"><INPUT TYPE="radio" NAME="tp_resource" VALUE="3"></TD>
-            <TD ALIGN="left" WIDTH="370" CLASS="formplain">[~Una compa&ntilde;&iacute;a externa~]</TD>
+            <TD ALIGN="left" WIDTH="370" CLASS="formplain">An external company</TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90"><INPUT TYPE="radio" NAME="tp_resource" VALUE="4"></TD>
-            <TD ALIGN="left" WIDTH="370" CLASS="formplain">[~Un proveedor~]</TD>
+            <TD ALIGN="left" WIDTH="370" CLASS="formplain">A supplier</TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90"><INPUT TYPE="radio" NAME="tp_other" onclick="document.location='../common/lookup_new.jsp<%=sQryStr%>'"></TD>
-            <TD ALIGN="left" WIDTH="370" CLASS="formplain">[~Otro tipo de recurso~]</TD>
+            <TD ALIGN="left" WIDTH="370" CLASS="formplain">Other</TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90" CLASS="formstrong">[~Nombre~]</TD>
+            <TD ALIGN="right" WIDTH="90" CLASS="formstrong">Name</TD>
             <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="nm_resource"></TD>
           </TR>
           <TR>
@@ -155,8 +155,8 @@
           </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onClick="window.parent.lookupup.location.href='resource_lookup_up.jsp<%=sQryStr%>';window.history.back();">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onClick="window.parent.lookupup.location.href='resource_lookup_up.jsp<%=sQryStr%>';window.history.back();">
     	      <BR><BR>
     	    </TD>
     	  </TR>            

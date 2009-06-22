@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
 /*
@@ -77,7 +77,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: [~Editar Coste~]</TITLE>
+  <TITLE>hipergate :: Edit Cost</TITLE>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -156,7 +156,7 @@
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()">
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Editar Coste~]</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Edit Cost</FONT></TD></TR>
   </TABLE>  
   <FORM NAME="" METHOD="post" ACTION="cost_edit_store.jsp" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="gu_cost" VALUE="<%=oCost.getStringNull(DB.gu_cost,"")%>">
@@ -168,41 +168,41 @@
         <TABLE WIDTH="100%" CLASS="formfront">
           <!-- 11. Mandatory Field -->
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">[~Proyecto~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Project</FONT></TD>
             <TD WIDTH="370"><FONT CLASS="formstrong"><%=oProj.getString(DB.nm_project)%></FONT></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">[~T&iacute;tulo~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Title</FONT></TD>
             <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="tl_cost" MAXLENGTH="100" SIZE="50" VALUE="<%=oCost.getStringNull(DB.tl_cost,"")%>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">[~Importe~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Amount</FONT></TD>
             <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="pr_cost" MAXLENGTH="9" SIZE="12" VALUE="<% if (!oCost.isNull(DB.pr_cost)) out.write(String.valueOf(oCost.getFloatFormated(DB.pr_cost,"#0.00"))); %>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Tipo~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Type</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
               <INPUT TYPE="hidden" NAME="tp_cost">
               <SELECT NAME="sel_cost"><OPTION VALUE=""></OPTION><%=sTypeLookUp%></SELECT>&nbsp;
-              <A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver tipos de costes~]"></A>
+              <A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View cost types"></A>
             </TD>
           </TR>          
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Fecha~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Date</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
               <INPUT TYPE="text" NAME="dt_cost" MAXLENGTH="10" SIZE="10" VALUE="<% out.write(oCost.get(DB.dt_cost)!=null ? oCost.getDateFormated(DB.dt_cost,"yyyy-MM-dd") : ""); %>">
-              <A HREF="javascript:showCalendar('dt_cost')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>
+              <A HREF="javascript:showCalendar('dt_cost')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
             </TD>
           </TR>          
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Usuario~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">User</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
               <INPUT TYPE="hidden" NAME="gu_user">
               <SELECT NAME="sel_user"><OPTION VALUE=""></OPTION><% for (int u=0; u<iUsrs; u++) out.write("<OPTION VALUE=\""+oUsrs.getString(0,u)+"\">"+oUsrs.getStringNull(1,u,"")+" "+oUsrs.getStringNull(2,u,"")+" "+oUsrs.getStringNull(3,u,"")+"</OPTION>"); %></SELECT>
             </TD>
           </TR>          
           <TR>
-            <TD ALIGN="right" VALIGN="top" WIDTH="90"><FONT CLASS="formplain">[~Descripci&oacute;n~]</FONT></TD>
+            <TD ALIGN="right" VALIGN="top" WIDTH="90"><FONT CLASS="formplain">Description</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
 	      <TEXTAREA NAME="de_cost"><%=oCost.getStringNull(DB.de_cost,"")%></TEXTAREA>
 	    </TD>
@@ -212,8 +212,8 @@
           </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>
     	    </TD>
     	  </TR>            

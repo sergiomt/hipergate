@@ -1,4 +1,4 @@
-<%@ page import="java.io.*,java.sql.*,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.datamodel.ModelManager" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.*,java.sql.*,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.datamodel.ModelManager" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <% 
   response.addHeader ("Pragma", "no-cache");
   response.addHeader ("cache-control", "no-store");

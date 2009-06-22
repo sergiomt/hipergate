@@ -1,4 +1,4 @@
-<%@ page import="java.util.Enumeration,java.io.IOException,java.net.URLDecoder,java.io.File,java.sql.SQLException,java.text.SimpleDateFormat,com.oreilly.servlet.MailMessage,com.oreilly.servlet.MultipartRequest,com.knowgate.jdc.JDCConnection,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.addrbook.Meeting,com.knowgate.projtrack.Bug,com.knowgate.hipergate.Order" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.Enumeration,java.io.IOException,java.net.URLDecoder,java.io.File,java.sql.SQLException,java.text.SimpleDateFormat,com.oreilly.servlet.MailMessage,com.oreilly.servlet.MultipartRequest,com.knowgate.jdc.JDCConnection,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.addrbook.Meeting,com.knowgate.projtrack.Bug,com.knowgate.hipergate.Order" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <% 
   
@@ -141,7 +141,7 @@
   msg.setHeader("Content-Transfer-Encoding","8bit");
       
   msg.setSubject(tx_subject);
-  msg.getPrintStream().println("[~Gracias por usar el sistema de reporte de incidencias. Hemos recibido su informe y nuestro equipo tecnico la revisara en breve.~]");
+  msg.getPrintStream().println("That you for using the incidents reporting system. We have received your report and our team will contact you soon");
   msg.sendAndClose();
   */
 %>
@@ -170,7 +170,7 @@
         </TD></TR>
         <TR><TD ALIGN="center">
           <FORM>
-            <INPUT TYPE="button" CLASS="pushbutton" VALUE="[~Cerrar Ventana~]" onclick="window.close()">
+            <INPUT TYPE="button" CLASS="pushbutton" VALUE="Close Window" onclick="window.close()">
           </FORM>
         </TD></TR>
       </TABLE>

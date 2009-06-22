@@ -1,4 +1,4 @@
-<%@ page import="java.util.Date,java.net.URLDecoder" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.Date,java.net.URLDecoder" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/cookies.jspf" %>
 <%!
 /*
@@ -40,6 +40,7 @@
      String MonthNamesFR[] = { "Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre" };
      String MonthNamesDE[] = { "Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember" };
      String MonthNamesPT[] = { "Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro" };
+     String MonthNamesNO[] = { "januar","februar","mars","april","mai","juni","juli","august","september","oktober","november","desember" };
     
     if (sLangId.equalsIgnoreCase("es"))
       return MonthNamesES[MyMonth];
@@ -51,6 +52,8 @@
       return MonthNamesDE[MyMonth];
     else if (sLangId.equalsIgnoreCase("pt"))
       return MonthNamesPT[MyMonth];
+    else if (sLangId.equalsIgnoreCase("no"))
+      return MonthNamesNO[MyMonth];
     else
       return MonthNamesEN[MyMonth];    
   } // MonthName
@@ -147,7 +150,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
   <HEAD>
-    <TITLE>hipergate :: [~Calendario~]</TITLE>
+    <TITLE>hipergate :: Calendar</TITLE>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
       <!--
@@ -172,9 +175,9 @@
         <!-- inicio del content -->
           <font face="Verdana,Arial" size="1" color="white">
           <center>
-          <a style="color:#ffffff;text-decoration:none" title="[~Mes Anterior~]" href="<%=PrevMonthURL(MyYear,MyMonth,MyCtrl)%>">- &lt;&lt;</a>
-          &nbsp;<b>[~Fecha~]</b>&nbsp;
-          <a style="color:#ffffff;text-decoration:none" title="[~Mes Siguiente~]" href="<%=NextMonthURL(MyYear,MyMonth,MyCtrl)%>">&gt;&gt; +</a>
+          <a style="color:#ffffff;text-decoration:none" title="Previous Month" href="<%=PrevMonthURL(MyYear,MyMonth,MyCtrl)%>">- &lt;&lt;</a>
+          &nbsp;<b>Date</b>&nbsp;
+          <a style="color:#ffffff;text-decoration:none" title="Next Month" href="<%=NextMonthURL(MyYear,MyMonth,MyCtrl)%>">&gt;&gt; +</a>
           </center>
           </font>
           <table border="0" cellpadding="2" cellspacing="0" width="100%">
@@ -188,13 +191,13 @@
       	      if (sLanguage.equalsIgnoreCase("es")) {
 		String WeekDays[] = { "L","M","X","J","V","S","D"} ;
 	        for (int w=0;w<7; w++)
-	          out.write("              <td bgcolor=\"#0066CC\" align=\"center\"><font face=\"Verdana,Arial\" size=\"1\" color=\"white\">" + WeekDays[w] + "</td>\n");
+	          out.write("              <td bgcolor=\"#0066CC\" align=\"center\"><font face=\"Verdana,Arial\" size=\"1\" color=\"white\">" + WeekDays[w] + "</font></td>\n");
                 FirstDay = (new Date(MyYear, MyMonth, 0).getDay()+6)%7;
 	      }
 	      else {
 		String WeekDays[] = { "S","M","T","W","T","F","S"} ;
 	        for (int w=0;w<7; w++)
-	          out.write("              <td bgcolor=\"#0066CC\" align=\"center\"><font face=\"Verdana,Arial\" size=\"1\" color=\"white\">" + WeekDays[w] + "</td>\n");
+	          out.write("              <td bgcolor=\"#0066CC\" align=\"center\"><font face=\"Verdana,Arial\" size=\"1\" color=\"white\">" + WeekDays[w] + "</font></td>\n");
                 FirstDay = new Date(MyYear, MyMonth, 0).getDay();
 	      }	      
               out.write("            </tr>\n");
@@ -221,6 +224,6 @@
         </td>
       </tr>
     </table>
-    <form><center><input type="button" class="closebutton" value="[~Cerrar~]" onClick="self.close()"></center></form>
+    <form><center><input type="button" class="closebutton" value="Close" onClick="self.close()"></center></form>
   </BODY>
 </HTML>

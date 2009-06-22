@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %><%
 
@@ -206,7 +206,7 @@
 	      frm.mn_city.value = frm.mn_city.value.toUpperCase();
 	
 	      if (frm.id_country.value=="es" && frm.zipcode.value.length!=0 && frm.zipcode.value.length!=5) {
-	        alert("The zipcode must have five digits");
+	        alert("[~El código postal debe tener 5 cifras~]");
 	        return false;
 	      }
 	
@@ -436,7 +436,7 @@
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('Your priviledge level as guest does not allow you to perform this action')">&nbsp;&nbsp;&nbsp;
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">&nbsp;&nbsp;&nbsp;
 <% } else { %>
               <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
 <% } %>

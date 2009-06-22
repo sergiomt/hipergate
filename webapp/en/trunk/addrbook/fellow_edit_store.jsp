@@ -1,4 +1,4 @@
-<%@ page import="com.oreilly.servlet.MultipartRequest,java.io.File,java.io.FileInputStream,java.io.IOException,java.net.URLDecoder,java.util.Enumeration,java.sql.SQLException,java.sql.PreparedStatement,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.addrbook.Fellow" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="com.oreilly.servlet.MultipartRequest,java.io.File,java.io.FileInputStream,java.io.IOException,java.net.URLDecoder,java.util.Enumeration,java.sql.SQLException,java.sql.PreparedStatement,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.addrbook.Fellow" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/multipartreqload.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*

@@ -1,9 +1,5 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.Statement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.misc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/dbbind.jsp" %>
-<%@ include file="../methods/cookies.jspf" %>
-<%@ include file="../methods/authusrs.jspf" %>
-<%@ include file="../methods/clientip.jspf" %>
-<% 
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.Statement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.misc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><% 
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -81,7 +77,7 @@
     
     switch (tp_list) {
       case DistributionList.TYPE_STATIC:
-        sTpList = "[~Est&aacute;tica~]";
+        sTpList = "Static";
         break;        
       case DistributionList.TYPE_DYNAMIC:        
         sTpList = "Din&aacute;mica";
@@ -92,7 +88,7 @@
         oStmt.close();                
         break;
       case DistributionList.TYPE_DIRECT:
-        sTpList = "[~Directa~]";
+        sTpList = "Direct";
         break;
     } // end switch()
   }
@@ -112,7 +108,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: [~Editar Lista de Distribuci&oacute;n~]</TITLE>
+  <TITLE>hipergate :: Edit Distribution List</TITLE>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -157,18 +153,18 @@
         var frm = window.document.forms[0];
 
 	if (frm.de_list.value.length>50) {
-	  alert ("[~La descripcion de la lista no puede superar los 50 caracteres~]");
+	  alert ("List description may not be longer than 50 characters");
 	  return false;
 	}
 
 	if (!check_email(frm.tx_from.value)) {
-	  alert ("[~La direccion de email del remitente no es valida~]");
+	  alert ("sender e-mail address is not valid");
 	  return false;
         }
 
 	/*
 	if (!check_email(frm.tx_reply.value)) {
-	  alert ("[~La direccion de email de retorno no es valida~]");
+	  alert ("return e-mail address is not valid");
 	  return false;
         }
         */
@@ -181,9 +177,9 @@
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8">
   <FORM NAME="" METHOD="post" ACTION="list_wizard_store.jsp" onSubmit="return validate()">
   <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Actualizar~]"> [~Actualizar~]</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="[~Imprimir~]"> [~Imprimir~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
   </DIV></DIV>
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
     <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
@@ -194,12 +190,15 @@
     <INPUT TYPE="hidden" NAME="caller" VALUE="edit">    
     <BR>
     <TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%" BORDER="0">
-      <TR><TD ALIGN="LEFT" CLASS="striptitle"><FONT CLASS="title1">[~Editar Lista de Distribuci&oacute;n~]</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT" CLASS="striptitle"><FONT CLASS="title1">Edit Distribution List</FONT></TD></TR>
       <TR><TD><IMG SRC="../images/images/spacer.gif" WIDTH="1" HEIGHT="4" BORDER="0"></TD></TR>
     </TABLE>  
     <% if (tp_list==DistributionList.TYPE_STATIC) {%>
-    <TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%" BORDER="0">
-      <TR><TD ALIGN="LEFT"><IMG SRC="../images/images/crm/subscriptions16.gif" BORDER="0" ALT="[~Click para editar miembros~]" ALIGN="MIDDLE">&nbsp;<FONT FACE="Arial" SIZE="-1" COLOR="black"><A HREF="#" onclick="javascript:window.open('member_listing.jsp?gu_list=<%=oList.getStringNull(DB.gu_list,"")%>&de_list=<%=oList.getStringNull(DB.de_list,"")%>','wMemeberListing','height=' + (screen.height>600 ? '600' : '520') + ',width= ' + (screen.width>800 ? '800' : '760') + ',scrollbars=yes,toolbar=no,menubar=no');window.close();" CLASS="linkplain">[~Editar miembros~]</A>&nbsp;&nbsp;</FONT></TD></TR>
+    <TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="80%" BORDER="0" ALIGN="center">
+      <TR>
+      	<TD ALIGN="LEFT"><IMG SRC="../images/images/crm/subscriptions16.gif" BORDER="0" ALT="Click for editing members" ALIGN="center">&nbsp;<FONT FACE="Arial" SIZE="-1" COLOR="black"><A HREF="#" onclick="javascript:window.open('member_listing.jsp?gu_list=<%=oList.getStringNull(DB.gu_list,"")%>&de_list=<%=oList.getStringNull(DB.de_list,"")%>','wMemeberListing','height=' + (screen.height>600 ? '600' : '520') + ',width= ' + (screen.width>800 ? '800' : '760') + ',scrollbars=yes,toolbar=no,menubar=no');window.close();" CLASS="linkplain">Edit Members</A>&nbsp;&nbsp;</FONT></TD>
+      	<TD ALIGN="LEFT"><IMG SRC="../images/images/excel16.gif" BORDER="0" ALT="[~Click para exportar miembros~]" ALIGN="center">&nbsp;<FONT FACE="Arial" SIZE="-1" COLOR="black"><A HREF="#" onclick="javascript:window.open('list_members_csv.jsp?gu_list=<%=oList.getStringNull(DB.gu_list,"")%>')" CLASS="linkplain">[~Exportar miembros~]</A>&nbsp;&nbsp;</FONT></TD>
+      </TR>
     </TABLE>
     <% } %>
     <CENTER>
@@ -207,43 +206,43 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right" WIDTH="200"><FONT CLASS="formstrong">[~Tipo de Lista:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="200"><FONT CLASS="formstrong">List Type:</FONT></TD>
             <TD ALIGN="left">
               <INPUT TYPE="text" NAME="locked_tp_list"  SIZE="16" VALUE="<%=sTpList%>" DISABLED>
 <% if (tp_list==DistributionList.TYPE_STATIC || tp_list==DistributionList.TYPE_DIRECT) { %>
-	      &nbsp;<A HREF="#" CLASS="linkplain" onclick="editMembers()">[~Editar miembros~]</A>
+	      &nbsp;<A HREF="#" CLASS="linkplain" onclick="editMembers()">Edit Members</A>
 <% } %>            
             </TD>
           </TR>
 <%  if (tp_list==DistributionList.TYPE_DYNAMIC) { %>
           <TR>
-            <TD ALIGN="right" WIDTH="200"><FONT CLASS="formstrong">[~Consulta:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="200"><FONT CLASS="formstrong">Query:</FONT></TD>
             <TD ALIGN="left"><A HREF="#" CLASS="linkplain" onclick="editMembers()"><% out.write (sTlQuery); %></A></TD>
           </TR>
 <% } %>
           <TR>
             <TD></TD>
-            <TD ALIGN="left"><FONT CLASS="formplain"><I>(<% out.write (String.valueOf(nu_members)); %>&nbsp;[~miembros~])</I></FONT></TD>
+            <TD ALIGN="left"><FONT CLASS="formplain"><I>(<% out.write (String.valueOf(nu_members)); %>&nbsp;members)</I></FONT></TD>
           </TR>
 
           <TR>
-            <TD ALIGN="right" WIDTH="200"><FONT CLASS="formplain">[~Descripci&oacute;n:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="200"><FONT CLASS="formplain">Description:</FONT></TD>
             <TD ALIGN="left"><TEXTAREA NAME="de_list" COLS="28"><%=oList.getStringNull(DB.de_list,"")%></TEXTAREA></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="200"><FONT CLASS="formstrong">[~Asunto:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="200"><FONT CLASS="formstrong">Subject:</FONT></TD>
             <TD ALIGN="left"><INPUT TYPE="text" NAME="tx_subject" MAXLENGTH="100" SIZE="40" VALUE="<%=oList.getStringNull(DB.tx_subject,"")%>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="200"><FONT CLASS="formstrong">[~Nombre del Remitente:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="200"><FONT CLASS="formstrong">Sender Name:</FONT></TD>
             <TD ALIGN="left"><INPUT TYPE="text" NAME="tx_sender" MAXLENGTH="100" SIZE="40" VALUE="<%=oList.getStringNull(DB.tx_sender,"")%>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="200"><FONT CLASS="formstrong">[~E-Mail del Remitente:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="200"><FONT CLASS="formstrong">Sender e-mail:</FONT></TD>
             <TD ALIGN="left"><INPUT TYPE="text" NAME="tx_from" MAXLENGTH="100" SIZE="40" VALUE="<%=oList.getStringNull(DB.tx_from,"")%>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="200"><FONT CLASS="formstrong">[~E-Mail de Retorno:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="200"><FONT CLASS="formstrong">Return e-mail:</FONT></TD>
             <TD ALIGN="left"><INPUT TYPE="text" NAME="tx_reply" MAXLENGTH="100" SIZE="40" VALUE="<%=oList.getStringNull(DB.tx_reply,"")%>"></TD>
           </TR>
           <TR>
@@ -252,11 +251,11 @@
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">&nbsp;&nbsp;&nbsp;
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">&nbsp;&nbsp;&nbsp;
 <% } else { %>
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
 <% } %>
-              <INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cerrar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+              <INPUT TYPE="button" ACCESSKEY="c" VALUE="Close" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>
     	    </TD>	            
         </TABLE>

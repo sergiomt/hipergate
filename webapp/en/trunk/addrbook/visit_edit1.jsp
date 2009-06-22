@@ -1,4 +1,4 @@
-<%@ page import="java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.addrbook.Meeting,com.knowgate.crm.Contact,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.addrbook.Meeting,com.knowgate.crm.Contact,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
@@ -229,7 +229,7 @@
 	}
 
 	if (!isDate(frm.dt_start.value, "d") ) {
-	  alert ("Invalid Start Date");
+	  alert ("[~La fecha de inicio no es válida~]");
 	  return false;	  
 	}
 
@@ -239,7 +239,7 @@
 	}
 
 	if (!isDate(frm.dt_end.value, "d") ) {
-	  alert ("Invalid End Date");
+	  alert ("[~La fecha de fin no es válida~]");
 	  return false;	  
 	}
 	
@@ -251,7 +251,7 @@
 	}
 	
 	if (frm.de_meeting.value.length>1000) {
-	  alert ("Meeting description cannot exceed 1000 characters");
+	  alert ("[~La descripción de la visita no puede superar los 1000 caracteres~]");
 	  return false;
 	}
         
@@ -477,7 +477,7 @@
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
 <%          if (bIsGuest) { %>    
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Next" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('Your credential level as Guest does not allow you to perform this action')">&nbsp;&nbsp;&nbsp;
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Next" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">&nbsp;&nbsp;&nbsp;
 <%            } else { %>
               <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Next" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
 <%            } %>

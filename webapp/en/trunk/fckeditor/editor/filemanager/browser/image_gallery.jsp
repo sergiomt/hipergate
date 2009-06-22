@@ -1,4 +1,4 @@
-<%@ page import="com.knowgate.debug.DebugFile,com.knowgate.misc.*,java.io.*,java.lang.*,java.util.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.workareas.FileSystemWorkArea" language="java" session="false" contentType="text/html;charset=UTF-8"  %>
+﻿<%@ page import="com.knowgate.debug.DebugFile,com.knowgate.misc.*,java.io.*,java.lang.*,java.util.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.workareas.FileSystemWorkArea" language="java" session="false" contentType="text/html;charset=UTF-8"  %>
 <%@ include file="../../../../methods/page_prolog.jspf" %><%@ include file="../../../../methods/dbbind.jsp" %><%@ include file="../../../../methods/cookies.jspf" %><%@ include file="../../../../methods/authusrs.jspf" %><%@ include file="../../../../methods/nullif.jspf" %>
 <%
 /*

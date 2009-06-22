@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.sql.SQLException,java.util.*,java.lang.*,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.misc.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,java.util.*,java.lang.*,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.misc.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf"  %>
 <%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf"   %>
 <%
@@ -96,7 +96,7 @@
 %>
 <HTML>
 <HEAD>
-<TITLE>hipergate :: [~Tipos de bloque~]</TITLE>
+<TITLE>hipergate :: Block Types</TITLE>
 <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
 <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
 <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
@@ -110,7 +110,7 @@
 </HEAD>
 <BODY  TOPMARGIN="0" MARGINHEIGHT="0" onclose="window.opener.setNull()">
 <table cellspacing="0" cellpadding="0" border="0" width="98%">
-  <tr><td valign="top" align="center" width="100%" >&nbsp;<img src="<% out.write(sURLRoot); %>/skins/<% out.write(sSkin); %>/hglogopeq.jpg" border="0"></td></tr><tr><td valign="center" align="center"  width="100%"><span class="title1">&nbsp;[~Tipos de bloque~]</span></td></tr><tr><td>&nbsp;</td></tr>
+  <tr><td valign="top" align="center" width="100%" >&nbsp;<img src="<% out.write(sURLRoot); %>/skins/<% out.write(sSkin); %>/hglogopeq.jpg" border="0"></td></tr><tr><td valign="center" align="center"  width="100%"><span class="title1">&nbsp;Block Types</span></td></tr><tr><td>&nbsp;</td></tr>
 <%
 
   int iMetaBlockCount = oMetablocks.size();

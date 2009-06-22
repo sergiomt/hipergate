@@ -1,4 +1,4 @@
-<%@ page import="com.knowgate.addrbook.Meeting,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" %>
+﻿<%@ page import="java.util.Date,com.knowgate.addrbook.Meeting,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -42,11 +42,12 @@
   try {
 
 		String sTxMeeting = DBCommand.queryStr(oCon, "SELECT "+DB.tx_meeting+" FROM "+DB.k_meetings+" WHERE "+DB.gu_meeting+"='"+gu_meeting+"'");
+		Date dtMeeting = DBCommand.queryDateTime(oCon, "SELECT "+DB.dt_start+" FROM "+DB.k_meetings+" WHERE "+DB.gu_meeting+"='"+gu_meeting+"'");
 		String sGuFellow = DBCommand.queryStr(oCon, "SELECT "+DB.gu_fellow+" FROM "+DB.k_meetings+" WHERE "+DB.gu_meeting+"='"+gu_meeting+"'");
 
     oCon.setAutoCommit (false);
     Meeting.delete(oCon, gu_meeting);
-    DBAudit.log(oCon, Meeting.ClassId, "DMET", id_user, gu_meeting, sGuFellow, 0, getClientIP(request), sTxMeeting, null);
+    DBAudit.log(oCon, Meeting.ClassId, "DMET", id_user, gu_meeting, sGuFellow, 0, getClientIP(request), sTxMeeting, dtMeeting.toString());
     oCon.commit();
 
     oCon.setAutoCommit (true);

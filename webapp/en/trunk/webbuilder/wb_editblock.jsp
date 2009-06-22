@@ -1,4 +1,4 @@
-<%@ page import="org.w3c.dom.*,com.knowgate.misc.*,java.io.File,java.lang.*,java.util.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.misc.Environment,com.knowgate.dataxslt.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.db.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="org.w3c.dom.*,com.knowgate.misc.*,java.io.File,java.lang.*,java.util.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.misc.Environment,com.knowgate.dataxslt.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.db.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <%!
 /*
@@ -292,7 +292,7 @@
 %>
 <html lang="<%=sLanguage%>">
 <head>
-  <TITLE>hipergate :: [~Editar bloque~]</TITLE>
+  <TITLE>hipergate :: Edit block</TITLE>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -410,7 +410,7 @@
       	w2.document.write("<html>"); w2.document.write("\n");
       	w2.document.write("<head>"); w2.document.write("\n");
       	w2.document.write("<title>"); w2.document.write("\n");
-      	w2.document.write("hipergate :: [~Ver imagen ~](" + pictureName + ")"); w2.document.write("\n");
+      	w2.document.write("hipergate :: View image(" + pictureName + ")"); w2.document.write("\n");
       	w2.document.write("</title>"); w2.document.write("\n");
       	w2.document.write("</head>"); w2.document.write("\n");
       	w2.document.write("<body topmargin=0 marginheight=0 leftmargin=0>"); w2.document.write("\n");
@@ -454,7 +454,7 @@
   </tr>
   <tr>
     <td valign="center" bgcolor="#cccccc">
-      <span class="title1">&nbsp;[~Bloque~]:&nbsp;<%=oBlock.tag()%></span>
+      <span class="title1">&nbsp;Block:&nbsp;<%=oBlock.tag()%></span>
     </td>
   </tr>
   <tr>
@@ -462,13 +462,13 @@
       <hr size="1">
       <img src="../images/images/floppy.gif" border="0" align="middle">&nbsp;
 <% if (bIsGuest) { %>
-      <a class="linkplain" href="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">[~Guardar~]</a>
+      <a class="linkplain" href="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">Save</a>
 <% } else { %>
-      <a class="linkplain" href="javascript:document.forms[0].submit()">[~Guardar~]</a>
+      <a class="linkplain" href="javascript:document.forms[0].submit()">Save</a>
 <% } %>
-      &nbsp;&nbsp;<img src="../images/images/back.gif" border="0" align="middle">&nbsp;<a class="linkplain" href="#" onclick="if (window.confirm('[~Los cambios se perderán y se recuperarán los datos iniciales. ¿Esta seguro?~]')) document.location.reload();">[~Restaurar~]</a>
-      &nbsp;&nbsp;<img src="../images/images/closewindow.gif" border="0" align="middle">&nbsp;<a class="linkplain" href="#" onclick="if (window.confirm('[~Si no pulsa Guardar se perderán los cambios realizados. ¿Está seguro?~]')) window.close();">[~Cerrar~]</a>
-      &nbsp;&nbsp;<img src="../images/images/resort.gif" border="0" align="middle">&nbsp;<a class="linkplain" href="javascript:reSort()">[~Reordenar~]</a>
+      &nbsp;&nbsp;<img src="../images/images/back.gif" border="0" align="middle">&nbsp;<a class="linkplain" href="#" onclick="if (window.confirm('[~Los cambios se perderán y se recuperarán los datos iniciales. ¿Esta seguro?~]')) document.location.reload();">Restore</a>
+      &nbsp;&nbsp;<img src="../images/images/closewindow.gif" border="0" align="middle">&nbsp;<a class="linkplain" href="#" onclick="if (window.confirm('[~Si no pulsa Guardar se perderán los cambios realizados. ¿Está seguro?~]')) window.close();">Close</a>
+      &nbsp;&nbsp;<img src="../images/images/resort.gif" border="0" align="middle">&nbsp;<a class="linkplain" href="javascript:reSort()">Reorder</a>
 
       <hr size="1">
     </td>
@@ -499,7 +499,7 @@
 <img width="32" height="32" align="middle" border="0" src="../images/images/webbuilder/text.jpg">
 </td>
 <td valign="center">
-<span class="title1">[~TEXTOS~]</span>
+<span class="title1">TEXTOS</span>
 </td>
 </tr>
 </table>
@@ -526,7 +526,7 @@
   <tr>
     <td colspan="2" class="formstrong"><% out.write(sCurId); %></td>
     <td align="right">
-      <img src="../images/images/webbuilder/cleanup.gif" width="16" height="16" border="0" align="middle">&nbsp;<a class="linkplain" href="javascript:void(0)" onclick="javascript:cleanParagraph('<%=sCurId%>');">[~Limpiar contenido~]</a>
+      <img src="../images/images/webbuilder/cleanup.gif" width="16" height="16" border="0" align="middle">&nbsp;<a class="linkplain" href="javascript:void(0)" onclick="javascript:cleanParagraph('<%=sCurId%>');">Clear contents</a>
     </td>
   </tr>
   <tr>
@@ -537,7 +537,7 @@
     </td>
   </tr>
   <tr>
-    <td width="" class="formstrong">[~Enlace:~]&nbsp;</td>
+    <td width="" class="formstrong">Link:&nbsp;</td>
     <td class="formplain">
 <%
   String sUrl;
@@ -550,7 +550,7 @@
 <%
  if (sDocType.equals("website")) {
 %>
-      <a href="javascript:void(0)" onclick="window.open('wb_addlink.jsp?itemid=Paragraph.<% out.write(sCurId); %>.url&file_pageset=<%=sFilePageSet%>&file_template=<%=sFileTemplate%>','wAddLink','top=' + (screen.height-320)/2 + ',left=' + (screen.width-200)/2 + ',height=320,width=200')">[~Enlace especial~]</a>
+      <a href="javascript:void(0)" onclick="window.open('wb_addlink.jsp?itemid=Paragraph.<% out.write(sCurId); %>.url&file_pageset=<%=sFilePageSet%>&file_template=<%=sFileTemplate%>','wAddLink','top=' + (screen.height-320)/2 + ',left=' + (screen.width-200)/2 + ',height=320,width=200')">Special link</a>
 <% } %>
     </td>
     <td class="formplain" valign="middle" align="right">
@@ -560,9 +560,9 @@
             <img src="../images/images/webbuilder/mailmerge.gif" border="0" align="middle">
           </td>
           <td class="formplain" valign="middle" align="left">
-            [~Insertar campo variable~]&nbsp;
-            <select name="Mailmerge_<%=sCurId%>"><option value="{#[~Datos.Nombre~]}">[~Nombre~]<option value="{#[~Datos.Apellidos~]}">[~Apellidos~]<option value="{#[~Datos.Email~]}">[~Correo Electr&oacute;nico~]<option value="{#[~Sistema.Hora~]}">[~Hora~]<option value="{#[~Sistema.Fecha~]}">[~Fecha~]</select>&nbsp;
-            <a href="javascript:void(0)" onclick="insertVariable(document.frmEditBlock.elements['Paragraph.<%=sCurId%>.text'],document.frmEditBlock.elements['Mailmerge_<%=sCurId%>'].options[document.frmEditBlock.elements['Mailmerge_<%=sCurId%>'].selectedIndex].value)">[~Insertar~]</a>
+            Insert variable field&nbsp;
+            <select name="Mailmerge_<%=sCurId%>"><option value="{#Data.Name}">Name<option value="{#Data.Surname}">Surname<option value="{#Data.Email}">e-mail<option value="{#System.Hour}">Hour<option value="{#System.Date}">Date</select>&nbsp;
+            <a href="javascript:void(0)" onclick="insertVariable(document.frmEditBlock.elements['Paragraph.<%=sCurId%>.text'],document.frmEditBlock.elements['Mailmerge_<%=sCurId%>'].options[document.frmEditBlock.elements['Mailmerge_<%=sCurId%>'].selectedIndex].value)">Insert</a>
           </td>
         </tr>
       </table>
@@ -584,7 +584,7 @@
       <img align="middle" width="32" height="32" border="0" src="../images/images/webbuilder/picture.jpg">
     </td>
     <td valign="center">
-      <span class="title1">[~IMAGENES~]</span>
+      <span class="title1">IMAGES</span>
     </td>
   </tr>
 </table>
@@ -624,7 +624,7 @@
       <table cellspacing="0" cellpadding="0" class="formfront" border="0" width="100%">
         <tr>
           <td align="left" class="formstrong"><%=sCurId%></td>
-          <td align="right"><img src="../images/images/webbuilder/cleanup.gif" width="16" height="16" border="0" align="middle">&nbsp;<a class="linkplain" href="javascript:void(0)" onclick="javascript:cleanImage('<%=sCurId%>')">[~Limpiar contenido~]</a>&nbsp;&nbsp;<img border="0" name="Image.<%=sCurId%>.view" align="middle" border="0" src="../images/images/viewtxt.gif" alt="[~Ver imagen actual~]">&nbsp;<a href="javascript:void(0)" onclick="javascript:openPicture(document.forms[0].elements['Image.<%=sCurId%>.path'].value);" class="linkplain">[~Ver imagen~]</a></td>
+          <td align="right"><img src="../images/images/webbuilder/cleanup.gif" width="16" height="16" border="0" align="middle">&nbsp;<a class="linkplain" href="javascript:void(0)" onclick="javascript:cleanImage('<%=sCurId%>')">Clear contents</a>&nbsp;&nbsp;<img border="0" name="Image.<%=sCurId%>.view" align="middle" border="0" src="../images/images/viewtxt.gif" alt="View current image">&nbsp;<a href="javascript:void(0)" onclick="javascript:openPicture(document.forms[0].elements['Image.<%=sCurId%>.path'].value);" class="linkplain">View image</a></td>
         </tr>
       </table>
       <input type="hidden" name="Image.<%=sCurId%>.id" value="<%=sCurId%>">
@@ -633,30 +633,30 @@
   </tr>
   <tr>
     <td class="formplain">
-    <b>[~Descripci&oacute;n:~]</b></td>
+    <b>Description:</b></td>
     <td>
       <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
           <td><input style="width:600" type="text" name="Image.<%=sCurId%>.alt" value="<%=sCurAlt%>"></td>
           <td align="right">
-            <a href="javascript:void(0);"><img border="0" src="../images/images/find16.gif" onclick="javascript:setItem('Image.<%=sCurId%>.height','');setItem('Image.<%=sCurId%>.width','');window.open('wb_imageslist.jsp?doctype=<%=sDocType%>&id_domain=<%=id_domain%>&n_domain=<%=n_domain%>&gu_workarea=<%=gu_workarea%>&refreshitem=Image.<%=sCurId%>','wImagesList','top=' + (screen.height-600)/2 + ',left=' + (screen.width-800)/2 + ',width=800,height=600,scrollbars=yes');" alt="[~Seleccionar otra imagen~]"></a>
+            <a href="javascript:void(0);"><img border="0" src="../images/images/find16.gif" onclick="javascript:setItem('Image.<%=sCurId%>.height','');setItem('Image.<%=sCurId%>.width','');window.open('wb_imageslist.jsp?doctype=<%=sDocType%>&id_domain=<%=id_domain%>&n_domain=<%=n_domain%>&gu_workarea=<%=gu_workarea%>&refreshitem=Image.<%=sCurId%>','wImagesList','top=' + (screen.height-600)/2 + ',left=' + (screen.width-800)/2 + ',width=800,height=600,scrollbars=yes');" alt="Select another image"></a>
           </td>
         </tr>
       </table>
     </td>
   </tr>
   <tr>
-    <td class="formplain"><b>[~Tama&ntilde;o~]</b></td>
-    <td class="formplain"><b>[~Ancho:~]&nbsp;</b><input type="text" size="1" name="Image.<%=sCurId%>.width" value="<%=sCurWidth%>">&nbsp;<b>[~Alto:~]&nbsp;</b><input type="text" size="1" name="Image.<%=sCurId%>.height" value="<%=sCurHeight%>"></td>
+    <td class="formplain"><b>Size</b></td>
+    <td class="formplain"><b>Width:&nbsp;</b><input type="text" size="1" name="Image.<%=sCurId%>.width" value="<%=sCurWidth%>">&nbsp;<b>Height:&nbsp;</b><input type="text" size="1" name="Image.<%=sCurId%>.height" value="<%=sCurHeight%>"></td>
   </tr>
   <tr>
-    <td class="formplain"><b>[~Enlace:~]</b></td>
+    <td class="formplain"><b>Link:</b></td>
     <td class="formplain">
       <input type="text" name="Image.<%=sCurId%>.url" value="<%=sCurUrl%>" size="60">
 <%
  if (sDocType.equals("website")) {
 %>
-      <a href="javascript:void(0)" onclick="window.open('wb_addlink.jsp?itemid=Image.<%=sCurId%>.url&file_pageset=<%=sFilePageSet%>&file_template=<%=sFileTemplate%>','wAddLink','top=' + (screen.height-320)/2 + ',left=' + (screen.width-200)/2 + ',height=320,width=200')">[~Enlace especial~]</a>
+      <a href="javascript:void(0)" onclick="window.open('wb_addlink.jsp?itemid=Image.<%=sCurId%>.url&file_pageset=<%=sFilePageSet%>&file_template=<%=sFileTemplate%>','wAddLink','top=' + (screen.height-320)/2 + ',left=' + (screen.width-200)/2 + ',height=320,width=200')">Special link</a>
 <%
  }
 %>

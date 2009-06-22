@@ -1,4 +1,4 @@
-<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//EN" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">
 <HTML>
   <HEAD>
@@ -11,7 +11,7 @@
   </FRAMESET>
   <NOFRAMES>
     <BODY>
-      <P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
+      <P>This page uses frames but your browser does not allow them</P>
     </BODY>
   </NOFRAMES>
 </HTML>

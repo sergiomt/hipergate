@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.crm.Contact" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.crm.Contact" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><% 
 
 /*
@@ -117,7 +117,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: [~Notas sobre ~]<%=sContactNm%></TITLE>
+  <TITLE>hipergate :: Notes about&nbsp;<%=sContactNm%></TITLE>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
@@ -255,12 +255,12 @@
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8">
   <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Actualizar~]"> [~Actualizar~]</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="[~Imprimir~]"> [~Imprimir~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
   </DIV></DIV>
   <BR><BR>
-  <TABLE><TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Notas sobre ~]<%=sContactNm%> (<%=sCompanyNm%>)</FONT></TD></TR></TABLE>
+  <TABLE><TR><TD CLASS="striptitle"><FONT CLASS="title1">Notes about&nbsp;<%=sContactNm%> (<%=sCompanyNm%>)</FONT></TD></TR></TABLE>
   <FORM METHOD="post" ACTION="note_edit_store.jsp" TARGET="notesdelete">
       <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
       <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
@@ -275,30 +275,30 @@
   <TABLE CELLSPACING="2" CELLPADDING="2">
      <TR><TD COLSPAN="7" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
      <TR>
-       <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" HEIGHT="16" BORDER="0" ALT="[~Nueva~]"></TD>
+       <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" HEIGHT="16" BORDER="0" ALT="New"></TD>
        <TD VALIGN="middle">
 <% if (bIsGuest) { %>
-         <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Nueva~]</A>
+         <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">New</A>
 <% } else { %>
-         <A HREF="#" onclick="addNote()" CLASS="linkplain">[~Nueva~]</A>
+         <A HREF="#" onclick="addNote()" CLASS="linkplain">New</A>
 <% } %>
        </TD>
-       <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar~]"></TD>
+       <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
        <TD>
 <% if (bIsGuest) { %>
-         <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Eliminar~]</A>
+         <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">Delete</A>
 <% } else { %>
-         <A HREF="#" onclick="deleteInstances()" CLASS="linkplain">[~Eliminar~]</A>
+         <A HREF="#" onclick="deleteInstances()" CLASS="linkplain">Delete</A>
 <% } %>
        </TD>
-       <TD>&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" WIDTH="22" HEIGHT="16" BORDER="0" ALT="[~Buscar~]"></TD>
+       <TD>&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" WIDTH="22" HEIGHT="16" BORDER="0" ALT="Search"></TD>
        <TD><INPUT TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>"></TD>
-       <TD><A CLASS="linkplain" HREF="javascript:findNote()">[~Buscar~]</A></TD>
+       <TD><A CLASS="linkplain" HREF="javascript:findNote()">Search</A></TD>
      </TR>
      <TR><TD COLSPAN="7" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
   </TABLE>
 <% if (sFind.length()>0 && iInstanceCount==0)
-     out.write("<BR><FONT CLASS=\"textplain\">[~No se encontr&oacute; ninguna nota que contenga la cadena ~]<I>" + sFind + "</I></FONT><BR>");
+     out.write("<BR><FONT CLASS=\"textplain\">Could not find any note containing substring;nbsp;<I>" + sFind + "</I></FONT><BR>");
 %>
       <TABLE CELLSPACING="1" CELLPADDING="0">
 <%
@@ -320,9 +320,9 @@
         <TR>
           <!-- Titulo -->
           <TD CLASS="tableheader" WIDTH="510px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B><%=sNoteTl%></B></TD>
-          <TD CLASS="tableheader" WIDTH="80px" ALIGN="right" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(2);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por Fecha~]"></A>&nbsp;<B>[~Fecha~]</B>&nbsp;</TD>
+          <TD CLASS="tableheader" WIDTH="80px" ALIGN="right" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(2);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by Date"></A>&nbsp;<B>Date</B>&nbsp;</TD>
 <%        if (0==i) { %> 
-          <TD CLASS="tableheader" WIDTH="20px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" ALIGN="center"><A HREF="#" onclick="selectAll()" TITLE="Seleccionar todos"><IMG SRC="../images/images/selall16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Seleccionar todas~]"></A></TD>
+          <TD CLASS="tableheader" WIDTH="20px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" ALIGN="center"><A HREF="#" onclick="selectAll()" TITLE="Seleccionar todos"><IMG SRC="../images/images/selall16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Select all"></A></TD>
 <%        } else  {%> 
           <TD CLASS="tableheader" WIDTH="20px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;</TD>
 <%        } %> 
@@ -342,7 +342,7 @@
         </TR>
         <TR>
           <TD CLASS="strip1" COLSPAN="3">
-            <INPUT TYPE="button" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onClick="saveNote(<%=iNoteId%>)">
+            <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onClick="saveNote(<%=iNoteId%>)">
           </TD>
         </TR>
         <TR><TD CLASS="strip1" COLSPAN="3"><IMG SRC="../images/images/spacer.gif" WIDTH="1" HEIGHT="2" BORDER="0"></TD></TR>

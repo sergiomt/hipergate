@@ -1,4 +1,4 @@
-<%@ page import="java.io.File,com.knowgate.misc.*,java.io.*,java.lang.*,java.util.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.workareas.FileSystemWorkArea" language="java" session="false" %>
+﻿<%@ page import="java.io.File,com.knowgate.misc.*,java.io.*,java.lang.*,java.util.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.workareas.FileSystemWorkArea" language="java" session="false" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 
 /*
@@ -173,7 +173,7 @@
           	contador++;
               }
            if (contador==0)
-             alert("[~Debe seleccionar al menos una imagen~]");
+             alert("Must check at least one image");
            else
              document.location="images_delete.jsp?checkeditems=" + lista;
       }       
@@ -203,20 +203,20 @@
 <img src="<%=sURLRoot%>/skins/<%=sSkin%>/hglogopeq.jpg" border="0">
 </td>
 <td align="right">
-<input type="button" onclick="window.opener.focus();window.close();" class="closebutton" value="[~Cerrar~]">
+<input type="button" onclick="window.opener.focus();window.close();" class="closebutton" value="Close">
 </td>
 </tr>
 <tr>
 <td colspan="2" valign="center" bgcolor="#cccccc">
-<span class="title1">[~Im&aacute;genes disponibles~]</span>
+<span class="title1">Available Images</span>
 </td>
 </tr>
 </table>
 <TABLE CELLSPACING="2" CELLPADDING="2">
   <TR><TD COLSPAN="4" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
   <TR>
-    <TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nueva imagen~]"></TD>
-    <TD ALIGN="LEFT" VALIGN="middle"><A HREF="#" onclick="uploadImage()" CLASS="linkplain">[~Nueva imagen~]</A></TD>
+    <TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Image"></TD>
+    <TD ALIGN="LEFT" VALIGN="middle"><A HREF="#" onclick="uploadImage()" CLASS="linkplain">New Image</A></TD>
     <TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar imágenes~]"></TD>
     <TD ALIGN="LEFT"VALIGN="middle"><A HREF="javascript:if (window.confirm('[~Cuando elimina imagenes, estas dejaran de aparecer en las newsletter que las utilicen. ¿Esta seguro?~]')) deleteImages()" CLASS="linkplain">[~Eliminar imágenes~]</A></TD>
   </TR>

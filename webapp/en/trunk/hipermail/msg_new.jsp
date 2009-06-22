@@ -1,4 +1,4 @@
-<%@ page import="java.net.URL,javax.mail.Session,javax.mail.Message,javax.mail.Folder,javax.mail.MessagingException,javax.mail.URLName,javax.mail.Address,javax.mail.internet.*,java.util.Properties,java.net.URLDecoder,java.io.IOException,java.sql.ResultSet,java.sql.SQLException,java.sql.PreparedStatement,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipermail.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URL,javax.mail.Session,javax.mail.Message,javax.mail.Folder,javax.mail.MessagingException,javax.mail.URLName,javax.mail.Address,javax.mail.internet.*,java.util.Properties,java.net.URLDecoder,java.io.IOException,java.sql.ResultSet,java.sql.SQLException,java.sql.PreparedStatement,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.ProductLocation,com.knowgate.dfs.FileSystem,com.knowgate.hipermail.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="msg_txt_util.jspf" %><%@ include file="mail_env.jspf" %><%@ include file="../methods/page_prolog.jspf" %><%
 
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
@@ -30,8 +30,10 @@
     sWebRoot = sWebRoot.substring(0,sWebRoot.lastIndexOf("/"));
   }
   sWebRoot = com.knowgate.misc.Gadgets.chomp (sWebRoot, "/");
+
+  String sTmpDir = Environment.getProfileVar(GlobalDBBind.getProfileName(), "temp", Environment.getTempDir());
+  sTmpDir = com.knowgate.misc.Gadgets.chomp(sTmpDir,java.io.File.separator);
     
-  JDCConnection oConn = null;
   DBStore oRDBMS = null;
   DBFolder oFolder = null;
   DBFolder oDrafts = null;
@@ -41,6 +43,7 @@
   
   String sMailHost = oMacc.getString(DB.outgoing_server);
   SessionHandler oHndl = null;
+  Address[] aTo = null;
   
   try {
     oHndl = new SessionHandler(oMacc,sMBoxDir);
@@ -61,23 +64,65 @@
     } else if (reply.equals(action)) {
       oMsg = DraftsHelper.draftMessageForReply(oDrafts, sMailHost, gu_workarea, id_user, oFolder, gu_mimemsg, false, contenttype);
       tx_subject = "Re: " + oMsg.getSubject();
-      Address[] aTo = oMsg.getRecipients(Message.RecipientType.TO);
+      aTo = new Address[]{oOriginalMsg.getFromRecipient()};
       if (aTo!=null) {
-	if (aTo.length>0) {
+	      if (aTo.length>0) {
           InternetAddress oAdr = (InternetAddress) aTo[0];
           sTo = oAdr.getAddress();
-        }
-      }
+        } // fi
+      } // fi
     }
     else if (replyall.equals(action)) {
       oMsg = DraftsHelper.draftMessageForReply(oDrafts, sMailHost, gu_workarea, id_user, oFolder, gu_mimemsg, true, contenttype);
       tx_subject = "Re: " + oMsg.getSubject();
-      sTo = RecipientsHelper.joinAddressList(oMsg.getRecipients(Message.RecipientType.TO));
+      aTo = new Address[]{oOriginalMsg.getFromRecipient()};
+      if (aTo!=null) {
+	      if (aTo.length>0) {
+          InternetAddress oAdr = (InternetAddress) aTo[0];
+          sTo = oAdr.getAddress();
+        } // fi
+      } // fi
       sCc = RecipientsHelper.joinAddressList(oMsg.getRecipients(Message.RecipientType.CC));
     }
     else if (bo_new) {
       oMsg = DraftsHelper.draftMessage(oDrafts, sMailHost, gu_workarea, id_user, contenttype);
-      sTo = nullif(request.getParameter("to"));
+      sTo = nullif(request.getParameter("to"),sTo);
+      
+      String gu_location = request.getParameter("gu_location");
+      if (gu_location!=null) {
+        Object oMax = DBCommand.queryMax(oRDBMS.getConnection(), DB.id_part, DB.k_mime_parts, DB.gu_mimemsg+"='"+oMsg.getMessageGuid()+"'");
+        int iLastPart;
+        if (oMax!=null)
+          iLastPart = Integer.parseInt(oMax.toString());
+				else
+					iLastPart = 0;
+
+				ProductLocation oLoca = new ProductLocation(oRDBMS.getConnection(), gu_location);
+
+				FileSystem oFs = new FileSystem();
+				oFs.copy(oLoca.getURL(), "file://" + sTmpDir + gu_location);
+				
+        String sType = com.knowgate.hipermail.DBMimePart.getMimeType(oRDBMS.getConnection(),oLoca.getString(DB.xfile));
+
+			  oRDBMS.getConnection().setAutoCommit(false);
+    		PreparedStatement oStmt = oRDBMS.getConnection().prepareStatement("INSERT INTO " + DB.k_mime_parts + "("+DB.gu_mimemsg+","+DB.id_message+","+DB.id_part+","+DB.id_disposition+","+DB.id_content+","+DB.id_type+","+DB.len_part+","+DB.de_part+","+DB.file_name+") VALUES ('"+oMsg.getMessageGuid()+"',?,?,'reference',?,?,?,?,?)");
+	      if (oMsg.getMessageID()==null)
+	        oStmt.setString(1, oMsg.getMessageGuid());
+	      else if (oMsg.getMessageID().length()==0)
+	        oStmt.setString(1, oMsg.getMessageGuid());
+				else
+	        oStmt.setString(1, oMsg.getMessageID());
+        oStmt.setInt(2, iLastPart+1);
+	      oStmt.setString(3, sType);        
+	      oStmt.setString(4, sType);        
+        oStmt.setInt(5, oLoca.getInt(DB.len_file));
+	      oStmt.setString(6, oLoca.getString(DB.xfile));
+	      oStmt.setString(7, sTmpDir + gu_location);	
+	      oStmt.executeUpdate();
+			  oStmt.close();
+			  oRDBMS.getConnection().commit();
+      } // fi (gu_location)
+      
     } else {
       oMsg = oFolder.getMessageByGuid(gu_mimemsg);
 
@@ -98,7 +143,7 @@
       tx_content = oMsg.getText();
     
     sGuid = oMsg.getMessageGuid();    
-    sId = oMsg.getMessageID();
+    sId = DBCommand.queryStr(oRDBMS.getConnection(),"SELECT "+DB.id_message+" FROM "+DB.k_mime_msgs+" WHERE "+DB.gu_mimemsg+"='"+sGuid+"'");
     
     oFolder.close(false);
     oFolder=null;
@@ -125,12 +170,17 @@
   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
 <% if (bo_new) { %>
   <META HTTP-EQUIV="refresh" CONTENT="0; url=msg_new.jsp?gu_mimemsg=<%=sGuid+(id_message==null ? "" : "&msgid="+sId)+(gu_contact==null ? "" : "&gu_contact="+gu_contact)+(action==null ? "" : "&action="+action)+(folder==null ? "" : "&folder="+folder)+"&to="+Gadgets.URLEncode(sTo)%>">
-<% } %>
+<% } else if (gu_mimemsg!=null) { %>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    parent.frames[1].location = "<%="msg_attachs.jsp?msgid="+id_message + (folder==null ? "" : "&folder=" + folder) + "&gu_mimemsg=" + gu_mimemsg%>";
+  </SCRIPT>
+<% } %>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../fckeditor/fckeditor.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
       function validate() {
@@ -138,6 +188,7 @@
         var del;
         var rec;
         var adr;
+        var edt;
         
         if ((frm.TO.value.indexOf(',')>=0 && frm.TO.value.indexOf(';')>=0) ||
             (frm.CC.value.indexOf(',')>=0 && frm.CC.value.indexOf(';')>=0) ||
@@ -146,51 +197,61 @@
           return false;
         }
 	
-	if (frm.TO.value.length>0) {
-	  rec = frm.TO.value.split(frm.TO.value.indexOf(',')>=0 ? "," : ";");
-	
-	  for (var t=0; t<rec.length; t++) {
-	    adr = ltrim(rtrim(rec[t]));
-	    if (adr.length>0) {
-	      if ((!check_email(adr) && adr.charAt(0)!='{') || adr.length>254) {
-	        alert ("Mail address " + adr + " is not valid");
-	        return false;
-	      } // fi (check_email) 
-	    } // fi (adr!="") 
-	  } // next
-	} // fi (TO!="")
-
-	if (frm.CC.value.length>0) {
-	  rec = frm.CC.value.split(frm.CC.value.indexOf(',')>=0 ? "," : ";");
-	
-	  for (var c=0; c<rec.length; c++) {
-	    adr = ltrim(rtrim(rec[c]));
-	    if (adr.length>0) {
-	      if ((!check_email(adr) && adr.charAt(0)!='{') || adr.length>254) {
-	        alert ("Mail address " + adr + " is not valid");
-	        return false;
-	      } // fi (check_email) 
-	    } // fi (adr!="") 
-	  } // next
-	} // fi (CC!="")
-
-	if (frm.BCC.value.length>0) {
-	  rec = frm.BCC.value.split(frm.BCC.value.indexOf(',')>=0 ? "," : ";");
-	
-	  for (var b=0; b<rec.length; b++) {
-	    adr = ltrim(rtrim(rec[b]));
-	    if (adr.length>0) {
-	      if ((!check_email(adr) && adr.charAt(0)!='{') || adr.length>254) {
-	        alert ("Mail address " + adr + " is not valid");
-	        return false;
-	      } // fi (check_email) 
-	    } // fi (adr!="") 
-	  } // next
-	} // fi (CC!="")
-	
-	frm.FROM.value = frm.SEL_FROM.options[frm.SEL_FROM.selectedIndex].value;
-	
-	return true;
+	      if (frm.TO.value.length>0) {
+      	  rec = frm.TO.value.split(frm.TO.value.indexOf(',')>=0 ? "," : ";");
+      	
+      	  for (var t=0; t<rec.length; t++) {
+      	    adr = ltrim(rtrim(rec[t]));
+      	    if (adr.length>0) {
+      	      if ((!check_email(adr) && adr.charAt(0)!='{') || adr.length>254) {
+      	        alert ("Mail address " + adr + " is not valid");
+      	        return false;
+      	      } // fi (check_email) 
+      	    } // fi (adr!="") 
+      	  } // next
+      	} // fi (TO!="")
+      
+      	if (frm.CC.value.length>0) {
+      	  rec = frm.CC.value.split(frm.CC.value.indexOf(',')>=0 ? "," : ";");
+      	
+      	  for (var c=0; c<rec.length; c++) {
+      	    adr = ltrim(rtrim(rec[c]));
+      	    if (adr.length>0) {
+      	      if ((!check_email(adr) && adr.charAt(0)!='{') || adr.length>254) {
+      	        alert ("Mail address " + adr + " is not valid");
+      	        return false;
+      	      } // fi (check_email) 
+      	    } // fi (adr!="") 
+      	  } // next
+      	} // fi (CC!="")
+      
+      	if (frm.BCC.value.length>0) {
+      	  rec = frm.BCC.value.split(frm.BCC.value.indexOf(',')>=0 ? "," : ";");
+      	
+      	  for (var b=0; b<rec.length; b++) {
+      	    adr = ltrim(rtrim(rec[b]));
+      	    if (adr.length>0) {
+      	      if ((!check_email(adr) && adr.charAt(0)!='{') || adr.length>254) {
+      	        alert ("Mail address " + adr + " is not valid");
+      	        return false;
+      	      } // fi (check_email) 
+      	    } // fi (adr!="") 
+      	  } // next
+      	} // fi (CC!="")
+      	
+      	frm.FROM.value = frm.SEL_FROM.options[frm.SEL_FROM.selectedIndex].value;
+      	
+<% if (contenttype.equals("html")) { %>
+        edt = FCKeditorAPI.GetInstance("MSGBODY");
+        
+        if (edt.GetHTML().indexOf("{#")>=0) {
+          if (frm.TO.value.indexOf("{")<0 && frm.CC.value.indexOf("{")<0 && frm.BCC.value.indexOf("{")<0) {
+            alert ("[~El cuerpo del mensaje contiene campos personalizados, pero no está siendo enviado a ninguna lista de distribución~]");
+            return false;
+          }
+        }
+<% } %>
+      	return true;
       } // validate
 
       // ----------------------------------------------------------------------
@@ -215,17 +276,17 @@
             alert ("You must specify at least one recipient");
             return false;
           }
-	  else if (frm.SUBJECT.value.length==0 || frm.SUBJECT.value=="no subject") {
-	    if (window.confirm("Message has no subject. Are you sure that you want to send it anyway?")) {
+	        else if (frm.SUBJECT.value.length==0 || frm.SUBJECT.value=="no subject") {
+	          if (window.confirm("[~El mensaje no tiene asunto. ¿Está seguro de que desea enviarlo de todas formas?~]")) {
               frm.action = "msg_send.jsp";
-	      frm.submit();
-	    }
-	  }
-	  else {
+	            frm.submit();
+	          }
+	        }
+	        else {
             frm.action = "msg_send.jsp";
-	    frm.submit();
-	  }
-	} // fi (validate())
+	          frm.submit();
+	        }
+	      } // fi (validate())
       } // send
 
       // ----------------------------------------------------------------------
@@ -233,6 +294,36 @@
       function attachfiles() {
         window.open ("attachfiles.htm?gu_mimemsg=<%=gu_mimemsg%>&id_message=<%=(id_message==null ? "" : id_message)%>", "attachfiles_<%=gu_mimemsg%>", "toolbar=no,directories=no,menubar=no,width=500,height=400");
       }
+
+      // ----------------------------------------------------------------------
+
+			function insertCustomField() {
+        var frm = document.forms[0];
+<% if (contenttype.equals("html")) { %>
+        var oEditor = FCKeditorAPI.GetInstance("MSGBODY") ;
+				if ( oEditor.EditMode == FCK_EDITMODE_WYSIWYG ) {
+          oEditor.InsertHtml(getCombo(frm.sel_custom)) ;
+        }
+        else {
+          alert( 'You must be on WYSIWYG mode!' ) ;
+        }
+<% } else { %>
+        if (document.selection) {
+			    frm.MSGBODY.focus();
+
+					sel = document.selection.createRange();
+					sel.text = getCombo(frm.sel_custom);
+        }
+				else if (frm.MSGBODY.selectionStart || frm.MSGBODY.selectionStart == '0') {
+				  var startPos = frm.MSGBODY.selectionStart;
+					var endPos = frm.MSGBODY.selectionEnd;
+					frm.MSGBODY.value = frm.MSGBODY.value.substring(0, startPos)+getCombo(frm.sel_custom)+frm.MSGBODY.value.substring(endPos, frm.MSGBODY.value.length);
+				} else {
+				  frm.MSGBODY.value += getCombo(frm.sel_custom);
+			  }
+<% } %>
+      } // insertCustomField
+			
     //-->
   </SCRIPT>
 </HEAD>
@@ -292,7 +383,7 @@
             <TD VALIGN="middle"><A CLASS="linkplain" HREF="#" onclick="savemsg()" TITLE="Save"><B>Save Message</B></A></TD>
             <TD VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="8" HEIGHT="1" BORDER="0" ALT=""></TD>
 	    <TD VALIGN="middle">
-	      <TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+	      <TABLE SUMMARY="Plain Text or HTML" BORDER="0" CELLSPACING="0" CELLPADDING="0">
 <%   if (bIE) { %>
 	        <TR>
 	          <TD>
@@ -306,8 +397,26 @@
 	          </TD>
 	        </TR>
 	      </TABLE>
-            </TD>
-          </TR>
+      </TD>
+
+	    <TD VALIGN="middle">
+	      <TABLE SUMMARY="Custom Tags" BORDER="0" CELLSPACING="0" CELLPADDING="0">
+	        <TR>
+	          <TD CLASS="formplain">[~Campos personalizados~]</TD>
+	        </TR>
+	        <TR>
+	          <TD>
+						  <SELECT NAME="sel_custom" CLASS="combomini"><OPTION VALUE=""></OPTION><OPTION VALUE="{#Data.Name}">[~Nombre~]</OPTION><OPTION VALUE="{#Data.Surname}">[~Apellidos~]</OPTION><OPTION VALUE="{#Data.Legal_Name}">[~Razón Social~]</OPTION><OPTION VALUE="{#Address.EMail}">[~e-mail~]</OPTION><OPTION VALUE="{#Address.Street_Type}">[~Tipo de Vía~]</OPTION><OPTION VALUE="{#Address.Street_Name}">[~Nombre de Vía~]</OPTION><OPTION VALUE="{#Address.Street_Num}">[~Número en la Vía~]</OPTION><OPTION VALUE="{#Address.Line1}">[~Dirección Línea 1~]</OPTION><OPTION VALUE="{#Address.Line2}">[~Dirección Línea 2~]</OPTION><OPTION VALUE="{#Address.Country}">[~Pais~]</OPTION><OPTION VALUE="{#Address.State}">[~Estado/Provincia~]</OPTION><OPTION VALUE="{#Address.City}">[~Ciudad~]</OPTION><OPTION VALUE="{#Address.Zipcode}">[~Código Postal~]</OPTION><OPTION VALUE="{#Address.Proffesional_Phone}">[~Teléfono~]</OPTION></SELECT>&nbsp;<INPUT TYPE="button" CLASS="minibutton" VALUE="[~Insertar~]" onclick="insertCustomField()">
+	          </TD>
+	        </TR>
+	      </TABLE>
+      </TD>
+<% if (contenttype.equals("html")) { %>
+	    <TD VALIGN="top" CLASS="formplain">
+	    	<INPUT TYPE="checkbox" NAME="chk_webbeacon" VALUE="1">&nbsp;Insertar Web Beacon
+      </TD>
+<% } %>
+    </TR>
         </TABLE>
       </TD>        
     </TR>    

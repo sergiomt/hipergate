@@ -1,4 +1,4 @@
-<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <% 
 /*
   Copyright (C) 2004  Know Gate S.L. All rights reserved.

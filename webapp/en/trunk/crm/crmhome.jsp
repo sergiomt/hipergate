@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 
@@ -170,7 +170,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: [~Gesti&oacute;n de Contactos~]</TITLE> 
+  <TITLE>hipergate :: Contact Management</TITLE> 
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
@@ -216,7 +216,7 @@
       var nmc = frm.full_name.value;
 
       if (nmc.length==0) {
-        alert ("[~Introduzca el nombre o apellidos del Individuo a buscar~]");
+        alert ("Type name or surname for individual to find");
         return false;
       }  
       
@@ -249,6 +249,14 @@
     }
 
     // ----------------------------------------------------
+    
+    function importVCard() {
+          
+      var w = window.open("vcardloader1.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>","vcardloader","menubar=no,toolbar=no,resizable=yes,scrollbars=yes,status=yes,height=460,width=490");
+      w.focus();
+    }
+
+    // ----------------------------------------------------
         	
     function createList() {	  
        // [~//Crear una nueva lista de distribución~]
@@ -274,7 +282,7 @@
 <BODY  TOPMARGIN="0" MARGINHEIGHT="0">
 <%@ include file="../common/tabmenu.jspf" %>
 <BR>
-<TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Gesti&oacute;n de Contactos~]</FONT></TD></TR></TABLE>
+<TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">Contact Management</FONT></TD></TR></TABLE>
 <FORM>
   <TABLE  BORDER="0">
     <TR>
@@ -290,7 +298,7 @@
       	          <TD ROWSPAN="2" CLASS="subtitle" ALIGN="right"><IMG SRC="../skins/<%=sSkin%>/tab/angle45_24x24.gif" style="display:block" WIDTH="24" HEIGHT="24" BORDER="0"></TD>
       	        </TR>
                 <TR>
-            	  <TD BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" COLSPAN="2" CLASS="subtitle" ALIGN="left" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">[~Compa&ntilde;&iacute;as~]</TD>
+            	  <TD BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" COLSPAN="2" CLASS="subtitle" ALIGN="left" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">Companies</TD>
                 </TR>
               </TABLE>
             </TD>
@@ -309,21 +317,21 @@
               <TABLE CELLSPACING="8" BORDER="0">
                 <TR>
                   <TD ROWSPAN="2">
-                    <A HREF="company_listing_f.jsp?selected=2&subselected=0"><IMG style="display:block" SRC="../images/images/crm/companies.gif" BORDER="0" ALT="[~Compa&ntilde;&iacute;as~]"></A>
+                    <A HREF="company_listing_f.jsp?selected=2&subselected=0"><IMG style="display:block" SRC="../images/images/crm/companies.gif" BORDER="0" ALT="Companies"></A>
                   </TD>
                   <TD>
                     <INPUT TYPE="text" NAME="nm_company" MAXLENGTH="50" STYLE="width:180px;text-transform:uppercase">
                   </TD>
                   <TD>
-                    <A HREF="#" onClick="searchCompany();return false" CLASS="linkplain">[~Buscar Compa&ntilde;&iacute;a~]</A>
+                    <A HREF="#" onClick="searchCompany();return false" CLASS="linkplain">Find Company</A>
                   </TD>
                 </TR>
       	        <TR>
                   <TD>
       <% if (bIsGuest) { %>
-                    <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Nueva Compa&ntilde;&iacute;a~]</A>
+                    <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">New Company</A>
       <% } else { %>
-                    <A HREF="#" onclick="createCompany();return false" CLASS="linkplain">[~Nueva Compa&ntilde;&iacute;a~]</A>
+                    <A HREF="#" onclick="createCompany();return false" CLASS="linkplain">New Company</A>
       <% } %>
                   </TD>
                   <TD></TD>
@@ -348,7 +356,7 @@
             <TD>
               <TABLE CELLSPACING="0" CELLPADDING="0" BORDER="0">
                 <TR>
-            	  <TD BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" CLASS="subtitle" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" HEIGHT="1" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">[~Individuos~]</TD>
+            	  <TD BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" CLASS="subtitle" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" HEIGHT="1" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">Individuals</TD>
       	          <TD ALIGN="right"><IMG  SRC="../skins/<%=sSkin%>/tab/angle45_22x22.gif" WIDTH="22" HEIGHT="22" BORDER="0"></TD>
       	        </TR>
               </TABLE>
@@ -368,21 +376,21 @@
               <TABLE CELLSPACING="8" BORDER="0">
                 <TR>
                   <TD ROWSPAN="3">
-                    <A HREF="contact_listing_f.jsp?selected=2&subselected=1"><IMG style="display:block" SRC="../images/images/crm/contacts.gif" BORDER="0" ALT="[~Individuos~]"></A>
+                    <A HREF="contact_listing_f.jsp?selected=2&subselected=1"><IMG style="display:block" SRC="../images/images/crm/contacts.gif" BORDER="0" ALT="Individuals"></A>
                   </TD>
                   <TD>
                     <INPUT TYPE="text" NAME="full_name" MAXLENGTH="50" STYLE="width:180px">
                   </TD>
                   <TD>
-                    <A HREF="#" onClick="searchContact();return false;" CLASS="linkplain">[~Buscar Individuo~]</A>
+                    <A HREF="#" onClick="searchContact();return false;" CLASS="linkplain">Find Individual</A>
                   </TD>
                 </TR>
       	        <TR>
                   <TD>
       <% if (bIsGuest) { %>
-                    <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Nuevo Individuo~]</A>
+                    <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">New Individual</A>
       <% } else { %>
-                    <A HREF="#" onclick="createContact()" CLASS="linkplain">[~Nuevo Individuo~]</A>
+                    <A HREF="#" onclick="createContact()" CLASS="linkplain">New Individual</A>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <A HREF="contact_fastedit_f.jsp" CLASS="linkplain">[~Edición R&aacute;pida~]</A>
       <% } %>
@@ -393,12 +401,12 @@
                   <TD COLSPAN="2">
                     <TABLE BORDER="0">
                       <TR VALIGN="middle">
-                        <TD><IMG style="display:block" SRC="../images/images/crm/outlookexpress.gif" WIDTH="15" HEIGHT="18" BORDER="0"></TD>
+                        <TD><IMG style="display:block" SRC="../images/images/crm/outlookexpress2.gif" WIDTH="20" HEIGHT="20" BORDER="0"></TD>
                         <TD>
       <% if (bIsGuest) { %>
-                          <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Importar Contactos de Outlook Express~]</A>
+                          <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">Import Address Book Entries from outllok Express</A>
       <% } else { %>
-                          <A HREF="#" onclick="importWAB()" CLASS="linkplain">[~Importar Contactos de Outlook Express~]</A>
+                          <A HREF="#" onclick="importWAB()" CLASS="linkplain">Import Address Book Entries from outllok Express</A>
       <% } %>
                         </TD>
                       </TR>
@@ -406,9 +414,19 @@
                         <TD><IMG style="display:block" SRC="../images/images/crm/textload.gif" WIDTH="19" HEIGHT="18" BORDER="0"></TD>
                         <TD>
       <% if (bIsGuest) { %>
-                          <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Importar Contactos desde Texto~]</A>
+                          <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">Import contacts from text file</A>
       <% } else { %>
-                          <A HREF="#" onclick="importTXT()" CLASS="linkplain">[~Importar Contactos desde Texto~]</A>
+                          <A HREF="#" onclick="importTXT()" CLASS="linkplain">Import contacts from text file</A>
+      <% } %>
+                        </TD>
+                      </TR>
+                      <TR VALIGN="middle">
+                        <TD><IMG style="display:block" SRC="../images/images/crm/vcard.gif" WIDTH="23" HEIGHT="19" BORDER="0"></TD>
+                        <TD>
+      <% if (bIsGuest) { %>
+                          <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Importar Contactos desde VCard~]</A>
+      <% } else { %>
+                          <A HREF="#" onclick="importVCard()" CLASS="linkplain">[~Importar Contactos desde VCard~]</A>
       <% } %>
                         </TD>
                       </TR>
@@ -440,7 +458,7 @@
             <TD>
               <TABLE CELLSPACING="0" CELLPADDING="0" BORDER="0">
                 <TR>
-            	  <TD BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" CLASS="subtitle" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" HEIGHT="1" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">[~Listas de Distribuci&oacute;n~]</TD>
+            	  <TD BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" CLASS="subtitle" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" HEIGHT="1" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">Distribution Lists</TD>
       	          <TD ALIGN="right"><IMG  SRC="../skins/<%=sSkin%>/tab/angle45_22x22.gif" WIDTH="22" HEIGHT="22" BORDER="0"></TD>
       	        </TR>
               </TABLE>
@@ -454,7 +472,7 @@
               <TABLE CELLSPACING="8" BORDER="0">
                 <TR>
                   <TD ROWSPAN="2">
-                    <A HREF="list_listing_f.jsp?selected=2&subselected=3"><IMG style="display:block" SRC="../images/images/crm/mailserved.gif" BORDER="0" ALT="[~Listas~]"></A>
+                    <A HREF="list_listing_f.jsp?selected=2&subselected=3"><IMG style="display:block" SRC="../images/images/crm/mailserved.gif" BORDER="0" ALT="Lists"></A>
                   </TD>
                   <TD>
                     <SELECT NAME="sel_list" CLASS="textplain" STYLE="width:180px">
@@ -464,15 +482,15 @@
                     </SELECT>
                   </TD>
                   <TD>
-                    <A HREF="#" onclick="alert('[~La funcionalidad de envío directo está deshabilitada en la versión demostrativa~]')" CLASS="linkplain">[~Enviar Comunicado~]</A>
+                    <A HREF="#" onclick="alert('[~La funcionalidad de envío directo está deshabilitada en la versión demostrativa~]')" CLASS="linkplain">Send Mailing</A>
                   </TD>
       	        </TR>	  
       	        <TR>
                   <TD>
       <% if (bIsGuest) { %>            
-                    <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Nueva Lista~]</A>
+                    <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">New List</A>
       <% } else { %>
-                    <A HREF="#" onclick="createList();return false" CLASS="linkplain">[~Nueva Lista~]</A>
+                    <A HREF="#" onclick="createList();return false" CLASS="linkplain">New List</A>
       <% } %>
                   </TD>
                   <TD></TD>
@@ -511,7 +529,7 @@
       	          <TD ROWSPAN="2" CLASS="subtitle" ALIGN="right"><IMG SRC="../skins/<%=sSkin%>/tab/angle45_24x24.gif" style="display:block" WIDTH="24" HEIGHT="24" BORDER="0"></TD>
       	        </TR>
                 <TR>
-            	  <TD COLSPAN="2" BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" CLASS="subtitle" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" HEIGHT="1" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">[~Recientes~]</TD>
+            	  <TD COLSPAN="2" BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" CLASS="subtitle" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" HEIGHT="1" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">Recent</TD>
                 </TR>
               </TABLE>
             </TD>

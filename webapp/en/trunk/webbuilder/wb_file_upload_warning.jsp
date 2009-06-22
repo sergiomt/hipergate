@@ -1,7 +1,7 @@
-<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/cookies.jspf" %><%
 /*
-  Copyright (C) 2003  Know Gate S.L. All rights reserved.
+  Copyright (C) 2009  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
@@ -75,7 +75,7 @@
     document.location='<%=request.getParameter("url")%>';
   }
 </script>
-<TITLE>hipergate :: [~Cargar Im&aacute;genes~]</TITLE>
+<TITLE>hipergate :: Load Images</TITLE>
 </head>
 <body  TOPMARGIN="0" MARGINHEIGHT="0">
 <table cellspacing="0" cellpadding="0" border="0" width="99%">
@@ -86,7 +86,7 @@
 </tr>
 <tr>
 <td class="striptitle">
-<span class="title1">[~Advertencia~]</span>
+<span class="title1">Warning</span>
 </td>
 </tr>
 </table>  
@@ -95,7 +95,7 @@
 <center><img src="../images/images/appletfile-warning.jpg" width="400" height="321" border="0"></center>
 <br>
 <center>
-<input class="pushbutton" type="submit" value="[~Continuar~]" onClick="continueLoad()">
+<input class="pushbutton" type="submit" value="Continue" onClick="continueLoad()">
 </center>
 </body>
 </html>

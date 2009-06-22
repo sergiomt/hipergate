@@ -1,4 +1,4 @@
-<%@ page import="java.util.Vector,javax.mail.Session,javax.mail.Folder,javax.mail.URLName,javax.mail.MessagingException,javax.mail.FolderNotFoundException,javax.mail.AuthenticationFailedException,javax.mail.internet.*,java.io.IOException,java.io.File,java.util.Properties,java.io.InputStream,java.io.UnsupportedEncodingException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.misc.Environment,com.knowgate.hipergate.ProductLocation,com.knowgate.dfs.StreamPipe,com.knowgate.hipermail.*" language="java" session="false" contentType="text/html;charset=UTF-8" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%
+﻿<%@ page import="java.util.Vector,javax.mail.Session,javax.mail.Folder,javax.mail.URLName,javax.mail.MessagingException,javax.mail.FolderNotFoundException,javax.mail.AuthenticationFailedException,javax.mail.internet.*,java.io.IOException,java.io.File,java.util.Properties,java.io.InputStream,java.io.UnsupportedEncodingException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.misc.Environment,com.knowgate.hipergate.ProductLocation,com.knowgate.dfs.StreamPipe,com.knowgate.hipermail.*" language="java" session="false" contentType="text/html;charset=UTF-8" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2004  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -116,12 +116,12 @@
       
     function reload() {
       if (halt) {
-        alert('Importación de mensajes cancelada');
+        alert('[~Importación de mensajes cancelada~]');
         window.opener.document.reload(true);
         if (!errr) window.close();
       }
       else if (done) {
-        alert('Messages import finished');
+        alert('[~Importación de mensajes finalizada~]');
         window.opener.document.reload(true);
         if (!errr) window.close();
       }

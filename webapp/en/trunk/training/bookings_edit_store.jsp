@@ -1,4 +1,4 @@
-<%@ page import="java.math.BigDecimal,java.io.IOException,java.net.URLDecoder,java.sql.Types,java.sql.PreparedStatement,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.training.*" language="java" session="false" contentType="text/plain;charset=UTF-8" %>
+﻿<%@ page import="java.math.BigDecimal,java.io.IOException,java.net.URLDecoder,java.sql.Types,java.sql.PreparedStatement,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.training.*" language="java" session="false" contentType="text/plain;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <% 
 

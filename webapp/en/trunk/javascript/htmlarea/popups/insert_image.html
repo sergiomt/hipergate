@@ -24,47 +24,6 @@ function Init() {
   document.getElementById("f_url").focus();
 };
 
-function onOK() {
-  var required = {
-    "f_url": "You must enter the URL"
-  };
-  for (var i in required) {
-    var el = document.getElementById(i);
-    if (!el.value) {
-      alert(required[i]);
-      el.focus();
-      return false;
-    }
-  }
-  // pass data back to the calling window
-  var fields = ["f_url", "f_alt", "f_align", "f_border",
-                "f_horiz", "f_vert"];
-  var param = new Object();
-  for (var i in fields) {
-    var id = fields[i];
-    var el = document.getElementById(id);
-    param[id] = el.value;
-  }
-  __dlg_close(param);
-  return false;
-};
-
-function onCancel() {
-  __dlg_close(null);
-  return false;
-};
-
-function onPreview() {
-  var f_url = document.getElementById("f_url");
-  var url = f_url.value;
-  if (!url) {
-    alert("You have to enter an URL first");
-    f_url.focus();
-    return false;
-  }
-  window.ipreview.location.replace(url);
-  return false;
-};
 </script>
 
 <style type="text/css">
@@ -102,16 +61,14 @@ form { padding: 0px; margin: 0px; }
 
 <div class="title">Insert Image</div>
 <!--- new stuff --->
-<form action="" method="get">
+<form action="insert_image_store.jsp" method="post" enctype="multipart/form-data">
 <table border="0" width="100%" style="padding: 0px; margin: 0px">
   <tbody>
 
   <tr>
     <td style="width: 7em; text-align: right">Image URL:</td>
-    <td><input type="text" name="url" id="f_url" style="width:75%"
-      title="Enter the image URL here" />
-      <button name="preview" onclick="return onPreview();"
-      title="Preview the image in a new window">Preview</button>
+    <td>
+      <input type="file" name="filepath">
     </td>
   </tr>
   <tr>
@@ -176,13 +133,9 @@ title="Vertical padding" />
 <br clear="all" />
 <table width="100%" style="margin-bottom: 0.2em">
  <tr>
-  <td valign="bottom">
-    Image Preview:<br />
-    <iframe name="ipreview" id="ipreview" frameborder="0" style="border : 1px solid gray;" height="200" width="300" src=""></iframe>
-  </td>
-  <td valign="bottom" style="text-align: right">
-    <button type="button" name="ok" onclick="return onOK();">OK</button><br>
-    <button type="button" name="cancel" onclick="return onCancel();">Cancel</button>
+  <td valign="bottom" style="text-align: center">
+  <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" STYLE="width:80" TITLE="ALT+s">&nbsp;
+  &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
   </td>
  </tr>
 </table>

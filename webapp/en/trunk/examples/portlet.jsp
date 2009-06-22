@@ -1,4 +1,4 @@
-<%@ page import="java.util.Date,java.util.Properties,java.io.IOException,java.io.File,javax.portlet.GenericPortlet,javax.portlet.WindowState,java.net.URLDecoder,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.http.portlets.*" language="java" session="false" contentType="text/plain;charset=UTF-8" %>
+﻿<%@ page import="java.util.Date,java.util.Properties,java.io.IOException,java.io.File,javax.portlet.GenericPortlet,javax.portlet.WindowState,java.net.URLDecoder,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.http.portlets.*" language="java" session="false" contentType="text/plain;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/globalportletconfig.jsp" %><% 
 
   String sLanguage = getNavigatorLanguage(request);

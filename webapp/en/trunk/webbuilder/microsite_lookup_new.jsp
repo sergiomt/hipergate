@@ -67,12 +67,12 @@
 	str = frm.vl_lookup.value;
 
         if (str.length==0) {
-          alert ("[~El campo Valor es obligatorio~]");
+          alert ("Value is mandatory");
           return false;
         }
 	
         if (str.indexOf("'")>0 || str.indexOf('"')>0 || str.indexOf("*")>0 || str.indexOf("?")>0 || str.indexOf("&")>0 || str.indexOf("^")>0 || str.indexOf("¨")>0 || str.indexOf(";")>0) {
-          alert ("[~El campo Valor contiene caracteres no permitidos~]");
+          alert ("Value contains invalid characters");
           return false;
         }
         
@@ -96,18 +96,18 @@
         <TR><TD>
           <TABLE CLASS="formfront">
             <TR>
-              <TD ALIGN="right"><SPAN onmouseover="popover('[~Texto descriptivo que aparecer&aacute;<BR>al visualizar el valor~]')" onmouseout="popout()"><FONT CLASS="formstrong">[~Descripci&oacute;n:~]</FONT></SPAN></TD>
+              <TD ALIGN="right"><SPAN onmouseover="popover('Descriptive text shown<BR>when value is chosen')" onmouseout="popout()"><FONT CLASS="formstrong">Description:</FONT></SPAN></TD>
               <TD ALIGN="left"><INPUT TYPE="text" MAXLENGTH="50" NAME="tr_<%=id_language%>"></TD>
             </TR>
             <TR>
-              <TD ALIGN="right"><SPAN onmouseover="popover('[~Valor real que se almacenar&aacute; en la base de datos para representar internamente el dato.~]')" onmouseout="popout()"><FONT CLASS="formstrong">[~Valor:~]</FONT></SPAN></TD>
+              <TD ALIGN="right"><SPAN onmouseover="popover('Actual value stored internally at database')" onmouseout="popout()"><FONT CLASS="formstrong">Value:</FONT></SPAN></TD>
               <TD ALIGN="left"><INPUT TYPE="text" MAXLENGTH="250" NAME="vl_lookup"></TD>          
             </TR>
           </TABLE>
         </TD></TR>
       </TABLE>
       <BR>
-      <INPUT TYPE="submit" VALUE="Guardar" CLASS="pushbutton" STYLE="width:80">&nbsp;&nbsp;<INPUT TYPE="button" VALUE="[~Cancelar~]" CLASS="closebutton" onClick="window.parent.lookupup.location.href='lookup_up.jsp<%=sQryStr%>';window.history.back();">
+      <INPUT TYPE="submit" VALUE="Guardar" CLASS="pushbutton" STYLE="width:80">&nbsp;&nbsp;<INPUT TYPE="button" VALUE="Cancel" CLASS="closebutton" onClick="window.parent.lookupup.location.href='lookup_up.jsp<%=sQryStr%>';window.history.back();">
       </CENTER>
     </FORM>
   </BODY>

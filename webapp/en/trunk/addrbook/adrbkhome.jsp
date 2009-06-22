@@ -1,4 +1,4 @@
-<%@ page import="java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.Timestamp,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.misc.Environment,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.Timestamp,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.misc.Environment,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -127,7 +127,7 @@
       }
 
       if (nmc.indexOf("'")>0 || nmc.indexOf('"')>0 || nmc.indexOf("?")>0 || nmc.indexOf("%")>0 || nmc.indexOf("*")>0 || nmc.indexOf("&")>0 || nmc.indexOf("/")>0) {
-	alert ("The name contains invalid characters");
+	alert ("[~El nombre contiene caracteres no válidos~]");
 	return false;
       }
       else
@@ -263,8 +263,8 @@
             <TD VALIGN="top">
 <% if (bIsGuest) {
      out.write("	      <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0>");
-     out.write("<TR><TD><IMG SRC=\"../images/images/new16x16.gif\" BORDER=\"0\"></TD><TD>&nbsp;</TD><TD><A CLASS=\"linkplain\" HREF=\"#\" onClick=\"alert('Your credential level as Guest does not allow you to perform this action')\">" + (sFace.equalsIgnoreCase("healthcare") ? "New Appointment" : "New Activity") + "</A></TD></TR>");
-     out.write("<TR><TD COLSPAN=\"2\"></TD><TD><A CLASS=\"linkplain\" HREF=\"#\" onClick=\"alert('Your credential level as Guest does not allow you to perform this action')\">Arrange meeting for another person</A></TD></TR>");
+     out.write("<TR><TD><IMG SRC=\"../images/images/new16x16.gif\" BORDER=\"0\"></TD><TD>&nbsp;</TD><TD><A CLASS=\"linkplain\" HREF=\"#\" onClick=\"alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')\">" + (sFace.equalsIgnoreCase("healthcare") ? "New Appointment" : "New Activity") + "</A></TD></TR>");
+     out.write("<TR><TD COLSPAN=\"2\"></TD><TD><A CLASS=\"linkplain\" HREF=\"#\" onClick=\"alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')\">Arrange meeting for another person</A></TD></TR>");
      out.write("</TABLE>");
    } else {
      out.write("	      <TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0>");

@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.io.File,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.QueryByForm" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder,java.io.File,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.QueryByForm,com.knowgate.hipergate.Address" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
  
@@ -316,12 +316,12 @@
 	} // setCombos()
     //-->    
   </SCRIPT>
-  <TITLE>hipergate :: [~Listado de Proveedores~]</TITLE>
+  <TITLE>hipergate :: List of suppliers</TITLE>
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onClick="hideRightMenu()">
     <%@ include file="../common/tabmenu.jspf" %>
     <FORM METHOD="post">
-      <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Listado de Proveedores~]</FONT></TD></TR></TABLE>  
+      <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">List of suppliers</FONT></TD></TR></TABLE>  
       <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
       <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
       <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
@@ -336,21 +336,21 @@
 <% if (bIsGuest) { %>      
         <TD COLSPAN="4"></TD>
 <% } else { %>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nuevo~]"></TD>
-        <TD VALIGN="middle"><A HREF="#" onclick="createSupplier()" CLASS="linkplain">[~Nuevo~]</A></TD>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar~]"></TD>
-        <TD><A HREF="#" onclick="deleteSuppliers()" CLASS="linkplain">[~Eliminar~]</A></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
+        <TD VALIGN="middle"><A HREF="#" onclick="createSupplier()" CLASS="linkplain">New</A></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
+        <TD><A HREF="#" onclick="deleteSuppliers()" CLASS="linkplain">Delete</A></TD>
 <% } %>
-        <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Buscar~]"></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Search"></TD>
         <TD VALIGN="middle">
           <SELECT NAME="sel_searched" CLASS="combomini"></SELECT>
           <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>">
-	  &nbsp;<A HREF="javascript:findSupplier();" CLASS="linkplain" TITLE="Find">[~Buscar~]</A>	  
+	  &nbsp;<A HREF="javascript:findSupplier();" CLASS="linkplain" TITLE="Find">Search</A>	  
         </TD>
-        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="[~Descartar~]"></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard"></TD>
         <TD VALIGN="bottom">
-          <A HREF="javascript:document.forms[0].find.value='';findSupplier();" CLASS="linkplain" TITLE="Discard Search">[~Descartar~]</A>
-          <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;[~Mostrar~]&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;[~resultados~]&nbsp;</FONT>
+          <A HREF="javascript:document.forms[0].find.value='';findSupplier();" CLASS="linkplain" TITLE="Discard Search">Discard</A>
+          <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;Show&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;results&nbsp;</FONT>
         </TD>
       </TR>
       <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
@@ -374,20 +374,20 @@
         </TR>
         <TR>
           <TD CLASS="tableheader" WIDTH="<%=String.valueOf(floor(300f*fScreenRatio))%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(2);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Ordenar por este campo"></A>&nbsp;<B>[~Razón Social~]</B></TD>
-          <TD CLASS="tableheader" WIDTH="<%=String.valueOf(floor(320f*fScreenRatio))%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Ordenar por este campo"></A>&nbsp;<B>[~Direcci&oacute;n~]</B></TD>
+          <TD CLASS="tableheader" WIDTH="<%=String.valueOf(floor(320f*fScreenRatio))%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Ordenar por este campo"></A>&nbsp;<B>Address</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Seleccionar todos"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select All"></A></TD></TR>
 <%
 
+		Address oAddr = new Address();
 	  String sInstId, sInstNm, sAddr, sStrip;
 	  for (int i=0; i<iSupplierCount; i++) {
+            oAddr.replace(DB.tp_street, oSuppliers.get(3,i));
+            oAddr.replace(DB.nm_street, oSuppliers.get(4,i));
+            oAddr.replace(DB.nu_street, oSuppliers.get(5,i));
+            
             sInstId = oSuppliers.getString(0,i);
             sInstNm = oSuppliers.getString(1,i);
-            if (sLanguage.startsWith("es"))
-              sAddr = oSuppliers.getStringNull(3,i,"")+" "+oSuppliers.getStringNull(4,i,"")+" "+oSuppliers.getStringNull(5,i,"")+" ("+oSuppliers.getStringNull(6,i,oSuppliers.getStringNull(7,i,""))+") "+oSuppliers.getStringNull(8,i,oSuppliers.getStringNull(9,i,""));
-            else if (sLanguage.startsWith("fr"))
-              sAddr = oSuppliers.getStringNull(5,i,"")+" "+oSuppliers.getStringNull(3,i,"")+" "+oSuppliers.getStringNull(4,i,"")+" ("+oSuppliers.getStringNull(6,i,oSuppliers.getStringNull(7,i,""))+") "+oSuppliers.getStringNull(8,i,oSuppliers.getStringNull(9,i,""));
-            else 
-              sAddr = oSuppliers.getStringNull(5,i,"")+" "+oSuppliers.getStringNull(4,i,"")+" "+oSuppliers.getStringNull(3,i,"")+" ("+oSuppliers.getStringNull(6,i,oSuppliers.getStringNull(7,i,""))+") "+oSuppliers.getStringNull(8,i,oSuppliers.getStringNull(9,i,""));
+            sAddr = oAddr.toLocaleString(sLanguage)+" ("+oSuppliers.getStringNull(6,i,oSuppliers.getStringNull(7,i,""))+") "+oSuppliers.getStringNull(8,i,oSuppliers.getStringNull(9,i,""));
             
             sStrip = String.valueOf((i%2)+1);
 %>            
@@ -402,8 +402,8 @@
     <!-- 22. DynFloat Right-click context menu -->
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
       <!--
-      addMenuOption("[~Abrir~]","modifySupplier(jsSupplierId)",1);
-      addMenuOption("[~Duplicar~]","clone()",0);
+      addMenuOption("Open","modifySupplier(jsSupplierId)",1);
+      addMenuOption("Clone","clone()",0);
       //-->
     </SCRIPT>
     <!-- /RightMenuBody -->    

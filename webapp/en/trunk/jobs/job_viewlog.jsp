@@ -1,4 +1,4 @@
-<%@ page import="java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.dfs.StreamPipe" language="java" session="false" contentType="text/plain;charset=UTF-8" %>
+﻿<%@ page import="java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.dfs.StreamPipe" language="java" session="false" contentType="text/plain;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <% 
 
@@ -10,8 +10,8 @@
   String gu_workarea = getCookie(request,"workarea","");
 
   String sStorage = Environment.getProfilePath(GlobalDBBind.getProfileName(), "storage");
-  String sJobLog = sStorage + gu_workarea + File.separator + gu_job + ".txt";
-  File oJobLog = new File(sStorage + gu_workarea + File.separator + gu_job + ".txt");
+  String sJobLog = sStorage + "jobs" + File.separator + gu_workarea + File.separator + gu_job + ".txt";
+  File oJobLog = new File(sJobLog);
   
   if (!oJobLog.exists()) {
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=File not found&desc=There is no log file for given job batch&resume=_close"));  

@@ -1,5 +1,4 @@
-<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<% 
+﻿<%@ page import="com.knowgate.dataobjs.*" language="java" session="false" contentType="text/html;charset=UTF-8" %><% 
 /*
   Copyright (C) 2008  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -59,15 +58,6 @@
             findInstance();
           }
         } // findCloned()
-
-        // 18. Clone an instance using an XML data structure definition
-      
-        function clone() {        
-          // Open a clone window and wait for it to be closed
-        
-          winclone = window.open ("../common/clone.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&datastruct=instance_clon&gu_instance=" + jsInstanceId +"&opcode=CCOM&classid=91", null, "directories=no,toolbar=no,menubar=no,width=320,height=200");                
-          intervalId = setInterval ("findCloned()", 100);
-        }	// clone()
 
       function checkEMail() {
       	ver eml = document.forms[0].tx_email;

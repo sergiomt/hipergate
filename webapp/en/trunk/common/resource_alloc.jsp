@@ -1,4 +1,4 @@
-<%@ page import="java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.projtrack.Project,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.projtrack.Project,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*
@@ -187,7 +187,7 @@
 
 	  if (frm.dt_from.value==frm.dt_to.value) {  
 	    if (parseInt(getCombo(frm.sel_h_start),10)*100+parseInt(getCombo(frm.sel_m_start),10)>=parseInt(getCombo(frm.sel_h_end),10)*100+parseInt(getCombo(frm.sel_m_end),10)) {
-	      alert ("[~La hora de fin debe ser posterior a la hora de inicio~]");
+	      alert ("End time must be later than start time");
 	      return false;	  
 	    }
 	  }	  

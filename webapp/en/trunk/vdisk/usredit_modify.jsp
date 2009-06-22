@@ -1,4 +1,4 @@
-<%@ page import="java.util.Date,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.Date,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.*,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -78,11 +78,6 @@
       // Asociar el usuario a los grupos pertinentes
       
       oUsr.clearACLGroups(oConn);
-      
-      // ************************************************************************
-      // Patch 2.0.10 for Closed Statement bug of ACLUser.addToACLGroups() method
-      // when adding the user to more than one group
-      // Sergio: May 22nd 2004
        
       String sGroupList = request.getParameter("memberof");
       
@@ -94,15 +89,13 @@
 	        oUsr.addToACLGroups(oConn, aGroupList[g]);
 	  
       } // fi (request.getParameter("memberof")!=null)
-
-      // End 2.0.10 patch ********************************************************
      
       if (!oUsr.isNull(DB.gu_workarea)) {
 
         String sFullName = nullif(oUsr.getStringNull(DB.nm_user, ""));
         if (oUsr.getStringNull(DB.tx_surname1,"").length()>0) sFullName += " " + oUsr.getString(DB.tx_surname1);
         if (oUsr.getStringNull(DB.tx_surname2,"").length()>0) sFullName += " " + oUsr.getString(DB.tx_surname2);
-	if (sFullName.trim().length()==0) sFullName = request.getParameter("tx_nickname");
+	      if (sFullName.trim().length()==0) sFullName = request.getParameter("tx_nickname");
 
         if ((iAppMask & (1<<BugTracker))!=0) {
                 	            
@@ -121,34 +114,22 @@
           oRstMax.close();
           oStmMax.close();
 
-	  if (null!=oPgUser) {
+	        if (null!=oPgUser) {
             oRes = new DBPersist (DB.k_bugs_lookup, "BugAssigned");
           
             oRes.put (DB.id_section, "nm_assigned");
             oRes.put (DB.pg_lookup, oPgUser);
             oRes.put (DB.vl_lookup, gu_user);
-            oRes.put (DB.tr_ + "es", sFullName);
-            oRes.put (DB.tr_ + "en", sFullName);
-            oRes.put (DB.tr_ + "de", sFullName);
-            oRes.put (DB.tr_ + "it", sFullName);
-            oRes.put (DB.tr_ + "fr", sFullName);
-            oRes.put (DB.tr_ + "pt", sFullName);
-            oRes.put (DB.tr_ + "ca", sFullName);
-            oRes.put (DB.tr_ + "eu", sFullName);
-            oRes.put (DB.tr_ + "ja", sFullName);
-            oRes.put (DB.tr_ + "cn", sFullName);
-            oRes.put (DB.tr_ + "tw", sFullName);
-            oRes.put (DB.tr_ + "fi", sFullName);
-            oRes.put (DB.tr_ + "ru", sFullName);
-            oRes.put (DB.tr_ + "pl", sFullName);
+            for (int l=0; l<DBLanguages.SupportedLanguages.length; l++)
+              oRes.put (DB.tr_ + DBLanguages.SupportedLanguages[l], sFullName);
 
-	    if (!oUsr.getString(DB.gu_workarea).equals(gu_previous_workarea)) {
+	          if (!oUsr.getString(DB.gu_workarea).equals(gu_previous_workarea)) {
               oRes.replace (DB.gu_owner, gu_previous_workarea);
-	      oRes.store(oConn);  
-	    }
+	            oRes.store(oConn);  
+	          }
 
             oRes.replace (DB.gu_owner, gu_workarea);
-	    oRes.store(oConn);  
+	          oRes.store(oConn);  
 
             GlobalCacheClient.expire(DB.k_duties_lookup + ".nm_resource#" + sLanguage + "[" + gu_workarea + "]");
             GlobalCacheClient.expire(DB.k_bugs_lookup + ".nm_assigned#" + sLanguage + "[" + gu_workarea + "]"); 
@@ -180,37 +161,22 @@
             oRes.put (DB.id_section, "nm_resource");
             oRes.put (DB.pg_lookup, oPgUser);
             oRes.put (DB.vl_lookup, gu_user);
-            oRes.put (DB.tr_ + "es", sFullName);
-            oRes.put (DB.tr_ + "en", sFullName);
-            oRes.put (DB.tr_ + "de", sFullName);
-            oRes.put (DB.tr_ + "it", sFullName);
-            oRes.put (DB.tr_ + "fr", sFullName);
-            oRes.put (DB.tr_ + "pt", sFullName);
-            oRes.put (DB.tr_ + "ca", sFullName);
-            oRes.put (DB.tr_ + "eu", sFullName);
-            oRes.put (DB.tr_ + "ja", sFullName);
-            oRes.put (DB.tr_ + "cn", sFullName);
-            oRes.put (DB.tr_ + "tw", sFullName);
-            oRes.put (DB.tr_ + "fi", sFullName);
-            oRes.put (DB.tr_ + "ru", sFullName);
-            oRes.put (DB.tr_ + "pl", sFullName);
+            for (int l=0; l<DBLanguages.SupportedLanguages.length; l++)
+              oRes.put (DB.tr_ + DBLanguages.SupportedLanguages[l], sFullName);
 	  
-	    if (!oUsr.getString(DB.gu_workarea).equals(gu_previous_workarea)) {
+	          if (!oUsr.getString(DB.gu_workarea).equals(gu_previous_workarea)) {
               oRes.replace (DB.gu_owner, gu_previous_workarea);
-	      oRes.store(oConn);  
-	    }
+	            oRes.store(oConn);  
+	          }
 
             oRes.replace (DB.gu_owner, gu_workarea);
-	    oRes.store(oConn);  
+	          oRes.store(oConn);  
 
             GlobalCacheClient.expire(DB.k_duties_lookup + ".nm_resource#" + sLanguage + "[" + gu_workarea + "]"); 
           } // fi (null!=oPgUser)
         } // fi (iAppMask&DutyManager)
         
       } // fi (gu_workarea!=null)
-
-      // ***************************************************************************
-      // Check whether or not there is an active LDAP server and synchronize with it
 
       // ***************************************************************************
       // Check whether or not there is an active LDAP server and synchronize with it
@@ -250,7 +216,9 @@
       GlobalCacheClient.expire ("["+gu_user+",guest]");
       GlobalCacheClient.expire ("["+gu_user+",mailbox]");
       GlobalCacheClient.expire ("["+gu_user+",left]");
-      GlobalCacheClient.expire ("["+gu_user+",right]");      
+      GlobalCacheClient.expire ("["+gu_user+",right]");
+      for (int a=1; a<=31; a++)
+        GlobalCacheClient.expire ("["+gu_user+","+gu_workarea+","+String.valueOf(a)+"]");
 
       oConn.commit();
   

@@ -1,4 +1,4 @@
-<%@ page import="java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.projtrack.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.projtrack.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/projtrack.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%
 
@@ -77,10 +77,12 @@
   else
     iQryMode = Integer.parseInt(request.getParameter("qrymode"));
 
+  boolean bIsAdmin = true;
   boolean bIsGuest = true;
 
   try {
-  
+
+    bIsAdmin = isDomainAdmin (GlobalCacheClient, GlobalDBBind, request, response);
     bIsGuest = isDomainGuest (GlobalCacheClient, GlobalDBBind, request, response);
        
     oCon1 = GlobalDBBind.getConnection("duty_list");
@@ -181,7 +183,7 @@
 %>
 <HTML LANG="<%=sLanguage%>">
   <HEAD>
-    <TITLE>hipergate :: [~Listado de tareas por proyecto~]</TITLE>
+    <TITLE>hipergate :: Duties by project</TITLE>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -227,11 +229,11 @@
     	  var chi = frm.checkeditems;
     	  	  
     	  if (frm.sel_new_status.selectedIndex<=0 && frm.sel_new_priority.selectedIndex<=0 && frm.sel_new_completed.selectedIndex<=0 && frm.sel_new_resource.selectedIndex<=0) {
-    	    alert ("[~Debe seleccionar un atributo a actualizar~]");
+    	    alert ("An attribute to be updated must be selected");
     	    return false;
     	  }
 
-    	  if (window.confirm("[~Esta seguro de que desea actualizar las tareas seleccionadas?~]")) {
+    	  if (window.confirm("Are you sure that you want to update the selected duty?")) {
 
 	        chi.value = "";
 	        frm.action = "dutyedit_update.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
@@ -418,29 +420,29 @@
     <INPUT TYPE="hidden" NAME="subselected" VALUE="<%=nullif(request.getParameter("subselected"),"1")%>">
     <INPUT TYPE="hidden" NAME="checkeditems" VALUE="">
     
-    <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Listado de tareas por proyecto~]</FONT></TD></TR></TABLE>
+    <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">Duties by project</FONT></TD></TR></TABLE>
     <% if (iQryMode!=4) { %>
     <TABLE SUMMARY="Search Options" BORDER="0">
       <TR>
-        <TD ALIGN="left"><INPUT TYPE="radio" NAME="qrymode" VALUE="1" <%=(iQryMode==1 ? "CHECKED" : "")%>>&nbsp;<FONT CLASS="textplain">[~Ver tareas por proyecto~]</FONT></TD>
-        <TD ALIGN="left"><INPUT TYPE="radio" NAME="qrymode" VALUE="2" <%=(iQryMode==2 ? "CHECKED" : "")%>>&nbsp;<FONT CLASS="textplain">[~Ver tareas por prioridad~]</FONT></TD>
+        <TD ALIGN="left"><INPUT TYPE="radio" NAME="qrymode" VALUE="1" <%=(iQryMode==1 ? "CHECKED" : "")%>>&nbsp;<FONT CLASS="textplain">View duties per project</FONT></TD>
+        <TD ALIGN="left"><INPUT TYPE="radio" NAME="qrymode" VALUE="2" <%=(iQryMode==2 ? "CHECKED" : "")%>>&nbsp;<FONT CLASS="textplain">View duties per priority</FONT></TD>
 	<TD ROWSPAN="2"><IMG SRC="../images/images/spacer.gif" WIDTH="20" HEIGHT="1" BORDER="0"></TD>
       </TR>
       <TR>        
-        <TD ALIGN="left"><INPUT TYPE="radio" NAME="qrymode" VALUE="3" <%=((iQryMode==3 && !sResource.equals(sUserId)) ? "CHECKED" : "")%> onclick="document.forms[0].nm_resource=getCombo(sel_resource)">&nbsp;<FONT CLASS="textplain">[~Ver tareas por persona~]</FONT></TD>
-        <TD ALIGN="left"><INPUT TYPE="radio" NAME="qrymode" VALUE="3" <%=((iQryMode==3 &&  sResource.equals(sUserId)) ? "CHECKED" : "")%> onclick="document.forms[0].sel_resource.selectedIndex=0; document.forms[0].nm_resource.value=getCookie('userid');">&nbsp;<FONT CLASS="textplain">[~Ver mis tareas~]</FONT></TD>
+        <TD ALIGN="left"><INPUT TYPE="radio" NAME="qrymode" VALUE="3" <%=((iQryMode==3 && !sResource.equals(sUserId)) ? "CHECKED" : "")%> onclick="document.forms[0].nm_resource=getCombo(sel_resource)">&nbsp;<FONT CLASS="textplain">View duties per person</FONT></TD>
+        <TD ALIGN="left"><INPUT TYPE="radio" NAME="qrymode" VALUE="3" <%=((iQryMode==3 &&  sResource.equals(sUserId)) ? "CHECKED" : "")%> onclick="document.forms[0].sel_resource.selectedIndex=0; document.forms[0].nm_resource.value=getCookie('userid');">&nbsp;<FONT CLASS="textplain">View My Duties</FONT></TD>
       </TR>
     </TABLE>
     <TABLE>
       <TR>
         <TD>
-          <FONT CLASS="textplain">[~Estado~]:</FONT>
+          <FONT CLASS="textplain">Status:</FONT>
         </TD>
         <TD ALIGN="right">
           <SELECT CLASS="combomini" NAME="sel_status"><OPTION VALUE=""></OPTION><%=sStatusLookUp%></SELECT>
         </TD>
         <TD>
-          <FONT CLASS="textplain">[~Prioridad~]:</FONT>
+          <FONT CLASS="textplain">Priority:</FONT>
         </TD>
         <TD>
           <SELECT CLASS="combomini" NAME="sel_priority"><OPTION VALUE=""></OPTION><%=sPriorityLookUp%></SELECT>
@@ -448,13 +450,13 @@
       </TR>
       <TR>
         <TD>
-          <FONT CLASS="textplain">[~Projecto~]:</FONT>
+          <FONT CLASS="textplain">Project:</FONT>
         </TD>
         <TD ALIGN="right">
           <SELECT CLASS="combomini" NAME="sel_project"><OPTION VALUE=""></OPTION><%=sProjCombo%></SELECT>
 	</TD>
         <TD>
-          <FONT CLASS="textplain">[~Asignadas a~]:</FONT>
+          <FONT CLASS="textplain">Assigned to:</FONT>
         </TD>
         <TD>
           <INPUT TYPE="hidden" NAME="nm_resource" VALUE="<%=sResource%>"><SELECT CLASS="combomini" NAME="sel_resource"><OPTION VALUE=""></OPTION><%=sResourceLookUp%></SELECT>
@@ -462,7 +464,7 @@
       </TR>
       <TR>
         <TD COLSPAN="4" ALIGN="right">
-          <IMG SRC="../images/images/search16x16.gif" BORDER="0">&nbsp;<A HREF="javascript:queryDuties()" CLASS="linkplain">[~Buscar~]</A>&nbsp;&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/undosearch16x16.gif" BORDER="0">&nbsp;<A HREF="duty_list.jsp?selected=4&subselected=1" CLASS="linkplain">[~Deshacer B&uacute;squeda~]</A>
+          <IMG SRC="../images/images/search16x16.gif" BORDER="0">&nbsp;<A HREF="javascript:queryDuties()" CLASS="linkplain">Search</A>&nbsp;&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/undosearch16x16.gif" BORDER="0">&nbsp;<A HREF="duty_list.jsp?selected=4&subselected=1" CLASS="linkplain">Undo Search</A>
         </TD>
       </TR>
     </TABLE>
@@ -478,21 +480,29 @@
         <TD COLSPAN="<%=nCols%>" ALIGN="left">
           <IMG SRC="../images/images/new16x16.gif" BORDER="0">&nbsp;
 <% if (bIsGuest) { %>
-          <A HREF="#" onClick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Crear Tarea~]</A>
+          <A HREF="#" onClick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">New Duty</A>
 <% } else { %>
-          <A HREF="#" onClick="window.open('duty_new.jsp', 'newduty', 'menubar=no,toolbar=no,width=780,height=' + (screen.height<=600 ? '520' : '640'))" CLASS="linkplain">[~Crear Tarea~]</A>
+          <A HREF="#" onClick="window.open('duty_new.jsp', 'newduty', 'menubar=no,toolbar=no,width=780,height=' + (screen.height<=600 ? '520' : '640'))" CLASS="linkplain">New Duty</A>
 <% } %>
           &nbsp;&nbsp;&nbsp;&nbsp;
-          <IMG SRC="../images/images/refresh.gif" BORDER="0">&nbsp;<A HREF="#" onClick="document.forms[0].submit()" CLASS="linkplain">[~Actualizar~]</A>
+          <IMG SRC="../images/images/refresh.gif" BORDER="0">&nbsp;<A HREF="#" onClick="document.forms[0].submit()" CLASS="linkplain">Update</A>
 	  &nbsp;&nbsp;&nbsp;&nbsp;
           <IMG SRC="../images/images/papelera.gif" BORDER="0">&nbsp;
 <% if (bIsGuest) { %>
-          <A HREF="#" onClick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Eliminar Tareas Seleccionadas~]</A>
+          <A HREF="#" onClick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">Delete selected duties</A>
 <% } else { %>
-          <A HREF="javascript:deleteDuties()" CLASS="linkplain">[~Eliminar Tareas Seleccionadas~]</A>
+          <A HREF="javascript:deleteDuties()" CLASS="linkplain">Delete selected duties</A>
 <% } %>
         </TD>
       </TR>
+<% if (bIsAdmin) { %>
+      <TR>
+        <TD COLSPAN="<%=nCols%>" ALIGN="left">
+          <IMG SRC="../images/images/excel16.gif" BORDER="0">&nbsp;
+          <A HREF="prj_todo_xls.jsp" TARGET="_blank" CLASS="linkplain">[~Listado de tareas abiertas~]</A>
+        </TD>
+      </TR>
+<% } %>
       <TR><TD COLSPAN="<%=nCols%>" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       <%
       for (int r=0; r<iRowCount; r++) {
@@ -504,13 +514,13 @@
               out.write("        <TD COLSPAN=\""+nCols+"\"><FONT CLASS=\"forminvstrong\">" + sLastProj + "</FONT></TD>\n");
               out.write("      </TR>\n");%>
 		  <TR>
-		    <TD CLASS="textstrong">[~Asunto~]</TD>
-		    <TD CLASS="textstrong">[~Inicio~]</TD>
-		    <TD CLASS="textstrong">[~Fin~]</TD>
-		    <TD CLASS="textstrong">[~Estado~]</TD>
-		    <TD CLASS="textstrong">[~Completado~]</TD>
-		    <TD CLASS="textstrong">[~Prioridad~]</TD>
-		    <TD CLASS="textstrong">[~Coste~]</TD>
+		    <TD CLASS="textstrong">Subject</TD>
+		    <TD CLASS="textstrong">Start</TD>
+		    <TD CLASS="textstrong">End</TD>
+		    <TD CLASS="textstrong">Status</TD>
+		    <TD CLASS="textstrong">Completed</TD>
+		    <TD CLASS="textstrong">Priority</TD>
+		    <TD CLASS="textstrong">Cost</TD>
 		    <TD></TD>
 		  </TR>
 
@@ -523,36 +533,36 @@
               if (!sLastProj.equals(oPriority.toString())) {
                 sLastProj = oDuties.get(1,r).toString();        
                 out.write("      <TR CLASS=\"stripheader\">\n");
-                out.write("        <TD COLSPAN=\""+nCols+"\"><FONT CLASS=\"forminvstrong\">[~Prioridad ~]&nbsp;" + sLastProj + "</FONT></TD>\n");
+                out.write("        <TD COLSPAN=\""+nCols+"\"><FONT CLASS=\"forminvstrong\">Priority&nbsp;" + sLastProj + "</FONT></TD>\n");
                 out.write("      </TR>\n");%>
 		  <TR>
-		    <TD CLASS="textstrong">[~Asunto~]</TD>
-		    <TD CLASS="textstrong">[~Inicio~]</TD>
-		    <TD CLASS="textstrong">[~Fin~]</TD>
-		    <TD CLASS="textstrong">[~Estado~]</TD>
-		    <TD CLASS="textstrong">[~Completado~]</TD>
-		    <TD CLASS="textstrong">[~Prioridad~]</TD>
-		    <TD CLASS="textstrong">[~Coste~]</TD>
+		    <TD CLASS="textstrong">Subject</TD>
+		    <TD CLASS="textstrong">Start</TD>
+		    <TD CLASS="textstrong">End</TD>
+		    <TD CLASS="textstrong">Status</TD>
+		    <TD CLASS="textstrong">Completed</TD>
+		    <TD CLASS="textstrong">Priority</TD>
+		    <TD CLASS="textstrong">Cost</TD>
 		    <TD></TD>
 		  </TR>
 <%            } // fi (sLastProj!=k_duties.od_priority)
             }
             break;
           case 3:
-            if (!sLastProj.equals(oDuties.getStringNull(6,r,"[~SIN ASIGNAR~]"))) {
-              sLastProj = oDuties.getStringNull(6,r,"[~SIN ASIGNAR~]");
+            if (!sLastProj.equals(oDuties.getStringNull(6,r,"SIN ASIGNAR"))) {
+              sLastProj = oDuties.getStringNull(6,r,"SIN ASIGNAR");
               out.write("      <TR CLASS=\"stripheader\">\n");
-              out.write("        <TD COLSPAN=\""+nCols+"\"><FONT CLASS=\"forminvstrong\">" + nullif((String)oResourceMap.get(sLastProj), "[~SIN ASIGNAR~]") + "</FONT></TD>\n");
+              out.write("        <TD COLSPAN=\""+nCols+"\"><FONT CLASS=\"forminvstrong\">" + nullif((String)oResourceMap.get(sLastProj), "SIN ASIGNAR") + "</FONT></TD>\n");
               out.write("      </TR>\n");%>
 		  <TR>
-		    <TD CLASS="textstrong">[~Proyecto~]</TD>
-		    <TD CLASS="textstrong">[~Asunto~]</TD>
-		    <TD CLASS="textstrong">[~Inicio~]</TD>
-		    <TD CLASS="textstrong">[~Fin~]</TD>
-		    <TD CLASS="textstrong">[~Estado~]</TD>
-		    <TD CLASS="textstrong">[~Completado~]</TD>
-		    <TD CLASS="textstrong">[~Prioridad~]</TD>
-		    <TD CLASS="textstrong">[~Coste~]</TD>
+		    <TD CLASS="textstrong">Project</TD>
+		    <TD CLASS="textstrong">Subject</TD>
+		    <TD CLASS="textstrong">Start</TD>
+		    <TD CLASS="textstrong">End</TD>
+		    <TD CLASS="textstrong">Status</TD>
+		    <TD CLASS="textstrong">Completed</TD>
+		    <TD CLASS="textstrong">Priority</TD>
+		    <TD CLASS="textstrong">Cost</TD>
 		    <TD></TD>
 		  </TR>              
 <%          } // fi (sLastProj!=k_x_duty_resource.nm_resource)          
@@ -594,28 +604,28 @@
         <TD COLSPAN="8">
 	        <TABLE BORDER="0" SUMMARY="Massive Update">
 	          <TR>
-	            <TD CLASS="textsmall" COLSPAN="3">&nbsp;&nbsp;&nbsp;&nbsp;<B>[~Opciones de cambio masivo:~]</B></TD>
+	            <TD CLASS="textsmall" COLSPAN="3">&nbsp;&nbsp;&nbsp;&nbsp;<B>Massive update options:</B></TD>
 	          </TR>
 	          <TR>
-	            <TD CLASS="textsmall">&nbsp;&nbsp;&nbsp;&nbsp;[~Cambiar a~]&nbsp;[~Estado~]&nbsp;</TD>
+	            <TD CLASS="textsmall">&nbsp;&nbsp;&nbsp;&nbsp;Change to&nbsp;Status&nbsp;</TD>
 	            <TD CLASS="textsmall">
-	              <SELECT CLASS="combomini" NAME="sel_new_status"><OPTION VALUE=""></OPTION><%=sStatusLookUp%></SELECT>&nbsp;&nbsp;[~Prioridad~]<SELECT CLASS="combomini" NAME="sel_new_priority"><OPTION VALUE=""></OPTION><%=sPriorityLookUp%></SELECT>
+	              <SELECT CLASS="combomini" NAME="sel_new_status"><OPTION VALUE=""></OPTION><%=sStatusLookUp%></SELECT>&nbsp;&nbsp;Priority<SELECT CLASS="combomini" NAME="sel_new_priority"><OPTION VALUE=""></OPTION><%=sPriorityLookUp%></SELECT>
 	            </TD>
               <TD CLASS="textsmall">
                 &nbsp;&nbsp;
-                <FONT >[~Completado~]:&nbsp;<SELECT CLASS="combomini" NAME="sel_new_completed"><OPTION VALUE=""></OPTION><% for (int c=0;c<=100;c+=10) out.write("<OPTION VALUE=\""+String.valueOf(c)+"\">"+String.valueOf(c)+"%</OPTION>"); %></SELECT>
+                <FONT >Completed:&nbsp;<SELECT CLASS="combomini" NAME="sel_new_completed"><OPTION VALUE=""></OPTION><% for (int c=0;c<=100;c+=10) out.write("<OPTION VALUE=\""+String.valueOf(c)+"\">"+String.valueOf(c)+"%</OPTION>"); %></SELECT>
 	            </TD>
 	          </TR>
 	          <TR>
 	            <TD CLASS="textsmall">
-	              &nbsp;&nbsp;&nbsp;&nbsp;[~Asignar a~]&nbsp;
+	              &nbsp;&nbsp;&nbsp;&nbsp;Assign to &nbsp;
 	            </TD>
 	            <TD>
 	              <SELECT CLASS="combomini" NAME="sel_new_resource" onchange="setCombo(document.forms[0].sel_resource,this.options[this.selectedIndex].value);document.forms[0].nm_resource.value=this.options[this.selectedIndex].value;"><OPTION VALUE=""></OPTION><%=sResourceLookUp%></SELECT>
-	              &nbsp;<A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Agregar recursos~]"></A>
+	              &nbsp;<A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Add resources"></A>
 	            </TD>
 	            <TD COLSPAN="2" ALIGN="right">
-                <A HREF="javascript:updateDuties()" CLASS="linkplain">[~Cambiar~]</A>
+                <A HREF="javascript:updateDuties()" CLASS="linkplain">Change</A>
 	            </TD>
 	          </TR>
 	        </TABLE>
@@ -628,11 +638,11 @@
     <BR>    
     <% if (sWhere.length()>0) {
       if (0==iRowCount)
-        out.write("    <FONT CLASS=\"textplain\">[~No se encontr&oacute; ninguna tarea que cumpla el criterio especificado~]</FONT>");
+        out.write("    <FONT CLASS=\"textplain\">No Duty was found matching the specified criteria.</FONT>");
       else if (1==iRowCount)
-        out.write("    <FONT CLASS=\"textplain\">[~Se encontr&oacute; 1 tarea que cumple el criterio especificado~]</FONT>");
+        out.write("    <FONT CLASS=\"textplain\">1 duty was found matching the specified criteria</FONT>");
       else
-        out.write("    <FONT CLASS=\"textplain\">[~Se encontraron ~]" + String.valueOf(iRowCount) + "[~ tareas que cumplen el criterio especificado~]</FONT>");
+        out.write("    <FONT CLASS=\"textplain\">&nbsp;" + String.valueOf(iRowCount) + " duties that match the specified criteria</FONT>");
     }
     %>
   </FORM>

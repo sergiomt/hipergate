@@ -1,4 +1,4 @@
-<%@ page import="java.text.SimpleDateFormat,java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.hipergate.DBLanguages,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.WelcomePack,com.knowgate.crm.WelcomePackChangeLog,com.knowgate.crm.Company,com.knowgate.crm.Contact" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.text.SimpleDateFormat,java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.hipergate.DBLanguages,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.WelcomePack,com.knowgate.crm.WelcomePackChangeLog,com.knowgate.crm.Company,com.knowgate.crm.Contact" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%
 /*
@@ -125,7 +125,7 @@
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: [~Welcome Pack~]</TITLE>
+  <TITLE>hipergate :: Welcome Pack</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -169,59 +169,59 @@
         var frm = window.document.forms[0];
 
 	if (frm.gu_address.selectedIndex<=0) {
-	  alert ("[~Debe especificar una direccion de envio~]");
+	  alert ("A delivery address must be specified");
 	  return false;	  
 	}
 
 	if (!isDate(frm.dt_sent.value, "d") && frm.dt_sent.value.length>0) {
-	  alert ("[~La fecha de envio no es valida~]");
+	  alert ("Send Date is not valid");
 	  return false;	  
 	}
 	if (!isDate(frm.dt_cancel.value, "d") && frm.dt_cancel.value.length>0) {
-	  alert ("[~La fecha de cancelacion no es valida~]");
+	  alert ("Cancel date is not valid");
 	  return false;
 	}
 	if (frm.dt_promised.value.length>0) {
 	  if (!isDate(frm.dt_promised.value, "d")) {
-	    alert ("[~La fecha prevista de entrega no es valida~]");
+	    alert ("Forseen delivery date is not valid");
 	    return false;	  
 	  }
 	  if (parseDate(frm.dt_promised.value, "d")<parseDate(frm.dt_sent.value, "d")) {
-	    alert ("[~La fecha prevista de entrega no puede ser anterior a la fecha de envio~]");
+	    alert ("Forseen delivery date may not be prior to send date");
 	    return false;
 	  }
 	}
 	if (frm.dt_delivered.value.length>0) {
 	  if (!isDate(frm.dt_delivered.value, "d")) {
-	    alert ("[~La fecha real de entrega no es valida~]");
+	    alert ("Actual delivery date is not valid");
 	    return false;	  
 	  }
 	  if (parseDate(frm.dt_delivered.value, "d")<parseDate(frm.dt_sent.value, "d")) {
-	    alert ("[~La fecha real de entrega no puede ser anterior a la fecha de envio~]");
+	    alert ("Delivery date may not be prior to send date");
 	    return false;
 	  }
 	  if (frm.dt_sent.value.length==0) {
-	    alert ("[~No se puede especificar una fecha de entrega si no se especifica tambien una fecha de envio~]");
+	    alert ("A delivery date may not be specified if a send date does not exist");
 	    return false;
 	  }
         }
 	if (frm.dt_returned.value.length>0) {
 	  if (!isDate(frm.dt_returned.value, "d")) {
-	    alert ("[~La fecha real de devolucion no es valida~]");
+	    alert ("Actual return date is not valid");
 	    return false;	  
 	  }
 	  if (parseDate(frm.dt_returned.value, "d")<parseDate(frm.dt_sent.value, "d")) {
-	    alert ("[~La fecha de devolucion no puede ser anterior a la fecha de envio~]");
+	    alert ("Return date may not be prior to sent date");
 	    return false;
 	  }
 	  if (frm.dt_sent.value.length==0) {
-	    alert ("[~No se puede especificar una fecha de devolucion si no se especifica tambien una fecha de envio~]");
+	    alert ("A Return Date cannot be specified without a Send Date");
 	    return false;
 	  }
 	}
 		
 	if (frm.tx_remarks.value.length>254) {
-	  alert ("[~Los comentarios no pueden exceder de 256 caracteres~]");
+	  alert ("Comments may not exceed 255 characters");
 	  return false;
 	}
 
@@ -248,13 +248,13 @@
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()">
   <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Actualizar~]"> [~Actualizar~]</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="[~Imprimir~]"> [~Imprimir~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Refresh"> Refresh</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
   </DIV></DIV>
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Editar Welcome Pack~]</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Edit Welcome Pack</FONT></TD></TR>
   </TABLE>  
   <FORM NAME="" METHOD="post" ACTION="welcomepack_store.jsp" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="gu_pack" VALUE="<%=oWPak.getStringNull(DB.gu_pack,"")%>">
@@ -271,7 +271,7 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Direcci&oacute;n~]:</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Address:</FONT></TD>
             <TD ALIGN="left" WIDTH="420">
               <SELECT NAME="gu_address"><OPTION VALUE=""></OPTION>
 <% if (oAdr!=null) {
@@ -291,7 +291,7 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Estado~]:</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Status:</FONT></TD>
             <TD ALIGN="left" WIDTH="420">
               <INPUT TYPE="hidden" NAME="id_status">
               <SELECT NAME="sel_status"><OPTION VALUE=""></OPTION><%=sStatusLookUp%></SELECT>&nbsp;
@@ -299,7 +299,7 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Courier~]:</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Courier:</FONT></TD>
             <TD ALIGN="left" WIDTH="420">
               <INPUT TYPE="hidden" NAME="id_courier" VALUE="<%=oWPak.getStringNull(DB.id_courier,"")%>">
               <SELECT NAME="sel_courier"><OPTION VALUE=""></OPTION><%=sCourierLookUp%></SELECT>&nbsp;
@@ -307,43 +307,43 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Referencia~]:</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Reference:</FONT></TD>
             <TD ALIGN="left" WIDTH="420"><INPUT TYPE="text" NAME="id_ref" MAXLENGTH="50" SIZE="20" VALUE="<%=oWPak.getStringNull(DB.id_ref,"")%>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" CLASS="formplain">[~Fecha de Env&iacute;o~]:</TD>
+            <TD ALIGN="right" CLASS="formplain">Send Date:</TD>
             <TD><INPUT TYPE="text" MAXLENGTH="10" SIZE="12" NAME="dt_sent" VALUE="<% if (!oWPak.isNull(DB.dt_sent)) out.write(oWPak.getDateShort(DB.dt_sent)); else if (bNew) out.write(sTomorrow); %>">&nbsp;<A HREF="javascript:showCalendar('dt_sent')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="View Calendar"></A></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" CLASS="formplain">[~Fecha Prevista de Entrega~]:</TD>
+            <TD ALIGN="right" CLASS="formplain">Forseen Delivery Date:</TD>
             <TD><INPUT TYPE="text" MAXLENGTH="10" SIZE="12" NAME="dt_promised" VALUE="<% if (!oWPak.isNull(DB.dt_promised)) out.write(oWPak.getDateShort(DB.dt_promised)); %>">&nbsp;<A HREF="javascript:showCalendar('dt_promised')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="View Calendar"></A></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" CLASS="formplain">[~Fecha Real de Entrega~]:</TD>
+            <TD ALIGN="right" CLASS="formplain">Actual Delivery Date:</TD>
             <TD><INPUT TYPE="text" MAXLENGTH="10" SIZE="12" NAME="dt_delivered" VALUE="<% if (!oWPak.isNull(DB.dt_delivered)) out.write(oWPak.getDateShort(DB.dt_delivered)); %>">&nbsp;<A HREF="javascript:showCalendar('dt_delivered')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="View Calendar"></A></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" CLASS="formplain">[~Fecha de Cancelaci&oacute;n~]:</TD>
+            <TD ALIGN="right" CLASS="formplain">Cancellation Date:</TD>
             <TD><INPUT TYPE="text" MAXLENGTH="10" SIZE="12" NAME="dt_cancel" VALUE="<% if (!oWPak.isNull(DB.dt_cancel)) out.write(oWPak.getDateShort(DB.dt_cancel)); %>">&nbsp;<A HREF="javascript:showCalendar('dt_cancel')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="View Calendar"></A></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" CLASS="formplain">[~Fecha de Devoluci&oacute;n~]:</TD>
+            <TD ALIGN="right" CLASS="formplain">Return Date:</TD>
             <TD><INPUT TYPE="text" MAXLENGTH="10" SIZE="12" NAME="dt_returned" VALUE="<% if (!oWPak.isNull(DB.dt_returned)) out.write(oWPak.getDateShort(DB.dt_returned)); %>">&nbsp;<A HREF="javascript:showCalendar('dt_returned')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="View Calendar"></A></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Comentarios~]:</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Comments:</FONT></TD>
             <TD ALIGN="left" WIDTH="420"><TEXTAREA NAME="tx_remarks" ROWS="4" STYLE="width:360px"><%=oWPak.getStringNull(DB.tx_remarks,"")%></TEXTAREA></TD>
           </TR>
 <% if (oWLog!=null) { %>
           <TR>
-            <TD ALIGN="right" VALIGN="top" WIDTH="90"><FONT CLASS="formplain">[~Historial~]:</FONT></TD>
+            <TD ALIGN="right" VALIGN="top" WIDTH="90"><FONT CLASS="formplain">History:</FONT></TD>
             <TD ALIGN="left" WIDTH="420">
               <TABLE SUMMARY="History" BORDER="0">              
 <%   for (int l=0; l<oWLog.length; l++) {       
        if (oWLog[l].getStringNull(DB.id_old_status,"").length()==0) {
          out.write("<TR CLASS=\"formplain\"><TD NOWRAP>"+oWLog[l].getDateTime(DB.dt_last_update)+"</TD><TD COLSPAN=2>"+oWLog[l].getStringNull(DB.id_new_status,"")+"</TD></TR>\n");
        } else {
-         out.write("<TR CLASS=\"formplain\"><TD NOWRAP>"+oWLog[l].getDateTime(DB.dt_last_update)+"</TD><TD NOWRAP>[~cambio de~]&nbsp;"+oWLog[l].getStringNull(DB.id_old_status,"")+"</TD><TD NOWRAP>[~a~]&nbsp;"+oWLog[l].getStringNull(DB.id_new_status,"")+"<TD></TR>\n");
+         out.write("<TR CLASS=\"formplain\"><TD NOWRAP>"+oWLog[l].getDateTime(DB.dt_last_update)+"</TD><TD NOWRAP>update&nbsp;"+oWLog[l].getStringNull(DB.id_old_status,"")+"</TD><TD NOWRAP>to&nbsp;"+oWLog[l].getStringNull(DB.id_new_status,"")+"<TD></TR>\n");
        }
      } // next
    } // fi %>
@@ -354,8 +354,8 @@
           </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>
     	    </TD>
     	  </TR>            

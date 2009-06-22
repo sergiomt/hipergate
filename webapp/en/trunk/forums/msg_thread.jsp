@@ -1,4 +1,4 @@
-<%@ page import="java.text.SimpleDateFormat,java.net.URLDecoder,java.io.Reader,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.text.SimpleDateFormat,java.net.URLDecoder,java.io.Reader,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <HTML>
 <HEAD>
@@ -111,18 +111,18 @@
 
       out.write("  <TABLE WIDTH=\"100%\" CELLSPACING=\"2\" CELLPADDING=\"2\">\n");
       out.write("    <TR><TD BACKGROUND=\"../images/images/loginfoot_med.gif\" HEIGHT=\"3\"></TD></TR>\n");
-      out.write("    <TR><TD><FONT CLASS=\"textplain\"><B>[~De~]</B>: </FONT><A HREF=\"mailto:" + sMail + "\">" + sAuthor + "</A></TD></TR>\n");
-      out.write("    <TR><TD><FONT CLASS=\"textplain\"><B>[~Fecha~]</B>: " + sDtPublished + "</FONT></TD></TR>\n");
+      out.write("    <TR><TD><FONT CLASS=\"textplain\"><B>from</B>: </FONT><A HREF=\"mailto:" + sMail + "\">" + sAuthor + "</A></TD></TR>\n");
+      out.write("    <TR><TD><FONT CLASS=\"textplain\"><B>Date</B>: " + sDtPublished + "</FONT></TD></TR>\n");
       
       if (!bIsGuest)
-        out.write("    <TR><TD><A CLASS=\"linkplain\" HREF=\"msg_edit.jsp?id_domain=" + id_domain + "&gu_workarea=" + gu_workarea + "&gu_newsgrp=" + gu_newsgrp + "&nm_newsgrp=" + nm_newsgrp + "&gu_parent_msg=" + sGuMsg + "\">[~Responder a Todos~]</A></TD></TR>\n");
+        out.write("    <TR><TD><A CLASS=\"linkplain\" HREF=\"msg_edit.jsp?id_domain=" + id_domain + "&gu_workarea=" + gu_workarea + "&gu_newsgrp=" + gu_newsgrp + "&nm_newsgrp=" + nm_newsgrp + "&gu_parent_msg=" + sGuMsg + "\">Reply to All</A></TD></TR>\n");
         
       if (sAttachsId!=null) {
         out.write("    <TR><TD>");
         oProd = new Product(sAttachsId);
         oLocs = oProd.getLocations(oConn);
         for (int a=0; a<oLocs.getRowCount(); a++)
-          out.write("<A HREF=\"../servlet/HttpBinaryServlet?id_user=" + sUserId + "&id_product=" + sAttachsId + "&id_location=" + oLocs.getString(DB.gu_location,a) + "\" CLASS=\"linkplain\" TARGET=\"blank\" TITLE=\"[~Abrir/Descargar~]\">" + oLocs.getStringNull(DB.xfile,a,"[~archivo adjunto ~]" + String.valueOf(a)) + "</A>&nbsp;<FONT CLASS=\"textsmall\">(" + String.valueOf(oLocs.getInt(DB.len_file,a)/1024) + " Kb)</FONT>&nbsp;&nbsp;&nbsp;&nbsp;");        
+          out.write("<A HREF=\"../servlet/HttpBinaryServlet?id_user=" + sUserId + "&id_product=" + sAttachsId + "&id_location=" + oLocs.getString(DB.gu_location,a) + "\" CLASS=\"linkplain\" TARGET=\"blank\" TITLE=\"Open/Download\">" + oLocs.getStringNull(DB.xfile,a,"attached File" + String.valueOf(a)) + "</A>&nbsp;<FONT CLASS=\"textsmall\">(" + String.valueOf(oLocs.getInt(DB.len_file,a)/1024) + " Kb)</FONT>&nbsp;&nbsp;&nbsp;&nbsp;");        
         out.write("</TD></TR>");
       } // fi (sAttachsId)
       

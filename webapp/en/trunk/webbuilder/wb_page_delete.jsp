@@ -1,8 +1,5 @@
-<%@ page import="com.knowgate.dataxslt.*,java.util.*,java.io.*,java.math.*,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.dataxslt.db.*,com.knowgate.dfs.FileSystem,com.knowgate.misc.*" language="java" session="false" %>
-<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
-<%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %>
-<%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %>
-<%
+﻿<%@ page import="com.knowgate.dataxslt.*,java.util.*,java.io.*,java.math.*,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.dataxslt.db.*,com.knowgate.dfs.FileSystem,com.knowgate.misc.*" language="java" session="false" %>
+<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -42,8 +39,10 @@
   String gu_pageset    = request.getParameter("gu_pageset");
   String gu_workarea   = request.getParameter("gu_workarea");
   
-  //Inicializaciones
-  //if (autenticateSession(GlobalDBBind, request, response)<0) return;
+  if (autenticateSession(GlobalDBBind, request, response)<0) return;
+  boolean bIsPowerUser = isDomainPowerUser (GlobalCacheClient, GlobalDBBind, request, response);
+  boolean bIsAdmin = isDomainAdmin (GlobalCacheClient, GlobalDBBind, request, response);
+
   PageSet oPageSet = new PageSet(file_template,file_pageset);
   
   //Controlar que no se elimina Home o Recursos
@@ -58,14 +57,16 @@
 %>
 <HTML><HEAD><TITLE>Wait...</TITLE>
 <%  
-  if (sPageName.equals("Home"))
-    out.write("<script>alert('[~No esta permitido eliminar la pagina Home, ya que es el punto de entrada para la navegacion de la web.~]');</script>");
+  if (!bIsAdmin && !bIsPowerUser)
+    out.write("<script type=\"text/javascript\">alert('[~Su nivel de privilegios no le permite eliminar páginas.~]');</script>");
+  else if (sPageName.equals("Home"))
+    out.write("<script type=\"text/javascript\">alert('It is not permitted to remove Home Page, as it is the start navigation point of the website.');</script>");
   else
    if (sPageName.equals("Recursos"))
-     out.write("<script>alert('[~No esta permitido eliminar la pagina Recursos, ya que es un agregador de recursos comunes a toda la web.~]');</script>");
+     out.write("<script type=\"text/javascript\">alert('It is not permitted to remove Resources Page.');</script>");
   else
    if (sPageName.equals("Index"))
-     out.write("<script>alert('[~No esta permitido eliminar la pagina Inicial, ya que es el punto de entrada para la navegacion de la web.~]');</script>");
+     out.write("<script type=\"text/javascript\">alert('[~No esta permitido eliminar la pagina Inicial, ya que es el punto de entrada para la navegacion de la web.~]');</script>");
    else
      oPageSet.removePage(file_pageset,gu_page);
   
@@ -73,8 +74,8 @@
 
   //Recargar listado
 %>  
-<script>
-document.location="wb_document.jsp?id_domain<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_pageset=<%=gu_pageset%>&doctype=website";
+<script type="text/javascript">
+  document.location="wb_document.jsp?id_domain<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_pageset=<%=gu_pageset%>&doctype=website";
 </script>
 </HEAD><BODY></BODY></HTML>
 <%@ include file="../methods/page_epilog.jspf" %>

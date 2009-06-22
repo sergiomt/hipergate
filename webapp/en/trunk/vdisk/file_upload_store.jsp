@@ -1,4 +1,4 @@
-<%@ page import="java.lang.System,java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.util.Enumeration,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.dfs.FileSystem,com.knowgate.misc.Environment,com.oreilly.servlet.MultipartRequest" language="java" session="false" %>
+﻿<%@ page import="java.lang.System,java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.util.Enumeration,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.dfs.FileSystem,com.knowgate.misc.Environment,com.oreilly.servlet.MultipartRequest" language="java" session="false" %>
 <%@ include file="../methods/dbbind.jsp" %>
 <%@ include file="../methods/cookies.jspf" %>
 <%@ include file="../methods/authusrs.jspf" %>

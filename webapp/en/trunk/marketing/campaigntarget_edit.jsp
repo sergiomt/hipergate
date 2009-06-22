@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.marketing.*,com.knowgate.workareas.WorkArea" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.marketing.*,com.knowgate.workareas.WorkArea" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%
 /*  
@@ -158,13 +158,13 @@
         }
 
 			  if (!isFloatValue(frm.nu_planned.value)) {
-          alert ("Forseen target is not valid");
+          alert ("[~El objetivo previsto no es válido~]");
           frm.nu_planned.focus();
           return false;
 			  }        
 
 			  if (!isFloatValue(frm.nu_achieved.value)) {
-          alert ("The reached target is not valid");
+          alert ("[~El objetivo alcanzado no es válido~]");
           frm.nu_achieved.focus();
           return false;
 			  }        

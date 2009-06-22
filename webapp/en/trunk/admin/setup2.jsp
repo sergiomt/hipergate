@@ -1,4 +1,4 @@
-<%@ page import="java.util.Date,java.util.Properties,java.io.IOException,java.io.File,java.io.FileWriter,java.io.FileInputStream,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %><% 
+﻿<%@ page import="java.util.Date,java.util.Properties,java.io.IOException,java.io.File,java.io.FileWriter,java.io.FileInputStream,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %><% 
 /*
   Copyright (C) 2004  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -285,7 +285,7 @@
       </TD>
     </TR>
     <TR CLASS="strip1">
-      <TD><A CLASS="linkplain" TARGET="_blank" HREF="http://www.hipergate.org/docs/install/#driver" TITLE="What is this?">Driver</A></TD>
+      <TD><A CLASS="linkplain" TARGET="_blank" HREF="http://www.hipergate.org/docs/install/#driver" TITLE="[~¿Qu&eacute; es esto?~]">Driver</A></TD>
       <TD>  
         <SELECT NAME="driver" CLASS="combomini" onchange="if (document.forms[0].alt_port.value.length==0) document.forms[0].default_port.options.selectedIndex=this.options.selectedIndex+1;">
           <OPTION VALUE="org.postgresql.Driver">PostgreSQL 8.3</OPTION>
@@ -297,24 +297,24 @@
           <!-- <OPTION VALUE="org.apache.derby.jdbc.ClientDriver">Apache Derby</OPTION>-->
         </SELECT>
       </TD>
-      <TD><A CLASS="linkplain" TARGET="_blank" HREF="http://www.hipergate.org/docs/install/#dburl" TITLE="What is this?">Server</A></TD>
+      <TD><A CLASS="linkplain" TARGET="_blank" HREF="http://www.hipergate.org/docs/install/#dburl" TITLE="[~¿Qu&eacute; es esto?~]">Server</A></TD>
       <TD><INPUT TYPE="text" NAME="server" VALUE="127.0.0.1" SIZE="16" CLASS="combomini"></TD>
-      <TD ALIGN="right"><A CLASS="linkplain" TARGET="_blank" HREF="http://www.hipergate.org/docs/install/#dburl" TITLE="What is this?">Port</A></TD>
+      <TD ALIGN="right"><A CLASS="linkplain" TARGET="_blank" HREF="http://www.hipergate.org/docs/install/#dburl" TITLE="[~¿Qu&eacute; es esto?~]">Port</A></TD>
       <TD>
         <SELECT NAME="default_port" CLASS="combomini"><OPTION VALUE="" SELECTED="selected"></OPTION><OPTION VALUE="">None (MySQL)</OPTION><OPTION VALUE="5432">5432 (PostgreSQL)</OPTION><OPTION VALUE="1433">1433 (SQL Server)</OPTION><OPTION VALUE="1521">1521 (Oracle)</OPTION><!--<OPTION VALUE="1527">1527 (DB2)</OPTION>--></SELECT>
         <INPUT TYPE="text" NAME="alt_port" MAXLENGTH="5" SIZE="5" CLASS="combomini" onchange="document.forms[0].default_port.options.selectedIndex=0;" onkeypress="return acceptOnlyNumbers();">
       </TD>
     </TR>
     <TR CLASS="strip2">
-      <TD><A CLASS="linkplain" TARGET="_blank" HREF="http://www.hipergate.org/docs/install/#dbuser" TITLE="What is this?">User</A></TD>
+      <TD><A CLASS="linkplain" TARGET="_blank" HREF="http://www.hipergate.org/docs/install/#dbuser" TITLE="[~¿Qu&eacute; es esto?~]">User</A></TD>
       <TD><INPUT TYPE="text" NAME="dbuser" VALUE="" SIZE="14" CLASS="combomini"></TD>    
-      <TD><A CLASS="linkplain" TARGET="_blank" HREF="http://www.hipergate.org/docs/install/#dbuser" TITLE="What is this?">Password</A></TD>
+      <TD><A CLASS="linkplain" TARGET="_blank" HREF="http://www.hipergate.org/docs/install/#dbuser" TITLE="[~¿Qu&eacute; es esto?~]">Password</A></TD>
       <TD><INPUT TYPE="text" NAME="dbpassword" VALUE="" SIZE="14" CLASS="combomini"></TD>    
-      <TD ALIGN="right"><A CLASS="linkplain" TARGET="_blank" HREF="http://www.hipergate.org/docs/install/#schema" TITLE="What is this?">Schema</A></TD>
+      <TD ALIGN="right"><A CLASS="linkplain" TARGET="_blank" HREF="http://www.hipergate.org/docs/install/#schema" TITLE="[~¿Qu&eacute; es esto?~]">Schema</A></TD>
       <TD><INPUT TYPE="text" NAME="schema" VALUE="" SIZE="12" CLASS="combomini"></TD>    
     </TR>
     <TR CLASS="strip1">
-      <TD><A CLASS="linkplain" TARGET="_blank" HREF="http://www.hipergate.org/docs/install/#dburl" TITLE="What is this?">Database</A></TD>
+      <TD><A CLASS="linkplain" TARGET="_blank" HREF="http://www.hipergate.org/docs/install/#dburl" TITLE="[~¿Qu&eacute; es esto?~]">Database</A></TD>
       <TD><INPUT TYPE="text" NAME="database" VALUE="" SIZE="10" CLASS="combomini"></TD>    
       <TD COLSPAN="2">
         <FONT CLASS="formplain">Pooled connections</FONT>
@@ -327,7 +327,7 @@
     </TR>
     <TR>
     <TD COLSPAN="6">
-      <INPUT TYPE="button" CLASS="minibutton" VALUE="Test Connection" onclick="testConnect()"></TD>
+      <INPUT TYPE="button" CLASS="minibutton" VALUE="[~Probar Conexión~]" onclick="testConnect()"></TD>
     </TR>    
     <TR><TD COLSPAN="6"><HR></TD></TR>
     <TR>

@@ -1,4 +1,4 @@
-<%@ page import="com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <HTML>
 <HEAD>
   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">

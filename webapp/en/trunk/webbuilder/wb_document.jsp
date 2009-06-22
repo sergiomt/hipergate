@@ -1,4 +1,4 @@
-<%@ page import="java.net.MalformedURLException,java.util.HashMap,org.xml.sax.SAXParseException,org.w3c.dom.DOMException,com.knowgate.debug.DebugFile,com.knowgate.debug.StackTraceUtil,java.util.Vector,java.io.BufferedOutputStream,java.io.OutputStreamWriter,java.io.FileOutputStream,java.io.FileNotFoundException,java.io.IOException,java.io.File,java.util.Properties,java.net.URLDecoder,java.sql.Statement,java.sql.ResultSet,java.sql.ResultSetMetaData,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBAudit,com.knowgate.dfs.FileSystem,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.acl.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*,javax.xml.transform.Transformer,javax.xml.transform.OutputKeys,javax.xml.transform.TransformerException,javax.xml.transform.TransformerConfigurationException" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.MalformedURLException,java.util.HashMap,org.xml.sax.SAXParseException,org.w3c.dom.DOMException,com.knowgate.debug.DebugFile,com.knowgate.debug.StackTraceUtil,java.util.Vector,java.io.BufferedOutputStream,java.io.OutputStreamWriter,java.io.FileOutputStream,java.io.FileNotFoundException,java.io.IOException,java.io.File,java.util.Properties,java.net.URLDecoder,java.sql.Statement,java.sql.ResultSet,java.sql.ResultSetMetaData,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBAudit,com.knowgate.dfs.FileSystem,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.acl.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*,javax.xml.transform.Transformer,javax.xml.transform.OutputKeys,javax.xml.transform.TransformerException,javax.xml.transform.TransformerConfigurationException" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%!
 
   static String back (String sPath) {
@@ -338,6 +338,7 @@
     }
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=TransformerException&desc=" + texc.getMessage() + "<BR>" + sStorageRoot + "<BR>" + sOutputPathEdit + "&resume=_close")); 
   }
+  /*
   catch (NullPointerException npex) {
     oPageSet = null;
     if (DebugFile.trace) {
@@ -346,6 +347,7 @@
     }
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=" + npex.getMessage() + "<BR>" + sStorageRoot + "<BR>" + sOutputPathEdit + "&resume=_close"));
   }
+  */
   if (null==oPageSet) return;
       
   // Redirección a la página renderizada
@@ -367,7 +369,7 @@
     }
 
     if (!oFS.exists(request.getScheme()+"://"+request.getServerName()+":"+String.valueOf(request.getServerPort()) + sURLEdit + sTitle_ + "_." + sMedia)) {
-      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=UrlNotFoundException&desc="+Gadgets.URLEncode(request.getScheme()+"://"+request.getServerName()+":"+String.valueOf(request.getServerPort()) + sURLEdit + sTitle_ + "_." + sMedia)+"<BR/>[~No fue posible abrir la pagina de edicion de plantilla por favor revise el valor de la propiedad workareasget en hipergate.cnf~]&resume=_close"));
+      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=UrlNotFoundException&desc="+Gadgets.URLEncode(request.getScheme()+"://"+request.getServerName()+":"+String.valueOf(request.getServerPort()) + sURLEdit + sTitle_ + "_." + sMedia)+"<BR/>Template could not be opened please check the value of workareasget at hipergate.cnf&resume=_close"));
     } else {
       response.sendRedirect (response.encodeRedirectUrl (sURLEdit + sTitle_ + "_." + sMedia));  
     }
@@ -416,7 +418,7 @@
     	  
     	    if (oRSet.getString(1).equals(request.getParameter(sParamName))) oParamBuffer.append(" SELECTED");
     	  
-    	    oParamBuffer.append(">[~Pagina~] " + String.valueOf(++p) + "</OPTION>");
+    	    oParamBuffer.append(">Page " + String.valueOf(++p) + "</OPTION>");
     	  } // wend
 
 	      if (0!=p) {
@@ -460,7 +462,7 @@
     }
 
     if (!oFS.exists(request.getScheme()+"://"+request.getServerName()+":"+String.valueOf(request.getServerPort()) + sURLEdit + sTitle_ + "_." + sMedia + sQueryString)) {
-      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=UrlNotFoundException&desc="+Gadgets.URLEncode(request.getScheme()+"://"+request.getServerName()+":"+String.valueOf(request.getServerPort()) + sURLEdit + sPage + "_." + sMedia + sQueryString)+"<BR/>[~No fue posible abrir la pagina de edicion de plantilla por favor revise el valor de la propiedad workareasget en hipergate.cnf~]&resume=_close"));
+      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=UrlNotFoundException&desc="+Gadgets.URLEncode(request.getScheme()+"://"+request.getServerName()+":"+String.valueOf(request.getServerPort()) + sURLEdit + sPage + "_." + sMedia + sQueryString)+"<BR/>Template could not be opened please check the value of workareasget at hipergate.cnf&resume=_close"));
     } else {
       response.sendRedirect (response.encodeRedirectUrl (sURLEdit + sTitle_ + "_." + sMedia + sQueryString));
     }

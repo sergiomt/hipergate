@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
 <%  response.setHeader("Cache-Control","no-cache");response.setHeader("Pragma","no-cache"); response.setIntHeader("Expires", 0); %>
 <%@ include file="../methods/cookies.jspf" %>
@@ -73,7 +73,7 @@
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <TITLE>hipergate :: [~&Aacute;rbol de Proyectos~]</TITLE>
+    <TITLE>hipergate :: Project Tree</TITLE>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
@@ -96,7 +96,7 @@
     var treeMenuHiFg       = "#FFFF00";        // Color for selected item text.
     var treeMenuFont       = "Arial,Helvetica"; // Text font face.
     var treeMenuFontSize   = 2;                    // Text font size.
-    var treeMenuRoot       = "[~PROYECTOS~]"; // Text for the menu root.
+    var treeMenuRoot       = "PROJECTS"; // Text for the menu root.
     var treeMenuFolders    = 1;                    // Sets display of '+' and '-' icons.
     var treeMenuAltText    = false;                 // Use menu item text for icon image ALT text.
 
@@ -232,7 +232,7 @@
   </FRAMESET>  
 <NOFRAMES>
   <BODY>
-    <P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
+    <P>This page use frames, but your web browser does not handle them</P>
   </BODY>
 </NOFRAMES>
 <HTML>

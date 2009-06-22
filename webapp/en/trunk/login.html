@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <!-- hipergate © 2003-2007 KnowGate -->
 <head>
@@ -35,17 +35,17 @@
         var frm = window.document.forms[0];
         
         if (frm.nickname.value=="") {
-          alert ("The e-mail may not be empty");
+          alert ("[~El e-mail no puede estar vacío~]");
           return false;
         }
 
         if (!check_email(frm.nickname.value)) {
-          alert ("e-mail address is not valid");
+          alert ("[~La dirección de e-mail no es válida~]");
           return false;
         }
 
         if (ltrim(frm.pwd_text.value)=="") {
-          alert ("Password may not be empty");
+          alert ("[~La contraseña no puede estar vacía~]");
           return false;
         }
           
@@ -108,7 +108,7 @@
     <br/><br/>
     <table summary="Default Passwords" align="center">
       <tr>
-        <td colspan="2"><font class="aplicacion"><b>Passwords for the development version are:</b></font></td>
+        <td colspan="2"><font class="aplicacion"><b>[~Las claves para la versión de desarrollo son:~]</b></font></td>
       </tr>
       <tr>
         <td><font class="aplicacion">administrator@hipergate-test.com</font></td>
@@ -128,9 +128,9 @@
       </tr>
       <tr>
         <td colspan="2">
-          <font class="aplicacion">for changing them go to Configuration menu option<br>
+          <font class="aplicacion">[~Para cambiarlas ve a la pestaña de Configuraci&oacute;n~]<br>
           and the edit users administrator, superuser, user and guest<br>
-          one by one for each WorkArea<br></font>
+          [~uno por uno para cada área de trabajo~]<br></font>
         </td>
       </tr>
     </table>

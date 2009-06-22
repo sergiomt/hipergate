@@ -1,4 +1,4 @@
-<%@ page import="java.sql.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/plain;charset=UTF-8" %><%
+﻿<%@ page import="java.sql.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/plain;charset=UTF-8" %><%
 /*
   Copyright (C) 2004  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)

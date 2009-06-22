@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/tab-separated-values;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/tab-separated-values;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -45,10 +45,6 @@
   JDCConnection oConn = null;
 
   DBSubset oSales = null;
-  
-  oSales.setRowDelimiter("\n");
-  oSales.setColumnDelimiter("\t");
-  oSales.setTextQualifier("");
    
   try {
     oConn = GlobalDBBind.getConnection("rp_salesforecast");
@@ -61,7 +57,11 @@
       oSales = new DBSubset(DB.k_oportunities + " o," + DB.k_users + " u",
   		            "o." + DB.tl_oportunity + ",o." + DB.id_objetive + ",o." + DB.id_status + ",o." + DB.im_revenue + ",o." + DB.dt_modified + ",o." + DB.dt_next_action + "," + DBBind.Functions.ISNULL + "(u." + DB.nm_user + ",'') " + DBBind.Functions.CONCAT + " ' ' " + DBBind.Functions.CONCAT + " " + DBBind.Functions.ISNULL + "(u." + DB.tx_surname1 + ",'') " + DBBind.Functions.CONCAT + " ' ' " + DBBind.Functions.CONCAT + " " + DBBind.Functions.ISNULL + "(u." + DB.tx_surname2 + ",'')",
   			    "o." + DB.gu_workarea + "='" + gu_workarea + "' AND o." + DB.gu_writer + "=u." + DB.gu_user + " AND o." + DB.id_status + " IN ('NUEVA','ABIERTA','APLAZADA')", 100);
-    
+
+    oSales.setRowDelimiter("\n");
+    oSales.setColumnDelimiter("\t");
+    oSales.setTextQualifier("");
+
     oSales.print (oConn, response.getOutputStream());
         
     oConn.close("rp_salesforecast");

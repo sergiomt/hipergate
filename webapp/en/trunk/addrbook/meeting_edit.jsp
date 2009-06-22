@@ -1,4 +1,4 @@
-<%@ page import="java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.addrbook.Meeting,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets,com.knowgate.crm.MemberAddress" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.addrbook.Meeting,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets,com.knowgate.crm.MemberAddress" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%@ include file="meeting_edit.jspf" %><%
 /*
@@ -219,12 +219,12 @@
       	txt = frm.tx_meeting.value;
       	
       	if (txt.indexOf("'")>=0 || txt.indexOf('"')>=0 || txt.indexOf('%')>=0 || txt.indexOf('*')>=0 || txt.indexOf('&')>=0 || txt.indexOf('?')>=0) {
-      	  alert ("Activity title contains invalid characters");
+      	  alert ("[~El título de la actividad contiene caracteres no permitidos~]");
       	  return false;
       	}
       
       	if (rtrim(txt)=="") {
-      	  alert ("Activity title is mandatory");
+      	  alert ("[~El título de la actividad es obligatorio~]");
       	  return false;
       	}
       	
@@ -234,7 +234,7 @@
       	}
       
       	if (!isDate(frm.dt_start.value, "d") ) {
-      	  alert ("Start date is not valid");
+      	  alert ("[~La fecha de inicio no es válida~]");
       	  return false;	  
       	}
       
@@ -244,7 +244,7 @@
       	}
       
       	if (!isDate(frm.dt_end.value, "d") ) {
-      	  alert ("End date is not valid");
+      	  alert ("[~La fecha de fin no es válida~]");
       	  return false;	  
       	}
       	
@@ -256,7 +256,7 @@
       	}
       	
       	if (frm.de_meeting.value.length>1000) {
-      	  alert ("Activity description cannot be longer than 1000 chars.");
+      	  alert ("[~La descripción de la actividad no puede superar los 1000 caracteres~]");
       	  return false;
       	}
         
@@ -468,7 +468,7 @@
             <TD ALIGN="right" WIDTH="100"><FONT CLASS="formplain">Ativity Type:</FONT></TD>
             <TD ALIGN="left" WIDTH="360">
               <INPUT TYPE="hidden" NAME="tp_meeting">
-              <SELECT CLASS="combomini" NAME="sel_tp_meeting"><OPTION VALUE=""></OPTION><OPTION VALUE="meeting">Meeting</OPTION><OPTION VALUE="call">Call</OPTION><OPTION VALUE="followup">Follow up</OPTION><OPTION VALUE="breakfast">Breakfast<OPTION VALUE="lunch">Lunch</OPTION><OPTION VALUE="course">Course</OPTION><OPTION VALUE="demo">Demo</OPTION><OPTION VALUE="workshop">Journey<OPTION VALUE="congress">Congress</OPTION><OPTION VALUE="tradeshow">Trade Show</OPTION><OPTION VALUE="bill">Send Invoice</OPTION><OPTION VALUE="pay">Pay</OPTION><OPTION VALUE="holidays">Holidays</OPTION></SELECT>
+              <SELECT CLASS="combomini" NAME="sel_tp_meeting"><OPTION VALUE=""></OPTION><OPTION VALUE="meeting">[~Reunión~]</OPTION><OPTION VALUE="call">Call</OPTION><OPTION VALUE="followup">Follow up</OPTION><OPTION VALUE="breakfast">Breakfast<OPTION VALUE="lunch">Lunch</OPTION><OPTION VALUE="course">Course</OPTION><OPTION VALUE="demo">Demo</OPTION><OPTION VALUE="workshop">Journey<OPTION VALUE="congress">Congress</OPTION><OPTION VALUE="tradeshow">Trade Show</OPTION><OPTION VALUE="bill">Send Invoice</OPTION><OPTION VALUE="pay">Pay</OPTION><OPTION VALUE="holidays">Holidays</OPTION></SELECT>
             </TD>
           </TR>
           <TR>
@@ -540,7 +540,7 @@
     	    <TD COLSPAN="2" ALIGN="center">
 <%	    if (gu_fellow.equals(getCookie(request, "userid", "")))
               if (bIsGuest) { %>    
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('Your credential level as Guest does not allow you to perform this action')">&nbsp;&nbsp;&nbsp;
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">&nbsp;&nbsp;&nbsp;
 <%            } else { %>
               <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
 <%          } %>

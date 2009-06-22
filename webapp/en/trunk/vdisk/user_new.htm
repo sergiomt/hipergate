@@ -1,4 +1,4 @@
-
+﻿
 <HTML>
 <HEAD>
   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
@@ -25,7 +25,7 @@
 
         str = rtrim(frm.tx_surname1.value);
 	if (str.length==0) {
-	  alert ("Surname/Legal Name is mandatory");
+	  alert ("[~El Apellido/Razón Social es Obligatorio~]");
 	  return false;
 	}
 	frm.tx_surname1.value = str;
@@ -38,7 +38,7 @@
 	frm.tx_nickname.value = str.toLowerCase();
 	
 	if(frm.tx_pwd.value!=frm.tx_pwd2.value) {
-	  alert ("Retyped password does not coincide with original one");
+	  alert ("[~La contraseña repetida no coincide con la original~]");
 	  return false;	
 	}
 

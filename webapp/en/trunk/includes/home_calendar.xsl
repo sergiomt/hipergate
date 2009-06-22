@@ -70,7 +70,7 @@
 	      <xsl:for-each select="calendar/todo/activity">
     	        <TR>
     	          <TD><FONT CLASS="textplain"><xsl:value-of select="od_priority"/></FONT></TD><TD><A CLASS="linkplain" HREF="#" onclick="window.open('../addrbook/todo_edit.jsp?gu_workarea={$param_workarea}&amp;gu_to_do={gu_to_do}',null,'directories=no,toolbar=no,menubar=no,width=500,height=400')"><xsl:value-of select="tl_to_do"/></A></TD>
-    	          <TD><A HREF="#" onclick="window.open('../addrbook/todo_finish.jsp?gu_workarea=$param_workarea}&amp;gu_to_do={gu_to_do}',null,'directories=no,toolbar=no,menubar=no,width=500,height=400')" TITLE="Finalize Task"><IMG SRC="../images/images/checkmark16.gif" WIDTH="16" HEIGHT="16" BORDER="0"/></A></TD>
+    	          <TD><A HREF="#" onclick="window.open('../addrbook/todo_finish.jsp?gu_workarea={$param_workarea}&amp;gu_to_do={gu_to_do}',null,'directories=no,toolbar=no,menubar=no,width=500,height=400')" TITLE="Finalize Task"><IMG SRC="../images/images/checkmark16.gif" WIDTH="16" HEIGHT="16" BORDER="0"/></A></TD>
     	        </TR>
 	      </xsl:for-each>	      
 	      </TABLE>

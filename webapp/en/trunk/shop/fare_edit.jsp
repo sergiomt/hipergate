@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*
@@ -131,7 +131,6 @@
         frm.pr_sale.value = frm.pct_tax_rate.value = frm.dt_start.value = frm.dt_end.value = "";
         frm.is_tax_included.checked = false;
 
-				alert (id);
         if (id.length!=0) {
           var e = false;
           for (var f=0; f<<%=nFares%> && !e; f++) e = (fares[f]==id);
@@ -145,12 +144,12 @@
         var frm = window.document.forms[0];
 
 	      if (!isDate(frm.dt_start.value, "d") && frm.dt_start.value.length>0) {
-	        alert ("Start date is not valid");
+	        alert ("[~La fecha de inicio no es válida~]");
 	        return false;
 	      }
 
 	      if (!isDate(frm.dt_end.value, "d") && frm.dt_end.value.length>0) {
-	        alert ("End date is not valid");
+	        alert ("[~La fecha de fin no es válida~]");
 	        return false;
 	      }
 
@@ -177,17 +176,17 @@
 		    }
 		    
       	if (!isFloatValue(frm.pr_sale.value)) {
-      	  alert ("Fare price is not valid ");
+      	  alert ("[~El precio de tarifa no es válido~]");
       	  return false;
       	}
 
       	if (frm.pct_tax_rate.value.length>0) {
       	  if (!isFloatValue(frm.pct_tax_rate.value)) {
-      	    alert ("Tax rate percentage is not valid");
+      	    alert ("[~El porcentaje de tasas no es válido~]");
       	    return false;
       	  }
       	  if (parseFloat(frm.pct_tax_rate.value.replace(new RegExp(","), "."))>100) {
-      	    alert ("Tax rate percentage is not valid");
+      	    alert ("[~El porcentaje de tasas no es válido~]");
       	    return false;
       	  }
       	}

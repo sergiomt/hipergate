@@ -1,4 +1,4 @@
-<%@ page import="java.lang.StringBuffer,java.util.Vector,com.knowgate.misc.*,java.io.File,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.debug.DebugFile,com.knowgate.misc.*,com.knowgate.dataxslt.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.db.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.lang.StringBuffer,java.util.Vector,com.knowgate.misc.*,java.io.File,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.debug.DebugFile,com.knowgate.misc.*,com.knowgate.dataxslt.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.db.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%!
 
   static String esc (String sPath) {
@@ -140,12 +140,12 @@
   integraOut.append("<table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">");
   integraOut.append("<tr><td colspan=\"3\" background=\"" + sImagesRoot + "/images/spacer.gif\" height=\"3\"></td></tr>");  
   integraOut.append("<tr valign=\"middle\">");
-  integraOut.append("<td>&nbsp;<img src=\"" + sImagesRoot + "/images/integrador/addblock16x16.gif\" width=\"16\" height=\"16\" border=\"0\" alt=\"[~Nuevo Bloque~]\">");
-  integraOut.append("&nbsp;<a href=\"javascript:addNewBlock();\" style=\"font-family:arial; font-size:10px; color:#ffffff\">[~Nuevo~]</a></td>");
-  integraOut.append("<td>&nbsp;<img src=\"" + sImagesRoot + "/images/integrador/delblock16x16.gif\" width=\"16\" height=\"16\" border=\"0\" alt=\"[~Eliminar bloques seleccionados~]\">");
-  integraOut.append("&nbsp;<a href=\"javascript:deleteCheckedBlocks();\" style=\"font-family:arial; font-size:10px; color:#ffffff\">[~Eliminar~]</a></td>");
-  integraOut.append("<td>&nbsp;<img src=\"" + sImagesRoot + "/images/integrador/palete16x16.gif\" width=\"16\" height=\"16\" border=\"0\" alt=\"[~Cambiar estilo~]\">");
-  integraOut.append("&nbsp;<a href=\"javascript:changeStyles();\" style=\"font-family:arial; font-size:10px; color:#ffffff\">[~Estilo~]</a></td>");
+  integraOut.append("<td>&nbsp;<img src=\"" + sImagesRoot + "/images/integrador/addblock16x16.gif\" width=\"16\" height=\"16\" border=\"0\" alt=\"New Block\">");
+  integraOut.append("&nbsp;<a href=\"javascript:addNewBlock();\" style=\"font-family:arial; font-size:10px; color:#ffffff\">New</a></td>");
+  integraOut.append("<td>&nbsp;<img src=\"" + sImagesRoot + "/images/integrador/delblock16x16.gif\" width=\"16\" height=\"16\" border=\"0\" alt=\"Remove selected blocks\">");
+  integraOut.append("&nbsp;<a href=\"javascript:deleteCheckedBlocks();\" style=\"font-family:arial; font-size:10px; color:#ffffff\">Delete</a></td>");
+  integraOut.append("<td>&nbsp;<img src=\"" + sImagesRoot + "/images/integrador/palete16x16.gif\" width=\"16\" height=\"16\" border=\"0\" alt=\"Change style\">");
+  integraOut.append("&nbsp;<a href=\"javascript:changeStyles();\" style=\"font-family:arial; font-size:10px; color:#ffffff\">Style</a></td>");
   integraOut.append("</tr>");
   integraOut.append("<tr><td colspan=\"3\" background=\"" + sImagesRoot + "/images/spacer.gif\" height=\"3\"></td></tr>");  
   integraOut.append("<tr><td colspan=\"3\" background=\"" + sImagesRoot + "/images/loginfoot_med.gif\" height=\"3\"></td></tr>");  

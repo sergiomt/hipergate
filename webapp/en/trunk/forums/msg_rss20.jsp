@@ -1,12 +1,8 @@
-<%@ page import="java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Gadgets,com.knowgate.forums.*" language="java" session="false" contentType="text/xml;charset=UTF-8" %>
-<%@ include file="../methods/dbbind.jsp" %>
-<%@ include file="../methods/cookies.jspf" %>
-<%@ include file="../methods/authusrs.jspf" %>
-<%@ include file="../methods/nullif.jspf" %>
-<%
+﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Gadgets,com.knowgate.forums.*" language="java" session="false" contentType="text/xml;charset=UTF-8" %>
+<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
 
-  Create an RSS 1.0 file with a message list
+  Create an RSS 2.0 file with a message list
   Check generated RSS with UserLand RSS 2.0 Validator at: http://rss.scripting.com/
 
   Copyright (C) 2004  Know Gate S.L. All rights reserved.
@@ -130,7 +126,7 @@
     <title><%=tl_newsgrp%></title>
     <link></link>
     <description><%=oNewsGrp.getStringNull(DB.de_newsgrp, "")%></description>
-    <copyright>Copyright (C) 2004  Know Gate S.L.</copyright>
+    <copyright>Copyright (C) 2009  Know Gate S.L.</copyright>
     <managingEditor>editor@thechannel.com</managingEditor>
     <webMaster>webmaster@thechannel.com</webMaster>
     <pubDate><%=nullif(oNewsGrp.getDateFormated(DB.dt_last_update, "EEE, dd MMM yyyy hh:mm:ss z"))%></pubDate>

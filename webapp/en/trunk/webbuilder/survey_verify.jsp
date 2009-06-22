@@ -1,4 +1,4 @@
-<%@ page import="java.util.LinkedList,java.util.ListIterator,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.surveys.Survey,com.knowgate.surveys.SurveyPage,com.knowgate.surveys.DataSheet" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.LinkedList,java.util.ListIterator,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.surveys.Survey,com.knowgate.surveys.SurveyPage,com.knowgate.surveys.DataSheet" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -95,17 +95,17 @@
           if (oQuest.mustAnswer()) {
 	    iAnswerIdx = oData.getAnswerIndex(oQuest.getName());
 	    if (-1==iAnswerIdx) {
-	      oErrors.add(new String("[~Falta una pregunta requerida.~] [~P&aacute;gina:~]&nbsp;"+String.valueOf(nPage)+"&nbsp;[~Pregunta:~]&nbsp;"+String.valueOf(q)));
+	      oErrors.add(new String("A required question is missing Page&nbsp;"+String.valueOf(nPage)+"&nbsp;Question&nbsp;"+String.valueOf(q)));
 	      if (-1==i1stError) i1stError=nPage;
 	    }
 	    else {
 	      oAnwr = oData.getAnswer(iAnswerIdx);
 	      if (null==oAnwr.getValue()) {
-	        oErrors.add(new String("[~Falta una pregunta requerida.~]&nbsp;[~P&aacute;gina:~]&nbsp;"+String.valueOf(nPage)+"&nbsp;[~Pregunta:~]&nbsp;"+String.valueOf(q)));
+	        oErrors.add(new String("A required question is missing&nbsp;Page&nbsp;"+String.valueOf(nPage)+"&nbsp;Question&nbsp;"+String.valueOf(q)));
 	        if (-1==i1stError) i1stError=nPage;
 	      }
 	      else if (oAnwr.getValue().length()==0) {
-	        oErrors.add(new String("[~Falta una pregunta requerida.~]&nbsp;[~P&aacute;gina:~]&nbsp;"+String.valueOf(nPage)+"&nbsp;[~Pregunta:~]&nbsp;"+String.valueOf(q)));
+	        oErrors.add(new String("A required question is missing&nbsp;Page&nbsp;"+String.valueOf(nPage)+"&nbsp;Question&nbsp;"+String.valueOf(q)));
 	        if (-1==i1stError) i1stError=nPage;
 	      }
 	    }

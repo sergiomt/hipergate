@@ -1,4 +1,4 @@
-<%@ page import="java.util.Arrays,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.crm.Contact,com.knowgate.training.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.Arrays,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.crm.Contact,com.knowgate.training.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*
@@ -108,7 +108,7 @@
         var sta = frm.elements["alumni_"+String(ix)];
         if (sta.value=="0") {
           if (frm.elements[gu+"_canceled"].checked) {
-            alert ("It is not possible to admit students whose registration has been cancelled");
+            alert ("[~No es posible aceptar alumnos cuya inscripción haya sido cancelada~]");
           } else {
             sta.value = "1";
             btn.src = "../images/images/corrected.gif";
@@ -161,7 +161,7 @@
       function convertToAlumni() {
         var frm = window.document.forms[0];
         var lst = "";
-        if (window.confirm("Are you sure that you want to promote all registrations to actual course students?")) {
+        if (window.confirm("[~¿Está seguro de que desea convertir todas las inscripciones confirmadas y no canceladas en alumnos aceptados del curso?~]")) {
 	  for (var c=0; c<<%=String.valueOf(iBooks)%>; c++) {
 	    if (frm.elements[cnt[c]+"_confirmed"].checked) {
 	      lst += (lst.length==0 ? "" : ",") + cnt[c];

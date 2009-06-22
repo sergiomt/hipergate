@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.QueryByForm" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.QueryByForm" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
@@ -225,14 +225,14 @@
 	  // [~//Borrar las instancias marcadas con checkboxes~]
 
 <% if (!bIsAdmin) { %>
-	alert ("Your priviledge level as guest does not allow you to perform this action");
+	alert ("[~Su nivel de privilegio no le permite efectuar esta acción~]");
 <% } else { %>
 	  
 	  var offset = 0;
 	  var frm = document.forms[0];
 	  var chi = frm.checkeditems;
 	  	  
-	  if (window.confirm("Are you sure you want to delete selected instances?")) {
+	  if (window.confirm("[~¿Está seguro de que desea eliminar las instancias seleccionadas?~]")) {
 	  	  
 	    chi.value = "";	  	  
 	    frm.action = "fellow_edit_delete.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
@@ -300,7 +300,7 @@
 
       function addPhoneCall(gu) {
 <% if (bIsGuest) { %>
-        alert("Your credential level as Guest does not allow you to perform this action");
+        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
 <% } else { %>
         window.open("phonecall_edit_f.jsp?gu_workarea=<%=gu_workarea%>&gu_fellow=" + gu, "addphonecall", "directories=no,toolbar=no,menubar=no,width=500,height=400");       
 <% } %>        
@@ -326,7 +326,7 @@
         // [~//Abrir una ventana de clonado y poner un temporizador para recargar la página cuando se termine el clonado~]
         
 <% if (!bIsAdmin) { %>
-	alert ("Your priviledge level as guest does not allow you to perform this action");
+	alert ("[~Su nivel de privilegio no le permite efectuar esta acción~]");
 <% } else { %>
         winclone = window.open ("../common/clone.jsp?id_domain=" + getCookie("domainid") + "&n_domain=" + escape(getCookie("domainnm")) + "&datastruct=fellow_clon&gu_instance=" + jsFellowId +"&opcode=CFLW&classid=20", "clonefellow", "directories=no,toolbar=no,menubar=no,width=320,height=200");                
         intervalId = setInterval ("findCloned()", 100);
@@ -364,7 +364,7 @@
         <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
         <TD VALIGN="middle">
 <% if (!bIsAdmin) { %>
-          <A HREF="#" onclick="alert('Your priviledge level as guest does not allow you to perform this action')" CLASS="linkplain">New</A>
+          <A HREF="#" onclick="alert('[~Su nivel de privilegio no le permite efectuar esta acción~]')" CLASS="linkplain">New</A>
 <% } else { %>
           <A HREF="#" onclick="createFellow()" CLASS="linkplain">New</A>
 <% } %>
@@ -372,7 +372,7 @@
         <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
         <TD>
 <% if (!bIsAdmin) { %>
-          <A HREF="#" onclick="alert('Your priviledge level as guest does not allow you to perform this action')" CLASS="linkplain">Delete</A>
+          <A HREF="#" onclick="alert('[~Su nivel de privilegio como no le permite efectuar esta acción~]')" CLASS="linkplain">Delete</A>
 <% } else { %>
           <A HREF="javascript:deleteFellows()" CLASS="linkplain">Delete</A>
 <% } %>
@@ -383,9 +383,9 @@
           <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>">
 	  &nbsp;<A HREF="#" onclick="findFellow();return false;" CLASS="linkplain" TITLE="Search">Search</A>	  
         </TD>
-        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard Find Filter"></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="[~Descartar búsqueda~]"></TD>
         <TD VALIGN="bottom">
-          <A HREF="#" onclick="window.document.location='fellow_listing.jsp?id_domain=' + getCookie('domainid') + '&n_domain=' + escape(getCookie('domainnm')) + '&skip=0&selected=' + getURLParam('selected') + '&subselected=' + getURLParam('subselected');" CLASS="linkplain" TITLE="Discard Find Filter">Discard</A>
+          <A HREF="#" onclick="window.document.location='fellow_listing.jsp?id_domain=' + getCookie('domainid') + '&n_domain=' + escape(getCookie('domainnm')) + '&skip=0&selected=' + getURLParam('selected') + '&subselected=' + getURLParam('subselected');" CLASS="linkplain" TITLE="[~Descartar búsqueda~]">Discard</A>
           <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;Show&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;results&nbsp;</FONT>
         </TD>
       </TR>

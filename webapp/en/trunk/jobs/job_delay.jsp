@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.*,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.*,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %>
 <%@ include file="../methods/cookies.jspf" %>
 <%@ include file="../methods/authusrs.jspf" %>
@@ -69,7 +69,7 @@
         var dte = rtrim(ltrim(frm.dt_execution.value));
         
         if (dte!="Lo antes posible" && dte!="As soon as posible" && !isDate(dte,"d")) {        
-          alert ("Specified date is not valid");
+          alert ("[~La fecha especificada no es válida~]");
           return false;
         }
         
@@ -93,7 +93,7 @@
       <TR>
        <TD>
         <TABLE WIDTH="100%" CLASS="formfront">
-          <TR><TD colspan="2" ALIGN="center" class="formstrong">Update scheduled execution date<BR><BR></TD></TR>
+          <TR><TD colspan="2" ALIGN="center" class="formstrong">[~Actualizar fecha de ejecución programada~]<BR><BR></TD></TR>
           <TR><TD ALIGN="center" colspan="2" class="formplain">Date:&nbsp;<INPUT TYPE="text" NAME="dt_execution" MAXLENGTH="20" SIZE="20" VALUE="Lo antes posible"><A HREF="javascript:showCalendar('dt_execution')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A></TD></TR>
           <TR><TD COLSPAN="2"><HR></TD></TR>
           <TR><TD COLSPAN="2" ALIGN="center"><INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()"><BR><BR></TD>

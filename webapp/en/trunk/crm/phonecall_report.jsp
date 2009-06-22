@@ -1,4 +1,4 @@
-<%@ page import="java.util.Date,java.util.Arrays,java.util.HashMap,java.text.SimpleDateFormat,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.Timestamp,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Calendar" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.Date,java.util.Arrays,java.util.HashMap,java.text.SimpleDateFormat,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.Timestamp,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Calendar" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><% 
 /*
   Copyright (C) 2003-2008  Know Gate S.L. All rights reserved.
@@ -56,13 +56,16 @@
   int nSent = 0;
   int nReceived = 0;
   int nOprts = 0;
+  int nOprtsWholeCampaign = 0;
   int nCallDays = 0;
   Date dtFirstSentCall=null, dtLastSentCall=null;
   Date dtFirstRecvCall=null, dtLastRecvCall=null;
 
   StringBuffer oByStatus = new StringBuffer();
+  StringBuffer oByStatusWholeCampaign = new StringBuffer();
   StringBuffer oWonByCause = new StringBuffer();
   StringBuffer oLostByCause = new StringBuffer();
+  StringBuffer oAbanByCause = new StringBuffer();
   int[] aSentCallsByDay = null;
   int[] aRecvCallsByDay = null;
 
@@ -170,6 +173,17 @@
 	    oLostByCause.append("<TR><TD CLASS=\"textsmall\" ALIGN=\"right\">"+sLostBecause+" "+String.valueOf(oRSet.getInt(2))+"</TD><TD></TD></TR>");
 	  } // wend
 	  oRSet.close();
+	  oStmt.setString(1, "ABANDONADA");
+	  oStmt.setString(2, gu_workarea);
+	  oStmt.setTimestamp(3, dt_from);
+	  oStmt.setTimestamp(4, dt_to);
+	  oRSet = oStmt.executeQuery();
+	  while(oRSet.next()) {
+	    String sAbanBecause = DBLanguages.getLookUpTranslation(oConn, DB.k_oportunities_lookup, gu_workarea, DB.tx_cause, sLanguage, oRSet.getString(1));
+	    if (null==sAbanBecause) sAbanBecause = oRSet.getString(1);	    
+	    oAbanByCause.append("<TR><TD CLASS=\"textsmall\" ALIGN=\"right\">"+sAbanBecause+" "+String.valueOf(oRSet.getInt(2))+"</TD><TD></TD></TR>");
+	  } // wend
+	  oRSet.close();
 	  oStmt.close();
 	  
     if (gu_campaign.length()==0)
@@ -190,9 +204,26 @@
 	    oByStatus.append("<TR><TD CLASS=\"textplain\">"+sStatus+"</TD><TD CLASS=\"textplain\">"+String.valueOf(oRSet.getInt(2))+"</TD></TR>");
 	    if ("GANADA".equals(oRSet.getString(1))) oByStatus.append(oWonByCause.toString());
 	    if ("PERDIDA".equals(oRSet.getString(1))) oByStatus.append(oLostByCause.toString());
+	    if ("ABANDONADA".equals(oRSet.getString(1))) oByStatus.append(oAbanByCause.toString());		
 	  } // wend
 	  oRSet.close();
 	  oStmt.close();
+
+    if (gu_campaign.length()>0) {
+      oStmt = oConn.prepareStatement("SELECT "+DB.id_status+",COUNT("+DB.gu_oportunity+") FROM "+DB.k_oportunities+" WHERE "+DB.gu_campaign+"=? AND "+DB.gu_workarea+"=? GROUP BY "+DB.id_status);
+	    oStmt.setString(1, gu_campaign);
+	    oStmt.setString(2, gu_workarea);
+	    oRSet = oStmt.executeQuery();
+	    while(oRSet.next()) {
+	      String sStatusW = DBLanguages.getLookUpTranslation(oConn, DB.k_oportunities_lookup, gu_workarea, DB.id_status, sLanguage, oRSet.getString(1));
+	      if (null==sStatusW) sStatusW = oRSet.getString(1);	    
+	      if (null==sStatusW) sStatusW = "";
+	      nOprtsWholeCampaign += oRSet.getInt(2);
+	      oByStatusWholeCampaign.append("<TR><TD CLASS=\"textplain\">"+sStatusW+"</TD><TD CLASS=\"textplain\">"+String.valueOf(oRSet.getInt(2))+"</TD></TR>");
+	    } // wend
+	    oRSet.close();
+	    oStmt.close();
+    }
 
     oConn.close(PAGE_NAME);
   }
@@ -236,11 +267,19 @@
   </TABLE>
   <BR/>
   <TABLE SUMMARY="By Status" BORDER="1">
-    <TR><TD CLASS="textstrong" COLSPAN="2">[~Estado de las oportunidades~]</TD></TR>
+    <TR><TD CLASS="textstrong" COLSPAN="2">[~Estado de las oportunidades con llamadas~]</TD></TR>
     <%=oByStatus.toString()%>
     <TR><TD CLASS="textstrong">[~Total~]</TD><TD CLASS="textstrong"><% out.write(String.valueOf(nOprts)); %></TD></TR>
   </TABLE>
-<% Date dt;
+<% if (gu_campaign.length()>0) { %>
+  <BR/>
+  <TABLE SUMMARY="By Status Whole Campaign" BORDER="1">
+    <TR><TD CLASS="textstrong" COLSPAN="2">[~Estado de todas las oportunidades de la campaña~]</TD></TR>
+    <%=oByStatusWholeCampaign.toString()%>
+    <TR><TD CLASS="textstrong">[~Total~]</TD><TD CLASS="textstrong"><% out.write(String.valueOf(nOprtsWholeCampaign)); %></TD></TR>
+  </TABLE>
+<% }
+   Date dt;
    int t;
    if (aSentCallsByDay!=null) {
      dt = new Date (dtFirstSentCall.getTime());

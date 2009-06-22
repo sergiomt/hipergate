@@ -1,10 +1,10 @@
-<%@ page import="com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//EN" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">  
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <TITLE>hipergate :: [~Editar Objetivos de Venta~]</TITLE>
+    <TITLE>hipergate :: Edit Sales Objectives</TITLE>
     <SCRIPT LANGUAGE="javascript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="javascript" SRC="../javascript/getparam.js"></SCRIPT>
   </HEAD>
@@ -13,7 +13,7 @@
     <FRAME NAME="yearobjectives" FRAMEBORDER="no" MARGINWIDTH="0 marginheight=" NORESIZE>
     <NOFRAMES>
       <BODY>
-	<P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
+	<P>This page contains frames, but you browser does not support them.</P>
       </BODY>
     </NOFRAMES>
   </FRAMESET>

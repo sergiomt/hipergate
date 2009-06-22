@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.ResultSet,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.ResultSet,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/cookies.jspf" %>
@@ -138,16 +138,16 @@
     <FORM onSubmit="return false">
     <TABLE WIDTH="100%">
       <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-      <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Editar Objetivos de Venta~]&nbsp;<% out.write(n_sales_man); %></FONT></TD></TR>
+      <TR><TD CLASS="striptitle"><FONT CLASS="title1">Edit Sales Objectives&nbsp;<% out.write(n_sales_man); %></FONT></TD></TR>
     </TABLE>
       <TABLE WIDTH="100%">
         <TR>
           <TD>
-            <FONT CLASS="formstrong">[~Año~]&nbsp;</FONT><SELECT NAME="sel_year" onchange="showYear(getCombo(this))"><% out.write(oStrBuff.toString()); %></SELECT><INPUT TYPE="button" CLASS="closebutton" VALUE="[~Eliminar~]" STYLE="width:80px" onclick="deleteYear()">
+            <FONT CLASS="formstrong">[~Año~]&nbsp;</FONT><SELECT NAME="sel_year" onchange="showYear(getCombo(this))"><% out.write(oStrBuff.toString()); %></SELECT><INPUT TYPE="button" CLASS="closebutton" VALUE="Delete" STYLE="width:80px" onclick="deleteYear()">
           </TD>
           <TD ALIGN="right">
             <FONT CLASS="formstrong">[~Nuevo Año~]&nbsp;</FONT><INPUT TYPE="text" MAXLENGTH="10" SIZE="6" NAME="tx_year">
-            <INPUT TYPE="button" CLASS="pushbutton" VALUE="[~Nuevo~]" STYLE="width:80px" onclick="newYear()">
+            <INPUT TYPE="button" CLASS="pushbutton" VALUE="New" STYLE="width:80px" onclick="newYear()">
           </TD>
         </TR>
       </TABLE>

@@ -1,4 +1,4 @@
-<%@ page import="java.util.Date,com.knowgate.misc.*,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.dfs.FileSystem" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.Date,com.knowgate.misc.*,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.dfs.FileSystem" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
 <%  response.setHeader("Cache-Control","no-cache");response.setHeader("Pragma","no-cache"); response.setIntHeader("Expires", 0); %>
@@ -114,15 +114,15 @@
   }
     
   if (sDocType.equals("newsletter")) {
-    sTitle = "[~NewsLetter~]";
+    sTitle = "NewsLetter";
     sSubPath = "domains" + sSep + id_domain + sSep + "workareas" + sSep + gu_workarea + sSep + "apps" + sSep + "Mailwire" + sSep + "data";
   }
   else if (sDocType.equals("survey")) {
-    sTitle = "[~Cuestionario~]";
+    sTitle = "Questionnaire";
     sSubPath = "domains" + sSep + id_domain + sSep + "workareas" + sSep + gu_workarea + sSep + "apps" + sSep + "Surveys" + sSep + "data";
   }
   else {
-    sTitle = "[~WebSite~]";
+    sTitle = "WebSite";
     sSubPath = "domains" + sSep + id_domain + sSep + "workareas" + sSep + gu_workarea + sSep + "apps" + sSep + "WebBuilder" + sSep + "data";
   }
   
@@ -312,7 +312,7 @@
         var frm = document.forms[0];
          
         if (frm.tx_comments.value.length>255) {
-          alert ("[~La longuitud de los comentarios no puede exceder los 255 caracteres~]");
+          alert ("Comments may not be longer than 255 characters");
           return false;
         }
 
@@ -410,18 +410,18 @@
 
 %>          
      <TR><TD ALIGN="left" WIDTH="90">&nbsp;<BR></TD></TR>
-     <TR><TD ALIGN="left" WIDTH="90"><FONT CLASS="formstrong">[~Idioma:~]</FONT><BR></TD></TR>
-     <TR><TD><SELECT NAME="sel_language"><OPTION VALUE="[~es~]" SELECTED>[~Español~]<% out.write (sSelLang); %></SELECT></TD></TR>
-     <TR><TD ALIGN="left" WIDTH="90"><FONT CLASS="formstrong">[~Compa&ntilde;&iacute;a:~]</FONT><BR></TD></TR>
-     <TR><TD><INPUT TYPE="hidden" NAME="gu_company"><INPUT TYPE="text" NAME="nm_legal" SIZE="30" TABINDEX="-1">&nbsp;&nbsp;<A HREF="javascript:reference(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Compa&ntilde;&iacute;as~]"></A></TD></TR>
+     <TR><TD ALIGN="left" WIDTH="90"><FONT CLASS="formstrong">Language:</FONT><BR></TD></TR>
+     <TR><TD><SELECT NAME="sel_language"><OPTION VALUE="es" SELECTED>[~Español~]<% out.write (sSelLang); %></SELECT></TD></TR>
+     <TR><TD ALIGN="left" WIDTH="90"><FONT CLASS="formstrong">Company</FONT><BR></TD></TR>
+     <TR><TD><INPUT TYPE="hidden" NAME="gu_company"><INPUT TYPE="text" NAME="nm_legal" SIZE="30" TABINDEX="-1">&nbsp;&nbsp;<A HREF="javascript:reference(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View list of companies"></A></TD></TR>
      <TR><TD ALIGN="left" WIDTH="90">&nbsp;<BR></TD></TR>
-     <TR><TD ALIGN="left" WIDTH="90"><FONT CLASS="formplain">[~Comentarios:~]</FONT><BR></TD></TR>
+     <TR><TD ALIGN="left" WIDTH="90"><FONT CLASS="formplain">Comments:</FONT><BR></TD></TR>
      <TR><TD ALIGN="left" WIDTH="370"><TEXTAREA NAME="tx_comments" COLS="30" ROWS="5"></TEXTAREA></TD></TR>
     </TABLE>
     </TD>
     <TD WIDTH="180" VALIGN="TOP" ALIGN="right" CLASS="formplain">
     <IMG ID="imgThumb" NAME="imgThumb" HEIGHT="282" WIDTH="242" BORDER="1" SRC="../images/images/webbuilder/pixeltrans.gif"><BR>
-    <b>[~Vista Previa~]</b>
+    <b>Preview</b>
     </TD>
     </TR>
     </TABLE>

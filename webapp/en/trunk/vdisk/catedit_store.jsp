@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.Category" language="java" session="false" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.Category" language="java" session="false" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/reqload.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -89,7 +89,7 @@
       if (!id_user.equals(oDom.getString(DB.gu_owner)))
         oCatg.setUserPermissions ( oCon1, id_user, ACL.PERMISSION_LIST|ACL.PERMISSION_READ|ACL.PERMISSION_ADD|ACL.PERMISSION_DELETE|ACL.PERMISSION_MODIFY|ACL.PERMISSION_GRANT, (short) 1, (short) 0);
     }
-    else {        
+    else {
 
       oCatg = new Category(id_category);
       
@@ -105,14 +105,14 @@
     oCatg.storeLabels(oCon1, names_subset, "¨", "`");
     
     oCon1.commit();
-    oCon1.close();
+    oCon1.close("catedit_store");
     oCon1 = null;        
   }
   catch (NullPointerException d) {
     if (null!=oCon1)
       if (!oCon1.isClosed()) {
-        oCon1.rollback();
-        oCon1.close();
+        if (oCon1.getAutoCommit()) oCon1.rollback();
+        oCon1.close("catedit_store");
         oCon1 = null;
       }
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + d.getMessage() + "&resume=_back"));    

@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.util.HashMap,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder,java.util.HashMap,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
 <%@ include file="../methods/cookies.jspf" %>
@@ -112,33 +112,33 @@
       sAddrZp = oAddresses.getStringNull(5,i,"");
       sAddrCt = oAddresses.getStringNull(6,i,"");
       sAddrEm = oAddresses.getStringNull(7,i,"");
-      if (sAddrEm.length()>0) sAddrEm = "<A HREF=\"mailto:" + sAddrEm + "\" TITLE=\"[~Enviar mensaje~]\">" + sAddrEm + "</A>";
+      if (sAddrEm.length()>0) sAddrEm = "<A HREF=\"mailto:" + sAddrEm + "\" TITLE=\"Send message\">" + sAddrEm + "</A>";
 
-      if (null!=sAddrTp) sResult += "[~Tipo de direcci&oacute;n ~]" + sAddrTp + "<BR>";
+      if (null!=sAddrTp) sResult += "Address Type" + sAddrTp + "<BR>";
       if (null!=sAddrTv) sResult += sAddrTv + " ";
       sResult += Gadgets.HTMLEncode(sAddrSt) + " " + sAddrNu + "<BR>";
       sResult += (sAddrZp.length()>0 ? sAddrZp+" " : "") + sAddrCt + "<BR>";
       sResult += sAddrEm+"<BR>";
       
       oAddrPh = oAddresses.get(8,i);
-      sResult += (oAddrPh==null ? "" : "[~Centralita ~]" + oAddrPh + "<BR>");
+      sResult += (oAddrPh==null ? "" : "Main" + oAddrPh + "<BR>");
       oAddrPh = oAddresses.get(9,i);
-      sResult += (oAddrPh==null ? "" : "[~Directo ~]" + oAddrPh + "<BR>");
+      sResult += (oAddrPh==null ? "" : "Direct" + oAddrPh + "<BR>");
       oAddrPh = oAddresses.get(10,i);
-      sResult += (oAddrPh==null ? "" : "[~Personal ~]" + oAddrPh + "<BR>");
+      sResult += (oAddrPh==null ? "" : "Personal" + oAddrPh + "<BR>");
       oAddrPh = oAddresses.get(11,i);
-      sResult += (oAddrPh==null ? "" : "[~M&oacute;vil ~]" + oAddrPh + "<BR>");
+      sResult += (oAddrPh==null ? "" : "Mobile" + oAddrPh + "<BR>");
       oAddrPh = oAddresses.get(12,i);
-      sResult += (oAddrPh==null ? "" : "[~Fax ~]" + oAddrPh + "<BR>");
+      sResult += (oAddrPh==null ? "" : "Fax" + oAddrPh + "<BR>");
     } // next(i)
   } // fi(sErrMsg)
 %>
 <HTML>
 <HEAD>
-  <TITLE>hipergate :: [~Direcci&oacute;n~]</TITLE>
+  <TITLE>hipergate :: Address</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
   <!--
-    top.frames['<%=request.getParameter("visible_frame")%>'].document.forms['<%=request.getParameter("visible_form")%>'].divField.value = '<%=sResult%><br><a href="javascript:hideDiv()">[~Cerrar~]</a>';
+    top.frames['<%=request.getParameter("visible_frame")%>'].document.forms['<%=request.getParameter("visible_form")%>'].divField.value = '<%=sResult%><br><a href="javascript:hideDiv()">Close</a>';
 <%  if (sErrMsg.length()>0) out.write(    "open('" + sErrMsg + "');\n"); %>
   //-->
   </SCRIPT>

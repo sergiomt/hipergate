@@ -31,7 +31,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//EN" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">  
 <HTML>
   <HEAD>
-    <TITLE>hipergate :: [~Editar Tesauro~]</TITLE>
+    <TITLE>hipergate :: Edit Thesaurus</TITLE>
   </HEAD>
   <FRAMESET NAME="thesaurif" ROWS="70%,*">
     <FRAME NAME="thesaurilist"  MARGINWIDTH="0" MARGINHEIGHT="0" NORESIZE SRC="thesauri_listing.jsp<%=sQueryStr%>">
@@ -39,7 +39,7 @@
     </FRAMESET>
     <NOFRAMES>
       <BODY>
-	<P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
+	<P>This page use frames, but your web browser does not handle them</P>
       </BODY>
     </NOFRAMES>
   </FRAMESET>

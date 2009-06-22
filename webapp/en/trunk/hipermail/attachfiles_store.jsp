@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.io.File,java.util.Enumeration,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.oreilly.servlet.MultipartRequest,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.io.File,java.util.Enumeration,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.oreilly.servlet.MultipartRequest,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2004  Know Gate S.L. All rights reserved.
@@ -98,22 +98,22 @@
 
         int iFileLen = new Long(oFile.length()).intValue();
 
-	File oRenamed = new File(sTmpDir + sGuid);
+	      File oRenamed = new File(sTmpDir + sGuid);
 	
         oFile.renameTo(oRenamed);
 
-	oStmt.setString(1, id_message.length()>0 ? id_message : gu_mimemsg);
+	      oStmt.setString(1, id_message.length()>0 ? id_message : gu_mimemsg);
         oStmt.setInt(2, iLastPart+iPart);
-	oStmt.setString(3, sType);        
-	oStmt.setString(4, sType);        
+	      oStmt.setString(3, sType);        
+	      oStmt.setString(4, sType);        
         oStmt.setInt(5, iFileLen);
-	oStmt.setString(6, sFileName);
-	oStmt.setString(7, sTmpDir + sGuid);
+	      oStmt.setString(6, sFileName);
+	      oStmt.setString(7, sTmpDir + sGuid);
 	
-	if (DebugFile.trace) DebugFile.writeln("<JSP:PreparedStatement.executeUpdate()");
+	      if (DebugFile.trace) DebugFile.writeln("<JSP:PreparedStatement.executeUpdate()");
 	
-	oStmt.executeUpdate();
-	iPart++;
+	      oStmt.executeUpdate();
+	      iPart++;
       }
     } // wend
     oStmt.close();

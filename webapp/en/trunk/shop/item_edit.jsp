@@ -1,4 +1,4 @@
-<%@ page import="java.util.Iterator,java.util.Vector,java.math.BigDecimal,java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.Iterator,java.util.Vector,java.math.BigDecimal,java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/customattrs.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%!
 /*
@@ -208,7 +208,7 @@
 	    	var pid = document.forms[2].elements["gu_location"+n].value;
 	    	
 	    	if (pid.length==0)	    	
-	      	alert ("The product name does not match anyone already present at current catalog");
+	      	alert ("[~El nombre del producto no corresponde con ninguno presente en el catálogo actual~]");
 	      else
 	        window.open ("item_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>&gu_shop=<%=gu_shop%>&gu_category=&top_parent_cat=<%=top_parent%>&gu_product=" + pid, "editProductFromPackage", "directories=no,toolbar=no,menubar=no,width=760,height=520");	  
 	    }	
@@ -269,12 +269,12 @@
         }
 
         if ((desc[1]=="SMALLINT" || desc[1]=="INTEGER") && !isIntValue(frm.vl_attr.value)) {
-	        alert ("Modified attribute must be an integer numeric value");
+	        alert ("[~El atributo modificado debe ser un valor numérico entero~]");
 	        return false;
         }
 
         if (desc[1]=="FLOAT" && !isFloatValue(frm.vl_attr.value)) {
-	        alert ("Modified attribute must be a numeric value");
+	        alert ("[~El atributo modificado debe ser un valor numérico~]");
 	        return false;
         }
 
@@ -325,32 +325,32 @@
       	// Verify pricing
       
       	if (frm.pr_list.value.length==0) {
-      	  alert ("Standard price is required");
+      	  alert ("[~El precio estándar es obligatorio~]");
       	  return false;
       	}
       
       	if (frm.pr_list.value.length>0 && !isFloatValue(frm.pr_list.value)) {
-      	  alert ("Standard price is not valid");
+      	  alert ("[~El precio estándar no es válido~]");
       	  return false;
       	}
       
       	if (frm.pr_sale.value.length>0 && !isFloatValue(frm.pr_sale.value)) {
-      	  alert ("Bargain price is not valid");
+      	  alert ("[~El precio de oferta no es válido~]");
       	  return false;
       	}
       
       	if (frm.pr_sale.value.length>0 && ltrim(frm.pr_list.value).length==0) {
-      	  alert ("If a bargain price is set, a normal price must also exist");
+      	  alert ("[~Si introduce un precio en oferta, debe especificar también un precio estándar~]");
       	  return false;
       	}
       
       	if (frm.pct_tax_rate.value.length>0) {
       	  if (!isFloatValue(frm.pct_tax_rate.value)) {
-      	    alert ("Tax percentage is not valid");
+      	    alert ("[~El porcentaje de tasas no es válido~]");
       	    return false;
       	  }
       	  if (parseFloat(frm.pct_tax_rate.value.replace(new RegExp(","), "."))>100) {
-      	    alert ("Tax percentage is not valid");
+      	    alert ("[~El porcentaje de tasas no es válido~]");
       	    return false;
       	  }
       	}
@@ -359,12 +359,12 @@
       	// Verify dates
       	
       	if (frm.dt_start.value.length>0 && !isDate(frm.dt_start.value, "d")) {
-      	  alert ("Bargain start date is not valid");
+      	  alert ("[~La fecha de inicio de oferta no es válida~]");
       	  return false;	  
       	}
       
       	if (frm.dt_end.value.length>0 && !isDate(frm.dt_end.value, "d")) {
-      	  alert ("Bargain end date is not valid");
+      	  alert ("[~La fecha de fin de oferta no es válida~]");
       	  return false;	  
       	}
       
@@ -374,7 +374,7 @@
       	}
       	
       	if ((frm.dt_start.value.length>0 || frm.dt_end.value.length>0) && ltrim(frm.pr_sale.value).length==0) {
-      	  alert ("If a bargain start date or end date is set than a bargain price must also exist");
+      	  alert ("[~Si introduce una fecha de inicio o una fecha de fin de oferta, debe especificar también un precio en oferta~]");
       	  return false;	  
       	}
       
@@ -382,20 +382,33 @@
       	// Verify remaining fields
       	
       	if (frm.de_product.value.length>254) {
-      	  alert ("product description may not be longer than 254 characters");
+      	  alert ("[~La descripción del producto no puede superar los 254 caracteres~]");
       	  return false;
       	}
       	
       	if (frm.od_position.value.length>0 && !isIntValue(frm.od_position.value)) {
-      	  alert ("Position of Product inside Category is not a valid integer.");
+      	  alert ("[~Posición del producto dentro de la categoría no es un valor entero válido~]");
       	  return false;
       	}
       	
       	// ********************************************************************
       	// Assign product to category
       
+        if (frm.sel_category.options.selectedIndex<0) {
+      	  alert ("[~Es preciso especificar a qué categoría pertenecerá el nuevo producto~]");
+      	  return false;
+        } else if (getCombo(frm.sel_category)=="") {
+      	  alert ("[~Es preciso especificar a qué categoría pertenecerá el nuevo producto~]");
+      	  return false;        
+        }
+
       	frm.gu_category.value = getCombo(frm.sel_category);
       
+      	// ********************************************************************
+        // Set tax rate
+
+        frm.pct_tax_rate.value = getCombo(frm.sel_tax_rate);
+        
       	// ********************************************************************
       	// Convert currency to ISO-4217 value
       	
@@ -412,7 +425,7 @@
       	var filext = new RegExp( "(.gif$)|(.jpg$)|(.jpeg$)", "i" );
       	
       	if (frm.thumbview.value.length>0 && !frm.thumbview.value.match(filext)) {
-      	  alert ("Graphics file extension must be .gif, .jpg or .jpeg");
+      	  alert ("[~La extensión de archivo gráfico del thumbnail debe ser .gif, .jpg o .jpeg~]");
       	  return false;	
       	}
       
@@ -420,26 +433,26 @@
       	// Checking for autothumbs generation
       
       	if (frm.autothumb.checked && frm.normalview.value.length==0) {
-      	  alert ("A thumbnail can only be automatically generated is a Normal Image exists.");
+      	  alert ("[~Para poder generar un thumbnail automáticamente debe subir también una Imagen Normal~]");
       	  return false;
       	}
       
       	if (!frm.autothumb.checked && (getCombo(frm.sel_thumbsize).length>0)) {
-      	  if (!window.confirm("You have selected a size for thumion. Do you want to automatically generate thumbnail?bnail, but you did not check it for generat"))
+      	  if (!window.confirm("[~Ha seleccionado un tamaño de thumbnail, pero no marcó la checkbox de generación. ¿Desea generar el thumbnail automáticamente?~]"))
       	    return false;
       	  else
       	    frm.autothumb.checked = true;
       	}
       	
       	if (frm.autothumb.checked && frm.gu_thumbview.value.length>0 && !frm.del_thumbview.checked) {
-      	  if (!window.confirm("You have selected to overwrite current thumbnail with another one automatically generated. Are you sure that you want to replace the previous one?"))
+      	  if (!window.confirm("[~Ha seleccionado sobreescribir el thumbnail actual con otro generado automáticamente. ¿Está seguro de que desea reemplazar la imagen anterior?~]"))
       	    return false;
       	  else
       	    frm.del_thumbview.checked = true;
       	}
       
       	if (frm.autothumb.checked && (getCombo(frm.sel_thumbsize).length==0)) {
-      	  alert ("Must specify size of thumbnail");
+      	  alert ("[~Debe especificar el tamaño del thumbnail a generar~]");
       	  return false;
       	}
       	
@@ -462,7 +475,7 @@
       	    dot = atr.list_attrs.options[idx].text.indexOf(":")+1;
       
       	    if (atr.list_attrs.options[idx].text.indexOf("'")>=0) {
-      	      alert ("The attribute&nbsp;" + atr.list_attrs.options[idx].text.substr(0,dot-1) + "contains invalid characters");
+      	      alert ("The attribute&nbsp;" + atr.list_attrs.options[idx].text.substr(0,dot-1) + "[~ contiene caracteres no válidos~]");
       	      return false;
       	    }
       	  	  
@@ -499,7 +512,7 @@
         	for (var l=1; l<=5; l++) {
 
         	  if (wrh.elements["de_prod_locat"+String(l)].value>0 && wrh.elements["gu_location"+String(l)].value.length==0) {
-        	    alert ("The product was not found at current catalog");
+        	    alert ("[~El producto no se encuentra en el catálogo actual~]");
         	    wrh.elements["gu_location"+String(l)].focus();
         	    return false;
         	  }
@@ -526,126 +539,126 @@
       	if (getCookie("face")!="realstate") {
 
         	if (hasForbiddenChars(wrh.de_prod_locat1.value)) {
-        	  alert ("Warehouse 1 name contains forbidden characters");
+        	  alert ("[~El nombre del almacén 1 contiene caracteres no permitidos~]");
         	  return false;
         	}
         
         	if (hasForbiddenChars(wrh.tag_prod_locat1.value)) {
-        	  alert ("Comments for warehouse 1 contain forbidden characters");
+        	  alert ("[~Las observaciones del almacén 1 contienen caracteres no permitidos~]");
         	  return false;
         	}
         	
         	if ((wrh.nu_current_stock1.value.length>0 || wrh.nu_min_stock1.value.length>0 || wrh.tag_prod_locat1.value.length>0) && ltrim(wrh.de_prod_locat1.value)=="") {
-        	  alert ("Warehouse location 1 name is mandatory");
+        	  alert ("[~El nombre de la ubicación de almacén 1 es obligatorio~]");
         	  return false;	
         	}
         	
         	if (wrh.nu_current_stock1.value.length>0 && !isIntValue(wrh.nu_current_stock1.value)) {
-        	  alert ("Current stock for location 1" + wrh.de_prod_locat2.value + "must be an integer quantity");
+        	  alert ("[~El stock actual de la ubicación 1 ~]" + wrh.de_prod_locat2.value + "must be an integer quantity");
         	  return false;
         	}
         
         	if (wrh.nu_min_stock1.value.length>0 && !isIntValue(wrh.nu_min_stock1.value)) {
-        	  alert ("Minimum stock for location 1" + wrh.de_prod_locat2.value + "must be an integer quantity");
+        	  alert ("[~El stock mínimo de la ubicación 1 ~]" + wrh.de_prod_locat2.value + "must be an integer quantity");
         	  return false;
         	}
         
         	if ((wrh.nu_current_stock2.value.length>0 || wrh.nu_min_stock2.value.length>0 || wrh.tag_prod_locat2.value.length>0) && ltrim(wrh.de_prod_locat2.value)=="") {
-        	  alert ("Warehouse location 2 name is mandatory");
+        	  alert ("[~El nombre de la ubicación de almacén 2 es obligatorio~]");
         	  return false;	
         	}
         	
         	if (wrh.nu_current_stock2.value.length>0 && !isIntValue(wrh.nu_current_stock2.value)) {
-        	  alert ("Current stock for location 2" + wrh.de_prod_locat2.value + "must be an integer quantity");
+        	  alert ("[~El stock actual de la ubicación 2 ~]" + wrh.de_prod_locat2.value + "must be an integer quantity");
         	  return false;        	}
         
         	if (wrh.nu_min_stock2.value.length>0 && !isIntValue(wrh.nu_min_stock2.value)) {
-        	  alert ("Minimum stock for location 2" + wrh.de_prod_locat2.value + "must be an integer quantity");
+        	  alert ("[~El stock mínimo de la ubicación 2 ~]" + wrh.de_prod_locat2.value + "must be an integer quantity");
         	  return false;
         	}
         
         	if (hasForbiddenChars(wrh.de_prod_locat2.value)) {
-        	  alert ("Warehouse 2 name contains forbidden characters");
+        	  alert ("[~El nombre del almacén 2 contiene caracteres no permitidos~]");
         	  return false;
         	}
         
         	if (hasForbiddenChars(wrh.tag_prod_locat2.value)) {
-        	  alert ("Comments for warehouse 2 contain forbidden characters");
+        	  alert ("[~Las observaciones del almacén 2 contienen caracteres no permitidos~]");
         	  return false;
         	}
         
         	if ((wrh.nu_current_stock3.value.length>0 || wrh.nu_min_stock3.value.length>0 || wrh.tag_prod_locat3.value.length>0) && ltrim(wrh.de_prod_locat3.value)=="") {
-        	  alert ("Warehouse location 3 name is mandatory");
+        	  alert ("[~El nombre de la ubicación de almacén 3 es obligatorio~]");
         	  return false;	
         	}
         	
         	if (wrh.nu_current_stock3.value.length>0 && !isIntValue(wrh.nu_current_stock3.value)) {
-        	  alert ("Current stock for location 3" + wrh.de_prod_locat3.value + "must be an integer quantity");
+        	  alert ("[~El stock actual de la ubicación 3 ~]" + wrh.de_prod_locat3.value + "must be an integer quantity");
         	  return false;
         	}
         
         	if (wrh.nu_min_stock3.value.length>0 && !isIntValue(wrh.nu_min_stock3.value)) {
-        	  alert ("Minimum stock for location 3" + wrh.de_prod_locat3.value + "must be an integer quantity");
+        	  alert ("[~El stock mínimo de la ubicación 3 ~]" + wrh.de_prod_locat3.value + "must be an integer quantity");
         	  return false;
         	}
         
         	if (hasForbiddenChars(wrh.de_prod_locat3.value)) {
-        	  alert ("Warehouse 3 name contains forbidden characters");
+        	  alert ("[~El nombre del almacén 3 contiene caracteres no permitidos~]");
         	  return false;
         	}
         
         	if (hasForbiddenChars(wrh.tag_prod_locat3.value)) {
-        	  alert ("Comments for warehouse 3 contain forbidden characters");
+        	  alert ("[~Las observaciones del almacén 3 contienen caracteres no permitidos~]");
         	  return false;
         	}
         
         	if ((wrh.nu_current_stock4.value.length>0 || wrh.nu_min_stock4.value.length>0 || wrh.tag_prod_locat4.value.length>0) && ltrim(wrh.de_prod_locat4.value)=="") {
-        	  alert ("Warehouse location 4 name is mandatory");
+        	  alert ("[~El nombre de la ubicación de almacén 4 es obligatorio~]");
         	  return false;	
         	}
         	
         	if (wrh.nu_current_stock4.value.length>0 && !isIntValue(wrh.nu_current_stock4.value)) {
-        	  alert ("Current stock for location 4" + wrh.de_prod_locat4.value + "must be an integer quantity");
+        	  alert ("[~El stock actual de la ubicación 4 ~]" + wrh.de_prod_locat4.value + "must be an integer quantity");
         	  return false;
         	}
         
         	if (wrh.nu_min_stock4.value.length>0 && !isIntValue(wrh.nu_min_stock4.value)) {
-        	  alert ("Minimum stock for location 4" + wrh.de_prod_locat4.value + "must be an integer quantity");
+        	  alert ("[~El stock mínimo de la ubicación 4 ~]" + wrh.de_prod_locat4.value + "must be an integer quantity");
         	  return false;
         	}
         
         	if (hasForbiddenChars(wrh.de_prod_locat4.value)) {
-        	  alert ("Warehouse 4 name contains forbidden characters");
+        	  alert ("[~El nombre del almacén 4 contiene caracteres no permitidos~]");
         	  return false;
         	}
         
         	if (hasForbiddenChars(wrh.tag_prod_locat4.value)) {
-        	  alert ("Comments for warehouse 4 contain forbidden characters");
+        	  alert ("[~Las observaciones del almacén 4 contienen caracteres no permitidos~]");
         	  return false;
         	}
         
         	if ((wrh.nu_current_stock5.value.length>0 || wrh.nu_min_stock5.value.length>0 || wrh.tag_prod_locat5.value.length>0) && ltrim(wrh.de_prod_locat5.value)=="") {
-        	  alert ("Warehouse location 5 name is mandatory");
+        	  alert ("[~El nombre de la ubicación de almacén 5 es obligatorio~]");
         	  return false;	
         	}
         	
         	if (wrh.nu_current_stock5.value.length>0 && !isIntValue(wrh.nu_current_stock5.value)) {
-        	  alert ("Current stock for location 5" + wrh.de_prod_locat5.value + "must be an integer quantity");
+        	  alert ("[~El stock actual de la ubicación 5 ~]" + wrh.de_prod_locat5.value + "must be an integer quantity");
         	  return false;
         	}
         
         	if (wrh.nu_min_stock5.value.length>0 && !isIntValue(wrh.nu_min_stock5.value)) {
-        	  alert ("Minimum stock for location 5" + wrh.de_prod_locat5.value + "must be an integer quantity");
+        	  alert ("[~El stock mínimo de la ubicación 5 ~]" + wrh.de_prod_locat5.value + "must be an integer quantity");
         	  return false;
         	}
         
         	if (hasForbiddenChars(wrh.de_prod_locat5.value)) {
-        	  alert ("Warehouse 5 name contains forbidden characters");
+        	  alert ("[~El nombre del almacén 5 contiene caracteres no permitidos~]");
         	  return false;
         	}
         
         	if (hasForbiddenChars(wrh.tag_prod_locat5.value)) {
-        	  alert ("Comments for warehouse 5 contain forbidden characters");
+        	  alert ("[~Las observaciones del almacén 5 contienen caracteres no permitidos~]");
         	  return false;
         	}
         
@@ -1119,7 +1132,7 @@
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('Your credential level as Guest does not allow you to perform this action')">
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
 <% } else { %>
               <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">
 <% } %>
@@ -1165,7 +1178,7 @@
                 <OPTION VALUE="product_group;VARCHAR;32">Product Group</OPTION>
                 <OPTION VALUE="isbn;VARCHAR;16">ISBN</OPTION>
                 <OPTION VALUE="brand;VARCHAR;50">Brand</OPTION>
-                <OPTION VALUE="doc_no;VARCHAR;50">Doc. Number</OPTION>
+                <OPTION VALUE="doc_no;VARCHAR;50">[~Nº documento~]</OPTION>
                 <OPTION VALUE="organization;VARCHAR;50">Organization</OPTION>
                 <OPTION VALUE="pages;INTEGER;10">Pages</OPTION>
                 <OPTION VALUE="country;VARCHAR;50">Country</OPTION>
@@ -1198,7 +1211,7 @@
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onClick="alert('Your credential level as Guest does not allow you to perform this action')">
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onClick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
 <% } else { %>
               <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onClick="if (validate()) document.forms[0].submit();">
 <% } %>
@@ -1310,7 +1323,7 @@
           <TR>
     	      <TD COLSPAN="2" ALIGN="center">
 <%   if (bIsGuest) { %>
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onClick="alert('Your credential level as Guest does not allow you to perform this action')">
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onClick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
 <%   } else { %>
               <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onClick="if (validate()) document.forms[0].submit();">
 <%   } %>
@@ -1417,7 +1430,7 @@
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
 <%   if (bIsGuest) { %>
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onClick="alert('Your credential level as Guest does not allow you to perform this action')">
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onClick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
 <%   } else { %>
               <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onClick="if (validate()) document.forms[0].submit();">
 <%   } %>
@@ -1445,7 +1458,7 @@
         <TR>
     	    <TD COLSPAN="2" ALIGN="center">
 <%   if (bIsGuest) { %>
-            <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onClick="alert('Your credential level as Guest does not allow you to perform this action')">
+            <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onClick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
 <%   } else { %>
             <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onClick="if (validate()) document.forms[0].submit();">
 <%   } %>

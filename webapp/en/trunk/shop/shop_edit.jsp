@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.Shop,com.knowgate.hipergate.DBLanguages,com.knowgate.workareas.WorkArea" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.Shop,com.knowgate.hipergate.DBLanguages,com.knowgate.workareas.WorkArea" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><% 
 
@@ -109,18 +109,18 @@
 	var txu = txt.toUpperCase();
 	
 	if (txt.length==0) {
-	  alert ("Catalog name is mandatory");
+	  alert ("[~El nombre del catálogo es obligatorio~]");
 	  return false;
 	}
 
 	if (txt.indexOf("'")>=0 || txt.indexOf("%")>=0 || txt.indexOf("*")>=0 || txt.indexOf(",")>=0 || txt.indexOf(";")>=0 || txt.indexOf("/")>=0 || txt.indexOf("?")>=0 || txt.indexOf("&")>=0) {
-	  alert ("Catalog name contains invalid characters");
+	  alert ("[~El nombre del catálogo contiene caracteres no permitidos~]");
 	  return false;
 	}
         
         for (var s=0; s<jsShops.length; s++)
           if (txu==jsShops[s]) {
-	    alert ("Another Catalog with same name already exists");
+	    alert ("[~Ya existe otro catálogo con el mismo nombre~]");
 	    return false;
           }
           

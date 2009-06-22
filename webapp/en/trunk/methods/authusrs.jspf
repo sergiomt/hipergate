@@ -553,7 +553,7 @@
           bAdmin = new Boolean(com.knowgate.workareas.WorkArea.isAdmin(con, getCookie (req, "workarea", ""), sUserId));
         }
         catch (java.sql.SQLException sqle) {
-	  throw new java.sql.SQLException(sqle.getMessage());
+	        throw new java.sql.SQLException(sqle.getMessage());
         }
         finally {    
           con.close("is_domain_admin");

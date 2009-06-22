@@ -1,4 +1,4 @@
-<%@ page import="java.math.BigDecimal,java.text.SimpleDateFormat,java.util.Date,java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.misc.Gadgets,com.knowgate.dataobjs.*,com.knowgate.hipergate.*,com.knowgate.math.CurrencyCode" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.math.BigDecimal,java.text.SimpleDateFormat,java.util.Date,java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.misc.Gadgets,com.knowgate.dataobjs.*,com.knowgate.hipergate.*,com.knowgate.math.CurrencyCode" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
 
@@ -61,12 +61,12 @@
         function validate () {
           var frm = document.forms[0];
           if (!isDate(frm.dt_payment.value,"d")) {
-          	alert("Date is not valid");
+          	alert("[~La fecha no es válida~]");
           	frm.dt_payment.focus();
             return false;
           } // fi
           if (!isFloatValue(frm.im_paid.value)) {
-          	alert("Amount is not valid");
+          	alert("[~El importe es válido~]");
           	frm.im_paid.focus();
             return false;
           }

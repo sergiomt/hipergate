@@ -188,7 +188,7 @@
 
 %><HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: [~Gestión de Proyectos~]</TITLE>
+  <TITLE>hipergate :: Project Management</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
@@ -243,7 +243,7 @@
 	  var frm = document.forms[0];
 	  var chi = frm.checkeditems;
 	  	  
-	  if (window.confirm("[~¿Está seguro de que desea eliminar los proyectos seleccionados?~]")) {
+	  if (window.confirm("Are you sure you want to delete selected projects?")) {
 	  	  
 	    chi.value = "";	  	  
 	    frm.action = "prjedit_delete.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
@@ -366,11 +366,11 @@
     	  var chi = frm.checkeditems;
     	  	  
     	  if (frm.sel_new_status.selectedIndex<=0) {
-    	    alert ("[~Debe seleccionar el nuevo estado para los proyectos~]");
+    	    alert ("A new status for the projects must be chosen");
     	    return false;
     	  }
 
-    	  if (window.confirm("[~Esta seguro de que desea actualizar los proyectos seleccionadas?~]")) {
+    	  if (window.confirm("Are you sure that you want to update the selected projects?")) {
 
 	        chi.value = "";
 	        frm.action = "projectedit_update.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
@@ -424,7 +424,7 @@
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onClick="hideRightMenu()">
     <%@ include file="../common/tabmenu.jspf" %>
     <FORM METHOD="post">
-      <TABLE SUMMARY="Strip Title"><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Listado de Proyectos~]</FONT></TD></TR></TABLE>  
+      <TABLE SUMMARY="Strip Title"><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">Project Listing</FONT></TD></TR></TABLE>  
       <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
       <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
       <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
@@ -435,58 +435,58 @@
       <TABLE SUMMARY="Controls Panel" CELLSPACING="2" CELLPADDING="2">
       <TR><TD COLSPAN="10" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       <TR>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nuevo Proyecto~]"></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Project"></TD>
         <TD VALIGN="middle">
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Nuevo~]</A>
+          <A HREF="#" onclick="alert ('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New</A>
 <% } else { %>
-          <A HREF="#" onclick="createProject()" CLASS="linkplain">[~Nuevo~]</A>
+          <A HREF="#" onclick="createProject()" CLASS="linkplain">New</A>
 <% } %>
         </TD>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar Proyecto~]"></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete Project"></TD>
         <TD>
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Eliminar~]</A>
+          <A HREF="#" onclick="alert ('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">Delete</A>
 <% } else { %>
-          <A HREF="javascript:deleteProjects()" CLASS="linkplain">[~Eliminar~]</A>
+          <A HREF="javascript:deleteProjects()" CLASS="linkplain">Delete</A>
 <% } %>
         </TD>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/tree/menu_root.gif" BORDER="0" ALT="[~Ver Árbol de Proyectos~]"></TD>
-        <TD><A HREF="#" onclick="navigateProjects()" CLASS="linkplain">[~&Aacute;rbol~]</A></TD>
-        <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Buscar Proyecto~]"></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/tree/menu_root.gif" BORDER="0" ALT="View Project Tree"></TD>
+        <TD><A HREF="#" onclick="navigateProjects()" CLASS="linkplain">Tree</A></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Find Project"></TD>
         <TD VALIGN="middle">
-          <SELECT NAME="sel_searched" CLASS="combomini"><OPTION VALUE="<%=DB.nm_project%>">[~Nombre~]<OPTION VALUE="<%=DB.nm_legal%>">[~Compa&ntilde;&iacute;a~]<OPTION VALUE="full_name">[~Contacto~]<OPTION VALUE="od_level">[~Nivel~]<OPTION VALUE="id_ref">[~Referencia~]</SELECT>
+          <SELECT NAME="sel_searched" CLASS="combomini"><OPTION VALUE="<%=DB.nm_project%>">Name<OPTION VALUE="<%=DB.nm_legal%>">Company<OPTION VALUE="full_name">Contact<OPTION VALUE="od_level">Level<OPTION VALUE="id_ref">Reference</SELECT>
           <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" SIZE="16" VALUE="<%=sFind%>">
-	  &nbsp;<A HREF="javascript:findProject();" CLASS="linkplain" TITLE="[~Buscar~]">[~Buscar~]</A>	  
+	  &nbsp;<A HREF="javascript:findProject();" CLASS="linkplain" TITLE="Search">Search</A>	  
         </TD>
-        <TD VALIGN="middle">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="[~Descartar búsqueda~]"></TD>
+        <TD VALIGN="middle">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard Find Filter"></TD>
         <TD VALIGN="middle">
-          <A HREF="javascript:document.forms[0].find.value='';document.forms[0].level.checked=document.forms[0].status.checked=true;filter('');" CLASS="linkplain" TITLE="[~Descartar búsqueda~]">[~Descartar~]</A>
+          <A HREF="javascript:document.forms[0].find.value='';document.forms[0].level.checked=document.forms[0].status.checked=true;filter('');" CLASS="linkplain" TITLE="Discard Find Filter">Discard</A>
         </TD>
       </TR>
       <TR>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/refresh.gif" WIDTH="13" HEIGHT="16" BORDER="0" ALT="[~Actualizar~]"></TD>
-        <TD VALIGN="middle"><A HREF="prj_reexpand.jsp?selected=<%=nullif(request.getParameter("selected"),"4")%>&subselected=<%=nullif(request.getParameter("subselected"),"0")%>" CLASS="linkplain">[~Actualizar~]</A></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/refresh.gif" WIDTH="13" HEIGHT="16" BORDER="0" ALT="Refresh"></TD>
+        <TD VALIGN="middle"><A HREF="prj_reexpand.jsp?selected=<%=nullif(request.getParameter("selected"),"4")%>&subselected=<%=nullif(request.getParameter("subselected"),"0")%>" CLASS="linkplain">Refresh</A></TD>
         <TD COLSPAN="5"></TD>
         <TD COLSPAN="3" ALIGN="right">
-        <FONT CLASS="textplain">[~Mostrar~]&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;[~resultados~]&nbsp;</FONT>
+        <FONT CLASS="textplain">Show&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;results&nbsp;</FONT>
         </TD>
       </TR>
       <TR>
         <TD COLSPAN="10">
         	<TABLE SUMMARY="Additional filters">
         	  <TR>
-              <TD CLASS="formstrong">[~Estado~]</TD>            
-              <TD CLASS="textplain"><INPUT TYPE="radio" NAME="status" VALUE="" onclick="filter('',getCheckedValue(document.forms[0].level))" <%=(sStatus.length()==0 ? "CHECKED" : "")%>>&nbsp;[~Todos~]</TD>
-              <TD CLASS="textplain"><INPUT TYPE="radio" NAME="status" VALUE="ABIERTO" onclick="filter('ABIERTO',getCheckedValue(document.forms[0].level))" <%=(sStatus.equals("ABIERTO") ? "CHECKED" : "")%>>&nbsp;[~Abiertos~]</TD>
-              <TD CLASS="textplain"><INPUT TYPE="radio" NAME="status" VALUE="CERRADO" onclick="filter('CERRADO',getCheckedValue(document.forms[0].level))" <%=(sStatus.equals("CERRADO") ? "CHECKED" : "")%>>&nbsp;[~Cerrados~]</TD>
-              <TD CLASS="textplain"><INPUT TYPE="radio" NAME="status" VALUE="CANCELADO" onclick="filter('CANCELADO',getCheckedValue(document.forms[0].level))" <%=(sStatus.equals("CANCELADO") ? "CHECKED" : "")%>>&nbsp;[~Cancelados~]
-              <TD CLASS="textplain"><INPUT TYPE="radio" NAME="status" VALUE="SUSPENDIDO" onclick="filter('SUSPENDIDO',getCheckedValue(document.forms[0].level))" <%=(sStatus.equals("SUSPENDIDO") ? "CHECKED" : "")%>>&nbsp;[~Suspendidos~]</TD>
+              <TD CLASS="formstrong">Status</TD>            
+              <TD CLASS="textplain"><INPUT TYPE="radio" NAME="status" VALUE="" onclick="filter('',getCheckedValue(document.forms[0].level))" <%=(sStatus.length()==0 ? "CHECKED" : "")%>>&nbsp;All</TD>
+              <TD CLASS="textplain"><INPUT TYPE="radio" NAME="status" VALUE="ABIERTO" onclick="filter('ABIERTO',getCheckedValue(document.forms[0].level))" <%=(sStatus.equals("ABIERTO") ? "CHECKED" : "")%>>&nbsp;Open</TD>
+              <TD CLASS="textplain"><INPUT TYPE="radio" NAME="status" VALUE="CERRADO" onclick="filter('CERRADO',getCheckedValue(document.forms[0].level))" <%=(sStatus.equals("CERRADO") ? "CHECKED" : "")%>>&nbsp;Closed</TD>
+              <TD CLASS="textplain"><INPUT TYPE="radio" NAME="status" VALUE="CANCELADO" onclick="filter('CANCELADO',getCheckedValue(document.forms[0].level))" <%=(sStatus.equals("CANCELADO") ? "CHECKED" : "")%>>&nbsp;Cancelled
+              <TD CLASS="textplain"><INPUT TYPE="radio" NAME="status" VALUE="SUSPENDIDO" onclick="filter('SUSPENDIDO',getCheckedValue(document.forms[0].level))" <%=(sStatus.equals("SUSPENDIDO") ? "CHECKED" : "")%>>&nbsp;Suspended</TD>
             </TR>
             <TR>
-              <TD CLASS="formstrong">[~Nivel~]</TD>
-              <TD CLASS="textplain"><INPUT TYPE="radio" NAME="level" VALUE="" onclick="filter(getCheckedValue(document.forms[0].status),'')" <%=(sLevel.length()==0 ? "CHECKED" : "")%>>&nbsp;[~Todos~]</TD>
-              <TD CLASS="textplain" COLSPAN="2"><INPUT TYPE="radio" NAME="level" VALUE="1" onclick="filter(getCheckedValue(document.forms[0].status),'1')" <%=(sLevel.equals("1") ? "CHECKED" : "")%>>&nbsp;[~S&oacute;lo primer nivel~]</TD>
+              <TD CLASS="formstrong">Level</TD>
+              <TD CLASS="textplain"><INPUT TYPE="radio" NAME="level" VALUE="" onclick="filter(getCheckedValue(document.forms[0].status),'')" <%=(sLevel.length()==0 ? "CHECKED" : "")%>>&nbsp;All</TD>
+              <TD CLASS="textplain" COLSPAN="2"><INPUT TYPE="radio" NAME="level" VALUE="1" onclick="filter(getCheckedValue(document.forms[0].status),'1')" <%=(sLevel.equals("1") ? "CHECKED" : "")%>>&nbsp;Only first level</TD>
               <TD COLSPAN="2"></TD>
             </TR>
           </TR>
@@ -499,22 +499,22 @@
           <TD COLSPAN="8" ALIGN="left">
 <%
           if (iSkip>0)
-            out.write("            <A HREF=\"project_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;[~Anteriores~]" + "</A>&nbsp;&nbsp;&nbsp;");
+            out.write("            <A HREF=\"project_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
     
           if (!oProjects.eof())
-            out.write("            <A HREF=\"project_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">[~Siguientes~]&nbsp;&gt;&gt;</A>");
+            out.write("            <A HREF=\"project_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
 %>
           </TD>
         </TR>
         <TR>
           <TD CLASS="tableheader" WIDTH="18" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"></TD>
-          <TD CLASS="tableheader" WIDTH="70" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(1);" oncontextmenu="return false;" ><IMG SRC="../skins/<%=sSkin + (iOrderBy==1 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este campo~]"></A>&nbsp;<B>[~Nivel~]</B></TD>
-          <TD CLASS="tableheader" WIDTH="<%=String.valueOf(floor(320f*fScreenRatio))%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(4);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==4 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este campo~]"></A>&nbsp;<B>[~Nombre~]</B></TD>
-          <TD CLASS="tableheader" WIDTH="96" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(7);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==7 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por fecha de inicio~]"></A>&nbsp;<B>[~Inicio~]</B></TD>
-          <TD CLASS="tableheader" WIDTH="80" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(8);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==8 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este de fin~]"></A>&nbsp;<B>[~Fin~]</B></TD>
-          <TD CLASS="tableheader" WIDTH="80" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(8);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==9 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por coste~]"></A>&nbsp;<B>[~Coste~]</B></TD>
-          <TD CLASS="tableheader" WIDTH="160" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(12);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==12 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este campo~]"></A>&nbsp;<B>[~Pertenece a~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Seleccionar todos"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="[~Seleccionar todos~]"></A></TD></TR>
+          <TD CLASS="tableheader" WIDTH="70" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(1);" oncontextmenu="return false;" ><IMG SRC="../skins/<%=sSkin + (iOrderBy==1 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>Level</B></TD>
+          <TD CLASS="tableheader" WIDTH="<%=String.valueOf(floor(320f*fScreenRatio))%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(4);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==4 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>Name</B></TD>
+          <TD CLASS="tableheader" WIDTH="96" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(7);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==7 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by start date"></A>&nbsp;<B>Start</B></TD>
+          <TD CLASS="tableheader" WIDTH="80" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(8);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==8 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;<B>End</B></TD>
+          <TD CLASS="tableheader" WIDTH="80" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(8);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==9 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by cost"></A>&nbsp;<B>Cost</B></TD>
+          <TD CLASS="tableheader" WIDTH="160" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(12);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==12 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>Belong to</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Seleccionar todos"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select all"></A></TD></TR>
 <%
 	  int iProjLv;
 	  String sProjId, sProjNm, sProjSt, sProjEn, sProjCt, sProjCo, sProjSs, sSsImg;
@@ -559,7 +559,7 @@
 %>              <IMG SRC="<% out.write(sSsImg); %>" WIDTH="16" HEIGHT="16" BORDER="0" ALT="<% out.write(nullif((String)oStatusTrMap.get(sProjSs),sProjSs)); %>">
               </TD>
               <TD ALIGN="center" CLASS="strip<%=((i%2)+1)%>">&nbsp;<%=iProjLv%></TD>
-              <TD CLASS="strip<%=((i%2)+1)%>"><A HREF="javascript:listSubprojects('<%=sProjId%>')" CLASS="linksmall">[+]</A>&nbsp;<A HREF="#" onclick="modifyProject('<%=sProjId%>','<%=sProjNm%>')" oncontextmenu="jsProjectId='<%=sProjId%>'; jsProjectNm='<%=sProjNm%>'; return showRightMenu(event)" TITLE="[~Bot&oacute;n Derecho para Ver el Men&uacute; Contextual~]"><%=sProjNm%></A></TD>
+              <TD CLASS="strip<%=((i%2)+1)%>"><A HREF="javascript:listSubprojects('<%=sProjId%>')" CLASS="linksmall">[+]</A>&nbsp;<A HREF="#" onclick="modifyProject('<%=sProjId%>','<%=sProjNm%>')" oncontextmenu="jsProjectId='<%=sProjId%>'; jsProjectNm='<%=sProjNm%>'; return showRightMenu(event)" TITLE="Click Right Mouse Button for Context Menu"><%=sProjNm%></A></TD>
               <TD CLASS="strip<%=((i%2)+1)%>" NOWRAP>&nbsp;<%=sProjSt==null ? "" : sProjSt%></TD>
               <TD CLASS="strip<%=((i%2)+1)%>" NOWRAP>&nbsp;<%=sProjEn==null ? "" : sProjEn%></TD>
               <TD CLASS="strip<%=((i%2)+1)%>">&nbsp;<%=sProjEn==null ? "" : sProjCt%></TD>
@@ -570,7 +570,7 @@
         if (fTotalCost>0f) { %>
             <TR HEIGHT="14">
               <TD COLSPAN="2"></TD>
-              <TD COLSPAN="2" ALIGN="right" CLASS="textplain"><B>[~Coste Total~]</B>&nbsp;</TD>
+              <TD COLSPAN="2" ALIGN="right" CLASS="textplain"><B>Total Cost</B>&nbsp;</TD>
               <TD CLASS="textplain"><%=String.valueOf(fTotalCost)%></TD>
               <TD COLSPAN="2"></TD>
             </TR>
@@ -588,12 +588,12 @@
 		    <TD COLSPAN="8">
 	        <TABLE BORDER="0" SUMMARY="Massive Update">
 	          <TR>
-	            <TD CLASS="textsmall">&nbsp;&nbsp;&nbsp;&nbsp;[~Cambiar a~]&nbsp;[~Estado~]&nbsp;</TD>
+	            <TD CLASS="textsmall">&nbsp;&nbsp;&nbsp;&nbsp;Change to&nbsp;Status&nbsp;</TD>
 	            <TD>
 	              <SELECT CLASS="combomini" NAME="sel_new_status"><OPTION VALUE=""></OPTION><%=sStatusLookUp%></SELECT>
 	            </TD>
 	            <TD>
-	              <A HREF="javascript:updateProjects()" CLASS="linkplain">[~Cambiar~]</A>
+	              <A HREF="javascript:updateProjects()" CLASS="linkplain">Change</A>
 	            </TD>
 		    	  </TR>
 		    	</TABLE>
@@ -606,14 +606,14 @@
 
     <IFRAME name="addrIFrame" src="../common/blank.htm" width="0" height="0" border="0" frameborder="0"></IFRAME>
     <SCRIPT language="JavaScript" type="text/javascript">
-      addMenuOption("[~Abrir~]","modifyProject(jsProjectId, jsProjectNm)",1);
-      addMenuOption("[~Duplicar~]","clone(jsProjectId)",0);
-      addMenuOption("[~Crear Subproyecto~]","createSubProject(jsProjectId, jsProjectNm)",0);
+      addMenuOption("Open","modifyProject(jsProjectId, jsProjectNm)",1);
+      addMenuOption("Duplicate","clone(jsProjectId)",0);
+      addMenuOption("Create subproject","createSubProject(jsProjectId, jsProjectNm)",0);
       addMenuSeparator();
-      addMenuOption("[~Crear Tarea~]","createDuty(jsProjectId)",0);
-      addMenuOption("[~Ver Tareas~]","listDuties(jsProjectId)",0);
+      addMenuOption("New Duty","createDuty(jsProjectId)",0);
+      addMenuOption("View Duties","listDuties(jsProjectId)",0);
       addMenuSeparator();
-      addMenuOption("[~Ver Incidencias~]","listBugs(jsProjectId)",0);
+      addMenuOption("View Incident","listBugs(jsProjectId)",0);
     </SCRIPT>
 
 </BODY>

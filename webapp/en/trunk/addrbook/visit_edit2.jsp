@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*
@@ -138,7 +138,7 @@
         
           case 1:
             if (frm.nm_legal.value.indexOf("'")>=0)
-              alert("The company name has forbidden characters");
+              alert("[~El nombre de la compañía contiene caracteres no permitidos~]");
             else
               window.open("../common/reference.jsp?nm_table=k_companies&tp_control=1&nm_control=nm_legal&nm_coding=gu_company"+(frm.nm_legal.value.length==0 ? "" : "&where=" + escape(" (nm_legal <%=DBBind.Functions.ILIKE%> '"+frm.nm_legal.value+"%' OR nm_commercial <%=DBBind.Functions.ILIKE%> '"+frm.nm_legal.value+"%') ")), "", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
             break;
@@ -198,7 +198,7 @@
 	  return false;
 	}        
 	if (frm.nm_legal.value.indexOf('"')>=0) {
-	  alert ("The company name has forbidden characters");
+	  alert ("[~El nombre de la compañía contiene caracteres no permitidos~]");
 	  return false;
 	}
 	if (frm.nm_street.value.indexOf('"')>=0) {

@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %>
@@ -95,7 +95,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML LANG="<%=sLanguage.toUpperCase()%>">
 <HEAD>
-  <TITLE>hipergate :: [~Editar Cuenta~]</TITLE>
+  <TITLE>hipergate :: Edit Account</TITLE>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -136,7 +136,7 @@
 	  }
 
 	  if (frm.cc.value.length==0) {
-	    alert("[~El numero de cuenta bancaria no es valido~]");
+	    alert("Bank account number is not valid");
 	    return false;
 	  }
 	  else {
@@ -148,21 +148,21 @@
 	    frm.dc.value = String(getBankAccountDigit("00" + frm.entity.value + frm.office.value)) + String(getBankAccountDigit(frm.cc.value));
 
           if (!isBankAccount (frm.entity.value, frm.office.value, frm.dc.value, frm.cc.value)) {
-	    alert("[~La cuenta bancaria no es valida~]");
+	    alert("Invalid Bank Account");
 	    return false;
 	  }
 	frm.nu_bank_acc.value = frm.entity.value + frm.office.value + frm.dc.value + frm.cc.value;
 	}
 		
 	if (frm.de_bank_acc.value.length>254) {
-	  alert("[~La longuitud de la descripcion no puede exceder 254 carateres~]");
+	  alert("Description length must not exceed 254 characters");
 	  return false;
 	}
 
 	if ((frm.sel_month.options.selectedIndex>0 && frm.sel_year.options.selectedIndex<0) ||
 	    (frm.sel_month.options.selectedIndex<0 && frm.sel_year.options.selectedIndex>0)) {
 
-	  alert("[~La fecha de expiracion no es valida~]");
+	  alert("Invalid Expiration Date");
 	  return false;
 	}
 	else if (frm.sel_month.options.selectedIndex>0 && frm.sel_year.options.selectedIndex>0) {
@@ -173,7 +173,7 @@
 	}
 		    
 	if(hasForbiddenChars(frm.nm_cardholder.value)) {
-	  alert("[~El nombre en la tarjeta contiene caracteres no permitidos~]");
+	  alert("Name on card contains invalid characters");
 	  return false;
 	}
 
@@ -222,7 +222,7 @@
 </HEAD>
 <BODY  TOPMARGIN="8" LEFTMARGIN="8" MARGINHEIGHT="8" onload="setCombos()">
 
-   <TABLE><TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Editar Cuenta Bancaria~]<%=(nm_company.length()>0 ? "&nbsp;-&nbsp;" + nm_company : "")%></FONT></TD></TR></TABLE>
+   <TABLE><TR><TD CLASS="striptitle"><FONT CLASS="title1">Edit Bank Account<%=(nm_company.length()>0 ? "&nbsp;-&nbsp;" + nm_company : "")%></FONT></TD></TR></TABLE>
   <BR>
   <FORM NAME="editaddr" METHOD="post" ACTION="bank_edit_store.jsp" onsubmit="return validate()">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
@@ -258,23 +258,23 @@
           <TR>
             <TD align="right" width="140">&nbsp;</TD>
             <TD align="left" width="460">
-              <INPUT type="checkbox" name="validateAccount" checked onclick="if (this.checked) { showLayer('ac20'); hideLayer('acfree'); } else { showLayer('acfree'); hideLayer('ac20'); } "><FONT CLASS="formplain">[~Validar n&uacute;mero de cuenta corriente~]</FONT>
+              <INPUT type="checkbox" name="validateAccount" checked onclick="if (this.checked) { showLayer('ac20'); hideLayer('acfree'); } else { showLayer('acfree'); hideLayer('ac20'); } "><FONT CLASS="formplain">Validate Account Number</FONT>
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Entidad~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Entity</FONT></TD>
             <TD ALIGN="left" WIDTH="460"><INPUT TYPE="text" NAME="nm_bank" MAXLENGTH="50" SIZE="41" STYLE="text-transform:uppercase" VALUE="<%=oBank.getStringNull(DB.nm_bank,"")%>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Direcci&oacute;n~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Address</FONT></TD>
             <TD ALIGN="left" WIDTH="460"><INPUT TYPE="text" NAME="tx_addr" MAXLENGTH="100" SIZE="41" VALUE="<%=oBank.getStringNull("tx_addr","")%>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Tipo de Tarjeta~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Card Type</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <INPUT TYPE="hidden" NAME="tp_card" VALUE="<%=oBank.getStringNull(DB.tp_card,"")%>">&nbsp;
               <SELECT CLASS="combomini" NAME="sel_card"><OPTION VALUE=""></OPTION><% out.write(sTpCardLookUp); %></SELECT>&nbsp;
-              <A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Tipos de Tarjeta~]"></A>
+              <A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Card Types"></A>
             </TD>
           </TR>
           <TR>
@@ -282,7 +282,7 @@
             <TD ALIGN="left" WIDTH="460"><INPUT TYPE="text" NAME="nu_card" MAXLENGTH="16" SIZE="20" VALUE="<%=oBank.getStringNull(DB.nu_card,"")%>"  onChange="acceptOnlyNumbers(this)"></TD>
           </TR>          
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Fecha Expira~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Expiration date</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <INPUT TYPE="hidden" NAME="tx_expire" VALUE="<%=oBank.getStringNull(DB.tx_expire,"")%>">
               <SELECT NAME="sel_month"><OPTION VALUE=""><OPTION VALUE="01">01<OPTION VALUE="02">02<OPTION VALUE="03">03<OPTION VALUE="04">04<OPTION VALUE="05">05<OPTION VALUE="06">06<OPTION VALUE="07">07<OPTION VALUE="08">08<OPTION VALUE="09">09<OPTION VALUE="10">10<OPTION VALUE="11">11<OPTION VALUE="12">12</SELECT>
@@ -290,25 +290,25 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Nombre en la Tarjeta~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Name on the Card</FONT></TD>
             <TD ALIGN="left" WIDTH="460"><INPUT TYPE="text" NAME="nm_cardholder" MAXLENGTH="100" SIZE="41" VALUE="<%=oBank.getStringNull(DB.nm_cardholder,"")%>" STYLE="text-transform:uppercase"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~L&iacute;mite de Cr&eacute;dito~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Credit Limit</FONT></TD>
             <TD ALIGN="left" WIDTH="460"><INPUT TYPE="text" NAME="im_credit_limit" MAXLENGTH="10" SIZE="10" VALUE="<% if (!oBank.isNull(DB.im_credit_limit)) out.write(String.valueOf(oBank.getDecimal(DB.im_credit_limit).longValue())); %>"  onChange="acceptOnlyNumbers(this)"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Descripci&oacute;n:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Description</FONT></TD>
             <TD ALIGN="left" WIDTH="460"><TEXTAREA NAME="de_bank_acc" ROWS="2" COLS="40"><%=oBank.getStringNull(DB.de_bank_acc,"")%></TEXTAREA></TD>
           </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">&nbsp;&nbsp;&nbsp;
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">&nbsp;&nbsp;&nbsp;
 <% } else { %>
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
 <% } %>
-              <INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.parent.close()">
+              <INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.parent.close()">
     	      <BR><BR>
     	    </TD>	            
         </TABLE>

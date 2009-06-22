@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.io.File,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.workareas.WorkArea,com.knowgate.scheduler.Atom" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder,java.io.File,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.workareas.WorkArea,com.knowgate.scheduler.Atom" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <%
 
@@ -20,6 +20,7 @@
 
   int iAtomCount = 0;
   DBSubset oAtoms;
+  DBSubset oAtomsArchived;
   String sOrderBy;
   int iOrderBy;  
   int iMaxRows;
@@ -84,7 +85,7 @@
         
     bIsAdmin = WorkArea.isAdmin (oConn, gu_workarea, id_user);
     
-    if (!bIsAdmin) throw new SQLException("WorkArea Administrator rol is required for editing atoms");
+    if (!bIsAdmin) throw new SQLException("[~Debe tener permisos de administrador en el área de trabajo para poder editar los átomos~]");
 
     iStatus = oStatus.load(oConn);
     aStatusId = new short [iStatus];
@@ -99,24 +100,37 @@
 
     if (iStatusFilterLen==0) {
 
+      oAtomsArchived = new DBSubset ("k_job_atoms_archived",
+      			     "pg_atom,dt_execution,id_status,tx_email,tx_log",
+      			     DB.gu_job + "=?", iMaxRows);      				 
+
       oAtoms = new DBSubset ("k_job_atoms",
-      			     "pg_atom,dt_execution,id_status,tx_email",
-      			     DB.gu_job + "=?" + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);      				 
+      			     "pg_atom,dt_execution,id_status,tx_email,tx_log",
+      			     DB.gu_job + "=?", iMaxRows);      				 
       			     
       aFind = new Object[] { sGuJob };
     }
     else {
 
+      oAtomsArchived = new DBSubset ("k_job_atoms_archived",
+      			     "pg_atom,dt_execution,id_status,tx_email,tx_log",
+      			     DB.gu_job + "=? " + ") AND " + DB.id_status + "=?", iMaxRows);      				 
+
       oAtoms = new DBSubset ("k_job_atoms b", 
-      				 "pg_atom,dt_execution,id_status,tx_email",
-      				 DB.gu_job + "=? " + ") AND " + DB.id_status + "=?" + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);      				 
+      				 "pg_atom,dt_execution,id_status,tx_email,tx_log",
+      				 DB.gu_job + "=? " + ") AND " + DB.id_status + "=?", iMaxRows);      				 
 
       oAtoms.setMaxRows(iMaxRows);
 
       aFind = new Object[] { sGuJob, sStatusFilter };
     }
     oAtoms.setMaxRows(iMaxRows);
-    iAtomCount = oAtoms.load (oConn, aFind, iSkip);
+    oAtomsArchived.setMaxRows(iMaxRows);
+		oAtomsArchived.load (oConn, aFind, iSkip);
+		oAtoms.load (oConn, aFind, iSkip);
+    oAtoms.union(oAtomsArchived);
+    if (iOrderBy>0) oAtoms.sortBy(iOrderBy-1);
+    iAtomCount = oAtoms.getRowCount();
     
     oConn.close("atomlisting"); 
   }
@@ -163,7 +177,7 @@
 	  
 	  var frm = document.forms[0];
 	  
-	  window.location = "listing.jsp?skip=0&orderby=" + fld + "&field=" + getCombo(frm.sel_status) + "&id_status=" + getCombo(frm.sel_status);
+	  window.location = "job_viewatoms.jsp?gu_job=<%=sGuJob%>&skip=0&orderby=" + fld + "&field=" + getCombo(frm.sel_status) + "&id_status=" + getCombo(frm.sel_status);
 	} // sortBy		
 
         // ----------------------------------------------------
@@ -187,9 +201,9 @@
 	  var frm = document.forms[0];
 	  
 	  if (frm.sel_status.selectedIndex>0)
-	    window.location = "job_viewatoms.jsp?skip=0&orderby=<%=sOrderBy%>&id_status=" + getCombo(frm.sel_status);
+	    window.location = "job_viewatoms.jsp?gu_job=<%=sGuJob%>&skip=0&orderby=<%=sOrderBy%>&id_status=" + getCombo(frm.sel_status);
 	  else
-	    window.location = "job_viewatoms.jsp?skip=0&orderby=<%=sOrderBy%>";
+	    window.location = "job_viewatoms.jsp?gu_job=<%=sGuJob%>&skip=0&orderby=<%=sOrderBy%>";
 
 	} // filterByStatus()
 
@@ -203,7 +217,7 @@
 	} // setCombos()
     //-->    
   </SCRIPT>
-  <TITLE>hipergate :: Listing of ...</TITLE>
+  <TITLE>hipergate :: [~Listado de átomos de una tarea~]</TITLE>
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8">
     <DIV class="cxMnu1" style="width:220px"><DIV class="cxMnu2">
@@ -252,13 +266,13 @@
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Ordenar por este campo"></A>&nbsp;<B>Status</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(2);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Ordenar por este campo"></A>&nbsp;<B>Date</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(4);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==4 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Ordenar por este campo"></A>&nbsp;<B>e-mail</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Comentarios~]</B></TD>
 <% if (iStatusFilterLen>0) { %>
 	  <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Select all"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select all"></A></TD></TR>
 <% }
-    	  // 21. List rows
 
 	  int iStatIdx;
-	  String sAtomPg, sExecDt, sStatusTx, sEMail, sStrip;
+	  String sAtomPg, sExecDt, sStatusTx, sEMail, sLog, sStrip;
 	  for (int i=0; i<iAtomCount; i++) {
 
             sAtomPg = String.valueOf(oAtoms.getInt(0,i));
@@ -276,6 +290,8 @@
             }
             
             sEMail = oAtoms.getStringNull(3,i,"");
+            sLog = oAtoms.getStringNull(4,i,"");
+
             sStrip = String.valueOf((i%2)+1);
 %>            
             <TR HEIGHT="14">
@@ -283,6 +299,7 @@
               <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<%=sStatusTx%></TD>
               <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<%=sExecDt%></TD>
               <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<%=sEMail%></TD>
+              <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<%=sLog%></TD>
 <% if (iStatusFilterLen>0) { %>
               <TD CLASS="strip<% out.write (sStrip); %>" ALIGN="center"><INPUT VALUE="1" TYPE="checkbox" NAME="A<%=sAtomPg%>"></TD>
 <% } %>

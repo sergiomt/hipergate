@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*
@@ -76,7 +76,7 @@
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: [~Nueva Oportunidad~]</TITLE>
+  <TITLE>hipergate :: New Opportunity</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -154,7 +154,7 @@
 	      var txt = ltrim(rtrim(frm.tx_email.value));
 	      if (txt.length>0) {
 	      if (!check_email(txt)) {
-	        alert ("[~La direccion de email de contacto no es valida~]");
+	        alert ("email address is not valid");
 	        return false;
         } else {
             var addrreq = createXMLHttpRequest();
@@ -244,7 +244,7 @@
             if (frm.sel_country.options.selectedIndex>0)
               window.open("../common/lookup_f.jsp?nm_table=k_addresses_lookup&id_language=" + getUserLanguage() + "&id_section=" + getCombo(frm.sel_country) + "&tp_control=2&nm_control=sel_state&nm_coding=id_state", "lookupaddrstate", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
             else
-              alert ("[~Debe seleccionar un Pais antes de poder escoger la Provincia o Estado~]");
+              alert ("Must select a country before choosing the state");
             break;
           case 5:
             window.open("../common/lookup_f.jsp?nm_table=k_oportunities_lookup&id_language=" + getUserLanguage() + "&id_section=id_status&tp_control=2&nm_control=sel_status&nm_coding=id_status", "lookupstatus", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
@@ -275,22 +275,22 @@
       	txt = frm.im_revenue.value;
       	for (var c=0; c<txt.length; c++)
       	  if (txt.charCodeAt(c)<48 || txt.charCodeAt(c)>57) {
-      	    alert ("[~El importe debe ser una cantidad entera sin puntos ni comas decimales~]");
+      	    alert ("Amount must be an integer quantity");
       	    return false;
       	  }
       
       	if (frm.tx_name.value.length==0) {
-      	  alert ("[~El nombre de la persona de contacto es obligatorio~]");
+      	  alert ("The name of contact person is required");
       	  return false;
       	}
       
       	if (frm.tx_surname.value.length==0) {
-      	  alert ("[~Los apellidos de la persona de contacto son obligatorios~]");
+      	  alert ("Surname of contact person is required");
       	  return false;
       	}
       
       	if (frm.tx_note.value.length>254) {
-      	  alert ("[~La longuitud de los comentarios no puede exceder los 254 caracteres~]");
+      	  alert ("Comments cannot exceed 254 characters");
       	  return false;
       	}
       	
@@ -302,7 +302,7 @@
       	txt = ltrim(rtrim(frm.tx_email.value));
       	if (txt.length>0)
       	  if (!check_email(txt)) {
-      	    alert ("[~La direccion de email de contacto no es valida~]");
+      	    alert ("email address is not valid");
       	    return false;
                 }
       	frm.tx_email.value = txt.toLowerCase();
@@ -326,7 +326,7 @@
 <BODY TOPMARGIN="8" MARGINHEIGHT="8" onload="setCombos()">
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Nueva Oportunidad~]</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">New Opportunity</FONT></TD></TR>
   </TABLE>  
   <FORM METHOD="post" ACTION="oportunity_new_store.jsp" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
@@ -339,70 +339,70 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right" WIDTH="100"><FONT CLASS="formstrong">[~T&iacute;tulo:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="100"><FONT CLASS="formstrong">Title</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <INPUT TYPE="hidden" NAME="bo_private">
               <INPUT TYPE="text" NAME="tl_oportunity" MAXLENGTH="128" SIZE="36">
-              &nbsp;&nbsp;&nbsp;<FONT CLASS="formstrong">[~Privada~]</FONT>&nbsp;<INPUT TYPE="checkbox" NAME="chk_private" VALUE="1">
+              &nbsp;&nbsp;&nbsp;<FONT CLASS="formstrong">Private</FONT>&nbsp;<INPUT TYPE="checkbox" NAME="chk_private" VALUE="1">
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="100"><FONT CLASS="formstrong">[~Objetivo:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="100"><FONT CLASS="formstrong">Target:</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <SELECT NAME="sel_objetive" onChange="if (document.forms[0].tl_oportunity.value.length==0) document.forms[0].tl_oportunity.value=getComboText(document.forms[0].sel_objetive);"><OPTION VALUE=""></OPTION><%=sObjectiveLookUp%></SELECT>
-              &nbsp;<A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Objetivos~]"></A>
+              &nbsp;<A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Objectives List"></A>
               <INPUT TYPE="hidden" NAME="id_objetive">
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="100"><FONT CLASS="formstrong">[~Estado:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="100"><FONT CLASS="formstrong">Status:</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <SELECT NAME="sel_status"><OPTION VALUE=""></OPTION><%=sStatusLookUp%></SELECT>
-              &nbsp;<A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Estados~]"></A>
+              &nbsp;<A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Status List"></A>
               <INPUT TYPE="hidden" NAME="id_status">
               &nbsp;&nbsp;
-              <FONT CLASS="formplain">[~Origen:~]</FONT>&nbsp;
-              <SELECT NAME="sel_origin"><OPTION VALUE=""></OPTION><%=sOriginLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(5)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Origenes~]"></A>
+              <FONT CLASS="formplain">Origin:</FONT>&nbsp;
+              <SELECT NAME="sel_origin"><OPTION VALUE=""></OPTION><%=sOriginLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(5)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Origins List"></A>
               <INPUT TYPE="hidden" NAME="tp_origin">
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="100"><FONT CLASS="formstrong">[~Importe:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="100"><FONT CLASS="formstrong">Amount:</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <INPUT TYPE="text" NAME="im_revenue" MAXLENGTH="11" SIZE="11">
               &nbsp;&nbsp;&nbsp;
-              <FONT CLASS="formplain">[~Sig. Fecha~]</FONT>
+              <FONT CLASS="formplain">Next Date</FONT>
               &nbsp;<INPUT TYPE="text" MAXLENGTH="10" SIZE="10" NAME="dt_next_action">
-              &nbsp;<A HREF="javascript:showCalendar('dt_next_action')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>
+              &nbsp;<A HREF="javascript:showCalendar('dt_next_action')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
             </TD>
           </TR>
           <TR>
             <TD ALIGN="right"></TD>
-            <TD NOWRAP><INPUT TYPE="checkbox" NAME="chk_meeting" VALUE="1">&nbsp;<FONT CLASS="formplain">[~Crear una actividad en el calendario para la siguiente acci&oacute;n~]</FONT></TD>
+            <TD NOWRAP><INPUT TYPE="checkbox" NAME="chk_meeting" VALUE="1">&nbsp;<FONT CLASS="formplain">Create an activity at calendar for next action</FONT></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="100"><FONT CLASS="formplain">[~Comentarios:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="100"><FONT CLASS="formplain">Comments:</FONT></TD>
             <TD ALIGN="left" WIDTH="460"><TEXTAREA NAME="tx_note" ROWS="3" COLS="40"></TEXTAREA></TD>
           </TR>          
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~e-mail:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">e-mail:</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <TABLE BORDER="0">
                 <TR>
                   <TD><INPUT TYPE="text" NAME="tx_email" STYLE="text-tansform:lowercase" MAXLENGTH="100" SIZE="42" onchange="document.forms[0].gu_address.value=''"></TD>
-                  <TD><DIV ID="lookupmail" STYLE="visibility:hidden"><A HREF="#" CLASS="linkplain" onclick="loadContactData()">[~Buscar~]</A></DIV>
+                  <TD><DIV ID="lookupmail" STYLE="visibility:hidden"><A HREF="#" CLASS="linkplain" onclick="loadContactData()">Search</A></DIV>
                 </TR>
               </TABLE>
             </TD>
           </TR>
 	</TABLE>
 	<DIV ALIGN="center" ID="continue" STYLE="display:block">
-	  <A HREF="#" CLASS="linkplain" onclick="loadContactData()">[~Continuar~]</A>
+	  <A HREF="#" CLASS="linkplain" onclick="loadContactData()">Continue</A>
 	</DIV>
 	<DIV ID="contactdata" STYLE="visibility:hidden">
 	<TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right"><FONT CLASS="formstrong">[~Compa&ntilde;&iacute;a~]</FONT></TD>
+            <TD ALIGN="right"><FONT CLASS="formstrong">Company</FONT></TD>
             <TD ALIGN="left">
               <INPUT TYPE="hidden" NAME="gu_address">
               <INPUT TYPE="hidden" NAME="ix_address">
@@ -411,18 +411,18 @@
               <INPUT TYPE="hidden" NAME="nm_company">
               <INPUT TYPE="hidden" NAME="tx_company">
               <INPUT TYPE="text" NAME="nm_legal" MAXLENGTH="50" SIZE="40" STYLE="text-transform:uppercase" onChange="document.forms[0].gu_company.value='';">
-              &nbsp;&nbsp;<A HREF="javascript:reference(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Compa&ntilde;&iacute;as~]"></A>
+              &nbsp;&nbsp;<A HREF="javascript:reference(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Companies List"></A>
             
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right"><FONT CLASS="formstrong">[~Nombre~]</FONT></TD>
+            <TD ALIGN="right"><FONT CLASS="formstrong">Name</FONT></TD>
             <TD ALIGN="left">
               <INPUT TYPE="text" NAME="tx_name" MAXLENGTH="50" SIZE="40" onchange="document.forms[0].gu_contact.value=''">
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right"><FONT CLASS="formstrong">[~Apellidos~]</FONT></TD>
+            <TD ALIGN="right"><FONT CLASS="formstrong">Surname</FONT></TD>
             <TD ALIGN="left">
               <INPUT TYPE="hidden" NAME="tx_contact">
               <INPUT TYPE="text" NAME="tx_surname" MAXLENGTH="50" SIZE="40" onchange="document.forms[0].gu_contact.value=''">
@@ -430,22 +430,22 @@
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="140">
-              <FONT CLASS="formplain">[~Tel&eacute;fonos:~]</FONT>
+              <FONT CLASS="formplain">Telephones:</FONT>
             </TD>
             <TD ALIGN="left" WIDTH="460">
               <TABLE CLASS="formback">
                 <TR>
-                  <TD><FONT CLASS="textsmall">[~Centralita~]</FONT></TD>
+                  <TD><FONT CLASS="textsmall">Main</FONT></TD>
                   <TD><INPUT TYPE="text" NAME="work_phone" MAXLENGTH="16" SIZE="10"></TD>
                   <TD>&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-                  <TD><FONT CLASS="textsmall">[~Directo~]</FONT></TD>
+                  <TD><FONT CLASS="textsmall">Direct</FONT></TD>
                   <TD><INPUT TYPE="text" NAME="direct_phone" MAXLENGTH="16" SIZE="10"></TD>
                 </TR>
                 <TR>
-                  <TD><FONT CLASS="textsmall">[~Personal~]</FONT></TD>
+                  <TD><FONT CLASS="textsmall">Personal</FONT></TD>
                   <TD><INPUT TYPE="text" NAME="home_phone" MAXLENGTH="16" SIZE="10"></TD>              
                   <TD>&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-                  <TD><FONT CLASS="textsmall">[~M&oacute;vil~]</FONT></TD>
+                  <TD><FONT CLASS="textsmall">Mobile Phone</FONT></TD>
                   <TD><INPUT TYPE="text" NAME="mov_phone" MAXLENGTH="16" SIZE="10"></TD>
                   <TD>&nbsp;&nbsp;&nbsp;&nbsp;</TD>
                 </TR>
@@ -453,11 +453,11 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Tipo de Direcci&oacute;n:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Address Type:</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="0" BORDER="0"><TR>
                 <TD ALIGN="left">
-                  <A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Tipos de Direcci&oacute;n~]"></A>&nbsp;<SELECT CLASS="combomini" NAME="sel_location"><OPTION VALUE=""></OPTION><%=sLocationLookUp%></SELECT>          
+                  <A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Address Types"></A>&nbsp;<SELECT CLASS="combomini" NAME="sel_location"><OPTION VALUE=""></OPTION><%=sLocationLookUp%></SELECT>          
                   <INPUT TYPE="hidden" NAME="tp_location">
                 </TD>
                 <TD></TD>
@@ -467,41 +467,41 @@
 <% if (sLanguage.equalsIgnoreCase("es")) { %>
           <TR>
             <TD ALIGN="right" WIDTH="140">
-              <A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Tipos de V&iacute;a~]"></A>&nbsp;
+              <A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Street Types"></A>&nbsp;
               <SELECT CLASS="combomini" NAME="sel_street"><OPTION VALUE=""></OPTION><%=sStreetLookUp%></SELECT>
             </TD>
             <TD ALIGN="left" WIDTH="460">
               <INPUT TYPE="hidden" NAME="tp_street" VALUE="">
               <INPUT TYPE="text" NAME="nm_street" MAXLENGTH="100" SIZE="40" VALUE="" onchange="document.forms[0].gu_address.value=''">
               &nbsp;&nbsp;
-              <FONT CLASS="formplain">[~N&uacute;m.~]</FONT>&nbsp;<INPUT TYPE="text" NAME="nu_street" MAXLENGTH="16" SIZE="4" VALUE="">
+              <FONT CLASS="formplain">Num.</FONT>&nbsp;<INPUT TYPE="text" NAME="nu_street" MAXLENGTH="16" SIZE="4" VALUE="">
             </TD>
           </TR>
 <% } else { %>
           <TR>
             <TD ALIGN="right" WIDTH="140">
-	      <FONT CLASS="formplain">[~N&uacute;m.~]</FONT>&nbsp;
+	      <FONT CLASS="formplain">Num.</FONT>&nbsp;
             </TD>
             <TD ALIGN="left" WIDTH="460">
               <INPUT TYPE="text" NAME="nu_street" MAXLENGTH="16" SIZE="4" VALUE="">
               <INPUT TYPE="text" NAME="nm_street" MAXLENGTH="100" SIZE="40" VALUE="">
               <INPUT TYPE="hidden" NAME="tp_street" VALUE="">
               <SELECT CLASS="combomini" NAME="sel_street"><OPTION VALUE=""></OPTION><%=sStreetLookUp%></SELECT>
-              <A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Tipos de V&iacute;a~]"></A>              
+              <A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Street Types"></A>              
             </TD>
           </TR>
 <% } %>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Esc/Piso:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Flat:</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <INPUT TYPE="text" NAME="tx_addr1" MAXLENGTH="100" SIZE="10">
               &nbsp;&nbsp;
-              <FONT CLASS="formplain">[~Resto:~]</FONT>&nbsp;
+              <FONT CLASS="formplain">Rest:</FONT>&nbsp;
               <INPUT TYPE="text" NAME="tx_addr2" MAXLENGTH="100" SIZE="32">              
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Pais:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Country:</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
 	      <SELECT CLASS="combomini" NAME="sel_country" onchange="loadstates()"><OPTION VALUE=""></OPTION><%=sCountriesLookUp%></SELECT>
               <INPUT TYPE="hidden" NAME="id_country" VALUE="">
@@ -509,19 +509,19 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Provincia/Estado:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">State/Province:</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
-              <A HREF="javascript:lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver provincias~]"></A>&nbsp;<SELECT CLASS="combomini" NAME="sel_state"></SELECT>
+              <A HREF="javascript:lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View States"></A>&nbsp;<SELECT CLASS="combomini" NAME="sel_state"></SELECT>
               <INPUT TYPE="hidden" NAME="id_state" MAXLENGTH="16" VALUE="">
               <INPUT TYPE="hidden" NAME="nm_state" MAXLENGTH="30" VALUE="">
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Ciudad:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">City:</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <INPUT TYPE="text" NAME="mn_city" STYLE="text-transform:uppercase" MAXLENGTH="50" SIZE="30" VALUE="" onchange="document.forms[0].gu_address.value=''">
               &nbsp;&nbsp;
-              <FONT CLASS="formplain">[~C&oacute;d Postal:~]</FONT>
+              <FONT CLASS="formplain">Zipcode:</FONT>
               &nbsp;
               <INPUT TYPE="text" NAME="zipcode" MAXLENGTH="30" SIZE="5" VALUE="" onchange="document.forms[0].gu_address.value=''">
             </TD>
@@ -531,8 +531,8 @@
           </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>
     	    </TD>
     	  </TR>

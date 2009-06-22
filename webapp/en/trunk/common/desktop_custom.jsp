@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %>
@@ -41,8 +41,17 @@
   response.addHeader ("cache-control", "no-store");
   response.setIntHeader("Expires", 0);
 
-  String sSkin = getCookie(request, "skin", "default");
+  final int IncidentsManager=10;
+  final int ProjectManager=12;
+  final int Sales=16;
+  final int CollaborativeTools=17;
+  final int Directory=19;
+  final int Shop=20;
+  final int Hipermail=21;
+
+  String sSkin = getCookie(request, "skin", "xp");
   String sLanguage = getNavigatorLanguage(request);
+  int iAppMask = Integer.parseInt(getCookie(request, "appmask", "0"));
 
   String gu_workarea = getCookie(request, "workarea", "");
   String gu_user = getCookie(request, "userid", "");
@@ -75,7 +84,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>[~Personalizar p&aacute;gina de inicio~]</TITLE>
+  <TITLE>Customize this page</TITLE>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
@@ -96,20 +105,45 @@
       function setCombos() {
         var left = new Array (<% for (int n=0,l=0;l<iPortlets;l++) if (oPortlets.getString(1,l).equals("left")) { out.write((n>0 ? ",\"" : "\"")+oPortlets.getString(0,l)+"\""); n++; } %>);
         var right = new Array (<% for (int n=0,l=0;l<iPortlets;l++) if (oPortlets.getString(1,l).equals("right")) { out.write((n>0 ? ",\"" : "\"")+oPortlets.getString(0,l)+"\""); n++; } %>);         
-	var portlets = new Array("com.knowgate.http.portlets.CalendarTab","com.knowgate.http.portlets.CallsTab","com.knowgate.http.portlets.MyIncidencesTab","com.knowgate.http.portlets.OportunitiesTab","com.knowgate.http.portlets.RecentContactsTab","com.knowgate.http.portlets.RecentPostsTab");
-	var labels =  new Array("[~Calendario~]","[~Llamadas~]","[~Incidencias~]","[~Oportunidades~]","[~Contactos~]","[~Foros~]");
+	      var portlets = new Array("com.knowgate.http.portlets.CalendarTab",
+	                               "com.knowgate.http.portlets.CallsTab",
+	                               "com.knowgate.http.portlets.MyIncidencesTab",
+	                               "com.knowgate.http.portlets.OportunitiesTab",
+	                               "com.knowgate.http.portlets.RecentContactsTab",
+	                               "com.knowgate.http.portlets.RecentPostsTab",
+	                               "com.knowgate.http.portlets.NewMail",
+	                               "com.knowgate.http.portlets.Favorites");
+	      var labels =  new Array("Calendar",
+	      												"Calls",
+	      												"Incidents",
+	      												"Oportunities",
+	      												"Contacts",
+	      												"Forums",
+	      												"[~Correo~]",
+	      												"[~Favoritos~]");
+	      var enabled =  new Array(<%=(((iAppMask & (1<<CollaborativeTools))==0) ? "false" : "true")%>,
+	      												 <%=(((iAppMask & (1<<CollaborativeTools))==0) ? "false" : "true")%>,
+	      												 <%=(((iAppMask & (1<<IncidentsManager))==0) ? "false" : "true")%>,
+	      												 <%=(((iAppMask & (1<<IncidentsManager))==0) ? "false" : "true")%>,
+	      												 <%=(((iAppMask & (1<<Sales))==0) ? "false" : "true")%>,
+	      												 <%=(((iAppMask & (1<<Sales))==0) ? "false" : "true")%>,
+	      												 <%=(((iAppMask & (1<<CollaborativeTools))==0) ? "false" : "true")%>,
+	      												 <%=(((iAppMask & (1<<Hipermail))==0) ? "false" : "true")%>,
+	      												 <%=(((iAppMask & (1<<Directory))==0) ? "false" : "true")%>);
 
         var frm = document.forms[0];
 
-	for (var p=0;p<portlets.length;p++) {
-	  if (belongsTo(portlets[p],left))
-	    comboPush (frm.sel_left, labels[p], portlets[p], false, false);
-	  else if (belongsTo(portlets[p],right))
-	    comboPush (frm.sel_right, labels[p], portlets[p], false, false);
-	  else
-	    comboPush (frm.sel_all, labels[p], portlets[p], false, false);	  
-	}
-	
+	      for (var p=0;p<portlets.length;p++) {
+	        if (enabled[p]) {
+	          if (belongsTo(portlets[p],left))
+	            comboPush (frm.sel_left, labels[p], portlets[p], false, false);
+	          else if (belongsTo(portlets[p],right))
+	            comboPush (frm.sel_right, labels[p], portlets[p], false, false);
+	          else
+	            comboPush (frm.sel_all, labels[p], portlets[p], false, false);
+	        }
+	      }
+
         return true;
       } // validate;
 
@@ -161,7 +195,7 @@
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()">
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Personalizar p&aacute;gina de inicio~]</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Customize this page</FONT></TD></TR>
   </TABLE>
   <FORM METHOD="post" ACTION="desktop_store.jsp" onsubmit="return validate()">
     <INPUT TYPE="hidden" NAME="left" VALUE=""><INPUT TYPE="hidden" NAME="right" VALUE="">
@@ -169,24 +203,24 @@
       <TR><TD>
         <TABLE CELLSPACING="4" CELLPADDING="4" WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="center" ><FONT CLASS="formstrong">[~Columna Izquierda~]</FONT></TD>
+            <TD ALIGN="center" ><FONT CLASS="formstrong">Left Column</FONT></TD>
 	    <TD></TD>
-            <TD ALIGN="center"><FONT CLASS="formstrong">[~Pesta&ntilde;as Disponibles~]</FONT></TD>
+            <TD ALIGN="center"><FONT CLASS="formstrong">Available Items</FONT></TD>
 	    <TD></TD>
-            <TD ALIGN="center"><FONT CLASS="formstrong">[~Columna Derecha~]</FONT></TD>
+            <TD ALIGN="center"><FONT CLASS="formstrong">Right Colum</FONT></TD>
           </TR>
           <TR>
             <TD ALIGN="center"><SELECT NAME="sel_left" MULTIPLE></SELECT></TD>
             <TD ALIGN="center" VALIGN="middle">
-              <INPUT TYPE="button" VALUE="<< [~Agregar~]" STYLE="width:70" onclick="add(document.forms[0].sel_left)">
+              <INPUT TYPE="button" VALUE="<< Add" STYLE="width:70" onclick="add(document.forms[0].sel_left)">
               <BR><BR>
-              <INPUT TYPE="button" VALUE="[~Eliminar~] >>" STYLE="width:70" onclick="remove(document.forms[0].sel_left)">
+              <INPUT TYPE="button" VALUE="Remove >>" STYLE="width:70" onclick="remove(document.forms[0].sel_left)">
             </TD>
             <TD ALIGN="center"><SELECT NAME="sel_all" MULTIPLE></TD>
             <TD ALIGN="center" VALIGN="middle">
-              <INPUT TYPE="button" VALUE="[~Agregar~] >>" STYLE="width:80" onclick="add(document.forms[0].sel_right)">
+              <INPUT TYPE="button" VALUE="Add >>" STYLE="width:80" onclick="add(document.forms[0].sel_right)">
               <BR><BR>
-              <INPUT TYPE="button" VALUE="<< [~Eliminar~]" STYLE="width:80" onclick="remove(document.forms[0].sel_right)">
+              <INPUT TYPE="button" VALUE="<< Remove" STYLE="width:80" onclick="remove(document.forms[0].sel_right)">
             </TD>
             <TD ALIGN="center"><SELECT NAME="sel_right" MULTIPLE></SELECT></TD>
           </TR>
@@ -195,8 +229,8 @@
           </TR>
           <TR>
     	    <TD COLSPAN="5" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:70" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:70" TITLE="ALT+c" onclick="window.document.location.href='desktop.jsp'">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" TITLE="ALT+c" onclick="window.document.location.href='desktop.jsp'">
     	      <BR><BR>
     	    </TD>
     	  </TR>

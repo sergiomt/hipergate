@@ -1,10 +1,5 @@
 <%@ page import="java.util.*,com.knowgate.crm.*,java.math.*,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.dataxslt.db.*,com.knowgate.misc.*" language="java" session="false" %>
-<%@ include file="../methods/dbbind.jsp" %>
-<%@ include file="../methods/cookies.jspf" %>
-<%@ include file="../methods/authusrs.jspf" %>
-<%@ include file="../methods/clientip.jspf" %>
-<%@ include file="../methods/reqload.jspf" %>
-<%
+<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%
 
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -53,14 +48,12 @@
 
   try{
   
-    // [~//Conexión con base de datos~]
     oCon = GlobalDBBind.getConnection("oportunity_delete");
     oCon.setAutoCommit (false);
     
     for (int i=0;i<a_items.length;i++)  
       com.knowgate.crm.Oportunity.delete(oCon, a_items[i]);
   
-    // [~//Ejecutar commit y liberar conexión~]
     oCon.commit();
     oCon.close("oportunity_delete");
   }
@@ -74,10 +67,9 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   } // catch()
     
-  // [~//Vaciar instancias~]
   oCon = null;
 
-  out.write("<HTML><HEAD><TITLE>Wait...</TITLE><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>window.document.location='oportunity_listing.jsp'<" + "/SCRIPT" +"></HEAD></HTML>");
+  out.write("<HTML><HEAD><TITLE>Wait...</TITLE><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>window.document.location='oportunity_listing.jsp?selected="+request.getParameter("selected")+"&subselected="+request.getParameter("subselected")+"'<" + "/SCRIPT" +"></HEAD></HTML>");
  
  %>
  

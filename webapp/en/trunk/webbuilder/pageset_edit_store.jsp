@@ -1,4 +1,4 @@
-<%@ page import="java.util.*,java.math.*,java.io.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.debug.DebugFile,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*,com.knowgate.misc.*,com.knowgate.workareas.FileSystemWorkArea" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.*,java.math.*,java.io.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.debug.DebugFile,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*,com.knowgate.misc.*,com.knowgate.workareas.FileSystemWorkArea" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %>
 <%
 /*
@@ -123,7 +123,7 @@
     
     File oDataFile = new File(sStorage + sDataFile);
     if (!oDataFile.exists()) {
-      throw new IOException("[~No fue posible crear el archivo~] "+sStorage + sDataFile+"[~Revise el valor de la propiedad workareasput en hipergate.cnf y los permisos sobre el directorio al que apunta~]");
+      throw new IOException("File Creation Failed "+sStorage + sDataFile+"Check the valueof workareasput at hipergate.cnf and to permissions on the directory to which it points");
     }
     
     oConn.commit();

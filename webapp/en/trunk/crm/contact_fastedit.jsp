@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.io.UnsupportedEncodingException,java.io.File,java.net.URLDecoder,java.sql.SQLException,com.oreilly.servlet.MultipartRequest,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.CSVParser,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.io.UnsupportedEncodingException,java.io.File,java.net.URLDecoder,java.sql.SQLException,com.oreilly.servlet.MultipartRequest,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.CSVParser,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
 <%!
@@ -112,7 +112,7 @@
   } // fi
 
   if (!isDomainAdmin (GlobalCacheClient, GlobalDBBind, request, response)) {
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SecurityException&desc=[~Para acceder a esta pagina es necesario tener rol de administrador~]&resume=_back"));  
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SecurityException&desc=Administror role is required for accessing this page&resume=_back"));  
     return;
   }
 
@@ -202,18 +202,18 @@
 	for (var r=0; r<nrows; r++) {
 	  txt = frm.elements["ny_age"+String(r)].value;
 	  if (txt.length>0 && !isIntValue(txt)) {
-	    alert ("[~Fila~] "+String(r+1)+" [~La edad debe ser un numero entero~]");
+	    alert ("Row "+String(r+1)+" Age must be a positive integer number");
 	    return false;
 	  }
 	  txt = frm.elements["dt_birth"+String(r)].value;
 	  if (txt.length>0 && !isDate(txt,"d")) {
-	    alert ("[~Fila~] "+String(r+1)+" [~La fecha de nacimiento no es válida, debe ser AAAA-MM-DD~]");
+	    alert ("Row "+String(r+1)+" [~La fecha de nacimiento no es válida, debe ser AAAA-MM-DD~]");
 	    return false;
 	  }
 	  /*
 	  txt = frm.elements["tx_email"+String(r)].value;
 	  if (txt.length>0 && !check_email(txt)) {
-	    alert ("[~Fila~] "+String(r+1)+" [~La dirección de e-mail no es válida~]");
+	    alert ("Row "+String(r+1)+" [~La dirección de e-mail no es válida~]");
 	    return false;
 	  }
 	  */
@@ -223,7 +223,7 @@
 	       frm.elements["dt_birth"+String(r)].value.length >0 || frm.elements["tx_email"+String(r)].value.length >0 ||
 	       frm.elements["nm_street"+String(r)].value.length>0 || frm.elements["tp_street"+String(r)].selectedIndex>0 ||	       	       
 	       frm.elements["sn_passport"+String(r)].value.length>0 || frm.elements["tp_passport"+String(r)].selectedIndex>0)) {
-	    alert ("[~Fila~] "+String(r+1)+" [~El nombre o los apellidos son obligatorios~]");
+	    alert ("Row "+String(r+1)+" Name or Surname is required");
 	    return false;	       
 	   }  
 	} // next
@@ -279,7 +279,7 @@
       } // setCombos()
     // -->
   </SCRIPT>
-  <TITLE>hipergate :: [~Edici&oacute;n r&aacute;pida de contactos~]</TITLE>
+  <TITLE>hipergate :: Contacts Fast Edit</TITLE>
 </HEAD>
 <BODY MARGINWIDTH="8" LEFTMARGIN="8" TOPMARGIN="8" MARGINHEIGHT="8" onload="setCombos()">
   <%@ include file="../common/header.jspf" %>
@@ -287,11 +287,11 @@
     <TR>
       <TD>
         <DIV class="cxMnu1" style="width:220px"><DIV class="cxMnu2">
-          <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.parent.location='crmhome.jsp?selected=2&subselected=-1'"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
-          <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="[~Imprimir~]"> [~Imprimir~]</SPAN>
+          <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.parent.location='crmhome.jsp?selected=2&subselected=-1'"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
+          <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
         </DIV></DIV>
       </TD>
-      <TD CLASS="striptitle"><FONT CLASS="title1">[~Edici&oacute;n r&aacute;pida de contactos~]</FONT></TD>
+      <TD CLASS="striptitle"><FONT CLASS="title1">Contacts Fast Edit</FONT></TD>
     </TR>
   </TABLE>  
   <FORM METHOD="post" ACTION="contact_fastedit_store.jsp" onsubmit="return validate()">
@@ -299,35 +299,35 @@
     <INPUT TYPE="hidden" NAME="nu_rows" VALUE="<%=String.valueOf(iRows)%>">
     <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
     <INPUT TYPE="hidden" NAME="id_mode" VALUE="">
-    <INPUT TYPE="radio" NAME="rad_ins_updt" CHECKED>&nbsp;<FONT CLASS="textplain">[~Insertar~]</FONT>&nbsp;&nbsp;<INPUT TYPE="radio" NAME="rad_ins_updt">&nbsp;<FONT CLASS="textplain">[~Insertar y Actualizar~]</FONT>&nbsp;&nbsp;&nbsp;<A TARGET="_top" HREF="../admin/lookups.jsp?nm_table=k_contacts_lookup&nm_referer=contact_fastedit_f.jsp" CLASS="linkplain">[~Edici&oacute;n Manual de Valores de Remonte~]</A>
+    <INPUT TYPE="radio" NAME="rad_ins_updt" CHECKED>&nbsp;<FONT CLASS="textplain">Insert</FONT>&nbsp;&nbsp;<INPUT TYPE="radio" NAME="rad_ins_updt">&nbsp;<FONT CLASS="textplain">Insert and Update</FONT>&nbsp;&nbsp;&nbsp;<A TARGET="_top" HREF="../admin/lookups.jsp?nm_table=k_contacts_lookup&nm_referer=contact_fastedit_f.jsp" CLASS="linkplain">Manual Maintenance of Lookup Values</A>
     <BR>
-    <INPUT TYPE="checkbox" NAME="chk_dup_names" VALUE="1" CHECKED>&nbsp;<FONT CLASS="textplain">[~Sin nombres duplicados~]</FONT>&nbsp;&nbsp;<INPUT TYPE="checkbox" NAME="chk_dup_emails" VALUE="1" CHECKED>&nbsp;<FONT CLASS="textplain">[~Sin e-mails duplicados~]</FONT>
+    <INPUT TYPE="checkbox" NAME="chk_dup_names" VALUE="1" CHECKED>&nbsp;<FONT CLASS="textplain">Avoid duplicated names</FONT>&nbsp;&nbsp;<INPUT TYPE="checkbox" NAME="chk_dup_emails" VALUE="1" CHECKED>&nbsp;<FONT CLASS="textplain">Avoid duplicated e-mails</FONT>
     <BR>
-    <INPUT TYPE="submit" VALUE="[~Grabar~]" CLASS="pushbutton">
+    <INPUT TYPE="submit" VALUE="Save" CLASS="pushbutton">
     <TABLE CELLSPACING="1" CELLPADDING="0">
       <TR>
         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>[~Referencia~]</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>[~Nombre~]</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>[~Apellidos~]</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>[~Compa&ntilde;&iacute;a~]</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>[~Sector~]</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>[~Empleo~]</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>[~Doc. Ident.~]</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>[~Tipo Ident.~]</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>[~Fecha Nac.~]</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>[~Edad~]</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>[~Tipo V&iacute;a~]</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>[~Nombre V&iacute;a~]</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>[~N&uacute;mero~]</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>[~Esc/Piso/Pta~]</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>[~Resto Dir.~]</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>[~Pais~]</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>[~Provincia~]</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>[~Ciudad~]</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>[~Cod. Postal~]</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>[~Tel&eacute;fono~]</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>[~e-mail~]</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Reference</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Name</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Surname</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Company</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Sector</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Position</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Identity Document</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Id. Doc. Type</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Birth Data</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Age</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Street Type</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Street Name</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Number</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Suite/Floor</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Other Address</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Country</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>State</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>City</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Zipcode</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Telephone</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>e-mail</B></TD>
       </TR>
 <% 
    for (int r=0; r<iRows; r++) {
@@ -340,7 +340,7 @@
         <TD><INPUT TYPE="text" CLASS="combomini" NAME="tx_surname<%=sRow%>" SIZE="20" MAXLENGTH="100" VALUE="<%=getField(oCsv,2,r)%>"></TD>
         <TD NOWRAP>
           <INPUT TYPE="text" CLASS="combomini" NAME="nm_legal<%=sRow%>" SIZE="20" MAXLENGTH="100" VALUE="<%=getField(oCsv,3,r)%>">
-          <A HREF="javascript:reference('nm_legal<%=sRow%>',1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Listado~]"></A>
+          <A HREF="javascript:reference('nm_legal<%=sRow%>',1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View listing"></A>
           &nbsp;&nbsp;
         </TD>
         <TD><SELECT CLASS="combomini" NAME="id_sector<%=sRow%>"><OPTION VALUE=""></OPTION><%=sSectorsLookUp%></SELECT></TD>
@@ -349,7 +349,7 @@
         <TD><SELECT CLASS="combomini" NAME="tp_passport<%=sRow%>"><OPTION VALUE=""></OPTION><%=sPassportsLookUp%></SELECT></TD>
         <TD NOWRAP>
           <INPUT TYPE="text" CLASS="combomini" NAME="dt_birth<%=sRow%>" SIZE="12" MAXLENGTH="10" VALUE="<%=getField(oCsv,8,r)%>">
-          <A HREF="javascript:showCalendar('dt_birth<%=sRow%>')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>
+          <A HREF="javascript:showCalendar('dt_birth<%=sRow%>')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
           &nbsp;&nbsp;
         </TD>
         <TD ALIGN="center"><INPUT TYPE="text" CLASS="combomini" NAME="ny_age<%=sRow%>" SIZE="3" MAXLENGTH="3" onkeypress="acceptOnlyNumbers(this)" VALUE="<%=getField(oCsv,9,r)%>"></TD>
@@ -378,11 +378,11 @@
   <FORM ENCTYPE="multipart/form-data" METHOD="post" ACTION="contact_fastedit.jsp" onsubmit="return (document.forms[1].nm_csvfile.value.length>0)">
     <TABLE>
       <TR>
-        <TD CLASS="textplain">[~Cargar Archivo~]</TD>
+        <TD CLASS="textplain">Load File</TD>
         <TD><INPUT TYPE="file" NAME="nm_csvfile" SIZE="40"></TD>
       </TR>
       <TR>
-        <TD CLASS="textplain">[~Juego de Caracteres~]</TD>
+        <TD CLASS="textplain">Character set </TD>
         <TD>
               <SELECT NAME="sel_encoding">
                 <OPTION VALUE="UTF8">UTF-8</OPTION>
@@ -414,16 +414,16 @@
         </TD>
       </TR>
       <TR>
-        <TD CLASS="textplain">[~Delimitador de Columna~]</TD>
+        <TD CLASS="textplain">Column Delimiter</TD>
         <TD>
-          <SELECT NAME="sel_delim"><OPTION VALUE="T" SELECTED>[~Tabulador~]</OPTION><OPTION VALUE=";">;</OPTION><OPTION VALUE=",">,</OPTION><OPTION VALUE="|">|</OPTION></SELECT>
+          <SELECT NAME="sel_delim"><OPTION VALUE="T" SELECTED>Tab</OPTION><OPTION VALUE=";">;</OPTION><OPTION VALUE=",">,</OPTION><OPTION VALUE="|">|</OPTION></SELECT>
           &nbsp;&nbsp;&nbsp;
-          <INPUT TYPE="submit" CLASS="pushbutton" VALUE="[~Cargar~]">
+          <INPUT TYPE="submit" CLASS="pushbutton" VALUE="Load">
         </TD>
       </TR>
       <TR>
         <TD CLASS="textsmall">
-          [~El archivo debe tener la estructura~]
+          The file must have structure
         </TD>
         <TD CLASS="textsmall">
           id_ref|tx_name|tx_surname|nm_legal|id_sector|de_title|sn_passport|tp_passport|dt_birth|ny_age|tp_street|nm_street|nu_street|tx_addr1|tx_addr2|id_country|id_state|mn_city|zipcode|direct_phone|tx_email

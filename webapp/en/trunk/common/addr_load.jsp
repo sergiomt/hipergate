@@ -1,4 +1,4 @@
-
+﻿
 <%@ page import="java.sql.Statement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/nullif.jspf" %><%
 /*
@@ -101,7 +101,7 @@
 %>
 //-->
 </SCRIPT>
-<TITLE>hipergate :: [~Carga de Direcciones~]</TITLE>
+<TITLE>hipergate :: Load addresses</TITLE>
 </HEAD>
 <BODY><%="<!--" + sSQL + "-->\n" + sErrMsg%></BODY>
 </HTML>

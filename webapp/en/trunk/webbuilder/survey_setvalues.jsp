@@ -1,4 +1,4 @@
-<%@ page import="java.io.File,java.io.FileNotFoundException,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,org.jibx.runtime.JiBXException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.surveys.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.File,java.io.FileNotFoundException,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,org.jibx.runtime.JiBXException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.surveys.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%!
   public static String jsEsc(String sStr) {

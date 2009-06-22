@@ -1,4 +1,4 @@
-<%@ page import="java.util.HashMap,java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.util.Vector,java.text.SimpleDateFormat,org.w3c.dom.*,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.hipergate.QueryByForm,dom.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.HashMap,java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.util.Vector,java.text.SimpleDateFormat,org.w3c.dom.*,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.hipergate.QueryByForm,dom.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -134,7 +134,7 @@
         var frm = document.forms[0];
         
         if (frm.sel_queries.selectedIndex<=0) {
-          alert ("[~Seleccione la consulta que desea eliminar~]");
+          alert ("Select the query to be deleted");
           return false;
         } else if (window.confirm("[~¿Está seguro de que desea eliminar la consulta?~] "+getComboText(frm.sel_queries) + " [~Al eliminar la consulta se eliminarán también automáticamente las listas dinámicas que la estén utilizando~]")) {
           frm.gu_query.value = getCombo(frm.sel_queries);
@@ -148,7 +148,7 @@
         var sTlQry = "<%=sTlQuery%>";
         
         if (sTlQry.length==0) {
-          sTlQry = window.prompt("[~Introduzca una etiqueta para describir la consulta~]", "<%=(sTlQuery.length()>0 ? sTlQuery : "[~Consulta~]"+String.valueOf(iQueries+1))%>");
+          sTlQry = window.prompt("Enter the query short name", "<%=(sTlQuery.length()>0 ? sTlQuery : "Query"+String.valueOf(iQueries+1))%>");
         }
         
         if (defined(sTlQry))
@@ -248,7 +248,7 @@
         var typ;
         	
 	if (getCombo(frm.sel_show_as)!="HTML" && frm.sel_show_columns.options.length==0) {
-            alert ("[~Debe seleccionar al menos 1 columna a visualizar~]");
+            alert ("You must select at least one column to be shown");
             return false;	
 	}
 	
@@ -642,11 +642,11 @@
     if (!sCaller.startsWith("list_"))
     {
 %>    
-      <FONT CLASS="textplain">&nbsp;[~Cargar consulta predefinida~]&nbsp;</FONT>
+      <FONT CLASS="textplain">&nbsp;Load predefined Query&nbsp;</FONT>
       <SELECT NAME="sel_queries" CLASS="combomini" onchange="loadQuery()"><%=sQueries%></SELECT>
       &nbsp;
-      <A HREF="#" onclick="deleteQuery()" TITLE="[~Eliminar Consulta~]"><IMG SRC="../images/images/delete.gif" WIDTH="13" HEIGHT="13" BORDER="0" ALT="[~Eliminar~]"></A>
-      <A HREF="#" onclick="deleteQuery()" TITLE="[~Eliminar Consulta~]" CLASS="linkplain">[~Eliminar~]</A>
+      <A HREF="#" onclick="deleteQuery()" TITLE="Delete Query"><IMG SRC="../images/images/delete.gif" WIDTH="13" HEIGHT="13" BORDER="0" ALT="Delete"></A>
+      <A HREF="#" onclick="deleteQuery()" TITLE="Delete Query" CLASS="linkplain">Delete</A>
       <BR><BR>
 <% } %>
       <FONT CLASS="textplain">&nbsp;cuyo</FONT><BR>
@@ -673,7 +673,7 @@
             <SELECT NAME="field1" CLASS="combomini" onClick="showLookUp(1)"><%=sFields%></SELECT>
           </TD>
           <TD CLASS="strip1" ALIGN="center">
-      	    <FONT CLASS="textplain">&nbsp;[~sea~]&nbsp;</FONT>
+      	    <FONT CLASS="textplain">&nbsp;is&nbsp;</FONT>
             <SELECT NAME="operator1" CLASS="combomini" STYLE="width:100"></SELECT>
           </TD>
           <TD CLASS="strip1">
@@ -681,12 +681,12 @@
             <DIV ID="val1txt" STYLE="position:relative;visibility:visible"><INPUT TYPE="text" NAME="value1" CLASS="textmini" MAXLENGTH="250" SIZE="30" onChange="document.forms[0].code1.value=''"></DIV>
           </TD>
           <TD CLASS="formfront">
-            <DIV ID="lookup1" STYLE="position:relative;visibility:hidden"><A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Valores~]"></A></DIV>           
+            <DIV ID="lookup1" STYLE="position:relative;visibility:hidden"><A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View list of values"></A></DIV>           
           </TD>
         </TR>
         <TR>
           <TD COLSPAN="3" CLASS="strip2">
-            <INPUT TYPE="radio" NAME="condition1" VALUE="AND">&nbsp;<FONT CLASS="formstrong">[~Y~]</FONT>&nbsp;&nbsp;&nbsp;&nbsp;<INPUT TYPE="radio" NAME="condition1" VALUE="OR">&nbsp;<FONT CLASS="formstrong">[~O~]</FONT>
+            <INPUT TYPE="radio" NAME="condition1" VALUE="AND">&nbsp;<FONT CLASS="formstrong">And</FONT>&nbsp;&nbsp;&nbsp;&nbsp;<INPUT TYPE="radio" NAME="condition1" VALUE="OR">&nbsp;<FONT CLASS="formstrong">Or</FONT>
           </TD>
           <TD CLASS="formfront"></TD>
         </TR>
@@ -695,7 +695,7 @@
             <SELECT NAME="field2" CLASS="combomini" onClick="showLookUp(2)"><%=sFields%></SELECT>
           </TD>
           <TD CLASS="strip1">    
-      	    <FONT CLASS="textplain">&nbsp;[~sea~]&nbsp;</FONT>
+      	    <FONT CLASS="textplain">&nbsp;is&nbsp;</FONT>
             <SELECT NAME="operator2" CLASS="combomini" STYLE="width:100"></SELECT>
           </TD>
           <TD CLASS="strip1">
@@ -703,12 +703,12 @@
             <DIV ID="val2txt" STYLE="position:relative;visibility:visible"><INPUT TYPE="text" NAME="value2" CLASS="textmini" MAXLENGTH="250" SIZE="30" onChange="document.forms[0].code2.value=''"></DIV>
           </TD>
           <TD VALIGN="middle" CLASS="formfront">
-            <DIV ID="lookup2" STYLE="position:relative;visibility:hidden"><A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Valores~]"></A></DIV>
+            <DIV ID="lookup2" STYLE="position:relative;visibility:hidden"><A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View list of values"></A></DIV>
           </TD>
         </TR>
         <TR>
           <TD COLSPAN="3" CLASS="formfront" HEIGHT="16">          
-            <INPUT TYPE="radio" NAME="condition2" VALUE="AND">&nbsp;<FONT CLASS="formstrong">[~Y~]</FONT>&nbsp;&nbsp;&nbsp;&nbsp;<INPUT TYPE="radio" NAME="condition2" VALUE="OR">&nbsp;<FONT CLASS="formstrong">[~O~]</FONT>
+            <INPUT TYPE="radio" NAME="condition2" VALUE="AND">&nbsp;<FONT CLASS="formstrong">And</FONT>&nbsp;&nbsp;&nbsp;&nbsp;<INPUT TYPE="radio" NAME="condition2" VALUE="OR">&nbsp;<FONT CLASS="formstrong">Or</FONT>
           </TD>
           <TD CLASS="formfront"></TD>
         </TR>
@@ -717,7 +717,7 @@
             <SELECT NAME="field3" CLASS="combomini" onClick="showLookUp(3)"><%=sFields%></SELECT>
           </TD>
           <TD CLASS="strip1">          
-      	    <FONT CLASS="textplain">&nbsp;[~sea~]&nbsp;</FONT>
+      	    <FONT CLASS="textplain">&nbsp;is&nbsp;</FONT>
             <SELECT NAME="operator3" CLASS="combomini" STYLE="width:100"></SELECT>
           </TD>
           <TD CLASS="strip1">
@@ -725,7 +725,7 @@
             <DIV ID="val2txt" STYLE="position:relative;visibility:visible"><INPUT TYPE="text" NAME="value3" CLASS="textmini" MAXLENGTH="250" SIZE="30" onChange="document.forms[0].code3.value=''"></DIV>
           </TD>
           <TD CLASS="formfront">
-            <DIV ID="lookup3" STYLE="position:relative;visibility:hidden"><A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Valores~]"></A></DIV>          
+            <DIV ID="lookup3" STYLE="position:relative;visibility:hidden"><A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View list of values"></A></DIV>          
           </TD>
         </TR>        
 	<TR>
@@ -735,14 +735,14 @@
 <% } else { %>
 	  <DIV ID="showresultsas">
 <% } %>
-	  <FONT CLASS="formplain">[~mostrar resultados como~]&nbsp;</FONT><SELECT onChange="columnVisibility()" CLASS="combomini" NAME="sel_show_as"><OPTION VALUE="HTML" SELECTED>HTML</OPTION><OPTION VALUE="XLS">Excel</OPTION><OPTION VALUE="CSV">[~Texto delimitado por comas~]</OPTION><OPTION VALUE="TSV">[~Texto delimitado por tabuladores~]</OPTION></SELECT>
+	  <FONT CLASS="formplain">show results as&nbsp;</FONT><SELECT onChange="columnVisibility()" CLASS="combomini" NAME="sel_show_as"><OPTION VALUE="HTML" SELECTED>HTML</OPTION><OPTION VALUE="XLS">Excel</OPTION><OPTION VALUE="CSV">Comma delimited text</OPTION><OPTION VALUE="TSV">Tab delimited text</OPTION></SELECT>
 	  </DIV>
 	</TD>
 	</TR>
         <TR>
           <TD>
             <DIV ID="columns1" STYLE="position:relative;visibility:hidden">
-      	    <FONT CLASS="textplain">[~Todas las columnas~]</FONT><BR>
+      	    <FONT CLASS="textplain">All columns</FONT><BR>
 <%
  	    String sColumns = "";  	    
  	    int iColumns = 0;
@@ -768,14 +768,14 @@
           </TD>
           <TD ALIGN="center" VALIGN="middle">
 	    <DIV ID="columns2" STYLE="position:relative;visibility:hidden">
-	    <INPUT TYPE="button" VALUE="[~Agregar~] >>" STYLE="font-family:Arial,Helvetica,sans-serif;font-size:9pt;width:100px" onClick="addColumns()">
+	    <INPUT TYPE="button" VALUE="Add >>" STYLE="font-family:Arial,Helvetica,sans-serif;font-size:9pt;width:100px" onClick="addColumns()">
 	    <BR><BR>
-	    <INPUT TYPE="button" VALUE="<< [~Quitar~]" STYLE="font-family:Arial,Helvetica,sans-serif;font-size:9pt;width:100px" onClick="removeColumns()">
+	    <INPUT TYPE="button" VALUE="<< Remove" STYLE="font-family:Arial,Helvetica,sans-serif;font-size:9pt;width:100px" onClick="removeColumns()">
             </DIV>
           </TD>
           <TD>
       	    <DIV ID="columns3" STYLE="position:relative;visibility:hidden">
-      	    <FONT CLASS="textplain">[~Columnas a mostrar~]</FONT><BR>
+      	    <FONT CLASS="textplain">Columns to show</FONT><BR>
 <%
 
 	    DOMDocument oQBFDoc = oQBF.getDocument();
@@ -800,7 +800,7 @@
           <TD></TD>
           <TD ALIGN="right">
             <DIV ID="columns4" STYLE="position:relative;visibility:hidden">
-            <FONT CLASS="textplain">&nbsp;[~ordenar por~]</FONT>
+            <FONT CLASS="textplain">&nbsp;order by</FONT>
             </DIV>
           </TD>
           <TD COLSPAN="2">
@@ -827,15 +827,15 @@
         <TR>
           <TD COLSPAN="4" ALIGN="center">
 <% if (bIsGuest) { %>
-            <INPUT TYPE="button" ACCESSKEY="s" TITLE="ALT+s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
+            <INPUT TYPE="button" ACCESSKEY="s" TITLE="ALT+s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
 <% } else { %>
-            <INPUT TYPE="button" ACCESSKEY="s" TITLE="ALT+s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" onclick="saveQuery()">
+            <INPUT TYPE="button" ACCESSKEY="s" TITLE="ALT+s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" onclick="saveQuery()">
 <% } %>
 <% 
     	  if (!sCaller.startsWith("list_"))
-            out.write("            &nbsp;&nbsp;&nbsp;<INPUT TYPE=\"submit\" ACCESSKEY=\"q\" TITLE=\"ALT+q\" VALUE=\"[~Consultar~]\" CLASS=\"pushbutton\" STYLE=\"width:80\">");
+            out.write("            &nbsp;&nbsp;&nbsp;<INPUT TYPE=\"submit\" ACCESSKEY=\"q\" TITLE=\"ALT+q\" VALUE=\"Query\" CLASS=\"pushbutton\" STYLE=\"width:80\">");
 	  else
-            out.write("            &nbsp;&nbsp;&nbsp;<INPUT TYPE=\"submit\" ACCESSKEY=\"c\" TITLE=\"ALT+c\" VALUE=\"[~Cancelar~]\" CLASS=\"closebutton\" STYLE=\"width:80\">");
+            out.write("            &nbsp;&nbsp;&nbsp;<INPUT TYPE=\"button\" ACCESSKEY=\"c\" TITLE=\"ALT+c\" VALUE=\"Cancel\" CLASS=\"closebutton\" STYLE=\"width:80\" onclick=\"window.close()\">");
 %>            
           </TD>
         </TR>

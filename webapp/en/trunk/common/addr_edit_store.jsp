@@ -1,4 +1,4 @@
-<%@ page import="java.util.Iterator,java.math.BigDecimal,java.sql.Types.*,java.util.Date,java.text.SimpleDateFormat,java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.Statement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.debug.*,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.Iterator,java.math.BigDecimal,java.sql.Types.*,java.util.Date,java.text.SimpleDateFormat,java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.Statement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.debug.*,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -275,7 +275,7 @@
 %>
 <HTML>
 <HEAD>
-  <TITLE>hipergate :: [~Guardar Direcci&oacute;n~]</TITLE>
+  <TITLE>hipergate :: Save Address</TITLE>
   <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript">
     <!--      
       if ("<%=noreload%>"=="0") {

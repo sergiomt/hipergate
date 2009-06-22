@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.hipergate.QueryByForm" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.hipergate.QueryByForm" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%
@@ -351,12 +351,12 @@
 	} // setCombos()
     //-->    
   </SCRIPT>
-  <TITLE>hipergate :: [~Listado de Vendedores~]</TITLE>
+  <TITLE>hipergate :: Sales Men Listing</TITLE>
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()">
     <%@ include file="../common/tabmenu.jspf" %>
     <FORM METHOD="post">
-      <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Listado de Vendedores~]</FONT></TD></TR></TABLE>  
+      <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">Sales Men Listing</FONT></TD></TR></TABLE>  
       <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
       <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
       <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
@@ -368,19 +368,19 @@
       <TABLE CELLSPACING="2" CELLPADDING="2">
       <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       <TR>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nuevo~]"></TD>
-        <TD VALIGN="middle"><A HREF="#" onclick="createSalesMen()" CLASS="linkplain">[~Nuevo~]</A></TD>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar~]"></TD>
-        <TD><A HREF="javascript:deleteSalesMen()" CLASS="linkplain">[~Eliminar~]</A></TD>
-        <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Buscar~]"></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
+        <TD VALIGN="middle"><A HREF="#" onclick="createSalesMen()" CLASS="linkplain">New</A></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
+        <TD><A HREF="javascript:deleteSalesMen()" CLASS="linkplain">Delete</A></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Search"></TD>
         <TD VALIGN="middle">
           <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>">
-	  &nbsp;<A HREF="javascript:findSalesMen();" CLASS="linkplain" TITLE="Find">[~Buscar~]</A>	  
+	  &nbsp;<A HREF="javascript:findSalesMen();" CLASS="linkplain" TITLE="Find">Search</A>	  
         </TD>
         <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="[~Descartar búsqueda~]"></TD>
         <TD VALIGN="bottom">
-          <A HREF="javascript:document.forms[0].find.value='';findSalesMen();" CLASS="linkplain" TITLE="[~Descartar búsqueda~]">[~Descartar~]</A>
-          <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;[~Mostrar~]&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;[~resultados~]&nbsp;</FONT>
+          <A HREF="javascript:document.forms[0].find.value='';findSalesMen();" CLASS="linkplain" TITLE="[~Descartar búsqueda~]">Discard</A>
+          <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;Show&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;results&nbsp;</FONT>
         </TD>
       </TR>
       <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
@@ -394,19 +394,19 @@
     
     	  if (iSalesMenCount>0) {
             if (iSkip>0) // If iSkip>0 then we have prev items
-              out.write("            <A HREF=\"salesmen_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&orderby=" + sOrderBy + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;[~Anteriores~]" + "</A>&nbsp;&nbsp;&nbsp;");
+              out.write("            <A HREF=\"salesmen_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&orderby=" + sOrderBy + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
     
             if (!oSalesMen.eof())
-              out.write("            <A HREF=\"salesmen_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&orderby=" + sOrderBy + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">[~Siguientes~]&nbsp;&gt;&gt;</A>");
+              out.write("            <A HREF=\"salesmen_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&orderby=" + sOrderBy + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
 	  } // fi (iSalesMenCount)
 %>
           </TD>
         </TR>
         <TR>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"></TD>
-          <TD CLASS="tableheader" WIDTH="<%=String.valueOf(floor(150f*fScreenRatio))%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(2);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este campo~]"></A>&nbsp;<B>[~Nombre~]</B></TD>
-          <TD CLASS="tableheader" WIDTH="<%=String.valueOf(floor(320f*fScreenRatio))%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este campo~]"></A>&nbsp;<B>[~Apellidos~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="[~Seleccionar todos~]"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="[~Seleccionar todos~]"></A></TD></TR>
+          <TD CLASS="tableheader" WIDTH="<%=String.valueOf(floor(150f*fScreenRatio))%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(2);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>Name</B></TD>
+          <TD CLASS="tableheader" WIDTH="<%=String.valueOf(floor(320f*fScreenRatio))%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>Surname</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Select All"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select All"></A></TD></TR>
 <%
     	  // 21. List rows
 
@@ -417,7 +417,7 @@
             sStrip = String.valueOf((i%2)+1);
 %>            
             <TR HEIGHT="14">
-              <TD CLASS="strip<% out.write (sStrip); %>"><A HREF="#" TITLE="[~Editar Objetivos de Venta~]" onclick="modifySalesObjectives('<% out.write(sInstId); %>','<% out.write(oSalesMen.getStringNull(1,i,"no name") + " " + oSalesMen.getStringNull(2,i,"") + " " + oSalesMen.getStringNull(3,i,"")); %>')"><IMG SRC="../images/images/crm/target16.gif" WIDTH="17" HEIGHT="18" BORDER="0" ALT="[~Editar Objetivos de Venta~]"></A></TD>
+              <TD CLASS="strip<% out.write (sStrip); %>"><A HREF="#" TITLE="Edit Sales Objectives" onclick="modifySalesObjectives('<% out.write(sInstId); %>','<% out.write(oSalesMen.getStringNull(1,i,"no name") + " " + oSalesMen.getStringNull(2,i,"") + " " + oSalesMen.getStringNull(3,i,"")); %>')"><IMG SRC="../images/images/crm/target16.gif" WIDTH="17" HEIGHT="18" BORDER="0" ALT="Edit Sales Objectives"></A></TD>
               <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<A HREF="#" onclick="modifySalesMen('<% out.write(sInstId); %>','<% out.write(oSalesMen.getStringNull(1,i,"no name") + " " + oSalesMen.getStringNull(2,i,"") + " " + oSalesMen.getStringNull(3,i,"")); %>')"><% out.write(oSalesMen.getStringNull(1,i,"no name")); %></A></TD>
               <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<% out.write(oSalesMen.getStringNull(2,i,"")+" "+oSalesMen.getStringNull(3,i,"")); %></TD>
               <TD CLASS="strip<% out.write (sStrip); %>" ALIGN="center"><INPUT VALUE="1" TYPE="checkbox" NAME="<% out.write (sInstId); %>">

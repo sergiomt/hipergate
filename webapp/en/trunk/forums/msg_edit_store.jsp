@@ -1,4 +1,4 @@
-<%@ page import="com.oreilly.servlet.MultipartRequest,java.util.Enumeration,java.io.IOException,java.net.URLDecoder,java.sql.Timestamp,java.sql.SQLException,com.knowgate.debug.DebugFile,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.dfs.FileSystem,com.knowgate.hipermail.SendMail,com.knowgate.hipermail.MailAccount,com.knowgate.misc.*,com.knowgate.hipergate.*,com.knowgate.forums.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.Date,com.oreilly.servlet.MultipartRequest,java.util.Enumeration,java.io.IOException,java.net.URLDecoder,java.sql.Timestamp,java.sql.SQLException,com.knowgate.debug.DebugFile,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.dfs.FileSystem,com.knowgate.hipermail.SendMail,com.knowgate.hipermail.MailAccount,com.knowgate.misc.*,com.knowgate.hipergate.*,com.knowgate.forums.*,com.knowgate.lucene.NewsMessageIndexer" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/multipartreqload.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -39,7 +39,7 @@
   sDefWrkArPut = sDefWrkArPut + java.io.File.separator + "workareas";
 
   String sTempDir = Environment.getProfileVar(GlobalDBBind.getProfileName(), "temp", Environment.getTempDir());
-  sTempDir = com.knowgate.misc.Gadgets.chomp(sTempDir,java.io.File.separator);
+  sTempDir = Gadgets.chomp(sTempDir,sSep);
 
   String sWrkAPut = Environment.getProfileVar(GlobalDBBind.getProfileName(), "workareasput", sDefWrkArPut);
   String sFileProtocol = Environment.getProfileVar(GlobalDBBind.getProfileName(), "fileprotocol", "file://");
@@ -53,7 +53,8 @@
   String id_user = oReq.getParameter("gu_user");
   String id_language = oReq.getParameter("id_language");
   String gu_newsgrp = oReq.getParameter("gu_newsgrp");
-  String tx_subject = oReq.getParameter("tx_subject");  
+  String tx_subject = oReq.getParameter("tx_subject");
+  short  id_status = Short.parseShort(nullif(oReq.getParameter("id_status"),"0"));
   String gu_product = null;
   int pg_prod_locat = 1;
       
@@ -72,6 +73,12 @@
   
 	String sFile;
   String sPath = sWrkAPut + sSep + gu_workarea + sSep + "apps" + sSep + "Forums" + sSep;
+
+  Date dtPub = null;
+  if (nullif(oReq.getParameter("dt_published")).length()>0) {
+    aDtEnd = Gadgets.split(oReq.getParameter("dt_published"),"-");
+    dtPub = new Date(Integer.parseInt(aDtEnd[0])-1900,Integer.parseInt(aDtEnd[1])-1,Integer.parseInt(aDtEnd[2]), Integer.parseInt(oReq.getParameter("dt_hour")), Integer.parseInt(oReq.getParameter("dt_min")), Integer.parseInt(oReq.getParameter("dt_sec")));
+  }
   
   JDCConnection oConn = null;
 
@@ -86,7 +93,7 @@
       oProd.put(DB.gu_owner, id_user);
       oProd.put(DB.id_language, id_language);
       oProd.put(DB.dt_uploaded, new Timestamp(System.currentTimeMillis()));
-      oProd.put(DB.id_status, (short)1);
+      oProd.put(DB.id_status, id_status);
       oProd.put(DB.is_compound, (short)1);
       oProd.put(DB.de_product, tx_subject);
     
@@ -96,7 +103,12 @@
     
       if (nullif(oReq.getParameter("dt_expire")).length()>0) {
         aDtEnd = Gadgets.split(oReq.getParameter("dt_expire"),"-");
-        oProd.put(DB.dt_end, new Timestamp(new java.util.Date(Integer.parseInt(aDtEnd[0]),Integer.parseInt(aDtEnd[1]),Integer.parseInt(aDtEnd[2])).getTime()));
+        oProd.put(DB.dt_expire, new Timestamp(new java.util.Date(Integer.parseInt(aDtEnd[0]),Integer.parseInt(aDtEnd[1]),Integer.parseInt(aDtEnd[2])).getTime()));
+      }       
+
+      if (dtPub!=null) {
+        aDtEnd = Gadgets.split(oReq.getParameter("dt_published"),"-");
+        oProd.put(DB.dt_published, new Timestamp(dtPub.getTime()));
       }       
     
       oProd.store(oConn);
@@ -123,16 +135,17 @@
         
         sFile = oReq.getOriginalFileName(oFileNames.nextElement().toString());
         
-	if (sFile!=null) {      
+	      if (sFile!=null) {      
           if (sFileProtocol.equalsIgnoreCase("file://")) {
-            oLoca.setPath  (sFileServer, sPath + sFile);
+            oLoca.setPath  (sFileServer, Gadgets.chomp(sPath,sSep) + sFile);
             oLoca.replace(DB.id_cont_type, ProductLocation.CONTAINER_FILE);
+            oLoca.replace(DB.id_prod_type, oLoca.getProductType());
           }
           else {
-            oLoca.setPath  (sFileProtocol, sFileServer, sPath, sFile, sFile);
+            oLoca.setPath(sFileProtocol, sFileServer, sPath, sFile, sFile);
             oLoca.replace(DB.id_cont_type, oLoca.getContainerType());
           }
-          oLoca.setLength(oFileSys.filelen(sTempDir + sSep + sFile));
+          oLoca.setLength(oFileSys.filelen(Gadgets.chomp(sTempDir,sSep) + sFile));
             
           // Actually store product location
           oLoca.store(oConn);
@@ -154,12 +167,18 @@
     loadRequest(oConn, oReq, oMsg);
     
     oMsg.put(DB.gu_newsgrp, gu_newsgrp);    
-    
-    if (oGrp.getShort(DB.id_doc_status)==NewsGroup.MODERATED)    
-      oMsg.put(DB.id_status, NewsMessage.STATUS_PENDING);
-    else
-      oMsg.put(DB.id_status, NewsMessage.STATUS_VALIDATED);
-    
+		if (dtPub!=null) oMsg.replace(DB.dt_published, new Timestamp(dtPub.getTime()));
+		
+    if (oReq.getParameter("tx_tags").length()>0)
+      oMsg.put(DB.tx_tags, oReq.getParameter("tx_tags"));    
+     
+    if (nullif(oReq.getParameter("id_status")).length()==0) {
+      if (oGrp.getShort(DB.id_doc_status)==NewsGroup.MODERATED)    
+        oMsg.put(DB.id_status, NewsMessage.STATUS_PENDING);
+      else
+        oMsg.put(DB.id_status, NewsMessage.STATUS_VALIDATED);
+    }
+
     if (gu_product!=null) oMsg.put(DB.gu_product, gu_product);
     
     oConn.setAutoCommit (false);
@@ -167,11 +186,11 @@
     oMsg.store(oConn);
 
     DBAudit.log(oConn, NewsMessage.ClassId, "NMSG", id_user, oMsg.getString(DB.gu_msg), null, 0, 0, oReq.getParameter("tx_subject"), null);
-    
+
     oConn.commit();
-    
+
     aSubscribers = oMsg.subscribers(oConn);
-    
+
     oAttachments = oMsg.getAttachments(oConn);
 	  if (null==oAttachments) {
 	    aAttachments = null;
@@ -185,12 +204,22 @@
 	  if (aSubscribers!=null) {
 	    oMacc = MailAccount.forUser(oConn, id_user, GlobalDBBind.getProperties());
 	  }
-    
+
     oConn.setAutoCommit (true);
-    
+
     com.knowgate.http.portlets.HipergatePortletConfig.touch(oConn, id_user, "com.knowgate.http.portlets.RecentPostsTab", gu_workarea);
 
+		NewsGroupJournal oJour = oGrp.getJournal();
+		if (null!=oJour) {
+		  oJour.rebuild(oConn, false);
+		}
+
     oConn.close("msg_edit_store");
+    
+		if (null!=GlobalDBBind.getProperty("luceneindex")) {
+			NewsMessageIndexer oIdxr = new NewsMessageIndexer();
+			oIdxr.addOrReplaceNewsMessage(GlobalDBBind.getProperties(), oMsg.getString(DB.gu_msg), gu_workarea, gu_newsgrp, tx_subject, oMsg.getStringNull(DB.nm_author,""), oMsg.getDate(DB.dt_start), oMsg.getStringNull(DB.tx_msg,""));
+		}    
   }
   catch (SQLException e) {  
     if (oConn!=null)
@@ -227,6 +256,6 @@
     if (DebugFile.trace) DebugFile.writeln("<JSP:msg_edit_store.jsp "+xcpt.getClass().getName()+" "+xcpt.getMessage());
   }
 
-  out.write ("<HTML><HEAD><TITLE>Wait...</TITLE><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>window.opener.location.reload(true); self.close();<" + "/SCRIPT" +"></HEAD></HTML>");
+  out.write ("<HTML><HEAD><TITLE>Wait...</TITLE><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>if (window.opener) window.opener.location.reload(true); self.close();<" + "/SCRIPT" +"></HEAD></HTML>");
 
 %>

@@ -54,7 +54,7 @@
     }
     return sDateFmt;
     */
-    return new java.text.SimpleDateFormat("dd/MM/yyyy");
+    return new java.text.SimpleDateFormat(sDateFmt);
   } // localeDateFormat
     
   // --------------------------------------------------------------------------
@@ -70,6 +70,8 @@
       return "de";    
     else if (sLang.startsWith("fr"))
       return "fr";    
+    else if (sLang.startsWith("pt"))
+      return "pt";
     else
       return "en";
       
@@ -77,24 +79,12 @@
 
   // --------------------------------------------------------------------------
   
-  static String getCookie (HttpServletRequest req, String sName, String sDefault)
-    throws java.io.UnsupportedEncodingException {
-    Cookie aCookies[] = req.getCookies();
-    String sValue = sDefault;
-    
-    if (null != aCookies)
-      for (int c=0; c<aCookies.length; c++) {
-      	if (aCookies[c].getName().equals(sName)) {
-          sValue = aCookies[c].getValue();
-          if (null!=sValue) {
-            sValue = java.net.URLDecoder.decode(sValue, COOKIE_ENCODING);          
-            break;
-          }
-        }
-      }
-      
-    return sValue;
-    
+  static String getCookie (HttpServletRequest req, String sName, String sDefault) {
+    String sRetVal = null;
+    try {
+      sRetVal = com.knowgate.http.Cookies.getCookie (req, sName, sDefault, COOKIE_ENCODING);    
+    } catch (java.io.UnsupportedEncodingException neverthrown) { }
+    return sRetVal;
   } // getCookie()
 
   // --------------------------------------------------------------------------
@@ -173,7 +163,7 @@
         if (null!=SESSION_FACE) SESSION_FACE = java.net.URLDecoder.decode(SESSION_FACE, COOKIE_ENCODING);      
       } else if (sCurrentCookieName.equals("shopid")) {
         SESSION_SHOP = ALL_SESSION_COOKIES[iCookieIndex].getValue();
-        if (null==SESSION_SHOP && GlobalDBBindBean!=null) SESSION_FACE = com.knowgate.misc.Environment.getProfileVar(GlobalDBBindBean.getProfileName(),"shopid");
+        if (null==SESSION_SHOP && GlobalDBBindBean!=null) SESSION_SHOP = com.knowgate.misc.Environment.getProfileVar(GlobalDBBindBean.getProfileName(),"shopid");
         if (null!=SESSION_SHOP) SESSION_SHOP = java.net.URLDecoder.decode(SESSION_SHOP, COOKIE_ENCODING);      
       }
     } // next

@@ -10,8 +10,9 @@ public static String utf8(String sInput) {
   return sOutput;
 }
 
-public static void loadRequest(com.knowgate.jdc.JDCConnection j, javax.servlet.ServletRequest r, DBPersist p)
-  throws java.text.ParseException, java.lang.NullPointerException, java.sql.SQLException
+public static void loadRequest(com.knowgate.jdc.JDCConnection j, HttpServletRequest r, DBPersist p)
+  throws java.text.ParseException, java.lang.NullPointerException, java.sql.SQLException,
+         org.apache.oro.text.regex.MalformedPatternException
   {
   java.util.Iterator i = null;
   
@@ -26,6 +27,7 @@ public static void loadRequest(com.knowgate.jdc.JDCConnection j, javax.servlet.S
   String n;
   String s;
   String aDt[];
+  java.text.SimpleDateFormat oDateFormat;
   
   while (i.hasNext())
     {
@@ -92,26 +94,42 @@ public static void loadRequest(com.knowgate.jdc.JDCConnection j, javax.servlet.S
             }
             break;
             
-	  case java.sql.Types.DATE:
-	    if (s.length()>10) s = s.substring(0,10);
-	    aDt = com.knowgate.misc.Gadgets.split(s,'-');
-	    p.replace(n, new java.util.Date(Integer.parseInt(aDt[0])-1900,Integer.parseInt(aDt[1])-1,Integer.parseInt(aDt[2])));
-	    break;
+	        case java.sql.Types.DATE:
+	          if (s.length()>10) s = s.substring(0,10);
+	          if (com.knowgate.misc.Gadgets.matches(s, "[\\d]{4}-[\\d]{2}-[\\d]{2}")) {
+	            aDt = com.knowgate.misc.Gadgets.split(s,'-');
+	            p.replace(n, new java.util.Date(Integer.parseInt(aDt[0])-1900,Integer.parseInt(aDt[1])-1,Integer.parseInt(aDt[2])));
+	          } else {
+	            oDateFormat = com.knowgate.workareas.WorkArea.getSimpleDateFormat((java.sql.Connection) j, getCookie(r,"workarea", null));
+              p.replace(n, new java.util.Date(oDateFormat.parse(s).getTime()));
+	          }
+
+	          break;
 	    	    
-    	  case java.sql.Types.TIMESTAMP:
+    	    case java.sql.Types.TIMESTAMP:
             if (s.length()==10) {
-	      aDt = com.knowgate.misc.Gadgets.split(s,'-');            
-	      p.replace(n, new java.sql.Timestamp(new java.util.Date(Integer.parseInt(aDt[0])-1900,Integer.parseInt(aDt[1])-1,Integer.parseInt(aDt[2])).getTime()));
+	            if (com.knowgate.misc.Gadgets.matches(s, "[\\d]{4}-[\\d]{2}-[\\d]{2}")) {
+	              aDt = com.knowgate.misc.Gadgets.split(s,'-');            
+	              p.replace(n, new java.sql.Timestamp(new java.util.Date(Integer.parseInt(aDt[0])-1900,Integer.parseInt(aDt[1])-1,Integer.parseInt(aDt[2])).getTime()));
+              } else {
+	              oDateFormat = new java.text.SimpleDateFormat(com.knowgate.workareas.WorkArea.getDateFormat((java.sql.Connection) j, getCookie(r,"workarea", null))+" HH:mm:ss");
+                p.replace(n, new java.sql.Timestamp(oDateFormat.parse(s).getTime()));              
+              }
             }
             else {
-              java.text.SimpleDateFormat oDateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-              p.replace(n, new java.sql.Timestamp(oDateFormat.parse(s).getTime()));
+              if (com.knowgate.misc.Gadgets.matches(s, "[\\d]{4}-[\\d]{2}-[\\d]{2} [\\d]{2}:[\\d]{2}:[\\d]{2}")) {
+                oDateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                p.replace(n, new java.sql.Timestamp(oDateFormat.parse(s).getTime()));
+              } else {
+	              oDateFormat = new java.text.SimpleDateFormat(com.knowgate.workareas.WorkArea.getDateFormat((java.sql.Connection) j, getCookie(r,"workarea", null))+" HH:mm:ss");
+                p.replace(n, new java.sql.Timestamp(oDateFormat.parse(s).getTime()));
+              }
             }
-	    break;
+	          break;
 
-    	  case 1111: // PostgreSQL INTERVAL
-	    try { p.put(n, s, 1111); } catch (java.io.FileNotFoundException neverthrown) {}
-	  break;
+    	    case 1111: // PostgreSQL INTERVAL
+	          try { p.put(n, s, 1111); } catch (java.io.FileNotFoundException neverthrown) {}
+	          break;
    		                
           default:
             try {

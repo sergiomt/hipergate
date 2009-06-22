@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.projtrack.*" language="java" session="false" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.projtrack.*" language="java" session="false" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%  response.setHeader("Cache-Control","no-cache");response.setHeader("Pragma","no-cache"); response.setIntHeader("Expires", 0); %>
@@ -147,7 +147,7 @@
 
 <HTML>
   <HEAD>
-    <TITLE>hipergate :: [~Listado de Incidencias~]</TITLE>
+    <TITLE>hipergate :: Incident Listing</TITLE>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   </HEAD>
@@ -155,7 +155,7 @@
   <!-- Black and white page (printer friendly styles) -->
   
   <BODY BGCOLOR="white">
-    <FONT FACE="Arial" SIZE="4" COLOR="black"><B>[~Listado de Incidencias~]</B></FONT>
+    <FONT FACE="Arial" SIZE="4" COLOR="black"><B>Incident Listing</B></FONT>
     <BR><BR>
     <TABLE CELLSPACING="0" CELLPADDING="2">      
       <%
@@ -180,8 +180,8 @@
         %>
         <TD><FONT CLASS="textplain"><%=oBugs.getString(5,r)%></FONT></TD>
         <TD><FONT CLASS="textsmall"><%=oSimpleDate.format((Date) oBugs.get(6,r))%></FONT></TD>
-        <TD><FONT CLASS="textsmall"><%=(oBugs.get(7,r)==null ? "[~PENDIENTE~]" : "[~CORREGIDO~]")%></FONT></TD>
-        <TD><FONT CLASS="textsmall">[~PRIORIDAD~] <%=oBugs.getInt(2,r)%></FONT></TD>
+        <TD><FONT CLASS="textsmall"><%=(oBugs.get(7,r)==null ? "PENDING" : "CORREGIDO")%></FONT></TD>
+        <TD><FONT CLASS="textsmall">PRIORITY <%=oBugs.getInt(2,r)%></FONT></TD>
         <TD><% if (bIsAdmin) out.write("<FONT CLASS=\"textsmall\">"+oBugs.getString(8,r)+"</FONT>"); %></TD>
       </TR>
       <TR>

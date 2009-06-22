@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.Connection,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.Connection,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %>
 <%
 /*
@@ -78,11 +78,11 @@
     oConn.close("lookup_store");
     
     if (1==iErrorLevel) {
-      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Dato duplicado~]&desc=[~Ya existe otro registro con el mismo valor que intento insertar~]&resume=_back"));
+      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Duplicated data&desc=Another register with same value already exists&resume=_back"));
       return;
     }
     else if (2==iErrorLevel) {
-      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Dato duplicado~]&desc=[~Ya existe otro registro con la misma descripcion que intento insertar~]&resume=_back"));
+      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Duplicated data&desc=Another register with same description already exists&resume=_back"));
       return;
     }
   }

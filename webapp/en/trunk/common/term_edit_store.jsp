@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.ResultSet,java.sql.PreparedStatement,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.Term,com.knowgate.hipergate.Thesauri,com.knowgate.debug.DebugFile" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.ResultSet,java.sql.PreparedStatement,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.Term,com.knowgate.hipergate.Thesauri,com.knowgate.debug.DebugFile" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/cookies.jspf" %>
@@ -97,7 +97,7 @@
         oConn.setAutoCommit (false);
 
 	if (bAlreadyExists)
-	  throw new SQLException ("[~El termino ya existe~]");
+	  throw new SQLException ("Term already exists");
 
 	if (gu_synonym.length()==0)
 	  gu_term = oThes.createRootTerm (oConn, tx_term, tx_term2, de_term, id_language, id_scope, Integer.parseInt(id_domain), gu_workarea);
@@ -127,7 +127,7 @@
         oConn.setAutoCommit (false);
 
 	if (bAlreadyExists)
-	  throw new SQLException ("[~El termino ya existe~]");
+	  throw new SQLException ("Term already exists");
 
 	if (gu_synonym.length()==0)
   	  gu_term = oThes.createTerm (oConn, gu_parent, tx_term, tx_term2, de_term, id_language, id_scope, Integer.parseInt(id_domain));

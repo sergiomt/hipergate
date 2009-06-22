@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <menu>
   <options>
     <option name="start">
@@ -138,10 +138,12 @@
             <mask/><title><![CDATA[Directory]]></title><href>../vdisk/cat_top_f.htm?selected=6&amp;subselected=0</href><forbid/>
             <suboptions/>
           </option>
+					<!--
           <option name="wiki">
-            <mask/><title><![CDATA[Directory]]></title><href>../wiki/wiki_top_f.htm?selected=6&amp;subselected=1</href><forbid/>
+            <mask/><title><![CDATA[[~Wiki~]]]></title><href>../wiki/wiki_top_f.htm?selected=6&amp;subselected=1</href><forbid/>
             <suboptions/>
           </option>
+          -->
       </suboptions>
     </option>
     <option name="shop">
@@ -183,7 +185,7 @@
       <mask>22</mask><title><![CDATA[Training]]></title><href>../training/courses_listing.jsp?selected=8&amp;subselected=-1</href><forbid/>
       <suboptions>
           <option name="courses">
-            <mask/><title><![CDATA[Formative Catalog]]></title><href>../training/courses_listing.jsp?selected=8&amp;subselected=0</href><forbid/>
+            <mask/><title><![CDATA[[~Catálogo Formativo~]]]></title><href>../training/courses_listing.jsp?selected=8&amp;subselected=0</href><forbid/>
             <suboptions/>
           </option>
           <option name="subjects">

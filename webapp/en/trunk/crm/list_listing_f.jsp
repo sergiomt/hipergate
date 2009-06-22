@@ -7,7 +7,7 @@
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <TITLE>hipergate :: [~Listas de distribuci&oacute;n~]</TITLE>
+    <TITLE>hipergate :: Distribution Lists</TITLE>
     <SCRIPT LANGUAGE="javascript" SRC="../javascript/getparam.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
@@ -23,7 +23,7 @@
   </FRAMESET>
   <NOFRAMES>
     <BODY>
-      <P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
+      <P>This page use frames, but your web browser does not handle them</P>
     </BODY>
   </NOFRAMES>
 </HTML>

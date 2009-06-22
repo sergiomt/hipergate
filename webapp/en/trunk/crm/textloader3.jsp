@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.io.File,java.net.URLDecoder,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.datamodel.ImportExport,com.knowgate.hipergate.datamodel.ImportExportException" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.io.File,java.net.URLDecoder,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.datamodel.ImportExport,com.knowgate.hipergate.datamodel.ImportExportException" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%!
 
   public static String escapeFileSeparator(String sInput, String sEscFileSep) {

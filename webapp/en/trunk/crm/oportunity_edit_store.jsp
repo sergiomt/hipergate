@@ -1,4 +1,4 @@
-<%@ page import="java.text.SimpleDateFormat,java.text.ParseException,java.util.Date,java.util.StringTokenizer,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.Timestamp,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.*,com.knowgate.addrbook.Meeting,com.knowgate.misc.Gadgets,com.knowgate.http.portlets.HipergatePortletConfig" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.text.SimpleDateFormat,java.text.ParseException,java.util.Date,java.util.StringTokenizer,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.Timestamp,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.*,com.knowgate.addrbook.Meeting,com.knowgate.misc.Gadgets,com.knowgate.http.portlets.HipergatePortletConfig" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/customattrs.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%
@@ -73,6 +73,9 @@
         bOnWonOptions = !sPreviousStatus.equals("GANADA");
       }
       oOprt.store(oConn);    
+
+      DBCommand.executeUpdate(oConn, "UPDATE k_oportunities SET dt_last_call = (SELECT MAX(dt_start) FROM k_oportunities AS s INNER JOIN k_phone_calls AS r ON  r.gu_oportunity = s.gu_oportunity AND k_oportunities.gu_oportunity = s.gu_oportunity WHERE s.gu_oportunity='"+oOprt.getString(DB.gu_oportunity)+"') WHERE gu_oportunity='"+oOprt.getString(DB.gu_oportunity)+"'");
+
       storeAttributes (request, GlobalCacheClient, oConn, DB.k_oportunities_attrs, gu_workarea, oOprt.getString(DB.gu_oportunity));
 
       DBAudit.log(oConn, com.knowgate.crm.Oportunity.ClassId, sOpCode, id_user, oOprt.getString(DB.gu_oportunity), null, 0, 0, oOprt.getStringNull(DB.tl_oportunity,""), null);    

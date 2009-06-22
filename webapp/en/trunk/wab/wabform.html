@@ -1,4 +1,4 @@
-<HTML>
+﻿<HTML>
 <HEAD>
 <TITLE>hipergate :: Import Addresses</TITLE>
 <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
@@ -51,7 +51,7 @@
    if (WAB_SelectedEntry() == -1) {
     incProBar((100*WAB_SelectedEntry())/WAB_Total());
     WAB_Stop();
-    alert("Windows Address Book import done successfully");
+    alert("[~Importación de contactos de la libreta de direcciones de Windows finalizada con éxito.~]");
     resetProBar();
     top.opener.document.location.href = "../crm/contact_listing.jsp?selected=2&subselected=1&screen_width=" + screen.width;
     top.close();
@@ -89,7 +89,7 @@
  function cancel() {
   WAB_Stop();
   top.frames[1].location.href = "wabload.html?getentry=0";
-  alert("WAB import cancelled by user");
+  alert("[~Importación de libreta de windows abortada por el usuario~]");
   top.opener.document.location = "../crm/contact_listing.jsp?selected=2&subselected=1&screen_width=" + screen.width;
   top.close();
  }
@@ -105,7 +105,7 @@
 <CENTER>
 <TABLE><TR><TD CLASS="striptitle"><FONT CLASS="title1">Import Windows Address Book</FONT></TD></TR></TABLE>  
 <BR>
-<DIV class="textsmall" align="justify">Click Import for loading all your Windows Address Book entries into hipergate.</DIV>
+<DIV class="textsmall" align="justify">[~Seleccione Importar para cargar los contactos de su libreta de direcciones de Windows en Hipergate. Si desea abortar el proceso mientras carga, pulse el botón Cancelar.~]</DIV>
 <BR>
 <DIV ALIGN="LEFT" ID="proBar1" STYLE="background-color:white;width:100px;height:14px;padding:2px;font-size:6pt;border-style:solid;border-color:#000000;border-width:1px;">
 <DIV ALIGN="LEFT" ID="proBar2" STYLE="background-color:#8080FF;width:0px;height:10px;font-size:6pt"></DIV>

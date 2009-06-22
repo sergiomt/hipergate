@@ -1,4 +1,4 @@
-<%@ page import="java.util.Properties,java.io.IOException,java.io.File,javax.portlet.GenericPortlet,javax.portlet.PortletException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.ResultSet,java.sql.CallableStatement,java.sql.Types,org.jibx.runtime.JiBXException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.debug.StackTraceUtil,com.knowgate.debug.DebugFile,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipermail.MailAccount,com.knowgate.dataxslt.StylesheetCache,com.knowgate.acl.*,com.knowgate.http.portlets.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.Properties,java.io.IOException,java.io.File,javax.portlet.GenericPortlet,javax.portlet.PortletException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.ResultSet,java.sql.CallableStatement,java.sql.Types,org.jibx.runtime.JiBXException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.debug.StackTraceUtil,com.knowgate.debug.DebugFile,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipermail.MailAccount,com.knowgate.dataxslt.StylesheetCache,com.knowgate.acl.*,com.knowgate.http.portlets.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -58,7 +58,7 @@
     int iDomain = Integer.parseInt(getCookie (request, "domainid", null));
   }
   catch (NumberFormatException nfe) {
-    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Dominio Invalido~]&desc=[~No fue posible encontrar la cookie con el identficador de dominio por favor asegurese de que tiene habilitadas las cookies de sesion en su navegador~]&resume=_back")); 
+    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Invalid Domain&desc=The session cookie could not be readed please ensure that cookies are enabled at your browser&resume=_back")); 
     return;
   }  
   
@@ -95,7 +95,7 @@
 	  if (null!=oMacc) if (oMacc.isNull(DB.incoming_server)) oMacc = null;
   }
   catch (SQLException e) {
-    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~hipergate: Imposible obtener la conexion a la base de datos~]&desc=" + e.getLocalizedMessage() + "&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=hipergate: Impossible to get connection to database&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }
 
   if (null==oConn) return;
@@ -189,7 +189,7 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <META NAME="robots" CONTENT="noindex,nofollow">
-  <TITLE>hipergate :: [~Menu principal~]</TITLE>
+  <TITLE>hipergate :: Main Menu</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
@@ -246,7 +246,7 @@
       var nmc = frm.full_name.value;
 
       if (nmc.length==0) {
-        alert ("[~Introduzca el nombre o apellidos del Individuo a buscar~]");
+        alert ("Type name or surname of individual to find");
         return false;
       }  
       
@@ -288,7 +288,7 @@
 <BODY TOPMARGIN="0" MARGINHEIGHT="0">
 <%@ include file="tabmenu.jspf" %>
 <FORM>
-  <TABLE SUMMARY="Page Title Strip"><TR><TD WIDTH="<% out.write(String.valueOf(iTabWidth*iActive)); %>" CLASS="striptitle"><FONT CLASS="title1">[~P&aacute;gina Principal~]</FONT></TD></TR></TABLE>
+  <TABLE SUMMARY="Page Title Strip"><TR><TD WIDTH="<% out.write(String.valueOf(iTabWidth*iActive)); %>" CLASS="striptitle"><FONT CLASS="title1">Main Page</FONT></TD></TR></TABLE>
   <TABLE>
     <TR>
 <% if (bShowPortlets) {
@@ -401,9 +401,9 @@
       </TD>
       <TD WIDTH="20px"></TD>
       <TD VALIGN="top" WIDTH="240px">
-        <FONT SIZE="5" FACE="Arial,Helvetica,sans-serif" COLOR="#EAE5E1"><B><I>[~Bienvenido~]</I></B></FONT>        
+        <FONT SIZE="5" FACE="Arial,Helvetica,sans-serif" COLOR="#EAE5E1"><B><I>Welcome</I></B></FONT>        
         <BR>
-        <FONT FACE="Verdana" SIZE="1" COLOR="#404040">&nbsp;&nbsp;[~Bienvenido a hipergate, desde el men&uacute; superior puedes navegar a trav&eacute;s de las diferentes aplicaciones que componen la suite.~]<BR>[~En cada aplicaci&oacute;n encontrar&aacute;s una p&aacute;gina de entrada de b&uacute;squeda y acceso r&aacute;pido a las tareas comunes y opciones de menu de segundo nivel~] [~que sirven para acceder a cada una de las funcionalidades de la aplicaci&oacute;n.~]<BR></FONT>
+        <FONT FACE="Verdana" SIZE="1" COLOR="#404040">&nbsp;&nbsp;Welcome to hipergate, from the above menu you can navigate  through the different applications of this suite.<BR>On each module you will find a welcome page with search functionalities and quick links to access to the most common tasks of hipergate.<BR></FONT>
 	<BR>
 	<IMG SRC="../images/images/bienvenido_linea.gif" WIDTH="214" HEIGHT="15" BORDER="0">
       </TD>
@@ -414,7 +414,7 @@
     <TR><TD WIDTH="<%=iTabWidth*iActive%>" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
   </TABLE>
 <% if (!id_domain.equals("1024")) { %>  
-  <A HREF="desktop_custom.jsp" CLASS="linkplain">[~Personalizar esta p&aacute;gina~]</A>
+  <A HREF="desktop_custom.jsp" CLASS="linkplain">Customize this page</A>
 <% } %>
   </FORM>
 </BODY>

@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.sql.Connection,java.sql.Statement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder,java.sql.Connection,java.sql.Statement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -191,19 +191,19 @@
       }
 
       if (frm.tx_pwd.value!=frm.tx_pwd2.value) {
-        alert ("Original and verified password do not coincide");
+        alert ("[~El texto de verificación de la clave no coincide con la clave original~]");
         return false;
       }
 
       txt = rtrim(ltrim(frm.tx_domain.value));
       if (txt.length==0) {
-        alert ("e-mail address is mandatory");
+        alert ("[~La dirección de email es obligatoria~]");
         return false;      
       }
       
       if (txt.length>0) {
         if (txt.indexOf("@")>=0 || txt.indexOf(".")<=0) {
-          alert ("Domain is not valid");
+          alert ("[~El dominio no es válido~]");
           return false;
         }
       }

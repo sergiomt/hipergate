@@ -125,7 +125,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: [~Crear Contacto~]</TITLE>
+  <TITLE>hipergate :: Create Contact</TITLE>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -163,7 +163,7 @@
         switch(parseInt(odctrl)) {
           case 1:
             if (frm.nm_legal.value.indexOf("'")>=0)
-              alert("[~El nombre de la compañía contiene caracteres no permitidos~]");
+              alert("The company name contains forbidden characters");
             else {
               document.forms[1].sel_company.selectedIndex=0;
               window.open("../common/reference.jsp?ix_form=1&nm_table=k_companies&tp_control=1&nm_control=nm_legal&nm_coding=gu_company"+(frm.nm_legal.value.length==0 ? "" : "&where=" + escape(" <%=DB.nm_legal%> LIKE '"+frm.nm_legal.value+"%' ")), "", "scrollbars=yes,toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
@@ -202,7 +202,7 @@
             if (document.forms[2].sel_country.options.selectedIndex>0)
               window.open("../common/lookup_f.jsp?nm_table=k_addresses_lookup&id_language=" + getUserLanguage() + "&id_section=" + getCombo(document.forms[2].sel_country) + "&tp_control=2&nm_control=sel_state&nm_coding=id_state&id_form=2", "lookupaddrstate", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
             else
-              alert ("[~Debe seleccionar un Pais antes de poder escoger la Provincia o Estado~]");
+              alert ("Must select a country before choosing the state");
             break;
           case 8:
             window.open("../common/lookup_f.jsp?nm_table=k_addresses_lookup&id_language=" + getUserLanguage() + "&id_section=tx_salutation&tp_control=2&nm_control=sel_salutation&nm_coding=tx_salutation&id_form=2", "lookupaddrsalutation", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
@@ -241,22 +241,22 @@
         frm = window.document.forms[0];
 
 	if (frm.tx_comments.value.length>254) {
-	  alert ("[~Los comentarios no pueden superar los 254 caracteres~]");
+	  alert ("Comments may not be longer than 254 characters");
 	  return false;
 	}
 
 	if (frm.ny_age.value.indexOf("+")>=0 || frm.ny_age.value.indexOf("-")>=0 || frm.ny_age.value.indexOf(".")>=0 || frm.ny_age.value.indexOf(",")>=0) {
-	  alert ("[~La edad no es válida~]");
+	  alert ("Age is not valid");
 	  return false;	  
 	}
 
 	if (isNaN(frm.ny_age.value)) {
-	  alert ("[~La edad no es válida~]");
+	  alert ("Age is not valid");
 	  return false;	  
 	}
 	
 	if (!isDate(frm.dt_birth.value, "d") && frm.dt_birth.value.length>0) {
-	  alert ("[~La fecha de nacimiento no es válida~]");
+	  alert ("Birth date is not valid");
 	  return false;	  
 	}
 	
@@ -280,7 +280,7 @@
         frm = window.document.forms[1];
 
 	if (frm.nm_legal.value.indexOf("'")>0 || frm.nm_legal.value.indexOf("¡")>0 || frm.nm_legal.value.indexOf("?")>0 || frm.nm_legal.value.indexOf('"')>0 || frm.nm_legal.value.indexOf("\\")>0 || frm.nm_legal.value.indexOf("/")>0 || frm.nm_legal.value.indexOf("*")>0 || frm.nm_legal.value.indexOf("`")>0 || frm.nm_legal.value.indexOf("´")>0 || frm.nm_legal.value.indexOf("¨")>0 || frm.nm_legal.value.indexOf('^')>0) {
-	  alert ("[~La Razón Social contiene caracteres no permitidos~]");
+	  alert ("Legal name contains forbidden characters");
 	  return false;	  
 	}
 	
@@ -290,23 +290,23 @@
 	txt = frm.nu_employees.value;
 	for (var c=0; c<txt.length; c++)
 	  if (txt.charCodeAt(c)<48 || txt.charCodeAt(c)>57) {
-	    alert ("[~El numero de empleados debe ser una cantidad entera~]");
+	    alert ("Head count must be an integer quantity");
 	    return false;
 	  }
 	
 	txt = frm.im_revenue.value;
 	if (txt.length>0 && isNaN(txt)) {
-	    alert ("[~La facturación no es valida~]");
+	    alert ("Billing is not valid");
 	    return false;	
 	}
 
         if (!isDate(frm.dt_founded.value, "d") && frm.dt_founded.value.length>0) {
-	  alert ("[~La fecha de constitucion no es válida~]");
+	  alert ("Date founded is not valid");
 	  return false;
 	}
 	
 	if (frm.de_company.value.length>254) {
-	  alert ("[~La descripción de la compañía no puede superar los 254 caracteres~]");
+	  alert ("Company description must not be longer than 254 characters");
 	  return false;
 	}
 	
@@ -345,7 +345,7 @@
         frm = window.document.forms[2];
 
 	if(frm.tx_remarks.value.length>254) {
-	  alert("[~La longuitud de los comentarios no puede exceder 254 carateres~]");
+	  alert("Comments may not be longer than 255 characters");
 	  return false;
 	}
 
@@ -353,7 +353,7 @@
 	
 	if (txt.length>0)
 	  if (!check_email(txt)) {
-	    alert ("[~La direccion de email de contacto no es valida~]");
+	    alert ("email address is not valid");
 	    return false;
           }
 	frm.tx_email.value = txt.toLowerCase();
@@ -390,7 +390,7 @@
 	document.forms[0].mn_city.value = frm.mn_city.value.toUpperCase();
 	
 	if (document.forms[0].id_country.value=="es" && frm.zipcode.value.length!=0 && frm.zipcode.value.length!=5) {
-	  alert("[~El código postal debe tener 5 cifras~]");
+	  alert("Zip code must have 5 characters");
 	  return false;
 	}
 	

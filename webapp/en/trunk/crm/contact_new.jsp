@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/cookies.jspf" %>
 <%
   String sFace = getCookie(request,"face","crm");

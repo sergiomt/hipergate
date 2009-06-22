@@ -1,4 +1,4 @@
-<%@ page import="java.util.Date,java.util.GregorianCalendar,java.text.SimpleDateFormat,java.net.URLDecoder,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Calendar,com.knowgate.misc.Environment,com.knowgate.hipergate.DBLanguages,com.knowgate.hipergate.Address,com.knowgate.billing.Account,com.knowgate.addrbook.Fellow,com.knowgate.addrbook.Meeting,com.knowgate.addrbook.Room,com.knowgate.addrbook.WeekPlan,com.knowgate.addrbook.WorkingCalendar,com.knowgate.crm.Company" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.Date,java.util.GregorianCalendar,java.text.SimpleDateFormat,java.net.URLDecoder,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Calendar,com.knowgate.misc.Environment,com.knowgate.hipergate.DBLanguages,com.knowgate.hipergate.Address,com.knowgate.billing.Account,com.knowgate.addrbook.Fellow,com.knowgate.addrbook.Meeting,com.knowgate.addrbook.Room,com.knowgate.addrbook.WeekPlan,com.knowgate.addrbook.WorkingCalendar,com.knowgate.crm.Company" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
 /*
@@ -225,10 +225,10 @@
       
       function deleteMeeting(gu,tx) {
         if (tx) {
-          if (confirm("Are you sure that you want to delete activity  " + tx + "?"))
+          if (confirm("[~¿Está seguro de que desea eliminar la actividad ~] " + tx + "?"))
             window.location = "meeting_edit_delete.jsp?id_domain=" + getURLParam("id_domain") + "&gu_workarea=" + getURLParam("gu_workarea") + "&gu_meeting=" + gu + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&year=<%=year%>&month=<%=month%>&day=<%=day%>&referer=week_schedule";
 	      } else {
-          if (confirm("Are you sure that you want to delete activity ?"))
+          if (confirm("[~¿Está seguro de que desea eliminar la actividad ~]?"))
             window.location = "meeting_edit_delete.jsp?id_domain=" + getURLParam("id_domain") + "&gu_workarea=" + getURLParam("gu_workarea") + "&gu_meeting=" + gu + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&year=<%=year%>&month=<%=month%>&day=<%=day%>&referer=week_schedule";
 	      }
       }
@@ -349,7 +349,7 @@
           <TD>
             <IMG SRC="../images/images/new16x16.gif" BORDER="0">&nbsp;
 <% if (bIsGuest)        
-     out.write("              <A HREF=\"#\" onClick=\"alert('Your priviledge level as Guest does not allow you to perform this action')\" CLASS=\"linkplain\" TITLE=\"New Activity\">New</A>");
+     out.write("              <A HREF=\"#\" onClick=\"alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')\" CLASS=\"linkplain\" TITLE=\"New Activity\">New</A>");
    else
      out.write("              <A HREF=\"#\" onClick=\"createMeeting();return false\" CLASS=\"linkplain\" TITLE=\"New Activity\">New</A>");
 %>
@@ -400,7 +400,11 @@
 	      int nMeets = aMeetings.length;
 	      for (int m=0; m<nMeets; m++) {
 	        Meeting oMeet = aMeetings[m];
-	        out.write("<FONT CLASS=\"textsmall\">"+(0==m ? "" : "<BR>")+oMeet.getHour()+":"+oMeet.getMinute()+"-"+oMeet.getHourEnd()+":"+oMeet.getMinuteEnd()+"&nbsp;<A CLASS=\"linksmall\" TITLE=\""+oMeet.getStringNull(DB.de_meeting,"").replace('\n',' ').replace('\r',' ')+"\" HREF=\"#\" onclick=\"modifyMeeting('"+oMeet.getString(DB.gu_meeting)+"'); return false;\">"+oMeet.getStringNull(DB.tx_meeting,"")+"</A></FONT><FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"javascript:deleteMeeting('" + oMeet.getString(DB.gu_meeting) + "','" + oMeet.getStringNull(DB.tx_meeting,"[~Sin titulo~]").replace((char)39,'´') + "')\" TITLE=\"Delete\">x</A>]</FONT>");
+					if (bItsMe || oMeet.getShort(DB.bo_private)==(short)0) {
+	          out.write("<FONT CLASS=\"textsmall\">"+(0==m ? "" : "<BR>")+oMeet.getHour()+":"+oMeet.getMinute()+"-"+oMeet.getHourEnd()+":"+oMeet.getMinuteEnd()+"&nbsp;<A CLASS=\"linksmall\" TITLE=\""+oMeet.getStringNull(DB.de_meeting,"").replace('\n',' ').replace('\r',' ')+"\" HREF=\"#\" onclick=\"modifyMeeting('"+oMeet.getString(DB.gu_meeting)+"'); return false;\">"+oMeet.getStringNull(DB.tx_meeting,"")+"</A></FONT><FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"javascript:deleteMeeting('" + oMeet.getString(DB.gu_meeting) + "','" + oMeet.getStringNull(DB.tx_meeting,"[~Sin titulo~]").replace((char)39,'´') + "')\" TITLE=\"Delete\">x</A>]</FONT>");
+	        } else {
+	          out.write("<FONT CLASS=\"textsmall\">"+(0==m ? "" : "<BR>")+oMeet.getHour()+":"+oMeet.getMinute()+"-"+oMeet.getHourEnd()+":"+oMeet.getMinuteEnd()+"</FONT><IMG SRC=\"../images/images/addrbook/smalllock.gif\" BORDER=\"0\">");
+	        }
 	      } // next
 	    } else {
               out.write("<TD CLASS=\""+aHolidays[d]+"tableborder\" WIDTH=\"100px\" HEIGHT=\"100px\">"); 
@@ -418,7 +422,11 @@
 	      int nMeets = aMeetings.length;
 	      for (int m=0; m<nMeets; m++) {
 	        Meeting oMeet = aMeetings[m];
-	        out.write("<FONT CLASS=\"textsmall\">"+(0==m ? "" : "<BR>")+oMeet.getHour()+":"+oMeet.getMinute()+"-"+oMeet.getHourEnd()+":"+oMeet.getMinuteEnd()+"&nbsp;<A CLASS=\"linksmall\" TITLE=\""+oMeet.getStringNull(DB.de_meeting,"").replace('\n',' ').replace('\r',' ')+"\" HREF=\"#\" onclick=\"modifyMeeting('"+oMeet.getString(DB.gu_meeting)+"'); return false;\">"+oMeet.getStringNull(DB.tx_meeting,"")+"</A></FONT><FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"javascript:deleteMeeting('" + oMeet.getString(DB.gu_meeting) + "','" + oMeet.getStringNull(DB.tx_meeting,"[~Sin titulo~]").replace((char)39,'´') + "')\" TITLE=\"Delete\">x</A>]</FONT>");
+					if (bItsMe || oMeet.getShort(DB.bo_private)==(short)0) {
+	          out.write("<FONT CLASS=\"textsmall\">"+(0==m ? "" : "<BR>")+oMeet.getHour()+":"+oMeet.getMinute()+"-"+oMeet.getHourEnd()+":"+oMeet.getMinuteEnd()+"&nbsp;<A CLASS=\"linksmall\" TITLE=\""+oMeet.getStringNull(DB.de_meeting,"").replace('\n',' ').replace('\r',' ')+"\" HREF=\"#\" onclick=\"modifyMeeting('"+oMeet.getString(DB.gu_meeting)+"'); return false;\">"+oMeet.getStringNull(DB.tx_meeting,"")+"</A></FONT><FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"javascript:deleteMeeting('" + oMeet.getString(DB.gu_meeting) + "','" + oMeet.getStringNull(DB.tx_meeting,"[~Sin titulo~]").replace((char)39,'´') + "')\" TITLE=\"Delete\">x</A>]</FONT>");
+	        } else {
+	          out.write("<FONT CLASS=\"textsmall\">"+(0==m ? "" : "<BR>")+oMeet.getHour()+":"+oMeet.getMinute()+"-"+oMeet.getHourEnd()+":"+oMeet.getMinuteEnd()+"</FONT><IMG SRC=\"../images/images/addrbook/smalllock.gif\" BORDER=\"0\">");
+	        }
 	      } // next
 	    } else {
               out.write("<TD CLASS=\""+aHolidays[d]+"tableborder\" WIDTH=\"100px\" HEIGHT=\"100px\">");

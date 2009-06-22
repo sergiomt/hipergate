@@ -1,4 +1,4 @@
-<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//EN" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">
 <!-- +-------------------------------------------------------------------+ -->
 <!-- | Marco de edición combinada de contactos, compañías y direcciones  | -->
@@ -7,7 +7,7 @@
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <TITLE>hipergate :: [~Editar Contacto~]</TITLE>
+    <TITLE>hipergate :: Edit Contact</TITLE>
     <SCRIPT LANGUAGE="javascript" SRC="../javascript/getparam.js"></SCRIPT>
     <SCRIPT LANGUAGE="javascript" SRC="../javascript/trim.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
@@ -24,7 +24,7 @@
   </FRAMESET>
   <NOFRAMES>
       <BODY>
-	<P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
+	<P>This page uses frames, but your browser does not handle them.</P>
       </BODY>
   </NOFRAMES>
 </HTML>

@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.io.IOException,java.io.FileNotFoundException,java.io.File,com.knowgate.acl.*,com.knowgate.misc.*,com.knowgate.crm.DirectList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder,java.io.IOException,java.io.FileNotFoundException,java.io.File,com.knowgate.acl.*,com.knowgate.misc.*,com.knowgate.crm.DirectList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
@@ -70,18 +70,18 @@
     Checks = oList.parseFile(sTempDir + request.getParameter("gu_query") + ".tmp", request.getParameter("desc_file"));
   }
   catch (FileNotFoundException e) {
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Archivo no encontrado~]&desc=" + e.getMessage() + "&resume=" + sRedirect2URL));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=File not found&desc=" + e.getMessage() + "&resume=" + sRedirect2URL));
     oList = null;  
   }
   catch (IOException e) {  
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Error interno de entrada-salida~]&desc=" + e.getMessage() + "&resume=" + sRedirect2URL));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Internal input-output error&desc=" + e.getMessage() + "&resume=" + sRedirect2URL));
     oList = null;  
   }
   catch (ArrayIndexOutOfBoundsException e) {
     oTmpFile = new File(sTempDir + request.getParameter("gu_query") + ".tmp"); 
     oTmpFile.delete();
     oTmpFile = null;
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Subindice fuera de rango~]&desc=El número de columnas del fichero en la línea " + String.valueOf(oList.errorLine()) + " no coincide con las especificadas en el paso 2&resume=" + sRedirect2URL));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Index out of range&desc=El número de columnas del fichero en la línea " + String.valueOf(oList.errorLine()) + " no coincide con las especificadas en el paso 2&resume=" + sRedirect2URL));
     oList = null;  
   }
   catch (IllegalStateException e) {  
@@ -89,14 +89,14 @@
     oTmpFile.delete();
     oTmpFile = null;
     oList = null;  
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Archivo Vacio~]&desc=El fichero que especifico para cargar la lista esta vacio&resume=" + sRedirect2URL));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=File is empty&desc=El fichero que especifico para cargar la lista esta vacio&resume=" + sRedirect2URL));
   }
   catch (RuntimeException e) {  
     oTmpFile = new File(sTempDir + request.getParameter("gu_query") + ".tmp"); 
     oTmpFile.delete();
     oTmpFile = null;
     oList = null;  
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Error procesando el archivo de entrada~]&desc=" + e.getMessage() + "&resume=" + sRedirect2URL));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error processing input file&desc=" + e.getMessage() + "&resume=" + sRedirect2URL));
   }
 
   if (null==oList) return;
@@ -105,7 +105,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: [~Carga Directa de e-mails~]</TITLE>
+  <TITLE>hipergate :: Direct loading of e-mails</TITLE>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
@@ -113,7 +113,7 @@
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8">
     <FORM METHOD="get" ACTION="list_wizard_store.jsp">
-      <TABLE WIDTH="100%"><TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Carga Directa de e-mails~]</FONT></TD></TR></TABLE>  
+      <TABLE WIDTH="100%"><TR><TD CLASS="striptitle"><FONT CLASS="title1">Direct loading of e-mails</FONT></TD></TR></TABLE>  
       <INPUT TYPE="hidden" NAME="caller" VALUE="wizard">
       <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
       <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
@@ -136,10 +136,10 @@
       <TABLE CELLSPACING="2" CELLPADDING="2">
       <TR><TD COLSPAN="2" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       <TR>
-        <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Buscar~]"></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Search"></TD>
         <TD VALIGN="middle">
           <INPUT NAME="findstr" CLASS="combomini">
-	  &nbsp;<A HREF="javascript:if (document.forms[0].findstr.value.length>0) findit(document.forms[0].findstr.value);" CLASS="linkplain" TITLE="Buscar">[~Buscar~]</A>	  
+	  &nbsp;<A HREF="javascript:if (document.forms[0].findstr.value.length>0) findit(document.forms[0].findstr.value);" CLASS="linkplain" TITLE="Buscar">Search</A>	  
         </TD>
       </TR>
       <TR><TD COLSPAN="2" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
@@ -152,17 +152,17 @@
         if (DirectList.CHECK_OK==Checks[v]) iValid++;      
 %>    
       <BR>
-      <FONT CLASS="textplain"><B>[~Est&aacute; a punto de cargar ~]<% out.write(String.valueOf(iValid)); %>[~ direcciones de un total de ~]<% out.write(String.valueOf(iRows)); %></B>
+      <FONT CLASS="textplain"><B>You are about to load&nbsp;<% out.write(String.valueOf(iValid)); %> addresses from a total of&nbsp;<% out.write(String.valueOf(iRows)); %></B>
       &nbsp;&nbsp;&nbsp;&nbsp;
-      <INPUT CLASS="pushbutton" TYPE="submit" VALUE="[~Cargar~]">&nbsp;&nbsp;&nbsp;&nbsp;<INPUT CLASS="closebutton" TYPE="button" VALUE="[~Cancelar~]" onclick="window.document.location='list_wizard_cancel.jsp?tp_list=<%=tp_list%>&gu_query=<%=gu_query%>';">
+      <INPUT CLASS="pushbutton" TYPE="submit" VALUE="Load">&nbsp;&nbsp;&nbsp;&nbsp;<INPUT CLASS="closebutton" TYPE="button" VALUE="Cancel" onclick="window.document.location='list_wizard_cancel.jsp?tp_list=<%=tp_list%>&gu_query=<%=gu_query%>';">
       <BR><BR>
       <TABLE CELLSPACING="1" CELLPADDING="0" WIDTH="100%">
 
         <TR>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;&nbsp;<B>[~e-mail~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;&nbsp;<B>[~Nombre~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;&nbsp;<B>[~Apellidos~]</B></TD>
-          <TD CLASS="tableheader" WIDTH="120px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;&nbsp;<B>[~Estado~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;&nbsp;<B>e-mail</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;&nbsp;<B>Name</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;&nbsp;<B>Surname</B></TD>
+          <TD CLASS="tableheader" WIDTH="120px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;&nbsp;<B>Status</B></TD>
 
 <%
 	  int iMail = oList.getColumnPosition("tx_email");
@@ -182,22 +182,22 @@
 <%
 	      switch (Checks[i]) {
 	        case DirectList.CHECK_OK:
-	          out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=green>[~OK~]</FONT></FONT>");
+	          out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=green>OK</FONT></FONT>");
 		  break;
 	        case DirectList.CHECK_INVALID_EMAIL:
 		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>[~e-mail no válido~]</FONT></FONT>");
 		  break;
 	        case DirectList.CHECK_NAME_TOO_LONG:
-		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>[~El nombre es demasiado largo~]</FONT></FONT>");
+		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>Name is too long</FONT></FONT>");
 		  break;
 	        case DirectList.CHECK_SURNAME_TOO_LONG:
-		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>[~Los apellidos son demasiado largos~]</FONT></FONT>");
+		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>Surname is too long</FONT></FONT>");
 		  break;
 	        case DirectList.CHECK_INVALID_FORMAT:
-		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>[~El formato debe ser TXT o HTML~]</FONT></FONT>");
+		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>Format must be either TXT or HTML</FONT></FONT>");
 		  break;
 	        case DirectList.CHECK_SALUTATION_TOO_LONG:
-		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>[~El saludo es demasiado largo~]</FONT></FONT>");
+		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>Salutation is too long</FONT></FONT>");
 		  break;	        	        
 	        case DirectList.CHECK_INVALID_NAME:
 		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>[~El nombre contiene caracteres no válidos~]</FONT></FONT>");
@@ -209,7 +209,7 @@
 		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>[~El saludo contiene caracteres no válidos~]</FONT></FONT>");
 		  break;
 		default:
-		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>[~Error de formato indeterminado~]</FONT></FONT>");
+		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>Unknown format error</FONT></FONT>");
 		  break;		
 	      }
 %>

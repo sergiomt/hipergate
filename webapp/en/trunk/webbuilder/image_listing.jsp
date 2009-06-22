@@ -1,10 +1,23 @@
-<%@ page import="com.knowgate.debug.DebugFile,com.knowgate.misc.*,java.io.*,java.lang.*,java.util.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.workareas.FileSystemWorkArea" language="java" session="false" contentType="text/html;charset=UTF-8"  %>
+﻿<%@ page import="java.util.Arrays,com.knowgate.debug.DebugFile,com.knowgate.misc.*,java.io.*,java.lang.*,java.util.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.workareas.FileSystemWorkArea,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8"  %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
-<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
-<%
+<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%!
+
+  public class SearchFilter implements FileFilter {
+    private String sPattern;
+    
+    public SearchFilter(String s) {
+      sPattern = s.toUpperCase();
+    }
+    
+    public boolean accept(File oFile) {
+      return oFile.getName().toUpperCase().indexOf(sPattern)>=0;
+    }
+  }
+
+%><%
 /*
-  Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+  Copyright (C) 2003-2009  Know Gate S.L. All rights reserved.
+                           C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -41,12 +54,14 @@
   response.setIntHeader("Expires", 0);
 
   String sLanguage = getNavigatorLanguage(request);  
-  String sSkin = getCookie(request, "skin", "default");
+  String sSkin = getCookie(request, "skin", "xp");
   String id_domain = getCookie(request, "domainid", "0");
   String n_domain = getCookie(request, "domainnm", "none");
   String gu_workarea = getCookie(request,"workarea","");
 
   String sDocType = request.getParameter("doctype");
+  String sSortBy = nullif(request.getParameter("sort_by"), "date_desc");
+  String sFind = nullif(request.getParameter("find"));
   String sSep = java.io.File.separator;
 
   // Rutas y parámetros  
@@ -64,7 +79,7 @@
   String sWorkareasPut = Environment.getProfileVar(GlobalDBBind.getProfileName(), "workareasput", sDefaultWorkAreasPut);
   String sWorkareasGet = Environment.getProfileVar(GlobalDBBind.getProfileName(), "workareasget", sDefaultWorkAreasGet);
   
-  String sApp = "Mailwire";
+  String sApp = nullif(request.getParameter("app"), "Mailwire");
   
   //if (sDocType.equals("website")) sApp = "WebBuilder";
      
@@ -78,16 +93,33 @@
   oFileSys = null;
     
   File oDirectory = new File(sImagesDir);
-  File[] aFiles = oDirectory.listFiles();
+  File[] aFiles;
+  if (sFind.length()==0) {
+    aFiles = oDirectory.listFiles();
+  } else {
+    SearchFilter oFilter = new SearchFilter(sFind);
+    aFiles = oDirectory.listFiles(oFilter);
+  }
+  	
+  if (sSortBy.equals("date_desc")) {
+    Arrays.sort( aFiles, new Comparator() { public int compare(Object o1, Object o2) { return new Long(((File)o2).lastModified()).compareTo(new Long(((File) o1).lastModified())); } });
+  } else if (sSortBy.equals("date_asc")) {
+    Arrays.sort( aFiles, new Comparator() { public int compare(Object o1, Object o2) { return new Long(((File)o1).lastModified()).compareTo(new Long(((File) o2).lastModified())); } });
+  } else if (sSortBy.equals("name_asc")) {
+    Arrays.sort( aFiles, new Comparator() { public int compare(Object o1, Object o2) { return ((File)o1).getName().compareTo(((File)o2).getName()); } });
+  }  else if (sSortBy.equals("name_desc")) {
+    Arrays.sort( aFiles, new Comparator() { public int compare(Object o1, Object o2) { return ((File)o2).getName().compareTo(((File)o1).getName()); } });
+  } // fi
+  
   String sFileName;
       
-%>
-<html lang="<%=sLanguage%>">
+%><html lang="<%=sLanguage%>">
 <head>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT> 
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT> 
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT> 
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
       function uploadImage() { 
@@ -103,7 +135,7 @@
       	w2.document.write("<html>"); w2.document.write("\n");
       	w2.document.write("<head>"); w2.document.write("\n");
       	w2.document.write("<TITLE>"); w2.document.write("\n");
-      	w2.document.write("[~Ver imagen ~](" + pictureName + ")"); w2.document.write("\n");
+      	w2.document.write("View image(" + pictureName + ")"); w2.document.write("\n");
       	w2.document.write("</TITLE>"); w2.document.write("\n");
       	w2.document.write("</head>"); w2.document.write("\n");
       	w2.document.write("<body topmargin=0 marginheight=0 leftmargin=0>"); w2.document.write("\n");
@@ -130,6 +162,9 @@
       function paintThumbs() {
         // Recorrer los thumbnails y cambiar el icono generico por la mini-imagen buena correspondiente
 
+			  setCombo(document.forms[0].sort_by, "<%=sSortBy%>");
+			  document.forms[0].find.value = "<%=sFind%>";
+			  
         var imgCount = document.images.length;
         var img;        
         
@@ -152,14 +187,14 @@
               if (document.forms[0].elements[i].checked)
               {
                 if (contador==0) 
-          	  lista = lista + '<%=sImagesDir%>/' + document.forms[0].elements[i].value;
+          	  lista = lista + "<%=Gadgets.escapeChars(Gadgets.chomp(sImagesDir,sSep),"\\", '\\')%>" + document.forms[0].elements[i].value;
           	else
-          	  lista = lista + ',' + '<%=sImagesDir%>/' + document.forms[0].elements[i].value;
+          	  lista = lista + ":" + "<%=Gadgets.escapeChars(Gadgets.chomp(sImagesDir,sSep),"\\", '\\')%>" + document.forms[0].elements[i].value;
           	contador++;
               }
               
            if (contador==0)
-             alert("[~Debe seleccionar al menos una imagen~]");
+             alert("Must check at least one image");
            else {
              document.forms[0].checkeditems.value = lista;
              document.forms[0].submit();
@@ -179,7 +214,14 @@
           }
         } // next
       } // selectAll
+
+      // ------------------------------------------------------
       
+      function sortBy(sby)
+      {
+      	var frm = document.forms[0];
+        window.location = "image_listing.jsp?selected="+getURLParam("selected")+"&subselected="+getURLParam("subselected")+"&find="+escape(frm.find.value)+"&sort_by="+sby;
+      }      
     //-->    
   </SCRIPT> 
   <TITLE>hipergate :: [~Imágenes disponibles~]</TITLE>
@@ -188,16 +230,25 @@
 <%@ include file="../common/tabmenu.jspf" %>
 <form name="frmDeleteImages" id="frmDeleteImages" method="post" action="images_delete.jsp">
 <input type="hidden" name="checkeditems">
-<table cellspacing="0" cellpadding="0" border="0" width="99%"><tr><td colspan="2" valign="center" class="striptitle"><font class="title1">[~Im&aacute;genes disponibles~]</font></td></tr></table>
+<br/>
+<table cellspacing="0" cellpadding="0" border="0" width="99%"><tr><td colspan="2" valign="center" class="striptitle"><font class="title1">Available Images</font></td></tr></table>
 <TABLE CELLSPACING="2" CELLPADDING="2">
 <TR>
 <TR><TD COLSPAN="6" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
-<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nueva imagen~]"></TD>
-<TD ALIGN="LEFT" VALIGN="middle"><A HREF="#" onclick="uploadImage()" CLASS="linkplain">[~Nueva imagen~]</A></TD>
+<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Image"></TD>
+<TD ALIGN="LEFT" VALIGN="middle"><A HREF="#" onclick="uploadImage()" CLASS="linkplain">New Image</A></TD>
 <TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar imágenes~]"></TD>
 <TD  ALIGN="LEFT"VALIGN="middle"><A HREF="javascript:if (window.confirm('[~Cuando elimina imagenes, estas dejaran de aparecer en las newsletter que las utilicen. ¿Esta seguro?~]')) deleteImages()" CLASS="linkplain">[~Eliminar imágenes~]</A></TD>
-<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/selall16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Seleccionar todas~]"></TD>
-<TD  ALIGN="LEFT"VALIGN="middle"><A HREF="#" onclick="selectAll()" CLASS="linkplain">[~Seleccionar todas~]</A></TD>
+<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/selall16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Select all"></TD>
+<TD  ALIGN="LEFT"VALIGN="middle"><A HREF="#" onclick="selectAll()" CLASS="linkplain">Select all</A></TD>
+</TR>
+<TR>
+<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/resort.gif" WIDTH="22" HEIGHT="16" BORDER="0" ALT="[~Ordenar~]"></TD>
+<TD ALIGN="LEFT" VALIGN="middle"><SELECT NAME="sort_by" CLASS="combomini" onchange="sortBy(this.options[this.selectedIndex].value)"><OPTION VALUE="date_desc">[~Fecha Descendente~]</OPTION><OPTION VALUE="date_asc">[~Fecha Ascendente~]</OPTION><OPTION VALUE="name_asc">[~Nombre Ascendente~]</OPTION><OPTION VALUE="name_desc">[~Nombre Descendente~]</OPTION></SELECT></TD>
+<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/find16.gif" WIDTH="22" HEIGHT="16" BORDER="0" ALT="[~Buscar~]"></TD>
+<TD  ALIGN="LEFT"VALIGN="middle"><INPUT TYPE="text" NAME="find" CLASS="combomini" SIZE="14">&nbsp;<A HREF="#" CLASS="linkplain" onclick="sortBy(getCombo(document.forms[0].sort_by))">Buscar</A></TD>
+<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/findundo16.gif" WIDTH="22" HEIGHT="16" BORDER="0" ALT="Select all"></TD>
+<TD  ALIGN="LEFT"VALIGN="middle"><A HREF="#" onclick="document.forms[0].find.value=''; sortBy(getCombo(document.forms[0].sort_by))" CLASS="linkplain">[~Descartar búsqueda~]</A></TD>
 <TR><TD COLSPAN="6" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
 </TR>
 </TABLE>
@@ -232,8 +283,8 @@
    {
      contador++; 
    }
-   } //if extensiones
-  }//for
+   } // if extensiones
+  } // for
 %>
 </tr>
 </table>

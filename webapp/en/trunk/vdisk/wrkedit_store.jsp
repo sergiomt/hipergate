@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.io.File,java.io.FileInputStream,java.net.URLDecoder,java.util.Enumeration,java.sql.SQLException,java.sql.Date,java.sql.PreparedStatement,java.sql.ResultSet,com.oreilly.servlet.MultipartRequest,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.workareas.FileSystemWorkArea,com.knowgate.misc.Environment,com.knowgate.workareas.WorkArea,com.knowgate.hipergate.datamodel.ModelManager" language="java" session="false" %>
+﻿<%@ page import="java.io.IOException,java.io.File,java.io.FileInputStream,java.net.URLDecoder,java.util.Enumeration,java.sql.SQLException,java.sql.Date,java.sql.PreparedStatement,java.sql.ResultSet,com.oreilly.servlet.MultipartRequest,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.workareas.FileSystemWorkArea,com.knowgate.misc.Environment,com.knowgate.workareas.WorkArea,com.knowgate.hipergate.datamodel.ModelManager" language="java" session="false" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -91,7 +91,15 @@
   
   final String sSep = System.getProperty("file.separator");
   
-  FileSystemWorkArea oFS = new FileSystemWorkArea (Environment.getProfile(GlobalDBBind.getProfileName()));
+  FileSystemWorkArea oFS = null;
+  
+  try {
+    oFS = new FileSystemWorkArea (Environment.getProfile(GlobalDBBind.getProfileName()));
+  }
+  catch (Exception e) {
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title="+e.getClass().getName()+"&desc=" + e.getClass().getName() + " whilst parsing " + GlobalDBBind.getProfileName() + " file&resume=_back"));
+    return;
+  }
    
   try {
     oCon1 = GlobalDBBind.getConnection("wrkedit_store");  
@@ -204,12 +212,12 @@
   
       for (int a=0; a<iApps; a++) {
         id_app = String.valueOf(oApps.getInt(0,a));
-	sCheckApp = nullif(oReq.getParameter("c" + id_app));
+	      sCheckApp = nullif(oReq.getParameter("c" + id_app));
         
         if (sCheckApp.length()>0) {
           gu_admins = oReq.getParameter("a" + id_app + "admins");
           gu_powusers = oReq.getParameter("a" + id_app + "powusers");
-  	  gu_users = oReq.getParameter("a" + id_app + "users");
+  	      gu_users = oReq.getParameter("a" + id_app + "users");
           gu_guests = oReq.getParameter("a" + id_app + "guests");
           
           oStmt.setInt(1, oApps.getInt(0,a));

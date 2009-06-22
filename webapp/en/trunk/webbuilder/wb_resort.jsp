@@ -1,4 +1,4 @@
-<%@ page import="org.w3c.dom.DOMException,java.util.Vector,java.io.FileNotFoundException,java.io.IOException,java.net.URLDecoder,com.knowgate.dataxslt.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="org.w3c.dom.DOMException,java.util.Vector,java.io.FileNotFoundException,java.io.IOException,java.net.URLDecoder,com.knowgate.dataxslt.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %>
 <%@ include file="../methods/cookies.jspf" %>
 <%@ include file="../methods/nullif.jspf" %>
@@ -127,7 +127,7 @@
 %>
 <HTML>
   <HEAD>
-    <TITLE>hipergate :: [~Reordenar bloques~]</TITLE>
+    <TITLE>hipergate :: Reorder blocks</TITLE>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>  
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
@@ -180,13 +180,13 @@
   </HEAD>
   <BODY>
   <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Actualizar~]"> [~Actualizar~]</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="[~Imprimir~]"> [~Imprimir~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
   </DIV></DIV>
     <TABLE WIDTH="100%">
       <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-      <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Reordenar bloques~]</FONT></TD></TR>
+      <TR><TD CLASS="striptitle"><FONT CLASS="title1">Reorder blocks</FONT></TD></TR>
     </TABLE>  
     <FORM METHOD="post" ACTION="wb_resort_store.jsp" onsubmit="return validate()">
       <TABLE>
@@ -208,11 +208,11 @@
     out.write ("        <TR><TD CLASS=\"strip" + String.valueOf((b%2)+1) + "\">");
 
     if (0==b)
-      out.write ("<IMG SRC=\"../images/images/spacer.gif\" WIDTH=\"14\" HEIGHT=\"14\" BORDER=\"0\">&nbsp;<A HREF=\"#\" TITLE=\"[~Mover hacia abajo~]\" onclick=\"swap('" + oBlk.id() + "','" + sNxt + "')\"><IMG SRC=\"../images/images/webbuilder/movedown.gif\" WIDTH=\"14\" HEIGHT=\"14\" BORDER=\"0\"></A>&nbsp;");
+      out.write ("<IMG SRC=\"../images/images/spacer.gif\" WIDTH=\"14\" HEIGHT=\"14\" BORDER=\"0\">&nbsp;<A HREF=\"#\" TITLE=\"Move down\" onclick=\"swap('" + oBlk.id() + "','" + sNxt + "')\"><IMG SRC=\"../images/images/webbuilder/movedown.gif\" WIDTH=\"14\" HEIGHT=\"14\" BORDER=\"0\"></A>&nbsp;");
     else if (iBlocks-1==b)
-      out.write ("<A HREF=\"#\" TITLE=\"[~Mover hacia arriba~]\" onclick=\"swap('" + sPrv + "','" + oBlk.id() + "')\"><IMG SRC=\"../images/images/webbuilder/moveup.gif\" WIDTH=\"14\" HEIGHT=\"14\" BORDER=\"0\"></A>&nbsp;<IMG SRC=\"../images/images/spacer.gif\" WIDTH=\"14\" HEIGHT=\"14\" BORDER=\"0\">&nbsp;");
+      out.write ("<A HREF=\"#\" TITLE=\"Move up\" onclick=\"swap('" + sPrv + "','" + oBlk.id() + "')\"><IMG SRC=\"../images/images/webbuilder/moveup.gif\" WIDTH=\"14\" HEIGHT=\"14\" BORDER=\"0\"></A>&nbsp;<IMG SRC=\"../images/images/spacer.gif\" WIDTH=\"14\" HEIGHT=\"14\" BORDER=\"0\">&nbsp;");
     else
-      out.write ("<A HREF=\"#\" TITLE=\"[~Mover hacia arriba~]\" onclick=\"swap('" + sPrv + "','" + oBlk.id() + "')\"><IMG SRC=\"../images/images/webbuilder/moveup.gif\" WIDTH=\"14\" HEIGHT=\"14\" BORDER=\"0\"></A>&nbsp;<A HREF=\"#\" TITLE=\"[~Mover hacia abajo~]\" onclick=\"swap('" + oBlk.id() + "','" + sNxt + "')\"><IMG SRC=\"../images/images/webbuilder/movedown.gif\" WIDTH=\"14\" HEIGHT=\"14\" BORDER=\"0\"></A>&nbsp;");
+      out.write ("<A HREF=\"#\" TITLE=\"Move up\" onclick=\"swap('" + sPrv + "','" + oBlk.id() + "')\"><IMG SRC=\"../images/images/webbuilder/moveup.gif\" WIDTH=\"14\" HEIGHT=\"14\" BORDER=\"0\"></A>&nbsp;<A HREF=\"#\" TITLE=\"Move down\" onclick=\"swap('" + oBlk.id() + "','" + sNxt + "')\"><IMG SRC=\"../images/images/webbuilder/movedown.gif\" WIDTH=\"14\" HEIGHT=\"14\" BORDER=\"0\"></A>&nbsp;");
         
     out.write ("<INPUT TYPE=\"hidden\" NAME=\"block-" + oBlk.id() + "\" VALUE=\"" + oBlk.id() + "\">");
     out.write ("<INPUT CLASS=\"flat" + String.valueOf((b%2)+1) + "\" NAME=\"name-" + oBlk.id() + "\" TABINDEX=\"-1\" SIZE=\"30\" TYPE=\"text\" VALUE=\"" + nm_metablock + " (" + String.valueOf(b+1) + ")\">&nbsp;");
@@ -237,8 +237,8 @@
       </TABLE>
       <HR>
       <CENTER>
-      <INPUT TYPE="submit" ACCESSKEY="r" VALUE="[~Reordenar~]" NAME="do" CLASS="pushbutton" STYLE="width:100" TITLE="ALT+r">
-      &nbsp;&nbsp;&nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cerrar~]" CLASS="closebutton" STYLE="width:100" TITLE="ALT+c" onclick="window.close()">
+      <INPUT TYPE="submit" ACCESSKEY="r" VALUE="Reorder" NAME="do" CLASS="pushbutton" STYLE="width:100" TITLE="ALT+r">
+      &nbsp;&nbsp;&nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Close" CLASS="closebutton" STYLE="width:100" TITLE="ALT+c" onclick="window.close()">
       </CENTER>
       <INPUT TYPE="hidden" NAME="old_order" VALUE="<% for (int b=0; b<iBlocks; b++) { if (b>0) out.write (","); out.write (((Block) oBlocksSorted.get(b)).id()); } %>">
       <INPUT TYPE="hidden" NAME="new_order">

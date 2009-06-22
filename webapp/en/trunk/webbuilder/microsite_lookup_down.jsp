@@ -19,11 +19,11 @@
     <FORM>
     <CENTER>
 <% if (bIsGuest) { %>
-      <INPUT TYPE="button" CLASS="pushbutton" VALUE="[~Siguiente~] >>" onClick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acciÃ³n~]')">
+      <INPUT TYPE="button" CLASS="pushbutton" VALUE="Next >>" onClick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acciÃ³n~]')">
 <% } else { %>
-      <INPUT TYPE="button" CLASS="pushbutton" VALUE="[~Siguiente~] >>" onClick="window.top.frames[1].choose()">
+      <INPUT TYPE="button" CLASS="pushbutton" VALUE="Next >>" onClick="window.top.frames[1].choose()">
 <% } %>
-      &nbsp;&nbsp;&nbsp;<INPUT TYPE="button" CLASS="closebutton" VALUE="[~Cancelar~]" onClick="window.parent.close()">
+      &nbsp;&nbsp;&nbsp;<INPUT TYPE="button" CLASS="closebutton" VALUE="Cancel" onClick="window.parent.close()">
     </CENTER>
     </FORM>
   </BODY>

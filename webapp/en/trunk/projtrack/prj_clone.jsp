@@ -1,4 +1,4 @@
-<%@ page import="java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <%  response.setHeader("Cache-Control","no-cache");response.setHeader("Pragma","no-cache"); response.setIntHeader("Expires", 0); %>
 <%
@@ -105,7 +105,7 @@
 %>
 <HTML>
   <HEAD>
-    <TITLE>hipergate :: [~Editar Proyecto ~]<%=oPrj.getString(DB.nm_project)%></TITLE>
+    <TITLE>hipergate :: Edit Project<%=oPrj.getString(DB.nm_project)%></TITLE>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
@@ -175,12 +175,12 @@
 	var dtEnd;
 	
 	if (rtrim(frm.nm_project.value)=="") {
-	  alert ("[~El nombre del proyecto es obligatorio~]");
+	  alert ("Project Name is mandatory");
 	  return false;
 	}
 	
 	if (frm.de_project.value.length>1000) {
-	  alert ("[~La descripci&oacute;n no debe exceder los 1000 caracteres~]");
+	  alert ("Description must not be longer than 1000 characters");
 	  return false;
 	}
 
@@ -203,7 +203,7 @@
     </SCRIPT>
   </HEAD>
   <BODY  onLoad="setCombos()">
-    <TABLE WIDTH="90%"><TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Clonar Proyecto~]</FONT></TD></TR></TABLE>       
+    <TABLE WIDTH="90%"><TR><TD CLASS="striptitle"><FONT CLASS="title1">Clone Project</FONT></TD></TR></TABLE>       
     <BR>
     <FORM NAME="frmCloneProject" METHOD="post" ACTION="prj_clone_store.jsp" onSubmit="return validate();">
       <INPUT TYPE="hidden" NAME="gu_project" VALUE="<%=request.getParameter("gu_project")%>">
@@ -215,43 +215,43 @@
           <TD VALIGN="top" CLASS="formfront">
 	    <TABLE SUMMARY="Project Data">
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formstrong">[~Nombre~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formstrong">Name</FONT></TD>
                 <TD>
                   <INPUT TYPE="text" MAXLENGTH="50" SIZE="30" NAME="nm_project" VALUE="<%=oPrj.getString(DB.nm_project)%>" TABINDEX="-1" onfocus="//document.forms[0].dt_closed.focus()">
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">[~Referencia~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">Reference</FONT></TD>
                 <TD>
                   <INPUT TYPE="text" MAXLENGTH="50" SIZE="20" NAME="id_ref">
                 </TD>
               </TR>
 <% if ((iAppMask & (1<<Sales))!=0) { %>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">[~Compa&ntilde;&iacute;a~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">Company</FONT></TD>
                 <TD>
                   <INPUT TYPE="text" SIZE="34" NAME="nm_legal" VALUE="<% if (oPrj.get(DB.tx_company)!=null) out.write(oPrj.getString(DB.tx_company)); %>" onkeypress="return false;">
-                  &nbsp;&nbsp;<A HREF="javascript:reference(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Compa&ntilde;&iacute;as~]"></A>
+                  &nbsp;&nbsp;<A HREF="javascript:reference(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Company List"></A>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">[~Departamento~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">Department</FONT></TD>
                 <TD>
                   <INPUT TYPE="hidden" MAXLENGTH="255" NAME="id_dept" VALUE="<% if (oPrj.get(DB.id_dept)!=null) out.write(oPrj.getString(DB.id_dept)); %>">
                   <SELECT NAME="sel_dept" STYLE="width:230"><OPTION VALUE=""></OPTION><%=sDeptsLookUp%></SELECT>
-                  &nbsp;&nbsp;<A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Departamentos~]"></A>
+                  &nbsp;&nbsp;<A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Departments List"></A>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">[~Contacto~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">Contact</FONT></TD>
                 <TD>
                   <INPUT TYPE="text" SIZE="34" NAME="tx_contact" VALUE="<% if (oPrj.get(DB.tx_contact)!=null) out.write(oPrj.getString(DB.tx_contact)); %>" onkeypress="return false;">
-                  &nbsp;&nbsp;<A HREF="javascript:reference(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Contactos~]"></A>
+                  &nbsp;&nbsp;<A HREF="javascript:reference(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Contacts List"></A>
                 </TD>
               </TR>
 <% } %>             
               <TR>
-                <TD ALIGN="right" VALIGN="top"><FONT CLASS="formplain">[~Descripci&oacute;n~]</FONT></TD>
+                <TD ALIGN="right" VALIGN="top"><FONT CLASS="formplain">Description</FONT></TD>
                 <TD><TEXTAREA NAME="de_project" ROWS="5" COLS="40" STYLE="font-family:Arial;font-size:9pt"><% if (oPrj.get(DB.de_project)!=null) out.write(oPrj.getString(DB.de_project)); %></TEXTAREA></TD>
               </TR>
               <TR>
@@ -262,12 +262,12 @@
                 <TD>
                   <BR>
 <% if (bIsGuest) { %>
-                  <INPUT TYPE="button" CLASS="pushbutton" STYLE="WIDTH:80" ACCESSKEY="s" TITLE="ALT+s" VALUE="[~Clonar~]" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
+                  <INPUT TYPE="button" CLASS="pushbutton" STYLE="WIDTH:80" ACCESSKEY="s" TITLE="ALT+s" VALUE="Clone" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
 <% } else { %>                  
-                  <INPUT TYPE="submit" CLASS="pushbutton" STYLE="WIDTH:80" ACCESSKEY="s" TITLE="ALT+s" VALUE="[~Clonar~]">
+                  <INPUT TYPE="submit" CLASS="pushbutton" STYLE="WIDTH:80" ACCESSKEY="s" TITLE="ALT+s" VALUE="Clone">
 <% } %>
                   &nbsp;&nbsp;&nbsp;
-                  <INPUT TYPE="button" CLASS="closebutton" STYLE="WIDTH:80" ACCESSKEY="c" TITLE="ALT+c" VALUE="[~Cerrar~]" onClick="javascript:window.parent.close()">
+                  <INPUT TYPE="button" CLASS="closebutton" STYLE="WIDTH:80" ACCESSKEY="c" TITLE="ALT+c" VALUE="Close" onClick="javascript:window.parent.close()">
                 </TD>
               </TR>              
             </TABLE>

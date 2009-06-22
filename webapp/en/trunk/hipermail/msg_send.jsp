@@ -1,4 +1,4 @@
-<%@ page import="com.sun.mail.smtp.SMTPMessage,javax.mail.*,javax.mail.Message.RecipientType,javax.mail.internet.*,java.util.Properties,java.util.HashMap,java.util.Iterator,java.io.File,java.io.FileNotFoundException,java.io.InputStream,java.io.ByteArrayOutputStream,java.io.IOException,java.net.URL,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.SQLException,java.sql.ResultSet,java.sql.Types,com.knowgate.jdc.JDCConnection,com.knowgate.debug.DebugFile,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.scheduler.Job,com.knowgate.scheduler.jobs.MimeSender,com.knowgate.dfs.*,com.knowgate.hipermail.*,com.knowgate.crm.Attachment,com.knowgate.crm.Contact" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="com.sun.mail.smtp.SMTPMessage,javax.mail.*,javax.mail.Message.RecipientType,javax.mail.internet.*,java.util.Properties,java.util.HashMap,java.util.Iterator,java.io.File,java.io.FileNotFoundException,java.io.InputStream,java.io.ByteArrayOutputStream,java.io.IOException,java.net.URL,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.SQLException,java.sql.ResultSet,java.sql.Types,com.knowgate.jdc.JDCConnection,com.knowgate.debug.DebugFile,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.scheduler.Job,com.knowgate.scheduler.jobs.MimeSender,com.knowgate.dfs.*,com.knowgate.hipermail.*,com.knowgate.crm.Attachment,com.knowgate.crm.Contact" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="msg_txt_util.jspf" %><%@ include file="../methods/page_prolog.jspf" %><%!
 /*  
   Copyright (C) 2004  Know Gate S.L. All rights reserved.
@@ -64,6 +64,7 @@
   String gu_workarea = getCookie (request, "workarea", null);
   String id_user = getCookie (request, "userid", null);
   String gu_account = nullif(request.getParameter("gu_account"),getCookie(request,"mail_account","").trim());
+  boolean bo_webbeacon = nullif(request.getParameter("chk_webbeacon"),"0").equals("1");
 
   String tx_pwd = (String) GlobalCacheClient.get("[" + id_user + ",mailpwd]");
   if (null==tx_pwd) {
@@ -71,6 +72,7 @@
     GlobalCacheClient.put ("[" + id_user + ",mailpwd]", tx_pwd);
   }
 
+  String sWebSrvr = Gadgets.chomp(GlobalDBBind.getProperty("webserver"),'/');
   String sProfile = GlobalDBBind.getProfileName();
   String sMBoxDir = DBStore.MBoxDirectory(sProfile,Integer.parseInt(id_domain),gu_workarea);
   String sGuJob;
@@ -86,12 +88,17 @@
   PreparedStatement oAtom = null;
 
   String sBody;
-      
-  if (tp_content.equals("html"))
-    sBody = "<HTML>\n<HEAD><TITLE>" + tx_subject + "</TITLE></HEAD>\n<BODY>\n" + request.getParameter("MSGBODY") + "\n</BODY>\n</HTML>";
-  else
+  
+  if (tp_content.equals("html")) {
+    sBody = "<HTML>\n<HEAD><TITLE>" + tx_subject + "</TITLE></HEAD>\n<BODY>\n" + request.getParameter("MSGBODY");
+    if (bo_webbeacon) {
+      sBody += "<!--WEBBEACON SRC=\""+sWebSrvr+"hipermail/web_beacon.jsp?gu_job={#Job.Guid}&pg_atom={#Job.Atom}&gu_company={#Data.Company_Guid}&gu_contact={#Data.Contact_Guid}&tx_email={#Address.EMail}\"-->";
+    }
+    sBody += "\n</BODY>\n</HTML>";
+  } else {
     sBody = request.getParameter("MSGBODY");
-
+  }
+  
   // If body contains "{#" substring then it is assumed to have personalization tags
   boolean bIsPersonalizedMail = (sBody.indexOf("{#")>=0);  
   boolean bXcpt = false;
@@ -162,7 +169,7 @@
       ((DBFolder) oRDBMS.getFolder("outbox")).moveMessage(oDraft);
 
       // Prepare a statement for inserting atoms fast
-      oAtom = oRDBMS.getConnection().prepareStatement("INSERT INTO "+DB.k_job_atoms+" ("+DB.gu_job+","+DB.id_status+","+DB.id_format+","+DB.tp_recipient+","+DB.tx_email+") VALUES ('"+sGuJob+"',"+String.valueOf(Job.STATUS_PENDING)+",'"+tp_content+"',?,?)");
+      oAtom = oRDBMS.getConnection().prepareStatement("INSERT INTO "+DB.k_job_atoms+" ("+DB.gu_job+","+DB.id_status+","+DB.id_format+","+DB.tp_recipient+","+DB.tx_email+") VALUES ('"+sGuJob+"',"+String.valueOf(Job.STATUS_PENDING)+",'"+(tp_content.equals("plain") ? "TXT" : "HTML")+"',?,?)");
 
       // ************************************
       // Write one atom for each mail address
@@ -302,5 +309,30 @@
   }
   if (bXcpt) return;
 %>
-<HTML><BODY onload="top.close()"></BODY></HTML>
+<HTML>
+	<HEAD>
+		<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
+		<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+			<!--
+		    function startSchedulerIfNecessary() {
+<%     if (bIsPersonalizedMail || oRecp.hasLists()) { %>		    	
+    		  var cac = createXMLHttpRequest();
+    			if (cac) {
+            cac.open("GET", "../servlet/HttpSchedulerServlet?action=info", false);
+      			cac.send(null);
+	      		var sch = cac.responseXML.getElementsByTagName("scheduler");
+						var sts = getElementText(sch[0],"status");
+						if (sts=="stop" || sts=="stopped") {
+              cac.open("GET", "../servlet/HttpSchedulerServlet?action=start", false);
+              cac.send(null);						  
+						} // fi
+          } // fi
+<% } %>
+		      top.close()
+		    }
+		  // -->
+		</SCRIPT>
+  </HEAD>
+	<BODY onload="startSchedulerIfNecessary()"></BODY>
+</HTML>
 <%@ include file="../methods/page_epilog.jspf" %>

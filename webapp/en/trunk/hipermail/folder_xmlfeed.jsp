@@ -2,7 +2,7 @@
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="mail_env.jspf" %><% 
 /*
   Copyright (C) 2008  Know Gate S.L. All rights reserved.
-                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
+                      C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -45,7 +45,7 @@
   if (DebugFile.trace) DebugFile.writeln("<JSP:folder_xmlfeed.jsp Begin");
       
   String nm_folder = nullif(request.getParameter("nm_folder"),"inbox");
-  String only_new = nullif(request.getParameter("only_new"),"true"); // Display all or only new messages
+  String only_new = nullif(request.getParameter("only_new"),"false"); // Display all or only new messages
   String bo_update = nullif(request.getParameter("bo_update"),"0");  // Get mail headers update from server
   
   int iMaxRows = nullif(request.getParameter("maxrows"),100);

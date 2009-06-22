@@ -1,4 +1,4 @@
-<%@ page import="java.util.Date,java.net.URLDecoder,java.text.SimpleDateFormat,java.text.ParseException,java.sql.SQLException,java.sql.Timestamp,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.projtrack.Bug" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.Date,java.net.URLDecoder,java.text.SimpleDateFormat,java.text.ParseException,java.sql.SQLException,java.sql.Timestamp,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.projtrack.Bug" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%
@@ -467,11 +467,11 @@
         var frm = document.forms[0];
         
         if (frm.dt_start.value.length>0 && !isDate(frm.dt_start.value, "d")) {
-          alert ("Invalid Start Date");
+          alert ("[~La fecha de inicio no es válida~]");
           return false;
         }
         if (frm.dt_end.value.length>0 && !isDate(frm.dt_end.value, "d")) {
-          alert ("Invalid Start Date");
+          alert ("[~La fecha de inicio no es válida~]");
           return false;
         }
         
@@ -527,7 +527,7 @@
             <OPTION VALUE="contact_person">Call from</OPTION>
             <OPTION VALUE="nm_legal">Company</OPTION>
             <OPTION VALUE="tx_phone">Phone</OPTION>
-            <OPTION VALUE="pg_bug">Incident Num</OPTION>
+            <OPTION VALUE="pg_bug">[~Nº Incidencia~]</OPTION>
           </SELECT>
           <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>">
 	  &nbsp;<A HREF="javascript:findPhoneCall();" CLASS="linkplain" TITLE="Search">Search</A>	  

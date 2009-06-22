@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.Statement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.scheduler.Job" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.Statement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.scheduler.Job" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %>
 <%@ include file="../methods/cookies.jspf" %>
 <%@ include file="../methods/authusrs.jspf" %>
@@ -122,7 +122,7 @@
 	var cmd = getURLParam("id_command");
 	
 	if (!isDate(frm.dt_execution.value, "d") && frm.dt_execution.value.length>0 && frm.dt_execution.value!="Lo antes posible") {
-	  alert ("Execution date is not valid");
+	  alert ("[~La fecha de ejecución no es válida~]");
 	  return false;	  
 	}
 	else if (frm.dt_execution.value=="Lo antes posible") {
@@ -130,12 +130,12 @@
 	}
 
 	if (frm.tl_job.value.length==0) {
-	  alert ("Task description is mandatory");
+	  alert ("[~La Descripción de la Tarea es Obligatoria~]");
 	  return false;
 	}
 	
 	if (hasForbiddenChars(frm.tl_job.value)) {
-	  alert ("Task description contains invalid characters");
+	  alert ("[~La Descripción de la Tarea contiene caracteres no permitidos~]");
 	  return false;
 	}
 	                
@@ -211,7 +211,7 @@
       <INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" TITLE="ALT+c" onclick="window.close()">
       &nbsp;&nbsp;
 <% if (bIsGuest) { %>
-      <INPUT TYPE="button" ACCESSKEY="f" VALUE="Finish" CLASS="pushbutton" TITLE="ALT+f" onclick="alert('Your credential level as Guest does not allow you to perform this action')">
+      <INPUT TYPE="button" ACCESSKEY="f" VALUE="Finish" CLASS="pushbutton" TITLE="ALT+f" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
 <% } else { %>
       <INPUT TYPE="submit" ACCESSKEY="f" VALUE="Finish" CLASS="pushbutton" TITLE="ALT+f">
 <% } %>

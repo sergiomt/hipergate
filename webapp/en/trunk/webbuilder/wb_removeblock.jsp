@@ -1,10 +1,10 @@
-<%@ page import="org.w3c.dom.*,com.knowgate.misc.*,java.io.File,java.lang.*,java.util.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.misc.Environment,com.knowgate.dataxslt.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.db.*" language="java" session="false" %>
+﻿<%@ page import="org.w3c.dom.*,com.knowgate.misc.*,java.io.File,java.lang.*,java.util.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.misc.Environment,com.knowgate.dataxslt.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.db.*" language="java" session="false" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <html>
 <head>
-<TITLE>hipergate :: [~Eliminar Bloques~]</TITLE>
+<TITLE>hipergate :: Remove</TITLE>
 <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
 <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
 <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascrip">
@@ -15,7 +15,7 @@
 </head>
 <body>
 <br><br><br>
-<center><span class="formstrong">[~Eliminando bloques. Espere, por favor...~]</span></center>
+<center><span class="formstrong">Removing blocks. Please Wait...</span></center>
 </body>
 <%
 

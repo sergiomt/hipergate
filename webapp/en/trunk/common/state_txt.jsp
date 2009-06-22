@@ -1,4 +1,4 @@
-<%@ page import="java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*" language="java" session="false" contentType="text/plain;charset=UTF-8" %><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><% 
+﻿<%@ page import="java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*" language="java" session="false" contentType="text/plain;charset=UTF-8" %><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><% 
 
   String sLanguage = getNavigatorLanguage(request);
 

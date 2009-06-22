@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
 <%  response.setHeader("Cache-Control","no-cache");response.setHeader("Pragma","no-cache"); response.setIntHeader("Expires", 0); %>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%
@@ -84,7 +84,7 @@
 %>
 <HTML>
   <HEAD>
-    <TITLE>hipergate :: [~Editar Tarea~]</TITLE>
+    <TITLE>hipergate :: Edit Duty</TITLE>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
@@ -116,7 +116,7 @@
             window.open("../common/lookup_f.jsp?nm_table=k_duties_lookup&id_language=<%=sLanguage%>&id_section=tx_status&tp_control=2&nm_control=sel_status&nm_coding=tx_status", "", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
             break;
           case 3:
-            window.open("../common/lookup_f.jsp?nm_table=k_duties_lookup&id_language=<%=sLanguage%>&id_section=nm_resource&tp_control=2&nm_control=sel_resources&nm_coding=nm_resource", "", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
+            window.open("resource_lookup_f.jsp?id_language=<%=sLanguage%>&tp_control=2&nm_control=sel_resources&nm_coding=nm_resource", "", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
             break;
           case 4:
             window.open("../common/lookup_f.jsp?nm_table=k_duties_lookup&id_language=<%=sLanguage%>&id_section=tp_duty&tp_control=2&nm_control=sel_tp_duty&nm_coding=tp_duty", "", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
@@ -167,7 +167,7 @@
 	var dtEnd;
 	
 	if (rtrim(frm.nm_duty.value)=="") {
-	  alert ("[~El nombre de la tarea es obligatorio~]");
+	  alert ("Duty name is mandatory");
 	  return false;
 	}
 		
@@ -176,7 +176,7 @@
           if (prj[n].selected) npj++;
 
 	if (npj==0) {
-	  alert ("[~Debe seleccionar un proyecto~]");
+	  alert ("Must select a Project");
 	  return false;
 	}
 	else if (npj>1) {
@@ -195,11 +195,11 @@
 	
 	frm.pct_complete.value = getCombo(frm.sel_pct_complete);
 	
-	if (frm.tx_status.value == '[~TERMINADA~]')
+	if (frm.tx_status.value == 'FINISHED')
 		frm.pct_complete.value = 100;
 		
 	if (frm.pct_complete.value == 100)
-	  frm.tx_status.value = '[~TERMINADA~]';
+	  frm.tx_status.value = 'FINISHED';
 
 	if (!isIntValue(frm.pr_cost.value)) {
 	  alert ("[~El coste debe ser una cantidad numérica entera~]");
@@ -224,9 +224,9 @@
 	  aStart = frm.dt_start.value.split("-");
 	  aEnd = frm.dt_end.value.split("-");
 	  dtStart = new Date(parseInt(aStart[0]), parseInt(parseFloat(parseFloat(aStart[1]))-1), parseInt(parseFloat(aStart[2])));
-	  dtEnd = new Date(parseInt(aEnd[0]), parseInt(parseFloat(aEnd[1])-1), parseInt(aEnd[2]));
+	  dtEnd = new Date(parseInt(aEnd[0]), parseInt(parseFloat(aEnd[1])-1), parseInt(parseFloat(aEnd[2])));
 	  if (dtStart>dtEnd) {
-	    alert ("[~La fecha de inicio debe ser anterior a la fecha de fin~]");
+	    alert ("Start date must be previous to end date");
 	    return false;
 	  }
 	}
@@ -237,12 +237,12 @@
 	    frm.nm_resource.value += (0==frm.nm_resource.value.length ? res[r].value : "," + res[r].value);
 	
 	if (frm.de_duty.value.length>2000) {
-	  alert ("[~La descripci&oacute;n no debe exceder los 2000 caracteres~]");
+	  alert ("Description must not be longer than 2000 characters");
 	  return false;
 	}
 	
 	if (frm.tx_comments.value.length>1000) {
-	  alert ("[~Los comentarios no deben exceder los 1000 caracteres~]");
+	  alert ("Comments may not be longer than 1000 characters");
 	  return false;
 	}
 	
@@ -253,7 +253,7 @@
     </SCRIPT>
   </HEAD>
   <BODY  onLoad="setCombos()">
-    <TABLE WIDTH="90%"><TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Editar Tarea~]</FONT></TD></TR></TABLE>  
+    <TABLE WIDTH="90%"><TR><TD CLASS="striptitle"><FONT CLASS="title1">Edit Duty</FONT></TD></TR></TABLE>  
 
     <FORM NAME="frmNewProject" ENCTYPE="multipart/form-data" METHOD="POST" ACTION="dutyedit_store.jsp" onSubmit="return validate()">
       <INPUT TYPE="hidden" NAME="is_new" VALUE="0">
@@ -265,7 +265,7 @@
             <TABLE SUMMARY="Proyecto" CLASS="formfront">
               <TR>
                 <TD>
-                  <FONT CLASS="formstrong">[~Proyecto~]</FONT><BR>
+                  <FONT CLASS="formstrong">Project</FONT><BR>
                   
                   <INPUT TYPE="hidden" NAME="gu_project" VALUE="<%=oDuty.getString(DB.gu_project)%>">
                   <SELECT NAME="sel_project" SIZE="22" STYLE="width:256" MULTIPLE>
@@ -297,7 +297,7 @@
             </TABLE>
           </TD>          
           <TD VALIGN="top" CLASS="formfront">
-	    <TABLE SUMMARY="[~Datos de Mantenimiento~]">
+	    <TABLE SUMMARY="Maintenance Data">
               <TR>
                 <TD ALIGN="right"></TD>
                 <TD>
@@ -305,38 +305,38 @@
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formstrong">[~Nombre~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formstrong">Name</FONT></TD>
                 <TD>
                   <INPUT TYPE="text" MAXLENGTH="50" SIZE="36" NAME="nm_duty" VALUE="<%=oDuty.getString(DB.nm_duty)%>">
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">[~Tipo~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">Type</FONT></TD>
                 <TD>
-                  <SELECT NAME="sel_tp_duty"><%=sTypesLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver tipos de tareas~]"></A>
+                  <SELECT NAME="sel_tp_duty"><%=sTypesLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Duty types"></A>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">[~Fecha Prevista~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">Scheduled Date</FONT></TD>
                 <TD>
                   <INPUT TYPE="text" MAXLENGTH="10" SIZE="9" NAME="dt_scheduled" VALUE="<% if (null!=oDuty.get(DB.dt_scheduled)) out.write(oSimpleDate.format(oDuty.get(DB.dt_scheduled))); %>">&nbsp;&nbsp;
-                  <A HREF="javascript:showCalendar('dt_scheduled')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>
+                  <A HREF="javascript:showCalendar('dt_scheduled')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
 		</TD>
 	      </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">[~Fecha Inicio~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">Start Date</FONT></TD>
                 <TD>
                   <INPUT TYPE="text" MAXLENGTH="10" SIZE="9" NAME="dt_start" VALUE="<% if (null!=oDuty.get(DB.dt_start)) out.write(oSimpleDate.format(oDuty.get(DB.dt_start))); %>">&nbsp;&nbsp;
-                  <A HREF="javascript:showCalendar('dt_start')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>
+                  <A HREF="javascript:showCalendar('dt_start')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
 		  &nbsp;
-		  <FONT CLASS="formplain">[~Fecha Fin~]</FONT>
+		  <FONT CLASS="formplain">End Date</FONT>
 		  &nbsp;
                   <INPUT TYPE="text" MAXLENGTH="10" SIZE="9" NAME="dt_end" VALUE="<% if (null!=oDuty.get(DB.dt_end)) out.write(oSimpleDate.format(oDuty.get(DB.dt_end))); %>">&nbsp;&nbsp;
-                  <A HREF="javascript:showCalendar('dt_end')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Ver Calendario~]"></A>
+                  <A HREF="javascript:showCalendar('dt_end')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
                 </TD>
               </TR>
                <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">[~Porcentaje Completado~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">Percentage Completed</FONT></TD>
                 <TD>
                   <INPUT TYPE="hidden" NAME="pct_complete" VALUE="<% if(null!=oDuty.get(DB.pct_complete)) out.write(String.valueOf(oDuty.get(DB.pct_complete))); %>">
 				  <SELECT NAME="sel_pct_complete">
@@ -360,51 +360,51 @@
                 </TD>
               </TR>
 			  <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">[~Prioridad~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">Priority</FONT></TD>
                 <TD>
                   <INPUT TYPE="hidden" NAME="od_priority" VALUE="<% if(null!=oDuty.get(DB.od_priority)) out.write(String.valueOf(oDuty.get(DB.od_priority))); %>">
                   <SELECT NAME="sel_priority"><OPTION VALUE=""></OPTION><%=sPriorityLookUp%></SELECT>
 <% if (1025==iDomainId) { %>
-                  <A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Valores~]"></A>
+                  <A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Values List"></A>
 <% } %>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">[~Estado~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">Status</FONT></TD>
                 <TD>
                   <INPUT TYPE="hidden" NAME="tx_status" VALUE="<%=oDuty.getStringNull(DB.tx_status,"")%>">
                   <SELECT NAME="sel_status"><OPTION VALUE=""></OPTION><%=sStatusLookUp%></SELECT>
 <% if (1025==iDomainId) { %>
-                  <A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Valores~]"></A>
+                  <A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Values List"></A>
 <% } %>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right"><FONT CLASS="formplain">[~Asignada a~]</FONT></TD>
+                <TD ALIGN="right"><FONT CLASS="formplain">Assigned to&nbsp;</FONT></TD>
                 <TD VALIGN="middle">
                   <INPUT TYPE="hidden" NAME="nm_resource" VALUE="">
-                  <SELECT NAME="sel_resources" MULTIPLE><OPTION VALUE=""></OPTION><%=sResourceLookUp%></SELECT>
-                  <A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" VSPACE="20" ALT="[~Ver Lista de Valores~]"></A>
+                  <SELECT NAME="sel_resources" SIZE="6" MULTIPLE><OPTION VALUE=""></OPTION><%=sResourceLookUp%></SELECT>
+                  <A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" VSPACE="20" ALT="View Values List"></A>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right" CLASS="formplain">[~Supervisada por~]</TD>
+                <TD ALIGN="right" CLASS="formplain">Supervised by</TD>
                 <TD><SELECT NAME="gu_writer"><OPTION VALUE=""></OPTION><% for (int s=0; s<iSupervisors; s++) out.write("<OPTION VALUE=\""+oSupervisors.getString(0,s)+"\">"+oSupervisors.getStringNull(1,s,"")+" "+oSupervisors.getStringNull(2,s,"")+" "+oSupervisors.getStringNull(3,s,"")+"</OPTION>"); %></SELECT></TD>
               </TR>
               <TR>
-                <TD ALIGN="right" VALIGN="top"><FONT CLASS="formplain">[~Descripci&oacute;n~]</FONT></TD>
+                <TD ALIGN="right" VALIGN="top"><FONT CLASS="formplain">Description</FONT></TD>
                 <TD>
                   <TEXTAREA NAME="de_duty" ROWS="4" COLS="36"><%=oDuty.getStringNull(DB.de_duty,"")%></TEXTAREA>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right" VALIGN="top"><FONT CLASS="formplain">[~Comentarios~]</FONT></TD>
+                <TD ALIGN="right" VALIGN="top"><FONT CLASS="formplain">Comments</FONT></TD>
                 <TD>
                   <TEXTAREA NAME="tx_comments" ROWS="3" COLS="36"><%=oDuty.getStringNull(DB.tx_comments,"")%></TEXTAREA>
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right" VALIGN="top"><FONT CLASS="formplain">[~Archivo Adjunto~]</FONT></TD>
+                <TD ALIGN="right" VALIGN="top"><FONT CLASS="formplain">Attached File</FONT></TD>
                 <TD>
                   <INPUT TYPE="file" NAME="dutyfile1_<%=sUserId%>" SIZE="26">
                 </TD>
@@ -412,9 +412,9 @@
 	      <%
 	        for (int a=0; a<iAttachs; a++) {
 	          out.write ("              <TR>\n");
-	          out.write ("                <TD VALIGN=\"middle\" ALIGN=\"right\"><FONT CLASS=\"formplain\">[~Borrar~]</FONT>&nbsp;<INPUT TYPE=\"checkbox\" VALUE=\"" + oAttachs.getString(0,a) + "\"></TD>\n");
+	          out.write ("                <TD VALIGN=\"middle\" ALIGN=\"right\"><FONT CLASS=\"formplain\">Delete</FONT>&nbsp;<INPUT TYPE=\"checkbox\" VALUE=\"" + oAttachs.getString(0,a) + "\"></TD>\n");
 	          out.write ("                <TD VALIGN=\"middle\">\n");
-	          out.write ("                  <A HREF=\"../servlet/HttpBLOBServlet?nm_table=" + DB.k_duties_attach + "&nm_field=" +  DB.tx_file + "&bin_field=" + DB.bin_file + "&pk_field=" + DB.gu_duty + "&pk_value=" + request.getParameter("gu_duty") + "\" TARGET=\"_blank\" CLASS=\"linknodecor\" TITLE=\"[~Ver Archivo~]\"><IMG SRC=\"../images/images/viewtxt.gif\" BORDER=\"0\">&nbsp;<I>" + oAttachs.getString(0,a) + "</I></A>");
+	          out.write ("                  <A HREF=\"../servlet/HttpBLOBServlet?nm_table=" + DB.k_duties_attach + "&nm_field=" +  DB.tx_file + "&bin_field=" + DB.bin_file + "&pk_field=" + DB.gu_duty + "&pk_value=" + request.getParameter("gu_duty") + "\" TARGET=\"_blank\" CLASS=\"linknodecor\" TITLE=\"View File\"><IMG SRC=\"../images/images/viewtxt.gif\" BORDER=\"0\">&nbsp;<I>" + oAttachs.getString(0,a) + "</I></A>");
 	          out.write ("                </TD>\n");
 	          out.write ("              </TR>\n");
 	        }
@@ -424,18 +424,18 @@
                 <TD>
                   <BR>
 <% if (bIsGuest) { %>
-                  <INPUT TYPE="button" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="[~Guardar~]" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
+                  <INPUT TYPE="button" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="Save" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
 <% } else { %>
-                  <INPUT TYPE="submit" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="[~Guardar~]">
+                  <INPUT TYPE="submit" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="Save">
 <% } %>
                   &nbsp;&nbsp;&nbsp;
 <% if (bIsGuest) { %>
-                  <INPUT TYPE="button" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="[~Eliminar~]" onClick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
+                  <INPUT TYPE="button" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="Delete" onClick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
 <% } else { %>
-                  <INPUT TYPE="button" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="[~Eliminar~]" onClick="javascript:deleteDuty()">
+                  <INPUT TYPE="button" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="Delete" onClick="javascript:deleteDuty()">
 <% } %>
                   &nbsp;&nbsp;&nbsp;
-                  <INPUT TYPE="button" CLASS="closebutton" STYLE="WIDTH:80" VALUE="[~Cerrar~]" onClick="javascript:window.close()">
+                  <INPUT TYPE="button" CLASS="closebutton" STYLE="WIDTH:80" VALUE="Close" onClick="javascript:window.close()">
                 </TD>
               </TR>              
             </TABLE>

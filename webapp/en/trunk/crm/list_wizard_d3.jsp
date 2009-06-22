@@ -1,4 +1,4 @@
-<%@ page import="com.oreilly.servlet.MultipartRequest,java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="com.oreilly.servlet.MultipartRequest,java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %>
 <%
 /*
@@ -150,7 +150,7 @@
       }
     //-->
   </SCRIPT>
-  <TITLE>hipergate :: [~Crear Lista de Distribuci&oacute;n - Paso 3/4~]</TITLE>
+  <TITLE>hipergate :: Create Distribution List - Step 3 of 4</TITLE>
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setInputs()">
   <FORM onSubmit="return validate()">
@@ -163,28 +163,28 @@
     <INPUT TYPE="hidden" NAME="desc_file" VALUE="<% out.write(oReq.getParameter("desc_file")); %>"">
     <CENTER>
     <TABLE>
-      <TR><TD WIDTH="310px" CLASS="striptitle"><FONT CLASS="title1">[~Crear Lista - Paso 3 de 4~]</FONT></TD></TR>
+      <TR><TD WIDTH="310px" CLASS="striptitle"><FONT CLASS="title1">Create List - Step 2 of 4</FONT></TD></TR>
       <TR><TD><IMG SRC="../images/images/spacer.gif" WIDTH="300" HEIGHT="4" BORDER="0"></TD></TR>
     </TABLE>
     <TABLE WIDTH="310px" CLASS="formback">
       <TR>
         <TD ALIGN="left" CLASS="formstrong">
-          [~Especifique direcciones de remite y retorno~]
+          Specify sender and return addresses
         </TD>
       </TR>
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
             <TD ALIGN="left">
-	      <FONT CLASS="formplain">[~Direcci&oacute;n e-mail del remitente~]</FONT>
+	      <FONT CLASS="formplain">Sender e-mail address</FONT>
 	      <BR>
 	      <INPUT TYPE="text" CLASS="combomini" NAME="tx_from" MAXLENGTH="100" SIZE="48" VALUE="<%=sEMail%>">
 	      <BR>
-	      <FONT CLASS="formplain">[~Mostrar nombre de remitente~]</FONT>
+	      <FONT CLASS="formplain">Display sender name</FONT>
 	      <BR>
 	      <INPUT TYPE="text" CLASS="combomini" NAME="tx_sender" MAXLENGTH="100" SIZE="48" VALUE="<%=sFullName%>">
 	      <BR>
-	      <FONT CLASS="formplain">[~Direcci&oacute;n e-mail de retorno~]</FONT>
+	      <FONT CLASS="formplain">e-mail return address</FONT>
 	      <BR>
 	      <INPUT TYPE="text" CLASS="combomini" NAME="tx_reply" MAXLENGTH="100" SIZE="48" VALUE="<%=sEMail%>">	      
             </TD>
@@ -193,7 +193,7 @@
       </TD></TR>
     </TABLE>
     <TABLE SUMMARY="Buttons">
-      <TR><TD><INPUT TYPE="button" CLASS="closebutton" VALUE="[~Cancelar~]" STYLE="width:100px" onClick="window.document.location='list_wizard_cancel.jsp?tp_list=' + document.forms[0].tp_list.value + '&gu_query=<% out.write(sFileId); %>';">&nbsp;<INPUT TYPE="button" CLASS="pushbutton" VALUE="[~<< Anterior~]" STYLE="width:100px" onClick="window.history.back()">&nbsp;<INPUT TYPE="submit" CLASS="pushbutton" VALUE="[~Siguiente >>~]" STYLE="width:100px"></TD></TR>
+      <TR><TD><INPUT TYPE="button" CLASS="closebutton" VALUE="Cancel" STYLE="width:100px" onClick="window.document.location='list_wizard_cancel.jsp?tp_list=' + document.forms[0].tp_list.value + '&gu_query=<% out.write(sFileId); %>';">&nbsp;<INPUT TYPE="button" CLASS="pushbutton" VALUE="<< Previous" STYLE="width:100px" onClick="window.history.back()">&nbsp;<INPUT TYPE="submit" CLASS="pushbutton" VALUE="Next >>" STYLE="width:100px"></TD></TR>
     </TABLE>
     </CENTER>
   </FORM>

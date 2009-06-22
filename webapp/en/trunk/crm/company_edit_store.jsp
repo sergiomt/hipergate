@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.util.*,java.math.*,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.crm.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.util.*,java.math.*,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.crm.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.misc.Environment,com.knowgate.hipergate.RecentlyUsed" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="../methods/customattrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%
@@ -102,6 +102,13 @@
       oStmt.close();
     } // fi (prods)
     
+    RecentlyUsed oRecent = new RecentlyUsed (DB.k_companies_recent, 10, DB.gu_company, DB.gu_user);
+	  DBPersist oItem = new DBPersist (DB.k_companies_recent, "RecentCompany");
+	  oItem.put (DB.gu_company, oCompany.getString(DB.gu_company));
+	  oItem.put (DB.gu_user, id_user);
+	  oItem.put (DB.gu_workarea, gu_workarea);
+	  oItem.put (DB.nm_company, oCompany.getStringNull(DB.nm_commercial, oCompany.getString(DB.nm_legal)));
+	  oRecent.add(oConn, oItem);
         
     DBAudit.log(oConn, Company.ClassId, sOpCode, id_user, oCompany.getString(DB.gu_company), null, 0, 0, request.getParameter("nm_legal"), null);
     
@@ -121,7 +128,7 @@
 %>
 <HTML>
 <HEAD>
-  <TITLE>[~Espere~]...</TITLE>
+  <TITLE>Wait...</TITLE>
   <SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>
     <!--    
     if ("<%=noreload%>"=="0")

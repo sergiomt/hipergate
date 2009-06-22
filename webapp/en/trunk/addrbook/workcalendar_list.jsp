@@ -1,4 +1,4 @@
-<%@ page import="java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><% 
 
   response.addHeader ("Pragma", "no-cache");
@@ -143,7 +143,7 @@
       
       function deleteWorkTime() {
       	var frm = document.forms[0];
-      	if (window.confirm("Are you sure that you want to delete the selected calendars?")) {
+      	if (window.confirm("[~¿Está seguro de que desea eliminar los calendarios seleccionados?~]")) {
       	  frm.checkeditems.value = "";
       	  for (var c=0; c<jsCalendars.length; c++) {
       	    if (frm.elements[jsCalendars[c]].checked)

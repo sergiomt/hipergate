@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 
 <HTML>
 <HEAD>
@@ -40,7 +40,7 @@
       }
     //-->
   </SCRIPT>
-  <TITLE>hipergate :: [~Crear Lista de Distribuci&oacute;n - Paso 1/4~]</TITLE>
+  <TITLE>hipergate :: Create Distribution List - Step 1 of 4</TITLE>
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setInputs()">
   <DIV ID="dek" STYLE="width:200;height:20;z-index:200;visibility:hidden;position:absolute"></DIV>  
@@ -50,31 +50,31 @@
     <INPUT TYPE="hidden" NAME="gu_workarea">
     <INPUT TYPE="hidden" NAME="tp_list">
     <CENTER>
-    <TABLE><TR><TD WIDTH="310px" CLASS="striptitle"><FONT CLASS="title1">[~Crear Lista - Paso 1 de 4~]</FONT></TD></TR></TABLE>
+    <TABLE><TR><TD WIDTH="310px" CLASS="striptitle"><FONT CLASS="title1">Create List - Step 1 of 4</FONT></TD></TR></TABLE>
     <TABLE WIDTH="310px" CLASS="formback">
       <TR><TD ALIGN="left" CLASS="formstrong">[~¿Qu&eacute; tipo de lista desea crear?~]</TD></TR>
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
             <TD ALIGN="left">
-              <INPUT TYPE="radio" checked NAME="listtype" VALUE="static" onClick="document.forms[0].tp_list.value='1';">&nbsp;<FONT CLASS="formstrong">[~Est&aacute;tica~]</FONT>
+              <INPUT TYPE="radio" checked NAME="listtype" VALUE="static" onClick="document.forms[0].tp_list.value='1';">&nbsp;<FONT CLASS="formstrong">Static</FONT>
               <BR>
-              <FONT CLASS="textsmall">[~Una lista Est&aacute;tica toma una foto fija de una consulta, a partir de ese momento los miembros nunca cambian.~]</FONT>
+              <FONT CLASS="textsmall">A Static List takes its members from a Query once and never changes over time even if query results do.</FONT>
               <BR>
-              <INPUT TYPE="radio" NAME="listtype" VALUE="dynamic" onClick="document.forms[0].tp_list.value='2';">&nbsp;<FONT CLASS="formstrong">[~Din&aacute;mica~]</FONT>
+              <INPUT TYPE="radio" NAME="listtype" VALUE="dynamic" onClick="document.forms[0].tp_list.value='2';">&nbsp;<FONT CLASS="formstrong">Dynamic</FONT>
               <BR>
-              <FONT CLASS="textsmall">[~Una lista Din&aacute;mica refleja los valores de una consulta y sus miembros cambian seg&uacute;n fije el criterio de dicha consulta.~]</FONT>
+              <FONT CLASS="textsmall">A Dynamic List reflect results from a Query, its members change over time as query produces new results.</FONT>
               <BR>
-              <INPUT TYPE="radio" NAME="listtype" VALUE="direct" onClick="document.forms[0].tp_list.value='3';">&nbsp;<FONT CLASS="formstrong">[~Directamente cargada desde un archivo~]</FONT>
+              <INPUT TYPE="radio" NAME="listtype" VALUE="direct" onClick="document.forms[0].tp_list.value='3';">&nbsp;<FONT CLASS="formstrong">Directly loaded from a file</FONT>
               <BR>
-              <FONT CLASS="textsmall">[~Una lista Directa toma su conjunto de miembros de un archivo de texto delimitado.~]<BR><BR></FONT>
+              <FONT CLASS="textsmall">A Direct List takes its members from a fixed test file an never changes over time.<BR><BR></FONT>
             </TD>
           </TR>
         </TABLE>
       </TD>
      </TR>
     </TABLE>
-    <TABLE WIDTH="310px"><TR><TD ALIGN="right"><INPUT TYPE="button" CLASS="closebutton" VALUE="[~Cancelar~]" STYLE="width:100px" onClick="self.close()">&nbsp;<INPUT TYPE="submit" CLASS="pushbutton" VALUE="[~Siguiente >>~]" STYLE="width:100px"></TD></TR></TABLE>
+    <TABLE WIDTH="310px"><TR><TD ALIGN="right"><INPUT TYPE="button" CLASS="closebutton" VALUE="Cancel" STYLE="width:100px" onClick="self.close()">&nbsp;<INPUT TYPE="submit" CLASS="pushbutton" VALUE="Next >>" STYLE="width:100px"></TD></TR></TABLE>
     </CENTER>
   </FORM>
 </BODY>

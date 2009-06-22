@@ -1,4 +1,4 @@
-<%@ page import="com.knowgate.debug.*,java.net.URLDecoder,java.io.File,java.io.FileNotFoundException,java.io.IOException,java.sql.SQLException,java.sql.PreparedStatement,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.*,com.knowgate.misc.Environment,com.knowgate.hipergate.QueryByForm" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="com.knowgate.debug.*,java.net.URLDecoder,java.io.File,java.io.FileNotFoundException,java.io.IOException,java.sql.Connection,java.sql.SQLException,java.sql.PreparedStatement,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.*,com.knowgate.misc.Environment,com.knowgate.hipergate.QueryByForm" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <%
 /*
@@ -69,7 +69,7 @@
   sTempDir = com.knowgate.misc.Gadgets.chomp(sTempDir,java.io.File.separator);
   
   // **************************************************
-  // [~//Parsear el fichero de texto si la lista es directa~]
+  // Parsear el fichero de texto si la lista es directa
   
   try {
     if ((tp_list.equals("3")) && (caller.equals("wizard")))
@@ -102,17 +102,18 @@
   if (null==oDirect) return;
   
   JDCConnection oConn = null;
+  Connection    oCon2 = null;
   
   try {
     
     oConn = GlobalDBBind.getConnection("list_wizard_store");
     
     // *************************************************************
-    // [~//Primero guardar el registro principal de la lista en si misma~]
+    // Primero guardar el registro principal de la lista en si misma
       
     loadRequest(oConn, request, oList);
     
-    // [~//Las listas directas no tienen query asociada~]
+    // Las listas directas no tienen query asociada
     if (null!=tp_list) if (tp_list.equals("3")) oList.remove(DB.gu_query);
 
     oConn.setAutoCommit (true);
@@ -125,7 +126,7 @@
   catch (SQLException e) {  
     if (oConn!=null)
       if (!oConn.isClosed()) {
-        oConn.close("list_wizard_store");      
+        oConn.close("list_wizard_store");
       }
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getMessage() + "&resume=_back"));
@@ -133,7 +134,7 @@
   catch (NumberFormatException e) {
     if (oConn!=null)
       if (!oConn.isClosed()) {
-        oConn.close("list_wizard_store");      
+        oConn.close();      
       }
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NumberFormatException&desc=" + e.getMessage() + "&resume=_back"));
@@ -154,49 +155,66 @@
       // Recuperar miembros
       oMembers = new DBSubset (DB.k_member_address + " b", 
                                DB.gu_company + "," + DB.gu_contact + "," + DB.nm_legal + "," + DB.tx_name + "," + DB.tx_surname + ", " + DB.tx_email + ", " + DB.gu_address,
-        		       DB.gu_workarea + "='" + gu_workarea + "' AND " + sWhere, 0);
+        		       						 DB.gu_workarea + "='" + gu_workarea + "' AND " + sWhere, 0);
       iMembersCount = oMembers.load(oConn);
-          
+
+      oConn.close("list_wizard_store");
+
+      oCon2 = GlobalDBBind.getConnection(GlobalDBBind.getProperty("dbuser"), GlobalDBBind.getProperty("dbpassword"));
+      oCon2.setAutoCommit (true);
+
       sQuery = "INSERT INTO " + DB.k_x_list_members + " (gu_list,tx_email,tx_name,tx_surname,dt_created,gu_company,gu_contact) SELECT '" + gu_list + "',tx_email,";
 
       if (DebugFile.trace)
         DebugFile.writeln("Connection.prepareStatement(" + sQuery + "nm_commercial,tx_surname,dt_created,gu_company,gu_contact FROM k_member_address WHERE gu_workarea='" + gu_workarea + "' AND gu_company=? AND gu_contact IS NULL AND gu_address=?)");
         
-      PreparedStatement oInsertCompany = oConn.prepareStatement(sQuery + "nm_commercial,tx_surname,dt_created,gu_company,gu_contact FROM k_member_address WHERE gu_workarea='" + gu_workarea + "' AND gu_company=? AND gu_contact IS NULL AND gu_address=?");
+      PreparedStatement oInsertCompany = oCon2.prepareStatement(sQuery + "nm_commercial,tx_surname,dt_created,gu_company,gu_contact FROM k_member_address WHERE gu_workarea='" + gu_workarea + "' AND gu_company=? AND gu_contact IS NULL AND gu_address=?");
 
       if (DebugFile.trace)
         DebugFile.writeln("Connection.prepareStatement(" + sQuery + "tx_name,tx_surname,dt_created,gu_company,gu_contact FROM k_member_address WHERE gu_workarea='" + gu_workarea + "' AND gu_contact=? AND gu_company IS NULL AND gu_address=?)");
         
-      PreparedStatement oInsertContact = oConn.prepareStatement(sQuery + "tx_name,tx_surname,dt_created,gu_company,gu_contact FROM k_member_address WHERE gu_workarea='" + gu_workarea + "' AND gu_contact=? AND gu_company IS NULL AND gu_address=?");
+      PreparedStatement oInsertContact = oCon2.prepareStatement(sQuery + "tx_name,tx_surname,dt_created,gu_company,gu_contact FROM k_member_address WHERE gu_workarea='" + gu_workarea + "' AND gu_contact=? AND gu_company IS NULL AND gu_address=?");
 
       if (DebugFile.trace)
         DebugFile.writeln("Connection.prepareStatement(" + sQuery + "tx_name,tx_surname,dt_created,gu_company,gu_contact FROM k_member_address WHERE gu_workarea='" + gu_workarea + "' AND gu_company=? AND gu_contact=? AND gu_address=?)");
         
-      PreparedStatement oInsertBoth    = oConn.prepareStatement(sQuery + "tx_name,tx_surname,dt_created,gu_company,gu_contact FROM k_member_address WHERE gu_workarea='" + gu_workarea + "' AND gu_company=? AND gu_contact=? AND gu_address=?");
+      PreparedStatement oInsertBoth    = oCon2.prepareStatement(sQuery + "tx_name,tx_surname,dt_created,gu_company,gu_contact FROM k_member_address WHERE gu_workarea='" + gu_workarea + "' AND gu_company=? AND gu_contact=? AND gu_address=?");
       
       for (int i=0; i<iMembersCount; i++) {              
         if (oMembers.isNull(0,i)) { 
           try {
             oInsertContact.setString(1, oMembers.getString(1,i));
             oInsertContact.setString(2, oMembers.getString(6,i)); 
-            oInsertContact.execute();
-          } catch (SQLException e) { if (DebugFile.trace) DebugFile.writeln(e.getMessage() + " Duplicated member "+oMembers.getString(1,i)+" removed"); }
+            oInsertContact.executeUpdate();
+          } catch (SQLException e) {            
+            if (DebugFile.trace) DebugFile.writeln(e.getMessage() + " Duplicated member "+oMembers.getString(1,i)+" removed");
+            oInsertContact.close();
+            oInsertContact = oConn.prepareStatement(sQuery + "tx_name,tx_surname,dt_created,gu_company,gu_contact FROM k_member_address WHERE gu_workarea='" + gu_workarea + "' AND gu_contact=? AND gu_company IS NULL AND gu_address=?");
+          }
         }
         else {
           if (oMembers.isNull(1,i)) { 
             try {
               oInsertCompany.setString(1, oMembers.getString(0,i)); 
               oInsertCompany.setString(2, oMembers.getString(6,i)); 
-              oInsertCompany.execute();
-            } catch (SQLException e) { if (DebugFile.trace) DebugFile.writeln(e.getMessage() + " Duplicated member "+oMembers.getString(0,i)+" removed"); }
+              oInsertCompany.executeUpdate();
+            } catch (SQLException e) {
+              if (DebugFile.trace) DebugFile.writeln(e.getMessage() + " Duplicated member "+oMembers.getString(0,i)+" removed");
+              oInsertCompany.close();
+              oInsertCompany = oConn.prepareStatement(sQuery + "nm_commercial,tx_surname,dt_created,gu_company,gu_contact FROM k_member_address WHERE gu_workarea='" + gu_workarea + "' AND gu_company=? AND gu_contact IS NULL AND gu_address=?");
+            }
           }
           else { 
             try {
               oInsertBoth.setString(1, oMembers.getString(0,i)); 
               oInsertBoth.setString(2, oMembers.getString(1,i)); 
               oInsertBoth.setString(3, oMembers.getString(6,i)); 
-              oInsertBoth.execute();
-            } catch (SQLException e) { if (DebugFile.trace) DebugFile.writeln(e.getMessage() + " Duplicated member "+oMembers.getString(0,i)+" removed"); }
+              oInsertBoth.executeUpdate();
+            } catch (SQLException e) {
+              if (DebugFile.trace) DebugFile.writeln(e.getMessage() + " Duplicated member "+oMembers.getString(0,i)+" removed");
+              oInsertBoth.close();
+      				oInsertBoth = oConn.prepareStatement(sQuery + "tx_name,tx_surname,dt_created,gu_company,gu_contact FROM k_member_address WHERE gu_workarea='" + gu_workarea + "' AND gu_company=? AND gu_contact=? AND gu_address=?");
+            }
           } // end if
         }                              
     } // next()
@@ -206,13 +224,21 @@
     oInsertContact.close();
     
     if (DebugFile.trace) DebugFile.writeln(String.valueOf(iMembersCount) + " candidate members processed");
-    
+
+	  oCon2.close();
+	  oCon2=null;
+
     } catch (SQLException e) {  
       if (oConn!=null)
         if (!oConn.isClosed()) {
-          oConn.close("list_wizard_store");          
+          oConn.close("list_wizard_store");
         }
         oConn = null;
+      if (oCon2!=null)
+        if (!oCon2.isClosed()) {
+          oCon2.close();
+        }
+        oCon2 = null;
       response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getMessage() + "&resume=_back"));
     }
     catch (NullPointerException e) {  
@@ -225,13 +251,17 @@
     }
 
     if (null==oConn) return;
+
+    if (!oConn.isClosed()) oConn.close("list_wizard_store");
+    oConn = GlobalDBBind.getConnection("list_wizard_store");
+    oConn.setAutoCommit (true);
         
     oMembers = null;
 
   } // fi (tp_list=="1" && caller=="wizard")
 
   // *****************************************************************************************
-  // [~//Almacenar miembros si es lista directa en y si la llamada proviene del wizard de creación~]
+  // Almacenar miembros si es lista directa en y si la llamada proviene del wizard de creación
 
   else if ((tp_list.equals("3")) && (caller.equals("wizard"))) {
         

@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.ListMember,com.knowgate.misc.CSVParser,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.ListMember,com.knowgate.misc.CSVParser,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><% 
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -91,7 +91,7 @@
 
         if (oOldSets.getField(1,l).equals("0") && oOldSets.getField(1,l).equals("1"))
 
-          throw new IllegalStateException ("[~No es posible dar el miembro de alta en ninguna lista porque no tiene ninguna direccion asociada~]");
+          throw new IllegalStateException ("It is not possible to add member to this list because he does not have any associated address");
       }
     }
 
@@ -160,7 +160,7 @@
         oConn.close("subscriptions_store");
       }
     oConn = null;
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Direccion no encontrada~]&desc=" + e.getMessage() + "&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Address not Found&desc=" + e.getMessage() + "&resume=_back"));
   }
   catch (NoSuchFieldException e) {  
     if (oConn!=null)

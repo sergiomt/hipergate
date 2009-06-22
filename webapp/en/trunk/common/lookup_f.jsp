@@ -1,4 +1,4 @@
-<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -49,7 +49,7 @@
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <TITLE>hipergate :: [~Seleccionar valor~]</TITLE>
+    <TITLE>hipergate :: Select value</TITLE>
   </HEAD>
   <FRAMESET NAME="lookuptop" ROWS="80,*,48" BORDER="0" FRAMEBORDER="0">
     <FRAME NAME="lookupup" FRAMEBORDER="no" MARGINWIDTH="0 MARGINHEIGHT="0" NORESIZE SRC="lookup_up.jsp<%=sQryStr%>">
@@ -57,7 +57,7 @@
     <FRAME NAME="lookupdown" FRAMEBORDER="no" MARGINWIDTH="0 MARGINHEIGHT="0" NORESIZE SRC="lookup_down.jsp">
     <NOFRAMES>
       <BODY>
-        <P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
+        <P>This page use frames, but your web browser does not handle them</P>
       </BODY>
     </NOFRAMES>
   </FRAMESET>

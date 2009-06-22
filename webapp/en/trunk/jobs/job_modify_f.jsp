@@ -1,8 +1,11 @@
-<%@ include file="../methods/nullif.jspf" %>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//EN" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">
+<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %><%@ include file="../methods/nullif.jspf" %><%
+  response.addHeader ("Pragma", "no-cache");
+  response.addHeader ("cache-control", "no-store");
+  response.setIntHeader("Expires", 0);
+%><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//EN" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">
 <!-- +--------------------------------+ -->
 <!-- | Edición de propiedades del Job | -->
-<!-- | (c) KnowGate 2003              | -->
+<!-- | (c) KnowGate 2003-2009         | -->
 <!-- +--------------------------------+ -->  
 <HTML>
   <HEAD>

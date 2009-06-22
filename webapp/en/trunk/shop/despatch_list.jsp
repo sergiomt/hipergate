@@ -1,4 +1,4 @@
-<%@ page import="java.math.BigDecimal,java.net.URLDecoder,java.util.Date,java.util.HashMap,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.*,com.knowgate.hipergate.QueryByForm,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><% 
+﻿<%@ page import="java.math.BigDecimal,java.net.URLDecoder,java.util.Date,java.util.HashMap,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.*,com.knowgate.hipergate.QueryByForm,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><% 
 
 /*
   Copyright (C) 2005  Know Gate S.L. All rights reserved.
@@ -31,6 +31,8 @@
   You should have received a copy of hipergate License with this code;
   if not, visit http://www.hipergate.org or mail to info@hipergate.org
 */
+
+  if (autenticateSession(GlobalDBBind, request, response)<0) return;
 
   String sLanguage = getNavigatorLanguage(request);
 
@@ -452,7 +454,7 @@
 	  var frm = document.forms[0];
 	  var chi = frm.checkeditems;
 	  	  
-	  if (window.confirm("Are you sure that you want to delete selected despatch advices?")) {
+	  if (window.confirm("[~¿Está seguro de que desea eliminar los albaranes seleccionadas?~]")) {
 	  	  
 	    chi.value = "";	  	  
 	    frm.action = "despatch_edit_delete.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
@@ -484,7 +486,7 @@
 	    return false;
 	  }
 	  
-	  if (window.confirm("Are you sure that you want to change the status of selected addespatch vices?")) {
+	  if (window.confirm("[~¿Está seguro de que desea cambiar el estado de los albaranes seleccionados?~]")) {
 	  	  
 	    chi.value = "";	  	  
 	    frm.action = "despatch_status_updt.jsp?id_status="+getCombo(frm.sel_status)+"&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
@@ -501,7 +503,7 @@
 	      chi.value = chi.value.substr(0,chi.value.length-1);
               frm.submit();
             } else {
-	      alert ("At least one Despacth Advice to be modified must be selected");
+	      alert ("[~Debe seleccionar al menos un albarán a modificar~]");
             }
           } // fi (confirm)
 	} // updateStatus()
@@ -565,17 +567,17 @@
           var fnd = "";
           
           if (frm.tx_search.value.indexOf("'")>=0 || frm.tx_search.value.indexOf(",")>=0 || frm.tx_search.value.indexOf(";")>=0) {
-	    alert ("Invalid characters at field "+getComboText(frm.sel_searched));
+	    alert ("[~Caracteres no válidos en el campo~] "+getComboText(frm.sel_searched));
 	    return null;
           }
 
           if (frm.tx_start.value.indexOf("'")>=0 || frm.tx_start.value.indexOf(",")>=0 || frm.tx_start.value.indexOf(";")>=0) {
-	    alert ("Start date contains invalid characters");
+	    alert ("[~La fecha de inicio contiene caracteres no válidos~]");
 	    return null;
           }
 
           if (frm.tx_end.value.indexOf("'")>=0 || frm.tx_end.value.indexOf(",")>=0  || frm.tx_end.value.indexOf(";")>=0) {
-	    alert ("End date contains invalid characters");
+	    alert ("[~La fecha de fin contiene caracteres no válidos~]");
 	    return null;
           }
 
@@ -585,27 +587,27 @@
           }
 
           if (getCombo(frm.sel_searched)=="pg_despatch" && !isIntValue(frm.tx_search.value)) {
-	    alert ("Despacth Advice Number is not valid");
+	    alert ("[~El numero de albarán no es valido~]");
 	    return null;
           }
           
 	  if (getCombo(frm.sel_between)=="im_total") {
 	    if (frm.tx_start.value.length>0 && isNaN(frm.tx_start.value)) {
-	      alert ("Initial amount is not a valid quantity");
+	      alert ("[~El importe inicial no es una cantidad válida~]");
 	      return null;
 	    }
 	    if (frm.tx_end.value.length>0 && isNaN(frm.tx_end.value)) {
-	      alert ("Final amount is not a valid quantity");
+	      alert ("[~El importe final no es una cantidad válida~]");
 	      return null;
 	    }
 	  }
 	  else if (getCombo(frm.sel_between)=="dt_modified") {
 	    if (frm.tx_start.value.length>0 && !isDate(frm.tx_start.value, "d")) {
-	      alert ("Start date is not valid");
+	      alert ("[~La fecha de inicio no es válida, debe ser en formato AAAA-MM-DD~]");
 	      return null;
 	    }
 	    if (frm.tx_end.value.length>0 && !isDate(frm.tx_end.value, "d")) {
-	      alert ("End date is not valid");
+	      alert ("[~La fecha de fin no es válida, debe ser en formato AAAA-MM-DD~]");
 	      return null;
 	    }
 	  }
@@ -719,10 +721,10 @@
           <TD NOWRAP>
             <TABLE SUMMARY="Top Options Line" BORDER="0">
               <TR>
-                <TD ALIGN="right">&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Despatch Advice"></TD>
+                <TD ALIGN="right">&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nuevo Albarán~]"></TD>
                 <TD ALIGN="left" VALIGN="center"><A HREF="#" onclick="createDespatchAdvice()" CLASS="linkplain">New</A></TD>
                 <TD>&nbsp;&nbsp;</TD>
-                <TD ALIGN="right">&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete Despatch Advice"></TD>
+                <TD ALIGN="right">&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar Albarán~]"></TD>
                 <TD ALIGN="left"><A HREF="javascript:deleteDespatchAdvices()" CLASS="linkplain">Delete</A></TD>
                 <TD>&nbsp;&nbsp;</TD>
 	        <TD>
@@ -742,7 +744,7 @@
             <TABLE SUMMARY="Bottom Options Line" BORDER="0" WIDTH="100%">
               <TR>
 		<TD>
-                  <SELECT NAME="sel_searched" CLASS="combomini"><OPTION VALUE=""></OPTION><OPTION VALUE="pg_despatch">Despatch Advice Num</OPTION><OPTION VALUE="nm_client">Client</OPTION><OPTION VALUE="id_legal">Legal Id</OPTION><OPTION VALUE="tx_comments">Comments</OPTION></SELECT>
+                  <SELECT NAME="sel_searched" CLASS="combomini"><OPTION VALUE=""></OPTION><OPTION VALUE="pg_despatch">[~Nº Albarán~]</OPTION><OPTION VALUE="nm_client">Client</OPTION><OPTION VALUE="id_legal">Legal Id</OPTION><OPTION VALUE="tx_comments">Comments</OPTION></SELECT>
                   <INPUT CLASS="textmini" TYPE="text" NAME="tx_search" MAXLENGTH="30" SIZE="10" VALUE="">
                   &nbsp;<FONT CLASS="textsmall">and</FONT>&nbsp;
                   <SELECT NAME="sel_lookup" CLASS="combomini" onchange="fillLooked()"><OPTION VALUE=""></OPTION><OPTION VALUE="id_status">Status</OPTION></SELECT>
@@ -754,7 +756,7 @@
                   &nbsp;<FONT CLASS="textsmall">and</FONT>&nbsp;
                   <INPUT CLASS="textmini" TYPE="text" NAME="tx_end" MAXLENGTH="10" SIZE="10" VALUE="">
 	          &nbsp;<A HREF="javascript:findDespatchAdvice();" TITLE="Buscar"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Search Despacth Advice"></A>
-	          &nbsp;&nbsp;&nbsp;<A HREF="javascript:discardFind();" TITLE="Discard Find Filter"><IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard Find Filter"></A>
+	          &nbsp;&nbsp;&nbsp;<A HREF="javascript:discardFind();" TITLE="[~Descartar búsqueda~]"><IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="[~Descartar búsqueda~]"></A>
                 </TD>
               </TR>
             <TABLE>
@@ -870,7 +872,7 @@
    response.setContentType("text/tab-separated-values");
    response.setHeader("Content-Disposition", "attachment; filename=\"despatchadvices.txt\"");
 
-   out.write("Number\tStatus\tInvoicing Date\tDue date\tLegal Name\tLegal Id.\tTotal\tCatalog\n");
+   out.write("[~Número~]\tStatus\tInvoicing Date\tDue date\tLegal Name\tLegal Id.\tTotal\t[~Catálogo~]\n");
    
    for (int i=0; i<iDespatchAdvicesCount; i++) {
 	  

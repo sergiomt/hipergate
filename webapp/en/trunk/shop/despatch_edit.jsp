@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><% 
 
@@ -67,7 +67,7 @@
 %><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: Edit Despatch Advice</TITLE>
+  <TITLE>hipergate :: [~Editar Albarán~]</TITLE>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -169,6 +169,7 @@
         intervalId = setInterval ("findReferenceWindow()", 500);
       } // reference()
 
+
       // ----------------------------------------------------
 
       function addProduct() {
@@ -201,7 +202,7 @@
   	    GridCreateInputCell(oRow, 3, "pr_product"+sPg , "pr_product"+sPg , "text", sProdPr, 8, 12,"onchange='GridSetCellValue(oProductGrid,3," + String(iProductCount) + ",this.value); computeTotal()'");
   	    GridCreateInputCell(oRow, 4, "pct_tax"+sPg , "pct_tax"+sPg , "text", sProdPc, 4, 12,"onchange='GridSetCellValue(oProductGrid,4," + String(iProductCount) + ",this.value);' onblur='setCookie(taxcookiename,this.value)'");
   	    GridCreateInputCell(oRow, 5, "id_currency"+sPg , "id_currency"+sPg , "hidden", sProdCu, null, 3, "");
-  	    GridCreateCell(oRow, 6, "remove"+sPg , "remove"+sPg , "html", "<A HREF='#' onclick='GridRemoveRow(oProductGrid,GridFindRow(oProductGrid," + '"' + sProdId + '"' + ")); GridDraw (oProductGrid, jsTableName, jsTableHeader, jsTableFooter); computeTotal();'><IMG SRC='../images/images/delete.gif' BORDER='0' ALT='Remove product from Despatch Note'></A>");        
+  	    GridCreateCell(oRow, 6, "remove"+sPg , "remove"+sPg , "html", "<A HREF='#' onclick='GridRemoveRow(oProductGrid,GridFindRow(oProductGrid," + '"' + sProdId + '"' + ")); GridDraw (oProductGrid, jsTableName, jsTableHeader, jsTableFooter); computeTotal();'><IMG SRC='../images/images/delete.gif' BORDER='0' ALT='[~Eliminar Producto del Albarán~]'></A>");        
 
         iProductCount++;
 
@@ -227,7 +228,7 @@
   	    GridCreateCell(oRow, 3, "pr_product"+sPg , "pr_product"+sPg , "html", "<FONT CLASS=textsmall>" + sProdPr  + "</FONT>");
   	    GridCreateCell(oRow, 4, "pct_tax"+sPg , "pct_tax"+sPg , "html", "<FONT CLASS=textsmall>" + sProdPc  + "</FONT>");
   	    GridCreateInputCell(oRow, 5, "id_currency"+sPg , "id_currency"+sPg , "hidden", sProdCu, null, 3, "");
-  	    GridCreateCell(oRow, 6, "remove"+sPg , "remove"+sPg , "html", "<A HREF='#' onclick='GridRemoveRow(oProductGrid,GridFindRow(oProductGrid," + '"' + sProdId + '"' + ")); GridDraw (oProductGrid, jsTableName, jsTableHeader, jsTableFooter); computeTotal();'><IMG SRC='../images/images/delete.gif' BORDER='0' ALT='Remove product from Despatch Note'></A>");
+  	    GridCreateCell(oRow, 6, "remove"+sPg , "remove"+sPg , "html", "<A HREF='#' onclick='GridRemoveRow(oProductGrid,GridFindRow(oProductGrid," + '"' + sProdId + '"' + ")); GridDraw (oProductGrid, jsTableName, jsTableHeader, jsTableFooter); computeTotal();'><IMG SRC='../images/images/delete.gif' BORDER='0' ALT='[~Eliminar Producto del Albarán~]'></A>");
 
         iProductCount++;
 
@@ -298,7 +299,7 @@
         var frm = document.forms[0];
 
 	if (frm.gu_company.value.length==0 && frm.gu_contact.value.length==0) {
-	  alert ("A Company or Individual must be selected before adding an address");
+	  alert ("[~Debe seleccionar primero una compañía o un individuo sobre los que crear direcciones~]");
 	  return false;
 	}
 	
@@ -310,6 +311,24 @@
         intervalAd = setInterval ("findAddressWindow()", 500);
       
       } // createAddress
+
+      // ----------------------------------------------------
+
+      function viewAddresses() {
+        var frm = document.forms[0];
+
+	      if (frm.gu_company.value.length==0 && frm.gu_contact.value.length==0) {
+	        alert ("[~Debe seleccionar primero una compañía o un individuo para los que ver direcciones~]");
+	        return false;
+	      }
+	
+	      if (frm.gu_company.value.length>=0)
+	      
+          winaddress = window.open("../common/addr_list.jsp?nm_company=" + frm.nm_client.value + "&linktable=k_x_company_addr&linkfield=gu_company&linkvalue=" + frm.gu_company.value, "editcompaddr", "toolbar=no,directories=no,menubar=no,resizable=no,width=700,height=" + (screen.height<=600 ? "520" : "640"));
+	      else
+          winaddress = window.open("../common/addr_list.jsp?nm_company=" + frm.nm_client.value + "&linktable=k_x_contact_addr&linkfield=gu_contact&linkvalue=" + frm.gu_contact.value, "editcontaddr", "toolbar=no,directories=no,menubar=no,resizable=no,width=700,height=" + (screen.height<=600 ? "520" : "640"));
+      
+      } // viewAddresses
             
       // ----------------------------------------------------
 
@@ -333,7 +352,7 @@
       	  qnt = GridGetCellValue(oProductGrid, 2, r);
       
                 if (isNaN(qnt)) {
-                  alert ("Amount "+qnt+" is not a valid number");
+                  alert ("Amount "+qnt+" [~no es un número válido~]");
                   return;
                 }
                 	  	  
@@ -341,7 +360,7 @@
       	    qnt = dotFloat(qnt);
       	    	    
       	    if (!isFloatValue(qnt)) {
-      	      alert ("Amount for product " + GridGetCellValue(oProductGrid, 1, r) + " is not valid");
+      	      alert ("Amount for product " + GridGetCellValue(oProductGrid, 1, r) + " [~no es válida~]");
       	      return false;
       	    }
       	    else {	      
@@ -361,7 +380,7 @@
       	    tot += parseFloat(dotFloat(frm.im_shipping.value));
       	  }
       	  else {
-      	    alert ("Shiping costs amount is not valid");
+      	    alert ("[~El importe de los gastos de envío no es válido~]");
       	    return false;
       	  }
       	} // fi (im_shipping)
@@ -374,7 +393,7 @@
       	      tot -= (tot*parseFloat(dotFloat(dis)))/100;
       	    }
       	    else {
-      	      alert ("Discount percentage is not valid");
+      	      alert ("[~El porcentaje del descuento no es válido~]");
       	      return false;
       	    }	    	    
       	  }
@@ -382,14 +401,14 @@
       	    tot -= parseFloat(dotFloat(frm.im_discount.value));
       	  }
       	  else {
-      	    alert ("Discount is not a valid amount");
+      	    alert ("[~El importe del descuento no es válido~]");
       	    return false;
       	  }
       	} // fi (im_discount)
 	
       	if (frm.im_taxes.value.length>0) {
       	  if (!isFloatValue(frm.im_taxes.value)) {
-      	    alert ("Tax is not a valid amount");
+      	    alert ("[~Los impuestos no es una cantidad válida~]");
       	    return false;
       	  }
       	} // fi (im_taxes)
@@ -406,12 +425,12 @@
       	var dis;
       	
       	if (frm.sel_ship_addr.selectedIndex<0) {
-      	  alert ("Delivery address is requiered");
+      	  alert ("[~La dirección de envío es obligatoria~]");
       	  return false;
       	}
       
       	if (ltrim(frm.de_despatch.value)=="") {
-      	  alert ("Despacth Advice description is required");
+      	  alert ("[~La descripción del albarán es obligatoria~]");
       	  return false;
       	}
       
@@ -436,7 +455,7 @@
       	}
       	
       	if (0==oProductGrid.rowcount) {
-      	  alert ("Despatch Note must contain at least one order line");
+      	  alert ("[~El albarán debe contener al menos una línea de pedido~]");
       	  return false;	      	
       	}
 
@@ -445,13 +464,13 @@
       	  	  
       	  if (null!=qnt)
       	    if (!isFloatValue(qnt)) {
-      	      alert ("Amount for product " + GridGetCellValue(oProductGrid, 1, r) + " is not valid");
+      	      alert ("Amount for product " + GridGetCellValue(oProductGrid, 1, r) + " [~no es válida~]");
       	      return false;
       	    }
       	} // next
       
       	if (frm.im_shipping.value.length>0 && !isFloatValue(frm.im_shipping.value)) {
-      	  alert ("Shiping cost is not a valid amount");
+      	  alert ("[~Los gastos de envio no son una cantidad válida~]");
       	  return false;
       	}
       
@@ -461,25 +480,25 @@
       	  if (pct>0) {
       	    dis = frm.im_discount.value.substring(0,pct);
       	    if (!isFloatValue(dis)) {
-      	      alert ("Discount percentage is not a valid quantity");
+      	      alert ("[~El porcentaje de descuento no es una cantidad válida~]");
       	      return false;
       	    }
       	  }
       	  else {
       	    if (!isFloatValue(frm.im_discount.value)) {	  	  
-      	      alert ("Discount is not a valid quantity");
+      	      alert ("[~El descuento no es una cantidad válida~]");
       	      return false;
       	    }
       	  } // fi (pct)
       	} // fi (im_discount)
       
       	if (frm.im_taxes.value.length>0 && !isFloatValue(frm.im_taxes.value)) {
-      	  alert ("Tax is not a valid amount");
+      	  alert ("[~Los impuestos no es una cantidad válida~]");
       	  return false;
       	}
       
       	if (frm.im_total.value.length>0 && !isFloatValue(frm.im_total.value)) {
-      	  alert ("Total is not a valid amount");
+      	  alert ("[~El total no es una cantidad válida~]");
       	  return false;
       	}
       
@@ -580,12 +599,12 @@
   <DIV class="cxMnu1" style="width:340px"><DIV class="cxMnu2">
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Refresh"> Refresh</SPAN>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="top.location='despatch_preview.jsp?gu_despatch=<%=gu_despatch%>'"><IMG src="../images/images/viewtxt.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Preview"> Preview</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="top.location='if (document.forms[0].gu_company.value.length==0 && document.forms[0].gu_contact.value.length==0) alert('[~El cliente el obligatorio para la vista previa del albarán~]'); else despatch_preview.jsp?gu_despatch=<%=gu_despatch%>'"><IMG src="../images/images/viewtxt.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Preview"> Preview</SPAN>
   </DIV></DIV>
 <% } %>
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Edit Despatch Advice <% if (gu_despatch.length()>0) out.write(String.valueOf(oDAdv.getInt(DB.pg_despatch))); %></FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Editar Albarán~] <% if (gu_despatch.length()>0) out.write(String.valueOf(oDAdv.getInt(DB.pg_despatch))); %></FONT></TD></TR>
   </TABLE>
   <DIV ID="dek" STYLE="width:200;height:20;z-index:200;visibility:hidden;position:absolute"></DIV>
   <SCRIPT LANGUAGE="JavaScript1.2" SRC="../javascript/popover.js"></SCRIPT>  
@@ -609,7 +628,7 @@
           <TR>
             <TD ALIGN="right" WIDTH="120"><FONT CLASS="formstrong">Client:</FONT></TD>
             <TD ALIGN="left" WIDTH="560">
-              <INPUT CLASS="combomini" TYPE="text" NAME="nm_client" MAXLENGTH="200" SIZE="51" VALUE="<% out.write(oDAdv.getStringNull("nm_client","")); %>" onchange="completeClient()" onkeypress="document.forms[0].gu_company.value='';document.forms[0].gu_contact.value='';document.images['clientwarning'].src = '../images/images/warn16.gif'"><SPAN onmouseover="if (document.forms[0].gu_company.value.length==0 && document.forms[0].gu_contact.value.length==0) popover('Must specify a valid name of Company or Individual'); else popover('View customer data');" onmouseout="popout()"><A HREF="#" onclick="viewClient()"><IMG NAME="clientwarning" ID="clientwarning" HSPACE="2" SRC="../images/images/spacer.gif" WIDTH="16" HEIGHT="16" BORDER="0"></A></SPAN>&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="reference(7)" ACCESSKEY="p" TITLE="ALT+p">View Companies</A>&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="reference(8)" ACCESSKEY="i" TITLE="ALT+i">View Individuals</A>
+              <INPUT CLASS="combomini" TYPE="text" NAME="nm_client" MAXLENGTH="200" SIZE="51" VALUE="<% out.write(oDAdv.getStringNull("nm_client","")); %>" onchange="completeClient()" onkeypress="document.forms[0].gu_company.value='';document.forms[0].gu_contact.value='';document.images['clientwarning'].src = '../images/images/warn16.gif'"><SPAN onmouseover="if (document.forms[0].gu_company.value.length==0 && document.forms[0].gu_contact.value.length==0) popover('[~Debe especificar un nombre de compañía o individuo válido~]'); else popover('View customer data');" onmouseout="popout()"><A HREF="#" onclick="viewClient()"><IMG NAME="clientwarning" ID="clientwarning" HSPACE="2" SRC="../images/images/spacer.gif" WIDTH="16" HEIGHT="16" BORDER="0"></A></SPAN>&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="reference(7)" ACCESSKEY="p" TITLE="ALT+p">View Companies</A>&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="reference(8)" ACCESSKEY="i" TITLE="ALT+i">View Individuals</A>
               <INPUT TYPE="hidden" NAME="gu_company" VALUE="<% out.write(oDAdv.getStringNull(DB.gu_company,"")); %>">
               <INPUT TYPE="hidden" NAME="gu_contact" VALUE="<% out.write(oDAdv.getStringNull(DB.gu_contact,"")); %>">
             </TD>
@@ -668,7 +687,7 @@
                     <FONT CLASS="formplain">Shipment Method:</FONT>
               	    <INPUT TYPE="hidden" NAME="id_ship_method">
               	    <SELECT CLASS="combomini" NAME="sel_ship_method"><OPTION VALUE=""></OPTION><% out.write(sShipingLookUp); %></SELECT>&nbsp;
-              	    <A HREF="javascript:lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Edit Shiping Methods"></A>
+              	    <A HREF="javascript:lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Editar Métodos de Envío~]"></A>
                   </TD>
                 </TR>
               </TABLE>
@@ -679,6 +698,8 @@
             <TD ALIGN="left" WIDTH="560">
               <INPUT TYPE="hidden" NAME="gu_ship_addr">
               <SELECT CLASS="combomini" NAME="sel_ship_addr"><% out.write (sAddrs); %></SELECT>&nbsp;<A HREF="#" onclick="createAddress()" TITLE="New Address" ACCESSKEY="d"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Address"></A>
+	    				&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="viewAddresses()" TITLE="[~Ver Direcciones~]">[~Ver Direcciones~]</A>
+
 	    </TD>
 	  </TR>
           <TR>
@@ -686,6 +707,7 @@
             <TD ALIGN="left" WIDTH="560">
               <INPUT TYPE="hidden" NAME="gu_bill_addr">
               <SELECT CLASS="combomini" NAME="sel_bill_addr"><% out.write (sAddrs); %></SELECT>&nbsp;<A HREF="#" onclick="createAddress()" TITLE="New Address"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Address"></A>
+	    				&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="viewAddresses()" TITLE="[~Ver Direcciones~]">[~Ver Direcciones~]</A>
 	    </TD>
 	  </TR>
           <TR>

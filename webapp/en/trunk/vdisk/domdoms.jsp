@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %>
 <%@ include file="../methods/cookies.jspf" %>
 <%@ include file="../methods/authusrs.jspf" %>
@@ -144,7 +144,7 @@
 	  var frm = document.forms[0];
 	  var chi = frm.checkeditems;
 
-	  if (confirm("Are you sure you want to delete selected domains?")) {
+	  if (confirm("[~¿Está seguro de que desea eliminar los dominios seleccionados?~]")) {
 	  	  
 	    chi.value = "";
 	  	  
@@ -176,7 +176,7 @@
 	  var fnd = document.forms[0].find.value;
 	  
 	  if (hasForbiddenChars(fnd))
-	    alert ("Domain name contains invalid characters");
+	    alert ("[~El nombre del dominio a buscar contiene caracteres no válidos~]");
 	  else	
             window.location = "domdoms.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&maxrows=10&show=domains&skip=0&find=" + escape(fnd);
 	}

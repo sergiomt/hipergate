@@ -19,15 +19,16 @@
   String tx_like = request.getParameter("tx_like");
   String gu_shop = nullif(request.getParameter("gu_shop"));
 
+  if (
   JDCConnection oConn = null;  
   DBSubset oResults=null,oResults2=null;
 
   if (gu_shop.length()>0) {
-    oResults = new DBSubset(DB.k_products+" p,"+DB.k_x_cat_objs+" x,"+DB.k_cat_expand+" e,"+DB.k_shops+" s",
-    												"p."+DB.gu_product+",p."+DB.nm_product+",p."+DB.de_product,
-  													"s."+DB.gu_shop+"=? AND s."+DB.gu_root_cat+"=e."+DB.gu_rootcat+" AND e."+DB.gu_category+"<>s."+DB.gu_bundles_cat+" AND "+
-  													"e."+DB.gu_category+"=x."+DB.gu_category+" AND x."+DB.gu_object+"=p."+DB.gu_product+" AND "+
-  													"p."+DB.nm_product+" "+DBBind.Functions.ILIKE+" ? ORDER BY 2", 10);
+        oResults = new DBSubset(DB.k_products+" p,"+DB.k_x_cat_objs+" x,"+DB.k_cat_expand+" e,"+DB.k_shops+" s",
+    												    "p."+DB.gu_product+",p."+DB.nm_product+",p."+DB.de_product,
+  													    "s."+DB.gu_shop+"=? AND s."+DB.gu_root_cat+"=e."+DB.gu_rootcat+" AND e."+DB.gu_category+"<>s."+DB.gu_bundles_cat+" AND "+
+  													    "e."+DB.gu_category+"=x."+DB.gu_category+" AND x."+DB.gu_object+"=p."+DB.gu_product+" AND "+
+  													    "p."+DB.nm_product+" "+DBBind.Functions.ILIKE+" ? ORDER BY 2", 10);
   } else {
     if (nullif(nm_table).equalsIgnoreCase("k_contact_company")) {
       oResults = new DBSubset(DB.k_contacts,
@@ -36,6 +37,23 @@
       oResults2= new DBSubset(DB.k_companies,
       												DB.gu_contact+","+DB.gu_company+","+DBBind.Functions.ISNULL+"("+DB.nm_commercial+","+DB.nm_legal+")"+DB.id_legal+",'"+String.valueOf(Company.ClassId)+"'",
   								            DB.gu_company+" IS NOT NULL AND "+DB.gu_workarea+"=? AND ("+DB.id_legal+"=? OR "+DB.nm_commercial+" "+DBBind.Functions.ILIKE+" ? OR "+DB.nm_legal+" "+DBBind.Functions.ILIKE+" ?) ORDER BY 2", 10);
+	  } else if (nullif(nm_table).equalsIgnoreCase("v_invoices")) {
+		  if (nm_valuecolumn.equals("pg_invoice")) {
+          oResults = new DBSubset(nm_table,"pg_invoice,nm_legal"),
+  								                "gu_workarea=? AND pg_invoice=?", 10);
+		  } else if (nm_valuecolumn.equals("id_ref")) {
+          oResults = new DBSubset(nm_table,"pg_invoice,id_ref"),
+  								                "gu_workarea=? AND id_ref " + DBBind.Functions.ILIKE + " ?", 10);
+		  } else if (nm_valuecolumn.equals("id_ref")) {
+          oResults = new DBSubset(nm_table,"pg_invoice,nm_legal"),
+  								                "gu_workarea=? AND nm_legal " + DBBind.Functions.ILIKE + " ?", 10);
+		  } else if (nm_valuecolumn.equals("id_ref")) {
+          oResults = new DBSubset(nm_table,"pg_invoice,id_legal"),
+  								                "gu_workarea=? AND id_legal " + DBBind.Functions.ILIKE + " ?", 10);
+		  } else if (nm_valuecolumn.equals("id_ref")) {
+          oResults = new DBSubset(nm_table,"pg_invoice,tx_comments"),
+  								                "gu_workarea=? AND tx_comments " + DBBind.Functions.ILIKE + " ?", 10);
+		  }
     } else {
       oResults = new DBSubset(nm_table,nm_valuecolumn+","+nm_textcolumn+","+(nm_infocolumn.length()>0 ? nm_infocolumn : "NULL AS tx_nilinfo"),
   								            nm_wrkacolumn+"=? AND "+tx_where+" "+DBBind.Functions.ILIKE+" ? ORDER BY 2", 10);
@@ -52,11 +70,14 @@
     if (gu_shop.length()>0) {
       nResults = oResults.load(oConn, new Object[]{gu_shop,tx_like+"%"});
     } else {
-      if (nullif(nm_table).equalsIgnoreCase("k_contact_company"))
+      if (nullif(nm_table).equalsIgnoreCase("k_contact_company")) {
         nResults = oResults.load(oConn, new Object[]{gu_workarea,tx_like,tx_like+"%",tx_like+"%"});
-      else
+      } else if (nullif(nm_table).equalsIgnoreCase("v_invoices")) {
+      	
+      } else {
         nResults = oResults.load(oConn, new Object[]{gu_workarea,tx_like+"%"});
-    }
+      }
+    } // fi
 
 	  if (0==nResults) {
 	    if (gu_shop.length()>0) {

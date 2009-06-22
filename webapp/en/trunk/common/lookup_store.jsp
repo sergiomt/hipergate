@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.rmi.RemoteException,java.net.URLDecoder,java.util.HashMap,java.sql.Connection,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.debug.DebugFile,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.cache.*,com.knowgate.acl.*,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%
+﻿<%@ page import="java.io.IOException,java.rmi.RemoteException,java.net.URLDecoder,java.util.HashMap,java.sql.Connection,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.debug.DebugFile,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.cache.*,com.knowgate.acl.*,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -83,16 +83,16 @@
     oConn = null;
     
     if (1==iErrorLevel)
-      response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?resume=_back&title=[~Dato duplicado~]&desc=[~Ya existe otro registro con el mismo valor que intento insertar~]"));
+      response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?resume=_back&title=Duplicated Entry&desc=Another entry with the same value already exists"));
     else if (2==iErrorLevel)
-      response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?resume=_back&title=[~Dato duplicado~]&desc=[~Ya existe otro registro con la misma descripcion que intento insertar~]"));    
+      response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?resume=_back&title=Duplicated Entry&desc=Another entry with the same description already exists"));    
   }
   catch (SQLException e) {
     if (oConn!=null)
       if (!oConn.isClosed())
         oConn.close("lookup_store1");
     oConn = null;
-    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?resume=_back&title=[~Error de Acceso a la Base de Datos~]&desc=" + e.getLocalizedMessage()));
+    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?resume=_back&title=Database Access Error&desc=" + e.getLocalizedMessage()));
     return;
   }
   

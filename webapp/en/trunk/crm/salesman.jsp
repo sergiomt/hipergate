@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.SalesMan,com.knowgate.hipergate.Term,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.SalesMan,com.knowgate.hipergate.Term,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*
@@ -90,7 +90,7 @@
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>[~Editar Vendedor~]</TITLE>
+  <TITLE>Edit Salesman</TITLE>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -157,7 +157,7 @@
             if (frm.sel_country.options.selectedIndex>0)
               window.open("../common/lookup_f.jsp?nm_table=k_addresses_lookup&id_language=" + getUserLanguage() + "&id_section=" + getCombo(frm.sel_country) + "&tp_control=2&nm_control=sel_state&nm_coding=id_state", "lookupaddrstate", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
             else
-              alert ("[~Debe seleccionar un Pais antes de poder escoger la Provincia o Estado~]");
+              alert ("A Country must be selected before choosing a State");
             break;
             
         } // end switch()
@@ -210,9 +210,9 @@
 </HEAD>
 <BODY  LEFTMARGIN="8" TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()">
   <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Actualizar~]"> [~Actualizar~]</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="[~Imprimir~]"> [~Imprimir~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
   </DIV></DIV>
 
   <TABLE CELLSPACING="2" CELLPADDING="2">
@@ -221,19 +221,19 @@
     <TR>
 <% if ((iAppMask & (1<<Shop))!=0) { %>
       <TD VALIGN="middle"><IMG SRC="../images/images/crm/history16.gif" WIDTH="16" HEIGHT="16" BORDER="0"></TD>
-      <TD VALIGN="middle"><A HREF="#" onclick="viewSalesHistory()" CLASS="linkplain">[~Hist&oacute;rico de Pedidos~]</A></TD>
+      <TD VALIGN="middle"><A HREF="#" onclick="viewSalesHistory()" CLASS="linkplain">Order History</A></TD>
 <% } else { %>
       <TD COLSPAN="2"></TD>
 <% }  %>
       <TD VALIGN="middle"><IMG SRC="../images/images/crm/target16.gif" WIDTH="17" HEIGHT="18" BORDER="0"></TD>
-      <TD VALIGN="middle"><A HREF="#" onclick="viewSalesObjectives()" CLASS="linkplain">[~Objetivos de Venta~]</A></TD>
+      <TD VALIGN="middle"><A HREF="#" onclick="viewSalesObjectives()" CLASS="linkplain">Sales Objectives</A></TD>
     </TR>
     <TR><TD COLSPAN="4" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
   </TABLE>    
 
   <TABLE WIDTH="98%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Editar Vendedor~] <% out.write(oUsr.getStringNull(DB.tx_name,"")+" "+oUsr.getStringNull(DB.tx_surname1,"")+" "+oUsr.getStringNull(DB.tx_surname2,"")); %></FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Edit Salesman <% out.write(oUsr.getStringNull(DB.tx_name,"")+" "+oUsr.getStringNull(DB.tx_surname1,"")+" "+oUsr.getStringNull(DB.tx_surname2,"")); %></FONT></TD></TR>
   </TABLE>  
   <FORM NAME="" METHOD="post" ACTION="salesman_store.jsp" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
@@ -243,14 +243,14 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right" WIDTH="160"><FONT CLASS="formplain">[~Zona de Venta:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="160"><FONT CLASS="formplain">Sales Zone:</FONT></TD>
             <TD ALIGN="left" WIDTH="440">
               <INPUT TYPE="hidden" NAME="gu_geozone" VALUE="<%=oMan.getStringNull(DB.gu_geozone,"")%>">
-              <INPUT TYPE="text" NAME="nm_geozone" SIZE="40" TABINDEX="-1" onfocus="document.forms[0].sel_country.focus()" VALUE="<%=nm_zone%>">&nbsp;<A HREF="#" onclick="lookupZone()"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Tesauro Geografico~]"></A>
+              <INPUT TYPE="text" NAME="nm_geozone" SIZE="40" TABINDEX="-1" onfocus="document.forms[0].sel_country.focus()" VALUE="<%=nm_zone%>">&nbsp;<A HREF="#" onclick="lookupZone()"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Geographic Thesaurus"></A>
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="160"><FONT CLASS="formplain">[~Pais:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="160"><FONT CLASS="formplain">Country:</FONT></TD>
             <TD ALIGN="left" WIDTH="440">
 	      <SELECT NAME="sel_country" onchange="loadstates(null)"><OPTION VALUE=""></OPTION><%=sCountriesLookUp%></SELECT>
               <INPUT TYPE="hidden" NAME="id_country" VALUE="<%=oMan.getStringNull(DB.id_country,"").trim()%>">
@@ -258,19 +258,19 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="160"><FONT CLASS="formplain">[~Provincia/Estado:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="160"><FONT CLASS="formplain">State/Province:</FONT></TD>
             <TD ALIGN="left" WIDTH="440">
-              <SELECT NAME="sel_state"></SELECT>&nbsp;<A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver provincias~]"></A>
+              <SELECT NAME="sel_state"></SELECT>&nbsp;<A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View States"></A>
               <INPUT TYPE="hidden" NAME="id_state" VALUE="<%=oMan.getStringNull(DB.id_state,"").trim()%>">
               <INPUT TYPE="hidden" NAME="nm_state">
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="160"><FONT CLASS="formplain">[~Grupo de Ventas~]:</FONT></TD>
+            <TD ALIGN="right" WIDTH="160"><FONT CLASS="formplain">Sales Group:</FONT></TD>
             <TD ALIGN="left" WIDTH="440">
               <INPUT TYPE="hidden" NAME="id_sales_group">
               <SELECT NAME="sel_group"><OPTION VALUE=""></OPTION><%=sSalesGroupsLookUp%></SELECT>&nbsp;
-              <A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Grupos de Venta~]"></A>
+              <A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Sales Groups"></A>
             </TD>
           </TR>          
           <TR>
@@ -278,8 +278,8 @@
           </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.parent.close()">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.parent.close()">
     	      <BR><BR>
     	    </TD>
     	  </TR>            

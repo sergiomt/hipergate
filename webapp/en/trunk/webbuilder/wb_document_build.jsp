@@ -1,4 +1,4 @@
-<%@ page import="java.util.Vector,dom.DOMDocument,com.knowgate.debug.DebugFile,java.lang.System,java.io.UnsupportedEncodingException,java.io.FileNotFoundException,java.io.IOException,java.io.File,java.util.Properties,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.acl.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*,javax.xml.transform.TransformerException,javax.xml.transform.TransformerConfigurationException" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.Vector,dom.DOMDocument,com.knowgate.debug.DebugFile,java.lang.System,java.io.UnsupportedEncodingException,java.io.FileNotFoundException,java.io.IOException,java.io.File,java.util.Properties,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.acl.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*,javax.xml.transform.TransformerException,javax.xml.transform.TransformerConfigurationException" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <%
 /*
@@ -179,7 +179,7 @@
   }  
 %>
 <HTML>
-<HEAD><TITLE>[~Espere~]...</TITLE></HEAD>
+<HEAD><TITLE>Wait...</TITLE></HEAD>
 <BODY onLoad="document.forms[0].submit()">
   <FORM METHOD="post" ACTION="../jobs/job_store.jsp" TARGET="_top">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=nullif(request.getParameter("id_domain"))%>">
