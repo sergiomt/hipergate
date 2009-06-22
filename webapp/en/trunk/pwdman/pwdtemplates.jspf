@@ -1,0 +1,17 @@
+<%!  
+  public static String getTemplatesPath(String sStorage, String sIdDomain, String sGuWorkArea, String sGuUser)
+    throws java.net.MalformedURLException, java.io.IOException, Exception {
+    final String sSep = java.io.File.separator;
+    String sPath = sStorage+"domains"+sSep+sIdDomain+sSep+"workareas"+sSep+sGuWorkArea+sSep+"apps"+sSep+"PwdMan"+sSep+sGuUser;
+    java.io.File oDir = new java.io.File(sPath);
+    if (oDir.exists()) {
+      return sPath;
+    } else {
+      com.knowgate.dfs.FileSystem oFS = new com.knowgate.dfs.FileSystem();
+      oFS.mkdirs("file://"+sPath);
+      oFS.copy("file://"+sStorage+"pwdman", "file://"+sPath);
+    }
+    return com.knowgate.misc.Gadgets.chomp(sPath,sSep);
+  }
+
+%>
