@@ -46,8 +46,10 @@ import java.util.Properties;
 
 import javax.mail.Message;
 import javax.mail.URLName;
+import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.MessagingException;
+import javax.mail.StoreClosedException;
 import javax.mail.internet.InternetAddress;
 
 import org.htmlparser.Parser;
@@ -310,10 +312,30 @@ public class MimeSender extends Job {
       DebugFile.incIdent();
       DebugFile.writeln("gu_job="+getStringNull(DB.gu_job,"null"));
     }
+
+    if (0==--iPendingAtoms) {
+      try {
+        DBFolder oSent = (DBFolder) oStor.getFolder("sent");
+        oSent.open(Folder.READ_WRITE);
+        oSent.copyMessage(oDraft);
+	    oSent.close(false);
+	    oDraft.setFlag(Flags.Flag.DELETED, true);
+      } catch (StoreClosedException sce) {
+        if (DebugFile.trace) {
+          DebugFile.writeln("MimeSender.free() StoreClosedException "+sce.getMessage());
+        }      	
+      }  catch (MessagingException mse) {
+        if (DebugFile.trace) {
+          DebugFile.writeln("MimeSender.free() MessagingException "+mse.getMessage());
+        }
+      } 	
+    } // fi
+
     oDraft=null;
     if (null!=oOutBox) { try { oOutBox.close(false); oOutBox=null; } catch (Exception ignore) {} }
     if (null!=oStor)   { try { oStor.close(); oStor=null; } catch (Exception ignore) {} }
     if (null!=oHndlr)  { try { oHndlr.close(); oHndlr=null; } catch (Exception ignore) {} }
+
     if (DebugFile.trace) {
       DebugFile.decIdent();
       DebugFile.writeln("End MimeSender.free()");
