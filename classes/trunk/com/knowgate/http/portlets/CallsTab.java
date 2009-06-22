@@ -46,11 +46,17 @@ import java.sql.SQLException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerConfigurationException;
 
-import javax.portlet.*;
+import javax.portlet.GenericPortlet;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
+import javax.portlet.PortletException;
+import javax.portlet.WindowState;
 
 import com.knowgate.debug.DebugFile;
 import com.knowgate.jdc.JDCConnection;
-import com.knowgate.dataobjs.*;
+import com.knowgate.dataobjs.DB;
+import com.knowgate.dataobjs.DBBind;
+import com.knowgate.dataobjs.DBSubset;
 import com.knowgate.dataxslt.StylesheetCache;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.dfs.FileSystem;
@@ -61,19 +67,23 @@ import com.knowgate.dfs.FileSystem;
  * @version 2.2
  */
 
-
 public class CallsTab  extends GenericPortlet {
+
+  // ---------------------------------------------------------------------------
+
   public CallsTab() { }
+
+  // ---------------------------------------------------------------------------
 
   public CallsTab(HipergatePortletConfig oConfig)
     throws javax.portlet.PortletException {
 
     init(oConfig);
-  }
+  } // CallsTab
 
   // ---------------------------------------------------------------------------
 
-  public String render(RenderRequest req, String sEncoding)
+  public String render(RenderRequest req, final String sEncoding)
     throws PortletException, IOException, IllegalStateException {
 
     ByteArrayInputStream oInStream;
@@ -130,7 +140,7 @@ public class CallsTab  extends GenericPortlet {
             }
 
           return sOutput;
-        }
+          } // fi ()
         }
       }
       catch (Exception xcpt) {
@@ -270,6 +280,6 @@ public class CallsTab  extends GenericPortlet {
    public void render(RenderRequest req, RenderResponse res)
      throws PortletException, IOException, IllegalStateException {
      res.getWriter().write(render(req,res.getCharacterEncoding()));
-   }
+   } // render
 
 }
