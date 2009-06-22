@@ -35,16 +35,21 @@ package com.knowgate.http;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+import java.io.File;
+
 import java.sql.SQLException;
 
+import com.knowgate.dataobjs.DBBind;
 import com.knowgate.debug.DebugFile;
+import com.knowgate.jdc.JDCConnection;
+import com.knowgate.scheduler.Job;
 import com.knowgate.misc.Environment;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.scheduler.SchedulerDaemon;
 
 /**
  * @author Sergio Montoro Ten
- * @version 3.0
+ * @version 5.0
  */
 
 public class HttpSchedulerServlet extends HttpServlet {
@@ -83,7 +88,9 @@ public class HttpSchedulerServlet extends HttpServlet {
     sProfile = sconfig.getInitParameter("profile");
 
     if (isVoid(sProfile)) {
-      sProfile = Gadgets.chomp(Environment.getEnvVar("KNOWGATE_PROFILES",Environment.DEFAULT_PROFILES_DIR), java.io.File.separator) + "hipergate.cnf";
+      sProfile = Gadgets.chomp(Environment.getEnvVar("KNOWGATE_PROFILES",Environment.DEFAULT_PROFILES_DIR), File.separator) + "hipergate.cnf";
+    } else if (sProfile.indexOf('.')<0) {
+      sProfile = Gadgets.chomp(Environment.getEnvVar("KNOWGATE_PROFILES",Environment.DEFAULT_PROFILES_DIR), File.separator) + sProfile + ".cnf";
     }
 
     if (DebugFile.trace) DebugFile.writeln("profile is " + sProfile);
@@ -140,15 +147,19 @@ public class HttpSchedulerServlet extends HttpServlet {
    * <p>Perform action on SchedulerDaemon and return resulting status</p>
    * The output written to ServletOutputStream is an XML string of the form:<br>
    * &lt;scheduler&gt;&lt;status&gt;{start|stop|running|stopped}&lt;/status&gt;&lt;startdate&gt;Thu Jul 14 23:04:33 CEST 2005&lt;/startdate&gt;&lt;stopdate&gt;&lt;/stopdate&gt;&lt;runningtime&gt;98767&lt;/runningtime&gt;&lt;poolsize&gt;2&lt;/poolsize&gt;&lt;livethreads&gt;1&lt;/livethreads&gt;&lt;queuelength&gt;4&lt;/queuelength&gt;&lt;/scheduler&gt;
-   * @param request Contains parameters: action = { start, stop, restart, info }
+   * @param request Contains parameters: action = { start, stop, restart, info, abort }
    * @param response HttpServletResponse
    * @throws ServletException
    */
   public void doGet(HttpServletRequest request, HttpServletResponse response)
      throws ServletException {
 
+   boolean bError = false;
+   
    String sAction = request.getParameter("action");
    if (null==sAction) sAction = "";
+
+   String sId = request.getParameter("id");
 
     if (DebugFile.trace) {
       DebugFile.writeln("Begin HttpSchedulerServlet.doGet("+sAction+")");
@@ -164,7 +175,7 @@ public class HttpSchedulerServlet extends HttpServlet {
       }
       if (null!=oDaemon) {
         if (DebugFile.trace) {
-          DebugFile.writeln("HttpSchedulerServlet.doGet() : No scheduler instance found. Re-start failed");
+          DebugFile.writeln("HttpSchedulerServlet.doGet("+sAction+") : No scheduler instance found. Re-start failed");
           DebugFile.decIdent();
         }
         return;
@@ -185,15 +196,16 @@ public class HttpSchedulerServlet extends HttpServlet {
         }
         catch (Exception xcpt) {
           if (DebugFile.trace) {
-            DebugFile.writeln("HttpSchedulerServlet.doGet() : "+xcpt.getClass().getName()+" "+xcpt.getMessage());
+            DebugFile.writeln("HttpSchedulerServlet.doGet("+sAction+") : "+xcpt.getClass().getName()+" "+xcpt.getMessage());
           }
           if (oDaemon!=null) {
             try { oDaemon.stopAll(); }
             catch (Exception ignore) {
-              DebugFile.writeln("HttpSchedulerServlet.doGet() : " + ignore.getClass().getName() + " " + ignore.getMessage());
+              DebugFile.writeln("HttpSchedulerServlet.doGet("+sAction+") : " + ignore.getClass().getName() + " " + ignore.getMessage());
             }
             oDaemon=null;
           }
+          bError = true;
           writeXML(response, "<scheduler><error><![CDATA["+xcpt.getClass().getName()+" "+xcpt.getMessage()+"]]></error></scheduler>");
         } // catch
         if (sStatus.length()==0) {
@@ -216,10 +228,11 @@ public class HttpSchedulerServlet extends HttpServlet {
           oDaemon=null;
           sStatus = "stop";
         } catch (IllegalStateException ist) {
-            DebugFile.writeln("HttpSchedulerServlet.doGet() : IllegalStateException " + ist.getMessage());
+            bError = true;
+            DebugFile.writeln("HttpSchedulerServlet.doGet(stop) : IllegalStateException " + ist.getMessage());
             writeXML(response, "<scheduler><error><![CDATA["+ist.getMessage()+"]]></error></scheduler>");
         } catch (SQLException sql) {
-            DebugFile.writeln("HttpSchedulerServlet.doGet() : SQLException " + sql.getMessage());
+            DebugFile.writeln("HttpSchedulerServlet.doGet(stop) : SQLException " + sql.getMessage());
             writeXML(response, "<scheduler><error><![CDATA["+sql.getMessage()+"]]></error></scheduler>");
         }
         if (null!=oDaemon) {
@@ -254,6 +267,35 @@ public class HttpSchedulerServlet extends HttpServlet {
           sQueue = String.valueOf(oDaemon.atomQueue().size());
       }
     }
+    else if (sAction.equals("abort")) {
+      if (DebugFile.trace) DebugFile.writeln("aborting job "+sId);
+      if (null!=sId) {
+        if (null!=oDaemon) {
+      	  try {
+      	    oDaemon.abortJob(sId);
+      	  } catch (Exception xcpt) {
+              bError = true;
+              DebugFile.writeln("HttpSchedulerServlet.doGet(abort) : " + xcpt.getClass().getName() + " " + xcpt.getMessage());
+              writeXML(response, "<scheduler><error><![CDATA["+xcpt.getClass().getName()+" "+xcpt.getMessage()+"]]></error></scheduler>");
+      	  }
+        } else {
+          DBBind oDbj = new DBBind(Gadgets.substrUpTo(sProfile.substring(sProfile.lastIndexOf(File.separator)+1),0,'.'));
+		  JDCConnection oCon = null;
+		  try {
+		    oCon = oDbj.getConnection("SchedulerDaemon");
+            Job.instantiate(oCon, sId, oDbj.getProperties()).abort(oCon);
+		  } catch (Exception xcpt) {
+              DebugFile.writeln("HttpSchedulerServlet.doGet(abort) : " + xcpt.getClass().getName() + " " + xcpt.getMessage());
+              writeXML(response, "<scheduler><error><![CDATA["+xcpt.getClass().getName()+" "+xcpt.getMessage()+"]]></error></scheduler>");
+		  } finally {
+		  	try {
+              if (null!=oCon) if (!oCon.isClosed()) oCon.close("SchedulerDaemon");
+              oDbj.close();
+		  	} catch (SQLException ignore) { }
+		  }                    
+        } // fi
+      } // fi
+    } // fi
 
     if (null!=oDaemon) {
       if (null!=oDaemon.startDate()) sStartDate = oDaemon.startDate().toString();
@@ -262,7 +304,7 @@ public class HttpSchedulerServlet extends HttpServlet {
         sRunning = String.valueOf(oDaemon.threadPool().getRunningTimeMS());
     }
 
-    writeXML(response, "<scheduler><error/><status>"+sStatus+"</status><startdate>"+sStartDate+"</startdate><stopdate>"+sStopDate+"</stopdate><runningtime>"+sRunning+"</runningtime><poolsize>"+sSize+"</poolsize><livethreads>"+sLive+"</livethreads><queuelength>"+sQueue+"</queuelength></scheduler>");
+    if (!bError) writeXML(response, "<scheduler><error/><status>"+sStatus+"</status><startdate>"+sStartDate+"</startdate><stopdate>"+sStopDate+"</stopdate><runningtime>"+sRunning+"</runningtime><poolsize>"+sSize+"</poolsize><livethreads>"+sLive+"</livethreads><queuelength>"+sQueue+"</queuelength></scheduler>");
 
     if (DebugFile.trace) {
       DebugFile.writeln("start date="+sStartDate);
