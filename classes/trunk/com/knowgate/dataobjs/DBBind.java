@@ -62,7 +62,7 @@ import java.beans.Beans;
 /**
  * <p>Singleton object for database binding.</p>
  * @author Sergio Montoro Ten
- * @version 4.0
+ * @version 5.0
  */
 
 public class DBBind extends Beans implements DataSource {
@@ -80,7 +80,7 @@ public class DBBind extends Beans implements DataSource {
 
   private HashMap oTableMap;
 
-  private static final String VERSION = "4.0.2";
+  private static final String VERSION = "5.0.0";
 
   // ***********
   // Constructor
