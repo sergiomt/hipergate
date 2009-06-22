@@ -912,7 +912,7 @@ public class DistributionList extends DBPersist {
   // ----------------------------------------------------------
 
   /**
-   * Print List Members to a comma delimited String.
+   * Print List Members to a String.
    * @param oConn Database Connection
    * @param bPrintHeader <b>true</b> if column names are to be printed at first row.
    * @return Comma delimited String with one Member per line.
@@ -965,7 +965,9 @@ public class DistributionList extends DBPersist {
 
     try { oRSet.setFetchSize(500); }  catch (SQLException sqle) { /* ignore */}
 
-    if (bPrintHeader) oBuffer.append(sColumnList + "\n");
+	try {
+      if (bPrintHeader) oBuffer.append(Gadgets.replace(sColumnList,"m\\.","") + "\n");
+	} catch (Exception mpe) { /* ignore */}
 
     while (oRSet.next()) {
       oBuffer.append(oRSet.getString(1));
