@@ -313,7 +313,7 @@ public class MimeSender extends Job {
       DebugFile.writeln("gu_job="+getStringNull(DB.gu_job,"null"));
     }
 
-    if (0==--iPendingAtoms) {
+    if (0==iPendingAtoms) {
       try {
         DBFolder oSent = (DBFolder) oStor.getFolder("sent");
         oSent.open(Folder.READ_WRITE);
@@ -408,6 +408,10 @@ public class MimeSender extends Job {
       oSentMsg.addFrom(aFrom);
       oSentMsg.setReplyTo(aReply);
 
+	  // Request read notification
+      if ("true".equals(getParameter("notification")))
+	    oSentMsg.addHeader("Disposition-Notification-To", aFrom[0].getAddress());
+	  
       // Send message here
       oHndlr.sendMessage(oSentMsg);
 
@@ -481,7 +485,40 @@ public class MimeSender extends Job {
                               				",id:"+sIdMsg+
                               				",message:"+sGuMsg+
                               				",account:"+sGuAccount+
-                              				",personalized:"+String.valueOf(bIsPersonalizedMail));
+                              				",personalized:"+String.valueOf(bIsPersonalizedMail)+
+                              				",notification:false");
+
+   if (DebugFile.trace) {
+     DebugFile.writeln("End MimeSender.newInstance() " + oJob.getStringNull(DB.gu_job,"null"));
+     DebugFile.decIdent();
+   }
+
+   return oJob;
+ } // newInstance
+
+ // ----------------------------------------------------------------------------
+
+ public static MimeSender newInstance(JDCConnection oConn, String sProfile, String sIdWrkA,
+                                      String sGuMsg, String sIdMsg,
+                                      String sGuUser, String sGuAccount,
+                                      boolean bIsPersonalizedMail,
+                                      String sTxTitle,
+                                      boolean bNotification)
+   throws SQLException {
+
+
+   if (DebugFile.trace) {
+     DebugFile.writeln("Begin MimeSender.newInstance(JDCConnection, "+sProfile+", "+sIdWrkA+", "+sGuMsg+", "+sIdMsg+", "+sGuUser+", "+sGuAccount+", "+String.valueOf(bIsPersonalizedMail)+", "+sTxTitle+")");
+     DebugFile.incIdent();
+   }
+
+   MimeSender oJob = MimeSender.newInstance(oConn, null, sIdWrkA, sGuUser, null, Job.STATUS_PENDING, sTxTitle,
+											"profile:"+sProfile+
+                              				",id:"+sIdMsg+
+                              				",message:"+sGuMsg+
+                              				",account:"+sGuAccount+
+                              				",personalized:"+String.valueOf(bIsPersonalizedMail)+
+                              				",notification:"+String.valueOf(bNotification));
 
    if (DebugFile.trace) {
      DebugFile.writeln("End MimeSender.newInstance() " + oJob.getStringNull(DB.gu_job,"null"));
