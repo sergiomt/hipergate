@@ -781,9 +781,21 @@ public class SessionHandler {
                            Address[] aAdrTo, Address[] aAdrCc, Address[] aAdrBcc)
     throws NoSuchProviderException,SendFailedException,ParseException,
            MessagingException,NullPointerException {
+           	SendFailedException s = null;
+           	
     if (DebugFile.trace) {
       DebugFile.writeln("Begin SessionHandler.sendMessage([Message],Address[],Address[],Address[],Address[],Address[])");
       DebugFile.incIdent();
+      if (aAdrFrom!=null)
+      	for (int f=0; f<aAdrFrom.length; f++) DebugFile.writeln("from "+aAdrFrom[f].toString());
+      if (aAdrReply!=null)
+      	for (int r=0; r<aAdrReply.length; r++) DebugFile.writeln("reply "+aAdrReply[r].toString());
+      if (aAdrTo!=null)
+      	for (int t=0; t<aAdrTo.length; t++) DebugFile.writeln("to "+aAdrTo[t].toString());
+      if (aAdrCc!=null)
+      	for (int c=0; c<aAdrCc.length; c++) DebugFile.writeln("cc "+aAdrCc[c].toString());
+      if (aAdrBcc!=null)
+      	for (int b=0; b<aAdrBcc.length; b++) DebugFile.writeln("bcc "+aAdrBcc[b].toString());
     }
     oMsg.addFrom(aAdrFrom);
     if (null==aAdrReply)

@@ -412,6 +412,8 @@ public class DraftsHelper {
 
     RecipientsHelper.clearRecipientsForMessage(oConn, sGuMsg);
 
+    DBInetAddr.write(oConn, iIdDomain, sGuWorkarea, sGuMsg, sIdMsg, sTxMailFrom, "from", sNmFrom);
+
     if (aTo!=null) {
       if (DebugFile.trace) DebugFile.writeln("to recipients count is " + String.valueOf(aTo.length));
       for (int t=0; t<aTo.length; t++) {
