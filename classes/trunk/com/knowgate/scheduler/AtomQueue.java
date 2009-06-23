@@ -32,15 +32,18 @@
 
 package com.knowgate.scheduler;
 
-
 import java.util.LinkedList;
+import java.util.ListIterator;
+
+import com.knowgate.dataobjs.DB;
+import com.knowgate.debug.DebugFile;
 
 /**
  * <p>Memory FIFO Queue for job atoms pending of processing</p>
  * @author Sergio Montoro Ten
  * @version 1.0
  */
-public class AtomQueue extends LinkedList {
+public class AtomQueue extends LinkedList<Atom> {
   private int iMaxAtoms;
   private static final long serialVersionUID = 1l;
   
@@ -85,7 +88,7 @@ public class AtomQueue extends LinkedList {
    * <p>Pop first available atom from queue</p>
    */
 
-  public synchronized Object pop() {
+  public synchronized Atom pop() {
     Atom oAtm;
     if (this.size()>0) {
       oAtm = (Atom) getFirst();
@@ -95,5 +98,39 @@ public class AtomQueue extends LinkedList {
     }
     return oAtm;
   } // pop
+
+  // ----------------------------------------------------------
+
+  /**
+   * <p>Remove atoms from a given Job</p>
+   * @param sGuJob String Job GUID
+   * @return Count of atoms removed
+   * @since 5.0
+   */
+
+  public synchronized int remove(String sGuJob) {  	
+	if (DebugFile.trace) {
+	  DebugFile.writeln("Begin AtomQueue.remove("+sGuJob+")");
+	  DebugFile.incIdent();
+	}
+
+	int nRemoved = 0;
+	
+    ListIterator<Atom> oIter = listIterator();
+    while (oIter.hasNext()) {
+      Atom oAtm = oIter.next();
+      if (oAtm.getString(DB.gu_job).equals(sGuJob)) {
+      	oIter.remove();
+      	nRemoved++;
+      } // fi
+    } // wend
+
+	if (DebugFile.trace) {
+	  DebugFile.decIdent();
+	  DebugFile.writeln("End AtomQueue.remove() : "+String.valueOf(nRemoved));
+	}
+
+	return nRemoved;
+  } // remove
 
 } // AtomQueue

@@ -33,6 +33,8 @@
 package com.knowgate.scheduler;
 
 import java.io.File;
+import java.io.IOException;
+
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -49,6 +51,7 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 
 import com.knowgate.debug.DebugFile;
+import com.knowgate.debug.StackTraceUtil;
 import com.knowgate.dataobjs.DBBind;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
@@ -205,6 +208,8 @@ public class SchedulerDaemon extends Thread {
     try {
 
     if (null==oDbb) oDbb = new DBBind(sProfile);
+    // Disable connection reaper to avoid connections being closed in the middle of job execution
+    oDbb.connectionPool().setReaperDaemonDelay(0l);
 
     oCon = oDbb.getConnection("SchedulerDaemon");
 
@@ -248,6 +253,13 @@ public class SchedulerDaemon extends Thread {
       try {
 
         while(bContinue) {
+
+          if (oCon.isClosed()) {
+          	oCon = oDbb.getConnection("SchedulerDaemon");
+            oCon.setAutoCommit(true);
+            oCsr.setConnection(oCon);
+          }
+          
           // Count how many atoms are pending of processing at the database
           oStmt = oCon.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
@@ -300,21 +312,32 @@ public class SchedulerDaemon extends Thread {
 
           if (DebugFile.trace) DebugFile.writeln(String.valueOf(iJobCount) + " pending jobs");
 
-          if (0==iJobCount)
+          if (0==iJobCount) {
+            if (DebugFile.trace) DebugFile.writeln("sleep (10000)");
             sleep (10000);
-          else
+          }
+          else {
             break;
+          }
         } // wend
 
         if (bContinue) {
+          if (oCon.isClosed()) {
+          	oCon = oDbb.getConnection("SchedulerDaemon");
+            oCon.setAutoCommit(true);
+            oCsr.setConnection(oCon);
+          }
           oFdr.loadAtoms(oCon, oThreadPool.size());
 
           oFdr.feedQueue(oCon, oQue);
 
-          if (oQue.size()>0)
+          if (oQue.size()>0) {
             oThreadPool.launchAll();
+          }
 
           do {
+
+            if (DebugFile.trace) DebugFile.writeln("sleep (10000)");
 
             sleep(10000);
 
@@ -342,13 +365,14 @@ public class SchedulerDaemon extends Thread {
 
     if (DebugFile.trace) DebugFile.writeln("JDConnection.close()");
 
-    oCon.close("SchedulerDaemon");
+	if (!oCon.isClosed())
+      oCon.close("SchedulerDaemon");
     oCon = null;
 
     oDbb.close();
     oDbb=null;
     }
-    catch (SQLException e) {
+    catch (Exception e) {
       try { oThreadPool.haltAll(); oThreadPool=null; } catch (Exception ignore) {}
       try { oCsr.close(); oCsr=null; } catch (Exception ignore) {}
       try {
@@ -362,10 +386,15 @@ public class SchedulerDaemon extends Thread {
       dtStartDate = null;
       dtStopDate = new Date();
 
-      if (DebugFile.trace)
-        DebugFile.writeln("SchedulerDaemon SQLException " + e.getMessage());
+      if (DebugFile.trace) {
+        DebugFile.writeln("SchedulerDaemon " + e.getClass().getName() + " " + e.getMessage());
+        try {
+          DebugFile.writeln(StackTraceUtil.getStackTrace(e));
+        } catch (IOException ignore) {}
+        
         DebugFile.writeln("SchedulerDaemon.run() abnormal termination");
-    }
+      }
+    } // catch
     if (DebugFile.trace) DebugFile.writeln("End SchedulerDaemon.run()");
   } // run
 
@@ -386,6 +415,45 @@ public class SchedulerDaemon extends Thread {
     if (oThreadPool!=null)
       oThreadPool.unregisterCallback(sCallbackName);
   }
+
+  // ---------------------------------------------------------------------------
+
+  /**
+   * <p>Abort a given Job</p>
+   * @param sGuJob GUID of Job to be aborted
+   * @throws SQLException, ClassNotFoundException
+   * @since 5.0
+   */
+  public void abortJob(String sGuJob)
+  	throws SQLException, ClassNotFoundException, IllegalAccessException, InstantiationException, FileNotFoundException {
+    DBBind oDb2;
+
+	if (DebugFile.trace) {
+	  DebugFile.writeln("Begin SchedulerDaemon.abortJob("+sGuJob+")");
+	  DebugFile.incIdent();
+	}
+	
+    if (null==oDbb)
+      oDb2 = new DBBind(sProfile);
+    else
+      oDb2 = oDbb;
+      
+    JDCConnection oCon = oDb2.getConnection("SchedulerDaemon.abortJob");
+	oCon.setAutoCommit(true);
+
+	atomQueue().remove(sGuJob);
+
+	Job.instantiate(oCon, sGuJob, oEnvProps).abort(oCon);
+
+	oCon.close("SchedulerDaemon.abortJob");
+
+	if (oDb2!=oDbb) oDb2.close();
+
+	if (DebugFile.trace) {
+	  DebugFile.decIdent();
+	  DebugFile.writeln("End SchedulerDaemon.abortJob()");
+	}
+  } // abortJob
 
   // ---------------------------------------------------------------------------
 

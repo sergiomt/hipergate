@@ -67,7 +67,7 @@ import com.knowgate.misc.Gadgets;
 /**
  * <p>Abstract base class for Job Commands Implementations</p>
  * @author Sergio Montoro Ten
- * @version 4.0
+ * @version 5.0
  */
 public abstract class Job extends DBPersist {
   private Properties oParams;
@@ -123,14 +123,19 @@ public abstract class Job extends DBPersist {
   // ----------------------------------------------------------
 
   public void abort(JDCConnection oConn) throws SQLException,IllegalStateException {
+
     if (DebugFile.trace) {
       DebugFile.writeln("Begin Job.abort()");
       DebugFile.incIdent();
       DebugFile.writeln("gu_job="+getStringNull(DB.gu_job,"null"));
     }
+
     short iStatus;
     String sSQL;
     PreparedStatement oUpdt;
+
+	iPendingAtoms = 0;
+
     PreparedStatement oStmt = oConn.prepareStatement("SELECT "+DB.id_status+" FROM "+DB.k_jobs+" WHERE "+DB.gu_job+"=?",
                                                      ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
     oStmt.setString(1, getStringNull(DB.gu_job,null));
@@ -141,23 +146,41 @@ public abstract class Job extends DBPersist {
       iStatus = 100;
     oRSet.close();
     oStmt.close();
+
     if (100==iStatus)
       throw new SQLException("Job "+getStringNull(DB.gu_job,"null")+" not found");
     if (Atom.STATUS_ABORTED==iStatus)
       throw new IllegalStateException("Job "+getStringNull(DB.gu_job,"null")+" was already aborted");
     else if (Atom.STATUS_FINISHED==iStatus)
       throw new IllegalStateException("Job "+getStringNull(DB.gu_job,"null")+" was already finished");
+
     sSQL = "UPDATE "+DB.k_job_atoms+" SET "+DB.id_status+"="+String.valueOf(Atom.STATUS_ABORTED)+","+DB.dt_execution+"=NULL WHERE "+DB.gu_job+"=? AND "+DB.id_status+"<>"+String.valueOf(Atom.STATUS_FINISHED);
     if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement("+sSQL+")");
     oUpdt = oConn.prepareStatement(sSQL);
     oUpdt.setString(1, getStringNull(DB.gu_job,null));
     oUpdt.executeUpdate();
     oUpdt.close();
+
+    sSQL = "INSERT INTO " + DB.k_job_atoms_archived + " (" + Atom.COLUMNS_LIST + ") " +
+           "SELECT " + Atom.COLUMNS_LIST + " FROM " + DB.k_job_atoms +
+           " WHERE gu_job='" + getString(DB.gu_job) + "'";
+    oUpdt = oConn.prepareStatement(sSQL);
+    if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(" + sSQL + ")");
+    oUpdt.executeUpdate();
+    oUpdt.close();
+
+    sSQL = "DELETE FROM " + DB.k_job_atoms + " WHERE gu_job='" + getString(DB.gu_job) + "'";
+    oUpdt = oConn.prepareStatement(sSQL);
+    if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(" + sSQL + ")");
+    oUpdt.executeUpdate();
+    oUpdt.close();
+
     sSQL = "UPDATE "+DB.k_jobs+" SET "+DB.id_status+"="+String.valueOf(Atom.STATUS_ABORTED)+","+DB.dt_finished+"="+DBBind.Functions.GETDATE+" WHERE "+DB.gu_job+"=?";
     oUpdt = oConn.prepareStatement(sSQL);
     oUpdt.setString(1, getStringNull(DB.gu_job,null));
     oUpdt.executeUpdate();
     oUpdt.close();
+
     if (DebugFile.trace) {
       DebugFile.decIdent();
       DebugFile.writeln("End Job.abort()");
@@ -671,11 +694,11 @@ public abstract class Job extends DBPersist {
         if (!oRetObj.oLogFile.exists()) throw new FileNotFoundException(sStorage);
 
         // Create directory storage/jobs/gu_workarea/gu_job
-        oRetObj.oLogFile = new File(sStorage + System.getProperty("file.separator") + sJobId);
-        if (!oRetObj.oLogFile.exists()) oRetObj.oLogFile.mkdir();
-        if (!oRetObj.oLogFile.exists()) throw new FileNotFoundException(sStorage);
+        // oRetObj.oLogFile = new File(sStorage + System.getProperty("file.separator") + sJobId);
+        // if (!oRetObj.oLogFile.exists()) oRetObj.oLogFile.mkdir();
+        // if (!oRetObj.oLogFile.exists()) throw new FileNotFoundException(sStorage);
 
-        // Set File Object to storage/jobs/gu_workarea/gu_job.txt
+        // Set File Object to storage/jobs/gu_workarea/gu_job/gu_job.txt
         oRetObj.oLogFile = new File(sStorage + System.getProperty("file.separator") + sJobId + ".txt");
 
       } // fi (sStorage)

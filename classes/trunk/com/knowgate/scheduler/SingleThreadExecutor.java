@@ -281,10 +281,14 @@ public class SingleThreadExecutor extends Thread {
 	}
 
     try {
-      if (oGlobalDbb==null)
+      if (oGlobalDbb==null) {
+        // Disable connection reaper to avoid connections being closed in the middle of job execution
         oDBB = new DBBind(sEnvProps);
-      else
+        oDBB.connectionPool().setReaperDaemonDelay(0l);
+      }
+      else {
       	oDBB = oGlobalDbb;
+      }
 
       oCon = oDBB.getConnection("SingleThreadExecutor_"+String.valueOf(currentThread().getId()));
 	  oCon.setAutoCommit(true);
@@ -296,6 +300,11 @@ public class SingleThreadExecutor extends Thread {
       oFdr = new AtomFeeder();
 
       while (bContinue) {
+
+        if (oCon.isClosed()) {
+          oCon = oDBB.getConnection("SingleThreadExecutor_"+String.valueOf(currentThread().getId()));
+          oCon.setAutoCommit(true);
+        }
 
         if (sJob==null)
           oDBS = oFdr.loadAtoms(oCon,1);
@@ -345,7 +354,8 @@ public class SingleThreadExecutor extends Thread {
           bContinue = false;
       } // wend
 
-      oCon.close("SingleThreadExecutor_"+String.valueOf(currentThread().getId()));
+      if (!oCon.isClosed())
+        oCon.close("SingleThreadExecutor_"+String.valueOf(currentThread().getId()));
 
       if (oGlobalDbb==null && oDBB!=null) oDBB.close();
     }

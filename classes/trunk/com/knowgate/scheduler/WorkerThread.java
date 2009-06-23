@@ -103,6 +103,12 @@ public class WorkerThread extends Thread {
 
   // ----------------------------------------------------------
 
+  public AtomConsumer getConsumer () {
+    return oConsumer;
+  }
+
+  // ----------------------------------------------------------
+
   public void setConsumer (AtomConsumer oAtomConsumer) {
     oConsumer = oAtomConsumer;
   }

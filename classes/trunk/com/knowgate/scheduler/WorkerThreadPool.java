@@ -125,13 +125,32 @@ public class WorkerThreadPool {
   /**
    * Launch all WorkerThreads and start consuming atoms from queue.
    */
-  public void launchAll() {
+  public void launchAll() throws IllegalThreadStateException {
+  	if (DebugFile.trace) {
+  	  DebugFile.writeln("Begin WorkerThreadPool.launchAll()");
+  	  DebugFile.incIdent();
+  	}
+  	
     for (int t=0; t<aThreads.length; t++) {
       if (!aThreads[t].isAlive()) {
+  	    if (DebugFile.trace) {
+  	      DebugFile.writeln("Re-starting thread "+String.valueOf(t));
+  	    }
         aStartTime[t] = new java.util.Date().getTime();
+        aThreads[t] = new WorkerThread(this, aThreads[t].getConsumer());
         aThreads[t].start();
+      } else {
+  	    if (DebugFile.trace) {
+  	      DebugFile.writeln("Thread "+String.valueOf(t)+" is alive");
+  	    }      	
       }
     } // next
+
+  	if (DebugFile.trace) {
+  	  DebugFile.writeln("End WorkerThreadPool.launchAll()");
+  	  DebugFile.decIdent();
+  	}
+
   } // launchAll
 
   // ---------------------------------------------------------------------------

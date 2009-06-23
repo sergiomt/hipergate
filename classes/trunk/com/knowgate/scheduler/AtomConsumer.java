@@ -45,7 +45,7 @@ import com.knowgate.debug.DebugFile;
 /**
  * Atom queue consumer
  * @author Sergio Montoro Ten
- * @version 1.0
+ * @version 5.0
  */
 public class AtomConsumer {
 
@@ -63,16 +63,29 @@ public class AtomConsumer {
    */
   public AtomConsumer(JDCConnection oConnection, AtomQueue oAtomQueue) throws SQLException {
     oQueue = oAtomQueue;
+    open(oConnection);
+  }
+
+  // ----------------------------------------------------------
+
+  private void open(JDCConnection oConnection) throws SQLException {
+
     oConn = oConnection;
 
     if (DebugFile.trace) {
       DebugFile.writeln("Connection.prepareStatement (UPDATE " + DB.k_job_atoms + " SET " + DB.id_status + "=" + String.valueOf(Atom.STATUS_RUNNING) + ", " + DB.dt_execution + "=? WHERE " + DB.gu_job + "=? AND " + DB.pg_atom + "=?)");
     }
 
-    // deja preparada la sentencia de actulización de estado del átomo para mejor velocidad
     oStmt = oConn.prepareStatement("UPDATE " + DB.k_job_atoms + " SET " + DB.id_status + "=" + String.valueOf(Atom.STATUS_RUNNING) + ", " + DB.dt_execution + "=? WHERE " + DB.gu_job + "=? AND " + DB.pg_atom + "=?");
 
     try { if (oConnection.getDataBaseProduct()!=JDCConnection.DBMS_POSTGRESQL) oStmt.setQueryTimeout(20); } catch (SQLException sqle) { }
+  } // open
+  
+  // ----------------------------------------------------------
+
+  public void setConnection(JDCConnection oConnection) throws SQLException {
+    close();
+    open(oConnection);
   }
 
   // ----------------------------------------------------------

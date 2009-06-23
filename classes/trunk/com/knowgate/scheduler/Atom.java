@@ -248,7 +248,6 @@ public class Atom extends DBPersist {
    * @throws SQLException
    */
   public void archive(JDCConnection oConn) throws SQLException {
-    final String COLUMNS_LIST = DB.gu_job + "," + DB.pg_atom + "," + DB.dt_execution + "," + DB.id_status + "," + DB.id_format + "," + DB.gu_company + "," + DB.gu_contact + "," + DB.tx_email + "," + DB.tx_name + "," + DB.tx_surname + "," + DB.tx_salutation + "," + DB.nm_commercial + "," + DB.tp_street + "," + DB.nm_street + "," + DB.nu_street + "," + DB.tx_addr1 + "," + DB.tx_addr2 + "," + DB.nm_country + "," + DB.nm_state + "," + DB.mn_city	 + "," + DB.zipcode	 + "," + DB.work_phone + "," + DB.direct_phone + "," + DB.home_phone + "," + DB.mov_phone + "," + DB.fax_phone + "," + DB.other_phone + "," + DB.po_box + "," + DB.tx_log;
     String sWhere, sSQL;
     Statement oStmt;
 
@@ -332,5 +331,7 @@ public class Atom extends DBPersist {
   public static final short STATUS_SUSPENDED = Job.STATUS_SUSPENDED;
   public static final short STATUS_RUNNING = Job.STATUS_RUNNING;
   public static final short STATUS_INTERRUPTED = Job.STATUS_INTERRUPTED;
+
+  public static final String COLUMNS_LIST = DB.gu_job + "," + DB.pg_atom + "," + DB.dt_execution + "," + DB.id_status + "," + DB.id_format + "," + DB.gu_company + "," + DB.gu_contact + "," + DB.tx_email + "," + DB.tx_name + "," + DB.tx_surname + "," + DB.tx_salutation + "," + DB.nm_commercial + "," + DB.tp_street + "," + DB.nm_street + "," + DB.nu_street + "," + DB.tx_addr1 + "," + DB.tx_addr2 + "," + DB.nm_country + "," + DB.nm_state + "," + DB.mn_city	 + "," + DB.zipcode	 + "," + DB.work_phone + "," + DB.direct_phone + "," + DB.home_phone + "," + DB.mov_phone + "," + DB.fax_phone + "," + DB.other_phone + "," + DB.po_box + "," + DB.tx_log;
 
 } // Atom
