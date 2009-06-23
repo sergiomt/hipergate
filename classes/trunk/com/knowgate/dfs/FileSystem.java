@@ -1412,6 +1412,9 @@ public class FileSystem {
   public static String detectEncoding(File oFile, String sDefault)
     throws FileNotFoundException, IOException {
 
+	if (!oFile.exists())
+	  throw new FileNotFoundException("FileSystem.detectEncoding("+oFile.getPath()+","+sDefault+")");
+
 	return new CharacterSetDetector().detect(oFile, sDefault);
 
   } // detectEncoding
@@ -1430,6 +1433,8 @@ public class FileSystem {
   public String detectEncoding(String sFilePath, String sDefault)
     throws FileNotFoundException, IOException, FTPException {
     byte[] byBuffer = readfilebin(sFilePath);
+    if (null==byBuffer) return sDefault;
+    if (byBuffer.length==0) return sDefault;
 	ByteArrayInputStream oInStrm = new ByteArrayInputStream(readfilebin(sFilePath));
     String sEncoding = new CharacterSetDetector().detect(oInStrm, sDefault);
 	oInStrm.close();
