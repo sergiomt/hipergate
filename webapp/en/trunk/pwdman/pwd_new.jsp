@@ -120,7 +120,7 @@
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
     <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Nuevo~]&nbsp;<%=oRec.getName()%></FONT></TD></TR>
   </TABLE>  
-  <FORM NAME="" METHOD="post" ACTION="form_store.jsp" onSubmit="return validate()">
+  <FORM NAME="" METHOD="post" ACTION="pwd_store.jsp" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
     <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
     <INPUT TYPE="hidden" NAME="gu_writer" VALUE="<%=id_user%>">

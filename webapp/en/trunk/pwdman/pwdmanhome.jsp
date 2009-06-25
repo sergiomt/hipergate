@@ -108,6 +108,9 @@
         
     var req = false;
 
+		var cts = new Array (<% for (int c=0; c<iCatgs; c++) out.write((c==0 ? "" : ",")+"\""+oCatgs.getString(0,c)+"\""); %>);
+		var ctn = new Array (<% for (int c=0; c<iCatgs; c++) out.write((c==0 ? "" : ",")+"\""+oCatgs.getStringNull(2,c,oCatgs.getString(1,c)).replace('"',' ')+"\""); %>);
+
     function createPassword() {
       var frm = document.forms["pwdsfrm"];
       if (frm.sel_templates.selectedIndex<=0) {
@@ -116,7 +119,6 @@
       } else {
 	      open ("pwd_new.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&nm_template="+getCombo(frm.sel_templates),
 	      		  "newpassword", "directories=no,toolbar=no,menubar=no,width=500,height=460");
-
       }
     } // createPassword
     
@@ -128,8 +130,9 @@
           	} else {
           		var id = req.responseText.substr(0,32);
           		var lt = req.responseText.substr(33);
+          		cts.push(id);
           		var clst = document.getElementById("catlist");
-          		clst.innerHTML = clst.innerHTML + "<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"listPasswords('"+id+"')\">"+lt+"</A><BR/>";
+          		clst.innerHTML = clst.innerHTML + "<INPUT TYPE=\"checkbox\" NAME=\"c_"+id+"\">&nbsp;<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"listPasswords('"+id+"')\">"+lt+"</A><BR/>";
           	} // fi
           	req = false;
           } else {
@@ -158,10 +161,35 @@
   			  req.setRequestHeader("Content-length", par.length);
   			  req.setRequestHeader("Connection", "close");
 			    req.send(par);
-    		  //window.prompt("URL", "category_store.jsp?id_parent_cat="+currentCategoryGuid+"&tr1st="+sCatName);
+    		  // window.prompt("URL", "category_store.jsp?id_parent_cat="+currentCategoryGuid+"&tr1st="+sCatName);
     	  }
     	}    	
     } // createCategory()
+
+    function deleteCategories {
+    	var par;
+    	var frm = document.forms["fcats"];
+		  var par = "";
+		  if (!req) {
+    	  for (var c=0; c<cts.length; c++) {
+    	  	if (frm.elements["c_"+cts[c]]].checked) par += (par.length==0 ? "" : ",")+frm.elements["c_"+cts[c]]].value;
+    	  } // next
+    	  
+    	  if (par.lenght==0) {
+    	    alert ("[~Debe seleccionar al menos una categoría a eliminar~]");
+        } else {
+      	  par = "lst="+par;
+			    req = createXMLHttpRequest();
+			    req.onreadystatechange = addNewCategory;
+			  
+			    req.open("POST", "category_delete.jsp", true);
+  		    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  			  req.setRequestHeader("Content-length", par.length);
+  			  req.setRequestHeader("Connection", "close");
+			    req.send(par);
+    	  }
+    	}    	    
+    } // deleteCategories
 
     // ----------------------------------------------------------------
 
@@ -298,13 +326,13 @@
     	<TD>&nbsp;&nbsp;<IMG SRC="../images/images/newfolder16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
       <TD VALIGN="middle"><A HREF="#" onclick="createCategory()" CLASS="linkplain">[~Nueva Categoría~]</A></TD>
     	<TD>&nbsp;&nbsp;<IMG SRC="../images/images/deletefolder.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
-      <TD VALIGN="middle"><A HREF="#" onclick="deleteCategory()" CLASS="linkplain">[~Eliminar Categoría~]</A></TD>
+      <TD VALIGN="middle"><A HREF="#" onclick="deleteCategories()" CLASS="linkplain">[~Eliminar Categorías~]</A></TD>
     </TR>
   </TABLE>
-  <FORM METHOD="post" ACTION="category_delete.jsp">
+  <FORM METHOD="post" NAME="fcats" ACTION="category_delete.jsp">
   <DIV id="catlist"><%
   for (int c=0; c<iCatgs; c++) {
-    out.write("<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"listPasswords('"+oCatgs.getString(0,c)+"')\">"+oCatgs.getStringNull(2,c,oCatgs.getString(1,c))+"</A><BR/>");
+    out.write("<INPUT TYPE=\"checkbox\" NAME=\"c_"+oCatgs.getString(0,c)+"\">&nbsp;<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"listPasswords('"+oCatgs.getString(0,c)+"')\">"+oCatgs.getStringNull(2,c,oCatgs.getString(1,c))+"</A><BR/>");
   } // next
 %></DIV>
   </FORM>
