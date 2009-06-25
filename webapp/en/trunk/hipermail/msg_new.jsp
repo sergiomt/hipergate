@@ -412,8 +412,14 @@
 	      </TABLE>
       </TD>
 <% if (contenttype.equals("html")) { %>
+	    <TD VALIGN="middle" CLASS="formplain">
+	    	<INPUT TYPE="checkbox" NAME="chk_notification" VALUE="1">&nbsp;[~Solicitar acuse de recibo~]
+	    	<BR/>
+	    	<INPUT TYPE="checkbox" NAME="chk_webbeacon" VALUE="1">&nbsp;[~Insertar Web Beacon~]
+      </TD>
+<% } else { %>
 	    <TD VALIGN="top" CLASS="formplain">
-	    	<INPUT TYPE="checkbox" NAME="chk_webbeacon" VALUE="1">&nbsp;Insertar Web Beacon
+	    	<INPUT TYPE="checkbox" NAME="chk_notification" VALUE="1">&nbsp;[~Solicitar acuse de recibo~]
       </TD>
 <% } %>
     </TR>

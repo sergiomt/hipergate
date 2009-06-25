@@ -64,7 +64,7 @@
     if (request.getParameter("maxrows")!=null)
       iMaxRows = Integer.parseInt(request.getParameter("maxrows"));
     else 
-      iMaxRows = Integer.parseInt(getCookie(request, "maxrows", "100"));
+      iMaxRows = 100;
   }
   catch (NumberFormatException nfe) { iMaxRows = 100; }
 

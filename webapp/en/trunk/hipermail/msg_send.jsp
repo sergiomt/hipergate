@@ -65,6 +65,7 @@
   String id_user = getCookie (request, "userid", null);
   String gu_account = nullif(request.getParameter("gu_account"),getCookie(request,"mail_account","").trim());
   boolean bo_webbeacon = nullif(request.getParameter("chk_webbeacon"),"0").equals("1");
+  boolean bo_notification = nullif(request.getParameter("chk_notification"),"0").equals("1");
 
   String tx_pwd = (String) GlobalCacheClient.get("[" + id_user + ",mailpwd]");
   if (null==tx_pwd) {
@@ -160,7 +161,7 @@
       MimeSender oJob = MimeSender.newInstance(oRDBMS.getConnection(), sProfile, gu_workarea,
                                     	       gu_mimemsg, id_mimemsg,
                                     	       id_user, oMacc.getString(DB.gu_account),
-                                    	       bIsPersonalizedMail, tx_subject);
+                                    	       bIsPersonalizedMail, tx_subject, bo_notification);
       oJob.store(oRDBMS.getConnection());      
       sGuJob = oJob.getString(DB.gu_job);
     
@@ -179,20 +180,20 @@
       aRecps = (InternetAddress[]) oRecp.getRecipients(Message.RecipientType.TO);
       if (null!=aRecps) {
         nRecps = aRecps.length;
-	for (int r=0; r<nRecps; r++) {
+	      for (int r=0; r<nRecps; r++) {
           oAtom.setString(1,"to");
           oAtom.setString(2,aRecps[r].getAddress());
           oAtom.executeUpdate();
-	} // next
+	      } // next
       } // fi
       aRecps = (InternetAddress[]) oRecp.getRecipients(Message.RecipientType.CC);
       if (null!=aRecps) {
         nRecps = aRecps.length;
-	for (int r=0; r<nRecps; r++) {
+	      for (int r=0; r<nRecps; r++) {
             oAtom.setString(1,"cc");
             oAtom.setString(2,aRecps[r].getAddress());
             oAtom.executeUpdate();
-	} // next
+	      } // next
       } // fi
       aRecps = (InternetAddress[]) oRecp.getRecipients(Message.RecipientType.BCC);
       if (null!=aRecps) {
@@ -214,6 +215,7 @@
       // Send message inmediately
 
       SMTPMessage oSentMsg = oDraft.composeFinalMessage(oHndlr.getSmtpSession(), tx_subject, sBody, id_mimemsg, tp_content);
+      if (bo_notification) oSentMsg.addHeader("Disposition-Notification-To", oMacc.getString(DB.tx_main_email));
 
       oHndlr.sendMessage(oSentMsg,aAdrFrom,aAdrFrom,oRecp.getRecipients(Message.RecipientType.TO),
       			 oRecp.getRecipients(Message.RecipientType.CC), oRecp.getRecipients(Message.RecipientType.BCC));
@@ -292,7 +294,10 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=FolderNotFoundException&desc=" + f.getMessage() + "&resume=_back"));
   } catch (SendFailedException s) {
     bXcpt = true;
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SendFailedException&desc=" + nullif(s.getMessage()).replace('#','~') + "&resume=_back"));
+    if (s.getCause()!=null)
+      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SendFailedException&desc=" + nullif(s.getMessage()).replace('#','~') + " " + s.getCause().getClass().getName()+ " " + s.getCause().getMessage() + "&resume=_back"));
+    else
+      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SendFailedException&desc=" + nullif(s.getMessage()).replace('#','~') + "&resume=_back"));
   } catch (MessagingException me) {
     bXcpt = true;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=MessagingException&desc=" + me.getMessage() + "&resume=_back"));
