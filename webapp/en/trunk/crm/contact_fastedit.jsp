@@ -92,7 +92,7 @@
     D = "|";
   }
 
-  String sDescriptor = "id_contact_ref"+D+"tx_name"+D+"tx_surname"+D+"nm_legal"+D+"id_sector"+D+"de_title"+D+"sn_passport"+D+"tp_passport"+D+"dt_birth"+D+"ny_age"+D+"tp_street"+D+"nm_street"+D+"nu_street"+D+"tx_addr1"+D+"tx_addr2"+D+"id_country"+D+"id_state"+D+"mn_city"+D+"zipcode"+D+"direct_phone"+D+"tx_email";
+  String sDescriptor = "id_contact_ref"+D+"tx_name"+D+"tx_surname"+D+"nm_legal"+D+"tx_email"+D+"direct_phone"+D+"id_sector"+D+"de_title"+D+"sn_passport"+D+"tp_passport"+D+"dt_birth"+D+"ny_age"+D+"tp_street"+D+"nm_street"+D+"nu_street"+D+"tx_addr1"+D+"tx_addr2"+D+"id_country"+D+"id_state"+D+"mn_city"+D+"zipcode";
   CSVParser oCsv = null;
   JDCConnection oConn = null;  
   String sSectorsLookUp="", sTitlesLookUp="", sPassportsLookUp="", sStreetsLookUp="", sCountriesLookUp="";
@@ -267,12 +267,12 @@
 	} else {
 	  for (int r=0; r<iRows; r++) {
 	    sRow = String.valueOf(r);
-	    out.write("        setCombo(frm.id_sector"+sRow+",\""+oCsv.getField(4,r)+"\");\n");
-	    out.write("        setCombo(frm.de_title"+sRow+",\""+oCsv.getField(5,r)+"\");\n");
-	    out.write("        setCombo(frm.tp_passport"+sRow+",\""+oCsv.getField(7,r)+"\");\n");
-	    out.write("        setCombo(frm.tp_street"+sRow+",\""+oCsv.getField(10,r)+"\");\n");
-	    out.write("        setCombo(frm.id_country"+sRow+",\""+oCsv.getField(15,r)+"\");\n");
-	    out.write("        setCombo(frm.id_state"+sRow+",\""+oCsv.getField(16,r)+"\");\n");
+	    out.write("        setCombo(frm.id_sector"+sRow+",\""+oCsv.getField(6,r)+"\");\n");
+	    out.write("        setCombo(frm.de_title"+sRow+",\""+oCsv.getField(7,r)+"\");\n");
+	    out.write("        setCombo(frm.tp_passport"+sRow+",\""+oCsv.getField(9,r)+"\");\n");
+	    out.write("        setCombo(frm.tp_street"+sRow+",\""+oCsv.getField(12,r)+"\");\n");
+	    out.write("        setCombo(frm.id_country"+sRow+",\""+oCsv.getField(17,r)+"\");\n");
+	    out.write("        setCombo(frm.id_state"+sRow+",\""+oCsv.getField(18,r)+"\");\n");
 	  } // next
 	} // fi
 %>
@@ -311,6 +311,8 @@
         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Name</B></TD>
         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Surname</B></TD>
         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Company</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>e-mail</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Telephone</B></TD>
         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Sector</B></TD>
         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Position</B></TD>
         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Identity Document</B></TD>
@@ -326,8 +328,6 @@
         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>State</B></TD>
         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>City</B></TD>
         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Zipcode</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>Telephone</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP>&nbsp;<B>e-mail</B></TD>
       </TR>
 <% 
    for (int r=0; r<iRows; r++) {
@@ -343,21 +343,23 @@
           <A HREF="javascript:reference('nm_legal<%=sRow%>',1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View listing"></A>
           &nbsp;&nbsp;
         </TD>
+        <TD><INPUT TYPE="text" CLASS="combomini" NAME="tx_email<%=sRow%>" SIZE="20" MAXLENGTH="100" VALUE="<%=getField(oCsv,4,r)%>"></TD>
+        <TD><INPUT TYPE="text" CLASS="combomini" NAME="direct_phone<%=sRow%>" SIZE="10" MAXLENGTH="16" VALUE="<%=getField(oCsv,5,r)%>"></TD>
         <TD><SELECT CLASS="combomini" NAME="id_sector<%=sRow%>"><OPTION VALUE=""></OPTION><%=sSectorsLookUp%></SELECT></TD>
         <TD><SELECT CLASS="combomini" NAME="de_title<%=sRow%>"><OPTION VALUE=""></OPTION><%=sTitlesLookUp%></SELECT></TD>
-        <TD><INPUT TYPE="text" CLASS="combomini" NAME="sn_passport<%=sRow%>" SIZE="10" MAXLENGTH="16" VALUE="<%=getField(oCsv,6,r)%>"></TD>
+        <TD><INPUT TYPE="text" CLASS="combomini" NAME="sn_passport<%=sRow%>" SIZE="10" MAXLENGTH="16" VALUE="<%=getField(oCsv,8,r)%>"></TD>
         <TD><SELECT CLASS="combomini" NAME="tp_passport<%=sRow%>"><OPTION VALUE=""></OPTION><%=sPassportsLookUp%></SELECT></TD>
         <TD NOWRAP>
-          <INPUT TYPE="text" CLASS="combomini" NAME="dt_birth<%=sRow%>" SIZE="12" MAXLENGTH="10" VALUE="<%=getField(oCsv,8,r)%>">
+          <INPUT TYPE="text" CLASS="combomini" NAME="dt_birth<%=sRow%>" SIZE="12" MAXLENGTH="10" VALUE="<%=getField(oCsv,10,r)%>">
           <A HREF="javascript:showCalendar('dt_birth<%=sRow%>')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
           &nbsp;&nbsp;
         </TD>
-        <TD ALIGN="center"><INPUT TYPE="text" CLASS="combomini" NAME="ny_age<%=sRow%>" SIZE="3" MAXLENGTH="3" onkeypress="acceptOnlyNumbers(this)" VALUE="<%=getField(oCsv,9,r)%>"></TD>
+        <TD ALIGN="center"><INPUT TYPE="text" CLASS="combomini" NAME="ny_age<%=sRow%>" SIZE="3" MAXLENGTH="3" onkeypress="acceptOnlyNumbers(this)" VALUE="<%=getField(oCsv,11,r)%>"></TD>
         <TD><SELECT CLASS="combomini" NAME="tp_street<%=sRow%>"><OPTION VALUE=""></OPTION><%=sStreetsLookUp%></SELECT></TD>
-        <TD><INPUT TYPE="text" CLASS="combomini" NAME="nm_street<%=sRow%>" SIZE="20" MAXLENGTH="100" VALUE="<%=getField(oCsv,11,r)%>"></TD>
-        <TD><INPUT TYPE="text" CLASS="combomini" NAME="nu_street<%=sRow%>" SIZE="4" MAXLENGTH="16" VALUE="<%=getField(oCsv,12,r)%>"></TD>
-        <TD><INPUT TYPE="text" CLASS="combomini" NAME="tx_addr1<%=sRow%>" SIZE="10" MAXLENGTH="100" VALUE="<%=getField(oCsv,13,r)%>"></TD>
-        <TD><INPUT TYPE="text" CLASS="combomini" NAME="tx_addr2<%=sRow%>" SIZE="10" MAXLENGTH="100" VALUE="<%=getField(oCsv,14,r)%>"></TD>
+        <TD><INPUT TYPE="text" CLASS="combomini" NAME="nm_street<%=sRow%>" SIZE="20" MAXLENGTH="100" VALUE="<%=getField(oCsv,13,r)%>"></TD>
+        <TD><INPUT TYPE="text" CLASS="combomini" NAME="nu_street<%=sRow%>" SIZE="4" MAXLENGTH="16" VALUE="<%=getField(oCsv,14,r)%>"></TD>
+        <TD><INPUT TYPE="text" CLASS="combomini" NAME="tx_addr1<%=sRow%>" SIZE="10" MAXLENGTH="100" VALUE="<%=getField(oCsv,15,r)%>"></TD>
+        <TD><INPUT TYPE="text" CLASS="combomini" NAME="tx_addr2<%=sRow%>" SIZE="10" MAXLENGTH="100" VALUE="<%=getField(oCsv,16,r)%>"></TD>
         <TD>
           <INPUT TYPE="hidden" NAME="nm_country<%=sRow%>">
           <SELECT CLASS="combomini" NAME="id_country<%=sRow%>" onchange="loadstates('id_country<%=sRow%>','id_state<%=sRow%>',null)"><OPTION VALUE=""></OPTION><% if (0==r) out.write(sCountriesLookUp); %></SELECT>
@@ -366,10 +368,8 @@
           <INPUT TYPE="hidden" NAME="nm_state<%=sRow%>">
           <SELECT CLASS="combomini" NAME="id_state<%=sRow%>"></SELECT>
         </TD>
-        <TD><INPUT TYPE="text" CLASS="combomini" NAME="mn_city<%=sRow%>" SIZE="15" MAXLENGTH="50" VALUE="<%=getField(oCsv,17,r)%>"></TD>
-        <TD><INPUT TYPE="text" CLASS="combomini" NAME="zipcode<%=sRow%>" SIZE="8" MAXLENGTH="30" VALUE="<%=getField(oCsv,18,r)%>"></TD>
-        <TD><INPUT TYPE="text" CLASS="combomini" NAME="direct_phone<%=sRow%>" SIZE="10" MAXLENGTH="16" VALUE="<%=getField(oCsv,19,r)%>"></TD>
-        <TD><INPUT TYPE="text" CLASS="combomini" NAME="tx_email<%=sRow%>" SIZE="20" MAXLENGTH="100" VALUE="<%=getField(oCsv,20,r)%>"></TD>
+        <TD><INPUT TYPE="text" CLASS="combomini" NAME="mn_city<%=sRow%>" SIZE="15" MAXLENGTH="50" VALUE="<%=getField(oCsv,19,r)%>"></TD>
+        <TD><INPUT TYPE="text" CLASS="combomini" NAME="zipcode<%=sRow%>" SIZE="8" MAXLENGTH="30" VALUE="<%=getField(oCsv,20,r)%>"></TD>
       </TR>
 <% } %>
     </TABLE>
@@ -426,7 +426,7 @@
           The file must have structure
         </TD>
         <TD CLASS="textsmall">
-          id_ref|tx_name|tx_surname|nm_legal|id_sector|de_title|sn_passport|tp_passport|dt_birth|ny_age|tp_street|nm_street|nu_street|tx_addr1|tx_addr2|id_country|id_state|mn_city|zipcode|direct_phone|tx_email
+          id_ref|tx_name|tx_surname|nm_legal|tx_email|direct_phone|id_sector|de_title|sn_passport|tp_passport|dt_birth|ny_age|tp_street|nm_street|nu_street|tx_addr1|tx_addr2|id_country|id_state|mn_city|zipcode
         </TD>
       </TR>
     </TABLE>

@@ -303,9 +303,9 @@
          sFrom = MimeUtility.decodeText(oMsgs.getStringNull(3, m, ""));
          sTo = MimeUtility.decodeText(oMsgs.getStringNull(4, m, ""));
          sSubject = MimeUtility.decodeText(oMsgs.getStringNull(5, m, "<I>&lt;sin asunto&gt;</I>"));
-	 sDateReceived = nullif(oMsgs.getDateShort(6, m));
-	 sDateSent = nullif(oMsgs.getDateShort(7, m));
-	 if (!oMsgs.isNull(8,m))
+	       sDateReceived = nullif(oMsgs.getDateShort(6, m));
+	       sDateSent = nullif(oMsgs.getDateShort(7, m));
+	       if (!oMsgs.isNull(8,m))
            iLen = oMsgs.getInt(8, m);
          else
            iLen = -1;
@@ -317,9 +317,9 @@
          else
            sSize = String.valueOf(iLen/1024) + "Kb";	          
 	 
-	 pgMsg = oMsgs.getDecimal(9,m);
+	       pgMsg = oMsgs.getDecimal(9,m);
 	 
-	 sFolder = oMsgs.getString(10,m);
+	       sFolder = oMsgs.getString(10,m);
 	   
          out.write("<TR>");         
          out.write("<TD CLASS=\"strip\""+sStrip+">");
@@ -330,7 +330,7 @@
          out.write("</TD>");
          out.write("<TD CLASS=\"strip\""+sStrip+"><FONT CLASS=\"textplain\">"+sFrom+"</FONT></TD>");
          out.write("<TD CLASS=\"strip\""+sStrip+"><A HREF=\"#\" CLASS=\"linkplain\" onclick=\"viewMessage('"+sFolder+"',"+pgMsg.toString()+",'"+sId+"')\">"+sSubject+"</FONT></TD>");
-         out.write("<TD CLASS=\"strip\""+sStrip+"><FONT CLASS=\"textplain\">"+sDateReceived+"</FONT></TD>");
+         out.write("<TD CLASS=\"strip\""+sStrip+"><FONT CLASS=\"textplain\">"+(sDateReceived.length()==0 ? sDateSent : sDateReceived)+"</FONT></TD>");
          out.write("<TD CLASS=\"strip\""+sStrip+" ALIGN=\"right\"><FONT CLASS=\"textplain\">"+sSize+"</FONT></TD>");
          out.write("</TR>\n");         
 
