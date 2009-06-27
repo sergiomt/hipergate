@@ -139,7 +139,7 @@ public class ListMember {
 
   /**
    * Create ListMember and load its fields from database.
-   * ListMember with given GUID or e-amil is seeked at k_x_list_members table.
+   * ListMember with given GUID or e-mail is seeked at k_x_list_members table.
    * @param oConn Database Connection
    * @param sMemberId One of: GUID for Contact, GUID for Company or Member e-mail.
    * @param sListGUID DistributionList GUID
