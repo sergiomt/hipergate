@@ -172,8 +172,8 @@ public class MailIndexer extends Indexer {
     oDoc.add (new Field ("number"   , dNumber.toString(), Field.Store.YES, Field.Index.UN_TOKENIZED));
     oDoc.add (new Field ("created"  , DateTools.dateToString(dtSent, DateTools.Resolution.SECOND), Field.Store.YES, Field.Index.UN_TOKENIZED));
     oDoc.add (new Field ("size"     , Gadgets.leftPad(String.valueOf(iSize),'0',10), Field.Store.YES, Field.Index.UN_TOKENIZED));
-    oDoc.add (new Field ("title"    , sSubject, Field.Store.YES, Field.Index.TOKENIZED));
-    oDoc.add (new Field ("author"   , sAuthor, Field.Store.YES, Field.Index.TOKENIZED));
+    oDoc.add (new Field ("title"    , Gadgets.ASCIIEncode(sSubject), Field.Store.YES, Field.Index.TOKENIZED));
+    oDoc.add (new Field ("author"   , Gadgets.ASCIIEncode(sAuthor), Field.Store.YES, Field.Index.TOKENIZED));
     oDoc.add (new Field ("abstract" , sAbstract, Field.Store.YES, Field.Index.TOKENIZED));
     oDoc.add (new Field ("recipients",sRecipients, Field.Store.YES, Field.Index.TOKENIZED));
     oDoc.add (new Field ("comments" , sComments, Field.Store.NO, Field.Index.TOKENIZED));
@@ -285,6 +285,8 @@ public class MailIndexer extends Indexer {
 
       oRSet = oStmt.executeQuery("SELECT m.gu_workarea,c.nm_category,m.gu_mimemsg,m.tx_subject,m.nm_from,m.tx_email_from,m.pg_message,m.de_mimemsg,m.dt_sent,m.len_mimemsg,m.by_content FROM k_mime_msgs m, k_categories c WHERE m.bo_deleted=0 AND m.bo_draft=0 AND m.gu_category=c.gu_category AND m.gu_workarea='"+sWorkArea+"' AND c.nm_category='"+sFolder+"'");
 
+	  int nIndexed = 0;
+
       while (oRSet.next()) {
 
         sWorkArea = oRSet.getString(1);
@@ -320,10 +322,20 @@ public class MailIndexer extends Indexer {
         MailIndexer.addMail(oIWrt, sGuid, dNumber, sWorkArea, sContainer, sTitle,
                             sAuthor, sRecipients, dtCreated, sComments,
                             oStrm, iSize);
+        nIndexed++;
 
       } // wend
+
+      if (DebugFile.trace) {
+        DebugFile.writeln(String.valueOf(nIndexed)+" messages indexed");
+      }
+
       oRSet.close();
       oRecp.close();
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Statement.executeUpdate(UPDATE k_mime_msgs SET bo_indexed=1 WHERE gu_workarea='"+sWorkArea+"' AND gu_category IN (SELECT gu_category FROM k_categories WHERE nm_category='"+sFolder+"'))");
+    }
 
     oStmt.executeUpdate("UPDATE k_mime_msgs SET bo_indexed=1 WHERE gu_workarea='"+sWorkArea+"' AND gu_category IN (SELECT gu_category FROM k_categories WHERE nm_category='"+sFolder+"')");
 
