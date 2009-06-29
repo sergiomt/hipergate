@@ -50,7 +50,7 @@
   
   <mymw:body newcontext="true">
     <mymw:div id="p1" class="center grid2">
-      <mymw:label class="right">Usuario:</mymw:label>
+      <mymw:label class="right">e-mail:</mymw:label>
       <mymw:entryfield id="USER" bind="${ _MYMW_LOGIN }" class="left login" />
       <mymw:label class="right">Clave:</mymw:label>
       <mymw:entryfield id="PASS" bind="${ _MYMW_PASS }" class="left password" />
