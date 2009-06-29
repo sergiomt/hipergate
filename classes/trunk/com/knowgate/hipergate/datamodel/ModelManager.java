@@ -1305,6 +1305,8 @@ public class ModelManager {
 
       executeBulk("tables/shops.ddl", BULK_STATEMENTS);
 
+      executeBulk("data/k_invoices_lookup.sql", BULK_STATEMENTS);
+
       executeBulk("constraints/shops.sql", BULK_STATEMENTS);
 
       executeBulk("procedures/" + sDbms + "/shops.ddl", BULK_PLSQL);

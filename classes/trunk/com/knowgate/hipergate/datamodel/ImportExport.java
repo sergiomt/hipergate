@@ -34,7 +34,7 @@ package com.knowgate.hipergate.datamodel;
 
 /**
  * @author Sergio Montoro Ten
- * @version 1.0
+ * @version 5.0
  */
 
 import java.sql.DriverManager;
@@ -54,11 +54,15 @@ import java.io.InputStreamReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import java.util.HashMap;
+
 import com.knowgate.debug.DebugFile;
 import com.knowgate.misc.Gadgets;
+import com.knowgate.misc.VCardParser;
 import com.knowgate.acl.UserLoader;
 import com.knowgate.crm.ContactLoader;
 import com.knowgate.crm.CompanyLoader;
+import com.knowgate.crm.VCardLoader;
 import com.knowgate.addrbook.FellowLoader;
 import com.knowgate.hipergate.ProductLoader;
 import com.knowgate.hipergate.DespatchAdviceLoader;
@@ -71,7 +75,7 @@ public class ImportExport {
   "CONNECT", "TO", "IDENTIFIED", "BY", "SCHEMA", "INFILE", "INPUTFILE", "BADFILE",
   "DISCARDFILE", "CHARSET", "CHARACTERSET", "ROWDELIM", "COLDELIM", "RECOVERABLE",
   "UNRECOVERABLE", "PRESERVESPACE", "WORKAREA", "MAXERRORS", "INSERTLOOKUPS", "SKIP",
-  "CATEGORY", "USERS", "CONTACTS", "COMPANIES", "PRODUCTS", "FELLOWS", "DESPATCHS",
+  "CATEGORY", "USERS", "CONTACTS", "COMPANIES", "PRODUCTS", "FELLOWS", "DESPATCHS","VCARDS",
   "WITHOUT", "DUPLICATED", "NAMES", "EMAILS" };
 
   // ---------------------------------------------------------------------------
@@ -91,7 +95,7 @@ public class ImportExport {
 
   /**
    * Perform an import or export command
-   * @param sControlCmdLine String [APPEND|UPDATE|APPENDUPDATE] [CONTACTS|COMPANIES|PRODUCTS|USERS|FELLOWS|DESPATCHS|<I>table_name</I>] CONNECT user TO connection_string IDENTIFED BY password INPUTFILE "/tmp/filename.txt" CHARSET ISO8859_1<BR>
+   * @param sControlCmdLine String [APPEND|UPDATE|APPENDUPDATE] [CONTACTS|COMPANIES|PRODUCTS|USERS|FELLOWS|DESPATCHS|VCARDS|<I>table_name</I>] CONNECT user TO connection_string IDENTIFED BY password INPUTFILE "/tmp/filename.txt" CHARSET ISO8859_1<BR>
    * EXPORT <I>table_name</I> CONNECT user TO connection_string IDENTIFED BY password OUTPUTFILE "/tmp/filename.txt"
    * @return Count of errors found or zero if operation was successfully completed
    * @throws ImportExportException
@@ -159,11 +163,14 @@ public class ImportExport {
           throw new ImportExportException("ONLY APPEND MODE IS SUPPORTED FOR DESPATCH ADVICES");
         oImplLoad = new DespatchAdviceLoader();
         iFlags |= DespatchAdviceLoader.MODE_APPEND;
+      } else if (sEntity.equalsIgnoreCase("VCARDS")) {
+        oImplLoad = new VCardLoader();
+        iFlags |= VCardLoader.WRITE_ADDRESSES|VCardLoader.WRITE_CONTACTS|VCardLoader.WRITE_COMPANIES|VCardLoader.NO_DUPLICATED_NAMES|VCardLoader.NO_DUPLICATED_MAILS;
       }
       else {
         if (isReservedWord(sEntity)) {
-          if (DebugFile.trace) { DebugFile.writeln("Expected CONTACTS,COMPANIES,PRODUCTS,USERS,FELLOWS,DESPATCHS or a table name but found reserved keyword "+sEntity); DebugFile.decIdent(); }
-          throw new ImportExportException("Expected CONTACTS,COMPANIES,PRODUCTS,USERS,FELLOWS,DESPATCHS or a table name but found reserved keyword "+sEntity);
+          if (DebugFile.trace) { DebugFile.writeln("Expected CONTACTS,COMPANIES,PRODUCTS,USERS,FELLOWS,DESPATCHS,VCARDS or a table name but found reserved keyword "+sEntity); DebugFile.decIdent(); }
+          throw new ImportExportException("Expected CONTACTS,COMPANIES,PRODUCTS,USERS,FELLOWS,DESPATCHS,VCARDS or a table name but found reserved keyword "+sEntity);
         } else {
           oImplLoad = new TableLoader(sEntity);
         }
@@ -581,7 +588,6 @@ public class ImportExport {
     FileInputStream oInStrm = null;
     BufferedInputStream oInBuff;
     BufferedOutputStream oOutBuff;
-    InputStreamReader oInRdr;
     // File with a description of all errors
     FileWriter oBadWrtr = null;
     // File with just the rows that failed to be inserted
@@ -608,16 +614,6 @@ public class ImportExport {
       }
       // Java direct I/O performance sucks so use an intermediate buffer
       oInBuff = new BufferedInputStream(oInStrm);
-      try {
-        // Use an stream reader for decoding bytes into the proper charset
-        if (DebugFile.trace) DebugFile.writeln("  new InputStreamReader(BufferedInputStream,"+sCharSet+")");
-        oInRdr = new InputStreamReader(oInBuff, sCharSet);
-      } catch (java.io.UnsupportedEncodingException uee) {
-        try { oInBuff.close(); } catch (Exception ignore) {}
-        try { oInStrm.close(); } catch (Exception ignore) {}
-        try { oConn.close(); } catch (Exception ignore) {}
-        throw new ImportExportException("Unsupported Encoding "+sCharSet, uee);
-      }
 
       // **********************************
       // Open bad and discard file writters
@@ -670,136 +666,205 @@ public class ImportExport {
         throw new ImportExportException(xcpt.getClass().getName()+" "+xcpt.getMessage(), xcpt);
       }
 
-      // *******************************************************
-      // Check that all column names on input file are valid
-      // and resolve column names to positions for faster access
+	  if (sEntity.equalsIgnoreCase("VCARDS")) {
+        try {
+			VCardParser oPrsr = new VCardParser();
+			oPrsr.parse(oInBuff, sCharSet);
+			VCardLoader oVCrdLoad = (VCardLoader) oImplLoad;
+			for (HashMap<String,String> oVCard : oPrsr.vcards()) {
+			  oVCrdLoad.put(oVCard);
+			  try {
+			    oVCrdLoad.store(oConn, sWorkArea, iFlags);
+              } catch (Exception xcpt) {
+                iErrorCount++;
+                if (DebugFile.trace) DebugFile.writeln("  "+xcpt.getClass().getName()+": at line "+String.valueOf(iLine)+" "+xcpt.getMessage());
+                if (bRecoverable) {
+                  if (DebugFile.trace) DebugFile.writeln("  Connection.rollback()");
+                  try { oConn.rollback(); } catch (SQLException ignore) {}
+                } // fi (bRecoverable)
+                if (oBadWrtr!=null) {
+                  oBadWrtr.write(xcpt.getClass().getName()+": at card "+oVCard.get("N")+" "+xcpt.getMessage()+"\r\n");
+                } // fi
+                if (oDiscardWrtr!=null) {
+                  oDiscardWrtr.write(oVCard.get("N")+sRowDelim);
+                } // fi
+              } // catch
+			} // next
 
-      if (DebugFile.trace) DebugFile.writeln("Resolving column names to positions...");
-      for (c=0; c<iColFmtsCount; c++) {
-        DBColumn oClmn = oColumns.getColumn(c);
-        if (oClmn.getSqlType()!=Types.NULL) {
-          int cIndex = oImplLoad.getColumnIndex(oClmn.getName());
-          if (-1==cIndex) {
-            throw new ImportExportException("SQLException column "+oClmn.getName()+" not found at base table");
-          } else {
-            oClmn.setPosition(cIndex);
+            if (oInBuff!=null) { oInBuff.close(); }
+            oInBuff=null;
+            if (oInStrm!=null) { oInStrm.close(); }
+            oInStrm=null;
+            if (oBadWrtr!=null) { oBadWrtr.close(); oBadWrtr=null; }
+            if (oDiscardWrtr!=null) { oDiscardWrtr.close(); oDiscardWrtr=null; }
+
+            oImplLoad.close();
+            if (bRecoverable) {
+            if (0==iErrorCount)
+              oConn.commit();
+            else
+              oConn.rollback();
+            }
+
+            if (DebugFile.trace) DebugFile.writeln("Connection.close()");
+            oConn.close();
+        } catch (Exception xcpt) {
+             if (DebugFile.trace) DebugFile.writeln("  "+xcpt.getClass().getName()+" "+xcpt.getMessage());
+             try { if (null!=oDiscardWrtr) oDiscardWrtr.close(); } catch (Exception ignore) {}
+             try { if (null!=oBadWrtr) oBadWrtr.close(); } catch (Exception ignore) {}
+             try { if (null!=oInBuff) oInBuff.close(); } catch (Exception ignore) {}
+             try { if (null!=oInStrm) oInStrm.close(); } catch (Exception ignore) {}
+             try { oImplLoad.close(); } catch (Exception ignore) {}
+             try { if (bRecoverable) oConn.rollback(); } catch (Exception ignore) {}
+             try { oConn.close(); } catch (Exception ignore) {}
+             throw new ImportExportException(xcpt.getClass().getName() + " " + xcpt.getMessage());
+        } 
+	  } else {
+
+        // *******************************************************
+        // Check that all column names on input file are valid
+        // and resolve column names to positions for faster access
+  
+        if (DebugFile.trace) DebugFile.writeln("Resolving column names to positions...");
+        for (c=0; c<iColFmtsCount; c++) {
+          DBColumn oClmn = oColumns.getColumn(c);
+          if (oClmn.getSqlType()!=Types.NULL) {
+            int cIndex = oImplLoad.getColumnIndex(oClmn.getName());
+            if (-1==cIndex) {
+              throw new ImportExportException("SQLException column "+oClmn.getName()+" not found at base table");
+            } else {
+              oClmn.setPosition(cIndex);
+            }
           }
+        } // next (c)
+  
+        // ******************************************
+        // Read data input file and insert row by row
+  
+        if (DebugFile.trace) DebugFile.writeln("Begin read data from text file...");
+
+		InputStreamReader oInRdr = null;
+        try {
+          // Use an stream reader for decoding bytes into the proper charset
+          if (DebugFile.trace) DebugFile.writeln("  new InputStreamReader(BufferedInputStream,"+sCharSet+")");
+          oInRdr = new InputStreamReader(oInBuff, sCharSet);
+        } catch (java.io.UnsupportedEncodingException uee) {
+          try { oInBuff.close(); } catch (Exception ignore) {}
+          try { oInStrm.close(); } catch (Exception ignore) {}
+          try { oConn.close(); } catch (Exception ignore) {}
+          throw new ImportExportException("Unsupported Encoding "+sCharSet, uee);
         }
-      } // next (c)
 
-      // ******************************************
-      // Read data input file and insert row by row
-
-      if (DebugFile.trace) DebugFile.writeln("Begin read data from text file...");
-      try {
-      	// Read input file by one character at a time
-        while (((i=oInRdr.read())!=-1) && (iErrorCount<=iMaxErrors)) {
-          // Skip row delimiter, let r be the relative position inside the row delimiter
-          // then skip as many characters readed at i as they match with row delimiter + offset r
-          r=0;
-          while (i==sRowDelim.charAt(r) && i!=-1) {
-            r++;
-            i=oInRdr.read();
-            if (r==iRowDelimLen) break;
-          } // wend
-          // If r>0 then the row delimiter has been reached Or
-          // If i==-1 then it is the last line, so insert the row
-          if (r==iRowDelimLen || i==-1) {
-            if (iLine>iSkip) {
-              if (DebugFile.trace) DebugFile.writeln("  Processing line "+String.valueOf(iLine));
-              if (bPreserveSpace)
-                sLine = oRow.toString();
-              else
-                sLine = oRow.toString().trim();
-              if (sLine.length()>0) {
-                if (sColDelim.length()==1)
-                  aLine = Gadgets.split(sLine, sColDelim.charAt(0));
+        try {
+        	// Read input file by one character at a time
+          while (((i=oInRdr.read())!=-1) && (iErrorCount<=iMaxErrors)) {
+            // Skip row delimiter, let r be the relative position inside the row delimiter
+            // then skip as many characters readed at i as they match with row delimiter + offset r
+            r=0;
+            while (i==sRowDelim.charAt(r) && i!=-1) {
+              r++;
+              i=oInRdr.read();
+              if (r==iRowDelimLen) break;
+            } // wend
+            // If r>0 then the row delimiter has been reached Or
+            // If i==-1 then it is the last line, so insert the row
+            if (r==iRowDelimLen || i==-1) {
+              if (iLine>iSkip) {
+                if (DebugFile.trace) DebugFile.writeln("  Processing line "+String.valueOf(iLine));
+                if (bPreserveSpace)
+                  sLine = oRow.toString();
                 else
-                  aLine = Gadgets.split(sLine, sColDelim);
-                // If current line does have the same number of columns as in the
-                // file definition then report an error or raise an exception
-                if (aLine.length!=iColFmtsCount) {
-                  iErrorCount++;
-                  if (DebugFile.trace) DebugFile.writeln("  Error: at line "+String.valueOf(iLine)+" has "+String.valueOf(aLine.length)+" columns but should have "+String.valueOf(iColFmtsCount));
-                  if (bRecoverable) {
-                    if (DebugFile.trace) DebugFile.writeln("  Connection.rollback()");
-                    try { oConn.rollback(); } catch (SQLException ignore) {}
-                  }
-                  if (oBadWrtr!=null) {
-                    oBadWrtr.write("Error: at line "+String.valueOf(iLine)+" has "+String.valueOf(aLine.length)+" columns but should have "+String.valueOf(iColFmtsCount)+"\r\n");
-                    oBadWrtr.write(sLine+"\r\n");
-                  }
-                  if (oDiscardWrtr!=null) {
-                    oDiscardWrtr.write(sLine+sRowDelim);
-                  }
-                } else {
-                  // Up to here a single line as been readed and is kept in aLines array
-                  try {
-                    oImplLoad.setAllColumnsToNull();
-                    if (bAllCaps) {
-                      for (c=0; c<iColFmtsCount; c++) {
-                        oColFmt = oColumns.getColumn(c);
-                        if (oColFmt.getSqlType()!=Types.NULL) {
-                          if (DebugFile.trace) DebugFile.writeln("  ImportLoader.put("+oColFmt.getName()+"("+String.valueOf(oColFmt.getPosition())+"),"+aLine[c]+")");
-                          oImplLoad.put(oColFmt.getPosition(), oColFmt.convert(aLine[c].toUpperCase()));
-                        } // fi (getSqlType()!=NULL)
-                      } // next c)
-                      if (null!=sCategory) oImplLoad.put("gu_category", sCategory);
-                    } else {
-                      for (c=0; c<iColFmtsCount; c++) {
-                        oColFmt = oColumns.getColumn(c);
-                        if (oColFmt.getSqlType()!=Types.NULL) {
-                          if (DebugFile.trace) DebugFile.writeln("  ImportLoader.put("+oColFmt.getName()+"("+String.valueOf(oColFmt.getPosition())+"),"+aLine[c]+")");
-                          oImplLoad.put(oColFmt.getPosition(), oColFmt.convert(aLine[c]));
-                        } // fi (getSqlType()!=NULL)
-                      } // next c)
-                      if (null!=sCategory) oImplLoad.put("gu_category", sCategory);
-                    } // fi (ALLCAPS)
-                    oImplLoad.store(oConn, sWorkArea, iFlags);
-                  } catch (NumberFormatException xcpt) {
+                  sLine = oRow.toString().trim();
+                if (sLine.length()>0) {
+                  if (sColDelim.length()==1)
+                    aLine = Gadgets.split(sLine, sColDelim.charAt(0));
+                  else
+                    aLine = Gadgets.split(sLine, sColDelim);
+                  // If current line does have the same number of columns as in the
+                  // file definition then report an error or raise an exception
+                  if (aLine.length!=iColFmtsCount) {
                     iErrorCount++;
-                    if (DebugFile.trace) DebugFile.writeln("  NumberFormatException: at line "+String.valueOf(iLine)+" "+xcpt.getMessage());
+                    if (DebugFile.trace) DebugFile.writeln("  Error: at line "+String.valueOf(iLine)+" has "+String.valueOf(aLine.length)+" columns but should have "+String.valueOf(iColFmtsCount));
                     if (bRecoverable) {
                       if (DebugFile.trace) DebugFile.writeln("  Connection.rollback()");
                       try { oConn.rollback(); } catch (SQLException ignore) {}
-                    } // fi (bRecoverable)
+                    }
                     if (oBadWrtr!=null) {
-                      oBadWrtr.write("NumberFormatException: at line "+String.valueOf(iLine)+" "+xcpt.getMessage()+"\r\n");
+                      oBadWrtr.write("Error: at line "+String.valueOf(iLine)+" has "+String.valueOf(aLine.length)+" columns but should have "+String.valueOf(iColFmtsCount)+"\r\n");
                       oBadWrtr.write(sLine+"\r\n");
-                    } // fi
+                    }
                     if (oDiscardWrtr!=null) {
                       oDiscardWrtr.write(sLine+sRowDelim);
-                    } // fi
-                  } catch (SQLException xcpt) {
-                    iErrorCount++;
-                    if (DebugFile.trace) DebugFile.writeln("  SQLException: at line "+String.valueOf(iLine)+" "+xcpt.getMessage());
-                    if (bRecoverable) {
-                      if (DebugFile.trace) DebugFile.writeln("  Connection.rollback()");
-                      try { oConn.rollback(); } catch (SQLException ignore) {}
-                    } // fi (bRecoverable)
-                    if (oBadWrtr!=null) {
-                      oBadWrtr.write("SQLException: at line "+String.valueOf(iLine)+" "+xcpt.getMessage()+"\r\n");
-                      oBadWrtr.write(sLine+"\r\n");
-                    } // fi
-                    if (oDiscardWrtr!=null) {
-                      oDiscardWrtr.write(sLine+sRowDelim);
-                    } // fi
-                  } // catch
-                } // fi (aLine.length!=iColFmtsCount)
-              } // fi (sLine!="")
-            } // fi (iLine>iSkip)
-            oRow.setLength(0);
-            if (i!=-1) oRow.append((char)i);
-            iLine++;
-            if (-1==i) break;
-          } else {
-            oRow.append((char)i);
-          }// fi (r==iRowDelimLen || i==-1)
-        } // wend
+                    }
+                  } else {
+                    // Up to here a single line as been readed and is kept in aLines array
+                    try {
+                      oImplLoad.setAllColumnsToNull();
+                      if (bAllCaps) {
+                        for (c=0; c<iColFmtsCount; c++) {
+                          oColFmt = oColumns.getColumn(c);
+                          if (oColFmt.getSqlType()!=Types.NULL) {
+                            if (DebugFile.trace) DebugFile.writeln("  ImportLoader.put("+oColFmt.getName()+"("+String.valueOf(oColFmt.getPosition())+"),"+aLine[c]+")");
+                            oImplLoad.put(oColFmt.getPosition(), oColFmt.convert(aLine[c].toUpperCase()));
+                          } // fi (getSqlType()!=NULL)
+                        } // next c)
+                        if (null!=sCategory) oImplLoad.put("gu_category", sCategory);
+                      } else {
+                        for (c=0; c<iColFmtsCount; c++) {
+                          oColFmt = oColumns.getColumn(c);
+                          if (oColFmt.getSqlType()!=Types.NULL) {
+                            if (DebugFile.trace) DebugFile.writeln("  ImportLoader.put("+oColFmt.getName()+"("+String.valueOf(oColFmt.getPosition())+"),"+aLine[c]+")");
+                            oImplLoad.put(oColFmt.getPosition(), oColFmt.convert(aLine[c]));
+                          } // fi (getSqlType()!=NULL)
+                        } // next c)
+                        if (null!=sCategory) oImplLoad.put("gu_category", sCategory);
+                      } // fi (ALLCAPS)
+                      oImplLoad.store(oConn, sWorkArea, iFlags);
+                    } catch (NumberFormatException xcpt) {
+                      iErrorCount++;
+                      if (DebugFile.trace) DebugFile.writeln("  NumberFormatException: at line "+String.valueOf(iLine)+" "+xcpt.getMessage());
+                      if (bRecoverable) {
+                        if (DebugFile.trace) DebugFile.writeln("  Connection.rollback()");
+                        try { oConn.rollback(); } catch (SQLException ignore) {}
+                      } // fi (bRecoverable)
+                      if (oBadWrtr!=null) {
+                        oBadWrtr.write("NumberFormatException: at line "+String.valueOf(iLine)+" "+xcpt.getMessage()+"\r\n");
+                        oBadWrtr.write(sLine+"\r\n");
+                      } // fi
+                      if (oDiscardWrtr!=null) {
+                        oDiscardWrtr.write(sLine+sRowDelim);
+                      } // fi
+                    } catch (SQLException xcpt) {
+                      iErrorCount++;
+                      if (DebugFile.trace) DebugFile.writeln("  SQLException: at line "+String.valueOf(iLine)+" "+xcpt.getMessage());
+                      if (bRecoverable) {
+                        if (DebugFile.trace) DebugFile.writeln("  Connection.rollback()");
+                        try { oConn.rollback(); } catch (SQLException ignore) {}
+                      } // fi (bRecoverable)
+                      if (oBadWrtr!=null) {
+                        oBadWrtr.write("SQLException: at line "+String.valueOf(iLine)+" "+xcpt.getMessage()+"\r\n");
+                        oBadWrtr.write(sLine+"\r\n");
+                      } // fi
+                      if (oDiscardWrtr!=null) {
+                        oDiscardWrtr.write(sLine+sRowDelim);
+                      } // fi
+                    } // catch
+                  } // fi (aLine.length!=iColFmtsCount)
+                } // fi (sLine!="")
+              } // fi (iLine>iSkip)
+              oRow.setLength(0);
+              if (i!=-1) oRow.append((char)i);
+              iLine++;
+              if (-1==i) break;
+            } else {
+              oRow.append((char)i);
+            }// fi (r==iRowDelimLen || i==-1)
+          } // wend
+  		  if (null!=oInRdr) oInRdr.close();
 
-        if (DebugFile.trace) {
-          DebugFile.writeln("End read data from text file");
-        }
+          if (DebugFile.trace) {
+            DebugFile.writeln("End read data from text file");
+          }
 
         if (oInBuff!=null) { oInBuff.close(); }
         oInBuff=null;
@@ -807,6 +872,7 @@ public class ImportExport {
         oInStrm=null;
         if (oBadWrtr!=null) { oBadWrtr.close(); oBadWrtr=null; }
         if (oDiscardWrtr!=null) { oDiscardWrtr.close(); oDiscardWrtr=null; }
+
         oImplLoad.close();
         if (bRecoverable) {
           if (0==iErrorCount)
@@ -850,6 +916,7 @@ public class ImportExport {
             try { oConn.close(); } catch (Exception ignore) {}
             throw new ImportExportException(xcpt.getClass().getName() + " " + xcpt.getMessage() + " at row " + String.valueOf(r));
      }
+	 } // fi
 
     } // fi (sCmd==APPEND || sCmd==UPDATE || sCmd==APPENDUPDATE)
 
