@@ -11,7 +11,7 @@
         <property name="Profile_Manager" value="com.knowgate.hipergate.mobile.UserProfileManager"/>
     </module>
     <module name="LoginManager">
-        <property name="Login_Manager" value="org.morfeo.tidmobile.server.login.CustomLogin"/>
+        <property name="Login_Manager" value="com.knowgate.hipergate.mobile.DatabaseLogin"/>
     </module>
     <module name="FlowEngine">
         <property name="Flow_Handler" value="org.morfeo.tidmobile.server.flow.TidMobileFlowEngine"/>
