@@ -87,6 +87,8 @@ import com.knowgate.hipergate.DBLanguages;
 import com.knowgate.hipergate.Product;
 import com.knowgate.hipergate.ProductLocation;
 
+import com.knowgate.lucene.MailIndexer;
+
 /**
  * <p>A subclass of javax.mail.Folder providing storage for MimeMessages at database
  * LONGVARBINARY columns and MBOX files.</p>
