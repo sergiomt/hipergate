@@ -1,3 +1,5 @@
  /* 
   *	Add your CSS styles
   */
+  
+  entryfield.login { width:200px;maxlength:100; }
