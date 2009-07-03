@@ -58,8 +58,10 @@
 
     loadRequest(oConn, request, oAddr);
     
-    if (request.getParameter("gu_sale_point").length()>0)
-      oAddr.put(DB.gu_sale_point, request.getParameter("gu_sale_point"));
+    if (gu_sale_point.length()>0)
+      oAddr.put(DB.gu_sale_point, gu_sale_point);
+
+	  oAddr.put(DB.gu_workarea, gu_workarea);
 
 	  oAddr.put(DB.nm_sale_point, request.getParameter("nm_sale_point"));
 
@@ -73,7 +75,7 @@
 
     oConn.close("salepoint_edit_store");    
   }
-  catch (SQLException e) {  
+  catch (NullPointerException e) {  
     if (oConn!=null)
       if (!oConn.isClosed()) {
         if (oConn.getAutoCommit()) oConn.rollback();
