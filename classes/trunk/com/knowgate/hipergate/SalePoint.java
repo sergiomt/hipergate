@@ -79,7 +79,27 @@ public class SalePoint extends Address {
   public boolean load (JDCConnection oConn, String sPk) throws SQLException {
     return load(oConn, new Object[]{sPk});
   }
+
+  public void replace (String sKey, String sValue) {
+	super.replace(sKey, sValue);
+	oSalePoint.replace(sKey, sValue);
+  }
+
+  public void replace (String sKey, short iValue) {
+	super.replace(sKey, iValue);
+	oSalePoint.replace(sKey, iValue);
+  }
   
+  public void put (String sKey, String sValue) {
+	super.put(sKey, sValue);
+	oSalePoint.put(sKey, sValue);
+  }
+
+  public void put (String sKey, short iValue) {
+	super.put(sKey, iValue);
+	oSalePoint.put(sKey, iValue);
+  }
+
   public boolean store (JDCConnection oConn) throws SQLException {
   	String sNewGuid = Gadgets.generateUUID();
   	if (!oSalePoint.getItemMap().containsKey(DB.gu_sale_point))
@@ -95,6 +115,7 @@ public class SalePoint extends Address {
       if (!isNull(DB.gu_sale_point)) oSalePoint.put(DB.gu_sale_point, get(DB.gu_sale_point));
       if (!isNull(DB.nm_sale_point)) oSalePoint.put(DB.nm_sale_point, get(DB.nm_sale_point));
       if (!isNull(DB.bo_active)) oSalePoint.put(DB.bo_active, get(DB.bo_active));
+      if (!isNull(DB.gu_workarea)) oSalePoint.put(DB.gu_workarea, get(DB.gu_workarea));
       bRetVal = oSalePoint.store(oConn);
     }
 
