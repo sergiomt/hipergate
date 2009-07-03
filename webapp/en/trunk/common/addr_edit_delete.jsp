@@ -62,22 +62,30 @@
     
       String sLdapConnect = Environment.getProfileVar(GlobalDBBind.getProfileName(),"ldapconnect", "");
 
-      if (linktable.equals(DB.k_x_contact_addr) && sLdapConnect.length()>0) {
-        Class oLdapCls = Class.forName(Environment.getProfileVar(GlobalDBBind.getProfileName(),"ldapclass", "com.knowgate.ldap.LDAPNovell"));
+			if (linktable.equals(DB.k_x_company_addr) && sLdapConnect.length()>0) {
+				DBCommand.executeUpdate(oCon, "DELETE FROM "+DB.k_x_list_members+" WHERE "+DB.gu_company+"='"+a_items[i]+"'");
+			}
+			
+			if (linktable.equals(DB.k_x_contact_addr)) {
+				DBCommand.executeUpdate(oCon, "DELETE FROM "+DB.k_x_list_members+" WHERE "+DB.gu_contact+"='"+a_items[i]+"'");
 
-        com.knowgate.ldap.LDAPModel oLdapImpl = (com.knowgate.ldap.LDAPModel) oLdapCls.newInstance();
+        if (sLdapConnect.length()>0) {
+          Class oLdapCls = Class.forName(Environment.getProfileVar(GlobalDBBind.getProfileName(),"ldapclass", "com.knowgate.ldap.LDAPNovell"));
+
+          com.knowgate.ldap.LDAPModel oLdapImpl = (com.knowgate.ldap.LDAPModel) oLdapCls.newInstance();
       
-        oLdapImpl.connectAndBind(Environment.getProfile(GlobalDBBind.getProfileName()));
+          oLdapImpl.connectAndBind(Environment.getProfile(GlobalDBBind.getProfileName()));
       
-        try {
-          oLdapImpl.deleteAddress (oCon, a_items[i]);
-        } catch (com.knowgate.ldap.LDAPException ignore) { }
+          try {
+            oLdapImpl.deleteAddress (oCon, a_items[i]);
+          } catch (com.knowgate.ldap.LDAPException ignore) { }
         
-        oLdapImpl.disconnect();
-      } // fi
+          oLdapImpl.disconnect();
+        } // fi
 
-      // End LDAP synchronization
-      // ***************************************************************************
+        // End LDAP synchronization
+        // ***************************************************************************
+      }
 
       oAddresses.replace(DB.gu_address, a_items[i]);
       oAddresses.delete(oCon);
