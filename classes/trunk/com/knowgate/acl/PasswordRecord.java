@@ -34,7 +34,9 @@ package com.knowgate.acl;
 import java.security.AccessControlException;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
+import java.util.Date;
 import java.util.ArrayList;
 
 import com.knowgate.dataobjs.DB;
@@ -65,6 +67,10 @@ public class PasswordRecord extends DBPersist {
 
   public void setKey (String sKey) {
     oCrypto = new RC4(sKey); 	
+  }
+
+  public void addLine(String sId, char cType, String sLabel) {
+    aRecordLines.add(new PasswordRecordLine(sId, cType, sLabel));
   }
   
   public ArrayList<PasswordRecordLine> lines() {
@@ -132,6 +138,11 @@ public class PasswordRecord extends DBPersist {
   	  oLines.append("\n");
   	} // next
   	  
+  	if (!bIsNew) {
+  	  replace(DB.dt_modified, new Timestamp(new Date().getTime()));
+  	}
+ 
+ 	replace(DB.id_enc_method, "RC4");
   	replace(DB.tx_lines, Base64Encoder.encode(oCrypto.rc4(Gadgets.dechomp(oLines.toString(),'\n'))));
     boolean bRetVal = super.store(oConn);
     

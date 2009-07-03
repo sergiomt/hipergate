@@ -74,6 +74,15 @@ public class PasswordRecordTemplate {
     return sName;
   }
 
+  public char getTypeOf(String sLineId) {
+    for (PasswordRecordLine l : lines()) {
+      if (l.getId().equals(sLineId)) {
+      	return l.getType(); 
+      } // fi
+    } // next
+    return 0;
+  } // getTypeOf
+
   /**
    * Create a new password record for this template
    */
