@@ -210,7 +210,7 @@
             <TD ALIGN="left" WIDTH="370">
               <INPUT TYPE="text" NAME="tx_start" MAXLENGTH="30" SIZE="15" STYLE="text-transform:uppercase" VALUE="<%=oCur.getStringNull(DB.tx_start,"")%>">
               &nbsp;&nbsp;<FONT CLASS="formstrong">End:</FONT>&nbsp;
-	      <INPUT TYPE="text" NAME="tx_end" MAXLENGTH="30" SIZE="15" STYLE="text-transform:uppercase" VALUE="<%=oCur.getStringNull(DB.tx_end,"")%>">              
+	            <INPUT TYPE="text" NAME="tx_end" MAXLENGTH="30" SIZE="15" STYLE="text-transform:uppercase" VALUE="<%=oCur.getStringNull(DB.tx_end,"")%>">              
             </TD>
           </TR>
           <TR>
@@ -225,6 +225,10 @@
               &nbsp;
               <A HREF="#" onclick="createCourse()" TITLE="New Course"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Course"></A>
             </TD>
+          </TR>
+          <TR>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Precio~]:</FONT></TD>
+            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="pr_acourse" MAXLENGTH="10" SIZE="12" VALUE="<% if (!oCur.isNull(DB.pr_acourse)) out.write(oCur.getDecimal(DB.pr_acourse).toString)%>"></TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Tutor:</FONT></TD>
