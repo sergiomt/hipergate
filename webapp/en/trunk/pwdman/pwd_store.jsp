@@ -1,7 +1,7 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.example.Example" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%
+﻿<%@ page import="java.util.Enumeration,java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.acl.PasswordRecord,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="true" contentType="text/html;charset=UTF-8" %>
+<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="pwdtemplates.jspf" %><%
 /*
-  Copyright (C) 2003-2008  Know Gate S.L. All rights reserved.
+  Copyright (C) 2003-2009  Know Gate S.L. All rights reserved.
                            C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
@@ -36,40 +36,59 @@
   response.addHeader ("cache-control", "no-store");
   response.setIntHeader("Expires", 0);
 
-  final String PAGE_NAME = "form_store";
+  final String PAGE_NAME = "pwd_store";
 
   /* Autenticate user cookie */
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
-      
+	boolean bSession = (session.getAttribute("validated")!=null);
+
+	if (!bSession) {
+	  response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Session Expired~]&desc=[~Session has expired. Please log in again~]&resume=_close"));
+    return;
+  }
+
+  String id_domain = request.getParameter("id_domain");
   String gu_workarea = request.getParameter("gu_workarea");
+  String gu_category = request.getParameter("gu_category");
+  String nm_template = request.getParameter("nm_template");
   String id_user = getCookie (request, "userid", null);
   
-  /* TO DO: Change gu_object with the parameter with the GUID of object to store */  
-  String gu_example = request.getParameter("gu_example");
+  String gu_pwd = request.getParameter("gu_pwd");
 
-  /* TO DO: Change operation code */  
-  String sOpCode = gu_object.length()>0 ? "NEXM" : "MEXM";
+  String sStorage = Environment.getProfilePath(GlobalDBBind.getProfileName(), "storage");
+
+  String sOpCode = gu_pwd.length()>0 ? "NPWD" : "MPWD";
+
+  PasswordRecordTemplate oRec = new PasswordRecordTemplate();
+  oRec.load(Gadgets.chomp(getTemplatesPath(sStorage, id_domain, gu_workarea, id_user),File.separator)+nm_template);
       
-  /* TO DO: Replace DBPersist with the proper inherited class */  
-  Example oObj = new Example();
+  PasswordRecord oPwd = new PasswordRecord((String) session.getAttribute("signature"));
 
-  /* TO DO: Give a connection name instead of "..." */
   JDCConnection oConn = null;
-  
+
   try {
     oConn = GlobalDBBind.getConnection(PAGE_NAME); 
-  
-    loadRequest(oConn, request, oObj);
+
+    loadRequest(oConn, request, oPwd);
 
     oConn.setAutoCommit (false);
 
-    /* TO DO: Data access stuff */
-    
-    oObj.store(oConn);
+		Enumeration en = request.getParameterNames();
+  
+    while (en.hasMoreElements()) {            
+      String paramName = (String) en.nextElement();
+      if (!paramName.equals("gu_pwd") && !paramName.equals("tl_pwd") && !paramName.equals("id_domain") && !paramName.equals("gu_workarea") && !paramName.equals("gu_category") && !paramName.equals("nm_template") && !paramName.equals("gu_writer")) {
+        char cTp = oRec.getTypeOf(paramName);
+        oPwd.addLine(paramName, cTp==(char)0 ? '$' : cTp, request.getParameter(paramName));
+      } // fi
+    } // wend
 
-    /* TO DO: Set auditing parameters */
-    DBAudit.log(oConn, oObj.ClassId, sOpCode, id_user, gu_example, null, 0, 0, null, null);
-    
+    oPwd.put(DB.gu_user, request.getParameter("gu_writer"));
+
+    oPwd.store(oConn, gu_category);
+
+    DBAudit.log(oConn, PasswordRecord.ClassId, sOpCode, id_user, gu_pwd, null, 0, 0, null, null);
+
     oConn.commit();
     oConn.close(PAGE_NAME);
   }

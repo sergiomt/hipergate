@@ -52,10 +52,12 @@
   
   String id_domain = request.getParameter("id_domain");
   String gu_workarea = request.getParameter("gu_workarea");
+  String gu_category = request.getParameter("gu_category");
+  String nm_template = request.getParameter("nm_template");
   String id_user = getCookie(request, "userid", "");
   
   PasswordRecordTemplate oRec = new PasswordRecordTemplate();
-  oRec.load(Gadgets.chomp(getTemplatesPath(sStorage, id_domain, gu_workarea, id_user),File.separator)+request.getParameter("nm_template"));
+  oRec.load(Gadgets.chomp(getTemplatesPath(sStorage, id_domain, gu_workarea, id_user),File.separator)+nm_template);
       
 %>
 <!-- <% out.write(Gadgets.chomp(getTemplatesPath(sStorage, id_domain, gu_workarea, id_user),File.separator)+request.getParameter("nm_template")); %> -->
@@ -91,6 +93,12 @@
       function validate() {
         var frm = window.document.forms[0];
         
+        if (ltrim(frm.tl_pwd.value).length==0) {
+          alert ("[~El título de la contraseña es obligatorio~]");
+          frm.tl_pwd.focus();
+          return false;
+        }
+        
         return true;
       } // validate;
     //-->
@@ -99,6 +107,11 @@
     <!--
       function paintFields() {
         var oRow;
+        oRow = GridCreateRow(oPwdsGrid, "tl_pwd");
+        GridCreateCell(oRow, 0, "lbl_tl_pwd", "lbl_tl_pwd", "html", "<FONT CLASS=textsmall><B>[~T&iacute;tulo~]</B></FONT>");
+        GridCreateInputCell(oRow, 1, "tl_pwd", "tl_pwd", "text", "", 50, 100, "onchange=''");
+        GridCreateCell(oRow, 2, "lbl_void", "lbl_void", "html", "");
+        
 <%      for (PasswordRecordLine rcl : oRec.lines()) {
 				  out.write("        oRow = GridCreateRow(oPwdsGrid, \""+rcl.getId()+"\");\n");
   	      out.write("        GridCreateCell(oRow, 0, \"lbl_"+rcl.getId()+"\", \"lbl_"+rcl.getId()+"\", \"html\", \"<FONT CLASS=textsmall>" + rcl.getLabel() + "</FONT>\");\n");
@@ -121,9 +134,13 @@
     <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Nuevo~]&nbsp;<%=oRec.getName()%></FONT></TD></TR>
   </TABLE>  
   <FORM NAME="" METHOD="post" ACTION="pwd_store.jsp" onSubmit="return validate()">
+    <INPUT TYPE="hidden" NAME="gu_pwd" VALUE="">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
     <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
+    <INPUT TYPE="hidden" NAME="gu_category" VALUE="<%=gu_category%>">
+    <INPUT TYPE="hidden" NAME="gu_user" VALUE="<%=id_user%>">
     <INPUT TYPE="hidden" NAME="gu_writer" VALUE="<%=id_user%>">
+    <INPUT TYPE="hidden" NAME="nm_template" VALUE="<%=nm_template%>">
 
     <TABLE CLASS="formback">
       <TR><TD>

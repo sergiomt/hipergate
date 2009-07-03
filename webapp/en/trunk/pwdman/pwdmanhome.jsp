@@ -110,14 +110,27 @@
 
 		var cts = new Array (<% for (int c=0; c<iCatgs; c++) out.write((c==0 ? "" : ",")+"\""+oCatgs.getString(0,c)+"\""); %>);
 		var ctn = new Array (<% for (int c=0; c<iCatgs; c++) out.write((c==0 ? "" : ",")+"\""+oCatgs.getStringNull(2,c,oCatgs.getString(1,c)).replace('"',' ')+"\""); %>);
+    var cur = null;
+
+		function writeCategoriesList() {
+	    var htm = "";
+	    for (var c=0; c<cts.length; c++) {
+	      htm += "<INPUT TYPE=\"checkbox\" NAME=\"c_"+cts[c]+"\" VALUE=\""+cts[c]+"\">&nbsp;<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"listPasswords('"+cts[c]+"')\">"+(cur==cts[c] ? "<B>" : "")+ctn[c]+(cur==cts[c] ? "</B>" : "")+"</A><BR/>";
+	    } // next
+	    document.getElementById("catlist").innerHTML = htm;
+		}
 
     function createPassword() {
       var frm = document.forms["pwdsfrm"];
-      if (frm.sel_templates.selectedIndex<=0) {
+      
+      if (null==cur) {
+    	  alert ("[~Debe elegir una categoría a la cual añadir la contraseña~]");
+        return false;
+      } else if (frm.sel_templates.selectedIndex<=0) {
     	  alert ("[~Debe elegir una plantilla para la contraseña~]");        
         return false;
       } else {
-	      open ("pwd_new.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&nm_template="+getCombo(frm.sel_templates),
+	      open ("pwd_new.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&nm_template="+getCombo(frm.sel_templates)+"&gu_category="+cur,
 	      		  "newpassword", "directories=no,toolbar=no,menubar=no,width=500,height=460");
       }
     } // createPassword
@@ -166,22 +179,36 @@
     	}    	
     } // createCategory()
 
-    function deleteCategories {
+    function deleteCategories() {
     	var par;
     	var frm = document.forms["fcats"];
 		  var par = "";
+		  var htm = "";
+		  var c2s = new Array();
+		  var c2n = new Array();
+		  var c;
+		  
 		  if (!req) {
-    	  for (var c=0; c<cts.length; c++) {
-    	  	if (frm.elements["c_"+cts[c]]].checked) par += (par.length==0 ? "" : ",")+frm.elements["c_"+cts[c]]].value;
+    	  for (c=0; c<cts.length; c++) {
+    	  	if (frm.elements["c_"+cts[c]].checked) {
+    	  		par += (par.length==0 ? "" : ",")+frm.elements["c_"+cts[c]].value;
+    	    } else {
+    	      c2s.push(cts[c]);
+    	      c2n.push(ctn[c]);
+    	    }
     	  } // next
     	  
     	  if (par.lenght==0) {
     	    alert ("[~Debe seleccionar al menos una categoría a eliminar~]");
         } else {
+        	cts = c2s;
+        	ctn = c2n;
+
+          writeCategoriesList();
+
       	  par = "lst="+par;
 			    req = createXMLHttpRequest();
-			    req.onreadystatechange = addNewCategory;
-			  
+
 			    req.open("POST", "category_delete.jsp", true);
   		    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   			  req.setRequestHeader("Content-length", par.length);
@@ -196,26 +223,30 @@
     function writePasswordsHtml() {
         if (req.readyState == 4) {
           if (req.status == 200) {
-          	if (req.responseText.substr(0,5)=="ERROR") {
-          	  alert (req.responseText);
-          	} else {
-						  var lins = req.responseText.split("\n");
-						  var nlin = lins.length;
-						  var html = "<TABLE>";
-						  for (var l=0; l<nlin; l++) {
-						  	var lin = lins[l].split("|");
-						    html += "<TR><TD>"+lin[1]+"</TD></TR>";
-						  }
-						  html += "</TABLE>";
-          	} // fi
+          	if (req.responseText.length>1) {
+          	  if (req.responseText.substr(0,5)=="ERROR") {
+          	    document.getElementById("pwdlist").innerHTML = "";
+          	  } else {
+						    var lins = req.responseText.split("\n");
+						    var nlin = lins.length;
+						    var html = "<TABLE>";
+						    for (var l=0; l<nlin; l++) {
+						  	  var lin = lins[l].split("|");
+						      html += "<TR><TD>"+lin[1]+"</TD></TR>";
+						    }
+						    html += "</TABLE>";
+          	    document.getElementById("pwdlinks").innerHTML = html;
+          	  } // fi
+            } // fi
           	req = false;
-          } else {
-          }
-        }
-    } // addNewCategory
+          } // fi
+        } // fi
+    } // writePasswordsHtml
 
 	  function listPasswords(gu) {
 	    if (!req) {
+	    	cur = gu;
+        writeCategoriesList();
 	      req = createXMLHttpRequest();
 			  req.onreadystatechange = writePasswordsHtml;			  
 			  req.open("GET", "pwdlist.jsp?gu_category="+gu, true);
@@ -332,7 +363,7 @@
   <FORM METHOD="post" NAME="fcats" ACTION="category_delete.jsp">
   <DIV id="catlist"><%
   for (int c=0; c<iCatgs; c++) {
-    out.write("<INPUT TYPE=\"checkbox\" NAME=\"c_"+oCatgs.getString(0,c)+"\">&nbsp;<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"listPasswords('"+oCatgs.getString(0,c)+"')\">"+oCatgs.getStringNull(2,c,oCatgs.getString(1,c))+"</A><BR/>");
+    out.write("<INPUT TYPE=\"checkbox\" NAME=\"c_"+oCatgs.getString(0,c)+"\" VALUE=\""+oCatgs.getString(0,c)+"\">&nbsp;<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"listPasswords('"+oCatgs.getString(0,c)+"')\">"+oCatgs.getStringNull(2,c,oCatgs.getString(1,c))+"</A><BR/>");
   } // next
 %></DIV>
   </FORM>
@@ -340,17 +371,32 @@
   <DIV id="pwdlist" CLASS="columnright">
   <FORM NAME="pwdsfrm">
 <%
+   PasswordRecordTemplate oRec = new PasswordRecordTemplate();
    String sTemplates = GlobalCacheClient.getString("PasswordTemplatesSelect["+gu_user+"]");
    if (null==sTemplates) {
-     sTemplates = "";
+     sTemplates = "<OPTION VALUE=\"\"></OPTION>";
      File[] aTemplates = new File(getTemplatesPath(sStorage, id_domain, gu_workarea, gu_user)).listFiles();
+     File[] aBrands = new File(getTemplatesPath(sStorage, id_domain, gu_workarea, gu_user)+File.separator+"brands").listFiles();
+		 if (null!=aBrands) {
+		   sTemplates += "<OPTGROUP LABEL=\"[~Servicios Predefinidos~]\">";
+		   final int nBrands = aBrands.length;
+		   for (int b=0; b<nBrands; b++) {
+		     oRec.load(aBrands[b].getPath());
+		     sTemplates += "<OPTION VALUE=\""+aBrands[b].getName()+"\">"+oRec.getName()+"</OPTION>";		   
+		   } // for
+		   sTemplates += "</OPTGROUP>";
+		 } // fi
+
 		 if (null!=aTemplates) {
-       PasswordRecordTemplate oRec = new PasswordRecordTemplate();
+		   sTemplates += "<OPTGROUP LABEL=\"[~Servicios Genéricos~]\">";       
 		   final int nTemplates = aTemplates.length;
 		   for (int p=0; p<nTemplates; p++) {
-		     oRec.load(aTemplates[p].getPath());
-		     sTemplates += "<OPTION VALUE=\""+aTemplates[p].getName()+"\">"+oRec.getName()+"</OPTION>";
+		     if (!aTemplates[p].isDirectory()) {
+		       oRec.load(aTemplates[p].getPath());
+		       sTemplates += "<OPTION VALUE=\""+aTemplates[p].getName()+"\">"+oRec.getName()+"</OPTION>";
+		     } // fi
 		   } // next
+		   sTemplates += "</OPTGROUP>";
 		 } // fi
    GlobalCacheClient.put("PasswordTemplatesSelect["+gu_user+"]", sTemplates);
    } // fi
@@ -359,10 +405,12 @@
     <TR>
       <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
       <TD VALIGN="middle" CLASS="textplain">[~Nueva~]</TD>
-  	  <TD><SELECT NAME="sel_templates"><OPTION VALUE=""></OPTION><%=sTemplates%></SELECT></TD>
+  	  <TD><SELECT NAME="sel_templates"><%=sTemplates%></SELECT></TD>
   	  <TD><INPUT TYPE="button" CLASS="minibutton" VALUE="[~Crear~]" onclick="createPassword()"></TD>
   	</TR>
   </TABLE>
+  <BR/>
+  <DIV id="pwdlinks"></DIV>
   </DIV>
   </FORM>
 <%  	}

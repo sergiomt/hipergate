@@ -8,7 +8,7 @@
       return sPath;
     } else {
       com.knowgate.dfs.FileSystem oFS = new com.knowgate.dfs.FileSystem();
-      oFS.mkdirs("file://"+sPath);
+      oFS.mkdirs("file://"+sPath+sSep+"brands");      
       oFS.copy("file://"+sStorage+"pwdman", "file://"+sPath);
     }
     return com.knowgate.misc.Gadgets.chomp(sPath,sSep);

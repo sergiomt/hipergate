@@ -4,6 +4,7 @@
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
 
   String gu_user = getCookie(request, "userid", "");
+  String tx_pwd_sign = request.getParameter("pwd1");
 
   JDCConnection oConn = null;  
   boolean bLogin = false;
@@ -11,7 +12,7 @@
   try {
     oConn = GlobalDBBind.getConnection("pwdlogin");
     
-	  bLogin = ACLUser.checkSignature(oConn, gu_user, request.getParameter("pwd1"));
+	  bLogin = ACLUser.checkSignature(oConn, gu_user, tx_pwd_sign);
 
     oConn.close("pwdlogin");
   }
@@ -29,8 +30,11 @@
 
   if (bLogin) {
 		session.setAttribute("validated", new Boolean(true));
+		session.setAttribute("signature", tx_pwd_sign);
     response.sendRedirect (response.encodeRedirectUrl ("pwdmanhome.jsp?selected="+request.getParameter("selected")+"&subselected="+request.getParameter("subselected")));
   } else {
+		session.setAttribute("validated", new Boolean(false));
+		session.setAttribute("signature", "");
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Clave invalida~]&desc=[~La clave de firma introducida no es correcta~]&resume=pwdmanhome.jsp?selected="+request.getParameter("selected")+"&subselected="+request.getParameter("subselected")));
   }
 %>
