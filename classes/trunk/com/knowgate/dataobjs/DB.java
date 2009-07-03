@@ -1046,6 +1046,7 @@ public final class DB {
 
   // k_academic_courses
   public static final String gu_acourse = "gu_acourse";
+  public static final String pr_acourse = "pr_acourse";
   public static final String bo_confirmed = "bo_confirmed";
   public static final String bo_paid = "bo_paid";
   public static final String bo_waiting = "bo_waiting";
