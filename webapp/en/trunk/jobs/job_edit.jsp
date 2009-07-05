@@ -1,9 +1,5 @@
 ﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.Statement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.scheduler.Job" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/dbbind.jsp" %>
-<%@ include file="../methods/cookies.jspf" %>
-<%@ include file="../methods/authusrs.jspf" %>
-<%@ include file="../methods/clientip.jspf" %>
-<% 
+<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><% 
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -121,11 +117,11 @@
         var frm = window.document.forms[0];
 	var cmd = getURLParam("id_command");
 	
-	if (!isDate(frm.dt_execution.value, "d") && frm.dt_execution.value.length>0 && frm.dt_execution.value!="Lo antes posible") {
+	if (!isDate(frm.dt_execution.value, "d") && frm.dt_execution.value.length>0 && frm.dt_execution.value!="As soon as possible") {
 	  alert ("[~La fecha de ejecución no es válida~]");
 	  return false;	  
 	}
-	else if (frm.dt_execution.value=="Lo antes posible") {
+	else if (frm.dt_execution.value=="As soon as possible") {
 	  frm.dt_execution.value = "ASAP";
 	}
 
