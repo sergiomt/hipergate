@@ -71,9 +71,10 @@
 
     oConn.setAutoCommit (false);
 
-    if (ix_address.length()==0)
+    if (ix_address.length()==0) {
       oAddr.put(DB.ix_address, Address.nextLocalIndex(oConn, linktable, linkfield, linkvalue));
-          
+    }
+    
     oAddr.store(oConn);
     
     // Borrar la dirección anterior y asociar la nueva    

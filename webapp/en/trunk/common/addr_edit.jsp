@@ -72,53 +72,57 @@
     bIsGuest = isDomainGuest (GlobalDBBind, request, response);
     
     if (gu_address.length()>0) {
-      oAddr = new Address(oConn,gu_address);
-      ix_address = String.valueOf(oAddr.getInt(DB.ix_address));
+      oAddr = new Address();
+      if (oAddr.load(oConn,new Object[]{gu_address})) {
+        ix_address = String.valueOf(oAddr.getInt(DB.ix_address));
       
-      RecentlyUsed oRecent;
-      DBPersist oItem;
+        RecentlyUsed oRecent;
+        DBPersist oItem;
       
-      oConn.setAutoCommit(true);
+        oConn.setAutoCommit(true);
 
-      if (sLinkTable.equals(DB.k_x_company_addr)) {
+        if (sLinkTable.equals(DB.k_x_company_addr)) {
 
-        oRecent = new RecentlyUsed (DB.k_companies_recent, 10, DB.gu_company, DB.gu_user);
+          oRecent = new RecentlyUsed (DB.k_companies_recent, 10, DB.gu_company, DB.gu_user);
 
-	      oItem = new DBPersist (DB.k_companies_recent, "RecentCompany");
+	        oItem = new DBPersist (DB.k_companies_recent, "RecentCompany");
 
-      	oItem.put (DB.gu_company, sLinkValue);
-      	oItem.put (DB.gu_user, gu_user);
-      	oItem.put (DB.gu_workarea, gu_workarea);
-      	oItem.put (DB.nm_company, nullif(request.getParameter("nm_company")));
-      	if (oAddr.getItemMap().containsKey(DB.work_phone))
-      	  oItem.put (DB.work_phone, oAddr.get(DB.work_phone));
-      	if (oAddr.getItemMap().containsKey(DB.tx_email))
-      	  oItem.put (DB.tx_email, oAddr.get(DB.tx_email));
+      	  oItem.put (DB.gu_company, sLinkValue);
+      	  oItem.put (DB.gu_user, gu_user);
+      	  oItem.put (DB.gu_workarea, gu_workarea);
+      	  oItem.put (DB.nm_company, nullif(request.getParameter("nm_company")));
+      	  if (oAddr.getItemMap().containsKey(DB.work_phone))
+      	    oItem.put (DB.work_phone, oAddr.get(DB.work_phone));
+      	  if (oAddr.getItemMap().containsKey(DB.tx_email))
+      	    oItem.put (DB.tx_email, oAddr.get(DB.tx_email));
       	  
-      	oRecent.add (oConn, oItem);
-      }
-      else if (sLinkTable.equals(DB.k_x_contact_addr)) {
+      	  oRecent.add (oConn, oItem);
+        }
+        else if (sLinkTable.equals(DB.k_x_contact_addr)) {
         
-        oRecent = new RecentlyUsed (DB.k_contacts_recent, 10, DB.gu_contact, DB.gu_user);
+          oRecent = new RecentlyUsed (DB.k_contacts_recent, 10, DB.gu_contact, DB.gu_user);
 
-      	oItem = new DBPersist (DB.k_contacts_recent, "RecentContact");
+      	  oItem = new DBPersist (DB.k_contacts_recent, "RecentContact");
       	
-      	DBPersist oCont = new DBPersist (DB.k_contacts, "Contact");
-      	oCont.load (oConn, new Object[]{sLinkValue});
+        	DBPersist oCont = new DBPersist (DB.k_contacts, "Contact");
+      	  oCont.load (oConn, new Object[]{sLinkValue});
       	
-      	oItem.put (DB.gu_contact, oCont.getString(DB.gu_contact));
-      	oItem.put (DB.full_name, oCont.getStringNull(DB.tx_name,"") + " " + oCont.getStringNull(DB.tx_surname,""));
-      	oItem.put (DB.gu_user, gu_user);
-      	oItem.put (DB.gu_workarea, gu_workarea);
-      	oItem.put (DB.nm_company, nullif(request.getParameter("nm_company")));
+      	  oItem.put (DB.gu_contact, oCont.getString(DB.gu_contact));
+      	  oItem.put (DB.full_name, oCont.getStringNull(DB.tx_name,"") + " " + oCont.getStringNull(DB.tx_surname,""));
+      	  oItem.put (DB.gu_user, gu_user);
+      	  oItem.put (DB.gu_workarea, gu_workarea);
+      	  oItem.put (DB.nm_company, nullif(request.getParameter("nm_company")));
       
-      	if (oAddr.getItemMap().containsKey(DB.work_phone))
-      	  oItem.put (DB.work_phone, oAddr.get(DB.work_phone));
+      	  if (oAddr.getItemMap().containsKey(DB.work_phone))
+      	    oItem.put (DB.work_phone, oAddr.get(DB.work_phone));
       
-      	if (oAddr.getItemMap().containsKey(DB.tx_email))
-      	  oItem.put (DB.tx_email, oAddr.get(DB.tx_email));
+      	  if (oAddr.getItemMap().containsKey(DB.tx_email))
+      	    oItem.put (DB.tx_email, oAddr.get(DB.tx_email));
       	  
-      	oRecent.add (oConn, oItem);
+      	  oRecent.add (oConn, oItem);
+        }
+      } else {
+        ix_address = "1";
       }
     }
     else {
@@ -304,7 +308,6 @@
     <INPUT TYPE="hidden" NAME="bo_active" VALUE="1">
     <INPUT TYPE="hidden" NAME="linktable" VALUE="<%=sLinkTable%>">
     <INPUT TYPE="hidden" NAME="linkfield" VALUE="<%=sLinkField%>">    
-    <INPUT TYPE="hidden" NAME="linkvalue" VALUE="<%=sLinkValue%>">
     <INPUT TYPE="hidden" NAME="linkvalue" VALUE="<%=sLinkValue%>">
     <INPUT TYPE="hidden" NAME="noreload" VALUE="<%=nullif(request.getParameter("noreload"),"0")%>">
         

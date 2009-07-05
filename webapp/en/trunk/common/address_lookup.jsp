@@ -21,7 +21,7 @@
         
     sAddrGuid = Address.getIdFromEmail(oConn, sTxEmail, sGuWorkA);
 
-    oConn.close("email_lookup");
+    oConn.close("address_lookup");
   }
   catch (Exception e) {  
     if (oConn!=null)
