@@ -252,6 +252,128 @@ public class AcademicCourse extends DBPersist {
 
   // ---------------------------------------------------------------------------
 
+  public AcademicCourseBooking[] getCancelledBookings(JDCConnection oConn)
+    throws SQLException {
+    AcademicCourseBooking[] aBooks = null;
+    DBSubset oBooks = new DBSubset(DB.k_x_course_bookings,
+                                   new AcademicCourseBooking().getTable(oConn).getColumnsStr(),
+                                   DB.gu_acourse+"=? AND "+DB.bo_canceled+"<>1 "+
+                                   "ORDER BY "+DB.dt_created,50);
+    int nBooks = oBooks.load(oConn, new Object[]{get(DB.gu_acourse)});
+    if (nBooks>0) {
+      aBooks = new AcademicCourseBooking[nBooks];
+      for (int b=0; b<nBooks; b++) {
+        aBooks[b] = new AcademicCourseBooking();
+        aBooks[b].putAll(oBooks.getRowAsMap(b));
+      } // next
+    } // fi
+    return aBooks;
+  } // getCancelledBookings
+
+  // ---------------------------------------------------------------------------
+
+  public AcademicCourseBooking[] getConfirmedBookings(JDCConnection oConn)
+    throws SQLException {
+    AcademicCourseBooking[] aBooks = null;
+    DBSubset oBooks = new DBSubset(DB.k_x_course_bookings,
+                                   new AcademicCourseBooking().getTable(oConn).getColumnsStr(),
+                                   DB.gu_acourse+"=? AND "+DB.bo_confirmed+"<>0 "+
+                                   "ORDER BY "+DB.dt_created,50);
+    int nBooks = oBooks.load(oConn, new Object[]{get(DB.gu_acourse)});
+    if (nBooks>0) {
+      aBooks = new AcademicCourseBooking[nBooks];
+      for (int b=0; b<nBooks; b++) {
+        aBooks[b] = new AcademicCourseBooking();
+        aBooks[b].putAll(oBooks.getRowAsMap(b));
+      } // next
+    } // fi
+    return aBooks;
+  } // getConfirmedBookings
+
+
+  // ---------------------------------------------------------------------------
+
+  public AcademicCourseBooking[] getUnconfirmedBookings(JDCConnection oConn)
+    throws SQLException {
+    AcademicCourseBooking[] aBooks = null;
+    DBSubset oBooks = new DBSubset(DB.k_x_course_bookings,
+                                   new AcademicCourseBooking().getTable(oConn).getColumnsStr(),
+                                   DB.gu_acourse+"=? AND "+DB.bo_confirmed+"<>1 "+
+                                   "ORDER BY "+DB.dt_created,50);
+    int nBooks = oBooks.load(oConn, new Object[]{get(DB.gu_acourse)});
+    if (nBooks>0) {
+      aBooks = new AcademicCourseBooking[nBooks];
+      for (int b=0; b<nBooks; b++) {
+        aBooks[b] = new AcademicCourseBooking();
+        aBooks[b].putAll(oBooks.getRowAsMap(b));
+      } // next
+    } // fi
+    return aBooks;
+  } // getConfirmedBookings
+
+  // ---------------------------------------------------------------------------
+
+  public AcademicCourseBooking[] getWaitingBookings(JDCConnection oConn)
+    throws SQLException {
+    AcademicCourseBooking[] aBooks = null;
+    DBSubset oBooks = new DBSubset(DB.k_x_course_bookings,
+                                   new AcademicCourseBooking().getTable(oConn).getColumnsStr(),
+                                   DB.gu_acourse+"=? AND "+DB.bo_waiting+"<>0 "+
+                                   "ORDER BY "+DB.dt_created,50);
+    int nBooks = oBooks.load(oConn, new Object[]{get(DB.gu_acourse)});
+    if (nBooks>0) {
+      aBooks = new AcademicCourseBooking[nBooks];
+      for (int b=0; b<nBooks; b++) {
+        aBooks[b] = new AcademicCourseBooking();
+        aBooks[b].putAll(oBooks.getRowAsMap(b));
+      } // next
+    } // fi
+    return aBooks;
+  } // getWaitingBookings
+
+  // ---------------------------------------------------------------------------
+
+  public AcademicCourseBooking[] getPaidBookings(JDCConnection oConn)
+    throws SQLException {
+    AcademicCourseBooking[] aBooks = null;
+    DBSubset oBooks = new DBSubset(DB.k_x_course_bookings,
+                                   new AcademicCourseBooking().getTable(oConn).getColumnsStr(),
+                                   DB.gu_acourse+"=? AND "+DB.bo_paid+"<>0 "+
+                                   "ORDER BY "+DB.dt_created,50);
+    int nBooks = oBooks.load(oConn, new Object[]{get(DB.gu_acourse)});
+    if (nBooks>0) {
+      aBooks = new AcademicCourseBooking[nBooks];
+      for (int b=0; b<nBooks; b++) {
+        aBooks[b] = new AcademicCourseBooking();
+        aBooks[b].putAll(oBooks.getRowAsMap(b));
+      } // next
+    } // fi
+    return aBooks;
+  } // getPaidBookings
+
+
+  // ---------------------------------------------------------------------------
+
+  public AcademicCourseBooking[] getUnpaidBookings(JDCConnection oConn)
+    throws SQLException {
+    AcademicCourseBooking[] aBooks = null;
+    DBSubset oBooks = new DBSubset(DB.k_x_course_bookings,
+                                   new AcademicCourseBooking().getTable(oConn).getColumnsStr(),
+                                   DB.gu_acourse+"=? AND "+DB.bo_paid+"<>1 "+
+                                   "ORDER BY "+DB.dt_created,50);
+    int nBooks = oBooks.load(oConn, new Object[]{get(DB.gu_acourse)});
+    if (nBooks>0) {
+      aBooks = new AcademicCourseBooking[nBooks];
+      for (int b=0; b<nBooks; b++) {
+        aBooks[b] = new AcademicCourseBooking();
+        aBooks[b].putAll(oBooks.getRowAsMap(b));
+      } // next
+    } // fi
+    return aBooks;
+  } // getUnpaidBookings
+
+  // ---------------------------------------------------------------------------
+
   public Course getCourse(JDCConnection oConn)
     throws SQLException,NullPointerException {
     if (isNull(DB.gu_course)) throw new NullPointerException("AcademicCourse.getCourse() gu_course is null");
