@@ -7,6 +7,7 @@ CREATE PROCEDURE k_sp_del_subject @SubjectId CHAR(32) AS
 GO;
 
 CREATE PROCEDURE k_sp_del_acourse @CourseId CHAR(32) AS
+  DELETE k_addresses WHERE gu_address IN (SELECT gu_address FROM k_academic_courses WHERE gu_acourse=@CourseId);
   DELETE k_x_course_alumni WHERE gu_acourse=@CourseId;
   DELETE k_x_course_bookings WHERE gu_acourse=@CourseId;
   DELETE k_evaluations WHERE gu_acourse=@CourseId;
@@ -51,10 +52,16 @@ CREATE TRIGGER k_tr_upd_course_booking ON k_x_course_bookings FOR UPDATE AS
 
   IF UPDATE(bo_confirmed) AND @BoConfirmed=1
     UPDATE b SET b.dt_confirmed=GETDATE() FROM k_x_course_bookings b JOIN inserted i ON b.gu_acourse=i.gu_acourse
+  IF UPDATE(bo_confirmed) AND @BoConfirmed=0
+    UPDATE b SET b.dt_confirmed=NULL FROM k_x_course_bookings b JOIN inserted i ON b.gu_acourse=i.gu_acourse
   IF UPDATE(bo_canceled) AND @BoCanceled=1
-    UPDATE b SET b.dt_confirmed=GETDATE() FROM k_x_course_bookings b JOIN inserted i ON b.gu_acourse=i.gu_acourse
+    UPDATE b SET b.dt_cancel=GETDATE() FROM k_x_course_bookings b JOIN inserted i ON b.gu_acourse=i.gu_acourse
+  IF UPDATE(bo_canceled) AND @BoCanceled=0
+    UPDATE b SET b.dt_cancel=NULL FROM k_x_course_bookings b JOIN inserted i ON b.gu_acourse=i.gu_acourse
   IF UPDATE(bo_paid) AND @BoPaid=1
     UPDATE b SET b.dt_paid=GETDATE() FROM k_x_course_bookings b JOIN inserted i ON b.gu_acourse=i.gu_acourse
+  IF UPDATE(bo_paid) AND @BoPaid=0
+    UPDATE b SET b.dt_paid=NULL FROM k_x_course_bookings b JOIN inserted i ON b.gu_acourse=i.gu_acourse
   IF UPDATE(bo_waiting) AND @BoWait=1
     UPDATE b SET b.dt_waiting=GETDATE() FROM k_x_course_bookings b JOIN inserted i ON b.gu_acourse=i.gu_acourse
 GO;

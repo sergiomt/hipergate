@@ -10,6 +10,7 @@ GO;
 
 CREATE OR REPLACE PROCEDURE k_sp_del_acourse (CourseId CHAR) IS
 BEGIN
+  DELETE FROM k_addresses WHERE gu_address IN (SELECT gu_address FROM k_academic_courses WHERE gu_acourse=CourseId);
   DELETE FROM k_x_course_alumni WHERE gu_acourse=CourseId;
   DELETE FROM k_x_course_bookings WHERE gu_acourse=CourseId;
   DELETE FROM k_evaluations WHERE gu_acourse=CourseId;
@@ -47,11 +48,20 @@ BEGIN
   IF :new.bo_confirmed=1 AND :old.bo_confirmed=0 THEN
     :new.dt_confirmed:=SYSDATE;
   END IF;
+  IF :new.bo_confirmed=0 AND :old.bo_confirmed=1 THEN
+    :new.dt_confirmed:=NULL;
+  END IF;
   IF :new.bo_paid=1 AND :old.bo_paid=0 THEN
     :new.dt_paid:=SYSDATE;
   END IF;
+  IF :new.bo_paid=0 AND :old.bo_paid=1 THEN
+    :new.dt_paid:=NULL;
+  END IF;
   IF :new.bo_canceled=1 AND :old.bo_canceled=0 THEN
     :new.dt_cancel:=SYSDATE;
+  END IF;
+  IF :new.bo_canceled=0 AND :old.bo_canceled=1 THEN
+    :new.dt_cancel:=NULL;
   END IF;
   IF :new.bo_waiting=1 AND :old.bo_waiting=0 THEN
     :new.dt_waiting:=SYSDATE;

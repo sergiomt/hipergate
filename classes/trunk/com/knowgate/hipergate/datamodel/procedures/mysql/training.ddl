@@ -10,6 +10,7 @@ GO;
 
 CREATE PROCEDURE k_sp_del_acourse (CourseId CHAR(32))
 BEGIN
+  DELETE FROM k_addresses WHERE gu_address IN (SELECT gu_address FROM k_academic_courses WHERE gu_acourse=CourseId);
   DELETE FROM k_x_course_alumni WHERE gu_acourse=CourseId;
   DELETE FROM k_x_course_bookings WHERE gu_acourse=CourseId;
   DELETE FROM k_evaluations WHERE gu_acourse=CourseId;
@@ -53,11 +54,20 @@ BEGIN
   IF NEW.bo_confirmed=1 AND OLD.bo_confirmed=0 THEN
     SET NEW.dt_confirmed=NOW();
   END IF;
+  IF NEW.bo_confirmed=0 AND OLD.bo_confirmed=1 THEN
+    SET NEW.dt_confirmed=NULL;
+  END IF;
   IF NEW.bo_paid=1 AND OLD.bo_paid=0 THEN
     SET NEW.dt_paid=NOW();
   END IF;
+  IF NEW.bo_paid=0 AND OLD.bo_paid=1 THEN
+    SET NEW.dt_paid=NULL;
+  END IF;
   IF NEW.bo_canceled=1 AND OLD.bo_canceled=0 THEN
     SET NEW.dt_cancel=NOW();
+  END IF;
+  IF NEW.bo_canceled=0 AND OLD.bo_canceled=1 THEN
+    SET NEW.dt_cancel=NULL;
   END IF;
   IF NEW.bo_waiting=1 AND OLD.bo_waiting=0 THEN
     SET NEW.dt_waiting=NOW();
