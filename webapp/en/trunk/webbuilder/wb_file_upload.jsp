@@ -83,8 +83,8 @@
         text-decoration:none;
       }
   </style>
-  <script language="JavaScript" src="../javascript/cookies.js"></script>  
-  <script language="JavaScript" src="../javascript/setskin.js"></script>
+  <script language="JavaScript" type="text/javascript" src="../javascript/cookies.js"></script>  
+  <script language="JavaScript" type="text/javascript" src="../javascript/setskin.js"></script>
   <script language="JavaScript" type="text/javascript">
   <!--
 
@@ -211,7 +211,9 @@
 </table>  
 <% } %>
 <!-- The form tag must contain correct action and onsubmit attributes -->
-<form action="wb_file_upload_store.jsp?gu_pageset=<%=request.getParameter("gu_pageset")%>&doctype=<%=request.getParameter("doctype")%>" method="get" name="form1" id="form1" onsubmit="return processUpload(this)">
+<form action="wb_file_upload_store.jsp" method="post" name="form1" id="form1" onsubmit="return processUpload(this)">
+  <input type="hidden" name="gu_pageset" value="<%=request.getParameter("gu_pageset")%>">
+  <input type="hidden" name="doctype" value="<%=request.getParameter("doctype")%>">
   <SELECT name="f_list" class="sBox" size="8" multiple="multiple"></SELECT>
   <BR>
   <SPAN class="cmdDiv"><A class="actLink" href="javascript:;" onClick="fu_add()">[~Añadir~]</A></SPAN>
