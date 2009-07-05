@@ -1,6 +1,9 @@
 UPDATE k_version SET vs_stamp='5.0.0'
 GO;
 
+INSERT INTO k_classes VALUES(14,'PasswordRecord');
+GO;
+
 ALTER TABLE k_pageset_pages ADD path_publish VARCHAR2(254) NULL
 GO;
 
@@ -129,4 +132,15 @@ GO;
 ALTER TABLE k_contacts ADD id_batch VARCHAR2(32)
 GO;
 ALTER TABLE k_companies ADD id_batch VARCHAR2(32)
+GO;
+
+ALTER TABLE k_academic_courses ADD pr_acourse NUMBER(14,4) NULL
+GO;
+ALTER TABLE k_x_course_bookings ADD dt_paid DATE NULL
+GO;
+ALTER TABLE k_x_course_bookings ADD id_transact VARCHAR2(32) NULL
+GO;
+ALTER TABLE k_x_course_bookings ADD tp_billing CHAR(1) NULL
+GO;
+ALTER TABLE k_academic_courses ADD gu_address CHAR(32) NULL
 GO;
