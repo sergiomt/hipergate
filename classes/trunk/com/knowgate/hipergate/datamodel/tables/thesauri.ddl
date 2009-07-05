@@ -129,7 +129,7 @@ CREATE TABLE k_addresses
     tx_email       CHARACTER VARYING(100) NULL,
     tx_email_alt   CHARACTER VARYING(100) NULL,
     url_addr       CHARACTER VARYING(254) NULL,
-    coord_x	   FLOAT        NULL,
+    coord_x	       FLOAT        NULL,
     coord_y        FLOAT        NULL,
     contact_person VARCHAR(100) NULL,
     tx_salutation  VARCHAR(16)  NULL,

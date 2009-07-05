@@ -62,15 +62,18 @@ CREATE TABLE k_academic_courses (
   id_course      VARCHAR(50)      NULL,
   bo_active      SMALLINT DEFAULT 1,
   dt_created     DATETIME DEFAULT CURRENT_TIMESTAMP,
-  dt_modified    DATETIME	  NULL,
-  dt_closed      DATETIME	  NULL,
-  nu_max_alumni  INTEGER          NULL,
-  nm_tutor       VARCHAR(200)     NULL,
+  dt_modified    DATETIME	   NULL,
+  dt_closed      DATETIME	   NULL,
+  pr_acourse     DECIMAL(14,4) NULL,
+  nu_max_alumni  INTEGER       NULL,
+  gu_address     CHAR(32)      NULL,
+  nm_tutor       VARCHAR(200)  NULL,
   tx_tutor_email CHARACTER VARYING(100) NULL,
-  de_course     VARCHAR(2000)     NULL,
+  de_course     VARCHAR(2000)  NULL,
   CONSTRAINT pk_academic_courses PRIMARY KEY (gu_acourse),
   CONSTRAINT u1_academic_courses UNIQUE (gu_course,tx_start,tx_end),
-  CONSTRAINT f1_academic_courses FOREIGN KEY (gu_course) REFERENCES k_courses(gu_course)
+  CONSTRAINT f1_academic_courses FOREIGN KEY (gu_course) REFERENCES k_courses(gu_course),
+  CONSTRAINT f2_academic_courses FOREIGN KEY (gu_address) REFERENCES k_addresses(gu_address)
 )
 GO;
 
@@ -136,6 +139,7 @@ CREATE TABLE k_x_course_alumni (
   tp_register  VARCHAR(30)   NULL,
   id_classroom VARCHAR(30)   NULL,
   dt_created   DATETIME DEFAULT CURRENT_TIMESTAMP,
+  
   CONSTRAINT pk_x_course_alumni PRIMARY KEY (gu_acourse,gu_alumni),
   CONSTRAINT f1_x_course_alumni FOREIGN KEY (gu_acourse) REFERENCES k_academic_courses(gu_acourse)
 )
@@ -156,6 +160,10 @@ CREATE TABLE k_x_course_bookings (
   dt_cancel    DATETIME      NULL,
   dt_waiting   DATETIME      NULL,
   im_paid      DECIMAL(14,4) NULL,
+  dt_paid      DATETIME      NULL,
+  id_transact  VARCHAR(32)   NULL,
+  tp_billing   CHAR(1)       NULL,
+
   CONSTRAINT pk_x_course_bookings PRIMARY KEY (gu_acourse,gu_contact),
   CONSTRAINT f1_x_course_bookings FOREIGN KEY (gu_acourse) REFERENCES k_academic_courses(gu_acourse),
   CONSTRAINT f2_x_course_bookings FOREIGN KEY (gu_contact) REFERENCES k_contacts(gu_contact),
