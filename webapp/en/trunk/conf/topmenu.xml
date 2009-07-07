@@ -193,7 +193,7 @@
             <suboptions/>
           </option>
           <option name="academiccourses">
-            <mask/><title><![CDATA[Courses]]></title><href>../training/acourses_listing.jsp?selected=8&amp;subselected=2</href><forbid/>
+            <mask/><title><![CDATA[[~Convocatorias~]]]></title><href>../training/acourses_listing.jsp?selected=8&amp;subselected=2</href><forbid/>
             <suboptions/>
           </option>
           <option name="alumni">
