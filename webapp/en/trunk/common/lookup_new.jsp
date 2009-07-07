@@ -54,15 +54,16 @@
     if (oTable!=null) oColumn = oTable.getColumnByName(id_section);    
     if (oColumn!=null) iMaxLength = oColumn.getPrecision();
     if (0==iMaxLength) iMaxLength = 30;
+    if (nm_table.equals("k_addresses_lookup") && nm_coding.equals("id_state")) iMaxLength = 9;    
     oColumn = null;
     oTable = null;  
   } // fi()   
 %>
 <HTML>
   <HEAD>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/simplevalidations.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
       <!--
       
@@ -75,7 +76,7 @@
           return false;
         }
 
-	str = frm.vl_lookup.value;
+	      str = frm.vl_lookup.value;
 
         if (str.length==0) {
           alert ("Value is mandatory");
@@ -87,7 +88,7 @@
           return false;
         }
 
-	frm.vl_lookup.value = str.toUpperCase();
+	      frm.vl_lookup.value = str.toUpperCase();
         
         window.parent.lookupup.location.href = "lookup_up.jsp<%=sQryStr%>";
         
