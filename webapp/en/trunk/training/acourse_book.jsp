@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.training.AcademicCourse,com.knowgate.training.AcademicCourseBooking" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.text.DecimalFormat,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.training.AcademicCourse,com.knowgate.training.AcademicCourseBooking" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
 <%!
@@ -95,15 +95,18 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
       
+      var pr_acourse = "<% if (!oAcrs.isNull(DB.pr_acourse)) { DecimalFormat oFmt2 = new DecimalFormat(); oFmt2.setMaximumFractionDigits(2); out.write(oFmt2.format(oAcrs.getDecimal(DB.pr_acourse).doubleValue())); } %>";
+
       // ------------------------------------------------------
 
       function remove(guid) {
- 	var frm = window.document.forms[0];
- 	frm.gu_discard.value = guid;
+ 	      var frm = window.document.forms[0];
+ 	      frm.gu_discard.value = guid;
         frm.action = "acourse_book.jsp";
         frm.submit();
       }
@@ -111,11 +114,22 @@
       function validate() {
         var frm = window.document.forms[0];
 
-	if (frm.im_paid.value.length>0 && !isFloatValue(frm.im_paid.value)) {
-	  alert ("Paid amount is not valid");
-	  return false;	
-	}
-        
+	      if (frm.im_paid.value.length>0 && !isFloatValue(frm.im_paid.value.replace(",","."))) {
+	        alert ("Paid amount is not valid");
+	        return false;	
+	      } else {
+	        frm.im_paid.value = frm.im_paid.value.replace(",",".");
+	      }
+
+        if (frm.dt_paid.value.length>0 && !isDate(frm.frm.dt_paid.value, "d")) {
+	        alert ("[~La fecha de pago no es válida~]");
+	        return false;	
+        }
+
+				if (frm.im_paid.value.length>0) {
+				  frm.bo_paid.checked = true;
+				}
+
         return true;
       } // validate;
     //-->
@@ -135,31 +149,35 @@
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
             <TD ALIGN="right" WIDTH="90" CLASS="formstrong">Course</TD>
-            <TD ALIGN="left" WIDTH="370" CLASS="formplain"><%=oAcrs.getString(DB.nm_course)%><% if (!oAcrs.isNull(DB.id_course)) out.write("&nbsp;("+oAcrs.getString(DB.id_course)+")"); %></TD>
+            <TD ALIGN="left" WIDTH="420" CLASS="formplain"><%=oAcrs.getString(DB.nm_course)%><% if (!oAcrs.isNull(DB.id_course)) out.write("&nbsp;("+oAcrs.getString(DB.id_course)+")"); %></TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90" ALIGN="right"><INPUT TYPE="radio" NAME="bo_waiting" VALUE="0" CHECKED></TD>
-            <TD ALIGN="left" WIDTH="370" CLASS="formplain">Reserved</TD>
+            <TD ALIGN="left" WIDTH="420" CLASS="formplain">Reserved</TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90" ALIGN="right"><INPUT TYPE="radio" NAME="bo_waiting" VALUE="1"></TD>
-            <TD ALIGN="left" WIDTH="370" CLASS="formplain">Waiting List</TD>
+            <TD ALIGN="left" WIDTH="420" CLASS="formplain">Waiting List</TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90" ALIGN="right"><INPUT TYPE="checkbox" NAME="bo_confirmed" VALUE="1"></TD>
-            <TD ALIGN="left" WIDTH="370" CLASS="formplain">Confirmed</TD>
+            <TD ALIGN="left" WIDTH="420" CLASS="formplain">Confirmed</TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90" ALIGN="right"><INPUT TYPE="checkbox" NAME="bo_paid" VALUE="1"></TD>
-            <TD ALIGN="left" WIDTH="370" CLASS="formplain">Paid&nbsp;&nbsp;&nbsp;&nbsp;Amount&nbsp;<INPUT TYPE="text" NAME="im_paid" MAXLENGTH="14" SIZE="10"></TD>
+            <TD ALIGN="right" WIDTH="90" ALIGN="right"><INPUT TYPE="checkbox" NAME="bo_paid" VALUE="1" onclick="if (this.checked) { if (document.forms[0].im_paid.value.length==0) document.forms[0].im_paid.value=pr_acourse; if (document.forms[0].dt_paid.value.length==0) document.forms[0].dt_paid.value=dateToString(new Date(),'d'); } else { document.forms[0].im_paid.value=''; document.forms[0].dt_paid.value=''; }"></TD>
+            <TD ALIGN="left" WIDTH="420" CLASS="formplain">Paid&nbsp;&nbsp;&nbsp;&nbsp;<INPUT TYPE="text" NAME="im_paid" MAXLENGTH="14" SIZE="10" VALUE="<% if (!oAcrs.isNull(DB.im_paid)) { DecimalFormat oFmt2 = new DecimalFormat(); oFmt2.setMaximumFractionDigits(2); out.write(oFmt2.format(oAcrs.getDecimal(DB.im_paid).doubleValue())); } %>">&nbsp;Amount&nbsp;&nbsp;&nbsp;&nbsp;<INPUT TYPE="text" NAME="dt_paid" MAXLENGTH="10" SIZE="10" VALUE="<% if (!oAcrs.isNull(DB.dt_paid)) out.write(oAcrs.getDateShort(DB.dt_paid)); %>">&nbsp;[~Fecha~]</TD>
+          </TR>
+          <TR>
+            <TD ALIGN="right" WIDTH="90" ALIGN="right"></TD>
+            <TD ALIGN="left" WIDTH="420" CLASS="formplain">[~Forma de pago~]&nbsp;<SELECT NAME="tp_biling"><OPTION VALUE=""></OPTION><OPTION VALUE="T">[~Transferencia~]</OPTION><OPTION VALUE="C">[~Cheque~]</OPTION><OPTION VALUE="M">[~Efectivo~]</OPTION><OPTION VALUE="A">[~Tarjeta de Crédito~]</OPTION></SELECT></TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90" CLASS="formstrong">Room</TD>
-            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="id_classroom" MAXLENGTH="30" SIZE="30"></TD>
+            <TD ALIGN="left" WIDTH="420"><INPUT TYPE="text" NAME="id_classroom" MAXLENGTH="30" SIZE="30"></TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90" CLASS="formstrong" VALIGN="top">Students</TD>
-            <TD ALIGN="left" WIDTH="370" CLASS="formplain">
+            <TD ALIGN="left" WIDTH="420" CLASS="formplain">
 	      <TABLE SUMMARY="Alumni List" WIDTH="100%" CLASS="formback">
 	      
 <% for (int a=0; a<nAlmn; a++) {

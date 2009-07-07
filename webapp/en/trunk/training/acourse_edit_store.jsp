@@ -1,6 +1,5 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.training.AcademicCourse" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="../methods/nullif.jspf" %>
-<%
+﻿<%@ page import="java.math.BigDecimal,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.Address,com.knowgate.hipergate.Category,com.knowgate.hipergate.Product,com.knowgate.training.AcademicCourse" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*  
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -38,14 +37,18 @@
       
   String id_domain = request.getParameter("id_domain");
   String gu_workarea = request.getParameter("gu_workarea");
+  String gu_category = request.getParameter("gu_category");
   String id_user = getCookie (request, "userid", null);
   
-  String gu_subject = nullif(request.getParameter("gu_subject"));
+  String gu_acourse = nullif(request.getParameter("gu_acourse"));
 
-  String sOpCode = gu_subject.length()>0 ? "NACR" : "MACR";
-      
+  String sOpCode = gu_acourse.length()>0 ? "NACR" : "MACR";
+  
+  Product oProd = null;
   AcademicCourse oAcr = new AcademicCourse();
-
+  Address oAdr = new Address();
+  oAdr.put(DB.gu_address,request.getParameter("gu_address"));
+  
   JDCConnection oConn = null;
   
   try {
@@ -55,9 +58,44 @@
 
     oConn.setAutoCommit (false);
     
-    oAcr.store(oConn);
+    if (!oAdr.exists(oConn)) oAcr.remove(DB.gu_address);
 
-    // DBAudit.log(oConn, oAcr.ClassId, sOpCode, id_user, gu_subject, null, 0, 0, null, null);
+    oAcr.store(oConn);
+		
+		if (gu_category!=null) {
+		  if (gu_acourse.length()>0) {
+		    DBCommand.executeUpdate(oConn, "DELETE FROM "+DB.k_x_cat_objs+" WHERE "+DB.gu_object+"='"+gu_acourse+"' AND "+DB.id_class+"="+String.valueOf(AcademicCourse.ClassId));
+		  }
+		  if (gu_category.length()>0) {
+
+		    if (gu_acourse.length()==0) {
+		      oProd = new Product(oAcr.getString(DB.gu_acourse));
+		      oProd.put(DB.pct_tax_rate, 0f);
+		      oProd.put(DB.is_tax_included, (short) 1);
+		    } else {
+		      oProd = new Product(oConn, gu_acourse);
+		    }
+		    oProd.replace(DB.id_status, request.getParameter("bo_active").equals("1") ? Product.STATUS_ACTIVE : Product.STATUS_RETIRED);		      
+		    oProd.replace(DB.gu_owner, id_user);
+		    oProd.replace(DB.nm_product, request.getParameter("nm_course"));
+		    oProd.replace(DB.id_ref, request.getParameter("id_course"));
+		    if (!oAcr.isNull(DB.gu_address))
+		      oProd.replace(DB.gu_address, oAcr.getString(DB.gu_address));
+		    else
+		      oProd.remove(DB.gu_address);		    	
+		    if (request.getParameter("pr_acourse").length()>0)
+		      oProd.replace(DB.pr_list, new BigDecimal(request.getParameter("pr_acourse")));
+		    else
+		      oProd.remove(DB.pr_list);
+				oProd.store(oConn);
+
+		    Category oCatg = new Category(gu_category);
+		    oCatg.addObject(oConn, oAcr.getString(DB.gu_acourse), AcademicCourse.ClassId, 0, 0);
+
+		  } // fi (gu_category!="")
+		} // fi (gu_category!=null)
+    
+    // DBAudit.log(oConn, oAcr.ClassId, sOpCode, id_user, oAcr.getString(DB.gu_acourse), null, 0, 0, null, null);
     
     oConn.commit();
     oConn.close("acourse_edit_store");

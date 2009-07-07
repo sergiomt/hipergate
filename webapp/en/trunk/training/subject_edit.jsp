@@ -90,13 +90,13 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Edit Subject</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
     <!--
 
@@ -120,41 +120,60 @@
       function validate() {
         var frm = window.document.forms[0];
 
-	if (frm.nm_subject.value.length==0) {
-	  alert ("Subject name is required");
-	  return false;
-	}
+      	if (frm.nm_subject.value.length==0) {
+      	  alert ("Subject name is required");
+      	  return false;
+      	}
+      
+      	if ((frm.nm_subject.value.indexOf("'")>=0) || (frm.nm_subject.value.indexOf('"')>=0)) {
+      	  alert ("Subject name contains forbidden characters");
+      	  return false;
+      	}
+      
+      	if ((frm.nm_short.value.indexOf("'")>=0) || (frm.nm_short.value.indexOf('"')>=0)) {
+      	  alert ("Subject short name contains forbidden characters");
+      	  return false;
+      	}
+      
+      	if (frm.de_subject.value.length>2000) {
+      	  alert ("Subject description cannot exceed 2000 characters");
+      	  return false;
+      	}
+      	
+      	if (frm.nu_credits.value.length>0) {
+      	  if (!isFloatValue(frm.nu_credits.value)) {
+      	    alert ("Credits number is not valid");
+      	    return false;	  
+      	  }
+      	}
+      	
+      	if ((frm.sel_h_start.selectedIndex<=0 && frm.sel_m_start.selectedIndex> 0) ||
+      	    (frm.sel_h_start.selectedIndex> 0 && frm.sel_m_start.selectedIndex<=0)) {
+      	  alert ("[~La hora de inicio no es válida~]");
+      	  return false;
+      	}
 
-	if ((frm.nm_subject.value.indexOf("'")>=0) || (frm.nm_subject.value.indexOf('"')>=0)) {
-	  alert ("Subject name contains forbidden characters");
-	  return false;
-	}
+      	if ((frm.sel_h_end.selectedIndex<=0 && frm.sel_m_end.selectedIndex> 0) ||
+      	    (frm.sel_h_end.selectedIndex> 0 && frm.sel_m_end.selectedIndex<=0)) {
+      	  alert ("[~La hora de fin no es válida~]");
+      	  return false;
+      	}
 
-	if ((frm.nm_short.value.indexOf("'")>=0) || (frm.nm_short.value.indexOf('"')>=0)) {
-	  alert ("Subject short name contains forbidden characters");
-	  return false;
-	}
+      	if (frm.sel_h_start.selectedIndex>0 && frm.sel_m_start.selectedIndex>0 &&
+      	    frm.sel_h_end.selectedIndex>0 && frm.sel_m_end.selectedIndex>0 &&
+      	    parseFloat(getCombo(frm.sel_h_start)+getCombo(frm.sel_m_start))>parseFloat(getCombo(frm.sel_h_end)+getCombo(frm.sel_m_end))) {
+      	  alert ("[~La hora de inicio no puede ser posterior a la hora de fin~]");
+      	  return false;
+      	}
 
-	if (frm.de_subject.value.length>2000) {
-	  alert ("Subject description cannot exceed 2000 characters");
-	  return false;
-	}
-	
-	if (frm.nu_credits.value.length>0) {
-	  if (!isFloatValue(frm.nu_credits.value)) {
-	    alert ("Credits number is not valid");
-	    return false;	  
-	  }
-	}
-	
-	frm.nm_subject.value = frm.nm_subject.value.toUpperCase();
-	frm.nm_short.value = frm.nm_short.value.toUpperCase();
-	frm.id_subject.value = frm.id_subject.value.toUpperCase();
-	
-	frm.gu_course.value = getCombo(frm.sel_course);
-	frm.tx_area.value = getCombo(frm.sel_area);
+      	frm.nm_subject.value = frm.nm_subject.value.toUpperCase();
+      	frm.nm_short.value = frm.nm_short.value.toUpperCase();
+      	frm.id_subject.value = frm.id_subject.value.toUpperCase();
+      	
+      	frm.gu_course.value = getCombo(frm.sel_course);
+      	frm.tx_area.value = getCombo(frm.sel_area);
 
-	if (frm.chk_active.checked) frm.bo_active.value = "1"; else frm.bo_active.value = "0";
+	      if (frm.chk_active.checked) frm.bo_active.value = "1"; else frm.bo_active.value = "0";
 
         return true;
       } // validate;
@@ -168,6 +187,15 @@
         setCombo(frm.sel_area,"<%out.write(oSub.getStringNull(DB.tx_area,""));%>");
         setCombo(frm.sel_course,"<%out.write(oSub.getStringNull(DB.gu_course,""));%>");
 
+<%			if (!oSub.isNull(DB.tm_start)) { %>
+        setCombo(frm.sel_h_start,"<% out.write(oSub.getString(DB.tm_start).substring(0,2)); %>");
+        setCombo(frm.sel_m_start,"<% out.write(oSub.getString(DB.tm_start).substring(3)); %>");				  
+<%      }
+		  if (!oSub.isNull(DB.tm_end)) { %>
+        setCombo(frm.sel_h_end,"<% out.write(oSub.getString(DB.tm_end).substring(0,2)); %>");
+        setCombo(frm.sel_m_end,"<% out.write(oSub.getString(DB.tm_end).substring(3)); %>");				  
+
+<%    } %> 
         return true;
       } // validate;
     //-->
@@ -233,8 +261,21 @@
             <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="nu_credits" MAXLENGTH="5" SIZE="6" VALUE="<% if (!oSub.isNull(DB.nu_credits)) out.write(String.valueOf(oSub.getFloat(DB.nu_credits))); %>" onkeypress="acceptOnlyNumbers(this)"></TD>
           </TR>
           <TR>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Inicio~]:</FONT></TD>
+            <TD ALIGN="left" WIDTH="370">
+            	<SELECT NAME="sel_h_start" CLASS="combomini"><OPTION VALUE=""></OPTION><OPTION VALUE="00">00</OPTION><OPTION VALUE="01">01</OPTION><OPTION VALUE="02">02</OPTION><OPTION VALUE="03">03</OPTION><OPTION VALUE="04">04</OPTION><OPTION VALUE="05">05</OPTION><OPTION VALUE="06">06</OPTION><OPTION VALUE="07">07</OPTION><OPTION VALUE="08">08</OPTION><OPTION VALUE="09">09</OPTION><OPTION VALUE="10">10</OPTION><OPTION VALUE="11">11</OPTION><OPTION VALUE="12">12</OPTION><OPTION VALUE="13">13</OPTION><OPTION VALUE="14">14</OPTION><OPTION VALUE="15">15</OPTION><OPTION VALUE="16">16</OPTION><OPTION VALUE="17">17</OPTION><OPTION VALUE="18">18</OPTION><OPTION VALUE="19">19</OPTION><OPTION VALUE="20">20</OPTION><OPTION VALUE="21">21</OPTION><OPTION VALUE="22">22</OPTION><OPTION VALUE="23">23</OPTION></SELECT>
+            	:
+            	<SELECT NAME="sel_m_start" CLASS="combomini"><OPTION VALUE=""><OPTION VALUE="00">00</OPTION><OPTION VALUE="01">01</OPTION><OPTION VALUE="02">02</OPTION><OPTION VALUE="03">03</OPTION><OPTION VALUE="04">04</OPTION><OPTION VALUE="05">05</OPTION><OPTION VALUE="06">06</OPTION><OPTION VALUE="07">07</OPTION><OPTION VALUE="08">08</OPTION><OPTION VALUE="09">09</OPTION><OPTION VALUE="10">10</OPTION><OPTION VALUE="11">11</OPTION><OPTION VALUE="12">12</OPTION><OPTION VALUE="13">13</OPTION><OPTION VALUE="14">14</OPTION><OPTION VALUE="15">15</OPTION><OPTION VALUE="16">16</OPTION><OPTION VALUE="17">17</OPTION><OPTION VALUE="18">18</OPTION><OPTION VALUE="19">19</OPTION><OPTION VALUE="20">20</OPTION><OPTION VALUE="21">21</OPTION><OPTION VALUE="22">22</OPTION><OPTION VALUE="23">23</OPTION><OPTION VALUE="24">24</OPTION><OPTION VALUE="25">25</OPTION><OPTION VALUE="26">26</OPTION><OPTION VALUE="27">27</OPTION><OPTION VALUE="28">28</OPTION><OPTION VALUE="29">29</OPTION><OPTION VALUE="30">30</OPTION><OPTION VALUE="31">31</OPTION><OPTION VALUE="32">32</OPTION><OPTION VALUE="33">33</OPTION><OPTION VALUE="34">34</OPTION><OPTION VALUE="35">35</OPTION><OPTION VALUE="36">36</OPTION><OPTION VALUE="37">37</OPTION><OPTION VALUE="38">38</OPTION><OPTION VALUE="39">39</OPTION><OPTION VALUE="40">40</OPTION><OPTION VALUE="41">41</OPTION><OPTION VALUE="42">42</OPTION><OPTION VALUE="43">43</OPTION><OPTION VALUE="44">44</OPTION><OPTION VALUE="45">45</OPTION><OPTION VALUE="46">46</OPTION><OPTION VALUE="47">47</OPTION><OPTION VALUE="48">48</OPTION><OPTION VALUE="49">49</OPTION><OPTION VALUE="50">50</OPTION><OPTION VALUE="51">51</OPTION><OPTION VALUE="52">52</OPTION><OPTION VALUE="53">53</OPTION><OPTION VALUE="54">54</OPTION><OPTION VALUE="55">55</OPTION><OPTION VALUE="56">56</OPTION><OPTION VALUE="57">57</OPTION><OPTION VALUE="58">58</OPTION><OPTION VALUE="59">59</OPTION></OPTION></SELECT>
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							<FONT CLASS="formplain">[~Fin~]:</FONT>
+            	<SELECT NAME="sel_h_end" CLASS="combomini"><OPTION VALUE=""></OPTION><OPTION VALUE="00">00</OPTION><OPTION VALUE="01">01</OPTION><OPTION VALUE="02">02</OPTION><OPTION VALUE="03">03</OPTION><OPTION VALUE="04">04</OPTION><OPTION VALUE="05">05</OPTION><OPTION VALUE="06">06</OPTION><OPTION VALUE="07">07</OPTION><OPTION VALUE="08">08</OPTION><OPTION VALUE="09">09</OPTION><OPTION VALUE="10">10</OPTION><OPTION VALUE="11">11</OPTION><OPTION VALUE="12">12</OPTION><OPTION VALUE="13">13</OPTION><OPTION VALUE="14">14</OPTION><OPTION VALUE="15">15</OPTION><OPTION VALUE="16">16</OPTION><OPTION VALUE="17">17</OPTION><OPTION VALUE="18">18</OPTION><OPTION VALUE="19">19</OPTION><OPTION VALUE="20">20</OPTION><OPTION VALUE="21">21</OPTION><OPTION VALUE="22">22</OPTION><OPTION VALUE="23">23</OPTION></SELECT>
+            	:
+            	<SELECT NAME="sel_m_end" CLASS="combomini"><OPTION VALUE=""><OPTION VALUE="00">00</OPTION><OPTION VALUE="01">01</OPTION><OPTION VALUE="02">02</OPTION><OPTION VALUE="03">03</OPTION><OPTION VALUE="04">04</OPTION><OPTION VALUE="05">05</OPTION><OPTION VALUE="06">06</OPTION><OPTION VALUE="07">07</OPTION><OPTION VALUE="08">08</OPTION><OPTION VALUE="09">09</OPTION><OPTION VALUE="10">10</OPTION><OPTION VALUE="11">11</OPTION><OPTION VALUE="12">12</OPTION><OPTION VALUE="13">13</OPTION><OPTION VALUE="14">14</OPTION><OPTION VALUE="15">15</OPTION><OPTION VALUE="16">16</OPTION><OPTION VALUE="17">17</OPTION><OPTION VALUE="18">18</OPTION><OPTION VALUE="19">19</OPTION><OPTION VALUE="20">20</OPTION><OPTION VALUE="21">21</OPTION><OPTION VALUE="22">22</OPTION><OPTION VALUE="23">23</OPTION><OPTION VALUE="24">24</OPTION><OPTION VALUE="25">25</OPTION><OPTION VALUE="26">26</OPTION><OPTION VALUE="27">27</OPTION><OPTION VALUE="28">28</OPTION><OPTION VALUE="29">29</OPTION><OPTION VALUE="30">30</OPTION><OPTION VALUE="31">31</OPTION><OPTION VALUE="32">32</OPTION><OPTION VALUE="33">33</OPTION><OPTION VALUE="34">34</OPTION><OPTION VALUE="35">35</OPTION><OPTION VALUE="36">36</OPTION><OPTION VALUE="37">37</OPTION><OPTION VALUE="38">38</OPTION><OPTION VALUE="39">39</OPTION><OPTION VALUE="40">40</OPTION><OPTION VALUE="41">41</OPTION><OPTION VALUE="42">42</OPTION><OPTION VALUE="43">43</OPTION><OPTION VALUE="44">44</OPTION><OPTION VALUE="45">45</OPTION><OPTION VALUE="46">46</OPTION><OPTION VALUE="47">47</OPTION><OPTION VALUE="48">48</OPTION><OPTION VALUE="49">49</OPTION><OPTION VALUE="50">50</OPTION><OPTION VALUE="51">51</OPTION><OPTION VALUE="52">52</OPTION><OPTION VALUE="53">53</OPTION><OPTION VALUE="54">54</OPTION><OPTION VALUE="55">55</OPTION><OPTION VALUE="56">56</OPTION><OPTION VALUE="57">57</OPTION><OPTION VALUE="58">58</OPTION><OPTION VALUE="59">59</OPTION></OPTION></SELECT>
+            </TD>
+          </TR>
+          <TR>
             <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Description:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370"><TEXTAREA ROWS="4" COLS="32" NAME="de_subject"<%=oSub.getStringNull(DB.de_subject,"")%>></TEXTAREA></TD>
+            <TD ALIGN="left" WIDTH="370"><TEXTAREA ROWS="3" COLS="40" NAME="de_subject"<%=oSub.getStringNull(DB.de_subject,"")%>></TEXTAREA></TD>
           </TR>
           <TR>
             <TD COLSPAN="2"><HR></TD>

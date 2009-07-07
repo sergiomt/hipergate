@@ -39,6 +39,10 @@
   String id_domain = request.getParameter("id_domain");
   String gu_workarea = request.getParameter("gu_workarea");
   String id_user = getCookie (request, "userid", null);
+  String h_start = request.getParameter("sel_h_start"); 
+  String m_start = request.getParameter("sel_m_start"); 
+  String h_end = request.getParameter("sel_h_end"); 
+  String m_end = request.getParameter("sel_m_end"); 
   
   String gu_subject = nullif(request.getParameter("gu_subject"));
 
@@ -53,6 +57,12 @@
   
     loadRequest(oConn, request, oSub);
 
+		if (h_start.length()>0 && m_start.length()>0)
+		  oSub.put(DB.tm_start, h_start+":"+m_start);
+
+    if (h_end.length()>0 && m_end.length()>0)
+	    oSub.put(DB.tm_end, h_end+":"+m_end);
+		  
     oConn.setAutoCommit (false);
     
     oSub.store(oConn);

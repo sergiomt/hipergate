@@ -1,7 +1,6 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.hipergate.*,com.knowgate.training.AcademicCourse" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
-<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
-<% 
+﻿<%@ page import="java.text.DecimalFormat,java.util.Vector,java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.Address,com.knowgate.misc.Gadgets,com.knowgate.hipergate.*,com.knowgate.training.AcademicCourse,com.knowgate.workareas.ApplicationModule" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/listchilds.jspf" %>
+<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
 /*  
   Copyright (C) 2004  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -48,17 +47,22 @@
 
   String sSkin = getCookie(request, "skin", "xp");
   String sLanguage = getNavigatorLanguage(request);
-  
-  String id_domain = request.getParameter("id_domain");
+  final int iAppMask = Integer.parseInt(getCookie(request, "appmask", "0"));
+  final boolean bShopActivated = ((iAppMask & (1<<20))!=0);
+
+  int id_domain = Integer.parseInt(request.getParameter("id_domain"));
   String gu_workarea = request.getParameter("gu_workarea");
   String gu_acourse = nullif(request.getParameter("gu_acourse"));
-    
+  String gu_category = null;
+
   AcademicCourse oCur = new AcademicCourse();
-      
+  Address oAdr = new Address();
+  
+  StringBuffer oSelParents = new StringBuffer("<OPTION VALUE=\"\">[~Ninguna. Este producto no está disponible en tienda~]</OPTION>");    
   JDCConnection oConn = null;
   DBSubset oCourses = new DBSubset(DB.k_courses, DB.gu_course+","+DB.nm_course, DB.gu_workarea+"=? AND "+DB.bo_active+"<>0 ORDER BY 2", 100);
   int iCourses = 0;
-      
+  
   try {
     
     oConn = GlobalDBBind.getConnection("acourse_edit");  
@@ -67,6 +71,29 @@
       
     if (gu_acourse.length()>0) {
       oCur.load(oConn, new Object[]{gu_acourse});
+      if (!oCur.isNull(DB.gu_address)) {
+        oAdr.load(oConn, new Object[]{oCur.getString(DB.gu_address)});
+      } else {
+        oAdr.put(DB.gu_address,Gadgets.generateUUID());
+      }
+      if (bShopActivated) {
+        gu_category = DBCommand.queryStr(oConn, "SELECT "+DB.gu_category+" FROM "+DB.k_x_cat_objs+" WHERE "+DB.gu_object+"='"+gu_acourse+"' AND "+DB.id_class+"="+String.valueOf(AcademicCourse.ClassId));        
+      }
+    } else {
+      oAdr.put(DB.gu_address,Gadgets.generateUUID());    
+    }
+
+    // Get categories list in a <SELECT> tag
+    if (bShopActivated) {
+      DBSubset oShops = new DBSubset (DB.k_shops, DB.gu_root_cat+","+DB.nm_shop, DB.id_domain+"=? AND "+DB.gu_workarea+"=?", 10);
+      int nShops = oShops.load(oConn, new Object[]{new Integer(id_domain), gu_workarea});
+      PreparedStatement oBrowseChilds = oConn.prepareStatement("SELECT c." + DB.gu_category + "," + DBBind.Functions.ISNULL + "(l." + DB.tr_category + ",c." + DB.nm_category + ") FROM " + DB.k_categories + " c," + DB.k_cat_tree + " t," + DB.k_cat_labels + " l WHERE c." + DB.gu_category + "=t." + DB.gu_child_cat + " AND l." + DB.gu_category + "=c." + DB.gu_category + " AND l." + DB.id_language + "='" + sLanguage + "' AND t." + DB.gu_parent_cat + "=?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+      for (int s=0; s<nShops; s++) {
+        oSelParents.append("<OPTGROUP LABEL=\""+oShops.getString(1,s)+"\">");
+        listChilds (oSelParents, oBrowseChilds, oShops.getString(0,s), oShops.getString(0,s), 3);
+        oSelParents.append("</OPTGROUP>");
+      }
+      oBrowseChilds.close();
     }
 
     oConn.close("acourse_edit");
@@ -85,16 +112,17 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: Edit Academic Course</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/simplevalidations.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/email.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
+  <TITLE>hipergate :: [~Editar Convocatoria~]</TITLE>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
       
       // ------------------------------------------------------
@@ -110,6 +138,27 @@
             break;
         } // end switch()
       } // lookup()
+
+      // ------------------------------------------------------
+
+			var winadr = null;
+			var intrid = false;
+
+      function checkAddressWindow() {
+        if (winadr.closed) {
+          clearInterval(intrid);
+          var adrtx = httpRequestText("../common/address_line.jsp?address=<%=oAdr.getStringNull(DB.gu_address,"")%>&workarea=<%=gu_workarea%>");
+          if (adrtx=="notfound")
+					  document.getElementById("address_line").innerHTML="<A HREF=\"#\" CLASS=\"linkplain\" onclick=\"editAddress()\">[~Agregar dirección~]</A>";
+          else
+					  document.getElementById("address_line").innerHTML="<A HREF=\"#\" CLASS=\"linkplain\" onclick=\"editAddress()\">"+adrtx+"</A>";
+        }
+      }
+
+		  function editAddress() {
+        winadr = open("../common/addr_edit_f.jsp?gu_address=<%=oAdr.getStringNull(DB.gu_address,"")%>&noreload=1", "editacraddr", "toolbar=no,directories=no,menubar=no,resizable=no,width=700,height=" + (screen.height<=600 ? "520" : "640"));
+		    intrid = setInterval ("checkAddressWindow()", 100);
+		  }
 
       // ------------------------------------------------------
 
@@ -151,6 +200,13 @@
 	  return false;
 	}
 
+  if (frm.pr_acourse.value.length>0 && !isFloatValue(frm.pr_acourse.value.replace(",","."))) {
+	  alert ("[~El precio del curso no es válido~]");
+	  return false;
+  } else {
+    frm.pr_acourse.value = frm.pr_acourse.value.replace(",",".");
+  }
+	
 	frm.nm_course.value = frm.nm_course.value.toUpperCase();
 	frm.id_course.value = frm.id_course.value.toUpperCase();
 	
@@ -167,8 +223,10 @@
       function setCombos() {
         var frm = document.forms[0];
 
-        setCombo(frm.sel_course,"<%out.write(oCur.getStringNull(DB.gu_course,""));%>");
-
+        setCombo(frm.sel_course,"<% out.write(oCur.getStringNull(DB.gu_course,"")); %>");
+<%      if (gu_category!=null) { %>
+          setCombo(frm.gu_category,"<% out.write(gu_category); %>");
+<%      } %>	
         return true;
       } // validate;
     //-->
@@ -182,14 +240,13 @@
   </DIV></DIV>
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Edit Academic Course</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Editar Convocatoria~]</FONT></TD></TR>
   </TABLE>  
   <FORM NAME="" METHOD="post" ACTION="acourse_edit_store.jsp" onSubmit="return validate()">
-    <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
+    <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=String.valueOf(id_domain)%>">
     <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
     <INPUT TYPE="hidden" NAME="gu_acourse" VALUE="<%=gu_acourse%>">
     <INPUT TYPE="hidden" NAME="bo_active" VALUE="<% if (!oCur.isNull(DB.bo_active)) out.write(String.valueOf(oCur.getShort(DB.bo_active))); else out.write("1"); %>">
-
     <TABLE CLASS="formback">
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
@@ -228,7 +285,25 @@
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Precio~]:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="pr_acourse" MAXLENGTH="10" SIZE="12" VALUE="<% if (!oCur.isNull(DB.pr_acourse)) out.write(oCur.getDecimal(DB.pr_acourse).toString)%>"></TD>
+            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="pr_acourse" MAXLENGTH="10" SIZE="12" VALUE="<% if (!oCur.isNull(DB.pr_acourse)) { DecimalFormat oFmt2 = new DecimalFormat(); oFmt2.setMaximumFractionDigits(2); out.write(oFmt2.format(oCur.getDecimal(DB.pr_acourse).doubleValue())); } %>"></TD>
+          </TR>
+<% if (bShopActivated) { %>
+          <TR>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Categoría~]:</FONT></TD>
+            <TD ALIGN="left" WIDTH="370">
+						  <SELECT NAME="gu_category" CLASS="combomini"><%=oSelParents.toString()%></SELECT>
+            </TD>
+          </TR>
+<% } %>
+          <TR>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Dirección~]:</FONT></TD>
+            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="hidden" NAME="gu_address" VALUE="<%=oAdr.getStringNull(DB.gu_address,"")%>">
+<% if (oCur.isNull(DB.gu_address)) { %>
+						  <DIV ID="address_line"><A HREF="#" CLASS="linkplain" onclick="editAddress()">Agregar dirección</A></DIV>
+<% } else { %>
+						  <DIV ID="address_line"><A HREF="#" CLASS="linkplain" onclick="editAddress()"><%=oAdr.toLocaleString()%></A></DIV>
+<% } %>
+            </TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Tutor:</FONT></TD>
