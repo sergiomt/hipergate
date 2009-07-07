@@ -44,13 +44,15 @@ import com.knowgate.debug.DebugFile;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBPersist;
 import com.knowgate.dataobjs.DBSubset;
-
+import com.knowgate.dataobjs.DBCommand;
+import com.knowgate.crm.Contact;
 import com.knowgate.misc.Gadgets;
+import com.knowgate.hipergate.Product;
 
 /**
  * Academic Course Instance
  * @author Sergio Montoro Ten
- * @version 2.2
+ * @version 5.0
  */
 
 public class AcademicCourse extends DBPersist {
@@ -191,6 +193,27 @@ public class AcademicCourse extends DBPersist {
     return AcademicCourse.delete(oConn, getString(DB.gu_acourse));
   }
 
+  // ---------------------------------------------------------------------------
+
+  public Contact[] getContacts(JDCConnection oConn)
+    throws SQLException {
+    Contact[] aContacts = null;
+    DBSubset oBooks = new DBSubset(DB.k_x_course_bookings+" b,"+DB.k_contacts+" c",    							
+                                   new Contact().getTable(oConn).getColumnsStr(),
+                                   "b."+DB.gu_contact+"=c."+DB.gu_contact+" AND "+
+                                   "b."+DB.gu_acourse+"=?",50);
+    int nBooks = oBooks.load(oConn, new Object[]{get(DB.gu_acourse)});
+    if (nBooks>0) {
+      aContacts = new Contact[nBooks];
+      for (int b=0; b<nBooks; b++) {
+        aContacts[b] = new Contact();
+        aContacts[b].putAll(oBooks.getRowAsMap(b));
+      } // next
+    } // fi
+
+    return aContacts;
+  } // getContacts
+  
   // ---------------------------------------------------------------------------
 
   public AcademicCourseAlumni[] getAlumni(JDCConnection oConn)
@@ -403,11 +426,77 @@ public class AcademicCourse extends DBPersist {
 
   // ---------------------------------------------------------------------------
 
+  /**
+   * <p>Get complete dump in XML</p>
+   * This method gets a full XML dump of an academic course,
+   * including its base course, subjects and bookings
+   */
+   
+  public String toXML(JDCConnection oConn, String sIdent, String sDelim)
+  	throws SQLException {
+  	
+  	final String sIdent2 = sIdent+sIdent;
+  	final String sIdent3 = sIdent2+sIdent;
+  	
+  	Course oCour = new Course(oConn, getString(DB.gu_course));
+  	Subject[] aSubj = oCour.getSubjects(oConn);
+  	AcademicCourseBooking[] aBook = getAllBookings(oConn);
+  	Contact[] aCont = getContacts(oConn);
+    final int nCont = aCont.length;
+
+  	String sXml = toXML(sIdent, sDelim);
+  	int iLastTag = sXml.indexOf("</"+getAuditClassName()+">");
+  	StringBuffer oXml = new StringBuffer(8000);
+  	oXml.append(sXml.substring(0, iLastTag));
+  	oXml.append(sDelim);
+  	oXml.append(oCour.toXML(sIdent2, sDelim));
+	if (null!=aSubj) {
+	  oXml.append(sIdent2);
+  	  oXml.append("<Subjects count=\""+String.valueOf(aSubj.length)+"\">");  
+	  oXml.append(sDelim);
+	  for (int s=0; s<aSubj.length; s++) {
+	    oXml.append(aSubj[s].toXML(sIdent3,""));
+	  }
+	  oXml.append(sIdent2);
+	  oXml.append("</Subjects>");
+	  oXml.append(sDelim);
+	}
+	if (null!=aBook) {
+	  oXml.append(sIdent2);
+  	  oXml.append("<Bookings count=\""+String.valueOf(aBook.length)+"\">");
+	  oXml.append(sDelim);
+	  for (int b=0; b<aBook.length; b++) {
+	  	String sBok = aBook[b].toXML(sIdent3,"");
+	  	int iBok = sBok.indexOf("</AcademicCourseBooking>");
+	    oXml.append(sBok.substring(0,iBok));
+	    String sGuBook = aBook[b].getString(DB.gu_contact);
+	    for (int c=0; c<nCont; c++) {
+	      if (aCont[c].getString(DB.gu_contact).equals(sGuBook)) {
+	      	oXml.append(aCont[c].toXML("",""));
+	      	break;
+	      } // fi
+	    } // next
+	    oXml.append("</AcademicCourseBooking>");
+	    oXml.append(sDelim);
+	  } // next
+	  oXml.append(sIdent2);
+	  oXml.append("</Bookings>");
+	  oXml.append(sDelim);
+	}
+	return oXml.toString();
+  } // toXML
+
+  // ---------------------------------------------------------------------------
+
   public static boolean delete (JDCConnection oConn, String sGuACourse) throws SQLException {
     if (DebugFile.trace) {
       DebugFile.writeln("Begin AcademicCourse.delete([JDCConnection],"+sGuACourse+")");
       DebugFile.incIdent();
     }
+    
+    String sGuProduct = DBCommand.queryStr(oConn, "SELECT "+DB.gu_product+" FROM "+DB.k_academic_courses+" WHERE "+DB.gu_acourse+"='"+sGuACourse+"'");
+    if (null!=sGuProduct) new Product(sGuProduct).delete(oConn);
+    
     if (oConn.getDataBaseProduct()==JDCConnection.DBMS_POSTGRESQL) {
       if (DebugFile.trace) {
         DebugFile.writeln("Connection.prepareStatement(SELECT k_sp_del_acourse('"+sGuACourse+"'))");
