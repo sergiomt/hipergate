@@ -1067,6 +1067,8 @@ public final class DB {
   public static final String id_subject = "id_subject";
   public static final String de_subject = "de_subject";
   public static final String nm_short = "nm_short";
+  public static final String tm_start = "tm_start";
+  public static final String tm_end = "tm_end";
 
   // k_absentisms
   public static final String bo_wholeday = "bo_wholeday";
