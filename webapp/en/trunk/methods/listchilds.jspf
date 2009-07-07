@@ -1,0 +1,28 @@
+<%!
+  public static void listChilds(StringBuffer oOptions, PreparedStatement oStmt, String sThisCategory, String sParent, int iLevel) throws SQLException {
+    ResultSet oChls;
+    Vector vIds = new Vector(10);
+    Vector vNms = new Vector(10);
+        
+    oStmt.setString(1, sParent);
+    oChls = oStmt.executeQuery();
+    
+    int iOps = 0;
+    while (oChls.next()) {
+      if (!sThisCategory.equals(oChls.getObject(1))) {
+        vIds.add(oChls.getObject(1));
+        vNms.add(oChls.getObject(2));      
+        iOps++;
+      }
+    } // wend
+    oChls.close();
+    
+    for (int o=0; o<iOps; o++) {
+      oOptions.append("<OPTION VALUE=\"");
+      oOptions.append(vIds.get(o) + "\">");
+      for (int l=0;l<iLevel;l++) oOptions.append("&nbsp;");      
+      oOptions.append(vNms.get(o) + "</OPTION>");
+      listChilds (oOptions,oStmt,sThisCategory,(String)vIds.get(o),iLevel+3);
+    } // next
+  } // listChilds
+%>
