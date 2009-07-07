@@ -71,7 +71,6 @@ CREATE TABLE k_academic_courses (
   tx_tutor_email CHARACTER VARYING(100) NULL,
   de_course     VARCHAR(2000)  NULL,
   CONSTRAINT pk_academic_courses PRIMARY KEY (gu_acourse),
-  CONSTRAINT u1_academic_courses UNIQUE (gu_course,tx_start,tx_end),
   CONSTRAINT f1_academic_courses FOREIGN KEY (gu_course) REFERENCES k_courses(gu_course),
   CONSTRAINT f2_academic_courses FOREIGN KEY (gu_address) REFERENCES k_addresses(gu_address)
 )
@@ -87,13 +86,16 @@ CREATE TABLE k_subjects (
   bo_active      SMALLINT DEFAULT 1,
   bo_optative    SMALLINT DEFAULT 0,
   dt_created     DATETIME DEFAULT CURRENT_TIMESTAMP,
-  dt_modified    DATETIME	  NULL,
+  dt_modified    DATETIME	      NULL,
+  tm_start       CHAR(5)          NULL,
+  tm_end         CHAR(5)          NULL,
   nu_credits     FLOAT            NULL,
   tx_area        VARCHAR(50)      NULL,
   nm_tutor       VARCHAR(200)     NULL,
   tx_tutor_email CHARACTER VARYING(100) NULL,
   de_subject     VARCHAR(2000) NULL,
   CONSTRAINT pk_subjects PRIMARY KEY (gu_subject),
+  CONSTRAINT c1_subjects CHECK (tm_start IS NULL OR tm_end IS NULL OR tm_start<=tm_end),
   CONSTRAINT f1_subjects FOREIGN KEY (gu_workarea) REFERENCES k_workareas(gu_workarea),
   CONSTRAINT f2_subjects FOREIGN KEY (gu_course) REFERENCES k_courses(gu_course)
 )
