@@ -1,6 +1,7 @@
 ﻿<%@ page import="java.net.URLDecoder,java.util.Vector,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %>
-<jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%!
+<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/listchilds.jspf" %>
+<jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%
+
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -31,37 +32,7 @@
 
   You should have received a copy of hipergate License with this code;
   if not, visit http://www.hipergate.org or mail to info@hipergate.org
-*/
-  
-  public static void listChilds(StringBuffer oOptions, PreparedStatement oStmt, String sThisCategory, String sParent, int iLevel) throws SQLException {
-    ResultSet oChls;
-    Vector vIds = new Vector(10);
-    Vector vNms = new Vector(10);
-        
-    oStmt.setString(1, sParent);
-    oChls = oStmt.executeQuery();
-    
-    int iOps = 0;
-    while (oChls.next()) {
-      if (!sThisCategory.equals(oChls.getObject(1))) {
-        vIds.add(oChls.getObject(1));
-        vNms.add(oChls.getObject(2));      
-        iOps++;
-      }
-    } // wend
-    oChls.close();
-    
-    for (int o=0; o<iOps; o++) {
-      oOptions.append("<OPTION VALUE=\"");
-      oOptions.append(vIds.get(o) + "\">");
-      for (int l=0;l<iLevel;l++) oOptions.append("&nbsp;");      
-      oOptions.append(vNms.get(o) + "</OPTION>");
-      listChilds (oOptions,oStmt,sThisCategory,(String)vIds.get(o),iLevel+3);
-    } // next
-  } // listChilds
-  
-%><%
-  
+*/  
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
 
   response.setHeader("Cache-Control","no-cache");
