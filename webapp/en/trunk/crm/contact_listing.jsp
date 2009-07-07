@@ -596,7 +596,7 @@
 	var chi = frm.checkeditems;
 	chi.value = "";
 
-	if (frm.sel_acourse.slectedIndex<=0) {
+	if (frm.sel_acourse.selectedIndex<=0) {
 	  alert ("Select course to which students must be assigned");
 	  frm.sel_acourse.focus();
 	  return false;
@@ -613,7 +613,10 @@
 
 	  self.open ("../training/acourse_book.jsp?gu_acourse="+getCombo(frm.sel_acourse)+"&checkeditems="+chi.value, null, "directories=no,toolbar=no,scrollbars=yes,menubar=no,width=600,height=520");
 
-        } // fi(checkeditems)
+        } else {
+	        alert ("[~Debe seleccionar al menos un alumno a quien inscribir~]");
+	        return false;        
+        }
 <% } %>      
       } // addToCourse
 
@@ -696,8 +699,10 @@
 	  setCookie ("maxrows", "<%=iMaxRows%>");
 	  setCombo(document.forms[0].maxresults, "<%=iMaxRows%>");
 	  setCombo(document.forms[0].sel_searched, "<%=sField%>");
+<% if (((Integer.parseInt(getCookie(request, "appmask", "0")) & (1<<22))==0) || !face.equals("edu") || bIsGuest) { %>
 	  setCombo(document.forms[0].sel_query, "<%=sQuery%>");	    
-<% if (bIsAdmin) { %>
+<% }
+   if (bIsAdmin) { %>
 	  setCombo(document.forms[0].salesman, "<%=sSalesMan%>");	    
 <% } %>
 	} // setCombos()
@@ -865,9 +870,12 @@
       addMenuSeparator();
       addMenuOption("View Addresses","listAddresses()",0);
       addMenuSeparator();
+<% if (!face.equals("edu")) { %>      
       addMenuOption("Create Opportunity","createOportunity(jsContactId,jsCompanyId)",0);
       addMenuOption("View Opportunities","viewOportunities(jsContactId,jsContactNm)",0);
       addMenuSeparator();
+<% } else if (((iAppMask & (1<<Training))!=0)) { %>
+<% } %>	
       addMenuOption("Add Note","addNote(jsContactId)",0);
       addMenuOption("View Notes","viewNotes(jsContactId,jsCompanyNm)",2);
       addMenuSeparator();

@@ -482,6 +482,8 @@
   	    document.forms[0].sel_title.style.visibility = "visible";
   	    document.forms[0].sel_gender.style.visibility = "visible";
   	    document.forms[0].sel_passport.style.visibility = "visible";
+  	    document.forms[0].sel_geozone.style.visibility = "visible";
+  	    document.forms[0].sel_salesman.style.visibility = "visible";
 
   	    document.forms[1].sel_company.style.visibility = "hidden";
   	    document.forms[1].sel_acourse.style.visibility = "hidden";
@@ -500,6 +502,8 @@
   	    document.forms[0].sel_title.style.visibility = "hidden";
   	    document.forms[0].sel_gender.style.visibility = "hidden";
   	    document.forms[0].sel_passport.style.visibility = "hidden";
+  	    document.forms[0].sel_geozone.style.visibility = "hidden";
+  	    document.forms[0].sel_salesman.style.visibility = "hidden";
 
   	    document.forms[1].sel_company.style.visibility = "visible";
   	    
@@ -520,11 +524,13 @@
 	    break;
 
 	  case 2:
-            document.forms[0].sel_title.style.visibility = "hidden";
+        document.forms[0].sel_title.style.visibility = "hidden";
   	    document.forms[0].sel_gender.style.visibility = "hidden";
   	    document.forms[0].sel_passport.style.visibility = "hidden";
+  	    document.forms[0].sel_geozone.style.visibility = "hidden";
+  	    document.forms[0].sel_salesman.style.visibility = "hidden";
 
- 	    document.forms[1].sel_company.style.visibility = "hidden";
+ 	      document.forms[1].sel_company.style.visibility = "hidden";
   	    document.forms[1].sel_acourse.style.visibility = "hidden";
   	    document.forms[1].sel_typecompany.style.visibility = "hidden";
 
