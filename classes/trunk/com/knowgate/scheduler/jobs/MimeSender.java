@@ -351,6 +351,22 @@ public class MimeSender extends Job {
       DebugFile.incIdent();
     }
 
+	if (null==oAtm) {
+	  if (DebugFile.trace) {
+	  	DebugFile.writeln("NullPointerException MimeSender.process() Atom may not be null");
+	  	DebugFile.decIdent();
+	  }
+	  throw new NullPointerException("MimeSender.process() Atom may not be null");
+	}
+
+	if (null==aFrom) {
+	  if (DebugFile.trace) {
+	  	DebugFile.writeln("NullPointerException MimeSender.process() From address may not be null");
+	  	DebugFile.decIdent();
+	  }
+	  throw new NullPointerException("MimeSender.process() From address may not be null");
+	}
+
     // ***************************************************
     // Create mail session if it does not previously exist
 
@@ -390,8 +406,9 @@ public class MimeSender extends Job {
       // that are already set into message object itself.
       // If there is a mail address at the atom then send message to that recipient
       if (!oAtm.isNull(DB.tx_email)) {
-        String sSanitizedEmail = MailMessage.sanitizeAddress(oAtm.getString(DB.tx_email));
         if (DebugFile.trace) DebugFile.writeln("tx_email="+oAtm.getString(DB.tx_email));
+        String sSanitizedEmail = MailMessage.sanitizeAddress(oAtm.getString(DB.tx_email));
+        if (DebugFile.trace) DebugFile.writeln("sanitized tx_email="+sSanitizedEmail);
         InternetAddress oRec = DBInetAddr.parseAddress(sSanitizedEmail);
         String sRecType = oAtm.getStringNull(DB.tp_recipient,"to");
         if (sRecType.equalsIgnoreCase("to"))
@@ -409,8 +426,10 @@ public class MimeSender extends Job {
       oSentMsg.setReplyTo(aReply);
 
 	  // Request read notification
-      if ("true".equals(getParameter("notification")))
+      if ("true".equals(getParameter("notification"))) {
+        if (DebugFile.trace) DebugFile.writeln("Disposition-Notification-To "+aFrom[0].getAddress());
 	    oSentMsg.addHeader("Disposition-Notification-To", aFrom[0].getAddress());
+      }
 	  
       // Send message here
       oHndlr.sendMessage(oSentMsg);
