@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2003-2007  Know Gate S.L. All rights reserved.
+  Copyright (C) 2003-2009  Know Gate S.L. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -247,6 +247,10 @@ public final class DB {
   public static final String k_evaluations = "k_evaluations";
   public static final String k_absentisms = "k_absentisms";
   public static final String k_absentisms_lookup = "k_absentisms_lookup";
+  public static final String k_education_institutions = "k_education_institutions";
+  public static final String k_education_degree = "k_education_degree";
+  public static final String k_education_degree_lookup = "k_education_degree_lookup";
+  public static final String k_contact_education = "k_contact_education";
 
   /***************/
   /* VIEW NAMES  */
@@ -269,6 +273,7 @@ public final class DB {
   public static final String v_campaign_contacts = "v_campaign_contacts";
   public static final String v_sale_points = "v_sale_points";
   public static final String v_warehouses = "v_warehouses";
+  public static final String v_contact_education_degree = "v_contact_education_degree";
   
   /***************/
   /* FIELD NAMES */
@@ -1075,5 +1080,20 @@ public final class DB {
   public static final String dt_from = "dt_from";
   public static final String dt_to = "dt_to";
   public static final String tp_absentism = "tp_absentism";
+
+  // k_education_institutions
+  public static final String gu_institution = "gu_institution";
+  public static final String nm_institution = "nm_institution";
+  public static final String nm_center = "nm_center";
+
+  // k_education_degree
+  public static final String gu_degree = "gu_degree";
+  public static final String nm_degree = "nm_degree";
+  public static final String tp_degree = "tp_degree";
+  public static final String id_degree = "id_degree";
+  public static final String ix_degree = "ix_degree";
+
+  // k_contact_education
+  public static final String bo_completed = "bo_completed";
 
 }
