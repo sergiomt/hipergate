@@ -314,8 +314,6 @@ public final class ACL {
       RC4 oRc4 = new RC4(getRC4key());
       
       byEncrypted = oRc4.rc4(sStr);
-      // Buggy version
-      // sEncrypted = RC4EnDeCrypt(sStr, getRC4key());
 
 	  if ((iFlags&ACL.PWD_DTIP_RC4_64)!=0) {
 	    sEncrypted = Base64Encoder.encode(byEncrypted);

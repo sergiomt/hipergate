@@ -63,6 +63,14 @@ public class PasswordRecordLine {
     ValueText = null;
   }
 
+  public PasswordRecordLine(String sId, char cType, String sLabel, String sValue) {
+    ValueId = sId;
+    ValueType = cType;
+    ValueLabel = sLabel;
+    ValueFileName = null;
+    setValue(cType, sValue);
+  }
+
   public char getType() {
   	return ValueType;
   }
@@ -170,7 +178,7 @@ public class PasswordRecordLine {
   	if (TYPE_BIN==ValueType)
   	  return ValueId+"|"+ValueType+"|"+ValueLabel+"|"+"/"+ValueFileName+"/"+ValueText;
   	else
-  	  return ValueId+"|"+ValueType+"|"+ValueLabel+"|"+ValueText;
+  	  return ValueId+"|"+ValueType+"|"+ValueLabel+"|"+(ValueText==null ? "" : ValueText);
   }
 
   public static final char TYPE_NAME = '!';

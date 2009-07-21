@@ -33,12 +33,15 @@ package com.knowgate.acl;
 
 import java.security.AccessControlException;
 
+import java.io.UnsupportedEncodingException;
+
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import java.util.Date;
 import java.util.ArrayList;
 
+import com.knowgate.debug.DebugFile;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.dataobjs.DBPersist;
@@ -50,7 +53,7 @@ import com.knowgate.hipergate.Category;
 
 public class PasswordRecord extends DBPersist {
 
-  private RC4 oCrypto;
+  private String sRC4Key;
   
   private ArrayList<PasswordRecordLine> aRecordLines;
 
@@ -66,11 +69,15 @@ public class PasswordRecord extends DBPersist {
   }
 
   public void setKey (String sKey) {
-    oCrypto = new RC4(sKey); 	
+    sRC4Key = sKey;
   }
 
   public void addLine(String sId, char cType, String sLabel) {
     aRecordLines.add(new PasswordRecordLine(sId, cType, sLabel));
+  }
+
+  public void addLine(String sId, char cType, String sLabel, String sValue) {
+    aRecordLines.add(new PasswordRecordLine(sId, cType, sLabel, sValue));
   }
   
   public ArrayList<PasswordRecordLine> lines() {
@@ -78,20 +85,42 @@ public class PasswordRecord extends DBPersist {
   }
   
   protected void parse() {
+
+  	if (DebugFile.trace) {
+  	  DebugFile.writeln("Begin Passwordrecord.parse()");
+  	  DebugFile.incIdent();
+  	}
+
   	  if (!isNull("tx_lines")) {
+  	  	
   	    String sLines;
   	    String[] aLines = null;
   	    final String sEncMethod = getStringNull(DB.id_enc_method,"RC4");
+
+  	    if (DebugFile.trace) {
+  	      DebugFile.writeln("id_enc_method="+sEncMethod);
+  	    }
+
   	    if (sEncMethod.equalsIgnoreCase("RC4")) {
   	      byte[] byLines = Base64Decoder.decodeToBytes(getString(DB.tx_lines));
-  	  	  sLines = new String(oCrypto.rc4(byLines));
+  	  	  try {
+  	  	    sLines = new String(new RC4(sRC4Key).rc4(byLines),"UTF-8");
+  	  	  } catch (UnsupportedEncodingException neverthrown) { sLines = ""; }
   	  	  aLines = Gadgets.split(sLines,'\n');
   	    } else if (sEncMethod.equalsIgnoreCase("NONE")) {
   	      aLines = Gadgets.split(getString(DB.tx_lines),'\n');
-  	    }
+  	    } // fi
+
   	  	if (aLines!=null) {
-  	  	  if (!aLines[0].startsWith("# Password record"))
+
+  	  	  if (!aLines[0].startsWith("# Password record")) {
+  	        if (DebugFile.trace) {
+  	          DebugFile.writeln("AccessControlException Invalid password or encryption method");
+  	          DebugFile.decIdent();
+  	        }
   	  	  	throw new AccessControlException("Invalid password or encryption method"); 
+  	  	  } // fi # Password record
+
   	  	  for (int l=1; l<aLines.length; l++) {
   	  	    String[] aLine = Gadgets.split(aLines[l],'|');
   	  	    PasswordRecordLine oRecLin = new PasswordRecordLine(aLine[0],aLine[1].charAt(0),aLine[2]);
@@ -103,9 +132,15 @@ public class PasswordRecord extends DBPersist {
   	  	    }
   	  	    aRecordLines.add(oRecLin);
   	  	  } // next
-  	  	} // fi
+
+  	  	} // fi (aLines)
   	  } // fi (tx_lines)
-  }
+
+  	if (DebugFile.trace) {
+  	  DebugFile.decIdent();
+  	  DebugFile.writeln("End Passwordrecord.parse()");
+  	}
+  } // parse
 
   public boolean load (JDCConnection oConn, Object[] aPK)
   	throws SQLException, AccessControlException {
@@ -123,7 +158,7 @@ public class PasswordRecord extends DBPersist {
   }
   	
   public boolean store (JDCConnection oConn)
-  	throws SQLException, AccessControlException {
+  	throws SQLException, AccessControlException, IllegalArgumentException {
 
 	boolean bIsNew = isNull(DB.gu_pwd);
 	if (!bIsNew) bIsNew = !exists(oConn);
@@ -132,18 +167,30 @@ public class PasswordRecord extends DBPersist {
   	  put (DB.gu_pwd, Gadgets.generateUUID());
   	}
   	
-  	StringBuffer oLines = new StringBuffer("# Password record v5.0");
+  	StringBuffer oLines = new StringBuffer("# Password record v5.0\n");
+  	int nLines = 0;
   	for (PasswordRecordLine rcl : aRecordLines) {
+  	  if (++nLines>1) oLines.append("\n");
   	  oLines.append(rcl.toString());
-  	  oLines.append("\n");
   	} // next
   	  
   	if (!bIsNew) {
   	  replace(DB.dt_modified, new Timestamp(new Date().getTime()));
   	}
  
- 	replace(DB.id_enc_method, "RC4");
-  	replace(DB.tx_lines, Base64Encoder.encode(oCrypto.rc4(Gadgets.dechomp(oLines.toString(),'\n'))));
+ 	if (isNull(DB.id_enc_method)) put(DB.id_enc_method, "RC4");
+ 	
+ 	if (getString(DB.id_enc_method).equalsIgnoreCase("RC4")) {
+  	  try {
+  	    replace(DB.tx_lines, Base64Encoder.encode(new RC4(sRC4Key).rc4(Gadgets.dechomp(oLines.toString(),'\n').getBytes("UTF-8"))));
+      } catch (UnsupportedEncodingException neverthrown) { }
+ 	}
+    else if (getString(DB.id_enc_method).equalsIgnoreCase("NONE"))
+      replace(DB.tx_lines, Gadgets.dechomp(oLines.toString(),'\n'));
+	else {
+	  throw new IllegalArgumentException("Invalid encoding method "+getString(DB.id_enc_method));
+	}
+
     boolean bRetVal = super.store(oConn);
     
     if (bIsNew) {
@@ -165,7 +212,7 @@ public class PasswordRecord extends DBPersist {
   } // store
 
   public boolean store (JDCConnection oConn, String sGuCategory)
-  	throws SQLException, AccessControlException {
+  	throws SQLException, AccessControlException, IllegalArgumentException {
 
 	boolean bIsNew = isNull(DB.gu_pwd);
 	if (!bIsNew) bIsNew = !exists(oConn);
@@ -174,13 +221,26 @@ public class PasswordRecord extends DBPersist {
   	  put (DB.gu_pwd, Gadgets.generateUUID());
   	}
   	
-  	StringBuffer oLines = new StringBuffer("# Password record v5.0");
+  	StringBuffer oLines = new StringBuffer("# Password record v5.0\n");
+  	int nLines = 0;
   	for (PasswordRecordLine rcl : aRecordLines) {
+  	  if (++nLines>1) oLines.append("\n");
   	  oLines.append(rcl);
-  	  oLines.append("\n");
   	} // next
   	  
-  	replace(DB.tx_lines, Base64Encoder.encode(oCrypto.rc4(Gadgets.dechomp(oLines.toString(),'\n'))));
+ 	if (isNull(DB.id_enc_method)) put(DB.id_enc_method, "RC4");
+ 	
+ 	if (getString(DB.id_enc_method).equalsIgnoreCase("RC4")) {
+  	  try {
+  	    replace(DB.tx_lines, Base64Encoder.encode(new RC4(sRC4Key).rc4(Gadgets.dechomp(oLines.toString(),'\n').getBytes("UTF-8"))));
+      } catch (UnsupportedEncodingException neverthrown) { }
+ 	}
+    else if (getString(DB.id_enc_method).equalsIgnoreCase("NONE"))
+      replace(DB.tx_lines, Gadgets.dechomp(oLines.toString(),'\n'));
+	else {
+	  throw new IllegalArgumentException("Invalid encoding method "+getString(DB.id_enc_method));
+	}
+
     boolean bRetVal = super.store(oConn);
     
     if (bIsNew) {
@@ -210,6 +270,16 @@ public class PasswordRecord extends DBPersist {
 	return (iAffected>0);
   }
 
+  public String toString() {
+    StringBuffer oStr = new StringBuffer(lines().size()*255);
+    int nLine = 0;
+    for (PasswordRecordLine l : lines()) {
+      if (++nLine>1) oStr.append('\n');
+      oStr.append(l.toString());
+    } // next
+    return oStr.toString();
+  } // toString
+  
   // **********************************************************
   // Public Constants
 
