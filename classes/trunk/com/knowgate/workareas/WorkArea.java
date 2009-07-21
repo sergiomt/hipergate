@@ -920,10 +920,10 @@ public class WorkArea extends DBPersist {
       try { if (oConn.getDataBaseProduct()!=JDCConnection.DBMS_POSTGRESQL) oStmt.setQueryTimeout(30); } catch (SQLException sqle) {}
       sSQL = "DELETE FROM " + DB.k_subjects_lookup + " WHERE " + DB.gu_owner + "='" + sWrkAreaGUID + "'";
       if (DebugFile.trace) DebugFile.writeln("Statement.execute(" + sSQL + ")");
-      oStmt.execute(sSQL);
+      oStmt.executeUpdate(sSQL);
       sSQL = "DELETE FROM " + DB.k_subjects + " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "'";
       if (DebugFile.trace) DebugFile.writeln("Statement.execute(" + sSQL + ")");
-      oStmt.execute(sSQL);
+      oStmt.executeUpdate(sSQL);
       oStmt.close();
     }
 
@@ -932,7 +932,7 @@ public class WorkArea extends DBPersist {
       try { if (oConn.getDataBaseProduct()!=JDCConnection.DBMS_POSTGRESQL) oStmt.setQueryTimeout(30); } catch (SQLException sqle) {}
       sSQL = "DELETE FROM " + DB.k_courses_lookup + " WHERE " + DB.gu_owner + "='" + sWrkAreaGUID + "'";
       if (DebugFile.trace) DebugFile.writeln("Statement.execute(" + sSQL + ")");
-      oStmt.execute(sSQL);
+      oStmt.executeUpdate(sSQL);
       oStmt.close();
 
       oItems = new DBSubset (DB.k_courses, DB.gu_course, DB.gu_workarea + "='" + sWrkAreaGUID + "'", 100);
@@ -954,6 +954,28 @@ public class WorkArea extends DBPersist {
        oCall.close();
       } // fi (DBMS_POSTGRESQL)
     } // fi (exists(DB.k_courses))
+
+    if (DBBind.exists(oConn, DB.k_education_institutions, "U")) {
+      oStmt = oConn.createStatement();
+      try { if (oConn.getDataBaseProduct()!=JDCConnection.DBMS_POSTGRESQL) oStmt.setQueryTimeout(30); } catch (SQLException sqle) {}
+      sSQL = "DELETE FROM " + DB.k_education_institutions + " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "'";
+      if (DebugFile.trace) DebugFile.writeln("Statement.execute(" + sSQL + ")");
+      oStmt.executeUpdate(sSQL);
+      oStmt.close();    	
+	}
+
+    if (DBBind.exists(oConn, DB.k_education_degree, "U")) {
+      oStmt = oConn.createStatement();
+      try { if (oConn.getDataBaseProduct()!=JDCConnection.DBMS_POSTGRESQL) oStmt.setQueryTimeout(30); } catch (SQLException sqle) {}
+      sSQL = "DELETE FROM " + DB.k_education_degree + " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "'";
+      if (DebugFile.trace) DebugFile.writeln("Statement.execute(" + sSQL + ")");
+      oStmt.executeUpdate(sSQL);
+      oStmt.close();    	
+      sSQL = "DELETE FROM " + DB.k_education_degree_lookup + " WHERE " + DB.gu_owner + "='" + sWrkAreaGUID + "'";
+      if (DebugFile.trace) DebugFile.writeln("Statement.execute(" + sSQL + ")");
+      oStmt.executeUpdate(sSQL);
+      oStmt.close();    	
+	}
 
     // Borrar las campañas
     // Nuevo para la v4.0 
