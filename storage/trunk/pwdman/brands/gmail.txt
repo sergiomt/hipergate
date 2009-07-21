@@ -1,0 +1,5 @@
+GMail
+user|$|[~User~]
+pwd|*|[~Password~]
+
+
