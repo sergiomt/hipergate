@@ -2120,6 +2120,9 @@ public class Category  extends DBPersist {
     // recorre los objetos de esta categoría y los borra
     for (int o=0; o<iObjs; o++) {
       switch (oObjs.getInt(1, o)) {
+        case com.knowgate.training.AcademicCourse.ClassId:
+          // los cursos academicos no se borran cuando se borra la categoria
+          // pero si se borran sus productos asociados en la tienda
         case com.knowgate.hipergate.Product.ClassId:
           oProd = new Product(oConn, oObjs.getString(0, o));
           oProd.delete(oConn);

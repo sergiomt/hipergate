@@ -53,9 +53,6 @@ import com.knowgate.hipergate.datamodel.ImportLoader;
 
 /**
  * <p>Load Product data from a single source</p>
- * Product loader creates or updates simultaneously registers at k_companies,
- * k_contacts and k_addresses tables and the links between them k_x_contact_addr.
- * <br><br>
  * @author Sergio Montoro Ten
  * @version 1.0
  */

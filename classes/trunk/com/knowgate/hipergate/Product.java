@@ -1183,4 +1183,11 @@ public class Product extends DBPersist {
   private DBSubset oLocations;
 
   public static final short ClassId = 15;
+  
+  public static final short STATUS_RETIRED = -2;
+  public static final short STATUS_CORRUPTED = -1;
+  public static final short STATUS_PENDING = 0;
+  public static final short STATUS_ACTIVE = 1;
+  public static final short STATUS_BLOCKED = 2;
+  
 } // Product

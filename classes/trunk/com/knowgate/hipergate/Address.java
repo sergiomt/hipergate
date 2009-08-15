@@ -146,6 +146,15 @@ public class Address extends DBPersist {
     }
 
 	// ************
+    // New for v5.0
+
+    if (DBBind.exists(oConn, DB.k_sms_audit, "U")) {
+      oDlte.executeUpdate("UPDATE "+DB.k_sms_audit+" SET "+DB.gu_address+"=NULL WHERE "+DB.gu_address+"='"+getString(DB.gu_address)+"'");
+    }
+
+	// ************
+
+	// ************
     // New for v4.0
 
     if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(UPDATE " + DB.k_meetings + " SET " + DB.gu_address + "=NULL WHERE " + DB.gu_address + "='" + getStringNull(DB.gu_address,"null") + "')");

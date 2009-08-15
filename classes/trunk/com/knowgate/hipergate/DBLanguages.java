@@ -345,11 +345,11 @@ public class DBLanguages {
       
       for (int r=0; r<iRoots; r++) {
         Term oRoot = new Term();
-        if (oRoot.load(oConn, new Object[]{oRoots.getString(0,r)})) {
+        if (oRoot.load(oConn, iIdDomain, oRoots.getString(1,r))) {
       
           oTerms.addLast(oRoot);
           oTerms.addAll (oRoot.getChilds(oConn, Term.SCOPE_ALL));
-        }
+        } // fi
       } // next (r)
 
       StringBuffer oTermsBuff = new StringBuffer();
