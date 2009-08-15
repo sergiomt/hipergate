@@ -14,6 +14,7 @@ CREATE OR REPLACE PROCEDURE k_sp_del_contact (ContactId CHAR) IS
   GuWorkArea CHAR(32);
 
 BEGIN
+  DELETE k_contact_education WHERE gu_contact=ContactId;
   DELETE k_x_duty_resource WHERE nm_resource=ContactId;
   DELETE k_welcome_packs_changelog WHERE gu_pack IN (SELECT gu_pack FROM k_welcome_packs WHERE gu_contact=ContactId);
   DELETE k_welcome_packs WHERE gu_contact=ContactId;
@@ -52,6 +53,7 @@ BEGIN
      hay que llamar al método Java de borrado de Product para eliminar también los ficheros físicos,
      de este modo la foreign key de la base de datos actua como protección para que no se queden ficheros basura */
 
+  DELETE k_oportunities_changelog WHERE gu_oportunity IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_contact=ContactId);
   DELETE k_oportunities_attrs WHERE gu_object IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_contact=ContactId);
   DELETE k_oportunities WHERE gu_contact=ContactId;
 
@@ -110,6 +112,7 @@ BEGIN
   END LOOP;
 
   /* Borrar las oportunidades */
+  DELETE k_oportunities_changelog WHERE gu_oportunity IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_company=CompanyId);
   DELETE k_oportunities_attrs WHERE gu_object IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_company=CompanyId);
   DELETE k_oportunities WHERE gu_company=CompanyId;
 
@@ -128,6 +131,7 @@ GO;
 
 CREATE OR REPLACE PROCEDURE k_sp_del_oportunity (OportunityId CHAR) IS
 BEGIN
+  DELETE k_oportunities_changelog WHERE gu_oportunity=OportunityId;
   DELETE k_oportunities_attrs WHERE gu_object=OportunityId;
   DELETE k_oportunities WHERE gu_oportunity=OportunityId;
 END k_sp_del_oportunity;
