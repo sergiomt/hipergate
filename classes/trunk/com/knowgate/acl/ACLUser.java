@@ -1172,6 +1172,18 @@ public final class ACLUser extends DBPersist {
     }
 
     // ************
+    // New for v5.0
+
+    if (DBBind.exists(oConn, DB.k_sms_audit, "U")) {
+      oStmt = oConn.createStatement();
+      oStmt.executeUpdate("UPDATE "+DB.k_sms_audit+" SET "+DB.gu_writer+"=NULL WHERE "+DB.gu_writer+"='"+sUserGUID+"'");
+	  oStmt.close();
+    }
+
+    // End new for v5.0
+    // ****************
+
+    // ************
     // New for v4.0
 
     if (DBBind.exists(oConn, DB.k_working_calendar, "U")) {
@@ -1769,9 +1781,12 @@ public final class ACLUser extends DBPersist {
     ResultSet oRSet = oStmt.executeQuery();
     boolean bFound = oRSet.next();
     if (bFound) {
-	  bCheck = Arrays.equals(Base64Decoder.decodeToBytes(oRSet.getString(1)),
-	                         new RC4(sSign).rc4("Signature password test string"));
-    }
+      String sSignatureStrTest = oRSet.getString(1);
+      if (!oRSet.wasNull()) {
+	    bCheck = Arrays.equals(Base64Decoder.decodeToBytes(oRSet.getString(1)),
+	                           new RC4(sSign).rc4("Signature password test string"));
+      } // fi
+    } // fi
     oRSet.close();
     oStmt.close();
     

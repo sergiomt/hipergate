@@ -234,7 +234,7 @@ public final class ACL {
   } // autenticate
 
   /**
-   * <p>Encrypt String</p>
+   * <p>Decrypt String</p>
    * @param sStr Base64 encoded string to be decriptted
    * @param iFlags Encryption flags
    * <ul>
