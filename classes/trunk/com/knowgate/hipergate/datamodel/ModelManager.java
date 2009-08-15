@@ -69,7 +69,7 @@ import com.knowgate.hipergate.DBLanguages;
  * <p>It may be used as an alternative method to database dumps for initial data loading,
  * or, also, as a tool for porting the data model to a new DBMS in a structured way.</p>
  * @author Sergio Montoro ten
- * @version 4.0
+ * @version 5.0
  */
 
 public class ModelManager {
@@ -1341,6 +1341,8 @@ public class ModelManager {
     executeBulk("tables/training.ddl", BULK_STATEMENTS);
 
     executeBulk("views/training.sql", BULK_STATEMENTS);
+
+    executeBulk("constraints/training.sql", BULK_STATEMENTS);
 
     executeBulk("procedures/" + sDbms + "/training.ddl", BULK_PLSQL);
 
