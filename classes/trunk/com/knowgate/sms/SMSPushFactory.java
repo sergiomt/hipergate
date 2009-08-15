@@ -1,6 +1,5 @@
 /*
   Copyright (C) 2008  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -32,11 +31,17 @@
 package com.knowgate.sms;
 
 public final class SMSPushFactory {
-	
- public static SMSPush getInstanceOf(String sProvider)
-   throws ClassNotFoundException {
- 
-   return null;
- }
+
+ /**
+  * Create an instance of an SMSPush subclass
+  * @param sProviderClassName One of { com.knowgate.sms.SMSPushAltiria, com.knowgate.sms.SMSPushRealidadFutura, com.knowgate.sms.SMSPushSybase365 }
+  */
+
+ public static SMSPush newInstanceOf(String sProviderClassName)
+   throws ClassNotFoundException,ClassCastException,InstantiationException,IllegalAccessException {
+
+   return (SMSPush) Class.forName(sProviderClassName).newInstance(); 
+
+ } // newInstanceOf
 
 } // SMSPushFactory

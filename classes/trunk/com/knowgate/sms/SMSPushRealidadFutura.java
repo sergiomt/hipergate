@@ -48,6 +48,7 @@ import java.net.URLEncoder;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 
+import com.knowgate.debug.DebugFile;
 
 public final class SMSPushRealidadFutura extends SMSPush {
 
@@ -73,15 +74,25 @@ public final class SMSPushRealidadFutura extends SMSPush {
 	public void connect(String sBaseUrl, String sUser, String sPassword, Properties oConnectionProps)
 		throws IOException, SQLException, MalformedURLException {
 
+		if (DebugFile.trace) {
+			DebugFile.writeln("Begin SMSPushRealidadFutura.connect("+sBaseUrl+", "+sUser+", ...)");
+			DebugFile.incIdent();
+		}
+
 		// Sanitize base URL
-		if (sUrl==null) sUrl = DEFAULT_URL;
-		if (sUrl.length()==0) sUrl = DEFAULT_URL;
-		if (!sUrl.endsWith("?")) sUrl += "?";
+		if (sBaseUrl==null) sBaseUrl = DEFAULT_URL;
+		if (sBaseUrl.length()==0) sBaseUrl = DEFAULT_URL;
+		if (!sBaseUrl.endsWith("?")) sBaseUrl += "?";
 
 		sUrl = sBaseUrl;
 		sUsr = sUser;
 		sPwd = sPassword;
 		oPrp = oConnectionProps;
+
+		if (DebugFile.trace) {
+			DebugFile.decIdent();
+			DebugFile.writeln("End SMSPushRealidadFutura.connect()");
+		}
 
 	}
 
@@ -103,37 +114,69 @@ public final class SMSPushRealidadFutura extends SMSPush {
 	public SMSResponse push(SMSMessage oMsg)
 		throws IOException, SQLException, IllegalArgumentException, UnsupportedEncodingException {
 
+		if (DebugFile.trace) {
+			DebugFile.writeln("Begin SMSPushRealidadFutura.push([SMSMessage])");
+			DebugFile.incIdent();
+		}
+
     	SMSResponse oRsp;
 		BufferedReader oRdr;
 
 		String sErr, sLin, sFrm = "";
 		if (oPrp.getProperty("from")!=null) sFrm = "&from="+oPrp.getProperty("from");
 
-		URL oUrl = new URL(sUrl+"username="+sUsr+"&password="+sPwd+sFrm+"&text="+URLEncoder.encode(oMsg.textBody(), "ISO8859_1"));
+		String sMsisdn = oMsg.msisdnNumber();
+		if (sMsisdn.startsWith("+")) sMsisdn = sMsisdn.substring(1);
+
+		String sQry = sUrl+"username="+sUsr+"&password="+sPwd+sFrm+"&to="+sMsisdn+"&text="+URLEncoder.encode(oMsg.textBody(), "ISO8859_1");
+
+		if (DebugFile.trace) {
+			DebugFile.writeln("new URL("+sUrl+"username="+sUsr+"&password=..."+sFrm+"&to="+sMsisdn+"&text=...)");
+		}
+
+		URL oUrl = new URL(sQry);
     	HttpURLConnection oCon = (HttpURLConnection) oUrl.openConnection();
 	    int iStatusCode = oCon.getResponseCode();
+
+		if (DebugFile.trace) {
+			DebugFile.writeln("response code is "+String.valueOf(iStatusCode));
+		}
+
 	    switch (iStatusCode) {
 	    	case 200:
-	    		oRdr = new BufferedReader(new InputStreamReader(oCon.getInputStream()));
+	    		oRdr = new BufferedReader(new InputStreamReader(oCon.getInputStream(), "UTF-8"));
+				sLin = oRdr.readLine();
+        		while( null != sLin ) {
+        		  sLin = oRdr.readLine();
+        		} // wend
 				oRdr.close();
 				oRsp = new SMSResponse(oMsg.messageId(), new Date(), SMSResponse.ErrorCode.NONE, SMSResponse.StatusCode.POSITIVE_ACK, "");
 				break;
-	    	case 400:
-	    		oRdr = new BufferedReader(new InputStreamReader(oCon.getErrorStream()));
+	    	case 422:
+	    		SMSResponse.ErrorCode eErr = SMSResponse.ErrorCode.UNKNOWN_ERROR;
+	    		oRdr = new BufferedReader(new InputStreamReader(oCon.getErrorStream(), "UTF-8"));
 				sErr = "";
 				sLin = oRdr.readLine();
         		while( null != sLin ) {
+        		  if (sLin.indexOf("número de móvil válido")>0) eErr = SMSResponse.ErrorCode.INVALID_MSISDN;
+        		  if (sLin.indexOf("es demasiado largo")>0) eErr = SMSResponse.ErrorCode.TEXT_TOO_LONG;
+        		  if (sLin.indexOf("Usuario o contraseña erróneos")>0) eErr = SMSResponse.ErrorCode.AUTHENTICATION_FAILURE;
         		  sErr += sLin + "\n";
         		  sLin = oRdr.readLine();
         		} // wend
 				oRdr.close();
-				oRsp = new SMSResponse(oMsg.messageId(), new Date(), SMSResponse.ErrorCode.UNKNOWN_ERROR, SMSResponse.StatusCode.NEGATIVE_FAILED_DELIVERY, sErr);
+				oRsp = new SMSResponse(oMsg.messageId(), new Date(), eErr, SMSResponse.StatusCode.NEGATIVE_FAILED_DELIVERY, sErr);
 				break;
 	    	default:
 	      		throw new IOException("Invalid HTTP response Code "+String.valueOf(iStatusCode));
 	    } // end switch	
 		
 		oCon.disconnect();
+
+		if (DebugFile.trace) {
+			DebugFile.decIdent();
+			DebugFile.writeln("End SMSPushRealidadFutura.push() : " + oRsp.toString());
+		}
 		
 		return oRsp;
 	} // push
@@ -143,7 +186,7 @@ public final class SMSPushRealidadFutura extends SMSPush {
 	 * @param sUser Realidad Futura Customer Account Identifier
      * @param sAuthStr Realidad Futura Customer Account Password
      * @param sFrom Sender's Number
-     * @param sTo Recipient's MSISDN Number with country preffix like +34609090603
+     * @param sTo Recipient's MSISDN Number with country preffix like 34609090603
      * @param sText Message Text.
      * @return SMSResponse
      * @throws IOException
@@ -168,4 +211,7 @@ public final class SMSPushRealidadFutura extends SMSPush {
   		return oRsp;
   	} // push
 
+	public static void main(String[] args) throws Exception {
+		SMSPushRealidadFutura.push("knowgate","montoro","609031645","34609031645", "Texto de prueba");
+	}
 }

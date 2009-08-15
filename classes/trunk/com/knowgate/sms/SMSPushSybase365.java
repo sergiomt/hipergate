@@ -59,7 +59,9 @@ import java.util.Properties;
  * @version 5.0
  */
 
-public class SMSPushSybase365 extends SMSPush {
+public final class SMSPushSybase365 extends SMSPush {
+  
+  private static final String DEFAULT_URL = "http://messaging.mobileway.com/";
   
   private static SimpleDateFormat DTF = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 
@@ -67,12 +69,14 @@ public class SMSPushSybase365 extends SMSPush {
   
   /**
    * <p>Open HTTP connection for sending messages</p>
-   * @param sUrl Base URL. Typically it should be "http://messaging.mobileway.com/".
+   * @param sUrl Base URL. Typically it should be "http://messaging.mobileway.com/",
+   * if null then the default value http://messaging.mobileway.com/ is used
    * The target URL will be sUrl+sUser+"/"+sUser+".sms"
    * For example, if sUser is kwgate_pus01120 then the target URL will be
    * http://messaging.mobileway.com/kwgate_pus01120/kwgate_pus01120.sms
    * @param sUser Sybase 365 Customer Account Identifier
    * @param sPassword Sybase 365 Customer Account Password
+   * @param oConnectionProps Not used, must be null
    * @throws IOException
    * @throws MalformedURLException
    */
@@ -80,9 +84,14 @@ public class SMSPushSybase365 extends SMSPush {
   public void connect(String sUrl, String sUser, String sPassword, Properties oConnectionProps)
     throws IOException,SQLException,MalformedURLException {
 
+	// Sanitize base URL
+	if (sUrl==null) sUrl = DEFAULT_URL;
+	if (sUrl.length()==0) sUrl = DEFAULT_URL;
+	if (!sUrl.endsWith("/")) sUrl += "/";
+
 	String sUsrPwd = sUser+":"+sPassword;
     String sEncAuth = new sun.misc.BASE64Encoder().encode(sUsrPwd.getBytes());
-	URL oUrl = new URL("http://messaging.mobileway.com/"+sUser+"/"+sUser+".sms");
+	URL oUrl = new URL(sUrl+sUser+"/"+sUser+".sms");
     oCon = (HttpURLConnection) oUrl.openConnection();
     oCon.setRequestProperty("Authorization", "Basic " + sEncAuth);
     oCon.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -96,8 +105,12 @@ public class SMSPushSybase365 extends SMSPush {
    * Send SMS
    * @param SMSMessage
    * @return SMSResponse
+   * @throws IOException
+   * @throws SQLException
+   * @throws IllegalArgumentException
+   * @throws UnsupportedEncodingException
    */
-   
+
   public SMSResponse push (SMSMessage oMsg)
     throws IOException,SQLException,IllegalArgumentException,UnsupportedEncodingException {    
 
@@ -195,8 +208,7 @@ public class SMSPushSybase365 extends SMSPush {
 
   /**
    * Open a new connection and send and SMS
-   * @param sUrl Base URL
-   * @param sUser Sybase 365 Customer Account Identifier
+   * @param sAccount Sybase 365 Customer Account Identifier
    * @param sAuthStr Sybase 365 Customer Account Password
    * @param sMsisdn MSISDN Number with country preffix like +34609090603
    * @param sSubject Message subject. Will not be sent to recipient but returned in status reports by Sybase 365.
@@ -206,7 +218,7 @@ public class SMSPushSybase365 extends SMSPush {
    * @throws IllegalArgumentException
    */
 
-  public static SMSResponse push (String sUrl, String sAccount, String sAuthStr,
+  public static SMSResponse push (String sAccount, String sAuthStr,
   						          String sMsisdn, String sSubject, String sText)
     throws IOException,IllegalArgumentException {      
   	Date dtNow = new Date();
@@ -214,7 +226,7 @@ public class SMSPushSybase365 extends SMSPush {
   	SMSResponse oRsp = null;
     SMSPushSybase365 oSms = new SMSPushSybase365();
     try {
-  	  oSms.connect(sUrl, sAccount, sAuthStr, null);
+  	  oSms.connect(null, sAccount, sAuthStr, null);
       oRsp = oSms.push(new SMSMessage(SMSMessage.MType.PLAIN_TEXT,
       			       sId, sAccount,
       			       sMsisdn, sSubject, sText,
@@ -244,16 +256,5 @@ public class SMSPushSybase365 extends SMSPush {
     else
       return new String[]{sInputStr.substring(0, iDelim), sInputStr.substring(iDelim+1)};
   } // split2
-
-  private static String getStackTrace( Throwable aThrowable )
-    throws IOException {
-    final Writer result = new StringWriter();
-    final PrintWriter printWriter = new PrintWriter( result );
-    aThrowable.printStackTrace( printWriter );
-    String sRetVal = result.toString();
-    printWriter.close();
-    result.close();
-    return sRetVal;
-  }
   
 } // SMSPushSybase365

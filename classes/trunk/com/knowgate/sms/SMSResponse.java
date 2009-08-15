@@ -42,14 +42,30 @@ public class SMSResponse {
 	private Date dtStamp;
 	private ErrorCode eErrorCode;
 	private StatusCode eNotificationStatusCode;
+	private String sErrorMessage;
 
   // --------------------------------------------------------------------------
 	
-	public SMSResponse(String sMsgId, Date dtResponse, ErrorCode eErrCode, StatusCode eNotifyStatusCode) {
+	/**
+	 * Constructor for SMS response
+	 * @param sMsgId Unique Message Identifier, as returned from SMS carrier
+	 * @param dtResponse Date of acknowledgement
+	 * @param eErrCode Error Code from enumeration { NONE(0), AUTHENTICATION_FAILURE(1), SERVER_UNAVAILABLE(2), INVALID_MSISDN(4), INVALID_CHARACTER(8), TEXT_TOO_LONG(16), UNKNOWN_ERROR(128) }
+	 * @param eNotifyStatusCode from enumeration { POSITIVE_ACK(0),TEMPORARY_ACK(1),TEMPORARY_ACK_WAITING_FOR_HANDSET(2),NEGATIVE_RETRYING_DELIVERY(-1),NEGATIVE_MSISDN_IS_BLACKLISTED(-2),NEGATIVE_CALL_BARRED_BY_OPERATOR(-4),NEGATIVE_FAILED_DELIVERY(-8),NEGATIVE_OUT_OF_CREDIT(-16) }
+	 * @param sErrorMsg Additional Error Information
+	 */
+	public SMSResponse(String sMsgId, Date dtResponse, ErrorCode eErrCode, StatusCode eNotifyStatusCode, String sErrorMsg) {
 	  sId = sMsgId;
 	  dtStamp = dtResponse;
 	  eErrorCode = eErrCode;
 	  eNotificationStatusCode = eNotifyStatusCode;
+	  sErrorMessage = sErrorMsg;
+	}
+
+  // --------------------------------------------------------------------------
+	
+	public String errorMessage() {
+	  return sErrorMessage;
 	}
 
   // --------------------------------------------------------------------------
@@ -78,13 +94,20 @@ public class SMSResponse {
 
   // --------------------------------------------------------------------------
 
+    public String toString() {
+      return sId+";"+dtStamp+";"+eErrorCode+";"+eNotificationStatusCode+";"+sErrorMessage;
+    }
+
+  // --------------------------------------------------------------------------
+
     public enum ErrorCode {
 	  NONE(0),
 	  AUTHENTICATION_FAILURE(1),
 	  SERVER_UNAVAILABLE(2),
 	  INVALID_MSISDN(4),
 	  INVALID_CHARACTER(8),
-	  TEXT_TOO_LONG(16);
+	  TEXT_TOO_LONG(16),
+	  UNKNOWN_ERROR(128);
 
 	  private final int iOrd;
 
@@ -126,4 +149,4 @@ public class SMSResponse {
 
     } // StatusCode
 
-}
+} // SMSResponse
