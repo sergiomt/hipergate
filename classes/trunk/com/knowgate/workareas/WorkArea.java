@@ -76,7 +76,7 @@ import com.knowgate.scheduler.Job;
 /**
  * <p>WorkArea</p>
  * @author Sergio Montoro Ten
- * @version 4.0
+ * @version 5.0
  */
 public class WorkArea extends DBPersist {
 
@@ -173,6 +173,7 @@ public class WorkArea extends DBPersist {
    * Deletion takes place by delegating it in other objects delete() method.<br><br>
    * In this order:<br>
    * <table border=1 cellpadding=4>
+   * <tr><td>DELETE k_sms_audit</td></tr>
    * <tr><td>DELETE k_x_portlet_user</td></tr>
    * <tr><td>QueryByForm.delete</td></tr>
    * <tr><td>MicrositeDB.delete</td></tr>
@@ -274,6 +275,19 @@ public class WorkArea extends DBPersist {
         DebugFile.writeln("End WorkArea.delete() : false");
       }
       return false;
+    }
+
+    // -----------------------------------------------------------------------------------
+    // Nuevo para v5.0
+    // Borrar los SMS
+
+    if (DBBind.exists(oConn, DB.k_sms_audit, "U")) {
+      oStmt = oConn.createStatement();
+      if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(DELETE FROM " + DB.k_sms_audit + " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "'");
+
+      oStmt.executeUpdate("DELETE FROM " + DB.k_sms_audit + " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "'");
+    
+      oStmt.close();
     }
 
     // -----------------------------------------------------------------------------------
