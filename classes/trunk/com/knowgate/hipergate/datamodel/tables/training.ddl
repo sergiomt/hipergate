@@ -13,8 +13,7 @@ CREATE TABLE k_courses (
   tx_area        VARCHAR(50)      NULL,
   nu_credits     FLOAT            NULL,
   de_course      VARCHAR(2000)    NULL,
-  CONSTRAINT pk_courses PRIMARY KEY (gu_course),
-  CONSTRAINT f1_courses FOREIGN KEY (gu_workarea) REFERENCES k_workareas(gu_workarea)
+  CONSTRAINT pk_courses PRIMARY KEY (gu_course)
 )
 GO;
 
@@ -48,8 +47,7 @@ tr_sk      VARCHAR(50)     NULL,
 tr_pl      VARCHAR(50)     NULL,
 tr_vn      VARCHAR(50)     NULL,
 
-CONSTRAINT pk_courses_lookup PRIMARY KEY (gu_owner,id_section,pg_lookup),
-CONSTRAINT f1_courses_lookup FOREIGN KEY (gu_owner) REFERENCES k_workareas(gu_workarea)
+CONSTRAINT pk_courses_lookup PRIMARY KEY (gu_owner,id_section,pg_lookup)
 )
 GO;
 
@@ -70,9 +68,7 @@ CREATE TABLE k_academic_courses (
   nm_tutor       VARCHAR(200)  NULL,
   tx_tutor_email CHARACTER VARYING(100) NULL,
   de_course     VARCHAR(2000)  NULL,
-  CONSTRAINT pk_academic_courses PRIMARY KEY (gu_acourse),
-  CONSTRAINT f1_academic_courses FOREIGN KEY (gu_course) REFERENCES k_courses(gu_course),
-  CONSTRAINT f2_academic_courses FOREIGN KEY (gu_address) REFERENCES k_addresses(gu_address)
+  CONSTRAINT pk_academic_courses PRIMARY KEY (gu_acourse)
 )
 GO;
 
@@ -95,9 +91,7 @@ CREATE TABLE k_subjects (
   tx_tutor_email CHARACTER VARYING(100) NULL,
   de_subject     VARCHAR(2000) NULL,
   CONSTRAINT pk_subjects PRIMARY KEY (gu_subject),
-  CONSTRAINT c1_subjects CHECK (tm_start IS NULL OR tm_end IS NULL OR tm_start<=tm_end),
-  CONSTRAINT f1_subjects FOREIGN KEY (gu_workarea) REFERENCES k_workareas(gu_workarea),
-  CONSTRAINT f2_subjects FOREIGN KEY (gu_course) REFERENCES k_courses(gu_course)
+  CONSTRAINT c1_subjects CHECK (tm_start IS NULL OR tm_end IS NULL OR tm_start<=tm_end)
 )
 GO;
 
@@ -130,8 +124,7 @@ tr_sk      VARCHAR(50)     NULL,
 tr_pl      VARCHAR(50)     NULL,
 tr_vn      VARCHAR(50)     NULL,
 
-CONSTRAINT pk_subjects_lookup PRIMARY KEY (gu_owner,id_section,pg_lookup),
-CONSTRAINT f1_subjects_lookup FOREIGN KEY (gu_owner) REFERENCES k_workareas(gu_workarea)
+CONSTRAINT pk_subjects_lookup PRIMARY KEY (gu_owner,id_section,pg_lookup)
 )
 GO;
 
@@ -168,7 +161,6 @@ CREATE TABLE k_x_course_bookings (
 
   CONSTRAINT pk_x_course_bookings PRIMARY KEY (gu_acourse,gu_contact),
   CONSTRAINT f1_x_course_bookings FOREIGN KEY (gu_acourse) REFERENCES k_academic_courses(gu_acourse),
-  CONSTRAINT f2_x_course_bookings FOREIGN KEY (gu_contact) REFERENCES k_contacts(gu_contact),
   CONSTRAINT c1_x_course_bookings CHECK (dt_confirmed IS NULL OR dt_confirmed>=dt_created),
   CONSTRAINT c2_x_course_bookings CHECK (dt_paid IS NULL OR dt_paid>=dt_created),
   CONSTRAINT c3_x_course_bookings CHECK (dt_cancel IS NULL OR dt_cancel>=dt_created),
@@ -227,7 +219,6 @@ CREATE TABLE k_absentisms (
   CONSTRAINT pk_absentisms PRIMARY KEY (gu_absentism),
   CONSTRAINT f1_absentisms FOREIGN KEY (gu_acourse) REFERENCES k_academic_courses(gu_acourse),
   CONSTRAINT f2_absentisms FOREIGN KEY (gu_subject) REFERENCES k_subjects(gu_subject),
-  CONSTRAINT f3_absentisms FOREIGN KEY (gu_writer) REFERENCES k_users(gu_user),
   CONSTRAINT c1_absentisms CHECK (dt_from<=dt_to)
 )
 GO;
@@ -261,6 +252,80 @@ tr_sk      VARCHAR(50)     NULL,
 tr_pl      VARCHAR(50)     NULL,
 tr_vn      VARCHAR(50)     NULL,
 
-CONSTRAINT pk_absentisms_lookup PRIMARY KEY (gu_owner,id_section,pg_lookup),
-CONSTRAINT f1_absentisms_lookup FOREIGN KEY (gu_owner) REFERENCES k_workareas(gu_workarea)
+CONSTRAINT pk_absentisms_lookup PRIMARY KEY (gu_owner,id_section,pg_lookup)
 )
+GO;
+
+CREATE TABLE k_education_institutions (
+  gu_institution CHAR(32)    NOT NULL,
+  gu_workarea    CHAR(32)    NOT NULL,
+  nm_institution VARCHAR(100) NOT NULL,
+  id_institution VARCHAR(30) NULL,
+  bo_active      SMALLINT    DEFAULT 1,
+  CONSTRAINT pk_education_institutions PRIMARY KEY (gu_institution),
+  CONSTRAINT u1_education_institutions UNIQUE (gu_workarea,nm_institution)
+)
+GO;
+
+CREATE TABLE k_education_degree (
+  gu_degree   CHAR(32)     NOT NULL,
+  gu_workarea CHAR(32)     NOT NULL,
+  nm_degree   VARCHAR(100)  NOT NULL,
+  tp_degree   VARCHAR(50)  NULL,
+  id_degree   VARCHAR(32)  NULL,
+  CONSTRAINT pk_education_degree PRIMARY KEY (gu_degree),
+  CONSTRAINT u1_education_degree UNIQUE (gu_workarea,tp_degree,nm_degree)
+)
+GO;
+
+CREATE TABLE k_education_degree_lookup
+(
+gu_owner   CHAR(32)    NOT NULL,
+id_section CHARACTER VARYING(30) NOT NULL,
+pg_lookup  INTEGER     NOT NULL,
+vl_lookup  VARCHAR(50)     NULL,
+tr_es      VARCHAR(50)     NULL,
+tr_en      VARCHAR(50)     NULL,
+tr_de      VARCHAR(50)     NULL,
+tr_it      VARCHAR(50)     NULL,
+tr_fr      VARCHAR(50)     NULL,
+tr_pt      VARCHAR(50)     NULL,
+tr_ca      VARCHAR(50)     NULL,
+tr_gl      VARCHAR(50)     NULL,
+tr_eu      VARCHAR(50)     NULL,
+tr_ja      VARCHAR(50)     NULL,
+tr_cn      VARCHAR(50)     NULL,
+tr_tw      VARCHAR(50)     NULL,
+tr_fi      VARCHAR(50)     NULL,
+tr_ru      VARCHAR(50)     NULL,
+tr_nl      VARCHAR(50)     NULL,
+tr_th      VARCHAR(50)     NULL,
+tr_cs      VARCHAR(50)     NULL,
+tr_uk      VARCHAR(50)     NULL,
+tr_no      VARCHAR(50)     NULL,
+tr_sk      VARCHAR(50)     NULL,
+tr_pl      VARCHAR(50)     NULL,
+tr_vn      VARCHAR(50)     NULL,
+
+CONSTRAINT pk_education_degree_lookup PRIMARY KEY (gu_owner,id_section,pg_lookup)
+)
+GO;
+
+CREATE TABLE k_contact_education (
+  gu_contact     CHAR(32) NOT NULL,
+  gu_degree      CHAR(32) NOT NULL,
+  dt_created     DATETIME DEFAULT CURRENT_TIMESTAMP,
+  bo_completed   SMALLINT DEFAULT 1,
+  gu_institution CHAR(32)     NULL,
+  nm_center      VARCHAR(50)  NULL,
+  tp_degree      VARCHAR(50)  NULL,
+  id_degree      VARCHAR(32)  NULL,
+  lv_degree      DECIMAL(3,2) NULL,
+  ix_degree      INTEGER      NULL,
+  tx_dt_from     VARCHAR(30)  NULL,
+  tx_dt_to       VARCHAR(30)  NULL,
+  CONSTRAINT pk_contact_education PRIMARY KEY (gu_contact,gu_degree),
+  CONSTRAINT f1_contact_education FOREIGN KEY (gu_degree) REFERENCES k_education_degree(gu_degree)  
+)
+GO;
+

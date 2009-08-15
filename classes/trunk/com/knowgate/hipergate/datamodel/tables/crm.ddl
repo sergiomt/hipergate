@@ -239,6 +239,7 @@ de_title       VARCHAR(70)  NULL,  /* Empleo/Puesto */
 id_gender      CHAR(1)      NULL,  /* Sexo */
 dt_birth       DATETIME     NULL,  /* Fecha Nacimiento */
 ny_age	       SMALLINT     NULL,  /* Edad */
+id_nationality CHAR(3)      NULL,  /* Country of nationality */
 sn_passport    VARCHAR(16)  NULL,  /* Nº doc identidad legal */
 tp_passport    CHAR(1)      NULL,  /* Tipo doc identidad legal */
 sn_drivelic    VARCHAR(16)  NULL,  /* Permiso de conducir */
@@ -461,6 +462,17 @@ CONSTRAINT pk_oportunities_attrs PRIMARY KEY (gu_object,nm_attr)
 )
 GO;
 
+CREATE TABLE k_oportunities_changelog (
+gu_oportunity    CHAR(32)      NOT NULL,
+nm_column        VARCHAR(18)   NOT NULL,
+dt_modified      DATETIME      DEFAULT CURRENT_TIMESTAMP,
+gu_writer        CHAR(32)      NULL,
+id_former_status VARCHAR(50)   NULL,
+id_new_status    VARCHAR(50)   NULL,
+tx_value         VARCHAR(1000) NULL
+)
+GO;
+
 CREATE TABLE k_member_address
 (
 gu_address      CHAR(32) NOT NULL,
@@ -669,5 +681,37 @@ CREATE TABLE k_prod_suppliers
 gu_product  CHAR(32) NOT NULL,
 gu_supplier CHAR(32) NOT NULL,
 CONSTRAINT pk_prod_suppliers PRIMARY KEY(gu_product,gu_supplier)
+)
+GO;
+
+CREATE TABLE k_sms_msisdn
+(
+gu_workarea  CHAR(32)    NOT NULL,
+nu_msisdn    VARCHAR(16) NOT NULL,
+bo_validated SMALLINT    DEFAULT 1,
+nu_pin       VARCHAR(6)  NULL,
+
+CONSTRAINT pk_sms_msisdn PRIMARY KEY (gu_workarea,nu_msisdn)
+)
+GO;
+
+CREATE TABLE k_sms_audit (
+id_sms		  VARCHAR(50)  NOT NULL,
+gu_workarea   CHAR(32)     NOT NULL,
+pg_part       SMALLINT     DEFAULT 1,
+nu_msisdn     VARCHAR(16)  NOT NULL,
+id_msg        VARCHAR(50)  NULL,
+gu_batch      CHAR(32)     NULL,
+bo_success    SMALLINT     NOT NULL,
+nu_error      INTEGER      DEFAULT 0,
+id_status     INTEGER      DEFAULT 0,
+dt_sent       DATETIME     DEFAULT CURRENT_TIMESTAMP,
+gu_writer     CHAR(32)     NULL,
+gu_address    CHAR(32)     NULL,
+gu_contact    CHAR(32)     NULL,
+gu_company    CHAR(32)     NULL,
+tx_msg        VARCHAR(160) NOT NULL,
+tx_err        VARCHAR(254) NULL,
+CONSTRAINT pk_sms_audit PRIMARY KEY(id_sms)
 )
 GO;

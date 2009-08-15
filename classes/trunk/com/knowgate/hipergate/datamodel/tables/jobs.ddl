@@ -142,7 +142,8 @@ id_status      SMALLINT   DEFAULT 1,
 gu_company     CHAR(32)     NULL,
 gu_contact     CHAR(32)     NULL,
 ip_addr        CHARACTER VARYING(16) NULL,
-tx_email       CHARACTER VARYING(100) NULL
+tx_email       CHARACTER VARYING(100) NULL,
+user_agent     VARCHAR(254) NULL
 )
 GO;
 

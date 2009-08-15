@@ -4,6 +4,7 @@ CREATE TABLE k_mime_msgs (
   pg_message     DECIMAL(20) NOT NULL,
   gu_category    CHAR(32) NULL,
   gu_parent_msg  CHAR(32) NULL,
+  gu_job         CHAR(32) NULL,
   nu_position    DECIMAL(20) NULL,
   id_type        CHARACTER VARYING(254) NULL,
   id_content     CHARACTER VARYING(254) NULL,
@@ -53,6 +54,8 @@ CREATE TABLE k_inet_addrs (
   gu_user        CHAR(32) NULL,
   gu_contact     CHAR(32) NULL,
   gu_company     CHAR(32) NULL,
+  dt_displayed   DATETIME NULL,
+  user_agent     VARCHAR(254) NULL,
   
   CONSTRAINT c1_inet_addrs CHECK (tp_recipient='from' OR tp_recipient='to' OR tp_recipient='cc' OR tp_recipient='bcc')  
 )
