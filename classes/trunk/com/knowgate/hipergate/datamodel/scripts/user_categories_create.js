@@ -225,7 +225,8 @@ try {
         oMe.getMailFolder(DefaultConnection, "deleted");
         oMe.getMailFolder(DefaultConnection, "sent");
         oMe.getMailFolder(DefaultConnection, "spam");
-        oMe.getMailFolder(DefaultConnection, "received");        
+        oMe.getMailFolder(DefaultConnection, "received");
+        oMe.getMailFolder(DefaultConnection, "receipts");
       }
   
       ReturnValue = sHomeId;
