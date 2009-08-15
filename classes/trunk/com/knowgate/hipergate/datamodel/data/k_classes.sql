@@ -37,6 +37,8 @@ INSERT INTO k_classes VALUES(62,'Subject');
 INSERT INTO k_classes VALUES(63,'Evaluation');
 INSERT INTO k_classes VALUES(64,'Absentism');
 INSERT INTO k_classes VALUES(65,'AcademicCourseBooking');
+INSERT INTO k_classes VALUES(66,'EducationInstitution');
+INSERT INTO k_classes VALUES(67,'EducationDegree');
 INSERT INTO k_classes VALUES(70,'Microsite');
 INSERT INTO k_classes VALUES(71,'PageSet');
 INSERT INTO k_classes VALUES(72,'Page');
