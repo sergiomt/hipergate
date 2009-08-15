@@ -5,7 +5,6 @@
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
   are met:
-
   1. Redistributions of source code must retain the above copyright
      notice, this list of conditions and the following disclaimer.
 
@@ -39,6 +38,7 @@ import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.Timestamp;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -221,22 +221,22 @@ public class MimeSender extends Job {
       try {
         if (DebugFile.trace) DebugFile.writeln("DBBind="+getDataBaseBind());
         // Get User, Account and Domain objects
-        oConn = getDataBaseBind().getConnection("MimeSender");
+        oConn = getDataBaseBind().getConnection("MimeSender.init.1");
         iDomainId = ACLDomain.forWorkArea(oConn, sWrkA);
         if (!oUser.load(oConn, new Object[]{getStringNull(DB.gu_writer,null)})) oUser=null;
         if (!oMacc.load(oConn, new Object[]{getParameter("account")})) oMacc=null;
         // If message is personalized then fill data for each mail address
         if (bPersonalized) resolveAtomsEMails(oConn);
-        oConn.close("MimeSender");
+        oConn.close("MimeSender.init.1");
         oConn=null;
       } catch (SQLException sqle) {
-        if (DebugFile.trace) DebugFile.writeln("MimeSender.process("+getStringNull(DB.gu_job,"null")+") " + sqle.getClass().getName() + " " + sqle.getMessage());
-        if (oConn!=null) { try { oConn.close(); } catch (Exception ignore) {} }
+        if (DebugFile.trace) DebugFile.writeln("MimeSender.init("+getStringNull(DB.gu_job,"null")+") " + sqle.getClass().getName() + " " + sqle.getMessage());
+        if (oConn!=null) { try { oConn.close("MimeSender.init.1"); } catch (Exception ignore) {} }
         throw sqle;
       }
         catch (NullPointerException npe) {
-        if (DebugFile.trace) DebugFile.writeln("MimeSender.process("+getStringNull(DB.gu_job,"null")+") " + npe.getClass().getName());
-        if (oConn!=null) { try { oConn.close(); } catch (Exception ignore) {} }
+        if (DebugFile.trace) DebugFile.writeln("MimeSender.init("+getStringNull(DB.gu_job,"null")+") " + npe.getClass().getName());
+        if (oConn!=null) { try { oConn.close("MimeSender.init.1"); } catch (Exception ignore) {} }
         throw npe;
       }
       if (null==oUser) {
@@ -288,8 +288,20 @@ public class MimeSender extends Job {
           else
             DebugFile.writeln("Message body: " + Gadgets.left(sBody.replace('\n',' '), 100));
         }
+
+        oConn = getDataBaseBind().getConnection("MimeSender.init.2");
+        oUpdt = oConn.prepareStatement("UPDATE "+DB.k_mime_msgs+" SET "+DB.dt_sent+"=? WHERE "+DB.gu_mimemsg+"=?");
+        oUpdt.setTimestamp(1, new Timestamp(new Date().getTime()));
+    	oUpdt.setString(2, sMsgId);
+        oUpdt.executeUpdate();
+        oUpdt.close();
+        oConn.close("MimeSender.init.2");
+        oConn=null;
+
       } catch (Exception e) {
         if (DebugFile.trace) {
+          DebugFile.writeStackTrace(e);
+          DebugFile.write("\n");
           DebugFile.decIdent();
           DebugFile.writeln("End MimeSender.init(" + oAtm.getString(DB.gu_job) + ":" + String.valueOf(oAtm.getInt(DB.pg_atom)) + ") : abnormal process termination");
         }
@@ -306,6 +318,9 @@ public class MimeSender extends Job {
 
   // ---------------------------------------------------------------------------
 
+  /**
+   * Move message from outbox to sent items folder
+   */
   public void free() {
     if (DebugFile.trace) {
       DebugFile.writeln("Begin MimeSender.free()");
@@ -317,9 +332,8 @@ public class MimeSender extends Job {
       try {
         DBFolder oSent = (DBFolder) oStor.getFolder("sent");
         oSent.open(Folder.READ_WRITE);
-        oSent.copyMessage(oDraft);
+        oSent.moveMessage(oDraft);
 	    oSent.close(false);
-	    oDraft.setFlag(Flags.Flag.DELETED, true);
       } catch (StoreClosedException sce) {
         if (DebugFile.trace) {
           DebugFile.writeln("MimeSender.free() StoreClosedException "+sce.getMessage());
@@ -359,6 +373,13 @@ public class MimeSender extends Job {
 	  throw new NullPointerException("MimeSender.process() Atom may not be null");
 	}
 
+    // ***************************************************
+    // Create mail session if it does not previously exist
+
+    if (oHndlr==null && iPendingAtoms>0) {
+      init(oAtm);
+    }
+
 	if (null==aFrom) {
 	  if (DebugFile.trace) {
 	  	DebugFile.writeln("NullPointerException MimeSender.process() From address may not be null");
@@ -366,13 +387,6 @@ public class MimeSender extends Job {
 	  }
 	  throw new NullPointerException("MimeSender.process() From address may not be null");
 	}
-
-    // ***************************************************
-    // Create mail session if it does not previously exist
-
-    if (oHndlr==null && iPendingAtoms>0) {
-      init(oAtm);
-    }
 
     if (null==oDraft) {
       if (DebugFile.trace) {
@@ -444,6 +458,7 @@ public class MimeSender extends Job {
       throw new MessagingException(e.getMessage(),e);
     } finally {
       // Decrement de count of atoms pending of processing at this job
+      if (DebugFile.trace) DebugFile.writeln("decrementing pending atoms to "+String.valueOf(iPendingAtoms-1));
       if (0==--iPendingAtoms) {
         free();
       } // fi (iPendingAtoms==0)
@@ -454,7 +469,7 @@ public class MimeSender extends Job {
       DebugFile.decIdent();
     }
 
-    return null;
+    return oSentMsg;
  } // process
 
  // ----------------------------------------------------------------------------
@@ -471,7 +486,6 @@ public class MimeSender extends Job {
                                       String sTxTitle, String sTxParameters)
     throws SQLException {
     MimeSender oJob = new MimeSender();
-
     oJob.put(DB.gu_workarea, sIdWrkA);
     oJob.put(DB.gu_writer, sGuUser);
     oJob.put(DB.id_command, Job.COMMAND_SEND);
@@ -481,8 +495,15 @@ public class MimeSender extends Job {
     if (null!=sJobGroup) oJob.put(DB.gu_job_group, sJobGroup);
     if (null!=dtExecution) oJob.put(DB.dt_execution, dtExecution);
     oJob.store(oConn);
+
+    PreparedStatement oUpdt = oConn.prepareStatement("UPDATE "+DB.k_mime_msgs+" SET "+DB.gu_job+"=? WHERE "+DB.gu_mimemsg+"=?");
+    oUpdt.setString(1, oJob.getString(DB.gu_job));
+    oUpdt.setString(2, oJob.getParameter("message"));
+    oUpdt.executeUpdate();
+    oUpdt.close();
+
     return oJob;
- }
+ } // newInstance
 
  // ----------------------------------------------------------------------------
 
