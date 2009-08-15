@@ -25,8 +25,13 @@ CREATE INDEX i5_oportunities ON k_oportunities(dt_next_action);
 CREATE INDEX i6_oportunities ON k_oportunities(id_status);
 CREATE INDEX i7_oportunities ON k_oportunities(gu_campaign);
 
+CREATE INDEX i1_oportunities_changelog ON k_oportunities_changelog(gu_oportunity);
+
 CREATE INDEX i1_contacts_recent ON k_contacts_recent(gu_user);
 CREATE INDEX i2_contacts_recent ON k_contacts_recent(gu_workarea);
 
 CREATE INDEX i1_welcome_packs ON k_welcome_packs(gu_workarea);
 CREATE INDEX i2_welcome_packs ON k_welcome_packs(gu_contact);
+
+CREATE INDEX i1_sms_audit ON k_sms_audit(gu_workarea);
+
