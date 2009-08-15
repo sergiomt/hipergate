@@ -47,7 +47,7 @@ import com.knowgate.debug.DebugFile;
 /**
  * A wrapper for some common SQL command sequences
  * @author Sergio Montoro Ten
- * @version 3.0
+ * @version 5.0
  */
 public class DBCommand {
 
@@ -305,6 +305,67 @@ public class DBCommand {
 
     return sStr;
   } // queryStr
+
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Execute a SQL query and get an Array of Strings as result
+   * @param oCon Connection Open JDBC database connection
+   * @param sSQL String Command to be executed
+   * @return Array of Strings or <b>null</b> if no row was found
+   * @throws SQLException
+   * @throws NumberFormatException
+   * @throws ClassCastException
+   */
+
+  public static String[] queryStrs(Connection oCon, String sSQL)
+    throws SQLException {
+
+    Statement oStm = null;
+    ResultSet oRst = null;
+    String[] aStr = null;
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin DBCommand.queryStrs("+sSQL+")");
+      DebugFile.incIdent();
+    }
+
+    try {
+      oStm = oCon.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+      oRst = oStm.executeQuery(sSQL);
+      if (oRst.next()) {
+      	ResultSetMetaData oMDat = oRst.getMetaData();
+      	int nCols = oMDat.getColumnCount();
+      	aStr = new String[nCols];
+      	for (int c=1; c<=nCols; c++) {
+      	  String sCol = oRst.getString(c);
+          if (oRst.wasNull())
+          	aStr[c-1] = null;
+          else
+          	aStr[c-1] = sCol;      	  	
+      	} // next 
+      } // fi
+      oRst.close();
+      oRst=null;
+      oStm.close();
+      oStm=null;
+    } catch (Exception xcpt) {
+      if (DebugFile.trace) {
+        DebugFile.writeln(xcpt.getClass().getName()+" "+xcpt.getMessage());
+        DebugFile.decIdent();
+      }
+      if (oRst!=null) { try {oRst.close(); } catch (Exception ignore) {} }
+      if (oStm!=null) { try {oStm.close(); } catch (Exception ignore) {} }
+      throw new SQLException(xcpt.getMessage());
+    }
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End DBCommand.queryStrs()");
+    }
+
+    return aStr;
+  } // queryStrs
 
   // ---------------------------------------------------------------------------
 
@@ -614,6 +675,29 @@ public class DBCommand {
 	else
 	  return new Integer(oMax.toString());
   } // queryMaxInt
+
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Execute a SQL query to get the maximum value for a column of type INTEGER
+   * @param oCon Connection Open JDBC database connection
+   * @param sColumn Column Name
+   * @param sTable Table Name
+   * @param sWhere WHERE clause to restrict maximum search
+   * @return The maximum value found for the given restrictions or <b>null</b> if no maximum value was found
+   * @throws SQLException
+   * @throws NumberFormatException
+   * @since 5.0
+   */
+
+  public static Integer queryMinInt(Connection oCon, String sColumn, String sTable, String sWhere)
+    throws SQLException,NumberFormatException {
+	Object oMin = queryMin(oCon, sColumn, sTable, sWhere);
+	if (null==oMin)
+	  return null;
+	else
+	  return new Integer(oMin.toString());
+  } // queryoMinInt
 
   // ---------------------------------------------------------------------------
 

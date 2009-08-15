@@ -206,6 +206,7 @@ public final class DB {
   public static final String k_job_atoms_archived = "k_job_atoms_archived";
   public static final String k_lu_job_commands = "k_lu_job_commands";
   public static final String k_lu_job_status = "k_lu_job_status";
+  public static final String k_job_atoms_tracking = "k_job_atoms_tracking";
 
   public static final String k_fellows = "k_fellows";
   public static final String k_fellows_attach = "k_fellows_attach";
@@ -251,6 +252,9 @@ public final class DB {
   public static final String k_education_degree = "k_education_degree";
   public static final String k_education_degree_lookup = "k_education_degree_lookup";
   public static final String k_contact_education = "k_contact_education";
+
+  public static final String k_sms_msisdn = "k_sms_msisdn";
+  public static final String k_sms_audit = "k_sms_audit";
 
   /***************/
   /* VIEW NAMES  */
@@ -889,6 +893,7 @@ public final class DB {
   public static final String tx_log = "tx_log";
   public static final String dt_execution = "dt_execution";
   public static final String dt_finished = "dt_finished";
+  public static final String dt_action = "dt_action";
 
   // k_lu_job_commands
   public static final String tx_command = "tx_command";
@@ -1029,6 +1034,8 @@ public final class DB {
   public static final String bo_seen = "bo_seen";
   public static final String bo_spam = "bo_spam";
   public static final String file_name = "file_name";
+  public static final String dt_displayed = "dt_displayed";
+  public static final String user_agent = "user_agent";
 
   // k_mime_parts
   public static final String id_part = "id_part";
@@ -1096,4 +1103,10 @@ public final class DB {
   // k_contact_education
   public static final String bo_completed = "bo_completed";
 
+  // k_sms_audit
+  public static final String id_sms = "id_sms";
+  public static final String nu_msisdn = "nu_msisdn";
+  public static final String pg_part = "pg_part";
+  public static final String bo_validated = "bo_validated";
+  
 }
