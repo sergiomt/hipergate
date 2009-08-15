@@ -385,7 +385,8 @@ public class DraftsHelper {
     String sAddr;
     String sSQL = "UPDATE "+DB.k_mime_msgs+" SET "+DB.bo_draft+"=1,"+
                   DB.tx_email_from+"=?,"+DB.tx_email_reply+"=?,"+DB.nm_from+"=?,"+
-                  DB.tx_subject+"=?,"+DB.id_type+"=?,"+DB.by_content+"=? WHERE "+DB.gu_mimemsg+"=?";
+                  DB.tx_subject+"=?,"+DB.id_type+"=?,"+DB.len_mimemsg+"=?,"+DB.by_content+"=? "+
+                  "WHERE "+DB.gu_mimemsg+"=?";
 
     if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement("+sSQL+")");
 
@@ -404,8 +405,9 @@ public class DraftsHelper {
       oBody.setContent(sBody, "text/"+sContentType);
     ByteArrayOutputStream oBodyStrm = new ByteArrayOutputStream((sBody.length()*2)+2);
     oBody.writeTo(oBodyStrm);
-    oStmt.setBytes(6, oBodyStrm.toByteArray());
-    oStmt.setString(7, sGuMsg);
+    oStmt.setInt(6, oBodyStrm.size());
+    oStmt.setBytes(7, oBodyStrm.toByteArray());    
+    oStmt.setString(8, sGuMsg);
     if (DebugFile.trace) DebugFile.writeln("PreparedStatement.executeUpdate()");	
     oStmt.executeUpdate();
     oStmt.close();

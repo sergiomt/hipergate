@@ -85,6 +85,7 @@ import javax.mail.MessagingException;
 import javax.mail.FolderClosedException;
 
 import com.sun.mail.smtp.SMTPMessage;
+import com.sun.mail.dsn.MultipartReport;
 
 import org.htmlparser.Parser;
 import org.htmlparser.Node;
@@ -107,7 +108,7 @@ import org.apache.oro.text.regex.Util;
 /**
  * MIME messages stored at database BLOB columns or MBOX files
  * @author Sergio Montoro Ten
- * @version 2.2
+ * @version 5.0
  */
 
 public class DBMimeMessage extends MimeMessage implements MimePart,Part {
@@ -964,6 +965,9 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
            oRetVal = DBMimePart.getMessagePart (oPart, p);
          }
        }  // next (p)
+     }
+     else if (sContentClass.equals("com.sun.mail.dsn.MultipartReport")) {
+       oRetVal = ((MultipartReport) oContent).getTextBodyPart();
      }
      else if (sContentClass.equals("java.lang.String")) {
        oRetVal = new MimeBodyPart();

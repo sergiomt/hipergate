@@ -571,6 +571,8 @@ public class SessionHandler {
    * &lt;msg&gt;
    * &lt;num&gt;[1..n]&lt;/num&gt;
    * &lt;id&gt;message unique identifier&lt;/id&gt;
+   * &lt;type&gt;message content-type&lt;/type&gt;
+   * &lt;disposition&gt;message content-disposition&lt;/disposition&gt;
    * &lt;len&gt;message length in bytes&lt;/len&gt;
    * &lt;priority&gt;X-Priority header&lt;/priority&gt;
    * &lt;spam&gt;X-Spam-Flag header&lt;/spam&gt;
@@ -678,6 +680,8 @@ public class SessionHandler {
    * &lt;msg&gt;
    * &lt;num&gt;[1..n]&lt;/num&gt;
    * &lt;id&gt;message unique identifier&lt;/id&gt;
+   * &lt;type&gt;message content type&lt;/type&gt;
+   * &lt;disposition&gt;message content-disposition&lt;/disposition&gt;
    * &lt;len&gt;message length in bytes&lt;/len&gt;
    * &lt;priority&gt;X-Priority header&lt;/priority&gt;
    * &lt;spam&gt;&lt;/spam&gt;

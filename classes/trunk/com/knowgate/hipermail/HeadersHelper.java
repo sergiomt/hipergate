@@ -58,7 +58,7 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * Set of utility functions for managing MimeMessage headers
  * @author Sergio Montoro Ten
- * @version 3.0
+ * @version 5.0
  */
 
 public class HeadersHelper extends DefaultHandler {
@@ -449,6 +449,8 @@ public class HeadersHelper extends DefaultHandler {
    * &lt;num&gt;[1..n]&lt;/num&gt;
    * &lt;id&gt;message unique identifier&lt;/id&gt;
    * &lt;len&gt;message length in bytes&lt;/len&gt;
+   * &lt;type&gt;message content-type&lt;/type&gt;
+   * &lt;disposition&gt;message content-disposition&lt;/disposition&gt;
    * &lt;priority&gt;X-Priority header&lt;/priority&gt;
    * &lt;spam&gt;X-Spam-Flag header&lt;/spam&gt;
    * &lt;subject&gt;&lt;![CDATA[message subject]]&gt;&lt;/subject&gt;
@@ -477,8 +479,18 @@ public class HeadersHelper extends DefaultHandler {
       if (null!=sHeader)
         oXBuffer.append("<id><![CDATA["+sHeader.replace('\n',' ')+"]]></id>");
       else
-        oXBuffer.append("<id><![CDATA[]]></id>");      	
+        oXBuffer.append("<id><![CDATA[]]></id>");
       oXBuffer.append("<len>"+String.valueOf(oMsg.getSize())+"</len>");
+      String sCType = oMsg.getContentType();
+      int iCType = sCType.indexOf(';');
+      if (iCType>0) sCType = sCType.substring(0, iCType);
+      oXBuffer.append("<type>"+sCType+"</type>");
+      String sDisposition = oMsg.getContentType().substring(iCType+1).trim();
+      int iDisposition = sDisposition.indexOf(';');
+      if (iDisposition>0) sDisposition = sDisposition.substring(0, iDisposition);
+      int iEq = sDisposition.indexOf('=');
+      if (iEq>0) sDisposition = sDisposition.substring(iEq+1);
+      oXBuffer.append("<disposition>"+sDisposition+"</disposition>");
       sHeader = oMsg.getHeader("X-Priority","");
       oXBuffer.append("<priority>"+(sHeader==null ? "" : sHeader)+"</priority>");
       sHeader = oMsg.getHeader("X-Spam-Flag","");    
@@ -531,7 +543,9 @@ public class HeadersHelper extends DefaultHandler {
 
 	if (DebugFile.trace) {
 	  DebugFile.decIdent();
-	  DebugFile.writeln("End HeadersHelper.toXML() : "+String.valueOf(oXBuffer.length()));
+	  String sCType = null;
+	  try { sCType = oMsg.getContentType(); } catch (Exception ignore) {}
+	  DebugFile.writeln("End HeadersHelper.toXML() : "+sCType+" "+String.valueOf(oXBuffer.length())+" bytes");
 	}
 
     return oXBuffer.toString();

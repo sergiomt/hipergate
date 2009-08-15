@@ -213,13 +213,15 @@ public class DBFolder extends Folder {
     BigDecimal oPos = null;
     int iLen = 0;
     String sId = null;
+    PreparedStatement oStmt = null;
+    ResultSet oRSet = null;
     try {
       String sSQL = "SELECT "+DB.pg_message+","+DB.id_message+","+DB.nu_position+","+DB.len_mimemsg+" FROM "+DB.k_mime_msgs+" WHERE "+DB.gu_mimemsg+"=";
       if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement("+sSQL+"'"+oSrcMsg.getMessageGuid()+"')");
 
-      PreparedStatement oStmt = getConnection().prepareStatement(sSQL+"?",ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+      oStmt = getConnection().prepareStatement(sSQL+"?",ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
       oStmt.setString(1, oSrcMsg.getMessageGuid());
-      ResultSet oRSet = oStmt.executeQuery();
+      oRSet = oStmt.executeQuery();
       if (!oRSet.next())
         throw new MessagingException("DBFolder.copyMessage() could not find source message " + oSrcMsg.getMessageGuid());
       oPg = oRSet.getBigDecimal(1);
@@ -227,9 +229,13 @@ public class DBFolder extends Folder {
       oPos= oRSet.getBigDecimal(3);
       iLen= oRSet.getInt(4);
       oRSet.close();
+      oRSet=null;
       oStmt.close();
+      oStmt=null;
     }
     catch (SQLException sqle) {
+      try { if (oRSet!=null) oRSet.close(); } catch (Exception ignore) {}
+      try { if (oStmt!=null) oStmt.close(); } catch (Exception ignore) {}
       try { getConnection().rollback(); } catch (Exception ignore) {}
       if (DebugFile.trace) {
         DebugFile.writeln("DBFolder.copyMessage() SQLException " + sqle.getMessage());
@@ -247,6 +253,7 @@ public class DBFolder extends Folder {
     String sNewGuid = null;
     try {
       if ((oSrcFldr.mode&MODE_MBOX)!=0) {
+        if (DebugFile.trace) DebugFile.writeln("new MboxFile(" + oSrcFldr.getFile() + ", MboxFile.READ_ONLY)");
         oMboxSrc = new MboxFile(oSrcFldr.getFile(), MboxFile.READ_ONLY);
         InputStream oInStrm = oMboxSrc.getMessageAsStream(oPos.longValue(), iLen);
         oMimeSrc = new MimeMessage(Session.getDefaultInstance(new Properties()), oInStrm);
@@ -277,7 +284,9 @@ public class DBFolder extends Folder {
       if (oMboxSrc!=null)  { try { oMboxSrc.close();  } catch (Exception ignore) {} }
       try { oSrcFldr.getConnection().rollback(); } catch (Exception ignore) {}
       if (DebugFile.trace) {
-        DebugFile.writeln("DBFolder.copyMessage() " + e.getClass().getName() + e.getMessage());
+        DebugFile.writeln("DBFolder.copyMessage() " + e.getClass().getName() + " "+ e.getMessage());
+        DebugFile.writeStackTrace(e);
+        DebugFile.writeln("");
         DebugFile.decIdent();
       }
       throw new MessagingException(e.getMessage(), e);
@@ -375,6 +384,10 @@ public class DBFolder extends Folder {
       oConn.commit();
     }
     catch (SQLException sqle) {
+      if (DebugFile.trace) {
+      	DebugFile.writeln("SQLException "+sqle.getMessage());
+      	DebugFile.writeStackTrace(sqle);
+      }
       if (null!=oRSet) { try {oRSet.close(); } catch (Exception ignore) {} }
       if (null!=oStmt) { try {oStmt.close(); } catch (Exception ignore) {} }
       if (null!=oConn) { try {oConn.rollback(); } catch (Exception ignore) {} }
@@ -396,7 +409,7 @@ public class DBFolder extends Folder {
       MboxFile oMboxSrc = null, oMboxThis = null;
       try {
         oMboxSrc = new MboxFile(oSrcFldr.getFile(), MboxFile.READ_WRITE);
-        oMboxThis = new MboxFile(oSrcFldr.getFile(), MboxFile.READ_WRITE);
+        oMboxThis = new MboxFile(getFile(), MboxFile.READ_WRITE);
 
         oMboxThis.appendMessage(oMboxSrc, oPos.longValue(), iLen);
         oMboxThis.close();
@@ -408,6 +421,10 @@ public class DBFolder extends Folder {
         oMboxSrc=null;
       }
       catch (Exception e) {
+      	if (DebugFile.trace) {
+      	  DebugFile.writeln(e.getClass()+" "+e.getMessage());
+      	  DebugFile.writeStackTrace(e);
+      	}
         if (oMboxThis!=null) { try { oMboxThis.close(); } catch (Exception ignore) {} }
         if (oMboxSrc!=null)  { try { oMboxSrc.close();  } catch (Exception ignore) {} }
         if (!bWasOpen) { try { close(false); } catch (Exception ignore) {} }
@@ -2433,7 +2450,11 @@ public class DBFolder extends Folder {
       try { if (null!=byOutStrm) byOutStrm.close(); } catch (Exception ignore) {}
       try { if (oMBox!=null) oMBox.close(); } catch (Exception ignore) {}
       try { if (null!=oConn) oConn.rollback(); } catch (Exception ignore) {}
-      if (DebugFile.trace) DebugFile.decIdent();
+      if (DebugFile.trace) {
+		DebugFile.writeln(xcpt.getClass().getName() + " " + xcpt.getMessage());
+		DebugFile.writeStackTrace(xcpt);
+        DebugFile.decIdent();
+      }
       throw new MessagingException(xcpt.getClass().getName() + " " + xcpt.getMessage(), xcpt);
     }
 
@@ -2562,6 +2583,8 @@ public class DBFolder extends Folder {
    * &lt;num&gt;[1..n]&lt;/num&gt;
    * &lt;id&gt;message unique identifier&lt;/id&gt;
    * &lt;len&gt;message length in bytes&lt;/len&gt;
+   * &lt;type&gt;message content-type&lt;/type&gt;
+   * &lt;disposition&gt;message content-disposition&lt;/disposition&gt;
    * &lt;priority&gt;X-Priority header&lt;/priority&gt;
    * &lt;spam&gt;X-Spam-Flag header&lt;/spam&gt;
    * &lt;subject&gt;&lt;![CDATA[message subject]]&gt;&lt;/subject&gt;
@@ -2588,7 +2611,7 @@ public class DBFolder extends Folder {
 	StringBuffer oBuffXml = new StringBuffer(1024);
 	
     DBSubset oMsgs = new DBSubset (DB.k_mime_msgs,
-    							   DB.gu_mimemsg+","+DB.id_message+","+DB.id_priority+","+DB.nm_from+","+DB.nm_to+","+DB.tx_subject+","+DB.dt_received+","+DB.dt_sent+","+DB.len_mimemsg+","+DB.pg_message+","+DB.bo_deleted+","+DB.tx_email_from+","+DB.nm_to+","+DB.bo_spam,
+    							   DB.gu_mimemsg+","+DB.id_message+","+DB.id_priority+","+DB.nm_from+","+DB.nm_to+","+DB.tx_subject+","+DB.dt_received+","+DB.dt_sent+","+DB.len_mimemsg+","+DB.pg_message+","+DB.bo_deleted+","+DB.tx_email_from+","+DB.nm_to+","+DB.bo_spam+","+DB.id_type,
       			                   DB.gu_category+"=? AND "+DB.gu_workarea+"=? AND " + DB.bo_deleted + "<>1 AND " + DB.gu_parent_msg + " IS NULL ORDER BY " + DB.dt_received + "," + DB.dt_sent + " DESC", 10);
     int iMsgs = oMsgs.load(((DBStore)getStore()).getConnection(), new Object[]{getCategoryGuid(), ((DBStore)getStore()).getUser().getString(DB.gu_workarea)});
 
@@ -2599,6 +2622,16 @@ public class DBFolder extends Folder {
         oBuffXml.append("<num>"+String.valueOf(oMsgs.getInt(DB.pg_message,m))+"</num>");
         oBuffXml.append("<id><![CDATA["+oMsgs.getStringNull(DB.id_message,m,"").replace('\n',' ')+"]]></id>");
         oBuffXml.append("<len>"+String.valueOf(oMsgs.getInt(DB.len_mimemsg,m))+"</len>");
+        String sCType = oMsgs.getStringNull(DB.id_type,m,"");
+        int iCType = sCType.indexOf(';');
+        if (iCType>0) sCType = sCType.substring(0, iCType);
+        oBuffXml.append("<type>"+sCType+"</type>");
+        String sDisposition = oMsgs.getStringNull(DB.id_type,m,"").substring(iCType+1).trim();
+        int iDisposition = sDisposition.indexOf(';');
+        if (iDisposition>0) sDisposition = sDisposition.substring(0, iDisposition);
+        int iEq = sDisposition.indexOf('=');
+        if (iEq>0) sDisposition = sDisposition.substring(iEq+1);
+        oBuffXml.append("<disposition>"+sDisposition+"</disposition>");
         oBuffXml.append("<priority>"+oMsgs.getStringNull(DB.id_priority,m,"")+"</priority>");
         if (oMsgs.isNull(DB.bo_spam,m))
 		  oBuffXml.append("<spam></spam>");

@@ -32,17 +32,27 @@
 
 package com.knowgate.hipermail;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+
+import java.util.Date;
 
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
+import java.sql.Timestamp;
+import java.sql.Types;
 
 import javax.mail.Address;
 import javax.mail.Message;
+import javax.mail.internet.InternetHeaders;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+
+import com.sun.mail.dsn.MultipartReport;
+import com.sun.mail.dsn.Report;
+import com.sun.mail.dsn.DispositionNotification;
 
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.debug.DebugFile;
@@ -53,7 +63,7 @@ import com.knowgate.misc.Gadgets;
 /**
  * Helper class for working with recipients lists
  * @author Sergio Montoro Ten
- * @version 3.0
+ * @version 5.0
  */
 public class RecipientsHelper {
 
@@ -448,4 +458,61 @@ public class RecipientsHelper {
     }
     return oReply;
   }
+
+  // ---------------------------------------------------------------------------
+
+  public static int acknowledgeNotification(JDCConnection oCon, MultipartReport oCnt)
+  	throws SQLException, IOException, MessagingException {
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin acknowledgeNotification([JDCConnection],[MimeMessage])");
+      DebugFile.incIdent();
+    }
+
+	int iAffected = 0;	
+	DispositionNotification oRpt = (DispositionNotification) oCnt.getReport();
+	InternetHeaders oInetHdrs = oRpt.getNotifications();			        					
+    String sHeader = oInetHdrs.getHeader("Disposition", null);
+
+	if (DebugFile.trace) DebugFile.writeln("Disposition: "+sHeader);
+    
+	if (sHeader!=null) {
+      if (sHeader.endsWith("displayed")) {						
+        String sSQL = "UPDATE "+DB.k_inet_addrs+ " SET "+DB.dt_displayed+"=";
+        PreparedStatement oUpdt = oCon.prepareStatement("UPDATE "+DB.k_inet_addrs+ " SET "+DB.dt_displayed+"=?,"+DB.user_agent+"=? WHERE "+DB.id_message+"=? AND "+DB.tx_email+"=?");
+		Timestamp oTs = new Timestamp(new Date().getTime());
+		oUpdt.setTimestamp(1, oTs);
+        sSQL+=oTs.toString()+","+DB.user_agent+"=";
+        sHeader = oInetHdrs.getHeader("Reporting-UA", null);
+		if (null==sHeader) {
+		  sSQL+="null";
+          oUpdt.setNull(2, Types.VARCHAR);
+		} else {
+		  sSQL+="'"+Gadgets.left(sHeader, 254)+"'";
+		  oUpdt.setString(2, Gadgets.left(sHeader, 254));
+        }
+        String sMsgId = oInetHdrs.getHeader("Original-Message-ID",null);
+		sSQL+=" WHERE "+DB.id_message+"='"+sMsgId+"' AND ";
+        oUpdt.setString(3, sMsgId);
+		String sTxEmail = oInetHdrs.getHeader("Final-Recipient", null);
+		if (sTxEmail.indexOf(';')>0)
+		  sTxEmail = Gadgets.split2(sTxEmail,';')[1];
+	    sSQL+=DB.tx_email+"='"+sTxEmail+"'";
+	    oUpdt.setString(4, sTxEmail);
+    	if (DebugFile.trace) {
+          DebugFile.writeln("PreparedStatement.executeUpdate("+sSQL+")");
+    	}        
+        iAffected = oUpdt.executeUpdate();
+		oUpdt.close();
+      } // fi
+	} // fi
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End acknowledgeNotification() : "+String.valueOf(iAffected));
+    }
+    return iAffected;
+  } // acknowledgeNotification
+
+  // ---------------------------------------------------------------------------
+
 }
