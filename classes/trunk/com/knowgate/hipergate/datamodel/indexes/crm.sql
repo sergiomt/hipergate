@@ -27,6 +27,8 @@ CREATE INDEX i7_oportunities ON k_oportunities(gu_campaign);
 
 CREATE INDEX i1_oportunities_changelog ON k_oportunities_changelog(gu_oportunity);
 
+CREATE INDEX i1_member_address ON k_member_address(tx_email);
+
 CREATE INDEX i1_contacts_recent ON k_contacts_recent(gu_user);
 CREATE INDEX i2_contacts_recent ON k_contacts_recent(gu_workarea);
 
