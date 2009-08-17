@@ -19,7 +19,7 @@
     
     oConn.setAutoCommit(true);
     
-    oStmt = oConn.prepareStatement("INSERT INTO k_job_atoms_tracking (gu_job,pg_atom,gu_company,gu_contact,ip_addr,tx_email) VALUES (?,?,?,?,?,?)");
+    oStmt = oConn.prepareStatement("INSERT INTO k_job_atoms_tracking (gu_job,pg_atom,gu_company,gu_contact,ip_addr,tx_email,user_agent) VALUES (?,?,?,?,?,?,?)");
     oStmt.setString(1, sGuJob);
     oStmt.setInt(2, iPgAtm);
     if (null==sGuCm)
@@ -38,6 +38,7 @@
       oStmt.setNull(6, Types.VARCHAR);
     else
       oStmt.setString(6, sEmail);
+    oStmt.setString(7, Gadgets.left(request.getHeader("User-Agent"),254));
     oStmt.executeUpdate();
 	  oStmt.close();
 	  oStmt=null;
