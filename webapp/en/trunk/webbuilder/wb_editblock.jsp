@@ -1,6 +1,5 @@
 ﻿<%@ page import="org.w3c.dom.*,com.knowgate.misc.*,java.io.File,java.lang.*,java.util.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.misc.Environment,com.knowgate.dataxslt.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.db.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
-<%!
+<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%!
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -293,11 +292,11 @@
 <html lang="<%=sLanguage%>">
 <head>
   <TITLE>hipergate :: Edit block</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT> 
-  <SCRIPT LANGUAGE="Javascript1.2">
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT> 
+  <SCRIPT LANGUAGE="Javascript" TYPE="text/javascript">
     <!-- // load htmlarea
     var htmlAreaEnabled = false;
     _editor_url = "../javascript/"; // URL to htmlarea files
@@ -316,7 +315,7 @@
     }
     // -->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/htmlarea_config.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/htmlarea_config.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
      <!--
       
@@ -515,7 +514,7 @@
         sCurId = (String)(vParagraphs.elementAt(i));
       else
       {
-        Paragraph curParagraph = (Paragraph)oBlock.paragraphs().elementAt(iPosition);
+        Paragraph curParagraph = (Paragraph) oBlock.paragraphs().elementAt(iPosition);
         sCurId = curParagraph.id();
         try { sCurUrl = curParagraph.url(); } catch (NullPointerException e) { sCurUrl = ""; }
         try { sCurText = curParagraph.text(); } catch (NullPointerException e) { sCurText = ""; }
