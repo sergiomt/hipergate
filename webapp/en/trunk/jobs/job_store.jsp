@@ -1,8 +1,5 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.Statement,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.debug.DebugFile" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
-<%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %>
-<%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %>
-<%
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.Statement,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.scheduler.Job,com.knowgate.crm.DistributionList,com.knowgate.debug.DebugFile" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -47,7 +44,8 @@
   String id_command = request.getParameter("id_command");
   String tx_parameters = request.getParameter("tx_parameters");
   String id_status = request.getParameter("id_status");
-  String sSQL = new String("");
+  String sSQL = "";
+  final boolean bAsap = request.getParameter("dt_execution").equals("ASAP");
   
   JDCConnection oConn = null;  
   
@@ -64,11 +62,11 @@
     sSQL += "'"+id_command+"',";
     sSQL += "'"+tx_parameters+"',";
     sSQL += id_status+",";
-    if (request.getParameter("dt_execution").equals("ASAP"))
+    if (bAsap)
       sSQL += "NULL";
     else if (oConn.getDataBaseProduct()==JDCConnection.DBMS_POSTGRESQL)
       sSQL += "timestamp '" + request.getParameter("dt_execution") + " 00:00:00' ";
-    else if (oConn.getDataBaseProduct()==JDCConnection.DBMS_POSTGRESQL)
+    else if (oConn.getDataBaseProduct()==JDCConnection.DBMS_MYSQL)
       sSQL += "TIMESTAMP ('" + request.getParameter("dt_execution") + " 00:00:00') ";
     else if (oConn.getDataBaseProduct()==JDCConnection.DBMS_ORACLE)
       sSQL += "TO_DATE('" + request.getParameter("dt_execution") + " 00:00','YYYY-MM-DD HH24:MI') ";
@@ -76,12 +74,23 @@
       sSQL += "{ d '" + request.getParameter("dt_execution") + "'} ";
     sSQL += ")";
     
+    oConn.setAutoCommit (false);
+
     Statement oStmt = oConn.createStatement();
     
     if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(" + sSQL + ")");
       
     oStmt.executeUpdate(sSQL);
     oStmt.close();
+    
+    int iGuList = tx_parameters.indexOf("gu_list:");
+    if (iGuList>0) {
+      String sGuList = tx_parameters.substring(iGuList+8,iGuList+40);
+      DistributionList oRecipients = new DistributionList (oConn, sGuList);
+      String[] aRecipients = Gadgets.split(oRecipients.activeMembers(oConn),',');
+      Job oEmailSender = Job.instantiate(oConn, gu_job, GlobalDBBind.getProperties());
+      oEmailSender.insertRecipients(oConn, aRecipients, "to", "html", Job.STATUS_PENDING);
+    } // fi
     
     oConn.commit();
     oConn.close("jobstore");
@@ -100,8 +109,12 @@
   
   oConn = null;
   
-  // [~//Refrescar el padre y cerrar la ventana~]
-  out.write ("<HTML><HEAD><TITLE>Wait...</TITLE><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>window.opener.location='../jobs/job_list.jsp?orderby=5&selected=5&subselected=2&id_command=" + id_command + "&list_title=:%20Envios'; self.close();<" + "/SCRIPT" +"></HEAD></HTML>");
+  out.write ("<HTML><HEAD><TITLE>Wait...</TITLE><"+"SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript' SRC='../javascript/xmlhttprequest.js'><"+"/SCRIPT"+">");
+  out.write ("<" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>");
+  if (bAsap) {
+    out.write ("var sched_info = httpRequestXML('../servlet/HttpSchedulerServlet?action=info'); var sched_stat = getElementText(sched_info.getElementsByTagName('scheduler')[0],'status'); ");
+    out.write ("if (sched_stat=='stop' || sched_stat=='stopped') httpRequestXML('../servlet/HttpSchedulerServlet?action=start'); ");
+  }
+  out.write ("window.opener.location='../jobs/job_list.jsp?orderby=5&selected=5&subselected=2&id_command=" + id_command + "&list_title=:%20[~Envios~]'; self.close();<" + "/SCRIPT" +"></HEAD></HTML>");
 
-%>
-<%@ include file="../methods/page_epilog.jspf" %>
+%><%@ include file="../methods/page_epilog.jspf" %>

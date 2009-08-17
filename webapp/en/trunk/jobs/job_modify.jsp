@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.misc.Environment,com.knowgate.scheduler.Job,com.knowgate.dataxslt.db.PageSetDB,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.misc.Environment,com.knowgate.scheduler.Job,com.knowgate.dataxslt.db.PageSetDB,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -41,7 +41,12 @@
   String sLanguage = getNavigatorLanguage(request);
   
   String gu_job = request.getParameter("gu_job");
-    
+  String gu_workarea = getCookie(request,"workarea","");
+
+  String sStorage = Environment.getProfilePath(GlobalDBBind.getProfileName(), "storage");
+  String sJobLog = sStorage + "jobs" + File.separator + gu_workarea + File.separator + gu_job + ".txt";
+  File oJobLog = new File(sJobLog);
+      
   boolean bStmt = false;
   boolean bRSet = false;
   DBSubset oJobCmd = null;
@@ -143,7 +148,7 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
       function showCalendar(ctrl) {       
         var dtnw = new Date();
@@ -159,7 +164,9 @@
   <TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" WIDTH="1" HEIGHT="4" BORDER="0"></TD></TR>
     <TR><TD CLASS="striptitle"><FONT CLASS="title1">Edit Task</FONT></TD></TR>
-  </TABLE>  
+  </TABLE>
+  <BR/>
+  <% out.flush(); %>
   <CENTER>
   <FORM METHOD="post">
     <TABLE CLASS="formback">
@@ -203,15 +210,23 @@
             <TD ALIGN="right" WIDTH="160"><FONT CLASS="formplain">Recipients List:</FONT></TD>
             <TD ALIGN="left" WIDTH="390"><FONT CLASS="textplain"><%=oLst.getStringNull(DB.de_list,"")%></FONT></TD>
           </TR>
+<% }
+   if (oJob.getString(DB.id_command).equals("SEND") || oJob.getString(DB.id_command).equals("MAIL")) { %>
+          <TR>
+            <TD ALIGN="right" WIDTH="160"><IMG SRC="../images/images/jobs/statistics16.gif" WIDTH="24" HEIGHT="16" BORDER="0" ALT="Statistics"></TD>
+            <TD ALIGN="left" WIDTH="390"><A HREF="job_followup_stats.jsp?gu_job=<%=gu_job%>" TARGET="_top" CLASS="linkplain">[~Ver estadísticas~]</A></TD>
+          </TR>
 <% } %>
           <TR>
             <TD ALIGN="right" WIDTH="160"><IMG SRC="../images/images/jobs/atoms16.gif" WIDTH="24" HEIGHT="16" BORDER="0" ALT="Atoms"></TD>
             <TD ALIGN="left" WIDTH="390"><A HREF="job_viewatoms.jsp?gu_job=<%=gu_job%>" TARGET="_top" CLASS="linkplain">[~Ver átomos~]</A></TD>
           </TR>
+<% if (oJobLog.exists()) { %>
           <TR>
-            <TD ALIGN="right" WIDTH="160"><IMG SRC="../images/images/jobs/logfile16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Log File"></TD>
+            <TD ALIGN="right" WIDTH="160"><IMG SRC="../images/images/jobs/logfile16.gif" WIDTH="16" HEIGHT="16" HSPACE="4" BORDER="0" ALT="Log File"></TD>
             <TD ALIGN="left" WIDTH="390"><A HREF="job_viewlog.jsp?gu_job=<%=gu_job%>" TARGET="_blank" CLASS="linkplain">View log file</A></TD>
           </TR>
+<% } %>
           <TR>
             <TD COLSPAN="2"></TD>
           </TR>

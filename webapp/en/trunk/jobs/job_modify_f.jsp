@@ -1,7 +1,9 @@
-<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %><%@ include file="../methods/nullif.jspf" %><%
+<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %><%
+
   response.addHeader ("Pragma", "no-cache");
   response.addHeader ("cache-control", "no-store");
   response.setIntHeader("Expires", 0);
+
 %><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//EN" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">
 <!-- +--------------------------------+ -->
 <!-- | Edición de propiedades del Job | -->
@@ -11,11 +13,10 @@
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
     <TITLE>hipergate :: Edit Task</TITLE>
-    <SCRIPT LANGUAGE="javascript" SRC="../javascript/getparam.js"></SCRIPT>
   </HEAD>
-  <FRAMESET NAME="jobmodifyframe" ROWS="*,100px" BORDER="0" FRAMEBORDER="0">
+  <FRAMESET NAME="jobmodifyframe" ROWS="280px,70px" BORDER="0" FRAMEBORDER="0">
     <FRAME NAME="jobmodify" FRAMEBORDER="no" MARGINWIDTH="16" MARGINHEIGHT="0" NORESIZE SRC="job_modify.jsp?gu_job=<%=request.getParameter("gu_job")%>">
-    <FRAME NAME="jobprogress" FRAMEBORDER="no" MARGINWIDTH="16 MARGINHEIGHT="0" NORESIZE SRC="job_progress.jsp?gu_job=<%=request.getParameter("gu_job")%>">
+    <FRAME NAME="jobprogress" FRAMEBORDER="no" MARGINWIDTH="16" MARGINHEIGHT="0" NORESIZE SRC="job_progress.jsp?gu_job=<%=request.getParameter("gu_job")%>">
   </FRAMESET>
   <NOFRAMES>
     <BODY>

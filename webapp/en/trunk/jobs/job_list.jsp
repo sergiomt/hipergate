@@ -117,8 +117,8 @@
     
   try {
       oInstances = new DBSubset (DB.v_jobs, 
-      				 DB.gu_job + "," + DB.gu_job_group + "," + DB.tx_command + "," + DB.tr_ + sLanguage + "," + DB.dt_execution + "," + DB.dt_created + "," + DB.id_command + "," + DB.tx_parameters + "," + DB.id_status + "," + DB.tl_job,
-      				 DB.gu_workarea+ "='" + gu_workarea + "' " + sFilter + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);      				 
+      				 DB.gu_job + "," + DB.gu_job_group + "," + DB.id_command + "," + DB.tr_ + sLanguage + "," + DB.dt_execution + "," + DB.dt_created + "," + DB.id_command + "," + DB.tx_parameters + "," + DB.id_status + "," + DB.tl_job,
+      				 DB.gu_workarea+ "='" + gu_workarea + "' " + sFilter + (iOrderBy>0 ? " ORDER BY " + sOrderBy + (iOrderBy==5 || iOrderBy==6 ? " DESC" : "") : ""), iMaxRows);      				 
       oInstances.setMaxRows(iMaxRows);
       iInstanceCount = oInstances.load (oConn, iSkip);
     oConn.close("joblisting"); 
@@ -184,13 +184,8 @@
 	   sFld = new String("4,6");
 	  else 
 	   sFld = new String(fld);
-	  document.location = "job_list.jsp?id_domain=<%=id_domain%>&skip=0&orderby=" + sFld + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + (getURLParam("id_command")!=null ? "&id_command="+getURLParam("id_command") : "") + "&list_title=:%20Envios";
+	  document.location = "job_list.jsp?id_domain=<%=id_domain%>&skip=0&orderby=" + sFld + "&viewonly=" + getCheckedValue(document.forms[0].viewonly) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + (getURLParam("id_command")!=null ? "&id_command="+getURLParam("id_command") : "") + "&list_title=:%20Envios";
 	}
-        // ----------------------------------------------------
-        	
-	function createInstance() {	  
-	  self.open ("job_edit.jsp?command=MAIL&id_domain=<%=id_domain%>", "editjob", "directories=no,toolbar=no,menubar=no,top=" + (screen.heigt-460)/2 + ",left=" + (screen.heigt-500)/2 + ",width=500,height=460");	  
-	} // createInstance()
 
         // ----------------------------------------------------
 	
@@ -264,7 +259,7 @@
         // ----------------------------------------------------
         
         function viewJob(id) {
-          window.open("job_modify_f.jsp?gu_job=" + id, "jobmodify","width=600,height=350,menubar=no,toolbar=no,directories=no");          
+          window.open("job_modify_f.jsp?gu_job=" + id, "modifyjob_"+ id, "width=600,height=350,menubar=no,toolbar=no,directories=no");          
         }
 
         // ----------------------------------------------------
@@ -374,18 +369,18 @@
       </TR>
       <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       <TR>
-        <TD><!--&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New">--></TD>
-        <TD VALIGN="middle"><!--<A HREF="#" onclick="createInstance()" CLASS="linkplain">New</A>--></TD>
+        <TD></TD>
+        <TD VALIGN="middle"></TD>
         <TD><IMG SRC="../images/images/jobs/cancel.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Cancel"></TD>
         <TD><A HREF="javascript:cancelJobs()" CLASS="linkplain">Cancel</A></TD>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/jobs/sandclock.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Reatrasar ejecución~]"></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/jobs/sandclock.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Retrasar ejecución~]"></TD>
         <TD><A HREF="javascript:void(0)" onclick="delayJobs()" CLASS="linkplain">Chage execution date</A></TD>
         <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/refresh.gif" HEIGHT="16" BORDER="0" ALT="Refresh"></TD>
         <TD><A HREF="#" onclick="window.document.location.reload()" CLASS="linkplain">Refresh</A></TD>
       </TR>
       <TR>
         <TD COLSPAN="8">
-          <FONT CLASS="textplain"><B>View Tasks</B>&nbsp;<INPUT TYPE="radio" NAME="viewonly" onclick="viewOnly(0)">Pending&nbsp;&nbsp;<INPUT TYPE="radio" NAME="viewonly" onclick="viewOnly(1)">finished/cancelled&nbsp;&nbsp;<INPUT TYPE="radio" NAME="viewonly" onclick="viewOnly(2)">all</FONT>
+          <FONT CLASS="textplain"><B>View Tasks</B>&nbsp;<INPUT TYPE="radio" NAME="viewonly" onclick="viewOnly(0)" VALUE="0">Pending&nbsp;&nbsp;<INPUT TYPE="radio" NAME="viewonly" onclick="viewOnly(1)" VALUE="1">finished/cancelled&nbsp;&nbsp;<INPUT TYPE="radio" NAME="viewonly" onclick="viewOnly(2)">all</FONT>
         </TD>
       </TR>
       <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
@@ -393,14 +388,12 @@
       <TABLE CELLSPACING="1" CELLPADDING="0">
         <TR>
           <TD COLSPAN="5" ALIGN="left">
-<%
-    	  // [~//Pintar los enlaces de siguiente y anterior~]
-    
-          if (iSkip>0) // [~//Si iSkip>0 entonces hay registros anteriores~]
-            out.write("            <A HREF=\"job_list.jsp?list_title=:Envios&id_domain=" + id_domain + (id_command!=null ? "&id_command="+id_command : "") + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&orderby=" + sOrderBy + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
+<%    
+          if (iSkip>0)
+            out.write("            <A HREF=\"job_list.jsp?list_title=:[~Envios~]&id_domain=" + id_domain + (id_command!=null ? "&id_command="+id_command : "") + "&viewonly="+String.valueOf(iShow)+"&skip=" + String.valueOf(iSkip-iMaxRows) + "&orderby=" + sOrderBy + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
     
           if (!oInstances.eof())
-            out.write("            <A HREF=\"job_list.jsp?list_title=:Envios&id_domain=" + id_domain + (id_command!=null ? "&id_command="+id_command : "") + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&orderby=" + sOrderBy + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
+            out.write("            <A HREF=\"job_list.jsp?list_title=:[~Envios~]&id_domain=" + id_domain + (id_command!=null ? "&id_command="+id_command : "") + "&viewonly="+String.valueOf(iShow)+"&skip=" + String.valueOf(iSkip+iMaxRows) + "&orderby=" + sOrderBy + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
 %>
           </TD>
         </TR>
@@ -418,7 +411,7 @@
 	  sStrip = String.valueOf((i%2)+1);
 %>            
             <TR HEIGHT="14">
-              <TD VALIGN="CENTER" WIDTH="320" CLASS="strip<% out.write(sStrip); %>"><% out.write("<A HREF=\"#\" CLASS=\"linknodecor\" oncontextmenu=\"return false;\" onclick=\"viewJob('" + oInstances.getString(0,i) + "')\" TITLE=\"View details\"><B>" + oInstances.getString(9,i)); %></TD>
+              <TD VALIGN="CENTER" WIDTH="320" CLASS="strip<% out.write(sStrip); %>"><% out.write("<A HREF=\"#\" CLASS=\"linknodecor\" oncontextmenu=\"return false;\" onclick=\"viewJob('" + oInstances.getString(0,i) + "')\" TITLE=\"View details\"><B>" + oInstances.getString(9,i)); %></B></TD>
               <TD VALIGN="CENTER" WIDTH="100" CLASS="strip<% out.write(sStrip); %>">&nbsp;<%=oInstances.getStringNull(3,i,"")%></TD>
               <TD ALIGN="center" VALIGN="CENTER" CLASS="strip<% out.write(sStrip); %>">&nbsp;<%=Gadgets.split(oInstances.getStringNull(5,i,"")," ")[0]%></TD>
               <TD VALIGN="CENTER" CLASS="strip<% out.write(sStrip); %>">&nbsp;<%=oInstances.getStringNull(4,i,"").equals("")?"As soon as possible":Gadgets.split(oInstances.getString(4,i)," ")[0]%></TD>

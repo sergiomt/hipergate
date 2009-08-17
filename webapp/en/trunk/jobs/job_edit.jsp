@@ -141,6 +141,8 @@
           frm.action = "job_store.jsp";
     
     	frm.tx_parameters.value += ",bo_attachimages:" + (frm.attachimages[0].checked ? "1" : "0");
+
+    	frm.tx_parameters.value += ",bo_webbeacon:" + (frm.webbeacon.checked ? "1" : "0");
     	
         return true;
       } // validate;
@@ -164,29 +166,29 @@
     <INPUT TYPE="hidden" NAME="tx_parameters" VALUE="<% out.write(request.getParameter("parameters")); %>">
     <INPUT TYPE="hidden" NAME="id_status" VALUE="<% out.write(String.valueOf(Job.STATUS_PENDING)); %>">
     <INPUT TYPE="hidden" NAME="tx_job" VALUE="<% out.write(oJobs.getString(0,0)); %>">
-    
+    <BR/>
     <INPUT TYPE="hidden" NAME="doctype" VALUE="newsletter">
     <TABLE CLASS="formback">
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Action:</FONT></TD>
-            <TD class="formplain" ALIGN="left" WIDTH="500"><% out.write(oJobs.getString(0,0)); %></TD>
+            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">Action:</FONT></TD>
+            <TD class="formplain" ALIGN="left" WIDTH="480"><% out.write(oJobs.getString(0,0)); %></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Description:</FONT></TD>
-            <TD class="formplain" ALIGN="left" WIDTH="500"><INPUT TYPE="text" NAME="tl_job"  MAXLENGTH="100" SIZE="70" VALUE="<% out.write(tl_job); %>"></TD>
+            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">Description:</FONT></TD>
+            <TD class="formplain" ALIGN="left" WIDTH="480"><INPUT TYPE="text" NAME="tl_job"  MAXLENGTH="100" SIZE="70" VALUE="<% out.write(tl_job); %>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Date:</FONT></TD>
-            <TD ALIGN="left" WIDTH="500">
+            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Date:</FONT></TD>
+            <TD ALIGN="left" WIDTH="480">
               <INPUT TYPE="text" NAME="dt_execution" MAXLENGTH="20" SIZE="20" VALUE="As soon as possible">
               <A HREF="javascript:showCalendar('dt_execution')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
             </TD>
           </TR>          
           <TR>
-            <TD VALIGN="top" ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Images</FONT></TD>
-            <TD ALIGN="left" WIDTH="500">
+            <TD VALIGN="top" ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Images</FONT></TD>
+            <TD ALIGN="left" WIDTH="480">
               <INPUT TYPE="radio" NAME="attachimages" CHECKED><FONT CLASS="formplain">&nbsp;images will be attached with message.</FONT>
               <BR>
               <FONT CLASS="textsmall"><I>with this option messages will take more time and bandwith to be send but will display faster on the recipient</I></FONT>
@@ -196,6 +198,12 @@
               <FONT CLASS="textsmall"><I>with this option, messages will be sent faster but they will take longer to display at recipient</I></FONT>
             </TD>
           </TR>
+          <TR>
+            <TD ALIGN="right" WIDTH="110" CLASS="formplain">[~Web Beacon:~]</TD>
+            <TD ALIGN="left" WIDTH="480" CLASS="formplain">
+              <INPUT TYPE="checkbox" VALUE="1" NAME="webbeacon" CHECKED="checked">&nbsp;[~A&ntilde;adir una im&aacute;gen oculta para trazar los correos abiertos~]
+            </TD>
+          </TR>          
           <TR>
             <TD COLSPAN="2"></TD>
           </TR>
