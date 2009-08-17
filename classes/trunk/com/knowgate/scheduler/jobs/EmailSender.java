@@ -34,6 +34,7 @@ package com.knowgate.scheduler.jobs;
 
 import java.lang.ref.SoftReference;
 
+import java.util.Vector;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -65,9 +66,14 @@ import javax.mail.internet.MimeMultipart;
 
 import org.htmlparser.Parser;
 import org.htmlparser.Node;
+import org.htmlparser.Attribute;
 import org.htmlparser.util.NodeIterator;
 import org.htmlparser.util.ParserException;
+import org.htmlparser.nodes.TagNode;
 import org.htmlparser.tags.ImageTag;
+import org.htmlparser.tags.MetaTag;
+import org.htmlparser.tags.CompositeTag;
+
 
 import org.apache.oro.text.regex.*;
 
@@ -76,6 +82,7 @@ import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataxslt.FastStreamReplacer;
 import com.knowgate.dfs.FileSystem;
+import com.knowgate.misc.Gadgets;
 
 import com.knowgate.scheduler.Atom;
 import com.knowgate.scheduler.Job;
@@ -85,7 +92,7 @@ import com.knowgate.scheduler.Job;
  * <p>Add database fields to a document template and send it to a mail recipient</p>
  * <p>Mails are send using Sun JavaMail</p>
  * @author Sergio Montoro Ten
- * @version 1.0
+ * @version 5.0
  */
 
 public class EmailSender extends Job {
@@ -101,7 +108,7 @@ public class EmailSender extends Job {
   // This is a soft reference to a String holding the base document template
   // if virtual memory runs low the garbage collector can discard the soft
   // reference that would be reloaded from disk later upon the next atom processing
-  private SoftReference oFileStr;
+  private SoftReference<String> oFileStr;
 
   // A reference to the replacer class witch maps tags of the form {#Section.Field}
   // to their corresponding database fields.
@@ -113,11 +120,14 @@ public class EmailSender extends Job {
 
   // Images repeated at HTML document are only attached once and referenced multiple times
   // This hashmap keeps a record of the file names of images that have been already attached.
-  HashMap oDocumentImages;
+  HashMap<String,String> oDocumentImages;
 
   // Because the HTML may be loaded once and then passed throught FastStreamReplacer
   // and be send multiple times, a Soft Reference to a String holding the HTML is kept.
-  private SoftReference oHTMLStr;
+  private SoftReference<StringBufferInputStream> oHTMLStr;
+
+  // FileSystem object shared among all atoms
+  private FileSystem oFS;
 
   // ---------------------------------------------------------------------------
 
@@ -125,8 +135,9 @@ public class EmailSender extends Job {
     bHasReplacements = true;
     oFileStr = null;
     oHTMLStr = null;
+    oFS = new FileSystem();
     oReplacer = new FastStreamReplacer();
-    oDocumentImages = new HashMap();
+    oDocumentImages = new HashMap<String,String>();
     oMailSession = null;
     oMailTransport = null;
   }
@@ -182,6 +193,146 @@ public class EmailSender extends Job {
 
   // ---------------------------------------------------------------------------
 
+  private String parseNode(Node oNode, PatternCompiler oCompiler, PatternMatcher oMatcher)
+  	throws FileNotFoundException, IOException {
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin EmailSender.parseNode(" + oNode.getClass().getName() + ")");
+      DebugFile.incIdent();
+    }
+
+	StringBuffer oBuffer = new StringBuffer();
+    Pattern oPattern;
+    String sTag, sCid;
+    int iSlash;
+
+    if (oNode instanceof ImageTag) {
+      ImageTag oImgNode = (ImageTag) oNode;
+      String sSrc = oImgNode.extractImageLocn();
+
+      try {
+        oPattern = oCompiler.compile(sSrc);
+      } catch (MalformedPatternException neverthrown) {
+        if (DebugFile.trace) DebugFile.writeln("MalformedPatternException "+sSrc);
+        oPattern=null;
+      }
+
+      iSlash = sSrc.lastIndexOf('/');
+      if (iSlash>=0) {
+        while (sSrc.charAt(iSlash)=='/') { if (++iSlash==sSrc.length()) break; }
+        sCid = sSrc.substring(iSlash);
+      } else {
+        sCid = sSrc;
+      } // fi 
+	  
+      if (!oDocumentImages.containsKey(sCid)) {
+
+ 	    if (DebugFile.trace) DebugFile.writeln("HashMap.put(" + sSrc + "," + sCid + ")");
+
+        oDocumentImages.put(sCid, sSrc);
+      } // fi (oDocumentImages.containsKey(sCid))
+
+	  sTag = oImgNode.toHtml(true);
+
+	  if (DebugFile.trace) DebugFile.writeln("Util.substitute([Perl5Matcher], "+oPattern.getPattern()+", new Perl5Substitution(cid:"+oDocumentImages.get(sCid)+", Perl5Substitution.INTERPOLATE_ALL)"+", "+sTag+ ", Util.SUBSTITUTE_ALL)");
+
+	  oBuffer.append(Util.substitute(oMatcher, oPattern,
+	                                 new Perl5Substitution("cid:"+sCid,
+                                                           Perl5Substitution.INTERPOLATE_ALL),
+                                     sTag, Util.SUBSTITUTE_ALL));
+
+    } else if (oNode instanceof TagNode && oNode.toHtml().toLowerCase().startsWith("<link")) {
+
+      TagNode oLnkNode = (TagNode) oNode;
+      String sSrc = oLnkNode.getAttribute("href");
+	  String sType = oLnkNode.getAttribute("type");
+	  if (sType==null) sType="text/css";
+	  
+	  if (sType.equalsIgnoreCase("text/css")) {
+
+	    oBuffer.append("<style type=\"text/css\">\n<!--\n");
+	    try {
+	      oBuffer.append(oFS.readfile(sSrc));
+	    } catch (com.enterprisedt.net.ftp.FTPException ftpe) {
+	      throw new IOException(sSrc, ftpe);
+	    }
+	    oBuffer.append("\n-->\n</style>\n");
+
+	  } else {
+
+        try {
+          oPattern = oCompiler.compile(sSrc);
+        } catch (MalformedPatternException neverthrown) {
+          if (DebugFile.trace) DebugFile.writeln("MalformedPatternException "+sSrc);
+          oPattern=null;
+        }
+
+        iSlash = sSrc.lastIndexOf('/');
+        if (iSlash>=0) {
+          while (sSrc.charAt(iSlash)=='/') { if (++iSlash==sSrc.length()) break; }
+          sCid = sSrc.substring(iSlash);
+        } else {
+          sCid = sSrc;
+        } // fi 
+
+        if (!oDocumentImages.containsKey(sCid)) {
+
+ 	      if (DebugFile.trace) DebugFile.writeln("HashMap.put(" + sSrc + "," + sCid + ")");
+
+          oDocumentImages.put(sCid, sSrc);
+        } // fi (oDocumentImages.containsKey(sCid))
+
+	    sTag = oLnkNode.toHtml(true);
+
+	    if (DebugFile.trace) DebugFile.writeln("Util.substitute([Perl5Matcher], "+oPattern.getPattern()+", new Perl5Substitution(cid:"+oDocumentImages.get(sCid)+", Perl5Substitution.INTERPOLATE_ALL)"+", "+sTag+ ", Util.SUBSTITUTE_ALL)");
+
+	    oBuffer.append(Util.substitute(oMatcher, oPattern,
+	                                   new Perl5Substitution("cid:"+sCid,
+                                                             Perl5Substitution.INTERPOLATE_ALL),
+                                       sTag, Util.SUBSTITUTE_ALL));
+	  }
+    } else if (oNode instanceof CompositeTag) {
+
+      try {
+      	CompositeTag oCTag = (CompositeTag) oNode;
+        oBuffer.append("<");
+        Vector oAttrs = oCTag.getAttributesEx();
+        int nAttrs = oAttrs.size();
+        for (int a=0; a<nAttrs; a++) {
+          Attribute oAttr = (Attribute) oAttrs.get(a);
+          oAttr.toString(oBuffer);
+        }
+        oBuffer.append(">");
+        for (NodeIterator i = oNode.getChildren().elements(); i.hasMoreNodes(); ) {
+          Node oChildNode = i.nextNode();
+          oBuffer.append(parseNode(oChildNode, oCompiler, oMatcher));
+        } // next
+        oBuffer.append(oCTag.getEndTag().toTagHtml());
+        
+      } catch (ParserException xcpt) {
+        if (DebugFile.trace) DebugFile.writeln("ParserException "+xcpt.getMessage());      
+      }
+
+    } else if (oNode instanceof MetaTag) {
+
+	  // Ignore meta tags in e-mails
+
+    } else {
+
+      oBuffer.append(oNode.toHtml(true));
+
+    }
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End EmailSender.parseNode()");
+    }
+
+    return oBuffer.toString();
+  } // parseNode
+
+  // ---------------------------------------------------------------------------
+
   private String attachFiles(String sHTMLPath) throws FileNotFoundException,IOException {
     String sHtml = null;
 
@@ -192,11 +343,12 @@ public class EmailSender extends Job {
     }
 
     try {
-      FileSystem oFS = new FileSystem();
       sHtml = oFS.readfilestr(sHTMLPath, null);
-      oFS = null;
     }
     catch (com.enterprisedt.net.ftp.FTPException ftpe) {}
+
+	if (null==sHtml) throw new FileNotFoundException(sHTMLPath);
+	if (sHtml.length()==0) throw new FileNotFoundException(sHTMLPath);
 
     PatternMatcher oMatcher = new Perl5Matcher();
     PatternCompiler oCompiler = new Perl5Compiler();
@@ -207,43 +359,9 @@ public class EmailSender extends Job {
 
     try {
       for (NodeIterator i = parser.elements(); i.hasMoreNodes(); ) {
-        Node node = i.nextNode();
-
-        if (node instanceof ImageTag) {
-          ImageTag oImgNode = (ImageTag) node;
-          String sSrc = oImgNode.extractImageLocn();
-          String sTag = oImgNode.getText();
-
-          Pattern oPattern;
-
-          try {
-            oPattern = oCompiler.compile(sSrc);
-          } catch (MalformedPatternException neverthrown) { oPattern=null; }
-
-          if (!oDocumentImages.containsKey(sSrc)) {
-            int iSlash = sSrc.lastIndexOf('/');
-            String sCid;
-
-            if (iSlash>=0) {
-              while (sSrc.charAt(iSlash)=='/') { if (++iSlash==sSrc.length()) break; }
-              sCid = sSrc.substring(iSlash);
-            }
-            else
-              sCid = sSrc;
-
-            oDocumentImages.put(sSrc, sCid);
-          }
-
-          oRetVal.append(Util.substitute(oMatcher, oPattern,
-                         new Perl5Substitution("cid:"+oDocumentImages.get(sSrc),
-                                               Perl5Substitution.INTERPOLATE_ALL),
-                         sTag, Util.SUBSTITUTE_ALL));
-
-        }
-        else {
-          oRetVal.append(node.getText());
-        }
-      }
+        Node oNode = i.nextNode();
+		oRetVal.append(parseNode(oNode, oCompiler, oMatcher));
+      } // next
     }
     catch (ParserException pe) {
       if (DebugFile.trace) {
@@ -256,7 +374,7 @@ public class EmailSender extends Job {
 
     if (DebugFile.trace) {
       DebugFile.decIdent();
-      DebugFile.writeln("End EmailSender.attachFiles()");
+      DebugFile.writeln("End EmailSender.attachFiles() : " + oRetVal.toString().replace('\n',' '));
     }
 
     return oRetVal.toString();
@@ -301,7 +419,7 @@ public class EmailSender extends Job {
     String sPathHTML;                // Full Path to Document Template File
     char cBuffer[];                  // Internal Buffer for Document Template File Data
     StringBufferInputStream oInStrm; // Document Template File Data after replacing images src http: with cid:
-    Object oReplaced;                // Document Template File Data after FastStreamReplacer processing
+    String oReplaced;                // Document Template File Data after FastStreamReplacer processing
     final String Yes = "1";
 
     final String sSep = System.getProperty("file.separator"); // Alias for file.separator
@@ -309,6 +427,7 @@ public class EmailSender extends Job {
     if (DebugFile.trace) {
       DebugFile.writeln("Begin EMailSender.process([Job:" + getStringNull(DB.gu_job, "") + ", Atom:" + String.valueOf(oAtm.getInt(DB.pg_atom)) + "])");
       DebugFile.incIdent();
+      DebugFile.writeln("document has "+(bHasReplacements ? "" : " no ")+"replacements");
     }
 
     if (bHasReplacements) { // Initially the document is assumed to have tags to replace
@@ -342,14 +461,14 @@ public class EmailSender extends Job {
           if (null!=oHTMLStr.get())
             // Get substituted html source as a StringBufferInputStream suitable
             // for FastStreamReplacer replace() method.
-            oInStrm = new StringBufferInputStream((String) oHTMLStr.get());
+            oInStrm = oHTMLStr.get();
         }
         if (null==oInStrm)
           // If SoftReference was not found then
           // call html processor for <IMG> tag substitution
           oInStrm = new StringBufferInputStream(attachFiles(sPathHTML));
 
-        oHTMLStr = new SoftReference(oInStrm);
+        oHTMLStr = new SoftReference<StringBufferInputStream>(oInStrm);
 
         // Call FastStreamReplacer for {#Section.Field} tags
         oReplaced = oReplacer.replace(oInStrm, oAtm.getItemMap());
@@ -363,11 +482,13 @@ public class EmailSender extends Job {
         oReplaced = oReplacer.replace(sPathHTML, oAtm.getItemMap());
       }
 
+	  if (DebugFile.trace) DebugFile.writeln("document has "+String.valueOf(oReplacer.lastReplacements())+" replacements");
+
       // Count number of replacements done and update bHasReplacements flag accordingly
       bHasReplacements = (oReplacer.lastReplacements() > 0);
     }
 
-    else {
+    else { // !bHasReplacements
 
       oReplaced = null;
 
@@ -410,7 +531,7 @@ public class EmailSender extends Job {
         // *********************************************************
         // Assign SoftReference to File cached in-memory as a String
 
-        oFileStr = new SoftReference(oReplaced);
+        oFileStr = new SoftReference<String>(oReplaced);
 
       } // fi (oReplaced)
 
@@ -447,7 +568,14 @@ public class EmailSender extends Job {
 
     MimeMessage oMsg;
     InternetAddress oFrom, oTo;
+    MimeMultipart oAltParts = new MimeMultipart("alternative");
+    
+    // Set alternative plain/text part to avoid spam filters as much as possible
+    MimeBodyPart oMsgTextPart = new MimeBodyPart();
+	oMsgTextPart.setText("This message is HTML, but your e-mail client is not capable of rendering HTML messages", "UTF-8", "plain");
 
+    MimeBodyPart oMsgBodyPart = new MimeBodyPart();
+	
     try {
       if (null==getParameter("tx_sender"))
         oFrom = new InternetAddress(getParameter("tx_from"));
@@ -482,24 +610,33 @@ public class EmailSender extends Job {
     String sSrc = null, sCid = null;
 
     try {
-
+	  
+	  // Insert Web Beacon just before </BODY> tag
+	  if (Yes.equals(getParameter("bo_webbeacon"))) {
+	  	int iEndBody = Gadgets.indexOfIgnoreCase(oReplaced, "</body>", 0);
+	  	if (iEndBody>0) {
+	  	  oReplaced = oReplaced.substring(0, iEndBody)+"<img src=\""+Gadgets.chomp(getProperty("webserver"),'/')+"hipermail/web_beacon.jsp?gu_job="+getString(DB.gu_job)+"&pg_atom="+String.valueOf(oAtm.getInt(DB.pg_atom))+"&gu_company="+oAtm.getStringNull(DB.gu_company,"")+"&gu_contact="+oAtm.getStringNull(DB.gu_contact,"")+"&tx_email="+oAtm.getStringNull(DB.tx_email,"")+"\" width=\"1\" height=\"1\" border=\"0\" alt=\"\" />"+oReplaced.substring(iEndBody);	  	  	
+	  	} // fi </body>
+	  } // fi (bo_webbeacon)
+      
       // Images may be attached into message or be absolute http source references
       if (Yes.equals(getParameter("bo_attachimages"))) {
 
-        BodyPart oMsgBodyPart = new MimeBodyPart();
-        oMsgBodyPart.setContent(oReplaced, "text/html");
+        if (DebugFile.trace) DebugFile.writeln("BodyPart.setText("+oReplaced.replace('\n',' ')+",UTF-8,html)");
+
+        oMsgBodyPart.setText(oReplaced, "UTF-8", "html");
 
         // Create a related multi-part to combine the parts
-        MimeMultipart oMultiPart = new MimeMultipart("related");
-        oMultiPart.addBodyPart(oMsgBodyPart);
+        MimeMultipart oRelatedMultiPart = new MimeMultipart("related");
+        oRelatedMultiPart.addBodyPart(oMsgBodyPart);
 
-        Iterator oImgs = oDocumentImages.keySet().iterator();
+        Iterator<String> oImgs = oDocumentImages.keySet().iterator();
 
         while (oImgs.hasNext()) {
-          BodyPart oImgBodyPart = new MimeBodyPart();
+          MimeBodyPart oImgBodyPart = new MimeBodyPart();
 
-          sSrc = (String) oImgs.next();
-          sCid = (String) oDocumentImages.get(sSrc);
+          sCid = oImgs.next();
+          sSrc = oDocumentImages.get(sCid);
 
           if (sSrc.startsWith("www."))
             sSrc = "http://" + sSrc;
@@ -511,22 +648,39 @@ public class EmailSender extends Job {
             oImgBodyPart.setDataHandler(new DataHandler(new FileDataSource(sSrc)));
           }
 
-          oImgBodyPart.setHeader("Content-ID", sCid);
+          oImgBodyPart.setContentID(sCid);
+          oImgBodyPart.setDisposition(oImgBodyPart.INLINE);
+          oImgBodyPart.setFileName(sCid);
 
           // Add part to multi-part
-          oMultiPart.addBodyPart(oImgBodyPart);
+          oRelatedMultiPart.addBodyPart(oImgBodyPart);
         } // wend
 
-        if (DebugFile.trace) DebugFile.writeln("MimeMessage.setContent([MultiPart])");
+        MimeBodyPart oTextHtmlRelated = new MimeBodyPart();
+        oTextHtmlRelated.setContent(oRelatedMultiPart);
 
-        oMsg.setContent(oMultiPart);
+		oAltParts.addBodyPart(oMsgTextPart);
+		oAltParts.addBodyPart(oTextHtmlRelated);
+
+    	MimeMultipart oSentMsgParts = new MimeMultipart("mixed");
+ 		MimeBodyPart oMixedPart = new MimeBodyPart();
+        
+        oMixedPart.setContent(oAltParts);
+        oSentMsgParts.addBodyPart(oMixedPart);
+        
+        oMsg.setContent(oSentMsgParts);
       }
 
       else {
 
-        if (DebugFile.trace) DebugFile.writeln("MimeMessage.setContent([String], \"text/html\")");
+        if (DebugFile.trace) DebugFile.writeln("BodyPart.setText("+oReplaced.replace('\n',' ')+",UTF-8,html)");
 
-        oMsg.setContent(oReplaced, "text/html");
+		oMsgBodyPart.setText(oReplaced, "UTF-8", "html");
+
+		oAltParts.addBodyPart(oMsgTextPart);
+		oAltParts.addBodyPart(oMsgBodyPart);
+
+        oMsg.setContent(oAltParts);
 
       }
 
