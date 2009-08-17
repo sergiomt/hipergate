@@ -1,4 +1,5 @@
-﻿INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('VOID','DO NOTHING','com.knowgate.scheduler.events.DoNothing');
+﻿INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('SMS','SEND SMS PUSH TEXT MESSAGE','com.knowgate.scheduler.jobs.SmsSender');
+INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('VOID','DO NOTHING','com.knowgate.scheduler.events.DoNothing');
 INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('NTFY','NOTIFY BY E-MAIL','com.knowgate.scheduler.events.NotifyByMail');
 INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('SEND','SEND MIME MESSAGES BY SMTP','com.knowgate.scheduler.jobs.MimeSender');
 INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('MAIL','SEND MAIL TEMPLATE BY SMTP','com.knowgate.scheduler.jobs.EmailSender');
