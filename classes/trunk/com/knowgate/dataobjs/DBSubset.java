@@ -894,10 +894,10 @@ public final class DBSubset {
   // ----------------------------------------------------------
 
   /**
-   * <p>Find a value in a given column<p>
+   * <p>Find first match of a value in a given column<p>
    * Value is searched by brute force from the begining to the end of the column.<br>
    * Trying to find a <b>null</b> value is allowed.<br>
-   * Find is case sensitive.
+   * For strings, find is case sensitive.
    * @param iCol Column to be searched [0..getColumnCount()-1]
    * @param oVal Value searched
    * @return Row where seached value was found or -1 is value was not found.
@@ -3133,6 +3133,8 @@ public final class DBSubset {
         if (!isNull(iCol,r) || !isNull(iCol,r+1)) {
           if (!isNull(iCol,r) && isNull(iCol,r+1))
             bSwapFlag = swapRows(r,r+1);
+          else if (isNull(iCol,r) && !isNull(iCol,r+1))
+            bSwapFlag = true;
           else if (((Comparable) get(iCol, r)).compareTo(get(iCol, r+1))>0)
             bSwapFlag = swapRows(r,r+1);
         } // fi
@@ -3158,7 +3160,7 @@ public final class DBSubset {
     throws ArrayIndexOutOfBoundsException, ClassCastException {
 
     if (DebugFile.trace) {
-      DebugFile.writeln("Begin DBSubset.sortBy("+String.valueOf(iCol)+")");
+      DebugFile.writeln("Begin DBSubset.sortByDesc("+String.valueOf(iCol)+")");
       DebugFile.incIdent();
     }
 
@@ -3170,8 +3172,10 @@ public final class DBSubset {
       bSwapFlag = false;
       for (int r=0; r<iRows1; r++) {
         if (!isNull(iCol,r) || !isNull(iCol,r+1)) {
-          if (!isNull(iCol,r) && isNull(iCol,r+1))
+          if (isNull(iCol,r) && !isNull(iCol,r+1))
             bSwapFlag = swapRows(r,r+1);
+          else if (!isNull(iCol,r) && isNull(iCol,r+1))
+            bSwapFlag = true;
           else if (((Comparable) get(iCol, r)).compareTo(get(iCol, r+1))<0)
             bSwapFlag = swapRows(r,r+1);
         } // fi
@@ -3180,7 +3184,7 @@ public final class DBSubset {
 
     if (DebugFile.trace) {
       DebugFile.decIdent();
-      DebugFile.writeln("End DBSubset.sortBy("+String.valueOf(iCol)+")");
+      DebugFile.writeln("End DBSubset.sortByDesc("+String.valueOf(iCol)+")");
     }
   } // sortByDesc
 
