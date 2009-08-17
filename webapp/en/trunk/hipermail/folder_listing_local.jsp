@@ -43,6 +43,7 @@
   String sSkin = getCookie(request, "skin", "xp");
   
   String gu_folder = request.getParameter("gu_folder");
+  String nm_folder = null;
   String screen_width = request.getParameter("screen_width");
 
   int iScreenWidth;
@@ -71,24 +72,17 @@
   // **********************************************
 
   int iMailCount = 0;
-  String sOrderBy;
+  String sOrderBy = null;
   
   // **********************************************
   
-  if (request.getParameter("orderby")!=null)
-    sOrderBy = request.getParameter("orderby");
-  else
-    sOrderBy = "7 DESC";
-    
-  if (sOrderBy.equals("7")) sOrderBy += " DESC";
-  
   ACLUser oMe = new ACLUser();
   Category oFolder = new Category();
-  String sFolderName = "";
+  String sFolderLabel = "";
   JDCConnection oConn = null;
   DBSubset oMsgs = null;
   int iMsgs = 0;
-  String sOutBox = null, sDrafts = null, sSent = null, sSpam = null, sDeleted = null, sReceived = null;
+  String sOutBox = null, sDrafts = null, sSent = null, sSpam = null, sDeleted = null, sReceived = null, sReceipts = null;
   StringBuffer oFoldersBuffer = new StringBuffer();
 
   try {
@@ -104,28 +98,47 @@
       sSpam = oMe.getMailFolder(oConn, "spam");
       sDeleted = oMe.getMailFolder(oConn, "deleted");
       sReceived = oMe.getMailFolder(oConn, "received");
-    
+      sReceipts = oMe.getMailFolder(oConn, "receipts");
+
+      if (request.getParameter("orderby")!=null) {
+        sOrderBy = request.getParameter("orderby");
+      } else if (gu_folder.equals(sOutBox) || gu_folder.equals(sDrafts)) {
+        sOrderBy = "10";
+      } else if (gu_folder.equals(sSent)) {
+        sOrderBy = "8";
+      } else if (gu_folder.equals(sReceived) || gu_folder.equals(sReceipts)) {
+        sOrderBy = "7";
+      }
+      
       if (oFolder.load (oConn, new Object[]{gu_folder})) {
 
-        if (gu_folder.equals(sOutBox))
-          sFolderName = "Outbox";
-        else if (gu_folder.equals(sReceived))
-          sFolderName = "Received messages";
-        else if (gu_folder.equals(sDeleted))
-          sFolderName = "Deleted Messages";
-        else if (gu_folder.equals(sDrafts)) {
-          sFolderName = "Dratf";
+        if (gu_folder.equals(sOutBox)) {
+          sFolderLabel = "Outbox";
+					nm_folder = "outbox";
+        } else if (gu_folder.equals(sReceived)) {
+          sFolderLabel = "Received messages";
+					nm_folder = "received";
+        } else if (gu_folder.equals(sDeleted)) {
+          sFolderLabel = "Deleted Messages";
+					nm_folder = "deleted";
+        } else if (gu_folder.equals(sDrafts)) {
+          sFolderLabel = "Dratf";
+					nm_folder = "drafts";
+        } else if (gu_folder.equals(sSent)) {
+          sFolderLabel = "Sent Messages";
+					nm_folder = "sent";
+        } else if (gu_folder.equals(sSpam)) {
+          sFolderLabel = "Bulk Mail";
+					nm_folder = "spam";
+        } else if (gu_folder.equals(sReceipts)) {
+        	sFolderLabel = "[~Acuses de recibo~]";
+					nm_folder = "receipts";
+				} else {
+					nm_folder = oFolder.getStringNull(DB.nm_category, "unnamed");
+          sFolderLabel = oFolder.getLabel(oConn, sLanguage);
+          if (null==sFolderLabel) sFolderLabel = oFolder.getLabel(oConn, Gadgets.left(sLanguage,2));
+          if (null==sFolderLabel) sFolderLabel = nm_folder;
         }
-        else if (gu_folder.equals(sSent))
-          sFolderName = "Sent Messages";
-        else if (gu_folder.equals(sSpam))
-          sFolderName = "Bulk Mail";
-        else {
-          sFolderName = oFolder.getLabel(oConn, sLanguage);
-          if (null==sFolderName) sFolderName = oFolder.getLabel(oConn, "xx");
-          if (null==sFolderName) sFolderName = oFolder.getStringNull(DB.nm_category, "unnamed");
-        }
-        
       }
       else {
         throw new SQLException ("Mail Folder " + gu_folder + " not found");
@@ -200,7 +213,7 @@
 	        irows = arows.length;
 	        gdata = new Array(irows);
 	        for (var r=0; r<irows; r++) {
-		  gdata[r] = arows[r].split("\t");
+		        gdata[r] = arows[r].split("\t");
 	        }
 	      } else {
 	        irows = 0;
@@ -228,11 +241,11 @@
           if (cac) {
             hideLayer("prev");
             hideLayer("next");
-	    document.getElementById("rcvng").style.display="block";
-	    document.getElementById("rcimg").src="../images/images/hipermail/loading.gif";
+	          document.getElementById("rcvng").style.display="block";
+	          document.getElementById("rcimg").src="../images/images/hipermail/loading.gif";
             skip += scroll;
-	    cac.onreadystatechange = processCacheScan;
-            cac.open("GET", "folder_tsvfeed.jsp?gu_account=<%=oMacc.getString(DB.gu_account)%>&gu_folder=<%=gu_folder%>&skip="+String(skip)+"&maxrows=<%=String.valueOf(iMaxRows)%>", true);
+	          cac.onreadystatechange = processCacheScan;
+            cac.open("GET", "folder_tsvfeed.jsp?gu_account=<%=oMacc.getString(DB.gu_account)%>&gu_folder=<%=gu_folder%>&skip="+String(skip)+"&maxrows=<%=String.valueOf(iMaxRows)%><%=(sOrderBy==null ? "" : "&orderby="+sOrderBy)%>", true);
             cac.send(null);
           } // fi
       } // loadXMLData
@@ -327,7 +340,7 @@
 <%        if (oMacc.isNull(DB.incoming_server)) { %>
 	    alert ("There is no incoming server configured for this account");
 <%        } else { %>	    
-	    open ("msg_view.jsp?gu_account=<%=oMacc.getString(DB.gu_account)%>&nm_folder=inbox&id_msg="+escape(id)+"&nu_msg="+num, "editmail"+String(num));
+	    open ("msg_view.jsp?gu_account=<%=oMacc.getString(DB.gu_account)%>&nm_folder=<%=nm_folder%>&id_msg="+escape(id)+"&nu_msg="+num, "editmail"+String(num));
 <%        } %>	    	
 	  return false;
 	} // viewMessage
@@ -348,15 +361,22 @@
 
         // ----------------------------------------------------
 
-	function viewSource(guid) {
+	      function viewSource(guid) {
 	  
 <%        if (oMacc.isNull(DB.incoming_server)) { %>
-	    alert ("There is no incoming server configured for this account");
+	          alert ("There is no incoming server configured for this account");
 <%        } else { %>	    
-	  open ("msg_src.jsp?&gu_account=<%=oMacc.getString(DB.gu_account)%>&gu_folder=<%=gu_folder%>&gu_mimemsg="+guid, "viewmailsrc"+guid);
+	          open ("msg_src.jsp?&gu_account=<%=oMacc.getString(DB.gu_account)%>&gu_folder=<%=gu_folder%>&gu_mimemsg="+guid, "viewmailsrc"+guid);
 <%        } %>
-	  return false;
-	} // viewSource
+	      return false;
+	      } // viewSource
+
+        // ----------------------------------------------------
+
+	      function viewFollowUpStats(guid) {
+	  			document.location = "msg_followup_stats.jsp?gu_mimemsg="+guid;
+	  		  return true;
+				} // viewFollowUpStats
 
         // ----------------------------------------------------
 
@@ -415,7 +435,7 @@
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8">
     <FORM METHOD="post">
-      <TABLE><TR><TD WIDTH="98%" CLASS="striptitle"><FONT CLASS="title1"><%=sFolderName%></FONT></TD></TR></TABLE>
+      <TABLE><TR><TD WIDTH="98%" CLASS="striptitle"><FONT CLASS="title1"><%=sFolderLabel%></FONT></TD></TR></TABLE>
       <INPUT TYPE="hidden" NAME="screen_width" VALUE="<%=screen_width%>">
       <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
       <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
@@ -456,6 +476,7 @@
 	  <SELECT NAME="sel_target" CLASS="combomini"><OPTION VALUE=""></OPTION><% out.write(oFoldersBuffer.toString());%></SELECT>
 	</TD>
       </TR>
+      <!--
       <TR>
         <TD>&nbsp;&nbsp;<IMG SRC="../images/images/findglass.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Find on this folder"></TD>
         <TD COLSPAN="7" VALIGN="middle">
@@ -463,6 +484,7 @@
           &nbsp;&nbsp;<A HREF="#" onclick="findit(document.forms[0].tx_sought.value)" CLASS="linkplain">Find on this folder</A>
         </TD>
       </TR>
+      -->
       <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       <TR>
         <TD COLSPAN="9">
@@ -483,7 +505,7 @@
       <!-- End Top Menu -->
       <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
         <!--
-	  grid.setRowCount(0);
+	        grid.setRowCount(0);
           grid.setDataProperty("text", function(i,j){return gdata[i][j]});
           document.write(grid);
         //-->
@@ -499,6 +521,11 @@
         addMenuOption("Delete","deleteSingleMessage(jsMsgNum, jsMsgId, jsMsgGuid)",0);
         addMenuSeparator();
         addMenuOption("View Source","viewSource(jsMsgGuid)",0);
+<% if (gu_folder!=null) {
+     if (gu_folder.equals(sSent)) { %>
+        addMenuSeparator();
+        addMenuOption("[~Seguimiento~]","viewFollowUpStats(jsMsgGuid)",0);
+<% } } %>
       //-->
     </SCRIPT>
 </BODY>

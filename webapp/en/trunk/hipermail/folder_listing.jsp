@@ -198,7 +198,7 @@
       
       // ***************************************************************
       // Global variables for moving the clicked row to the context menu
-      var jsMsgId, jsMsgGuid, jsMsgNum, jsSpamCount, jsMsgCount;
+      var jsMsgId, jsMsgGuid, jsMsgNum, jsSpamCount, jsMsgCount, jsReceiptsCount;
 
       // **************************
       // ActiveWidgets grid loading
@@ -208,6 +208,7 @@
       var cac;
       var scanning=false;
       var filterspam=false;
+      var movereceipts=true;
       var gdata = new Array();
       var cols = ["", "From", "Subject", "Date", "Kb", "Id", "Num", "Guid"];
       var grid = new Active.Controls.Grid;
@@ -259,7 +260,7 @@
             // only if "OK"
             if (req.status == 200) {
 
-    	      var id,num,subject,from,sent,kb,spam;
+    	      var id,num,subject,from,sent,kb,spam,content_type;
     	      var node;
     	      var emsg;
 
@@ -323,16 +324,34 @@
 		            } // next
     	        } // fi (filterspam)
 
-    	        document.getElementById("msgcount").innerHTML = "<FONT CLASS=textplain>Total:&nbsp;"+String(jsMsgCount-jsSpamCount)+"</FONT>";
+		          // ****************************************************************************
+		          // Inspect tag <type> for each <msg>
 
-		          // **********************************
-		          // Display messages that are not spam
+							var rids = "";
+							var rnms = "";
+    	        jsReceiptsCount = 0;
+							if (movereceipts) {
+    	          for (var i = 0; i < imsg; i++) {
+    	            content_type = getElementText(msgs[i],"type");
+									if (content_type=="multipart/report") {
+		                rids += (jsReceiptsCount==0 ? "" : ",") + getElementText(msgs[i],"id");
+		                rnms += (jsReceiptsCount==0 ? "" : ",") + String(i+1);
+									  jsReceiptsCount++;
+									}
+		            } // next
+							}
+
+    	        document.getElementById("msgcount").innerHTML = "<FONT CLASS=textplain>Total:&nbsp;"+String(jsMsgCount-jsSpamCount-jsReceiptsCount)+"</FONT>";
+
+		          // *****************************************************************
+		          // Display messages that are not spam nor read confirmation receipts
 		
-    	        gdata = new Array(imsg-jsSpamCount);    	      	      
+    	        gdata = new Array(imsg-jsSpamCount-jsReceiptsCount);    	      	      
     	        var r = 0;
     	        for (var i = 0; i < imsg ; i++) {
     	          spam = getElementText(msgs[i],"spam");
-		            if (!filterspam || (spam!="YES" && spam!="yes" && spam!="1" && spam!="true")) {
+    	          content_type = getElementText(msgs[i],"type");
+		            if ((!filterspam || (spam!="YES" && spam!="yes" && spam!="1" && spam!="true")) && content_type!="multipart/report") {
     	            id = getElementText(msgs[i],"id");
     	            num = getElementText(msgs[i],"num");
     	            from = "<SPAN onmouseover=\"hideRightMenu()\"><B>"+getElementText(msgs[i],"from")+"</B></SPAN>";    	        
@@ -359,6 +378,16 @@
 	          document.forms[1].action="msg_move_exec.jsp";
 		        document.forms[1].submit();
 		      } // fi
+		      
+				  if (movereceipts && rnms.length>0) {
+		        ids.value=rids;
+		        nms.value=rnms;
+		        document.forms[1].target="listhide";
+		        document.forms[1].destination.value="receipts";
+	          document.forms[1].action="msg_move_exec.jsp";
+		        document.forms[1].submit();
+    	    }
+    	  
     	      } else {
                 alert(emsg);
     	      }

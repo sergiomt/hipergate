@@ -46,7 +46,7 @@
 
   Short oOne = new Short((short)1);
   int iMailCount = 0;
-  String sOrderBy;
+  String sOrderBy = null;
   int iMaxRows;
   int iSkip;
   
@@ -66,18 +66,17 @@
 
   // **********************************************
   
-  if (request.getParameter("orderby")!=null)
-    sOrderBy = request.getParameter("orderby");
-  else
-    sOrderBy = "7 DESC";    
-  if (sOrderBy.equals("7")) sOrderBy += " DESC";
-  
+  if (request.getParameter("orderby")!=null) {
+    sOrderBy = request.getParameter("orderby");   
+    if (sOrderBy.equals("7") || sOrderBy.equals("8")) sOrderBy += " DESC";
+  }
+
   JDCConnection oConn = null;
   StringBuffer oFoldersBuffer = new StringBuffer();
   String sDrafts = null;
   ACLUser oMe = new ACLUser(id_user);
-  DBSubset oMsgs = new DBSubset (DB.k_mime_msgs, DB.gu_mimemsg+","+DB.id_message+","+DB.id_priority+","+DB.nm_from+","+DB.nm_to+","+DB.tx_subject+","+DB.dt_received+","+DB.dt_sent+","+DB.len_mimemsg+","+DB.pg_message+","+DB.bo_deleted,
-      			         DB.gu_category+"=? AND "+DB.gu_workarea+"=? AND " + DB.bo_deleted + "<>1 AND " + DB.gu_parent_msg + " IS NULL ORDER BY " + sOrderBy, iMaxRows);
+  DBSubset oMsgs = new DBSubset (DB.k_mime_msgs, DB.gu_mimemsg+","+DB.id_message+","+DB.id_priority+","+DB.nm_from+","+DB.nm_to+","+DB.tx_subject+","+DB.dt_received+","+DB.dt_sent+","+DB.len_mimemsg+","+DB.pg_message+","+DB.bo_deleted+","+DB.tx_email_from,
+      			         DB.gu_category+"=? AND "+DB.gu_workarea+"=? AND " + DB.bo_deleted + "<>1 AND " + DB.gu_parent_msg + " IS NULL " + (sOrderBy==null ? "" : " ORDER BY "+sOrderBy), iMaxRows);
   int iMsgs = 0;
   
   try {
@@ -136,7 +135,7 @@
       String sGuid = oMsgs.getString(0, m);
       String sId = oMsgs.getString(1, m);
       String sPriority = oMsgs.getStringNull(2, m, "3");
-      String sFrom = oMsgs.getStringNull(3, m, "");
+      String sFrom = oMsgs.getStringNull(3, m, oMsgs.getStringNull(11, m, ""));
       String sTo = oMsgs.getStringNull(4, m, "");
       String sSubject = oMsgs.getStringNull(5, m, "<I>&lt;sin asunto&gt;</I>");
       String sDateReceived = nullif(oMsgs.getDateTime(6, m));

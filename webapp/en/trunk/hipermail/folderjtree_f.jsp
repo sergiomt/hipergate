@@ -80,6 +80,7 @@
          String sSent = oMe.getMailFolder(oConn, "sent");
          String sSpam = oMe.getMailFolder(oConn, "spam");
          String sReceived = oMe.getMailFolder(oConn, "received");
+         String sReceipts = oMe.getMailFolder(oConn, "receipts");
          
 	       oConn.setAutoCommit(false);
 
@@ -90,6 +91,7 @@
 	       oBuffer.append ("treeMenu.addItem(new TreeMenuItem('Deleted Messages', 'parent.parent.frames[3].location.href = \"folder_listing_local.jsp?gu_folder="+sDeleted+"&screen_width=\" + String(screen.width);return false;','recycledempty_16x16.gif'));\n");
 	       oBuffer.append ("treeMenu.addItem(new TreeMenuItem('Sent Messsages', 'parent.parent.frames[3].location.href = \"folder_listing_local.jsp?gu_folder="+sSent+"&screen_width=\" + String(screen.width);return false;','folderclosed_16x16.gif'));\n");
 	       oBuffer.append ("treeMenu.addItem(new TreeMenuItem('Bulk Mail', 'parent.parent.frames[3].location.href = \"folder_listing_local.jsp?gu_folder="+sSpam+"&screen_width=\" + String(screen.width);return false;','folderred_16x16.gif'));\n");
+	       oBuffer.append ("treeMenu.addItem(new TreeMenuItem('[~Acuses de recibo~]', 'parent.parent.frames[3].location.href = \"folder_listing_local.jsp?gu_folder="+sReceipts+"&screen_width=\" + String(screen.width);return false;','folder_receipts16.gif'));\n");
          
          String sSQL;
                                             	 
@@ -99,9 +101,9 @@
 	          " FROM " + DB.k_cat_tree + " t, " + DB.k_categories + " c, " + DB.k_cat_labels +
 	   	  " l WHERE c." + DB.gu_category + "=l." + DB.gu_category + "(+) AND l." + DB.id_language + "=? AND t." +
 	   	  DB.gu_child_cat + "=c." + DB.gu_category + " AND t." + DB.gu_parent_cat +
-	   	  "=? AND c." + DB.gu_category + " NOT IN ('"+sInBox+"','"+sOutBox+"','"+sDrafts+"','"+sDeleted+"','"+sSent+"','"+sSpam+"','"+sReceived+"') " +
+	   	  "=? AND c." + DB.gu_category + " NOT IN ('"+sInBox+"','"+sOutBox+"','"+sDrafts+"','"+sDeleted+"','"+sSent+"','"+sSpam+"','"+sReceived+"','"+sReceipts+"') " +
 	   	  " UNION SELECT c.gu_category,c.nm_category,c.nm_icon FROM k_cat_tree t, k_categories c WHERE NOT EXISTS (SELECT l.gu_category FROM k_cat_labels l WHERE l.gu_category=c.gu_category AND l.id_language=?) AND t.gu_child_cat=c.gu_category AND t.gu_parent_cat=?" +
-	   	  " AND c." + DB.gu_category + " NOT IN ('"+sInBox+"','"+sOutBox+"','"+sDrafts+"','"+sDeleted+"','"+sSent+"','"+sSpam+"','"+sReceived+"') ";
+	   	  " AND c." + DB.gu_category + " NOT IN ('"+sInBox+"','"+sOutBox+"','"+sDrafts+"','"+sDeleted+"','"+sSent+"','"+sSpam+"','"+sReceived+"','"+sReceipts+"') ";
 
 	   if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement("+sSQL+")");
 	     
@@ -111,9 +113,9 @@
 	   sSQL = "(SELECT c." + DB.gu_category+ "," + DBBind.Functions.ISNULL + "(l."+DB.tr_category+",c."+DB.nm_category+"),c."+DB.nm_icon+
                   " FROM " + DB.k_cat_tree+" t, "+DB.k_categories+" c LEFT OUTER JOIN "+DB.k_cat_labels+" l ON c."+DB.gu_category+"=l."+DB.gu_category+
 	   	  " WHERE l."+DB.id_language+"=? AND t."+DB.gu_child_cat+"=c."+DB.gu_category+" AND t."+DB.gu_parent_cat+"=? "+
-	   	  " AND c." + DB.gu_category + " NOT IN ('"+sInBox+"','"+sOutBox+"','"+sDrafts+"','"+sDeleted+"','"+sSent+"','"+sSpam+"','"+sReceived+"')) " +
+	   	  " AND c." + DB.gu_category + " NOT IN ('"+sInBox+"','"+sOutBox+"','"+sDrafts+"','"+sDeleted+"','"+sSent+"','"+sSpam+"','"+sReceived+"','"+sReceipts+"')) " +
 	   	  " UNION (SELECT c.gu_category,c.nm_category,c.nm_icon FROM k_cat_tree t, k_categories c WHERE NOT EXISTS (SELECT l.gu_category FROM k_cat_labels l WHERE l.gu_category=c.gu_category AND l.id_language=?) AND t.gu_child_cat=c.gu_category AND t.gu_parent_cat=?" +
-	   	  " AND c." + DB.gu_category + " NOT IN ('"+sInBox+"','"+sOutBox+"','"+sDrafts+"','"+sDeleted+"','"+sSent+"','"+sSpam+"','"+sReceived+"')) ";
+	   	  " AND c." + DB.gu_category + " NOT IN ('"+sInBox+"','"+sOutBox+"','"+sDrafts+"','"+sDeleted+"','"+sSent+"','"+sSpam+"','"+sReceived+"','"+sReceipts+"')) ";
 
 	   if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement("+sSQL+")");
 	   
@@ -170,8 +172,8 @@
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
     // User-defined tree menu data.
