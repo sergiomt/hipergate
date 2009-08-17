@@ -59,7 +59,8 @@
 
   int iShops = 0;
   int iProds = 0;
-    
+  int iDomain = 0;
+  
   try {
 
     oConn = GlobalDBBind.getConnection("campaign_target_edit");
@@ -71,7 +72,9 @@
       if (bRefresh) oTrgt.refreshTargetAchievement(oConn);
     }
     
-    sTerms = GlobalDBLang.getHTMLTermSelect(oConn, new WorkArea(oConn, gu_workarea).getInt(DB.id_domain), gu_workarea);
+    iDomain = new WorkArea(oConn, gu_workarea).getInt(DB.id_domain);
+    
+    sTerms = GlobalDBLang.getHTMLTermSelect(oConn, iDomain, gu_workarea);
 
 	  iShops = oShops.load(oConn, new Object[]{ gu_workarea});
 		iProds = oShops.loadSubrecords(oConn, DB.v_prod_cat, DB.gu_category, 2);
@@ -109,7 +112,7 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js" DEFER="defer"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js" DEFER="defer"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript">
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
 
       function showCalendar(ctrl) {
@@ -117,6 +120,14 @@
 
         window.open("../common/calendar.jsp?a=" + (dtnw.getFullYear()) + "&m=" + dtnw.getMonth() + "&c=" + ctrl, "", "toolbar=no,directories=no,menubar=no,resizable=no,width=171,height=195");
       } // showCalendar()
+
+      // ------------------------------------------------------
+              
+      function lookupZone() {
+        var frm = window.document.forms[0];
+      
+        window.open("../common/thesauri_f.jsp?id_domain=<%=String.valueOf(iDomain)%>&gu_workarea=<%=gu_workarea%>&id_scope=geozones&nm_control=nm_geozone&nm_coding=gu_geozone", "", "toolbar=no,directories=no,menubar=no,resizable=no,width=" + String(Math.floor(600*(screen.width/800))) + ",height=" + String(Math.floor(520*(screen.height/600))) );
+      }
             
       // ------------------------------------------------------
 
@@ -141,7 +152,7 @@
           return false;
 			  }
 
-        if (frm.sel_package.options.selectedIndex<0) {
+        if (frm.sel_package.options.selectedIndex<=0) {
           alert ("The product is required");
           frm.sel_package.focus();
           return false;
@@ -149,7 +160,7 @@
           frm.gu_product.value = getCombo(frm.sel_package);
         }
 
-        if (frm.sel_zone.options.selectedIndex<0) {
+        if (frm.sel_zone.options.selectedIndex<=0) {
           alert ("Zone is required");
           frm.sel_zone.focus();
           return false;
@@ -157,9 +168,21 @@
           frm.gu_geozone.value = getCombo(frm.sel_zone);
         }
 
+			  if (frm.nu_planned.value.length==0) {
+          alert ("[~El objetivo previsto es obligatorio~]");
+          frm.nu_planned.focus();
+          return false;
+			  }        
+
 			  if (!isFloatValue(frm.nu_planned.value)) {
           alert ("[~El objetivo previsto no es válido~]");
           frm.nu_planned.focus();
+          return false;
+			  }        
+
+			  if (frm.nu_achieved.value.length==0) {
+          alert ("[~El objetivo alcanzado es obligatorio~]");
+          frm.nu_achieved.focus();
           return false;
 			  }        
 
@@ -208,6 +231,7 @@
     <INPUT TYPE="hidden" NAME="gu_campaign_target" VALUE="<%=nullif(gu_campaign_target)%>">
     <INPUT TYPE="hidden" NAME="gu_product" VALUE="<%=oTrgt.getStringNull(DB.gu_product,"")%>">
     <INPUT TYPE="hidden" NAME="gu_geozone" VALUE="<%=oTrgt.getStringNull(DB.gu_geozone,"")%>">
+    <INPUT TYPE="hidden" NAME="nm_geozone" VALUE="">
 
     <TABLE CLASS="formback">
       <TR><TD>
@@ -225,7 +249,7 @@
           <TR>
             <TD ALIGN="right" WIDTH="90" CLASS="formstrong">Zone</TD>
             <TD ALIGN="left" WIDTH="370">
-              <SELECT NAME="sel_zone"><OPTION VALUE="" SELECTED></OPTION><%=sTerms%></SELECT>
+              <SELECT NAME="sel_zone"><OPTION VALUE="" SELECTED></OPTION><%=sTerms%></SELECT>&nbsp;<A HREF="#" onclick="lookupZone()"><IMG SRC="../images/images/find16.gif" BORDER="0"></A>
             </TD>
           </TR>
           <TR>
@@ -245,13 +269,13 @@
           <TR>
             <TD ALIGN="right" WIDTH="90" CLASS="formstrong">Forseen</TD>
             <TD ALIGN="left" WIDTH="370">
-            	<INPUT TYPE="text" NAME="nu_planned" MAXLENGTH="9" SIZE="11" VALUE="<% if (!oTrgt.isNull(DB.nu_planned)) out.write(String.valueOf(oTrgt.getFloat(DB.nu_planned))); %>" onkeypress="return acceptOnlyNumbers();">
+            	<INPUT TYPE="text" NAME="nu_planned" MAXLENGTH="9" SIZE="11" VALUE="<% if (!oTrgt.isNull(DB.nu_planned)) out.write(String.valueOf(oTrgt.getFloat(DB.nu_planned))); else out.write("0"); %>" onkeypress="return acceptOnlyNumbers();">
             </TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90" CLASS="formstrong">Reached</TD>
             <TD ALIGN="left" WIDTH="370">
-            	<INPUT TYPE="text" NAME="nu_achieved" MAXLENGTH="9" SIZE="11" VALUE="<% if (!oTrgt.isNull(DB.nu_achieved)) out.write(String.valueOf(oTrgt.getFloat(DB.nu_achieved))); %>" onkeypress="return acceptOnlyNumbers();">
+            	<INPUT TYPE="text" NAME="nu_achieved" MAXLENGTH="9" SIZE="11" VALUE="<% if (!oTrgt.isNull(DB.nu_achieved)) out.write(String.valueOf(oTrgt.getFloat(DB.nu_achieved))); else out.write("0"); %>" onkeypress="return acceptOnlyNumbers();">
             </TD>
           </TR>
           <TR>
