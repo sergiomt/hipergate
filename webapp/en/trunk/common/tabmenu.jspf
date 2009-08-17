@@ -180,7 +180,7 @@
   // *******************************************
   
   bIsWorkAreaMenuAdmin = ((Boolean)oIsAdmin).booleanValue();
-  bIsWorkAreaMenuOwner = ((Boolean)oIsOwner).booleanValue();      
+  bIsWorkAreaMenuOwner = ((Boolean)oIsOwner).booleanValue();   
   boolean bMailEnabled = ((sMailIncoming!=null) && (sMailOutgoing!=null)) && ((iAppMask & (1<<Hipermail))!=0);
   int iOptions = oTopMenu.countSubOptions();
   

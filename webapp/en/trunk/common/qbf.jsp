@@ -166,27 +166,26 @@
       } // saveQuery()
       // -->
     </SCRIPT>    
-    <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>    
-    <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" SRC="../javascript/layer.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>    
-    <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>    
-    <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>    
-    <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>    
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/layer.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>    
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>    
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>    
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
       <!--
 
-<%  if (!sCaller.startsWith("list_")) { %>
-
       function loadQuery() {
-        if (getCombo(document.forms[0].sel_queries)!="")
-          window.location = "qbf.jsp?gu_list=<%=gu_list%>&queryspec=" + escape(getURLParam("queryspec")) + "&queryid=" + getCombo(document.forms[0].sel_queries);
+<%      if (sCaller.startsWith("list_")) { %>
+            window.location = "qbf.jsp?queryspec=" + escape(getURLParam("queryspec")) + "&queryid=<%=gu_query%><%=gu_list==null ? "" : "&gu_list="+gu_list%>";
+<%      } else { %>
+          if (getCombo(document.forms[0].sel_queries)!="")        
+            window.location = "qbf.jsp?queryspec=" + escape(getURLParam("queryspec")) + "&queryid=" + getCombo(document.forms[0].sel_queries) + "<%=gu_list==null ? "" : "&gu_list="+gu_list%>";
+<%      } %>
       } // loadQuery()
-
-<% } %>
-      
 
       // ------------------------------------------------------
      
@@ -565,7 +564,9 @@
 	  var frm = document.forms[0];
 <%
 	  if (gu_query!=null) {
-            if (!sCaller.startsWith("list_"))
+      if (sCaller.startsWith("list_"))
+	      out.write("          loadQuery();\n");
+	    else
 	      out.write("          setCombo(frm.sel_queries, \"" + gu_query + "\");\n");
 
 	    iCurrentQuery = oQueries.find(0,gu_query);
