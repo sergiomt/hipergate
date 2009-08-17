@@ -10,6 +10,8 @@
   final int Shop=20;
   final int CollaborativeTools=17;
   final int Hipermail=21;
+  final int Training=22;
+  
 
   String id_domain = request.getParameter("id_domain");
   String n_domain = request.getParameter("n_domain");
@@ -94,10 +96,7 @@
     sTitleLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_contacts_lookup, gu_workarea, "de_title", sLanguage);    
     sPassportLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_contacts_lookup, gu_workarea, "tp_passport", sLanguage);
     
-    if (sFace.equals("edu")) {
-      oContanies.setMaxRows(1000);
-      iCompanyCount = oContanies.load (oConn);    
-    } else if (bOk) {
+    if (bOk) {
       oContanies = new DBSubset (DB.k_companies, 
       			         DB.gu_company + "," + DB.nm_legal ,
       			         DB.gu_company + "=? ORDER BY 2", 100);

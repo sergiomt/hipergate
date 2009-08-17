@@ -130,7 +130,7 @@
               <TR>
                 <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Legal Id.</FONT></TD>
                 <TD ALIGN="left" WIDTH="420">
-                  <INPUT TYPE="text" NAME="sn_passport" SIZE="10" MAXLENGTH="16">&nbsp;
+                  <INPUT TYPE="text" NAME="sn_passport" SIZE="10" MAXLENGTH="16" onblur="checkIdDoc(this.value)">&nbsp;
                   <SELECT CLASS="combomini" NAME="sel_passport"><OPTION VALUE=""></OPTION><%=sPassportLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Identity Document Types"></A>
                   <INPUT TYPE="hidden" NAME="tp_passport">
                 </TD>
@@ -381,7 +381,7 @@
               </TR>
               <TR>
                 <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">e-mail:</FONT></TD>
-                <TD ALIGN="left" WIDTH="460"><INPUT TYPE="text" NAME="tx_email" STYLE="text-tansform:lowercase" MAXLENGTH="50" SIZE="42">
+                <TD ALIGN="left" WIDTH="460"><INPUT TYPE="text" NAME="tx_email" STYLE="text-tansform:lowercase" MAXLENGTH="50" SIZE="42" onblur="checkEmail(this.value)">
                 </TD>
               </TR>
               <TR>

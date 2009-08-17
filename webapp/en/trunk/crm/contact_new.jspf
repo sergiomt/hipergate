@@ -126,14 +126,15 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Create Contact</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/datefuncs.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/email.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="true">
     <!--
 
@@ -226,6 +227,60 @@
             parent.contactexec.location.href = "../common/addr_load.jsp?id_language=" + getUserLanguage() + "&gu_workarea=" + getURLParam("gu_workarea") + "&id_section=" + getCombo(frm.sel_country) + "&control=sel_state&id_form=2&set_value=" + setval;
         }  
       }
+
+      // ------------------------------------------------------
+      
+      var xrq = false;
+      
+      function processDocId() {
+        if (xrq.readyState == 4) {
+          if (xrq.status == 200) {
+            var rs = xrq.responseXML.getElementsByTagName("rs");
+            if (rs) {
+              if (window.confirm("[~Ya existe otro contacto con el mismo documento de identidad.~] "+rs[0].childNodes[0].data+" [~¿Quiere abandonar la creación del contacto actual y editar el antiguo?~]")) {
+							  top.location="contact_edit.jsp?id_domain=<%=id_domain%>&gu_contact=" + rs[0].attributes.item(0).value;
+              }
+            }
+            xrq = false;
+          }
+        }
+      }
+
+      // ------------------------------------------------------
+      
+      function checkIdDoc(docid) {
+	      if (!xrq) {
+	        xrq = createXMLHttpRequest();
+	        xrq.onreadystatechange = processDocId;
+	        xrq.open("GET","../common/autocomplete.jsp?gu_workarea=<%=gu_workarea%>&nm_table=k_contact_doc_id&tx_like="+docid,true);
+	        xrq.send(null);
+	      } // fi
+	    } // fi
+
+      function processEmail() {
+        if (xrq.readyState == 4) {
+          if (xrq.status == 200) {
+            var rs = xrq.responseXML.getElementsByTagName("rs");
+            if (rs) {
+              if (window.confirm("[~Ya existe otro contacto con el mismo e-mail.~] "+rs[0].childNodes[0].data+" [~¿Quiere abandonar la creación del contacto actual y editar el antiguo?~]")) {
+							  top.location="contact_edit.jsp?id_domain=<%=id_domain%>&gu_contact=" + rs[0].attributes.item(0).value;
+              }
+            }
+            xrq = false;
+          }
+        }
+      }
+
+      // ------------------------------------------------------
+      
+      function checkEmail(email) {
+	      if (!xrq) {
+	        xrq = createXMLHttpRequest();
+	        xrq.onreadystatechange = processEmail;
+	        xrq.open("GET","../common/autocomplete.jsp?gu_workarea=<%=gu_workarea%>&nm_table=k_member_address&nm_valuecolumn=gu_contact&nm_textcolumn=tx_email&tx_where="+escape("gu_contact IS NOT NULL AND tx_email ")+"&tx_like="+email,true);
+	        xrq.send(null);
+	      } // fi
+	    } // fi
       
       // ------------------------------------------------------
 

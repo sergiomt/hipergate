@@ -444,6 +444,8 @@
     <INPUT TYPE="hidden" NAME="tx_contact" VALUE="<%=oCont.getStringNull(DB.tx_surname,"") + ", " + oCont.getStringNull(DB.tx_name,"")%>">         
     <INPUT TYPE="hidden" NAME="gu_writer" VALUE="<%=id_user%>">
     <INPUT TYPE="hidden" NAME="gu_list" VALUE="<%=gu_list%>">
+    <INPUT TYPE="hidden" NAME="id_former_status" VALUE="<%=oOprt.getStringNull(DB.id_status,"")%>">
+
 <% if ((iAppMask & (1<<Marketing))==0) { %>
     <INPUT TYPE="hidden" NAME="gu_campaign" VALUE="<%=oOprt.getStringNull(DB.gu_campaign,"")%>">
 <% } %>

@@ -34,7 +34,6 @@
 */
   
   String gu_workarea = request.getParameter("gu_workarea"); 
-  // String sWebServer = Environment.getProfileVar(GlobalDBBind.getProfileName(),"webserver","");
   DBSubset oQueries = null;
   int iQueryCount = 0;  
 
@@ -77,6 +76,16 @@
       
       function createQuery() {
         window.open("../common/qbf.jsp?queryspec=listmember&caller=list_wizard_02.jsp","qbf","height=460,width=560");
+      }
+
+      function editQuery() {
+      	if (document.forms[0].gu_query.selectedIndex<0) {
+      	  alert ("[~Debe seleccionar previamente la consulta a editar~]");
+          return false;
+        } else {
+        	window.open("../common/qbf.jsp?queryid="+getCombo(document.forms[0].gu_query)+"&queryspec=listmember&caller=list_wizard_02.jsp","qbf","height=460,width=560");
+          return true;
+        }
       }
 
       function validate() {
@@ -129,7 +138,7 @@
 	        out.write("	        <OPTION VALUE=\"" + oQueries.getString(0,q) + "\">" + oQueries.getString(1,q) + "</OPTION>\n");
 	      } // next ()
 %>
-	      </SELECT>	      
+	    </SELECT>&nbsp;&nbsp;<A HREF="#" onclick="editQuery()" TITLE="[~Editar consulta~]"><IMG SRC="../images/images/edit16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Editar consulta~]"></A>
             </TD>
           </TR>
         </TABLE>

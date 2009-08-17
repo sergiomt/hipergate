@@ -1,6 +1,6 @@
 ﻿<%@ page import="java.util.LinkedList,java.util.ListIterator,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.*,com.knowgate.hipergate.DBLanguages,com.knowgate.hipergate.Term,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/customattrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
-<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
+<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
 <%@ include file="contact_edit.jspf" %>
 
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onload="setCombos()">
@@ -28,7 +28,12 @@
       <TD VALIGN="middle"><A HREF="#" onclick="window.opener.top.location.href='../addrbook/phonecall_listing.jsp?selected=1&subselected=5&field=<%=DB.gu_contact%>&find=<%=gu_contact%>&contact_person=<%=Gadgets.URLEncode(oCont.getStringNull(DB.tx_name,"") + " " + oCont.getStringNull(DB.tx_surname,""))%>'; window.opener.top.focus()" CLASS="linkplain">Calls</A></TD>
 <% } else { %>
       <TD COLSPAN="2"></TD>
-<% } %>      
+<% } %>
+    </TR>
+    <TR>
+      <TD VALIGN="middle"><IMG SRC="../images/images/training/diploma16.gif" WIDTH="16" HEIGHT="16" BORDER="0"></TD>
+      <TD VALIGN="middle"><A HREF="contact_education_listing.jsp?gu_contact=<%=oCont.getString(DB.gu_contact)%>&fullname=<%=Gadgets.URLEncode(oCont.getStringNull(DB.tx_name,"") + " " + oCont.getStringNull(DB.tx_surname,""))%>" CLASS="linkplain">[~Titulaciones~]</A></TD>
+      <TD COLSPAN="8"></TD>
     </TR>
     <TR><TD COLSPAN="10" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
   </TABLE>
@@ -50,6 +55,8 @@
     <INPUT TYPE="hidden" NAME="gu_geozone" VALUE="<%=oCont.getStringNull(DB.gu_geozone,"")%>">
     <INPUT TYPE="hidden" NAME="nm_geozone" SIZE="40" VALUE="<%=oTerm.getStringNull(DB.tx_term,"")%>">
     <SELECT NAME="sel_geozone" STYLE="visibility:hidden"><% out.write (sTerms); %></SELECT>
+    <INPUT TYPE="hidden" NAME="gu_geozone" VALUE="<%=oCont.getStringNull(DB.gu_geozone,"")%>">
+    <INPUT TYPE="hidden" NAME="nm_geozone" SIZE="40" VALUE="<%=oTerm.getStringNull(DB.tx_term,"")%>">
 
     <TABLE WIDTH="100%">
       <TR><TD>
@@ -126,14 +133,6 @@
               <INPUT TYPE="text" NAME="sn_passport" SIZE="10" MAXLENGTH="16" VALUE="<%=oCont.getStringNull(DB.sn_passport,"")%>">&nbsp;
               <SELECT CLASS="combomini" NAME="sel_passport"><OPTION VALUE=""></OPTION><%=sPassportLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View list of identity document types"></A>
               <INPUT TYPE="hidden" NAME="tp_passport" VALUE="<%=oCont.getStringNull(DB.tp_passport,"")%>">
-            </TD>
-          </TR>
-          <TR>
-            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Zone:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370">
-            <INPUT TYPE="hidden" NAME="gu_geozone" VALUE="<%=oCont.getStringNull(DB.gu_geozone,"")%>">
-            <INPUT TYPE="hidden" NAME="nm_geozone" SIZE="40" VALUE="<%=oTerm.getStringNull(DB.tx_term,"")%>">
-            <SELECT NAME="sel_geozone" onchange="setCombo(document.forms[0].sel_salesman,zone_salesman[this.options[this.selectedIndex].value])"><% out.write (sTerms); %></SELECT>&nbsp;<A HREF="#" onclick="lookupZone()"><IMG SRC="../images/images/find16.gif" BORDER="0"></A>            
             </TD>
           </TR>
           <TR>

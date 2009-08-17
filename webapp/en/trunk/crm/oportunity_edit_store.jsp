@@ -49,6 +49,8 @@
   String gu_list = request.getParameter("gu_list");
   String gu_oportunity = request.getParameter("gu_oportunity");
   String dt_next_action = request.getParameter("dt_next_action");
+  String id_status = request.getParameter("id_status");
+  String id_former_status = request.getParameter("id_former_status");
   String gu_meeting = null;
   boolean bCreateMeeting = nullif(request.getParameter("chk_meeting")).equals("1");
   boolean bOnWonOptions = false;
@@ -75,6 +77,18 @@
       oOprt.store(oConn);    
 
       DBCommand.executeUpdate(oConn, "UPDATE k_oportunities SET dt_last_call = (SELECT MAX(dt_start) FROM k_oportunities AS s INNER JOIN k_phone_calls AS r ON  r.gu_oportunity = s.gu_oportunity AND k_oportunities.gu_oportunity = s.gu_oportunity WHERE s.gu_oportunity='"+oOprt.getString(DB.gu_oportunity)+"') WHERE gu_oportunity='"+oOprt.getString(DB.gu_oportunity)+"'");
+
+			if (!id_status.equals(id_former_status)) {
+				PreparedStatement oClog = oConn.prepareStatement("INSERT INTO k_oportunities_changelog (gu_oportunity,nm_column,dt_modified,gu_writer,id_former_status,id_new_status,tx_value) VALUES (?,'id_status',?,?,?,?,?)");
+				oClog.setString(1, oOprt.getString(DB.gu_oportunity));
+				oClog.setTimestamp(2, new Timestamp(new Date().getTime()));
+				oClog.setString(3, id_user);
+				oClog.setString(4, id_former_status);
+				oClog.setString(5, id_status);
+				oClog.setString(6, request.getParameter("tx_cause"));
+				oClog.executeUpdate();
+				oClog.close();
+			}
 
       storeAttributes (request, GlobalCacheClient, oConn, DB.k_oportunities_attrs, gu_workarea, oOprt.getString(DB.gu_oportunity));
 
