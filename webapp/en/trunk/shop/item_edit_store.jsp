@@ -264,7 +264,7 @@
 	  else
       	    oImg.remove(DB.gu_image);
       	  
-      	  String sImgName;
+      	  String sImgName, sImgExt;
       	  
       	  if (bAutoThumb && aImageTypes[i].equals("thumbview")) {
       	    sImgName = "tn_" + oReq.getOriginalFileName("normalview");
@@ -273,7 +273,8 @@
 					}
 
 					if (sImgName.length()>30) {
-					  sImgName = sImgName.substring(0, 29-sImgExt.length()) + sImgName.substring(sImgName.lastIndexOf(".")+1);
+					  sImgExt = sImgName.substring(sImgName.lastIndexOf("."));
+					  sImgName = sImgName.substring(0, 29-sImgExt.length()) + sImgExt;
 					}
 
 	        oImg.replace(DB.nm_image, sImgName);					
