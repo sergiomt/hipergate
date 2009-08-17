@@ -199,7 +199,7 @@ public class PageSet extends DOMDocument {
 
       if (DebugFile.trace) DebugFile.writeln("parseURI (file://" + sPageSetURI  + ");");
 
-      parseURI("file://" + sPageSetURI);
+      parseURI("file://" + sPageSetURI, "UTF-8");
     }
     // fi (sPageSetURI.startsWith("file://"))
 
@@ -239,7 +239,7 @@ public class PageSet extends DOMDocument {
       if (!oPFile.exists())
         throw new FileNotFoundException (sPageSetURI.substring(7) + " not found");
 
-      parseURI(sPageSetURI);
+      parseURI(sPageSetURI, "UTF-8");
     }
     else {
       oPFile = new File(sPageSetURI);
@@ -247,7 +247,7 @@ public class PageSet extends DOMDocument {
       if (!oPFile.exists())
         throw new FileNotFoundException (sPageSetURI + " not found");
 
-      parseURI("file://" + sPageSetURI);
+      parseURI("file://" + sPageSetURI, "UTF-8");
     }
   } // PageSet()
 
@@ -1221,7 +1221,7 @@ public class PageSet extends DOMDocument {
 
     sURI = sFilePath;
 
-    parseURI(sFilePath);
+    parseURI(sFilePath, "UTF-8");
 
     oPage = findPage(sPageGUID);
 
