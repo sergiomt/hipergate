@@ -102,6 +102,9 @@
   
   // If body contains "{#" substring then it is assumed to have personalization tags
   boolean bIsPersonalizedMail = (sBody.indexOf("{#")>=0);  
+
+  if (DebugFile.trace) DebugFile.writeln("<JSP:is "+(bIsPersonalizedMail ? "" : "not ")+"personalized mail");
+
   boolean bXcpt = false;
 
   try {
@@ -118,6 +121,8 @@
     oRecp.parseRecipientsList(oConn, request.getParameter("TO"),Message.RecipientType.TO);
     oRecp.parseRecipientsList(oConn, request.getParameter("CC"), Message.RecipientType.CC);
     oRecp.parseRecipientsList(oConn, request.getParameter("BCC"), Message.RecipientType.BCC);
+
+		if (DebugFile.trace) DebugFile.writeln("<JSP:has "+(oRecp.hasLists() ? "" : "not ")+"lists");
 
     oConn.close("msg_send");
     oConn=null;

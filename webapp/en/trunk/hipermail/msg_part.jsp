@@ -36,7 +36,7 @@
   
   /* Autenticate user cookie */
   
-  //if (autenticateSession(GlobalDBBind, request, response)<0) return;
+  if (autenticateSession(GlobalDBBind, request, response)<0) return;
 
   final String sMsgId = request.getParameter("msgid");
   final String sPartId = request.getParameter("cid");
@@ -245,7 +245,7 @@
   	    <jsp:forward page="msg_view.jsp">
   	      <jsp:param name="id_msg" value="<%=sAttachmentId%>" />
   	      <jsp:param name="nu_msg" value="-1" />
-  	      <jsp:param name="nm_folder" value="<%=sFolder%>" />
+  	      <jsp:param name="nm_folder" value="<%=oFolder.getName()%>" />
   	    </jsp:forward>    
 <%        return;
   	} else {

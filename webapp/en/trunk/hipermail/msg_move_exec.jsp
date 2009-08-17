@@ -1,4 +1,4 @@
-﻿<%@ page import="javax.mail.*,javax.mail.internet.*,java.util.Enumeration,java.util.Properties,java.io.File,java.io.IOException,java.io.UnsupportedEncodingException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.debug.DebugFile,com.knowgate.debug.StackTraceUtil,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.dfs.FileSystem,com.knowgate.misc.Gadgets,com.knowgate.hipermail.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="javax.mail.*,javax.mail.internet.*,java.util.Enumeration,java.util.Date,java.util.Properties,java.io.File,java.io.IOException,java.io.UnsupportedEncodingException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.Timestamp,com.sun.mail.dsn.MultipartReport,com.knowgate.debug.DebugFile,com.knowgate.debug.StackTraceUtil,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.dfs.FileSystem,com.knowgate.misc.Gadgets,com.knowgate.hipermail.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="mail_env.jspf" %><%
 /*
   Copyright (C) 2004  Know Gate S.L. All rights reserved.
@@ -55,6 +55,7 @@
   if (null!=sMsgNums) aMsgNums = Gadgets.split(sMsgNums,',');
   
   DBMimeMessage oMimeMsg = null;
+	MimeMessage oPop3Msg = null;
   PreparedStatement oStmt = null;
   ResultSet oRSet = null;
 
@@ -111,7 +112,6 @@
           
 	      for (int m=0; m<aMsgNums.length; m++) {
   
-	      MimeMessage oPop3Msg;
 	      try {
 	        if (DebugFile.trace) DebugFile.writeln("<JSP:Folder.getMessage("+aMsgNums[m]+")");
 	        oPop3Msg = (MimeMessage) oPop3Fldr.getMessage(Integer.parseInt(aMsgNums[m]));
@@ -120,60 +120,65 @@
 	        oPop3Msg = null;
 	      }
 
-	  String sMsgGuid;
+	      String sMsgGuid;
 	  
-	  if (null!=oPop3Msg) {
-	    if (!aMsgIds[m].equals(oPop3Msg.getMessageID())) {
-	      for (int c=1; c<=iPop3Count; c++) {
-	        oPop3Msg = (MimeMessage) oPop3Fldr.getMessage(c);
-	        if (aMsgIds[m].equals(oPop3Msg.getMessageID()))
-	          break;
-	        else
-	          oPop3Msg = null;
-	      } // next
-	    } // fi
-	  } else {
-	    for (int c=1; c<=iPop3Count; c++) {
-	      oPop3Msg = (MimeMessage) oPop3Fldr.getMessage(c);
-	      if (aMsgIds[m].equals(oPop3Msg.getMessageID()))
-	        break;
-	      else
-	      oPop3Msg = null;
-	    } // next
-	  } // fi (oPop3Msg)
-	  
-	  if (null!=oPop3Msg) {
-	    if (DebugFile.trace) DebugFile.writeln("<JSP:searching message " + oPop3Msg.getMessageID());
-            
-	    oStmt.setString(1, oPop3Msg.getMessageID());
+	      if (null!=oPop3Msg) {
+	        if (!aMsgIds[m].equals(oPop3Msg.getMessageID())) {
+	          for (int c=1; c<=iPop3Count; c++) {
+	            oPop3Msg = (MimeMessage) oPop3Fldr.getMessage(c);
+	            if (aMsgIds[m].equals(oPop3Msg.getMessageID()))
+	              break;
+	            else
+	              oPop3Msg = null;
+	          } // next
+	        } // fi aMsgIds[m] == oPop3Msg.getMessageID()
 
-	    oRSet = oStmt.executeQuery();
+	      } else { // null==oPop3Msg
+
+	        for (int c=1; c<=iPop3Count; c++) {
+	          oPop3Msg = (MimeMessage) oPop3Fldr.getMessage(c);
+	          if (aMsgIds[m].equals(oPop3Msg.getMessageID()))
+	            break;
+	          else
+	            oPop3Msg = null;
+	        } // next
+	      } // fi (oPop3Msg)
+	  
+	      if (null!=oPop3Msg) {
+	        if (DebugFile.trace) DebugFile.writeln("<JSP:searching message " + oPop3Msg.getMessageID());
+            
+	        oStmt.setString(1, oPop3Msg.getMessageID());
+
+	        oRSet = oStmt.executeQuery();
 	    
-	    if (oRSet.next()) {
-	      sMsgGuid = oRSet.getString(1);
-	      if (DebugFile.trace) DebugFile.writeln("<JSP:message guid for " + oPop3Msg.getMessageID() + " is "+ sMsgGuid);
-	    } else {
-	      sMsgGuid = null;
-	      if (DebugFile.trace) DebugFile.writeln("<JSP:message guid for " + oPop3Msg.getMessageID() + " not found");
-	    }
+	        if (oRSet.next()) {
+	          sMsgGuid = oRSet.getString(1);
+	          if (DebugFile.trace) DebugFile.writeln("<JSP:message guid for " + oPop3Msg.getMessageID() + " is "+ sMsgGuid);
+	        } else {
+	          sMsgGuid = null;
+	          if (DebugFile.trace) DebugFile.writeln("<JSP:message guid for " + oPop3Msg.getMessageID() + " not found");
+	        }
 	    
-	    oRSet.close();
-	    oRSet = null;
+	        oRSet.close();
+	        oRSet = null;
 	  	    
-	    if (sMsgGuid==null) {
-	      if (DebugFile.trace) DebugFile.writeln("source message not cached, reading from remote folder");
+	        if (sMsgGuid==null) {
+	          if (DebugFile.trace) DebugFile.writeln("source message not cached, reading from remote folder");
 	    
-	      oTargetFldr.appendMessages(new Message[]{oPop3Msg});
-	    }
-	    else {
-	      if (DebugFile.trace) DebugFile.writeln("source message cached " + sMsgGuid);
+	          oTargetFldr.appendMessages(new Message[]{oPop3Msg});
+
+	        } else { // sMsgGuid!=null
+
+	          if (DebugFile.trace) DebugFile.writeln("source message cached " + sMsgGuid);
 	    
-	      oMimeMsg = oLocalFldr.getMessageByGuid(sMsgGuid);
-	    }
-	    if (sAction.equals("move")) oPop3Msg.setFlag(Flags.Flag.DELETED, true);
-          } else {
-            oMimeMsg = oLocalFldr.getMessageByID(aMsgIds[m]);
-          }// fi (oPop3Msg)
+	          oMimeMsg = oLocalFldr.getMessageByGuid(sMsgGuid);
+	        }
+	    
+	        if (sAction.equals("move")) oPop3Msg.setFlag(Flags.Flag.DELETED, true);
+
+        } else { // null==oPop3Msg
+          oMimeMsg = oLocalFldr.getMessageByID(aMsgIds[m]);
+        } // fi (oPop3Msg)
 
         if (null!=oMimeMsg) {
 	        if (sAction.equals("move"))
@@ -240,20 +245,33 @@
           if (DebugFile.trace) DebugFile.writeln(String.valueOf(nRemoved)+" messages removed. Cache file after update is\n"+oMsgsXML.toString());
         }
       } // fi
-      
-    }
-    else {
+
+      // ********************************************************************
+      // If message is a confirmation receipt then update confirmed addresses
+			if (sTarget.equals("receipts")) {	
+				Object oCnt = (oPop3Msg==null ? oMimeMsg : oPop3Msg).getContent();
+        if (oCnt.getClass().getName().equals("com.sun.mail.dsn.MultipartReport")) {
+  				oConn = GlobalDBBind.getConnection("inet_addrs_notification");
+			    oConn.setAutoCommit(true);
+					RecipientsHelper.acknowledgeNotification(oConn, (MultipartReport) oCnt);
+					oConn.close("inet_addrs_notification");
+			  } // fi MultipartReport
+			} // fi (sTarget=="receipts")
+
+    } else { // sFolder!="inbox"
+
       sReloadUrl = "folder_listing_local.jsp?gu_folder="+oLocalFldr.getCategory().getString(DB.gu_category);
 
       for (int m=0; m<aMsgNums.length; m++) {
 	      out.write("<SCRIPT LANGUAGE=\"JavaScript\" TYPE=\"text/javascript\">window.parent.frames[0].document.all.proBar2.style.width = \"" + String.valueOf((100*m)/aMsgNums.length) + "px\";setLabHTML(\""+m+"/"+aMsgNums.length+"\")</SCRIPT>\n");
         out.flush();
-        oMimeMsg = new DBMimeMessage(oLocalFldr, aMsgNums[m]);
-        oTargetFldr.copyMessage(oMimeMsg);
+        oMimeMsg = (DBMimeMessage) oLocalFldr.getMessage(Integer.parseInt(aMsgNums[m]));
         if (sAction.equals("move")) {
-	        oMimeMsg.setFlag(Flags.Flag.DELETED, true);
+          oTargetFldr.moveMessage(oMimeMsg);
+        } else {
+          oTargetFldr.copyMessage(oMimeMsg);
         }
-      }
+      } // next
     } // fi (inbox)
 
     oTargetFldr.close(false);
@@ -287,7 +305,7 @@
 
 %>
 </HEAD>
-<BODY BGCOLOR="linen" onload="<% if (sErrMsg.length()>0) { %> alert ('<%=sErrMsg.replace('\n',' ').replace((char)39,(char)32)%>'); <% } %>">
+<BODY BGCOLOR="linen" onload="<% if (sErrMsg.length()>0) { %> alert ('<%=Gadgets.escapeChars(sErrMsg.replace('\n',' ').replace((char)39,(char)32),"\\",'\\')%>'); <% } %>">
 
 <!--
 <% if (sReloadUrl!=null) { %>window.parent.parent.frames[3].document.location.href='<%=sReloadUrl%>' + '&screen_width=' + String(screen.width); window.parent.document.location.href='../common/blank.htm';<% } %>">

@@ -112,6 +112,7 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=AuthenticationFailedException&desc=" + oMacc.getString(DB.gu_user) + " " +e.getMessage() + "&resume=_close"));  
     return;
   }
+  /*
   catch (MessagingException e) {  
     oHeaders = null;
     try { if (null!=oInbox) oInbox.close(false); } catch (Exception ignore) {}        
@@ -119,6 +120,7 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=MessagingException&desc=" + e.getMessage() + "&resume=_close"));  
     return;
   }
+  */
   oHndl.close();      
 %>
   <TITLE><%=sTxSubject%></TITLE>
