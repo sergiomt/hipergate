@@ -36,9 +36,9 @@
   // From version 2.1 the user password is encrypted and not stored as clear text in cookies
   // if you want to revert to behavior from v2.0 and prior, set ENCRYPT_ALGORITHM = com.knowgate.acl.ACL.PWD_CLEAR_TEXT
   
-  // static final int ENCRYPT_ALGORITHM = com.knowgate.acl.ACL.PWD_DTIP_RC4_64;
+  static final int ENCRYPT_ALGORITHM = com.knowgate.acl.ACL.PWD_DTIP_RC4_64;
 
-  static final int ENCRYPT_ALGORITHM = com.knowgate.acl.ACL.PWD_CLEAR_TEXT;
+  // static final int ENCRYPT_ALGORITHM = com.knowgate.acl.ACL.PWD_CLEAR_TEXT;
   
   // --------------------------------------------------------------------------
 
@@ -90,8 +90,7 @@
   short autenticateLDAPUser (com.knowgate.dataobjs.DBBind dbb, String sDomainNm, String sWorkAreaNm, String sUserCn, String sAuthStr) {
     com.knowgate.ldap.LDAPModel oLdapImpl = null;
 
-    if (com.knowgate.acl.ACL.PWD_DTIP_RC4==ENCRYPT_ALGORITHM)
-      sAuthStr = com.knowgate.acl.ACL.RC4EnDeCrypt(sAuthStr);
+    sAuthStr = com.knowgate.acl.ACL.decript (sAuthStr, ENCRYPT_ALGORITHM);
 
     short iStatus = 0;
     
