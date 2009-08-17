@@ -72,6 +72,7 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/grid.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
 
@@ -89,7 +90,6 @@
       
       // ------------------------------------------------------
 
-
       function validate() {
         var frm = window.document.forms[0];
         
@@ -105,6 +105,41 @@
   </SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
+      function addNewField() {
+      	var lbl = window.prompt("[~Introduzca el nombre del nuevo campo~]");
+      	
+      	if (lbl!=null) {
+      	  if (lbl.length>0) {
+
+					  if (hasForbiddenChars(lbl)) {
+					    alert ("[~El nombre introducido para el nuevo campo contiene caracteres no validos~]");
+					  } else {
+				      GridRemoveRow(oPwdsGrid,oGrid.rowcount-1);
+
+				      var rc = String(oGrid.rowcount);
+
+				      oRow = GridCreateRow(oPwdsGrid, "line_"+rc);
+              GridCreateCell(oRow, 0, "lbl_line_"+rc, "lbl_line_"+rc, "html", "<FONT CLASS=textsmall>"+lbl+"</FONT>");
+              GridCreateInputCell(oRow, 1, "line_"+rc, "line_"+rc, "text", "", 50, 100, "");
+              GridCreateCell(oRow, 2, "x_line_"+rc, "x_line_"+rc, "html", "<A HREF=# TITLE='[~Remove Field~]' onclick='GridRemoveRow(oPwdsGrid,GridFindRow(oPwdsGrid,\"line_" + String(oGrid.rowcount) + "\")); GridDraw (oPwdsGrid, jsTableName, jsTableHeader, jsTableFooter);'><IMG SRC='../images/images/delete.gif' BORDER='0' ALT='[~Eliminar~]'></A>");
+
+				      oRow = GridCreateRow(oPwdsGrid, "newline");
+              GridCreateCell(oRow, 0, "void_newline1", "void_newline1", "html", "");
+              GridCreateCell(oRow, 1, "void_newline2", "void_newline2", "html", "");
+              GridCreateCell(oRow, 2, "void_newline3", "void_newline3", "html", "<A HREF=# onclick='addNewField()' TITLE='[~Add New Field~]'><IMG SRC='../images/images/new16x16.gif' BORDER='0' ALT='[~Nueva~]'></A>");
+		          GridDraw (oPwdsGrid, jsTableName, jsTableHeader, jsTableFooter);
+		          
+		          var hd = document.createElement("input");
+		          hd.type="hidden";
+		          hd.name = "lbl_line_"+rc;
+		          hd.value = lbl;
+		          document.forms[0].appendChild(hd);
+		          alert ("lbl_line_"+rc+"="+document.forms[0].elements["lbl_line_"+rc].value);
+            }
+          }
+        }
+      } // addNewField
+      
       function paintFields() {
         var oRow;
         oRow = GridCreateRow(oPwdsGrid, "tl_pwd");
@@ -133,7 +168,7 @@
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
     <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Nuevo~]&nbsp;<%=oRec.getName()%></FONT></TD></TR>
   </TABLE>  
-  <FORM NAME="" METHOD="post" ACTION="pwd_store.jsp" onSubmit="return validate()">
+  <FORM METHOD="post" ACTION="pwd_store.jsp" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="gu_pwd" VALUE="">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
     <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
@@ -141,7 +176,10 @@
     <INPUT TYPE="hidden" NAME="gu_user" VALUE="<%=id_user%>">
     <INPUT TYPE="hidden" NAME="gu_writer" VALUE="<%=id_user%>">
     <INPUT TYPE="hidden" NAME="nm_template" VALUE="<%=nm_template%>">
-
+    <INPUT TYPE="hidden" NAME="id_enc_method" VALUE="<% out.write(nm_template.startsWith("brands"+File.separator) ? "NONE" : "RC4"); %>">   
+<% for (PasswordRecordLine rcl : oRec.lines()) { %>
+    <INPUT TYPE="hidden" NAME="lbl_<%=rcl.getId()%>" VALUE="<%=rcl.getLabel()%>">   
+<% } %>
     <TABLE CLASS="formback">
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">

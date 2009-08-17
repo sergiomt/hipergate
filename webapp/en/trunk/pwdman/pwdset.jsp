@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.SQLException,java.sql.Timestamp,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.Category" language="java" session="true" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.SQLException,java.sql.Timestamp,java.sql.Types,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.DBLanguages,com.knowgate.hipergate.Category" language="java" session="true" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%
 /*
   Copyright (C) 2003-2008  Know Gate S.L. All rights reserved.
@@ -43,6 +43,7 @@
   boolean bSession = (session.getAttribute("validated")!=null);
       
   String id_user = getCookie (request, "userid", null);
+  int id_domain = new Integer(getCookie(request,"domainid","")).intValue();
       
 	PreparedStatement oStmt = null;
   JDCConnection oConn = null;
@@ -61,21 +62,51 @@
 
 	  if (bSession) {
 	    ACLUser.resetSignature(oConn, id_user, sPwd1);
-      DBAudit.log(oConn, ACLUser.ClassId, "USPW", id_user, id_user, null, 0, 0, null, null);
+
+			oStmt = oConn.prepareStatement("UPDATE "+DB.k_users+" SET "+DB.tx_challenge+"=? WHERE "+DB.gu_user+"=?");
+			if (request.getParameter("tx_challenge").length()>0)
+			  oStmt.setString(1, request.getParameter("tx_challenge"));
+			else
+			  oStmt.setNull(1, Types.VARCHAR);
+			oStmt.setString(2, id_user);
+			oStmt.executeUpdate();
+			oStmt.close();
+			
+      DBAudit.log(oConn, ACLUser.ClassId, "USPW", id_user, id_user, null, 0, 0, null, null);	  
 	  }
 	  else {
 	  	if (sPwdSign==null || sPwd1.equals(sPwdSign)) {
 	      ACLUser.resetSignature(oConn, id_user, sPwd1);
+
+			  oStmt = oConn.prepareStatement("UPDATE "+DB.k_users+" SET "+DB.tx_challenge+"=? WHERE "+DB.gu_user+"=?");
+			  if (request.getParameter("tx_challenge").length()>0)
+			    oStmt.setString(1, request.getParameter("tx_challenge"));
+			  else
+			    oStmt.setNull(1, Types.VARCHAR);
+			  oStmt.setString(2, id_user);
+			  oStmt.executeUpdate();
+			  oStmt.close();
+
         DBAudit.log(oConn, ACLUser.ClassId, sPwdSign==null ? "NSPW" : "USPW", id_user, id_user, null, 0, 0, null, null);
 
 			  sCatName = DBCommand.queryStr(oConn, "SELECT d."+DB.nm_domain+",'_'"+",u."+DB.tx_nickname+",'_pwds' FROM "+DB.k_domains+" d,"+DB.k_users+" u WHERE d."+DB.id_domain+"=u."+DB.id_domain+" AND u."+DB.gu_user+"='"+id_user+"'");
 
 				String sPwdsCat = DBCommand.queryStr(oConn, "SELECT "+DB.gu_category+" FROM "+DB.k_categories+" c, " + DB.k_cat_tree+ " t WHERE c."+DB.gu_category+"=t."+DB.gu_child_cat+" AND t."+DB.gu_parent_cat+" IN (SELECT "+DB.gu_category+" FROM "+DB.k_users+" WHERE "+DB.gu_user+"='"+id_user+"') AND c."+DB.nm_category+"='"+sCatName+"'");
-
+				
 				if (null==sPwdsCat) {
-      	  Category.create(oConn, new Object[] { DBCommand.queryStr(oConn, "SELECT "+DB.gu_category+" FROM "+DB.k_users+" WHERE "+DB.gu_user+"='"+id_user+"'"),
-      	  																		  id_user, sCatName, new Short((short)1), new Integer(1), "folderpwds_16x16.gif", "folderpwds_16x16.gif" });
-				}
+    			ACLDomain oDom = new ACLDomain(oConn, id_domain);
+					
+      	  Category oPwdsCat = new Category(Category.create(oConn, new Object[] { DBCommand.queryStr(oConn, "SELECT "+DB.gu_category+" FROM "+DB.k_users+" WHERE "+DB.gu_user+"='"+id_user+"'"),
+      	  																		             id_user, sCatName, new Short((short)1), new Integer(1), "folderpwds_16x16.gif", "folderpwds_16x16.gif" }));
+
+    			oPwdsCat.setUserPermissions (oConn, oDom.getString(DB.gu_owner), ACL.PERMISSION_FULL_CONTROL, (short)0, (short)0);
+      		oPwdsCat.setUserPermissions ( oConn, id_user, ACL.PERMISSION_LIST|ACL.PERMISSION_READ|ACL.PERMISSION_ADD|ACL.PERMISSION_DELETE|ACL.PERMISSION_MODIFY|ACL.PERMISSION_GRANT, (short) 1, (short) 0);
+
+      	  Category oMySites = new Category(Category.create(oConn, new Object[] { oPwdsCat.getString(DB.gu_category), id_user, sCatName + "_mywebs", new Short((short)1), new Integer(1), "folderpwds_16x16.gif", "folderpwds_16x16.gif" }));
+    			oMySites.setUserPermissions (oConn, oDom.getString(DB.gu_owner), ACL.PERMISSION_FULL_CONTROL, (short)0, (short)0);
+      		oMySites.setUserPermissions ( oConn, id_user, ACL.PERMISSION_LIST|ACL.PERMISSION_READ|ACL.PERMISSION_ADD|ACL.PERMISSION_DELETE|ACL.PERMISSION_MODIFY|ACL.PERMISSION_GRANT, (short) 1, (short) 0);
+					oMySites.setLabel(oConn, "[~Mis sitios web~]");
+				} // fi
 
 		    session.setAttribute("validated", new Boolean(true));
 

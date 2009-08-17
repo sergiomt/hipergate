@@ -1,5 +1,5 @@
 ﻿<%@ page import="java.util.Enumeration,java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.acl.PasswordRecord,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="true" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="pwdtemplates.jspf" %><%
+<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="pwdtemplates.jspf" %><%
 /*
   Copyright (C) 2003-2009  Know Gate S.L. All rights reserved.
                            C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -45,6 +45,9 @@
 	if (!bSession) {
 	  response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Session Expired~]&desc=[~Session has expired. Please log in again~]&resume=_close"));
     return;
+  } else if (!((Boolean) session.getAttribute("validated")).booleanValue()) {
+	  response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Session Expired~]&desc=[~Session has expired. Please log in again~]&resume=_close"));
+    return;
   }
 
   String id_domain = request.getParameter("id_domain");
@@ -70,16 +73,22 @@
     oConn = GlobalDBBind.getConnection(PAGE_NAME); 
 
     loadRequest(oConn, request, oPwd);
-
+			
     oConn.setAutoCommit (false);
 
 		Enumeration en = request.getParameterNames();
   
     while (en.hasMoreElements()) {            
       String paramName = (String) en.nextElement();
-      if (!paramName.equals("gu_pwd") && !paramName.equals("tl_pwd") && !paramName.equals("id_domain") && !paramName.equals("gu_workarea") && !paramName.equals("gu_category") && !paramName.equals("nm_template") && !paramName.equals("gu_writer")) {
+      if (!paramName.startsWith("lbl_") && 
+          !paramName.equals("gu_pwd") && !paramName.equals("tl_pwd") && !paramName.equals("id_domain") &&
+          !paramName.equals("gu_workarea") && !paramName.equals("gu_category") && !paramName.equals("nm_template")
+          && !paramName.equals("gu_writer") && !paramName.equals("gu_user") && !paramName.equals("id_enc_method")) {
         char cTp = oRec.getTypeOf(paramName);
-        oPwd.addLine(paramName, cTp==(char)0 ? '$' : cTp, request.getParameter(paramName));
+        String sLabel = request.getParameter("lbl_"+paramName);
+        String sValue = nullif(request.getParameter(paramName));
+        if (sValue.equalsIgnoreCase("null")) sValue = "";
+        oPwd.addLine(paramName, cTp==(char)0 ? '$' : cTp, sLabel, sValue);
       } // fi
     } // wend
 
@@ -126,6 +135,6 @@
   oConn = null;
   
   // Refresh parent and close window, or put your own code here
-  out.write ("<HTML><HEAD><TITLE>Wait...</TITLE><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>window.opener.location.reload(true); self.close();<" + "/SCRIPT" +"></HEAD></HTML>");
+  out.write ("<HTML><HEAD><TITLE>Wait...</TITLE><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>window.opener.refreshPasswordList(); self.close();<" + "/SCRIPT" +"></HEAD></HTML>");
 
 %><%@ include file="../methods/page_epilog.jspf" %>

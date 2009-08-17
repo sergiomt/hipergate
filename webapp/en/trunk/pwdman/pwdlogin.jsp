@@ -33,8 +33,8 @@
 		session.setAttribute("signature", tx_pwd_sign);
     response.sendRedirect (response.encodeRedirectUrl ("pwdmanhome.jsp?selected="+request.getParameter("selected")+"&subselected="+request.getParameter("subselected")));
   } else {
-		session.setAttribute("validated", new Boolean(false));
-		session.setAttribute("signature", "");
+		session.removeAttribute("validated");
+		session.removeAttribute("signature");
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Clave invalida~]&desc=[~La clave de firma introducida no es correcta~]&resume=pwdmanhome.jsp?selected="+request.getParameter("selected")+"&subselected="+request.getParameter("subselected")));
   }
 %>

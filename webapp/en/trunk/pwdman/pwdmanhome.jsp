@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.Categories" language="java" session="true" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.Category,com.knowgate.hipergate.Categories" language="java" session="true" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="pwdtemplates.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 
@@ -36,6 +36,8 @@
  
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
   
+  final int P = ACL.PERMISSION_LIST|ACL.PERMISSION_READ|ACL.PERMISSION_ADD|ACL.PERMISSION_MODIFY;
+
   String sLanguage = getNavigatorLanguage(request);
   String sSkin = getCookie(request, "skin", "xp");
   String sStorage = Environment.getProfilePath(GlobalDBBind.getProfileName(), "storage");
@@ -43,14 +45,20 @@
   String id_domain = getCookie(request, "domainid", "0");
   String gu_user = getCookie(request, "userid", "");
   String gu_workarea = getCookie(request, "workarea", "");
+  String gu_category = request.getParameter("gu_category");
+  String sSelParams = "?selected="+request.getParameter("selected")+"&subselected="+request.getParameter("subselected");
 
   JDCConnection oConn = null;  
   
 	boolean bSession = (session.getAttribute("validated")!=null);
+  if (bSession) bSession = ((Boolean) session.getAttribute("validated")).booleanValue();
+
   boolean bIsGuest = true;
-	String sPwdSign = null;
+	String[] aStr = null;
   DBSubset oCatgs = null;
   int iCatgs = 0;
+  int[] aPermissions = null;
+  
   String sPwdsCat = "";
   
   try {
@@ -58,7 +66,7 @@
     
     oConn = GlobalDBBind.getConnection("pwdmanhome");
 
-    sPwdSign = DBCommand.queryStr(oConn, "SELECT "+DB.tx_pwd_sign+" FROM "+DB.k_users+" WHERE "+DB.gu_user+"='"+gu_user+"'");
+    aStr = DBCommand.queryStrs(oConn, "SELECT "+DB.tx_pwd_sign+","+DB.tx_challenge+" FROM "+DB.k_users+" WHERE "+DB.gu_user+"='"+gu_user+"'");
 
 		if (bSession) {
 			String sCatName = DBCommand.queryStr(oConn, "SELECT d."+DB.nm_domain+",'_',u."+DB.tx_nickname+",'_pwds' FROM "+DB.k_domains+" d,"+DB.k_users+" u WHERE d."+DB.id_domain+"=u."+DB.id_domain+" AND u."+DB.gu_user+"='"+gu_user+"'");
@@ -68,7 +76,14 @@
 			if (null!=sPwdsCat)
 		    oCatgs = new Categories().getChildsNamed(oConn, sPwdsCat, sLanguage, Categories.ORDER_BY_LOCALE_NAME);
 	      iCatgs = oCatgs.getRowCount();
-	  }
+	      if (iCatgs>0) { 
+	        aPermissions = new int[iCatgs];
+	        for (int p=0; p<iCatgs; p++) {
+	          Category oPerms = new Category(oCatgs.getString(0,p));
+	          aPermissions[p] = oPerms.getUserPermissions(oConn, gu_user);
+	        } //next
+	      } // fi
+	  } // fi
 
 	  oConn.close("pwdman");
   }
@@ -93,14 +108,18 @@
     }
 
     .columnright {
-      float:left;right:340px;clear:right;text-align:left;
+      float:left;right:340px;clear:right;text-align:left;visibility:hidden;
     }
   </STYLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/layer.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
   <!--
 
@@ -108,18 +127,34 @@
         
     var req = false;
 
-		var cts = new Array (<% for (int c=0; c<iCatgs; c++) out.write((c==0 ? "" : ",")+"\""+oCatgs.getString(0,c)+"\""); %>);
-		var ctn = new Array (<% for (int c=0; c<iCatgs; c++) out.write((c==0 ? "" : ",")+"\""+oCatgs.getStringNull(2,c,oCatgs.getString(1,c)).replace('"',' ')+"\""); %>);
+		var cts = new Array (<% for (int c=0; c<iCatgs; c++) if ((aPermissions[c]&P)!=0) out.write((c==0 ? "" : ",")+"\""+oCatgs.getString(0,c)+"\""); %>);
+		var ctn = new Array (<% for (int c=0; c<iCatgs; c++) if ((aPermissions[c]&P)!=0) out.write((c==0 ? "" : ",")+"\""+oCatgs.getStringNull(2,c,oCatgs.getString(1,c)).replace('"',' ')+"\""); %>);
     var cur = null;
+    var pws = null;
+
+    // ----------------------------------------------------------------
 
 		function writeCategoriesList() {
-	    var htm = "";
+	    var htm = "";	
 	    for (var c=0; c<cts.length; c++) {
 	      htm += "<INPUT TYPE=\"checkbox\" NAME=\"c_"+cts[c]+"\" VALUE=\""+cts[c]+"\">&nbsp;<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"listPasswords('"+cts[c]+"')\">"+(cur==cts[c] ? "<B>" : "")+ctn[c]+(cur==cts[c] ? "</B>" : "")+"</A><BR/>";
 	    } // next
+	    htm += "<BR/><TABLE SUMMARY=\"Close Session\" BORDER=\"0\"><TR><TD><IMG SRC=\"../images/images/padlock.gif\" WIDTH=19 HEIGHT=22 BORDER=0 ALT=\"Padlock\" /></TD><TD><A HREF=\"pwdlogout.jsp<%=sSelParams%>\" CLASS=\"linkplain\">[~Cerrar Gestor de Contraseñas~]</A></TD></TR></TABLE>";
 	    document.getElementById("catlist").innerHTML = htm;
-		}
+		} // writeCategoriesList
 
+    // ----------------------------------------------------------------
+		
+    function refreshPasswordList() {
+	      if (!req) {
+          document.getElementById("pwdlinks").innerHTML = "";
+	        req = createXMLHttpRequest();
+			    req.onreadystatechange = writePasswordsHtml;			  
+			    req.open("GET", "pwdlist.jsp?gu_category="+cur, true);
+			    req.send(null);
+			  } // fi
+    } // refreshPasswordList()
+		
     function createPassword() {
       var frm = document.forms["pwdsfrm"];
       
@@ -132,8 +167,11 @@
       } else {
 	      open ("pwd_new.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&nm_template="+getCombo(frm.sel_templates)+"&gu_category="+cur,
 	      		  "newpassword", "directories=no,toolbar=no,menubar=no,width=500,height=460");
+      	frm.sel_templates.selectedIndex=0;
       }
     } // createPassword
+
+    // ----------------------------------------------------------------
     
     function addNewCategory() {
         if (req.readyState == 4) {
@@ -144,14 +182,17 @@
           		var id = req.responseText.substr(0,32);
           		var lt = req.responseText.substr(33);
           		cts.push(id);
+          		ctn.push(lt);
           		var clst = document.getElementById("catlist");
-          		clst.innerHTML = clst.innerHTML + "<INPUT TYPE=\"checkbox\" NAME=\"c_"+id+"\">&nbsp;<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"listPasswords('"+id+"')\">"+lt+"</A><BR/>";
+          		clst.innerHTML = clst.innerHTML + "<INPUT TYPE=\"checkbox\" NAME=\"c_"+id+"\" VALUE=\""+id+"\" />&nbsp;<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"listPasswords('"+id+"')\">"+lt+"</A><BR/>";
           	} // fi
           	req = false;
           } else {
           }
         }
     } // addNewCategory
+
+    // ----------------------------------------------------------------
 
     function createCategory() {
     	var par;
@@ -179,6 +220,8 @@
     	}    	
     } // createCategory()
 
+    // ----------------------------------------------------------------
+
     function deleteCategories() {
     	var par;
     	var frm = document.forms["fcats"];
@@ -198,28 +241,70 @@
     	    }
     	  } // next
     	  
-    	  if (par.lenght==0) {
+    	  if (par.length==0) {
     	    alert ("[~Debe seleccionar al menos una categoría a eliminar~]");
         } else {
-        	cts = c2s;
-        	ctn = c2n;
+	        if (window.confirm("[~¿Está seguro de que desea eliminar las categorías seleccionadas?~]")) {
+        	  cts = c2s;
+        	  ctn = c2n;
+		  			hideLayer("pwdlist");
+	    			document.getElementById("pwdlinks").innerHTML = "";
 
-          writeCategoriesList();
+            writeCategoriesList();
 
-      	  par = "lst="+par;
-			    req = createXMLHttpRequest();
+      	    par = "lst="+par;
+			      req = createXMLHttpRequest();
 
-			    req.open("POST", "category_delete.jsp", true);
-  		    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  			  req.setRequestHeader("Content-length", par.length);
-  			  req.setRequestHeader("Connection", "close");
-			    req.send(par);
-    	  }
-    	}    	    
+			      req.open("POST", "category_delete.jsp", false);
+  		      req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  			    req.setRequestHeader("Content-length", par.length);
+  			    req.setRequestHeader("Connection", "close");
+			      req.send(par);
+			      req = false;
+    	    } // fi (confirm)
+    	  } // fi (par.length) 
+    	} // fi (req)    	    
     } // deleteCategories
 
     // ----------------------------------------------------------------
 
+	  function deletePasswords() {
+	        var offset = 0;
+	        var frm = document.forms["pwdsfrm"];
+	        var chi = frm.checkeditems;
+	  	  
+	        if (window.confirm("[~¿Está seguro de que desea eliminar las contraseñas seleccionadas?~]")) {
+
+	          chi.value = "";	  	  
+	          frm.action = "pwd_delete.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&gu_category=" + cur;
+	  	  
+	          for (var i=0;i<pws.length; i++) {
+              while (frm.elements[offset].type!="checkbox") offset++;
+    	        if (frm.elements[offset].checked)
+                chi.value += pws[i] + ",";
+                offset++;
+	          } // next()
+	    
+	          if (chi.value.length>0) {
+	            chi.value = chi.value.substr(0,chi.value.length-1);
+              frm.submit();
+            } // fi(chi!="")
+          } // fi (confirm)
+	  } // deletePasswords()
+
+    // ----------------------------------------------------------------
+
+    function selectAll() {          
+      var frm = document.forms["pwdsfrm"];
+      
+      for (var p=0; p<pws.length; p++)
+        frm.elements["chk_"+pws[p]].click();
+    } // selectAll()
+
+    // ----------------------------------------------------------------
+
+    var pwdlinkshtml = "";
+    
     function writePasswordsHtml() {
         if (req.readyState == 4) {
           if (req.status == 200) {
@@ -229,13 +314,16 @@
           	  } else {
 						    var lins = req.responseText.split("\n");
 						    var nlin = lins.length;
-						    var html = "<TABLE>";
+						    pwdlinkshtml = "<IMG SRC=\"../images/images/spacer.gif\" WIDTH=\"12\" HEIGHT=\"1\" BORDER=\"0\" ALT=\"\"><IMG SRC=\"../images/images/papelera.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"[~Eliminar~]\">&nbsp;<A HREF=\"#\" onclick=\"deletePasswords()\" CLASS=\"linkplain\">[~Eliminar Contrase&ntilde;as Seleccionadas~]</A><BR/><TABLE SUMMARY=\"Passwords List\"><TR><TD CLASS=tableheader BACKGROUND=\"../skins/<%=sSkin%>/tablehead.gif\"></TD><TD CLASS=tableheader BACKGROUND=\"../skins/<%=sSkin%>/tablehead.gif\"><A HREF=\"#\" onclick=\"selectAll()\" TITLE=\"Select all\"><IMG SRC=\"../images/images/selall16.gif\" BORDER=\"0\" ALT=\"Select all\"></A></TD></TR>";
+						    
+						    pws = new Array();
 						    for (var l=0; l<nlin; l++) {
 						  	  var lin = lins[l].split("|");
-						      html += "<TR><TD>"+lin[1]+"</TD></TR>";
+						  	  pws.push(lin[0]);
+						      pwdlinkshtml += "<TR><TD><A HREF=\"#\" CLASS=\"linkplain\" onclick=\"viewPassword('"+lin[0]+"')\">"+lin[1]+"</A></TD><TD><INPUT TYPE=\"checkbox\" NAME=\"chk_"+lin[0]+"\" VALUE=\""+lin[0]+"\" /></TD></TR>";
 						    }
-						    html += "</TABLE>";
-          	    document.getElementById("pwdlinks").innerHTML = html;
+						    pwdlinkshtml += "</TABLE>";
+          	    document.getElementById("pwdlinks").innerHTML = pwdlinkshtml;
           	  } // fi
             } // fi
           	req = false;
@@ -243,19 +331,73 @@
         } // fi
     } // writePasswordsHtml
 
+    // ----------------------------------------------------------------
+
 	  function listPasswords(gu) {
-	    if (!req) {
-	    	cur = gu;
-        writeCategoriesList();
-	      req = createXMLHttpRequest();
-			  req.onreadystatechange = writePasswordsHtml;			  
-			  req.open("GET", "pwdlist.jsp?gu_category="+gu, true);
-			  req.send(null);
-			} 
-	  }
+	      showLayer("pwdlist");
+	      if (!req) {
+	    	  cur = gu;
+          writeCategoriesList();
+          document.getElementById("pwdlinks").innerHTML = "";
+	        req = createXMLHttpRequest();
+			    req.onreadystatechange = writePasswordsHtml;			  
+			    req.open("GET", "pwdlist.jsp?gu_category="+gu, true);
+			    req.send(null);
+			  } // fi
+	  } // listPasswords
 
     // ----------------------------------------------------------------
 
+    function viewPassword(gu) {
+		  var pwdxml = httpRequestXML("pwd_txt.jsp?gu_pwd="+gu);
+		  var pwdrec = pwdxml.getElementsByTagName("PasswordRecord")[0];
+		  var pwdhtm = "";
+		  if (getElementAttribute(pwdrec, "error", "status")=="0") {
+				var pwdlins = pwdxml.getElementsByTagName("tx_lines")[0].childNodes[0].data.split("\n");				 
+				pwdhtm = "<DIV class=cxMnu1 style=\"width:100px\"><DIV class=cxMnu2><SPAN class=hmMnuOff onMouseOver=\"this.className='hmMnuOn'\" onMouseOut=\"this.className='hmMnuOff'\" onClick=\"document.getElementById('pwdlinks').innerHTML=pwdlinkshtml;\"><IMG src=\"../images/images/toolmenu/historyback.gif\" width=16 style=\"vertical-align:middle\" height=16 border=0 alt=\"[~Atras~]\"> [~Atras~]</SPAN></DIV></DIV><BR/><TABLE><TR><TD CLASS=striptitle><FONT CLASS=title1>"+getElementText(pwdxml, "tl_pwd")+"</FONT></TD></TR></TABLE><TABLE CLASS=\"formback\"><TR><TD><TABLE WIDTH=\"100%\" CLASS=\"formfront\">";
+				for (var l=0; l<pwdlins.length; l++) {
+					var lin = pwdlins[l].split("|");
+					if (lin[3].length>0) {
+				    pwdhtm += "<TR><TD CLASS=\"formstrong\">"+lin[2]+"</TD>";
+				    if (lin[1]=="&") {
+				    	if (lin[3].substr(0,6)!="ftp://" && lin[3].substr(0,7)!="http://" && lin[3].substr(0,8)!="https://")
+				    	  lin[3] = "http://" + lin[3];
+				      pwdhtm += "<TD><A HREF=\""+lin[3]+"\" CLASS=\"linkplain\" TARGET=\"_blank\">"+lin[3]+"</A></TD>";
+				    } else if (lin[1]=="@") {
+				      pwdhtm += "<TD><A HREF=\"mailto:"+lin[3]+"\" CLASS=\"linkplain\">"+lin[3]+"</A></TD>"
+				    } else {
+				      pwdhtm += "<TD CLASS=\"formplain\">"+lin[3]+"</TD>";
+				    }
+				    pwdhtm += "</TR>";
+				  }
+				}
+				pwdhtm += "</TABLE></TD></TR></TABLE>";
+        document.getElementById("pwdlinks").innerHTML = pwdhtm;				
+		  } else {
+		    alert (getElementText(pwdxml, "error")); 
+		  }
+    } // viewPassword
+
+    // ----------------------------------------------------------------
+
+    function forceNewSignaturePassword() {
+      if (window.confirm("[~Si establece una nueva clave de acceso PERDERÁ todas las contraseñas previamente almacenadas. ¿Está seguro de que desea continuar y borrar todas las contraseñas?~]")) {
+        window.location = "pwd_reset.jsp<%=sSelParams%>";
+      }
+    }
+    
+    // ----------------------------------------------------------------
+
+    function setCombos() {
+      var gct = getURLParam("gu_category");
+      if (null!=gct) listPasswords(gct);
+<%    if (bSession && iCatgs==1) { %>
+			  listPasswords("<%=oCatgs.getString(0,0)%>");
+<%    } %>
+    }
+
+    // ----------------------------------------------------------------
+    
     var stre = new Array("[~Insuficiente~]", "[~Insuficiente~]", "[~Insuficiente~]", "[~Insuficiente~]", "[~Insuficiente~]",  "[~Moderada~]", "[~Moderada~]", "[~Moderada~]", "[~Fuerte~]", "[~Fuerte~]", "[~Muy fuerte~]");
 
     var streCSS = 	new Array("#FF3300", "#FF3300", "#FFA400", "#FFB700", "#FCE200",  "#CBF400", "#8DFC00", "#78FE00", "#5BFF00", "#4CFF00", "#1CFF00");
@@ -325,16 +467,16 @@
       }
 
       return true;
-    } // validate
-
+    } // validateNewPassword
+    
   //-->
   </SCRIPT>
 </HEAD>
-<BODY  TOPMARGIN="0" MARGINHEIGHT="0">
+<BODY  TOPMARGIN="0" MARGINHEIGHT="0" onload="setCombos()">
 <%@ include file="../common/tabmenu.jspf" %>
 <BR>
 <TABLE SUMMARY="Page Header"><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Gestor de Contraseñas~]</FONT></TD></TR></TABLE>
-<% if (null==sPwdSign) { %>
+<% if (null==aStr[0]) { %>
   <FORM METHOD="post" ACTION="pwdset.jsp" onSubmit="return validateNewPassword()">
   	<INPUT TYPE="hidden" NAME="selected" VALUE="<%=request.getParameter("selected")%>">
   	<INPUT TYPE="hidden" NAME="subselected" VALUE="<%=request.getParameter("subselected")%>">
@@ -344,9 +486,14 @@
     <BR/>
     <FONT CLASS="textplain">[~hipergate no almacena la clave de firma, y no puede ser recuperada de ninguna manera tras ser establecida~]</FONT>    <BR/>
     <BR/>
-    <FONT CLASS="textplain">[~Clave de firma~]</FONT>&nbsp;<INPUT TYPE="password" NAME="pwd1" MAXLENGTH="20" onKeyUp="updateMeter(this.value)">&nbsp;&nbsp;<FONT CLASS="textplain">[~repetir clave~]</FONT>&nbsp;<INPUT TYPE="password" NAME="pwd2" MAXLENGTH="20">&nbsp;&nbsp;<INPUT TYPE="submit" VALUE="[~Establecer~]">
+    <FONT CLASS="textplain">[~Clave de firma~]</FONT>&nbsp;<INPUT CLASS="combomini" TYPE="password" NAME="pwd1" MAXLENGTH="20" onKeyUp="updateMeter(this.value)">&nbsp;&nbsp;<FONT CLASS="textplain">[~repetir clave~]</FONT>&nbsp;<INPUT CLASS="combomini" TYPE="password" NAME="pwd2" MAXLENGTH="20">
 		<BR/>
 		<SPAN ID="fuerza" class="textsmall"></SPAN><DIV ID='strengthMeter' CLASS="strengthMeter" STYLE='width:160;height:12;'><DIV id='scoreBar' class="scoreBar"></DIV></DIV>
+    <FONT CLASS="textplain">[~Introduzca una frase que le ayude a recordar su clave de firma en caso de olvidarla~] [~(Opcional)~]</FONT>
+    <BR/>
+    <INPUT TYPE="text" CLASS="combomini" NAME="tx_challenge" MAXLENGTH="100" SIZE="70" VALUE="">
+    <BR/><BR/>
+    <INPUT TYPE="submit" VALUE="[~Establecer~]">
   </FORM>
 <% } else {
      if (bSession) {
@@ -363,13 +510,15 @@
   <FORM METHOD="post" NAME="fcats" ACTION="category_delete.jsp">
   <DIV id="catlist"><%
   for (int c=0; c<iCatgs; c++) {
-    out.write("<INPUT TYPE=\"checkbox\" NAME=\"c_"+oCatgs.getString(0,c)+"\" VALUE=\""+oCatgs.getString(0,c)+"\">&nbsp;<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"listPasswords('"+oCatgs.getString(0,c)+"')\">"+oCatgs.getStringNull(2,c,oCatgs.getString(1,c))+"</A><BR/>");
+    if ((aPermissions[c]&P)!=0) 
+      out.write("<INPUT TYPE=\"checkbox\" NAME=\"c_"+oCatgs.getString(0,c)+"\" VALUE=\""+oCatgs.getString(0,c)+"\">&nbsp;<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"listPasswords('"+oCatgs.getString(0,c)+"')\">"+oCatgs.getStringNull(2,c,oCatgs.getString(1,c))+"</A><BR/>");
   } // next
-%></DIV>
+%><BR/><TABLE SUMMARY="Close Session" BORDER="0"><TR><TD><IMG SRC="../images/images/padlock.gif" WIDTH=19 HEIGHT=22 BORDER=0 ALT="Padlock" /></TD><TD><A HREF="pwdlogout.jsp<%=sSelParams%>" CLASS="linkplain">[~Cerrar Gestor de Contraseñas~]</A></TD></TR></TABLE></DIV>
   </FORM>
   </DIV>
   <DIV id="pwdlist" CLASS="columnright">
-  <FORM NAME="pwdsfrm">
+  <FORM NAME="pwdsfrm" METHOD="POST">
+  <INPUT TYPE="hidden" NAME="checkeditems" />
 <%
    PasswordRecordTemplate oRec = new PasswordRecordTemplate();
    String sTemplates = GlobalCacheClient.getString("PasswordTemplatesSelect["+gu_user+"]");
@@ -419,6 +568,21 @@
   <INPUT TYPE="hidden" NAME="selected" VALUE="<%=request.getParameter("selected")%>">
   <INPUT TYPE="hidden" NAME="subselected" VALUE="<%=request.getParameter("subselected")%>">
   <FONT CLASS="textplain">[~Clave de firma~]</FONT>&nbsp;<INPUT TYPE="password" NAME="pwd1" MAXLENGTH="20">&nbsp;&nbsp;<INPUT TYPE="submit" VALUE="[~Entrar~]">
+  <BR/>
+  <DIV id="reminderlink" STYLE="visibility:visible">
+  <BR/>
+  <A HREF="#" CLASS="linkplain" onclick="hideLayer('reminderlink'); showLayer('reminder');"><IMG SRC="../images/images/forgotpwd.gif" WIDTH="17" HEIGHT="16" BORDER="0" ALT="Forgot password?">&nbsp;[~&iquest;Olvid&oacute; la clave de firma?~]</A>
+  <BR/>
+  </DIV>
+  <DIV id="reminder" STYLE="visibility:hidden">
+  <FONT CLASS="textplain">[~Por motivos de seguridad, la clave de firma no puede ser recuperada ni re-enviada~]</FONT>
+<% if (aStr[1]!=null) { %>
+  <BR/>
+  <FONT CLASS="textplain">[~La frase que introdujo como recordatorio de su clave es~]&nbsp;"<%=aStr[1]%>"</FONT>
+<% } %>
+  <BR/>
+  <A HREF="#" CLASS="linkplain" onclick="forceNewSignaturePassword()">[~Establecer una nueva clave de firma~]</A>
+  </DIV>
   </FORM>
 <%   }
    } %>
