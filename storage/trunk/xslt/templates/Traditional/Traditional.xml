@@ -9,6 +9,9 @@
     <family>Verdana</family>
   </fonts>
   <colors>
+    <color>GrisOscuro-Plata</color>
+    <color>CyanOscuro-Crimson</color>
+    <color>CyanOscuro-Dorado</color>
     <color>Azul-Naranja</color>
     <color>Verde-Dorado</color>
     <color>Burdeos-Negro</color>
