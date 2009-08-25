@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATASTRUCT>
+  <ROWSETS>
+    <INIT>
+    </INIT>
+    <ROWSET>
+      <ACTION>
+        <FROM>K_ACTIVITIES</FROM>
+        <TO>K_ACTIVITIES</TO>
+        <WHERE>GU_ACTIVITY=?</WHERE>
+        <ERASE>GU_ACTIVITY=?</ERASE>
+        <FROM_PK>GU_ACTIVITY</FROM_PK>
+        <TO_PK>GU_ACTIVITY</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING>SYSDATE,DT_CREATED</MAPPING>
+        <MAPPING>NULL,DT_MODIFIED</MAPPING>
+        <MAPPING>NULL,GU_LIST</MAPPING>
+        <MAPPING>TL_ACTIVITY || ' (' || TO_CHAR(SYSDATE) || ')',TL_ACTIVITY</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+  </ROWSETS>
+</DATASTRUCT>
