@@ -37,7 +37,7 @@
                 <xsl:variable name="titular" select="pageset/pages/page/blocks/block[metablock='TITULAR']/paragraphs"/>
                 <tr name="TITULAR_1" id="TITULAR_1">
                   <td class="TP_TITULAR_TEXTO">&#160;<xsl:value-of select="$titular/paragraph[@id='TITULAR_TEXTO']/text" disable-output-escaping="no"/></td>
-                  <td class="TP_fondo2"><img height="35" src="{$param_imageserver}/styles/Contemporary/{pageset/color}/spacer.gif" width="2" border="0" /></td>
+                  <td class="TP_TITULAR_TEXTO"><img height="35" src="{$param_imageserver}/styles/Contemporary/{pageset/color}/spacer.gif" width="2" border="0" /></td>
                   <td class="TP_TITULAR_otros">
                     <div class="TP_TITULAR_COMENTARIO"><xsl:value-of select="$titular/paragraph[@id='TITULAR_COMENTARIO']/text" disable-output-escaping="no"/>&#160;</div>
                     <div class="TP_TITULAR_FECHA"><xsl:value-of select="$titular/paragraph[@id='TITULAR_FECHA']/text" disable-output-escaping="no"/>&#160;</div>
