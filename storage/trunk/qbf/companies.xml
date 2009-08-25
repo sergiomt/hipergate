@@ -8,7 +8,7 @@
   <title_ru>#ru#Companies Query</title_ru>
   <title_pt>#pt#Companies Query</title_pt>
   <title_cn>#zh#Companies Query</title_cn>
-  <title_tw>#zh#Companies Query</title_tw>
+  <title_tw>#tw#Companies Query</title_tw>
   <method>post</method>
   <action>../crm/company_listing_f.jsp?selected=2&amp;subselected=0</action>
   <baseobject>v_company_address b</baseobject>

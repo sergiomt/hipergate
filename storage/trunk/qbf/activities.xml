@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<qbf>
+  <title_es>Consulta de Actividades</title_es>
+  <title_en>Activities Query</title_en>
+  <title_fr>#fr#Companies Query</title_fr>
+  <title_de>#de#Companies Query</title_de>
+  <title_it>#it#Companies Query</title_it>
+  <title_ru>#ru#Companies Query</title_ru>
+  <title_pt>#pt#Companies Query</title_pt>
+  <title_cn>#zh#Companies Query</title_cn>
+  <title_tw>#tw#Companies Query</title_tw>
+  <method>post</method>
+  <action>../marketing/activity_list.jsp?selected=3&amp;subselected=1</action>
+  <baseobject>v_company_address b</baseobject>
+  <basefilter>gu_workarea='${cookie.workarea}'</basefilter>
+
+  <fields>
+    <field><name>tl_activity</name>
+      <label_es>Titulo</label_es>
+      <label_en>Title</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>id_ref</name>
+      <label_es>Referencia</label_es>
+      <label_en>Reference</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>dt_start</name>
+      <label_es>Inicio</label_es>
+      <label_en>dt_start</label_en>
+      <type>date</type>
+    </field>
+    <field><name>dt_end</name>
+      <label_es>Fin</label_es>
+      <label_en>End</label_en>
+      <type>date</type>
+    </field>
+    <field><name>dt_modified</name>
+      <label_es>Fecha Modificacion</label_es>
+      <label_en>Date Modified</label_en>
+      <type>date</type>
+    </field>
+    <field><name>nu_capacity</name>
+      <label_es>Aforo</label_es>
+      <label_en>Capacity</label_en>
+      <type>integer</type>
+    </field>
+    <field><name>tx_dept</name>
+      <label_es>Departamento</label_es>
+      <label_en>Department</label_en>
+      <type>lookup</type><form>lookup_f.jsp?nm_table=k_activity_audience_lookup</form>
+    </field>
+    <field><name>de_activity</name>
+      <label_es>Descripcion</label_es>
+      <label_en>Description</label_en>
+      <type>varchar</type>
+    </field>
+    <field><name>tx_comments</name>
+      <label_es>Comentarios</label_es>
+      <label_en>Comments</label_en>
+      <type>varchar</type>
+    </field>
+  </fields>
+
+  <columns>
+    <column default="yes"><name>tl_activity</name>
+      <label_es>Titulo</label_es>
+      <label_en>Title</label_en>
+      <type>varchar</type></column>
+    <column default="yes"><name>id_ref</name>
+      <label_es>Referencia</label_es>
+      <label_en>Reference</label_en>
+      <type>varchar</type></column>
+    <column default="yes"><name>dt_start</name>
+      <label_es>Fecha Inicio</label_es>
+      <label_en>Date Start</label_en>
+      <type>date</type></column>
+    <column><name>dt_end</name>
+      <label_es>Fecha Fin</label_es>
+      <label_en>Date End</label_en>
+      <type>date</type></column>
+    <column><name>nu_capacity</name>
+      <label_es>Aforo</label_es>
+      <label_en>Capacity</label_en>
+      <type>integer</type></column>
+    <column default="yes"><name>tx_dept</name>
+      <label_es>Departamento</label_es>
+      <label_en>Department</label_en>
+      <type>varchar</type></column>
+    <column default="yes"><name>de_activity</name>
+      <label_es>Descripcion</label_es>
+      <label_en>Description</label_en>
+      <type>varchar</type></column>
+    <column default="yes"><name>tx_comments</name>
+      <label_es>Comentarios</label_es>
+      <label_en>Comments</label_en>
+      <type>varchar</type></column>
+  </columns>
+
+  <sortable>
+    <by>
+      <name>tl_activity</name>
+      
+      <label_es>Titulo</label_es>
+      <label_en>Title</label_en>
+    </by>
+    <by>
+      <name>dt_start</name>      
+      <label_es>Inicio</label_es>
+      <label_en>start</label_en>
+    </by>
+    <by>
+      <name>tx_dept</name>
+      
+      <label_es>Departamento</label_es>
+      
+      <label_en>Department</label_en>
+    </by>
+  </sortable>
+</qbf>
