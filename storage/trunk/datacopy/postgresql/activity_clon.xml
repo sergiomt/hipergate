@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATASTRUCT>
+  <ROWSETS>
+    <INIT>
+    </INIT>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_activities</FROM>
+        <TO>k_activities</TO>
+        <WHERE>gu_activity=?</WHERE>
+        <ERASE>gu_activity=?</ERASE>
+        <FROM_PK>gu_activity</FROM_PK>
+        <TO_PK>gu_activity</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING>CURRENT_TIMESTAMP,dt_created</MAPPING>
+        <MAPPING>null,dt_modified</MAPPING>
+        <MAPPING>null,gu_list</MAPPING>
+        <MAPPING>tl_activity || ' (' || CAST((SELECT COUNT(gu_activity) FROM k_activities) AS VARCHAR(11)) || ')',tl_activity</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+  </ROWSETS>
+</DATASTRUCT>

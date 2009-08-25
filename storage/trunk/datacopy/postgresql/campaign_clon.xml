@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATASTRUCT>
+  <ROWSETS>
+    <INIT>
+    </INIT>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_campaigns</FROM>
+        <TO>k_campaigns</TO>
+        <WHERE>gu_campaign=?</WHERE>
+        <ERASE>gu_campaign=?</ERASE>
+        <FROM_PK>gu_campaign</FROM_PK>
+        <TO_PK>gu_campaign</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFERENCED">gu_campaign,gu_campaign</MAPPING>
+        <MAPPING>CURRENT_TIMESTAMP,dt_created</MAPPING>
+        <MAPPING>nm_campaign || ' (' || CAST((SELECT COUNT(gu_campaign) FROM k_campaigns) AS VARCHAR(11)) || ')',nm_campaign</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_x_campaign_lists</FROM>
+        <TO>k_x_campaign_lists</TO>
+        <WHERE>gu_campaign=?</WHERE>
+        <ERASE>gu_campaign=?</ERASE>
+        <FROM_PK>gu_campaign,gu_list</FROM_PK>
+        <TO_PK>gu_campaign,gu_list</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="REFER(k_campaigns.gu_campaign)">gu_campaign,gu_campaign</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+    <ROWSET>
+      <ACTION>
+        <FROM>k_campaign_targets</FROM>
+        <TO>k_campaign_targets</TO>
+        <WHERE>gu_campaign=?</WHERE>
+        <ERASE>gu_campaign=?</ERASE>
+        <FROM_PK>gu_campaign_target</FROM_PK>
+        <TO_PK>gu_campaign_target</TO_PK>
+      </ACTION>
+      <MAPPINGS>
+        <MAPPING TRANSFORM="NEWGUID">gu_campaign_target,gu_campaign_target</MAPPING>
+        <MAPPING TRANSFORM="REFER(k_campaigns.gu_campaign)">gu_campaign,gu_campaign</MAPPING>
+        <MAPPING>NULL,dt_modified</MAPPING>
+        <MAPPING>CURRENT_TIMESTAMP,dt_created</MAPPING>
+        <MAPPING>0,nu_achieved</MAPPING>
+      </MAPPINGS>
+    </ROWSET>
+  </ROWSETS>
+</DATASTRUCT>
