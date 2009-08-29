@@ -43,5 +43,6 @@
 -->
 <OAConfiguration>
   <OA id="ListTodayMeetings_OA" class="com.knowgate.hipergate.mobile.oa.ListTodayMeetings"></OA>
+  <OA id="ListFoundContacts_OA" class="com.knowgate.hipergate.mobile.oa.ListFoundContacts"></OA>
 
 </OAConfiguration>
