@@ -1,0 +1,5 @@
+Hotmail
+wlid|$|[~Windows Live Id.~]
+pwd|*|[~Password~]
+
+

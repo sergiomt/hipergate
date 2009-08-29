@@ -1,0 +1,5 @@
+Bloglines
+email|$|[~Email~]
+pwd|*|[~Password~]
+
+
