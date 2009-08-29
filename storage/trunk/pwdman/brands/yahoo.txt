@@ -1,0 +1,5 @@
+Yahoo
+yahooid|$|[~Yahoo Id.~]
+pwd|*|[~Password~]
+
+
