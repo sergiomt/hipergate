@@ -260,7 +260,7 @@ public class Atom extends DBPersist {
 
     sWhere = " WHERE gu_job='" + getString(DB.gu_job) + "' AND pg_atom=" + String.valueOf(getInt(DB.pg_atom));
 
-    sSQL = "UPDATE " + DB.k_job_atoms + " SET " + DB.id_status + "=" + String.valueOf(Atom.STATUS_FINISHED) + "," + DB.tx_log + "=NULL " + sWhere;
+    sSQL = "UPDATE " + DB.k_job_atoms + " SET " + DB.id_status + "=" + String.valueOf(Atom.STATUS_FINISHED) + " " + sWhere;
 
     if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(" + sSQL + ")");
 
@@ -302,6 +302,11 @@ public class Atom extends DBPersist {
   public void setStatus (JDCConnection oConn, short iStatus, String sLog)
     throws SQLException, NullPointerException,NumberFormatException {
 
+    if (DebugFile.trace) {
+       DebugFile.writeln("Begin Atom.setStatus([Connection], "+String.valueOf(iStatus)+", "+sLog+")");
+       DebugFile.incIdent();
+     }
+
     if (isNull(DB.gu_job))
       throw new NullPointerException("Atom.setStatus() Job GUID not set");
     if (isNull(DB.pg_atom))
@@ -321,6 +326,16 @@ public class Atom extends DBPersist {
     oStmt.close();
 
     replace(DB.id_status, iStatus);
+
+    if (sLog==null)
+      remove(DB.tx_log);
+    else
+      replace(DB.tx_log, sLog);
+
+    if (DebugFile.trace) {
+       DebugFile.decIdent();
+       DebugFile.writeln("End Atom.setStatus()");
+     }
   } // setStatus
   	
   // ----------------------------------------------------------

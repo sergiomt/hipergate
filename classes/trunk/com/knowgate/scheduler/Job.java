@@ -243,14 +243,19 @@ public abstract class Job extends DBPersist {
         }
         else {
           bRetVal = false;
-          if (DebugFile.trace)
-            DebugFile.writeln("ERROR: PageSet " + sPageSet +
-                              " referenced by job " + getString(DB.gu_job) +
-                              " was not found");
         }
         oRSet.close();
         oStmt.close();
 
+		if (!bRetVal) {
+          if (DebugFile.trace) {
+            DebugFile.writeln("ERROR: PageSet " + sPageSet +
+                              " referenced by job " + getString(DB.gu_job) +
+                              " was not found");
+            DebugFile.decIdent();
+          }
+          throw new SQLException("PageSet " + sPageSet + " referenced by job " + getString(DB.gu_job) + " was not found at "+DB.k_pagesets);
+		}
       } // fi (sPageSet)
 
       sList = getParameter("gu_list");
@@ -269,14 +274,19 @@ public abstract class Job extends DBPersist {
         }
         else {
           bRetVal = false;
-          if (DebugFile.trace)
-            DebugFile.writeln("ERROR: List " + sList +
-                              " referenced by job " + getString(DB.gu_job) +
-                              " was not found");
         }
         oRSet.close();
         oStmt.close();
 
+		if (!bRetVal){
+          if (DebugFile.trace) {
+            DebugFile.writeln("ERROR: List " + sList +
+                              " referenced by job " + getString(DB.gu_job) +
+                              " was not found");
+            DebugFile.decIdent();
+          }
+          throw new SQLException("ERROR: List " + sList + " referenced by job " + getString(DB.gu_job) + " was not found");
+		}
       } // fi (sList)
 
       sAttachImages = getParameter("bo_attachimages");
@@ -619,7 +629,7 @@ public abstract class Job extends DBPersist {
       DebugFile.writeln("Connection.prepareStatement(SELECT id_command,tx_command,nm_class FROM k_lu_job_commands WHERE id_command=(SELECT id_command FROM k_jobs WHERE gu_job='" + sJobId + "'))");
     }
 
-    oStmt = oConn.prepareStatement("SELECT id_command,tx_command,nm_class FROM k_lu_job_commands WHERE id_command=(SELECT id_command FROM k_jobs WHERE gu_job=?)", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+    oStmt = oConn.prepareStatement("SELECT id_command,tx_command,nm_class FROM "+DB.k_lu_job_commands+" WHERE "+DB.id_command+"=(SELECT id_command FROM k_jobs WHERE gu_job=?)", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
     oStmt.setString(1, sJobId);
 
     if (DebugFile.trace) DebugFile.writeln("PreparedStatementStatement.executeQuery()");
@@ -641,15 +651,33 @@ public abstract class Job extends DBPersist {
       sCmmdId = null;
       sClassNm = "null";
 
-      if (DebugFile.trace) DebugFile.writeln("ERROR: job command id. not found");
-    }
+	  if (DBCommand.queryExists(oConn, DB.k_jobs, DB.gu_job+"='"+sJobId+"'")) {
+        if (DebugFile.trace) {
+          DebugFile.writeln("SQLException Job "+sJobId+" was not found at "+DB.k_jobs+" table");
+          DebugFile.decIdent();
+        }
+        throw new SQLException("Job "+sJobId+" was not found at "+DB.k_jobs+" table");
+	  } // fi
+
+	  if (DBCommand.queryExists(oConn, DB.k_lu_job_commands,
+	                            DB.id_command+"=(SELECT id_command FROM k_jobs WHERE gu_job='"+sJobId+"'")) {
+        if (DebugFile.trace) {
+          DebugFile.writeln("SQLException command was not found at "+DB.k_lu_job_commands+" table for "+DBCommand.queryStr(oConn,"SELECT id_command FROM k_jobs WHERE gu_job='"+sJobId+"'"));
+          DebugFile.decIdent();
+        }
+        throw new SQLException("Job "+sJobId+" was not found at "+DB.k_jobs+" table");
+	  } // fi
+	  
+    } // fi
 
     oRSet.close();
     oStmt.close();
 
-    if (null==sCmmdId)
+    if (null==sCmmdId) {
+
       oRetObj = null;
-    else {
+
+    } else {
       if (DebugFile.trace) DebugFile.writeln("Class.forName(" + sClassNm + ");");
 
       oJobImplementation = Class.forName(sClassNm);
@@ -667,8 +695,15 @@ public abstract class Job extends DBPersist {
           if (DebugFile.trace) DebugFile.writeln("Connection has no pool from which to get database binding for Job");
         }
         oRetObj.oEnvProps = oEnvironmentProps;
+
       } else {
-        oRetObj = null;
+
+        if (DebugFile.trace) {
+          DebugFile.writeln("SQLException "+oRetObj.getClass().getName()+" failed to load "+sJobId);
+          DebugFile.decIdent();
+        }
+
+        throw new SQLException("SQLException "+oRetObj.getClass().getName()+" failed to load "+sJobId);      	
       }
     } // fi (sCmmdId)
 

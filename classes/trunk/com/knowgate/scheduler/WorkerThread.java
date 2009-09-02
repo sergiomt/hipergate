@@ -325,11 +325,9 @@ public class WorkerThread extends Thread {
 
 		  try {
             oJob.process(oAtm);
+            oAtm.archive(oConsumerConnection);          	
             if (DebugFile.trace)
               DebugFile.writeln("Thread " + getName() + " consumed Atom " + String.valueOf(oAtm.getInt(DB.pg_atom)));
-
-            // Move Atom register from k_job_atoms to k_job_atoms_archived
-            oAtm.archive(oConsumerConnection);
 		  }
           catch (Exception e) {
             if (DebugFile.trace) {
@@ -349,6 +347,7 @@ public class WorkerThread extends Thread {
 
             if (iCallbacks>0) callBack(WorkerThreadCallback.WT_ATOM_CONSUME, "Thread " + getName() + " " + sLastError, e, oJob);
           }
+          
           if (iCallbacks>0) callBack(WorkerThreadCallback.WT_ATOM_CONSUME, "Thread " + getName() + " consumed Atom " + String.valueOf(oAtm.getInt(DB.pg_atom)), null, oAtm);
 
           oAtm = null;
