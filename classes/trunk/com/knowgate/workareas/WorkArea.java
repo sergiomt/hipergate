@@ -173,6 +173,9 @@ public class WorkArea extends DBPersist {
    * Deletion takes place by delegating it in other objects delete() method.<br><br>
    * In this order:<br>
    * <table border=1 cellpadding=4>
+   * <tr><td>k_activities</td></tr>
+   * <tr><td>k_x_activity_audience</td></tr>
+   * <tr><td>DELETE k_sms_audit</td></tr>
    * <tr><td>DELETE k_sms_audit</td></tr>
    * <tr><td>DELETE k_x_portlet_user</td></tr>
    * <tr><td>QueryByForm.delete</td></tr>
@@ -279,11 +282,28 @@ public class WorkArea extends DBPersist {
 
     // -----------------------------------------------------------------------------------
     // Nuevo para v5.0
+    // Borrar las actividades
+
+    if (DBBind.exists(oConn, DB.k_activities, "U")) {
+      oStmt = oConn.createStatement();
+      if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(DELETE FROM " + DB.k_x_activity_audience + " WHERE " + DB.gu_activity + " IN (SELECT " + DB.gu_activity +" FROM " + DB.k_activities+ " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "'))");
+
+      oStmt.executeUpdate("DELETE FROM " + DB.k_x_activity_audience + " WHERE " + DB.gu_activity + " IN (SELECT " + DB.gu_activity +" FROM " + DB.k_activities+ " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "')");
+    
+      if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(DELETE FROM " + DB.k_activities + " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "')");
+
+      oStmt.executeUpdate("DELETE FROM " + DB.k_activities + " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "'");
+    
+      oStmt.close();
+    }
+
+    // -----------------------------------------------------------------------------------
+    // Nuevo para v5.0
     // Borrar los SMS
 
     if (DBBind.exists(oConn, DB.k_sms_audit, "U")) {
       oStmt = oConn.createStatement();
-      if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(DELETE FROM " + DB.k_sms_audit + " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "'");
+      if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(DELETE FROM " + DB.k_sms_audit + " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "')");
 
       oStmt.executeUpdate("DELETE FROM " + DB.k_sms_audit + " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "'");
     
