@@ -1349,6 +1349,7 @@ public class ModelManager {
   } else if (sModuleName.equals("marketing")) {
 
     executeBulk("tables/marketing.ddl", BULK_STATEMENTS);
+    executeBulk("procedures/" + sDbms + "/marketing.ddl", BULK_PLSQL);
     executeBulk("constraints/marketing.sql", BULK_STATEMENTS);
 
   }
@@ -1500,6 +1501,8 @@ public class ModelManager {
       executeBulk("drop/" + sDbms + "/training.sql", BULK_STATEMENTS);
 
     } else if (sModuleName.equals("marketing")) {
+
+      executeBulk("drop/" + sDbms + "/marketing.sql", BULK_STATEMENTS);
 
       executeBulk("drop/marketing.sql", BULK_STATEMENTS);
 

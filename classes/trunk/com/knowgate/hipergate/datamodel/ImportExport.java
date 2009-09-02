@@ -96,7 +96,7 @@ public class ImportExport {
   /**
    * Perform an import or export command
    * @param sControlCmdLine String [APPEND|UPDATE|APPENDUPDATE] [CONTACTS|COMPANIES|PRODUCTS|USERS|FELLOWS|DESPATCHS|VCARDS|<I>table_name</I>] CONNECT user TO connection_string IDENTIFED BY password INPUTFILE "/tmp/filename.txt" BADFILE "/tmp/badfile.txt" DISCARDFILE "/tmp/discardfile.txt" CHARSET ISO8859_1 ROWDELIM CRLF COLDELIM "|" ([column type]+)<BR>
-   * EXPORT <I>table_name</I> CONNECT user TO connection_string IDENTIFED BY password OUTPUTFILE "/tmp/filename.txt"
+   * EXPORT <I>table_name</I> CONNECT user TO connection_string IDENTIFIED BY password OUTPUTFILE "/tmp/filename.txt"
    * @return Count of errors found or zero if operation was successfully completed
    * @throws ImportExportException
    */
