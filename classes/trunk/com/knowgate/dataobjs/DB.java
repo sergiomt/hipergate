@@ -192,6 +192,9 @@ public final class DB {
   public static final String k_x_campaign_lists = "k_x_campaign_lists";
   public static final String k_campaign_targets = "k_campaign_targets";
   
+  public static final String k_activities = "k_activities";
+  public static final String k_x_activity_audience = "k_x_activity_audience";
+
   public static final String k_microsites = "k_microsites";
   public static final String k_pagesets = "k_pagesets";
   public static final String k_pagesets_lookup = "k_pagesets_lookup";
@@ -577,6 +580,7 @@ public final class DB {
   public static final String  nu_cvv2 = "nu_cvv2";
   public static final String  tx_email_to = "tx_email_to";
   public static final String  pg_payment = "pg_payment";
+  public static final String  id_transact = "id_transact";
 
   // k_returned_invoices
   public static final String gu_returned = "gu_returned";
@@ -860,6 +864,12 @@ public final class DB {
   public static final String gu_campaign_target = "gu_campaign_target";
   public static final String nu_planned = "nu_planned";
   public static final String nu_achieved = "nu_achieved";
+
+  // k_activities
+  public static final String gu_activity = "gu_activity";
+  public static final String tl_activity = "tl_activity";
+  public static final String de_activity = "de_activity";
+  public static final String nu_capacity = "nu_capacity";
   
   // k_microsites
   public static final String gu_microsite = "gu_microsite";
@@ -914,7 +924,6 @@ public final class DB {
   public static final String nm_room = "nm_room";
   public static final String bo_available = "bo_available";
   public static final String tp_room = "tp_room";
-  public static final String nu_capacity = "nu_capacity";
 
   // k_meetings
   public static final String gu_meeting = "gu_meeting";

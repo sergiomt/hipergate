@@ -278,6 +278,40 @@ public class DBPersist implements Map {
   } // getCreationDate
 
   /**
+   * Set dt_created column of register corresponding to this DBPersist instace
+   * @param oConn JDCConnection
+   * @param dtCreated Date If <b>null</b> then current system date is set
+   * @throws SQLException If table for this DBPersist does not have a column named dt_created
+   * @since 5.0
+   */
+
+  public void setCreationDate(JDCConnection oConn, Date dtCreated) throws SQLException {
+  	if (null==dtCreated) dtCreated = new Date();
+    PreparedStatement oStmt = null;
+    DBTable oTbl = getTable(oConn);
+    LinkedList oList = oTbl.getPrimaryKey();
+    ListIterator oIter;
+    String sSQL = "UPDATE "+oTbl.getName()+" SET "+DB.dt_created+"=? WHERE 1=1";
+    oIter = oList.listIterator();
+    while (oIter.hasNext())
+      sSQL += " AND " + oIter.next() + "=?";
+    try {
+    oStmt = oConn.prepareStatement(sSQL, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+    oStmt.setTimestamp(1, new Timestamp(dtCreated.getTime()));
+    int p=1;
+    oIter = oList.listIterator();
+    while (oIter.hasNext())
+      oStmt.setObject(++p, get(oIter.next()));
+    oStmt.executeUpdate();
+    oStmt.close();
+    oStmt=null;
+    } catch (Exception xcpt) {
+      if (null!=oStmt) { try { oStmt.close(); } catch (Exception ignore) { /* ignore */ } }
+      throw new SQLException ("DBPersist.getCreationDate() "+xcpt.getClass().getName()+" "+xcpt.getMessage());
+    }
+  } // setCreationDate
+  
+  /**
    * <p>Get value for a field name</p>
    * @param sKey String Field Name
    * @return Field value. If field is <b>null</b> or DBPersist has not been loaded,

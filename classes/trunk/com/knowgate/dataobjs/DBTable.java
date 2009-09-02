@@ -837,7 +837,7 @@ public class DBTable {
    * @return List of primary key column names
    */
 
-  public LinkedList getPrimaryKey() {
+  public LinkedList<String> getPrimaryKey() {
     return oPrimaryKeys;
 
   }
@@ -917,8 +917,8 @@ public class DBTable {
       String sSetAllCols = "";
       String sSetNoPKCols = "";
 
-      oColumns = new LinkedList();
-      oPrimaryKeys = new LinkedList();
+      oColumns = new LinkedList<DBColumn>();
+      oPrimaryKeys = new LinkedList<String>();
 
       if (DebugFile.trace)
         {
@@ -1144,8 +1144,8 @@ public class DBTable {
   private String sSchema;
   private String sName;
   private int iHashCode;
-  private LinkedList oColumns;
-  private LinkedList oPrimaryKeys;
+  private LinkedList<DBColumn> oColumns;
+  private LinkedList<String> oPrimaryKeys;
 
   private String sSelect;
   private String sInsert;
