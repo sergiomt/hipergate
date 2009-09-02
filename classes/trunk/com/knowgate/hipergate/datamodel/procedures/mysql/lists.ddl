@@ -6,6 +6,9 @@ BEGIN
 
   SELECT tp_list,gu_workarea INTO tp,wa FROM k_lists WHERE gu_list=ListId;
 
+  UPDATE k_activities SET gu_list=NULL WHERE gu_list=ListId;
+  UPDATE k_x_activity_audience SET gu_list=NULL WHERE gu_list=ListId;
+
   SELECT gu_list INTO bk FROM k_lists WHERE gu_workarea=wa AND gu_query=ListId AND tp_list=4;
   IF bk IS NULL THEN
     DELETE FROM k_list_members WHERE gu_member IN (SELECT gu_contact FROM k_x_list_members WHERE gu_list=ListId) AND gu_member NOT IN (SELECT x.gu_contact FROM k_x_list_members x, k_lists l WHERE x.gu_list=l.gu_list AND l.gu_workarea=wa AND x.gu_list<>ListId);
