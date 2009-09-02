@@ -72,6 +72,17 @@ public class PasswordRecord extends DBPersist {
     sRC4Key = sKey;
   }
 
+  public String getValueOf (String sLineId) {
+  	String sVal = null;
+  	for (PasswordRecordLine rcl : aRecordLines) {
+	  if (rcl.getId().equals(sLineId)) {
+	  	sVal = rcl.getValue();
+	  	break;
+	  } // fi
+  	} // next
+  	return sVal;
+  } // getValueOf
+
   public void addLine(String sId, char cType, String sLabel) {
     aRecordLines.add(new PasswordRecordLine(sId, cType, sLabel));
   }
