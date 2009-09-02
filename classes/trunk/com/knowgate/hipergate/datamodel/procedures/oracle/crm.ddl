@@ -14,6 +14,7 @@ CREATE OR REPLACE PROCEDURE k_sp_del_contact (ContactId CHAR) IS
   GuWorkArea CHAR(32);
 
 BEGIN
+  DELETE k_x_activity_audience WHERE gu_contact=ContactId;
   DELETE k_contact_education WHERE gu_contact=ContactId;
   DELETE k_x_duty_resource WHERE nm_resource=ContactId;
   DELETE k_welcome_packs_changelog WHERE gu_pack IN (SELECT gu_pack FROM k_welcome_packs WHERE gu_contact=ContactId);
