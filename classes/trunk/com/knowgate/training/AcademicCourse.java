@@ -47,6 +47,7 @@ import com.knowgate.dataobjs.DBSubset;
 import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.crm.Contact;
 import com.knowgate.misc.Gadgets;
+import com.knowgate.hipergate.Category;
 import com.knowgate.hipergate.Product;
 
 /**
@@ -179,13 +180,76 @@ public class AcademicCourse extends DBPersist {
 
   // ---------------------------------------------------------------------------
 
-  public boolean store(JDCConnection oConn) throws SQLException{
-    if (!AllVals.containsKey(DB.dt_modified))
-      AllVals.put(DB.dt_modified, new Date());
-    if (!AllVals.containsKey(DB.gu_acourse))
+  public boolean store(JDCConnection oConn) throws SQLException {
+
+	if (DebugFile.trace) {
+	  DebugFile.writeln("Begin AcademicCourse.store([JDCConnection])");
+	  DebugFile.incIdent();
+	}
+
+	boolean bIsNew = !AllVals.containsKey(DB.gu_acourse);
+
+    if (AllVals.containsKey(DB.gu_category) && !bIsNew)
+      DBCommand.executeUpdate(oConn, "DELETE FROM "+DB.k_x_cat_objs+" WHERE "+DB.gu_object+"='"+getString(DB.gu_acourse)+"' AND "+DB.id_class+"="+String.valueOf(AcademicCourse.ClassId));
+	
+    if (bIsNew)
       AllVals.put(DB.gu_acourse, Gadgets.generateUUID());
-    return super.store(oConn);
-  }
+
+    if (!AllVals.containsKey(DB.dt_modified) && !bIsNew)
+      AllVals.put(DB.dt_modified, new Date());
+
+    if (!AllVals.containsKey(DB.bo_active))
+      AllVals.put(DB.bo_active, (short)1);
+
+    boolean bRetVal = super.store(oConn);
+
+    if (bRetVal) {
+	  if (AllVals.containsKey(DB.gu_category)) {
+	    if (getStringNull(DB.gu_category,"").length()>0) {
+		  Product oProd;
+		  if (bIsNew) {
+		    oProd = new Product(getString(DB.gu_acourse));
+		    oProd.put(DB.pct_tax_rate, 0f);
+		    oProd.put(DB.is_tax_included, (short) 1);
+		  } else {
+		    oProd = new Product(oConn, getString(DB.gu_acourse));
+		  } // fi
+		  oProd.replace(DB.id_status, getShort(DB.bo_active)==(short)1 ? Product.STATUS_ACTIVE : Product.STATUS_RETIRED);
+		  if (isNull(DB.gu_owner)) {
+		  	if (DebugFile.trace) {
+		  	  DebugFile.writeln("NullPointerException gu_owner GUID from k_users table is required when storing an AcademicCourse that it is also a Product");
+		  	  DebugFile.decIdent();
+		  	} // fi
+		  	throw new NullPointerException("gu_owner GUID from k_users table is required when storing an AcademicCourse that it is also a Product");
+		  } // gu_owner==null
+		  oProd.replace(DB.gu_owner, getString(DB.gu_owner));
+		  oProd.replace(DB.nm_product, getString(DB.nm_course));
+		  if (!isNull(DB.id_course))
+		    oProd.replace(DB.id_ref, getString(DB.id_course));
+		  if (!isNull(DB.gu_address))
+		    oProd.replace(DB.gu_address, getString(DB.gu_address));
+		  else
+		    oProd.remove(DB.gu_address);	    	
+		  if (!isNull(DB.pr_acourse))
+		    oProd.replace(DB.pr_list, getDecimal(DB.pr_acourse));
+		  else
+		    oProd.remove(DB.pr_list);
+		  oProd.store(oConn);
+
+		  Category oCatg = new Category(getString(DB.gu_category));
+		  oCatg.addObject(oConn, getString(DB.gu_acourse), AcademicCourse.ClassId, 0, 0);
+		} // fi (gu_category!="")
+	  } // fi (gu_category!=null)
+	      	
+    }
+
+	if (DebugFile.trace) {
+	  DebugFile.decIdent();
+	  DebugFile.writeln("End AcademicCourse.store() : "+String.valueOf(bRetVal));
+	}
+
+    return bRetVal;
+  } // store
 
   // ---------------------------------------------------------------------------
 

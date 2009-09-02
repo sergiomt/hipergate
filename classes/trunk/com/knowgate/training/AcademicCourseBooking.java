@@ -40,13 +40,19 @@ import java.math.BigDecimal;
 
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
+import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.dataobjs.DBPersist;
+import com.knowgate.dataobjs.DBSubset;
+import com.knowgate.crm.Company;
 import com.knowgate.crm.Contact;
+import com.knowgate.misc.Gadgets;
+import com.knowgate.hipergate.Invoice;
+import com.knowgate.hipergate.Product;
 
 /**
  * Booking for an academic course
  * @author Sergio Montoro Ten
- * @version 1.0
+ * @version 5.0
  */
 public class AcademicCourseBooking extends DBPersist {
 
@@ -135,6 +141,146 @@ public class AcademicCourseBooking extends DBPersist {
     oAlmn.store(oConn);
     return oAlmn;
   } // createAlumni
+
+  // ---------------------------------------------------------------------------
+
+  public Invoice createInvoiceForCompany(JDCConnection oConn, String sGuShop)
+    throws SQLException, IllegalStateException {
+
+	if (!isNull(DB.gu_invoice))
+      throw new IllegalStateException("Invoice was already created for academic course booking");
+
+    if (isNull(DB.gu_contact))
+      throw new IllegalStateException("AcademicCourseBooking.getContact() gu_contact not set");
+
+	Contact oCntc = new Contact(oConn, getString(DB.gu_contact));
+
+	if (oCntc.isNull(DB.gu_company))
+	  throw new SQLException("Company not set for given Contact");
+		
+	Company oComp = new Company(oConn, getString(DB.gu_contact));
+	if (oComp.isNull(DB.id_legal))
+	  throw new SQLException("Legal document number not set for given Company");
+	  
+	Product oProd = new Product();
+
+	if (!oProd.load(oConn, new Object[]{getString(DB.gu_acourse)})) {
+	  throw new SQLException("No product found for given academic course");
+	} else {
+	  if (oProd.isNull(DB.id_currency)) {
+	    throw new SQLException("Currency for product is not set");
+	  }
+	  if (oProd.isNull(DB.pr_list)) {
+	    throw new SQLException("List price for product is not set");
+	  }
+	}
+
+	DBSubset oAddrs = oComp.getAddresses(oConn);
+	DBSubset oBanks = oComp.getActiveBankAccounts(oConn);
+	
+	Invoice oInvc = new Invoice();
+	oInvc.put(DB.bo_active, (short) 1);
+	oInvc.put(DB.gu_shop, sGuShop);
+	oInvc.put(DB.id_currency, oProd.get(DB.id_currency));
+	oInvc.put(DB.id_legal, oComp.getString(DB.id_legal));
+	oInvc.put(DB.de_order, Gadgets.left(getStringNull(DB.nm_course,"")+"/"+oCntc.getStringNull(DB.tx_name,"")+" "+oCntc.getStringNull(DB.tx_surname,""),100));	
+	oInvc.put(DB.gu_company, oComp.getString(DB.gu_company));
+	oInvc.put(DB.nm_client, oComp.getString(DB.nm_legal));
+	if (oAddrs.getRowCount()>0) {
+	  oInvc.put(DB.gu_bill_addr, oAddrs.getString(DB.gu_address,0));
+	  if (!oAddrs.isNull(DB.tx_email,0)) {
+	    oInvc.put(DB.tx_email_to, oAddrs.getString(DB.tx_email,0));	  	
+	  }
+	} // fi
+	if (oBanks.getRowCount()>0) {
+	  oInvc.put(DB.nu_bank, oBanks.getString(DB.nu_bank_acc,0));
+	} // fi
+    oInvc.store(oConn);
+
+	oInvc.addProduct(oConn, oProd.getString(DB.gu_product), 1f);
+
+	oInvc.put(DB.im_subtotal, oInvc.computeSubtotal(oConn));
+	oInvc.put(DB.im_taxes, oInvc.computeTaxes(oConn));
+	oInvc.put(DB.im_total, oInvc.computeTotal(oConn));
+	oInvc.put(DB.im_paid, new BigDecimal(0d));
+    oInvc.store(oConn);	
+    
+    DBCommand.executeUpdate(oConn, "UPDATE "+DB.k_x_course_bookings+" SET "+DB.gu_invoice+"='"+oInvc.getString(DB.gu_invoice)+"' WHERE "+DB.gu_acourse+"='"+getString(DB.gu_acourse)+"' AND "+DB.gu_contact+"='"+getString(DB.gu_contact)+"'");
+
+    return oInvc;
+  } // createInvoiceForCompany
+
+  // ---------------------------------------------------------------------------
+
+  public Invoice createInvoiceForContact(JDCConnection oConn, String sGuShop)
+    throws SQLException, IllegalStateException {
+
+	if (!isNull(DB.gu_invoice))
+      throw new IllegalStateException("Invoice was already created for academic course booking");
+		
+    if (isNull(DB.gu_contact))
+      throw new IllegalStateException("AcademicCourseBooking.getContact() gu_contact not set");
+
+	Contact oCntc = new Contact(oConn, getString(DB.gu_contact));
+	if (oCntc.isNull(DB.sn_passport))
+	  throw new SQLException("Legal document number not set for Contact "+getString(DB.gu_contact)+" at bookig for academic course "+getString(DB.gu_acourse));
+	  
+	Product oProd = new Product();
+
+	if (!oProd.load(oConn, new Object[]{getString(DB.gu_acourse)})) {
+	  throw new SQLException("No product found for given academic course");
+	} else {
+	  if (oProd.isNull(DB.id_currency)) {
+	    throw new SQLException("Currency for product is not set");
+	  }
+	  if (oProd.isNull(DB.pr_list)) {
+	    throw new SQLException("List price for product is not set");
+	  }
+	}
+
+	DBSubset oAddrs = oCntc.getAddresses(oConn);
+	DBSubset oBanks = oCntc.getActiveBankAccounts(oConn);
+	
+	Invoice oInvc = new Invoice();
+	oInvc.put(DB.gu_shop, sGuShop);
+	oInvc.put(DB.id_currency, oProd.get(DB.id_currency));
+	oInvc.put(DB.id_legal, oCntc.getString(DB.sn_passport));
+	oInvc.put(DB.de_order, Gadgets.left(getStringNull(DB.nm_acourse,"")+"/"+oCntc.getStringNull(DB.tx_name,"")+" "+oCntc.getStringNull(DB.tx_surname,""),100));	
+	oInvc.put(DB.gu_contact, oCntc.getString(DB.gu_contact));
+	oInvc.put(DB.nm_client, Gadgets.left(oCntc.getStringNull(DB.tx_name,"")+" "+oCntc.getStringNull(DB.tx_surname,""),200));
+	if (oAddrs.getRowCount()>0) {
+	  oInvc.put(DB.gu_bill_addr, oAddrs.getString(DB.gu_address,0));
+	  if (!oAddrs.isNull(DB.tx_email,0)) {
+	    oInvc.put(DB.tx_email_to, oAddrs.getString(DB.tx_email,0));	  	
+	  }
+	} // fi
+	if (oBanks.getRowCount()>0) {
+	  oInvc.put(DB.nu_bank, oBanks.getString(DB.nu_bank_acc,0));
+	} // fi
+    oInvc.store(oConn);
+
+	oInvc.addProduct(oConn, oProd.getString(DB.gu_product), 1f);
+
+	oInvc.put(DB.im_subtotal, oInvc.computeSubtotal(oConn));
+	oInvc.put(DB.im_taxes, oInvc.computeTaxes(oConn));
+	oInvc.put(DB.im_total, oInvc.computeTotal(oConn));
+	oInvc.put(DB.im_paid, new BigDecimal(0d));
+    oInvc.store(oConn);	
+    	
+    DBCommand.executeUpdate(oConn, "UPDATE "+DB.k_x_course_bookings+" SET "+DB.gu_invoice+"='"+oInvc.getString(DB.gu_invoice)+"' WHERE "+DB.gu_acourse+"='"+getString(DB.gu_acourse)+"' AND "+DB.gu_contact+"='"+getString(DB.gu_contact)+"'");
+	
+    return oInvc;
+  } // createInvoiceForContact
+
+  // ---------------------------------------------------------------------------
+
+  public Invoice getInvoice(JDCConnection oConn)
+    throws SQLException, IllegalStateException {
+    if (isNull(DB.gu_invoice))
+      return null;
+    else
+      return new Invoice(oConn, getString(DB.gu_invoice));
+  } // getInvoice
 
   // ---------------------------------------------------------------------------
 

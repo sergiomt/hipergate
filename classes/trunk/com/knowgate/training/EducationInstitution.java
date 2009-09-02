@@ -51,7 +51,7 @@ public class EducationInstitution extends DBPersist {
   }
 
   public boolean delete(JDCConnection oConn) throws SQLException {
-	DBCommand.executeUpdate("UPDATE "+DB.k_contact_education+" SET "+DB.gu_institution+"=NULL WHERE "+DB.gu_institution+"='"+getStringNull(DB.gu_institution,'')+"'");
+	DBCommand.executeUpdate(oConn, "UPDATE "+DB.k_contact_education+" SET "+DB.gu_institution+"=NULL WHERE "+DB.gu_institution+"='"+getStringNull(DB.gu_institution,"")+"'");
     return super.delete(oConn);
   }
 
