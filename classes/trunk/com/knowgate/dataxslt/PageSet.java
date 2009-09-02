@@ -875,8 +875,8 @@ public class PageSet extends DOMDocument {
 
         // Incrustar las llamadas al Integrador en el lugar apropiado del fuente
         oPostTransform.append(sTransformed.substring(0, iCloseHead));
-        oPostTransform.append("\n<script language=\"JavaScript\" src=\"" + sMenuPath + "\"></script>");
-        oPostTransform.append("\n<script language=\"JavaScript\" src=\"" + sIntegradorPath + "\"></script>\n");
+        oPostTransform.append("\n<script language=\"JavaScript\" type=\"text/javascript\" src=\"" + sMenuPath + "\"></script>");
+        oPostTransform.append("\n<script language=\"JavaScript\" type=\"text/javascript\" src=\"" + sIntegradorPath + "\"></script>\n");
         oPostTransform.append(sTransformed.substring(iCloseHead, iCloseHead+7));
         oPostTransform.append(sTransformed.substring(iOpenBody, iCloseBody));
 
@@ -1247,11 +1247,19 @@ public class PageSet extends DOMDocument {
   //-----------------------------------------------------------
 
   public void save(String sFilePath) throws IOException {
+    if (DebugFile.trace) {
+      DebugFile.writeln("End Pageset.save("+sFilePath+")");
+    }
+
     FileOutputStream oOutFile = new FileOutputStream(sFilePath, false);
 
     print(oOutFile);
 
     oOutFile.close();
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("End Pageset.save()");
+    }
   } // save
 
   // **********************************************************
