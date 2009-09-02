@@ -38,6 +38,9 @@ CREATE PROCEDURE k_sp_del_list @ListId CHAR(32) AS
 
   DELETE k_x_campaign_lists WHERE gu_list=@ListId
 
+  UPDATE k_activities SET gu_list=NULL WHERE gu_list=@ListId
+  UPDATE k_x_activity_audience SET gu_list=NULL WHERE gu_list=@ListId
+
   DELETE k_lists WHERE gu_list=@ListId
 GO;
 

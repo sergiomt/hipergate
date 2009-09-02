@@ -8,6 +8,8 @@ CREATE PROCEDURE k_sp_del_contact @ContactId CHAR(32) AS
 
   DECLARE @GuWorkArea CHAR(32)
 
+  DELETE k_x_activity_audience WHERE gu_contact=@ContactId
+
   DELETE k_contact_education WHERE gu_contact=@ContactId
 
   DELETE k_x_duty_resource WHERE nm_resource=@ContactId
