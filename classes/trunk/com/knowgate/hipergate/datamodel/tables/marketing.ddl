@@ -43,3 +43,120 @@ SELECT l.gu_list,l.tp_list,l.gu_query,l.de_list,m.gu_contact,m.gu_company,m.bo_a
 FROM k_campaigns g, k_x_campaign_lists x, k_lists l, k_x_list_members m, k_contacts c
 WHERE g.gu_campaign=x.gu_campaign AND x.gu_list=l.gu_list AND l.gu_list=m.gu_list AND m.gu_contact=c.gu_contact
 GO;
+
+CREATE TABLE k_activities
+(
+gu_activity    CHAR(32)      NOT NULL,
+gu_workarea    CHAR(32)      NOT NULL,
+dt_created     DATETIME      DEFAULT CURRENT_TIMESTAMP,
+tl_activity    VARCHAR(100)  NOT NULL,
+bo_active      SMALLINT DEFAULT 1,
+dt_modified    DATETIME      NULL,
+gu_address     CHAR(32)      NULL,
+gu_campaign    CHAR(32)      NULL,
+gu_list        CHAR(32)      NULL,
+gu_writer      CHAR(32)      NULL,
+dt_start       DATETIME      NULL,
+dt_end         DATETIME      NULL,
+nu_capacity    INTEGER       NULL,
+pr_sale		   DECIMAL(14,4) NULL,
+pr_discount    DECIMAL(14,4) NULL,
+id_ref         VARCHAR(50)   NULL,
+tx_dept        VARCHAR(70)   NULL,
+de_activity    VARCHAR(1000) NULL,
+tx_comments    VARCHAR(254)  NULL,
+
+CONSTRAINT pk_activities PRIMARY KEY (gu_activity),
+CONSTRAINT u1_activities UNIQUE (gu_workarea,tl_activity),
+CONSTRAINT c1_activities CHECK ((dt_start IS NULL AND dt_end IS NULL) OR dt_end IS NULL OR dt_end>=dt_start),
+CONSTRAINT c2_activities CHECK (nu_capacity>=0),
+CONSTRAINT c3_activities CHECK (pr_sale>=0),
+CONSTRAINT c4_activities CHECK (pr_discount>=0)
+)
+GO;
+
+CREATE TABLE k_x_activity_audience (
+gu_activity   CHAR(32)      NOT NULL,
+gu_contact    CHAR(32)      NULL,
+gu_address    CHAR(32)      NULL,
+gu_list       CHAR(32)      NULL,
+gu_writer     CHAR(32)      NULL,
+dt_created    DATETIME      DEFAULT CURRENT_TIMESTAMP,
+dt_modified   DATETIME      NULL,
+id_ref        VARCHAR(50)   NULL,
+tp_origin     VARCHAR(50)   NULL,
+bo_confirmed  SMALLINT      DEFAULT 0,
+dt_confirmed  DATETIME      NULL,
+bo_paid       SMALLINT      DEFAULT 0,
+dt_paid       DATETIME      NULL,
+im_paid       DECIMAL(14,4) NULL,
+id_transact   VARCHAR(32)   NULL,
+tp_billing    CHAR(1)       NULL,
+bo_went       SMALLINT DEFAULT 0,
+bo_allows_ads SMALLINT DEFAULT 0,
+id_data1      VARCHAR(32)   NULL,
+de_data1      VARCHAR(100)  NULL,
+tx_data1      VARCHAR(254)  NULL,
+id_data2      VARCHAR(32)   NULL,
+de_data2      VARCHAR(100)  NULL,
+tx_data2      VARCHAR(254)  NULL,
+id_data3      VARCHAR(32)   NULL,
+de_data3      VARCHAR(100)  NULL,
+tx_data3      VARCHAR(254)  NULL,
+id_data4      VARCHAR(32)   NULL,
+de_data4      VARCHAR(100)  NULL,
+tx_data4      VARCHAR(254)  NULL,
+id_data5      VARCHAR(32)   NULL,
+de_data5      VARCHAR(100)  NULL,
+tx_data5      VARCHAR(254)  NULL,
+id_data6      VARCHAR(32)   NULL,
+de_data6      VARCHAR(100)  NULL,
+tx_data6      VARCHAR(254)  NULL,
+id_data7      VARCHAR(32)   NULL,
+de_data7      VARCHAR(100)  NULL,
+tx_data7      VARCHAR(254)  NULL,
+id_data8      VARCHAR(32)   NULL,
+de_data8      VARCHAR(100)  NULL,
+tx_data8      VARCHAR(254)  NULL,
+id_data9      VARCHAR(32)   NULL,
+de_data9      VARCHAR(100)  NULL,
+tx_data9      VARCHAR(254)  NULL,
+
+CONSTRAINT pk_x_activity_audience PRIMARY KEY (gu_activity,gu_contact)
+)
+GO;
+
+CREATE TABLE k_activity_audience_lookup
+(
+gu_owner   CHAR(32)    NOT NULL,
+id_section CHARACTER VARYING(30) NOT NULL,
+pg_lookup  INTEGER     NOT NULL,
+vl_lookup  VARCHAR(255)    NULL,
+tr_es      VARCHAR(50)     NULL,
+tr_en      VARCHAR(50)     NULL,
+tr_de      VARCHAR(50)     NULL,
+tr_it      VARCHAR(50)     NULL,
+tr_fr      VARCHAR(50)     NULL,
+tr_pt      VARCHAR(50)     NULL,
+tr_ca      VARCHAR(50)     NULL,
+tr_eu      VARCHAR(50)     NULL,
+tr_ja      VARCHAR(50)     NULL,
+tr_cn      VARCHAR(50)     NULL,
+tr_tw      VARCHAR(50)     NULL,
+tr_fi      VARCHAR(50)     NULL,
+tr_ru      VARCHAR(50)     NULL,
+tr_nl      VARCHAR(50)     NULL,
+tr_th      VARCHAR(50)     NULL,
+tr_cs      VARCHAR(50)     NULL,
+tr_uk      VARCHAR(50)     NULL,
+tr_no      VARCHAR(50)     NULL,
+tr_ko      VARCHAR(50)     NULL,
+tr_sk      VARCHAR(50)     NULL,
+tr_pl      VARCHAR(50)     NULL,
+tr_vn      VARCHAR(50)     NULL,
+
+CONSTRAINT pk_activity_audience_lookup PRIMARY KEY (gu_owner,id_section,pg_lookup),
+CONSTRAINT u1_activity_audience_lookup UNIQUE (gu_owner,id_section,vl_lookup)
+)
+GO;
+

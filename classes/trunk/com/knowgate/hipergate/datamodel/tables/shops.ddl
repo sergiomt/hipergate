@@ -433,10 +433,15 @@ GO;
 CREATE TABLE k_invoice_payments (
   gu_invoice     CHAR(32)      NOT NULL,
   pg_payment     INTEGER       NOT NULL,
+  bo_active      SMALLINT      DEFAULT 1,
   dt_payment     DATETIME      NOT NULL,
+  dt_paid        DATETIME          NULL,
+  dt_expire      DATETIME          NULL,
   id_currency    CHAR(3)       NOT NULL,
   im_paid        DECIMAL(14,4) NOT NULL,
   tp_billing     CHAR(1)       NULL,
+  id_ref         VARCHAR(50)   NULL,
+  id_transact    VARCHAR(32)   NULL,
   nm_client	     VARCHAR(200)  NULL,
   tx_comments    VARCHAR(254)  NULL,
 
