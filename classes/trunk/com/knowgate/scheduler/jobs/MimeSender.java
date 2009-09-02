@@ -329,19 +329,34 @@ public class MimeSender extends Job {
     }
 
     if (0==iPendingAtoms) {
+
+      int iStillExecutable = 0;
       try {
-        DBFolder oSent = (DBFolder) oStor.getFolder("sent");
-        oSent.open(Folder.READ_WRITE);
-        oSent.moveMessage(oDraft);
-	    oSent.close(false);
-      } catch (StoreClosedException sce) {
+        JDCConnection oConn = getDataBaseBind().getConnection("MimeSender.free");
+        iStillExecutable = DBCommand.queryCount(oConn, "*", DB.k_job_atoms, DB.id_status+" IN ("+
+      					     String.valueOf(Atom.STATUS_INTERRUPTED)+","+String.valueOf(Atom.STATUS_SUSPENDED)+")");
+        oConn.close("MimeSender.free");
+      } catch (SQLException sqle) {
         if (DebugFile.trace) {
-          DebugFile.writeln("MimeSender.free() StoreClosedException "+sce.getMessage());
-        }      	
-      }  catch (MessagingException mse) {
-        if (DebugFile.trace) {
-          DebugFile.writeln("MimeSender.free() MessagingException "+mse.getMessage());
+          DebugFile.writeln("SQLException "+sqle.getMessage());
         }
+      }
+
+      if (0==iStillExecutable) {
+        try {
+          DBFolder oSent = (DBFolder) oStor.getFolder("sent");
+          oSent.open(Folder.READ_WRITE);
+          oSent.moveMessage(oDraft);
+	      oSent.close(false);
+        } catch (StoreClosedException sce) {
+          if (DebugFile.trace) {
+            DebugFile.writeln("MimeSender.free() StoreClosedException "+sce.getMessage());
+          }      	
+        }  catch (MessagingException mse) {
+          if (DebugFile.trace) {
+            DebugFile.writeln("MimeSender.free() MessagingException "+mse.getMessage());
+          }
+        } // fi (0==iStillExecutable)
       } 	
     } // fi
 
