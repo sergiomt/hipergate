@@ -35,6 +35,7 @@ package com.knowgate.dataxslt.db;
 import java.util.Date;
 
 import java.io.File;
+import java.io.IOException;
 
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -43,19 +44,32 @@ import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.Types;
 
+import java.text.SimpleDateFormat;
+
+import java.util.Vector;
+
+import org.w3c.dom.Node;
+import org.w3c.dom.Element;
+
+import dom.DOMSubDocument;
+
 import com.knowgate.debug.DebugFile;
+import com.knowgate.dfs.FileSystem;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBBind;
+import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.dataobjs.DBPersist;
 import com.knowgate.dataobjs.DBSubset;
 import com.knowgate.misc.Gadgets;
+
+import com.knowgate.dataxslt.PageSet;
 
 /**
  *
  * <p>PageSet database index</p>
  * @author Sergio Montoro Ten
- * @version 1.1
+ * @version 5.0
  */
 
 public class PageSetDB extends DBPersist {
@@ -459,6 +473,129 @@ public class PageSetDB extends DBPersist {
     }
     return aPages;
   } // getPages
+
+  // ----------------------------------------------------------
+
+  /**
+   * <p>Clone another page set including all its pages into current object instance</p>
+   * Both database registers and XML and HTML files are cloned.
+   * @param oConn JDCConnection
+   * @param sProtocol File transfer protocol (usually "file://") if <b>null</b> then file:// is the default
+   * @param sStorage String Absolute path to storage directory (from storage property of hipergate.cnf file)
+   * @param oSource Source PageSetDB object instance to be cloned
+   * @throws IOException
+   * @throws SQLException
+   * @since 5.0
+   */
+  public void clone(JDCConnection oConn, String sProtocol, String sStorage, PageSetDB oSource)
+  	throws IOException, SQLException {
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin PageSetDB.clone([Connection], [PageSetDB])");
+      DebugFile.incIdent();
+    }
+
+	FileSystem oFS = new FileSystem();
+	if (sProtocol==null) sProtocol = "file://";
+	
+	sStorage = Gadgets.chomp(sStorage, File.separator);
+
+	SimpleDateFormat oFmt = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss");
+	int iLastSlash, iParenthesis;
+
+	String sPathMetadata = DBCommand.queryStr(oConn, "SELECT "+DB.path_metadata+" FROM "+DB.k_microsites+" WHERE "+DB.gu_microsite+"='"+oSource.getString(DB.gu_microsite)+"'");
+
+	super.clone(oSource);
+	
+	replace(DB.gu_pageset, Gadgets.generateUUID());
+	remove(DB.dt_modified);
+	remove(DB.id_status);
+
+	if (getStringNull(DB.id_language,"").equals("es"))
+	  replace(DB.nm_pageset, Gadgets.left("Copia de "+oSource.getString(DB.nm_pageset),100));
+	else  
+	  replace(DB.nm_pageset, Gadgets.left("Copy of "+oSource.getString(DB.nm_pageset),100));
+
+	String sPathData = getString(DB.path_data);
+	iLastSlash = sPathData.lastIndexOf('/');
+	if (-1==iLastSlash) iLastSlash = sPathData.lastIndexOf('\\');
+	sPathData = sPathData.substring(0, iLastSlash+1);
+	Date dtCreated = new Date();
+	String sXmlFileName = oSource.getString(DB.nm_pageset);
+	iParenthesis = sXmlFileName.indexOf('(');
+	if (iParenthesis>0) sXmlFileName = sXmlFileName.substring(0, iParenthesis);	
+
+    if (DebugFile.trace) DebugFile.writeln("path_data="+sPathData+sXmlFileName+" ("+oFmt.format(dtCreated)+").xml");
+
+	replace(DB.path_data, sPathData+sXmlFileName+" ("+oFmt.format(dtCreated)+").xml");
+
+	store(oConn);
+	setCreationDate(oConn, dtCreated);
+
+	PageSet oPSet = null;
+	
+	try {
+	  oPSet = new PageSet(sStorage+sPathMetadata, sStorage+oSource.getString(DB.path_data), false);
+	} catch (Exception xcpt) {
+	  throw new IOException(xcpt.getMessage(), xcpt);
+	}
+
+	Node oRoot = oPSet.getRootNode();	  
+	Node oPgst = oPSet.seekChildByName(oRoot, "pageset");
+	if (DebugFile.trace) DebugFile.writeln("PageSet.setAttribute("+oPgst+",\"guid\",\""+getString(DB.gu_pageset)+"\")");
+    oPSet.setAttribute(oPgst, "guid", getString(DB.gu_pageset));	    
+
+	PageDB[] aPags = oSource.getPages(oConn);
+
+	if (aPags!=null) {
+	  if (DebugFile.trace) DebugFile.writeln("PageSet.seekChildByName("+oPgst+",\"pages\")");
+	  Node oPags = oPSet.seekChildByName(oPgst,"pages");
+	  if (DebugFile.trace) DebugFile.writeln("PageSet.filterChildsByName("+oPags+",\"page\")");
+	  Vector<DOMSubDocument> vPags = oPSet.filterChildsByName((Element) oPags, "page");
+
+	  for (int p=0; p<aPags.length; p++) {
+	  	PageDB oPage = aPags[p];
+	  	oPage.replace(DB.gu_page, Gadgets.generateUUID());
+	  	oPage.replace(DB.gu_pageset, getString(DB.gu_pageset));
+		oPage.remove(DB.dt_modified);
+	  	String sTlPage = oPage.getString(DB.tl_page);
+		iParenthesis = sTlPage.indexOf('(');
+		if (iParenthesis>0) sTlPage = sTlPage.substring(0, iParenthesis)+" ("+oFmt.format(dtCreated)+").html";
+		if (DebugFile.trace) DebugFile.writeln("PageDB.replace(DB.tl_page, \""+sTlPage+"\")");
+		oPage.replace(DB.tl_page, sTlPage);
+		
+		final String sSrcPathPage = oPage.getString(DB.path_page);
+	  	String sPathPage = sSrcPathPage;
+	    iLastSlash = sPathPage.indexOf("/"+oSource.getString(DB.gu_pageset)+"/");
+	    if (-1==iLastSlash) iLastSlash = sPathPage.indexOf("\\"+oSource.getString(DB.gu_pageset)+"\\");
+	  	char cSep = sPathPage.charAt(iLastSlash);
+	  	String sPathPages = sPathPage.substring(0, ++iLastSlash)+getString(DB.gu_pageset);
+	  	sPathPage = sPathPages+cSep+sTlPage.replace(' ','_');	  	
+	  	if (DebugFile.trace) DebugFile.writeln("Page.replace(DB.path_page, \""+sPathPages+cSep+sTlPage.replace(' ','_')+"\")");
+	  	oPage.replace(DB.path_page, sPathPages+cSep+sTlPage.replace(' ','_'));
+	  		
+	  	oPage.store(oConn);
+		oPage.setCreationDate(oConn, dtCreated);
+
+        oPSet.setAttribute(vPags.get(p).getNode(), "guid", oPage.getString(DB.gu_page));
+
+        try {
+          oFS.mkdirs(sProtocol+sPathPages);
+          oFS.copy(sProtocol+sSrcPathPage, sProtocol+sPathPage);	      
+        } catch (Exception xcpt) {
+          throw new IOException(xcpt.getMessage(), xcpt);
+        }
+	  } // next
+	} // fi (aPags)
+
+	oPSet.save(sStorage+getString(DB.path_data));
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End PageSetDB.clone()");
+    }
+
+  } // clone
 
   // ----------------------------------------------------------
   
