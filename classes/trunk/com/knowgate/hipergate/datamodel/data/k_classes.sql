@@ -79,6 +79,8 @@ INSERT INTO k_classes VALUES(214,'ChoiceElement');
 INSERT INTO k_classes VALUES(215,'Enumeration');
 INSERT INTO k_classes VALUES(300,'Campaign');
 INSERT INTO k_classes VALUES(301,'CampaignTarget');
+INSERT INTO k_classes VALUES(310,'Activity');
+INSERT INTO k_classes VALUES(311,'ActivityAudience');
 INSERT INTO k_classes VALUES(666,'Example');
 INSERT INTO k_classes VALUES(800,'DBFolder');
 INSERT INTO k_classes VALUES(810,'MailAccount');
