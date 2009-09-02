@@ -47,7 +47,7 @@ import com.knowgate.debug.DebugFile;
 
 /**
  * @author Sergio Montoro Ten
- * @version 4.0
+ * @version 5.0
  */
 public class Invoice extends AbstractOrder {
 
@@ -192,6 +192,21 @@ public class Invoice extends AbstractOrder {
       AllVals.put(DB.gu_invoice,Gadgets.generateUUID());
     else
       replace(DB.dt_modified, dtNow);
+
+    if (AllVals.containsKey(DB.gu_workarea) && AllVals.containsKey(DB.gu_shop)) {
+	  if (!getString(DB.gu_workarea).equals(DBCommand.queryStr(oConn, "SELECT "+DB.gu_workarea+" FROM "+DB.k_shops+" WHERE "+DB.gu_shop+"='"+getString(DB.gu_shop)+"'"))) {
+        if (DebugFile.trace) {
+          DebugFile.writeln("The WorkArea being set for the Invoice does not match the one from its Shop");
+          DebugFile.decIdent();
+        }
+        throw new SQLException("The WorkArea being set for the Invoice does not match the one from its Shop");
+	  }
+    } // fi (gu_shop AND NOT gu_workarea)
+
+    if (!AllVals.containsKey(DB.gu_workarea) && AllVals.containsKey(DB.gu_shop)) {
+	  AllVals.put(DB.gu_workarea, DBCommand.queryStr(oConn, "SELECT "+DB.gu_workarea+" FROM "+DB.k_shops+" WHERE "+DB.gu_shop+"='"+getString(DB.gu_shop)+"'"));	  	  
+    } // fi (gu_shop AND NOT gu_workarea)
+
 
     if (!AllVals.containsKey(DB.pg_invoice) && AllVals.containsKey(DB.gu_workarea)) {
       AllVals.put(DB.pg_invoice, new Integer(nextVal(oConn, (String) AllVals.get(DB.gu_workarea))));
@@ -354,6 +369,8 @@ public class Invoice extends AbstractOrder {
     oStmt.executeUpdate("DELETE FROM " + DB.k_x_orders_invoices + " WHERE " + DB.gu_invoice + "='" + getString(DB.gu_invoice) + "'");
 
     oStmt.executeUpdate("DELETE FROM " + DB.k_invoice_payments + " WHERE " + DB.gu_invoice + "='" + getString(DB.gu_invoice) + "'");
+
+    oStmt.executeUpdate("UPDATE " + DB.k_x_course_bookings + " SET " + DB.gu_invoice + "=NULL WHERE " + DB.gu_invoice + "='" + getString(DB.gu_invoice) + "'");
 
     oStmt.close();
 

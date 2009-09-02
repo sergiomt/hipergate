@@ -53,11 +53,15 @@ public class InvoicePayment extends DBPersist {
       put(DB.pg_payment, oNextPayId.intValue()+1);
     }
     if (isNull(DB.dt_payment)) {
-      put(DB.dt_payment, new Date());
+      if (isNull(DB.dt_paid))
+        put(DB.dt_payment, new Date());
+      else
+        put(DB.dt_payment, get(DB.dt_paid));
     }
     if (isNull(DB.id_currency)) {
 	  put(DB.id_currency, DBCommand.queryStr(oConn, "SELECT "+DB.id_currency+" FROM "+DB.k_invoices+" WHERE "+DB.gu_invoice+"='"+getString(DB.gu_invoice)+"'"));
     }
+
 	return super.store(oConn);    
   } // store
 

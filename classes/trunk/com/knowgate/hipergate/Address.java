@@ -131,7 +131,7 @@ public class Address extends DBPersist {
 
   /**
    * <p>Delete Address</p>
-   * Registers at k_welcome_packs, k_x_company_addr and k_x_contact_addr are deleted on cascade
+   * Registers at k_welcome_packs, k_x_company_addr, k_x_contact_addr, k_meetings, k_sms_audit, k_activities, k_x_activity_audience are deleted on cascade
    * @param oConn Database Connection
    * @return <b>true<b> if Address existed at k_addresses table.
    * @throws SQLException
@@ -147,6 +147,14 @@ public class Address extends DBPersist {
 
 	// ************
     // New for v5.0
+
+    if (DBBind.exists(oConn, DB.k_activities, "U")) {
+      oDlte.executeUpdate("UPDATE "+DB.k_activities+" SET "+DB.gu_address+"=NULL WHERE "+DB.gu_address+"='"+getString(DB.gu_address)+"'");
+    }
+
+    if (DBBind.exists(oConn, DB.k_x_activity_audience, "U")) {
+      oDlte.executeUpdate("UPDATE "+DB.k_x_activity_audience+" SET "+DB.gu_address+"=NULL WHERE "+DB.gu_address+"='"+getString(DB.gu_address)+"'");
+    }
 
     if (DBBind.exists(oConn, DB.k_sms_audit, "U")) {
       oDlte.executeUpdate("UPDATE "+DB.k_sms_audit+" SET "+DB.gu_address+"=NULL WHERE "+DB.gu_address+"='"+getString(DB.gu_address)+"'");
