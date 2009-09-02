@@ -288,8 +288,8 @@ public class ContactLoader implements ImportLoader {
     oCompLook = oConn.prepareStatement("SELECT NULL FROM k_companies_lookup WHERE gu_owner=? AND id_section=? AND vl_lookup=?",ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
     oCompName = oConn.prepareStatement("SELECT gu_company FROM k_companies WHERE nm_legal=? AND gu_workarea=?",ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
-    oContUpdt = oConn.prepareStatement("UPDATE k_contacts SET gu_workarea=?,tx_nickname=?,tx_pwd=?,tx_challenge=?,tx_reply=?,dt_pwd_expires=?,dt_modified=?,gu_writer=?,gu_company=?,id_status=?,id_ref=?,tx_name=?,tx_surname=?,de_title=?,id_gender=?,dt_birth=?,ny_age=?,sn_passport=?,tp_passport=?,sn_drivelic=?,dt_drivelic=?,tx_dept=?,tx_division=?,gu_geozone=?,tx_comments=? WHERE gu_contact=? OR (tx_name=? AND tx_surname=? AND gu_workarea=?)");
-    oContInst = oConn.prepareStatement("INSERT INTO k_contacts (gu_workarea,tx_nickname,tx_pwd,tx_challenge,tx_reply,dt_pwd_expires,dt_modified,gu_writer,gu_company,id_status,id_ref,tx_name,tx_surname,de_title,id_gender,dt_birth,ny_age,sn_passport,tp_passport,sn_drivelic,dt_drivelic,tx_dept,tx_division,gu_geozone,tx_comments,gu_contact) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+    oContUpdt = oConn.prepareStatement("UPDATE k_contacts SET gu_workarea=?,tx_nickname=?,tx_pwd=?,tx_challenge=?,tx_reply=?,dt_pwd_expires=?,dt_modified=?,gu_writer=?,gu_company=?,id_status=?,id_ref=?,tx_name=?,tx_surname=?,de_title=?,id_gender=?,dt_birth=?,ny_age=?,sn_passport=?,tp_passport=?,sn_drivelic=?,dt_drivelic=?,tx_dept=?,tx_division=?,gu_geozone=?,id_nationality=?,tx_comments=? WHERE gu_contact=? OR (tx_name=? AND tx_surname=? AND gu_workarea=?)");
+    oContInst = oConn.prepareStatement("INSERT INTO k_contacts (gu_workarea,tx_nickname,tx_pwd,tx_challenge,tx_reply,dt_pwd_expires,dt_modified,gu_writer,gu_company,id_status,id_ref,tx_name,tx_surname,de_title,id_gender,dt_birth,ny_age,sn_passport,tp_passport,sn_drivelic,dt_drivelic,tx_dept,tx_division,gu_geozone,id_nationality,tx_comments,gu_contact) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
     oContLook = oConn.prepareStatement("SELECT NULL FROM k_contacts_lookup WHERE gu_owner=? AND id_section=? AND vl_lookup=?",ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
     oContPort = oConn.prepareStatement("SELECT gu_contact FROM k_contacts WHERE sn_passport=? AND gu_workarea=?",ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
@@ -707,21 +707,25 @@ public class ContactLoader implements ImportLoader {
         oContUpdt.setString(22, getColNull(tx_dept));
         oContUpdt.setString(23, getColNull(tx_division));
         oContUpdt.setString(24, getColNull(gu_geozone));
+        if (getColNull(id_nationality)==null)
+          oContUpdt.setNull(25, Types.CHAR);
+		else
+          oContUpdt.setString(25, getColNull(id_nationality));
         if (getColNull(tx_comments)==null) {
-          oContUpdt.setNull(25, Types.VARCHAR);
+          oContUpdt.setNull(26, Types.VARCHAR);
         } else {
-          oContUpdt.setString(25, Gadgets.left((String) aValues[tx_comments], 254));
+          oContUpdt.setString(26, Gadgets.left((String) aValues[tx_comments], 254));
         }
-        if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setString(26,"+aValues[gu_contact]+")");
-        oContUpdt.setString(26, (String) aValues[gu_contact]);
+        if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setString(27,"+aValues[gu_contact]+")");
+        oContUpdt.setString(27, (String) aValues[gu_contact]);
         if (test(iFlags,NO_DUPLICATED_NAMES)) {
-          oContUpdt.setString(27, getColNull(tx_name));
-          oContUpdt.setString(28, getColNull(tx_surname));
-          oContUpdt.setString(29, (String) aValues[gu_workarea]);
+          oContUpdt.setString(28, getColNull(tx_name));
+          oContUpdt.setString(29, getColNull(tx_surname));
+          oContUpdt.setString(30, (String) aValues[gu_workarea]);
         } else {
-          oContUpdt.setNull(27, Types.VARCHAR);
           oContUpdt.setNull(28, Types.VARCHAR);
-          oContUpdt.setNull(29, Types.CHAR);
+          oContUpdt.setNull(29, Types.VARCHAR);
+          oContUpdt.setNull(30, Types.CHAR);
         }
         if (DebugFile.trace) DebugFile.writeln("PreparedStatement.executeUpdate(oContUpdt)");
           iAffected = oContUpdt.executeUpdate();
@@ -760,13 +764,17 @@ public class ContactLoader implements ImportLoader {
         oContInst.setString(22, getColNull(tx_dept));
         oContInst.setString(23, getColNull(tx_division));
         oContInst.setString(24, getColNull(gu_geozone));
+        if (getColNull(id_nationality)==null)
+          oContInst.setNull(25, Types.CHAR);
+		else
+          oContInst.setString(25, getColNull(id_nationality));
         if (getColNull(tx_comments)==null) {
-          oContInst.setNull(25, Types.VARCHAR);
+          oContInst.setNull(26, Types.VARCHAR);
         } else {
-          oContInst.setString(25, Gadgets.left((String) aValues[tx_comments], 254));
+          oContInst.setString(26, Gadgets.left((String) aValues[tx_comments], 254));
         }
-        if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setString(26,"+aValues[gu_contact]+")");
-        oContInst.setString(26, (String) aValues[gu_contact]);
+        if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setString(27,"+aValues[gu_contact]+")");
+        oContInst.setString(27, (String) aValues[gu_contact]);
         if (DebugFile.trace) DebugFile.writeln("PreparedStatement.executeUpdate(oContInst)");
         iAffected = oContInst.executeUpdate();
         if (DebugFile.trace) DebugFile.writeln("affected="+String.valueOf(iAffected));
@@ -815,7 +823,10 @@ public class ContactLoader implements ImportLoader {
       oAddrUpdt.setString(14, getColNull(id_state));
       oAddrUpdt.setString(15, getColNull(nm_state));
       oAddrUpdt.setString(16, getColNull(mn_city));
-      oAddrUpdt.setString(17, getColNull(zipcode));
+      if (getColNull(zipcode)==null)
+        oAddrUpdt.setNull(17, Types.VARCHAR);
+      else
+        oAddrUpdt.setString(17, getColNull(zipcode));
       oAddrUpdt.setString(18, getColNull(work_phone));
       oAddrUpdt.setString(19, getColNull(direct_phone));
       oAddrUpdt.setString(20, getColNull(home_phone));
@@ -877,7 +888,10 @@ public class ContactLoader implements ImportLoader {
       oAddrInst.setString(14, getColNull(id_state));
       oAddrInst.setString(15, getColNull(nm_state));
       oAddrInst.setString(16, getColNull(mn_city));
-      oAddrInst.setString(17, getColNull(zipcode));
+      if (getColNull(zipcode)==null)
+        oAddrInst.setNull(17, Types.VARCHAR);
+      else
+        oAddrInst.setString(17, getColNull(zipcode));
       oAddrInst.setString(18, Gadgets.left(getColNull(work_phone),16));
       oAddrInst.setString(19, Gadgets.left(getColNull(direct_phone),16));
       oAddrInst.setString(20, Gadgets.left(getColNull(home_phone),16));
@@ -937,7 +951,7 @@ public class ContactLoader implements ImportLoader {
   // ---------------------------------------------------------------------------
 
   // Keep this list sorted
-  private static final String[] ColumnNames = { "", "bo_active","bo_change_pwd","bo_private","contact_person","coord_x"  ,"coord_y"  ,"de_company" ,"de_title","direct_phone","dt_birth","dt_created","dt_drivelic","dt_founded","dt_modified","dt_pwd_expires","fax_phone","gu_address","gu_company","gu_contact","gu_geozone","gu_sales_man","gu_workarea","gu_writer","home_phone","id_address_ref","id_batch","id_company_ref","id_company_status","id_contact_ref","id_contact_status","id_country","id_gender","id_legal","id_sector","id_state","im_revenue","ix_address","mn_city","mov_phone","nm_commercial","nm_company","nm_country","nm_legal","nm_state","nm_street","nu_employees","nu_street","ny_age","other_phone","po_box","sn_drivelic","sn_passport","tp_company","tp_location","tp_passport","tp_street","tx_addr1","tx_addr2","tx_challenge","tx_comments","tx_dept","tx_division","tx_email","tx_email_alt","tx_franchise","tx_name","tx_nickname","tx_pwd","tx_remarks","tx_reply","tx_salutation","tx_surname","url_addr","work_phone","zipcode"};
+  private static final String[] ColumnNames = { "", "bo_active","bo_change_pwd","bo_private","contact_person","coord_x"  ,"coord_y"  ,"de_company" ,"de_title","direct_phone","dt_birth","dt_created","dt_drivelic","dt_founded","dt_modified","dt_pwd_expires","fax_phone","gu_address","gu_company","gu_contact","gu_geozone","gu_sales_man","gu_workarea","gu_writer","home_phone","id_address_ref","id_batch","id_company_ref","id_company_status","id_contact_ref","id_contact_status","id_country","id_gender","id_legal","id_nationality","id_sector","id_state","im_revenue","ix_address","mn_city","mov_phone","nm_commercial","nm_company","nm_country","nm_legal","nm_state","nm_street","nu_employees","nu_street","ny_age","other_phone","po_box","sn_drivelic","sn_passport","tp_company","tp_location","tp_passport","tp_street","tx_addr1","tx_addr2","tx_challenge","tx_comments","tx_dept","tx_division","tx_email","tx_email_alt","tx_franchise","tx_name","tx_nickname","tx_pwd","tx_remarks","tx_reply","tx_salutation","tx_surname","url_addr","work_phone","zipcode"};
 
   // ---------------------------------------------------------------------------
 
@@ -975,46 +989,47 @@ public class ContactLoader implements ImportLoader {
   public static int id_country =31;
   public static int id_gender =32;
   public static int id_legal =33;
-  public static int id_sector =34;
-  public static int id_state =35;
-  public static int im_revenue =36;
-  public static int ix_address =37;
-  public static int mn_city =38;
-  public static int mov_phone =39;
-  public static int nm_commercial =40;
-  //public static int nm_company =41;
-  public static int nm_country =42;
-  public static int nm_legal =43;
-  public static int nm_state =44;
-  public static int nm_street =45;
-  public static int nu_employees =46;
-  public static int nu_street =47;
-  public static int ny_age =48;
-  public static int other_phone =49;
-  public static int po_box =50;
-  public static int sn_drivelic =51;
-  public static int sn_passport =52;
-  public static int tp_company =53;
-  public static int tp_location =54;
-  public static int tp_passport =55;
-  public static int tp_street =56;
-  public static int tx_addr1 =57;
-  public static int tx_addr2 =58;
-  public static int tx_challenge =59;
-  public static int tx_comments =60;
-  public static int tx_dept =61;
-  public static int tx_division =62;
-  public static int tx_email =63;
-  public static int tx_email_alt =64;
-  public static int tx_franchise =65;
-  public static int tx_name =66;
-  public static int tx_nickname =67;
-  public static int tx_pwd =68;
-  public static int tx_remarks =69;
-  public static int tx_reply =70;
-  public static int tx_salutation =71;
-  public static int tx_surname =72;
-  public static int url_addr =73;
-  public static int work_phone =74;
-  public static int zipcode =75;
+  public static int id_nationality =34;
+  public static int id_sector =35;
+  public static int id_state =36;
+  public static int im_revenue =37;
+  public static int ix_address =38;
+  public static int mn_city =39;
+  public static int mov_phone =40;
+  public static int nm_commercial =41;
+  //public static int nm_company =42;
+  public static int nm_country =43;
+  public static int nm_legal =44;
+  public static int nm_state =45;
+  public static int nm_street =46;
+  public static int nu_employees =47;
+  public static int nu_street =48;
+  public static int ny_age =49;
+  public static int other_phone =50;
+  public static int po_box =51;
+  public static int sn_drivelic =52;
+  public static int sn_passport =53;
+  public static int tp_company =54;
+  public static int tp_location =55;
+  public static int tp_passport =56;
+  public static int tp_street =57;
+  public static int tx_addr1 =58;
+  public static int tx_addr2 =59;
+  public static int tx_challenge =60;
+  public static int tx_comments =61;
+  public static int tx_dept =62;
+  public static int tx_division =63;
+  public static int tx_email =64;
+  public static int tx_email_alt =65;
+  public static int tx_franchise =66;
+  public static int tx_name =67;
+  public static int tx_nickname =68;
+  public static int tx_pwd =69;
+  public static int tx_remarks =70;
+  public static int tx_reply =71;
+  public static int tx_salutation =72;
+  public static int tx_surname =73;
+  public static int url_addr =74;
+  public static int work_phone =75;
+  public static int zipcode =76;
 }
