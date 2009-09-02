@@ -321,12 +321,18 @@ public class DBFolder extends Folder {
     BigDecimal oPos = null;
     int iLen = 0;
     boolean bNullLen = true;
+    String sCatGuid = null;
 
     boolean bWasOpen = isOpen();
     if (!bWasOpen) open(Folder.READ_WRITE);
 
     try {
       oConn = getConnection();
+
+      sCatGuid = getCategory().getString(DB.gu_category);
+      
+      if (null==sCatGuid) throw new SQLException("Could not find category for folder");
+
       if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(SELECT "+DB.pg_message+","+DB.nu_position+","+DB.len_mimemsg+" FROM "+DB.k_mime_msgs+" WHERE "+DB.gu_mimemsg+"='"+oSrcMsg.getMessageGuid()+"')");
       oStmt = oConn.prepareStatement("SELECT "+DB.pg_message+","+DB.nu_position+","+DB.len_mimemsg+" FROM "+DB.k_mime_msgs+" WHERE "+DB.gu_mimemsg+"=?");
       oStmt.setString(1, oSrcMsg.getMessageGuid());
@@ -375,12 +381,15 @@ public class DBFolder extends Folder {
       oStmt.executeUpdate();
       oStmt.close();
       oStmt=null;
-      if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(UPDATE "+DB.k_categories+" SET "+DB.len_size+"="+DB.len_size+"-"+String.valueOf(iLen)+" WHERE "+DB.gu_category+"='"+getCategory().getStringNull(DB.gu_category,"null")+"')");
+      if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(UPDATE "+DB.k_categories+" SET "+DB.len_size+"="+DB.len_size+"+"+String.valueOf(iLen)+" WHERE "+DB.gu_category+"='"+getCategory().getStringNull(DB.gu_category,"null")+"')");
       oStmt = oConn.prepareStatement("UPDATE "+DB.k_categories+" SET "+DB.len_size+"="+DB.len_size+"+"+String.valueOf(iLen)+" WHERE "+DB.gu_category+"=?");
       oStmt.setString(1, getCategory().getString(DB.gu_category));
       oStmt.executeUpdate();
       oStmt.close();
       oStmt=null;
+
+      if (DebugFile.trace) DebugFile.writeln("JDCConnection.commit()");
+
       oConn.commit();
     }
     catch (SQLException sqle) {
@@ -407,11 +416,20 @@ public class DBFolder extends Folder {
       DBFolder oSrcFldr = (DBFolder) oSrcMsg.getFolder();
 
       MboxFile oMboxSrc = null, oMboxThis = null;
+      
       try {
+      	if (DebugFile.trace) DebugFile.writeln("new MboxFile("+oSrcFldr.getFile().getPath()+", MboxFile.READ_WRITE)");
+      	  
         oMboxSrc = new MboxFile(oSrcFldr.getFile(), MboxFile.READ_WRITE);
+
+      	if (DebugFile.trace) DebugFile.writeln("new MboxFile("+getFile().getPath()+", MboxFile.READ_WRITE)");
+
         oMboxThis = new MboxFile(getFile(), MboxFile.READ_WRITE);
 
+      	if (DebugFile.trace) DebugFile.writeln("MboxFile.appendMessage([MboxFile], "+oPos.toString()+","+String.valueOf(iLen)+")");
+
         oMboxThis.appendMessage(oMboxSrc, oPos.longValue(), iLen);
+
         oMboxThis.close();
         oMboxThis=null;
 
@@ -434,21 +452,37 @@ public class DBFolder extends Folder {
 
     try {
       oConn = getConnection();
-      String sCatGuid = getCategory().getString(DB.gu_category);
+      oConn.setAutoCommit(false);
+
       BigDecimal dNext = getNextMessage();
+
+      if (DebugFile.trace)
+      	DebugFile.writeln("JDCConnection.prepareStatement(UPDATE "+DB.k_mime_msgs+" SET "+DB.gu_category+"='"+sCatGuid+"',"+DB.pg_message+"="+dNext.toString()+" WHERE "+DB.gu_mimemsg+"='"+oSrcMsg.getMessageGuid()+"')");
+
       oStmt = oConn.prepareStatement("UPDATE "+DB.k_mime_msgs+" SET "+DB.gu_category+"=?,"+DB.pg_message+"=? WHERE "+DB.gu_mimemsg+"=?");
       oStmt.setString(1, sCatGuid);
       oStmt.setBigDecimal(2, dNext);
       oStmt.setString(3, oSrcMsg.getMessageGuid());
-      oStmt.executeUpdate();
+      int iAffected = oStmt.executeUpdate();      
+      if (DebugFile.trace) DebugFile.writeln(String.valueOf(iAffected)+" updated rows");      
       oStmt.close();
       oStmt=null;
+
+      if (DebugFile.trace) DebugFile.writeln("JDCConnection.commit()");
+
       oConn.commit();
     }
     catch (SQLException sqle) {
-      if (null!=oStmt) { try {oStmt.close(); } catch (Exception ignore) {}}
-      if (null!=oConn) { try {oConn.rollback();} catch (Exception ignore) {} }
+
+      if (DebugFile.trace) {
+      	DebugFile.writeln("MessagingException "+sqle.getMessage());
+      	DebugFile.writeStackTrace(sqle);
+      }
+
+      if (null!=oStmt) { try { oStmt.close(); } catch (Exception ignore) {}}
+      if (null!=oConn) { try { oConn.rollback(); } catch (Exception ignore) {} }
       if (!bWasOpen) { try { close(false); } catch (Exception ignore) {} }
+
       throw new MessagingException(sqle.getMessage(), sqle);
     }
 
@@ -627,7 +661,7 @@ public class DBFolder extends Folder {
         if ((iOpenMode&READ_ONLY)!=0) sMode += " READ_ONLY ";
         if ((iOpenMode&MODE_BLOB)!=0) sMode += " MODE_BLOB ";
         if ((iOpenMode&MODE_MBOX)!=0) sMode += " MODE_MBOX ";
-        DebugFile.writeln("End DBFolder.open() :");
+        DebugFile.writeln("End DBFolder.open()");
       }
 
     }
