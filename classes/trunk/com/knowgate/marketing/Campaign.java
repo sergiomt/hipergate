@@ -38,6 +38,7 @@ import java.sql.PreparedStatement;
 import com.knowgate.jdc.JDCConnection;
 
 import com.knowgate.dataobjs.DB;
+
 import com.knowgate.dataobjs.DBPersist;
 import com.knowgate.dataobjs.DBSubset;
 
@@ -82,6 +83,14 @@ public class Campaign extends DBPersist {
 	  DebugFile.incIdent();
 	}    
 
+	DBSubset oActivities = new DBSubset(DB.k_activities, DB.gu_activity, DB.gu_campaign+"=?", 100);
+	int iActivities = oActivities.load(oConn, new Object[]{getString(DB.gu_campaign)});
+	Activity oActy = new Activity();
+	for (int a=0; a<=iActivities; a++) {
+	  oActy.replace(DB.gu_activity, oActivities.getString(0,a));
+	  oActy.delete(oConn);
+	} // next
+
     oStmt = oConn.prepareStatement("UPDATE "+DB.k_oportunities+" SET "+DB.gu_campaign+"=NULL WHERE "+DB.gu_campaign+"=?");
     oStmt.setString(1, getString(DB.gu_campaign));
     oStmt.executeUpdate();
@@ -103,6 +112,6 @@ public class Campaign extends DBPersist {
 	}
 	return true;
   } // delete
-  
+
   public static final short ClassId = (short) 300;
 }
