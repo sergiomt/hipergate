@@ -212,6 +212,5 @@ public final class SMSPushRealidadFutura extends SMSPush {
   	} // push
 
 	public static void main(String[] args) throws Exception {
-		SMSPushRealidadFutura.push("knowgate","montoro","609031645","34609031645", "Texto de prueba");
 	}
 }
