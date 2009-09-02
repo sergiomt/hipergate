@@ -81,7 +81,7 @@ GO;
 CREATE FUNCTION k_sp_get_cat_path (CHAR) RETURNS VARCHAR AS '
 DECLARE
   Neighbour CHAR(32);
-  Neighname VARCHAR(30);
+  Neighname VARCHAR(100);
   DoNext SMALLINT;
   IdCategory CHAR(32);
   CatPath TEXT;

@@ -16,7 +16,8 @@ DECLARE
 
   GuWorkArea CHAR(32);
 
-BEGIN  
+BEGIN
+  DELETE FROM k_x_activity_audience WHERE gu_contact=$1;
   DELETE FROM k_contact_education WHERE gu_contact=$1;
   DELETE FROM k_x_duty_resource WHERE nm_resource=$1;
   DELETE FROM k_welcome_packs_changelog WHERE gu_pack IN (SELECT gu_pack FROM k_welcome_packs WHERE gu_contact=$1);
