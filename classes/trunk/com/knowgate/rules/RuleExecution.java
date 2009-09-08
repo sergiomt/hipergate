@@ -53,8 +53,8 @@ public abstract class RuleExecution {
 
   private RuleEngine oRuleEngine;
 
-  private HashMap oParams;
-  private HashMap oAssrts;
+  private HashMap<String,Object> oParams;
+  private HashMap<String,Boolean> oAssrts;
 
   /**
    * Create RuleExecution on given RuleEngine
@@ -62,8 +62,8 @@ public abstract class RuleExecution {
    */
   public RuleExecution(RuleEngine oEngine) {
     oRuleEngine = oEngine;
-    oParams = new HashMap(29);
-    oAssrts = new HashMap(29);
+    oParams = new HashMap<String,Object>(29);
+    oAssrts = new HashMap<String,Boolean>(29);
   }
 
   /**
@@ -108,7 +108,7 @@ public abstract class RuleExecution {
    * @return boolean If no assertion with given key is found then <b>false</b> is returned.
    */
   public boolean getAssert(String sAssertKey) {
-    Boolean bAssrt = (Boolean) oAssrts.get(sAssertKey);
+    Boolean bAssrt = oAssrts.get(sAssertKey);
     if (bAssrt==null)
       return false;
     else
@@ -119,7 +119,7 @@ public abstract class RuleExecution {
    * Get map of parameters used by this RuleExecution
    * @return HashMap
    */
-  public HashMap getParamMap() {
+  public HashMap<String,Object> getParamMap() {
     return oParams;
   }
 
@@ -127,7 +127,7 @@ public abstract class RuleExecution {
    * Get map of assertions used by this RuleExecution
    * @return HashMap
    */
-  public HashMap getAssertMap() {
+  public HashMap<String,Boolean> getAssertMap() {
     return oAssrts;
   }
 
@@ -181,7 +181,7 @@ public abstract class RuleExecution {
   public void setParams(Map oMap) {
     Iterator oKeys = oMap.keySet().iterator();
     while (oKeys.hasNext()) {
-      Object oKey = (String) oKeys.next();
+      String oKey = (String) oKeys.next();
       if (oParams.containsKey(oKey)) oParams.remove(oKey);
       oParams.put(oKey, oMap.get(oKey));
     } // wend
