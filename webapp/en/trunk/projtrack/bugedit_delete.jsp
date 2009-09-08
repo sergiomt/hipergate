@@ -25,11 +25,7 @@
     oCon.close("object_delete");
   } 
   catch(SQLException e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("bugedit_delete");      
-        }
+      disposeConnection(oCon,"bugedit_delete");
       oCon = null;
 
       if (com.knowgate.debug.DebugFile.trace) {

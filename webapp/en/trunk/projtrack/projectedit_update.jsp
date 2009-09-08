@@ -73,7 +73,7 @@
         if (oInsr!=null) oInsr.close();
         if (oDlte!=null) oDlte.close();
         if (oStmt!=null) oStmt.close();
-        if (oConn.getAutoCommit()) oConn.rollback();
+        if (!oConn.getAutoCommit()) oConn.rollback();
         oConn.close("projectedit_update");  
       }
     oConn = null;

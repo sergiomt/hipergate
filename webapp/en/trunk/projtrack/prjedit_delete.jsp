@@ -71,7 +71,7 @@
   }
   catch (SQLException e) {
     if (!oConn.isClosed()) {
-      if (oConn.getAutoCommit()) oConn.rollback();
+      if (!oConn.getAutoCommit()) oConn.rollback();
       oConn.close("prjedit_delete");
     }
     oConn = null;

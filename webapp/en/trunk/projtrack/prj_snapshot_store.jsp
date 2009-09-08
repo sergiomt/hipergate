@@ -25,11 +25,7 @@
     oConn.close("prj_snapshot_store");
   }
   catch (Exception e) {
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("prj_snapshot_store");
-      }
+    disposeConnection(oConn,"prj_snapshot_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=" + e.getClass().getName() + "&desc=" + e.getMessage() + "&resume=_back"));
   }

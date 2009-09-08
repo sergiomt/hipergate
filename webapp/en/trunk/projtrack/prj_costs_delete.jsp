@@ -76,7 +76,7 @@
       if (!oConn.isClosed()) {
         if (null!=oDlte) { try { oDlte.close(); } catch (Exception ignore) {} }
         if (null!=oUpdt) { try { oUpdt.close(); } catch (Exception ignore) {} }
-        if (oConn.getAutoCommit()) oConn.rollback();
+        if (!oConn.getAutoCommit()) oConn.rollback();
         oConn.close("prj_costs_delete");
       }
       oConn = null;

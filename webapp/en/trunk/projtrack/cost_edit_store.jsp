@@ -60,7 +60,7 @@
     if (oConn!=null) {
       if (null!=oStmt) { try { oStmt.close(); } catch (Exception ignore) {} }
       if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
+        if (!oConn.getAutoCommit()) oConn.rollback();
         oConn.close("cost_edit_store");      
       }
       oConn = null;
@@ -71,7 +71,7 @@
     if (oConn!=null) {
       if (null!=oStmt) { try { oStmt.close(); } catch (Exception ignore) {} }
       if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
+        if (!oConn.getAutoCommit()) oConn.rollback();
         oConn.close("cost_edit_store");      
       }
       oConn = null;

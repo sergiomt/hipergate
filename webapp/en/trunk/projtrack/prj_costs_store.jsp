@@ -90,7 +90,7 @@
       if (null!=oCost) { try { oCost.close(); } catch (Exception ignore) {} }
       if (null!=oDuty) { try { oDuty.close(); } catch (Exception ignore) {} }
       if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
+        if (!oConn.getAutoCommit()) oConn.rollback();
         oConn.close("prj_cost_store");      
       }
       oConn = null;
@@ -102,7 +102,7 @@
       if (null!=oCost) { try { oCost.close(); } catch (Exception ignore) {} }
       if (null!=oDuty) { try { oDuty.close(); } catch (Exception ignore) {} }
       if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
+        if (!oConn.getAutoCommit()) oConn.rollback();
         oConn.close("prj_cost_store");      
       }
       oConn = null;

@@ -85,11 +85,7 @@
     
   }
   catch (SQLException e) {
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("dutyedit_delete");
-      }
+    disposeConnection(oConn,"dutyedit_delete");
     oConn = null;
 
     if (com.knowgate.debug.DebugFile.trace) {
