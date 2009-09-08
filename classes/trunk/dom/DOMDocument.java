@@ -598,10 +598,10 @@ public class DOMDocument {
 
     //---------------------------------------------------------
 
-  public Vector filterChildsByName(Element oParent, String sChildsName) {
+  public Vector<DOMSubDocument> filterChildsByName(Element oParent, String sChildsName) {
     Element oContainers;
     NodeList oNodeList;
-    Vector oLinkVctr;
+    Vector<DOMSubDocument> oLinkVctr;
 
     // Obtener una referencia al nodo de nivel superior en el documento
     Node oPageSetNode = getRootNode().getFirstChild();
@@ -611,7 +611,7 @@ public class DOMDocument {
     oNodeList = oParent.getElementsByTagName(sChildsName);
 
     // Crear el vector
-    oLinkVctr = new Vector(oNodeList.getLength());
+    oLinkVctr = new Vector<DOMSubDocument>(oNodeList.getLength());
 
     // Convertir los nodos DOM en objetos de tipo Page
     for (int i=0; i<oNodeList.getLength(); i++)
