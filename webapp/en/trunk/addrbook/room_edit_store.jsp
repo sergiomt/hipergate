@@ -69,11 +69,7 @@
     oConn.close("storeroom");
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("storeroom");      
-      }
+    disposeConnection(oConn,"storeroom");
 
     if (com.knowgate.debug.DebugFile.trace) {      
       com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "SQLException", e.getMessage());

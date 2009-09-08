@@ -57,11 +57,7 @@
     oCon.close("meeting_delete");
   } 
   catch(SQLException e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("meeting_delete");      
-        }
+      disposeConnection(oCon,"meeting_delete");
 
       oCon = null;
       

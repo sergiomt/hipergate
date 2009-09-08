@@ -164,11 +164,7 @@
   catch (Exception e) {
     if (oIns!=null) oIns.close();
     if (oUpd!=null) oUpd.close();
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("workcalendar_setdays_store");
-      }
+    disposeConnection(oConn,"workcalendar_setdays_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=" + e.getClass().getName() + "&desc=" + e.getMessage() + "&resume=_back"));
   }

@@ -1,8 +1,8 @@
 ﻿<%@ page import="com.oreilly.servlet.MultipartRequest,java.io.File,java.io.FileInputStream,java.io.IOException,java.net.URLDecoder,java.util.Enumeration,java.sql.SQLException,java.sql.PreparedStatement,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.addrbook.Fellow" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
-<%@ include file="../methods/multipartreqload.jspf" %><%@ include file="../methods/nullif.jspf" %><%
+<%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/multipartreqload.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
-  Copyright (C) 2003  Know Gate S.L. All rights reserved.
+  Copyright (C) 2003-2009  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
@@ -164,11 +164,7 @@
     oConn.close("felloweditstore");
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("felloweditstore");      
-      }
+    disposeConnection(oConn,"felloweditstore");
 
     oConn = null;
 
@@ -179,11 +175,7 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getMessage() + "&resume=_back"));
   }
   catch (com.knowgate.ldap.LDAPException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("felloweditstore");      
-      }
+    disposeConnection(oConn,"felloweditstore");
 
     oConn = null;
 

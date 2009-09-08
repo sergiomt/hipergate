@@ -58,11 +58,7 @@
     oConn.close("workcalendar_nonworkingtime_store");
   }
   catch (Exception e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("workcalendar_nonworkingtime_store");      
-      }
+    disposeConnection(oConn,"workcalendar_nonworkingtime_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title="+e.getClass().getName()+"&desc=" + e.getMessage() + "&resume=_back"));
   }

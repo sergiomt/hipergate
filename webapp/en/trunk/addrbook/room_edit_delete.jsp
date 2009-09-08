@@ -52,11 +52,7 @@
     oCon.close("room_delete");
   } 
   catch(SQLException e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("room_delete");      
-        }
+      disposeConnection(oCon,"room_delete");
 
       if (com.knowgate.debug.DebugFile.trace) {      
         com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "SQLException", e.getMessage());

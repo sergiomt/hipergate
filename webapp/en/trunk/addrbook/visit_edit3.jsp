@@ -58,11 +58,7 @@
   }
   catch (NullPointerException e) {
     if (oLoad!=null) { try { oLoad.close(); } catch (Exception ignore) {} }
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("visit_edit3");      
-      }
+    disposeConnection(oConn,"visit_edit3");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title="+e.getClass().getName()+"&desc=" + e.getMessage() + "&resume=_back"));
   }

@@ -49,11 +49,7 @@
     oCon.close("fellowtitle_delete");
   } 
   catch(SQLException e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("fellowtitle_delete");      
-        }
+      disposeConnection(oCon,"fellowtitle_delete");
       oCon = null; 
 
       if (com.knowgate.debug.DebugFile.trace) {      

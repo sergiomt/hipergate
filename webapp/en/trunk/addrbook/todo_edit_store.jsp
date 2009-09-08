@@ -69,11 +69,7 @@
     oConn.close("todo_edit_store");
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("todo_edit_store");
-      }
+    disposeConnection(oConn,"todo_edit_store");
     oConn = null;
     
     if (com.knowgate.debug.DebugFile.trace) {

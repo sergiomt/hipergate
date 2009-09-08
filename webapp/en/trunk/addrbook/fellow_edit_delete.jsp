@@ -85,11 +85,7 @@
     oCon.close("fellow_delete");
   } 
   catch (SQLException e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("fellow_delete");      
-        }
+      disposeConnection(oCon,"fellow_delete");
 
       if (com.knowgate.debug.DebugFile.trace) {
         com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "SQLException", e.getMessage());
@@ -98,11 +94,7 @@
       response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getMessage() + "&resume=_back"));
     }
   catch (com.knowgate.ldap.LDAPException e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("fellow_delete");      
-        }
+      disposeConnection(oCon,"fellow_delete");
 
       if (com.knowgate.debug.DebugFile.trace) {
         com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "LDAPException", e.getMessage());

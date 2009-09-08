@@ -365,7 +365,8 @@
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
     <TR><TD CLASS="striptitle"><FONT CLASS="title1"><%=(null==gu_phonecall ? "New Call" : "Edit Call") %></FONT></TD></TR>
   </TABLE>  
-  <FORM NAME="" METHOD="post" ACTION="phonecall_edit_store.jsp" onSubmit="return validate()">
+  <FORM METHOD="post" ACTION="phonecall_edit_store.jsp" onSubmit="return validate()">
+  	<INPUT TYPE="hidden" NAME="gu_phonecall" VALUE="<%=gu_phonecall%>">
     <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
     <INPUT TYPE="hidden" NAME="id_status" VALUE="<% out.write(String.valueOf(oCall.getShort(DB.id_status))); %>">
     <INPUT TYPE="hidden" NAME="gu_project" VALUE="">

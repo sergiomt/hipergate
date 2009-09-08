@@ -68,11 +68,7 @@
     oCon.close("phonecall_delete");
   } 
   catch(SQLException e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("phonecall_delete");      
-        }
+      disposeConnection(oCon,"phonecall_delete");
       oCon = null;
 
       if (com.knowgate.debug.DebugFile.trace) {      

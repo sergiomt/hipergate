@@ -33,11 +33,7 @@
     oCon.close("to_do_done");
   } 
   catch(SQLException e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("to_do_done");      
-        }
+      disposeConnection(oCon,"to_do_done");
       oCon = null; 
 
       if (com.knowgate.debug.DebugFile.trace) {      
