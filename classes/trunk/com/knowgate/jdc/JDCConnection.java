@@ -50,7 +50,7 @@ import com.knowgate.dataobjs.DBColumn;
 /**
  * JDBC Connection Wrapper
  * @author Sergio Montoro Ten
- * @version 4.0
+ * @version 5.0
  */
 public final class JDCConnection implements Connection,PooledConnection {
 
@@ -72,7 +72,7 @@ public final class JDCConnection implements Connection,PooledConnection {
 
     private JDCConnectionPool pool;
     private Connection conn;
-    private LinkedList listeners;
+    private LinkedList<ConnectionEventListener> listeners;
     private boolean inuse;
     private long timestamp;
     private int dbms;
@@ -94,7 +94,7 @@ public final class JDCConnection implements Connection,PooledConnection {
         this.timestamp=0;
         this.name = null;
         this.schema=schemaname;
-        listeners = new LinkedList();
+        listeners = new LinkedList<ConnectionEventListener>();
     }
 
     public JDCConnection(Connection conn, JDCConnectionPool pool) {
@@ -105,7 +105,7 @@ public final class JDCConnection implements Connection,PooledConnection {
         this.timestamp=0;
         this.name = null;
         this.schema=null;
-        listeners = new LinkedList();
+        listeners = new LinkedList<ConnectionEventListener>();
     }
 
     public void addConnectionEventListener(ConnectionEventListener listener) {
@@ -118,9 +118,9 @@ public final class JDCConnection implements Connection,PooledConnection {
 
 	protected void notifyClose() {
       if (listeners.size()>0) {
-        Iterator oIter = listeners.iterator();
+        Iterator<ConnectionEventListener> oIter = listeners.iterator();
         while (oIter.hasNext()) {
-          ConnectionEventListener oCevl = (ConnectionEventListener) oIter.next();
+          ConnectionEventListener oCevl = oIter.next();
           oCevl.connectionClosed(new ConnectionEvent(this));
         } // wend
       } // fi        
@@ -249,6 +249,10 @@ public final class JDCConnection implements Connection,PooledConnection {
 		notifyClose();
       }
       else {
+      	try { setAutoCommit(true); }
+      	catch (SQLException sqle) { DebugFile.writeln("SQLException setAutoCommit(true) "+sqle.getMessage()); } 
+      	try { setReadOnly(false); }
+      	catch (SQLException sqle) { DebugFile.writeln("SQLException setReadOnly(false) "+sqle.getMessage()); } 
         pool.returnConnection(this);
       }
 
@@ -270,6 +274,10 @@ public final class JDCConnection implements Connection,PooledConnection {
         notifyClose();
       }
       else {
+      	try { setAutoCommit(true); }
+      	catch (SQLException sqle) { DebugFile.writeln("SQLException setAutoCommit(true) "+sqle.getMessage()); } 
+      	try { setReadOnly(false); }
+      	catch (SQLException sqle) { DebugFile.writeln("SQLException setReadOnly(false) "+sqle.getMessage()); } 
         pool.returnConnection(this, sCaller);
       }
 
@@ -278,6 +286,18 @@ public final class JDCConnection implements Connection,PooledConnection {
         DebugFile.writeln("End JDCConnection.close("+sCaller+")");
       }
     }
+
+	public void dispose() {
+	  try { if (!getAutoCommit()) rollback(); } catch (SQLException ignore) { }
+	  pool.returnConnection(this);
+	  pool.disposeConnection(this);
+	}
+
+	public void dispose(String sCaller) {
+	  try { if (!getAutoCommit()) rollback(); } catch (SQLException ignore) { }
+	  pool.returnConnection(this, sCaller);
+	  pool.disposeConnection(this);
+	}
 
     protected void expireLease() {
         inuse=false;

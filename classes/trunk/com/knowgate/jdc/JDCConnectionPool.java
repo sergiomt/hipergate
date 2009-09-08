@@ -134,13 +134,13 @@ final class ConnectionReaper extends Thread {
   /**
    * <p>JDBC Connection Pool</p>
    * <p>Implementation of a standard JDBC connection pool.</p>
-   * @version 2.2
+   * @version 5.0
    */
 
 public final class JDCConnectionPool implements ConnectionPoolDataSource {
 
    private Object binding;
-   private Vector connections;
+   private Vector<JDCConnection> connections;
    private int openconns;
    private HashMap callers;
    private String url, user, password;
@@ -193,7 +193,7 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
 
       DriverManager.setLoginTimeout(20); // default login timeout = 20 seconds
 
-      connections = new Vector(poolsize<=hardlimit ? poolsize : hardlimit);
+      connections = new Vector<JDCConnection>(poolsize<=hardlimit ? poolsize : hardlimit);
       reaper = new ConnectionReaper(this);
       reaper.start();
 
@@ -249,7 +249,7 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
 
       DriverManager.setLoginTimeout(logintimeout);
 
-      connections = new Vector(poolsize<=hardlimit ? poolsize : hardlimit);
+      connections = new Vector<JDCConnection>(poolsize<=hardlimit ? poolsize : hardlimit);
       reaper = new ConnectionReaper(this);
       reaper.start();
 
@@ -337,7 +337,7 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
 
      DriverManager.setLoginTimeout(logintimeout);
 
-     connections = new Vector(poolsize);
+     connections = new Vector<JDCConnection>(poolsize);
      reaper = new ConnectionReaper(this);
      reaper.start();
 
@@ -587,12 +587,12 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
     * @param conn Connection to close
     */
 
-   private synchronized void removeConnection(JDCConnection conn) {
+   protected synchronized void disposeConnection(JDCConnection conn) {
      boolean bClosed;
      String sCaller = "";
 
        try {
-         if (DebugFile.trace) logConnection (conn, "removeConnection", "RDBC", null);
+         if (DebugFile.trace) logConnection (conn, "disposeConnection", "RDBC", null);
 
          sCaller = conn.getName();
          if (!conn.isClosed()) {         	
@@ -609,7 +609,7 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
          if (errorlog.size()>100) errorlog.removeFirst();
          errorlog.addLast(new Date().toString() + " " + sCaller + " Connection.close() " + e.getMessage());
 
-         if (DebugFile.trace) DebugFile.writeln("SQLException at JDCConnectionPool.removeConnection() : " + e.getMessage());
+         if (DebugFile.trace) DebugFile.writeln("SQLException at JDCConnectionPool.disposeConnection() : " + e.getMessage());
        }
 
        if (bClosed) {
@@ -617,7 +617,7 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
          connections.removeElement(conn);
          openconns--;
        }
-   } // removeConnection()
+   } // disposeConnection()
 
    // ---------------------------------------------------------
 
@@ -633,7 +633,7 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
       }
 
       long stale = System.currentTimeMillis() - timeout;
-      Enumeration connlist = connections.elements();
+      Enumeration<JDCConnection> connlist = connections.elements();
       JDCConnection conn;
 
       while((connlist != null) && (connlist.hasMoreElements())) {
@@ -642,12 +642,12 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
           // Remove each connection that is not in use or
           // is stalled for more than maximun usage timeout (default 10 mins)
           if (!conn.inUse())
-            removeConnection(conn);
+            disposeConnection(conn);
           else if (stale>conn.getLastUse()) {
             if (DebugFile.trace) DebugFile.writeln("Connection "+conn.getName()+" was staled since "+new Date(conn.getLastUse()).toString());
             if (errorlog.size()>100) errorlog.removeFirst();
             errorlog.addLast(new Date().toString()+" Connection "+conn.getName()+" was staled since "+new Date(conn.getLastUse()).toString());
-            removeConnection(conn);
+            disposeConnection(conn);
           }
       } // wend
 
@@ -676,7 +676,7 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
 
       if (connlist != null) {
         while (connlist.hasMoreElements()) {
-          removeConnection ((JDCConnection) connlist.nextElement());
+          disposeConnection ((JDCConnection) connlist.nextElement());
         } // wend
       } // fi ()
 
@@ -719,7 +719,7 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
           conn = (JDCConnection) connlist.nextElement();
           if (stale>conn.getLastUse()) {
             staled++;
-            removeConnection (conn);
+            disposeConnection (conn);
           }
         } // wend
       } // fi ()
