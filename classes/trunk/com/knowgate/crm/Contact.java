@@ -311,23 +311,34 @@ public class Contact extends DBPersist {
    * If contact is already associated to the given address then a foreign key violation is thrown
    * @param oConn Database Connection
    * @throws SQLException
+   * @throws NullPointerException
    * @since 3.0
    */
-  public boolean addAddress(JDCConnection oConn, String sAddrGUID) throws SQLException {
+  public boolean addAddress(JDCConnection oConn, String sAddrGUID)
+  	throws SQLException, NullPointerException {
     PreparedStatement oStmt = null;
     boolean bRetVal;
 
-    try {
-      oStmt = oConn.prepareStatement("INSERT INTO " + DB.k_x_contact_addr + " (" + DB.gu_contact + "," + DB.gu_address + ") VALUES (?,?)");
-      oStmt.setString(1, getStringNull(DB.gu_contact, null));
-      oStmt.setString(2, sAddrGUID);
-      int iAffected = oStmt.executeUpdate();
-      oStmt.close();
-      oStmt = null;
-      bRetVal = (iAffected > 0);
-    } catch (SQLException sqle) {
-      bRetVal = false;
-      try { if (oStmt!=null) oStmt.close(); } catch (Exception ignore) {}
+	if (isNull(DB.gu_contact))
+	  throw new NullPointerException("Contact.addAddress() gu_contact may not be null");
+
+	if (!DBCommand.queryExists(oConn, DB.k_x_contact_addr,
+							   DB.gu_contact+"='"+getString(DB.gu_contact)+"' AND "+
+							   DB.gu_address+"='"+sAddrGUID+"'")) {
+      try {
+        oStmt = oConn.prepareStatement("INSERT INTO " + DB.k_x_contact_addr + " (" + DB.gu_contact + "," + DB.gu_address + ") VALUES (?,?)");
+        oStmt.setString(1, getString(DB.gu_contact));
+        oStmt.setString(2, sAddrGUID);
+        int iAffected = oStmt.executeUpdate();
+        oStmt.close();
+        oStmt = null;
+        bRetVal = (iAffected > 0);
+      } catch (SQLException sqle) {
+        bRetVal = false;
+        try { if (oStmt!=null) oStmt.close(); } catch (Exception ignore) {}
+      }
+    } else {
+      throw new SQLException("Contact.addAddress() The address "+sAddrGUID+" is already associated to contact "+getString(DB.gu_contact));
     }
     return bRetVal;
   } // addAddress
@@ -995,7 +1006,7 @@ public class Contact extends DBPersist {
    * @throws SQLException
    * @since 3.0
    */
-  public static boolean addLookupPassportType (Connection oConn, String sGuWorkArea, String sTpPassport, HashMap oTranslations)
+  public static boolean addLookupPassportType (Connection oConn, String sGuWorkArea, String sTpPassport, HashMap<String,String> oTranslations)
     throws SQLException {
     return DBLanguages.addLookup(oConn,DB.k_contacts_lookup, sGuWorkArea, DB.tp_passport, sTpPassport, oTranslations);
   }
@@ -1010,7 +1021,7 @@ public class Contact extends DBPersist {
    * @throws SQLException
    * @since 3.0
    */
-  public static boolean addLookupJobTitle (Connection oConn, String sGuWorkArea, String sDeTitle, HashMap oTranslations)
+  public static boolean addLookupJobTitle (Connection oConn, String sGuWorkArea, String sDeTitle, HashMap<String,String> oTranslations)
     throws SQLException {
     return DBLanguages.addLookup(oConn,DB.k_contacts_lookup, sGuWorkArea, DB.de_title, sDeTitle, oTranslations);
   }

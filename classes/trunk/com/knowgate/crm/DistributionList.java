@@ -154,8 +154,6 @@ public class DistributionList extends DBPersist {
 
     oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
-    try { oStmt.setQueryTimeout(120); }  catch (SQLException sqle) { /* ignore */}
-
     if (DebugFile.trace) DebugFile.writeln("Statement.executeQuery(" + sSQL + ")");
 
     oRSet = oStmt.executeQuery(sSQL);
@@ -229,8 +227,6 @@ public class DistributionList extends DBPersist {
     sSQL = "SELECT " + DB.tx_email + " FROM " + sTableName + " m WHERE " + sWhere;
 
     oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-
-    try { oStmt.setQueryTimeout(120); }  catch (SQLException sqle) { /* ignore */}
 
     if (DebugFile.trace) DebugFile.writeln("Statement.executeQuery(" + sSQL + ")");
 
@@ -391,8 +387,6 @@ public class DistributionList extends DBPersist {
     sSQL = "SELECT " + DB.gu_company + " FROM " + sTableName + " m WHERE " + sWhere;
 
     oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-
-    try { oStmt.setQueryTimeout(120); }  catch (SQLException sqle) { /* ignore */}
 
     if (DebugFile.trace) DebugFile.writeln("Statement.executeQuery(" + sSQL + ")");
 
@@ -557,12 +551,8 @@ public class DistributionList extends DBPersist {
 
     oStmt = oConn.prepareStatement("SELECT " + DB.gu_list + " FROM " + DB.k_lists + " WHERE " + DB.gu_workarea + "=? AND " + DB.tp_list + "=" + String.valueOf(TYPE_BLACK) + " AND " + DB.gu_query + "=?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
-    try { oStmt.setQueryTimeout(10); }  catch (SQLException e) { }
-
     oStmt.setString(1, getString(DB.gu_workarea));
     oStmt.setString(2, getString(DB.gu_list));
-
-    try { oStmt.setQueryTimeout(20); } catch (SQLException sqle) { }
 
     oRSet = oStmt.executeQuery();
 
@@ -664,8 +654,6 @@ public class DistributionList extends DBPersist {
     // Añadir los miembros que no estuviesen ya presentes en la lista base
 
     oInsrt = oConn.createStatement();
-
-    try { oInsrt.setQueryTimeout(120); }  catch (SQLException sqle) { /* ignore */}
 
     if (oAppendedList.getShort(DB.tp_list)==TYPE_DYNAMIC) {
 
@@ -938,8 +926,6 @@ public class DistributionList extends DBPersist {
     oBuffer = new StringBuffer();
 
     oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-
-    try { oStmt.setQueryTimeout(120); }  catch (SQLException sqle) { /* ignore */}
 
     sColumnList = "m." + DB.tx_email + ",m." + DB.tx_name + ",m." + DB.tx_surname + ",m." + DB.tx_salutation + ",m." + DB.bo_active + ",m." + DB.gu_company + ",m." + DB.gu_contact + ",m." + DB.dt_modified;
 
