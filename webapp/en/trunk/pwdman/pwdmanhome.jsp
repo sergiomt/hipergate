@@ -104,11 +104,11 @@
   <TITLE>hipergate :: [~Gestor de Contraseñas~]</TITLE> 
   <STYLE TYPE="text/css">
     .columnleft {
-      width:340px;float:left;clear:left;text-align:left;
+      width:340px;float:left;clear:left;text-align:left;background:#e7e3e7;
     }
 
     .columnright {
-      float:left;right:340px;clear:right;text-align:left;visibility:hidden;
+      float:left;right:340px;margin-left:8px;clear:right;text-align:left;visibility:hidden;
     }
   </STYLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
@@ -135,11 +135,16 @@
     // ----------------------------------------------------------------
 
 		function writeCategoriesList() {
-	    var htm = "";	
+	    var htm = "<TABLE WIDTH=\"100%\" SUMMARY=\"Categories List\"><TR><TD WIDTH=\"28px\" CLASS=\"tableheader\" BACKGROUND=\"../skins/<%=sSkin%>/tablehead.gif\"></TD><TD CLASS=\"tableheader\" BACKGROUND=\"../skins/<%=sSkin%>/tablehead.gif\"></TD></TR>";
 	    for (var c=0; c<cts.length; c++) {
-	      htm += "<INPUT TYPE=\"checkbox\" NAME=\"c_"+cts[c]+"\" VALUE=\""+cts[c]+"\">&nbsp;<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"listPasswords('"+cts[c]+"')\">"+(cur==cts[c] ? "<B>" : "")+ctn[c]+(cur==cts[c] ? "</B>" : "")+"</A><BR/>";
+	      htm += "<TR><TD WIDTH=\"28px\" ALIGN=\"center\" CLASS=\"strip1\">&nbsp;&nbsp;<INPUT TYPE=\"checkbox\" NAME=\"c_"+cts[c]+"\" VALUE=\""+cts[c]+"\"></TD><TD CLASS=\"strip1\"><A CLASS=\"linkplain\" HREF=\"#\" onclick=\"listPasswords('"+cts[c]+"')\">";
+	      if (cur==cts[c])
+	        htm += "<B>"+ctn[c]+"</B>";
+	      else
+	        htm += ctn[c];
+	      htm += "</A></TD></TR>";
 	    } // next
-	    htm += "<BR/><TABLE SUMMARY=\"Close Session\" BORDER=\"0\"><TR><TD><IMG SRC=\"../images/images/padlock.gif\" WIDTH=19 HEIGHT=22 BORDER=0 ALT=\"Padlock\" /></TD><TD><A HREF=\"pwdlogout.jsp<%=sSelParams%>\" CLASS=\"linkplain\">[~Cerrar Gestor de Contraseñas~]</A></TD></TR></TABLE>";
+	    htm += "<TABLE SUMMARY=\"Close Session\" BORDER=\"0\"><TR><TD>&nbsp;&nbsp;<IMG SRC=\"../images/images/padlock.gif\" WIDTH=19 HEIGHT=22 BORDER=0 ALT=\"Padlock\" /></TD><TD><A HREF=\"pwdlogout.jsp<%=sSelParams%>\" CLASS=\"linkplain\">[~Cerrar Gestor de Contraseñas~]</A></TD></TR></TABLE>";
 	    document.getElementById("catlist").innerHTML = htm;
 		} // writeCategoriesList
 
@@ -178,15 +183,15 @@
           if (req.status == 200) {
           	if (req.responseText.substr(0,5)=="ERROR") {
           	  alert (req.responseText);
+          	  req = false;
           	} else {
           		var id = req.responseText.substr(0,32);
           		var lt = req.responseText.substr(33);
           		cts.push(id);
           		ctn.push(lt);
-          		var clst = document.getElementById("catlist");
-          		clst.innerHTML = clst.innerHTML + "<INPUT TYPE=\"checkbox\" NAME=\"c_"+id+"\" VALUE=\""+id+"\" />&nbsp;<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"listPasswords('"+id+"')\">"+lt+"</A><BR/>";
+          	  req = false;
+							writeCategoriesList();
           	} // fi
-          	req = false;
           } else {
           }
         }
@@ -314,13 +319,18 @@
           	  } else {
 						    var lins = req.responseText.split("\n");
 						    var nlin = lins.length;
-						    pwdlinkshtml = "<IMG SRC=\"../images/images/spacer.gif\" WIDTH=\"12\" HEIGHT=\"1\" BORDER=\"0\" ALT=\"\"><IMG SRC=\"../images/images/papelera.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"[~Eliminar~]\">&nbsp;<A HREF=\"#\" onclick=\"deletePasswords()\" CLASS=\"linkplain\">[~Eliminar Contrase&ntilde;as Seleccionadas~]</A><BR/><TABLE SUMMARY=\"Passwords List\"><TR><TD CLASS=tableheader BACKGROUND=\"../skins/<%=sSkin%>/tablehead.gif\"></TD><TD CLASS=tableheader BACKGROUND=\"../skins/<%=sSkin%>/tablehead.gif\"><A HREF=\"#\" onclick=\"selectAll()\" TITLE=\"Select all\"><IMG SRC=\"../images/images/selall16.gif\" BORDER=\"0\" ALT=\"Select all\"></A></TD></TR>";
+						    pwdlinkshtml = "<IMG SRC=\"../images/images/spacer.gif\" WIDTH=\"12\" HEIGHT=\"1\" BORDER=\"0\" ALT=\"\"><IMG SRC=\"../images/images/papelera.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"[~Eliminar~]\">&nbsp;<A HREF=\"#\" onclick=\"deletePasswords()\" CLASS=\"linkplain\">[~Eliminar Contrase&ntilde;as Seleccionadas~]</A><BR/><TABLE SUMMARY=\"Passwords List\"><TR><TD CLASS=tableheader BACKGROUND=\"../skins/<%=sSkin%>/tablehead.gif\"><TD CLASS=tableheader BACKGROUND=\"../skins/<%=sSkin%>/tablehead.gif\"><TD CLASS=tableheader BACKGROUND=\"../skins/<%=sSkin%>/tablehead.gif\"></TD><TD CLASS=tableheader BACKGROUND=\"../skins/<%=sSkin%>/tablehead.gif\"><A HREF=\"#\" onclick=\"selectAll()\" TITLE=\"[~Seleccionar Todo~]\"><IMG SRC=\"../images/images/selall16.gif\" BORDER=\"0\" ALT=\"Select all\"></A></TD></TR>";
 						    
 						    pws = new Array();
 						    for (var l=0; l<nlin; l++) {
 						  	  var lin = lins[l].split("|");
 						  	  pws.push(lin[0]);
-						      pwdlinkshtml += "<TR><TD><A HREF=\"#\" CLASS=\"linkplain\" onclick=\"viewPassword('"+lin[0]+"')\">"+lin[1]+"</A></TD><TD><INPUT TYPE=\"checkbox\" NAME=\"chk_"+lin[0]+"\" VALUE=\""+lin[0]+"\" /></TD></TR>";
+						      pwdlinkshtml += "<TR><TD CLASS=\"textplain\">"+lin[1]+"</TD><TD><A HREF=\"#\" CLASS=\"linkplain\" onclick=\"viewPassword('"+lin[0]+"')\">[~Mostrar Contraseña~]</A></TD>";
+						      if (lin[2].length==0)
+						        pwdlinkshtml += "<TD></TD>";
+						      else
+						        pwdlinkshtml += "<TD><A CLASS=\"linkplain\" TARGET=\"_blank\" HREF=\"loginforms/"+lin[2]+".jsp?gu_pwd="+lin[0]+"\">[~Abrir sitio web~]</A></TD>";
+						      pwdlinkshtml += "<TD><INPUT TYPE=\"checkbox\" NAME=\"chk_"+lin[0]+"\" VALUE=\""+lin[0]+"\" /></TD></TR>";
 						    }
 						    pwdlinkshtml += "</TABLE>";
           	    document.getElementById("pwdlinks").innerHTML = pwdlinkshtml;
@@ -333,14 +343,14 @@
 
     // ----------------------------------------------------------------
 
-	  function listPasswords(gu) {
+	  function listPasswords(gu) {	  	  
 	      showLayer("pwdlist");
 	      if (!req) {
 	    	  cur = gu;
           writeCategoriesList();
           document.getElementById("pwdlinks").innerHTML = "";
 	        req = createXMLHttpRequest();
-			    req.onreadystatechange = writePasswordsHtml;			  
+			    req.onreadystatechange = writePasswordsHtml;
 			    req.open("GET", "pwdlist.jsp?gu_category="+gu, true);
 			    req.send(null);
 			  } // fi
@@ -357,7 +367,7 @@
 				pwdhtm = "<DIV class=cxMnu1 style=\"width:100px\"><DIV class=cxMnu2><SPAN class=hmMnuOff onMouseOver=\"this.className='hmMnuOn'\" onMouseOut=\"this.className='hmMnuOff'\" onClick=\"document.getElementById('pwdlinks').innerHTML=pwdlinkshtml;\"><IMG src=\"../images/images/toolmenu/historyback.gif\" width=16 style=\"vertical-align:middle\" height=16 border=0 alt=\"[~Atras~]\"> [~Atras~]</SPAN></DIV></DIV><BR/><TABLE><TR><TD CLASS=striptitle><FONT CLASS=title1>"+getElementText(pwdxml, "tl_pwd")+"</FONT></TD></TR></TABLE><TABLE CLASS=\"formback\"><TR><TD><TABLE WIDTH=\"100%\" CLASS=\"formfront\">";
 				for (var l=0; l<pwdlins.length; l++) {
 					var lin = pwdlins[l].split("|");
-					if (lin[3].length>0) {
+					if (lin[3].length>0 && lin[2]!="null") {
 				    pwdhtm += "<TR><TD CLASS=\"formstrong\">"+lin[2]+"</TD>";
 				    if (lin[1]=="&") {
 				    	if (lin[3].substr(0,6)!="ftp://" && lin[3].substr(0,7)!="http://" && lin[3].substr(0,8)!="https://")
@@ -377,6 +387,25 @@
 		    alert (getElementText(pwdxml, "error")); 
 		  }
     } // viewPassword
+
+    // ----------------------------------------------------------------
+
+    function checkNewAuthStr() {
+      frm = document.forms["newauthstr"];
+      if (frm.tx_pwd_new1.value.length<4) {
+        alert ("[~La clave debe ser de al menos cuatro caracteres~]");
+        frm.tx_pwd_new1.value=frm.tx_pwd_new2.value="";
+        frm.tx_pwd_new1.focus();
+        return false;
+      }
+      if (frm.tx_pwd_new1.value!=frm.tx_pwd_new2.value) {
+        alert ("[~La nueva clave no coincide con su verificación~]");
+        frm.tx_pwd_new1.value=frm.tx_pwd_new2.value="";
+        frm.tx_pwd_new1.focus();
+        return false;
+      }
+      return true;
+    }
 
     // ----------------------------------------------------------------
 
@@ -477,7 +506,7 @@
 <BR>
 <TABLE SUMMARY="Page Header"><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Gestor de Contraseñas~]</FONT></TD></TR></TABLE>
 <% if (null==aStr[0]) { %>
-  <FORM METHOD="post" ACTION="pwdset.jsp" onSubmit="return validateNewPassword()">
+  <FORM METHOD="post" ACTION="pwdset.jsp" AUTOCOMPLETE="off" onSubmit="return validateNewPassword()">
   	<INPUT TYPE="hidden" NAME="selected" VALUE="<%=request.getParameter("selected")%>">
   	<INPUT TYPE="hidden" NAME="subselected" VALUE="<%=request.getParameter("subselected")%>">
     <FONT CLASS="textplain">[~Debe establecer una clave de firma adicional para el gestor de contraseñas~]</FONT>
@@ -498,6 +527,7 @@
 <% } else {
      if (bSession) {
 		   if (oCatgs!=null) { %>
+  <FORM METHOD="post" NAME="fcats" ACTION="category_delete.jsp">
   <DIV CLASS="columnleft">
   <TABLE SUMMARY="Actions">
     <TR>
@@ -507,15 +537,16 @@
       <TD VALIGN="middle"><A HREF="#" onclick="deleteCategories()" CLASS="linkplain">[~Eliminar Categorías~]</A></TD>
     </TR>
   </TABLE>
-  <FORM METHOD="post" NAME="fcats" ACTION="category_delete.jsp">
-  <DIV id="catlist"><%
+  <DIV id="catlist">
+  <TABLE WIDTH="100%" SUMMARY="Categories List"><TR><TD WIDTH="28px" CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"></TD><TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"></TD></TR>
+<%
   for (int c=0; c<iCatgs; c++) {
     if ((aPermissions[c]&P)!=0) 
-      out.write("<INPUT TYPE=\"checkbox\" NAME=\"c_"+oCatgs.getString(0,c)+"\" VALUE=\""+oCatgs.getString(0,c)+"\">&nbsp;<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"listPasswords('"+oCatgs.getString(0,c)+"')\">"+oCatgs.getStringNull(2,c,oCatgs.getString(1,c))+"</A><BR/>");
+      out.write("<TR><TD WIDTH=\"28px\" ALIGN=\"center\" CLASS=\"strip1\">&nbsp;&nbsp;<INPUT TYPE=\"checkbox\" NAME=\"c_"+oCatgs.getString(0,c)+"\" VALUE=\""+oCatgs.getString(0,c)+"\"></TD><TD CLASS=\"strip1\"><A CLASS=\"linkplain\" HREF=\"#\" onclick=\"listPasswords('"+oCatgs.getString(0,c)+"')\">"+oCatgs.getStringNull(2,c,oCatgs.getString(1,c))+"</A></TD></TR>");
   } // next
-%><BR/><TABLE SUMMARY="Close Session" BORDER="0"><TR><TD><IMG SRC="../images/images/padlock.gif" WIDTH=19 HEIGHT=22 BORDER=0 ALT="Padlock" /></TD><TD><A HREF="pwdlogout.jsp<%=sSelParams%>" CLASS="linkplain">[~Cerrar Gestor de Contraseñas~]</A></TD></TR></TABLE></DIV>
-  </FORM>
+%></TABLE><TABLE SUMMARY="Close Session" BORDER="0"><TR><TD>&nbsp;&nbsp;<IMG SRC="../images/images/padlock.gif" WIDTH=19 HEIGHT=22 BORDER=0 ALT="Padlock" /></TD><TD><A HREF="pwdlogout.jsp<%=sSelParams%>" CLASS="linkplain">[~Cerrar Gestor de Contraseñas~]</A></TD></TR></TABLE></DIV>
   </DIV>
+  </FORM>
   <DIV id="pwdlist" CLASS="columnright">
   <FORM NAME="pwdsfrm" METHOD="POST">
   <INPUT TYPE="hidden" NAME="checkeditems" />
@@ -531,7 +562,7 @@
 		   final int nBrands = aBrands.length;
 		   for (int b=0; b<nBrands; b++) {
 		     oRec.load(aBrands[b].getPath());
-		     sTemplates += "<OPTION VALUE=\""+aBrands[b].getName()+"\">"+oRec.getName()+"</OPTION>";		   
+		     sTemplates += "<OPTION VALUE=\"brands"+File.separator+""+aBrands[b].getName()+"\">"+oRec.getName()+"</OPTION>";		   
 		   } // for
 		   sTemplates += "</OPTGROUP>";
 		 } // fi
@@ -554,8 +585,7 @@
     <TR>
       <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
       <TD VALIGN="middle" CLASS="textplain">[~Nueva~]</TD>
-  	  <TD><SELECT NAME="sel_templates"><%=sTemplates%></SELECT></TD>
-  	  <TD><INPUT TYPE="button" CLASS="minibutton" VALUE="[~Crear~]" onclick="createPassword()"></TD>
+  	  <TD><SELECT NAME="sel_templates" onchange="if (this.selectedIndex>0) createPassword()"><%=sTemplates%></SELECT></TD>
   	</TR>
   </TABLE>
   <BR/>
@@ -564,25 +594,69 @@
   </FORM>
 <%  	}
    } else { %>
-  <FORM METHOD="post" ACTION="pwdlogin.jsp">
-  <INPUT TYPE="hidden" NAME="selected" VALUE="<%=request.getParameter("selected")%>">
-  <INPUT TYPE="hidden" NAME="subselected" VALUE="<%=request.getParameter("subselected")%>">
-  <FONT CLASS="textplain">[~Clave de firma~]</FONT>&nbsp;<INPUT TYPE="password" NAME="pwd1" MAXLENGTH="20">&nbsp;&nbsp;<INPUT TYPE="submit" VALUE="[~Entrar~]">
-  <BR/>
-  <DIV id="reminderlink" STYLE="visibility:visible">
-  <BR/>
-  <A HREF="#" CLASS="linkplain" onclick="hideLayer('reminderlink'); showLayer('reminder');"><IMG SRC="../images/images/forgotpwd.gif" WIDTH="17" HEIGHT="16" BORDER="0" ALT="Forgot password?">&nbsp;[~&iquest;Olvid&oacute; la clave de firma?~]</A>
-  <BR/>
-  </DIV>
-  <DIV id="reminder" STYLE="visibility:hidden">
-  <FONT CLASS="textplain">[~Por motivos de seguridad, la clave de firma no puede ser recuperada ni re-enviada~]</FONT>
-<% if (aStr[1]!=null) { %>
-  <BR/>
-  <FONT CLASS="textplain">[~La frase que introdujo como recordatorio de su clave es~]&nbsp;"<%=aStr[1]%>"</FONT>
-<% } %>
-  <BR/>
-  <A HREF="#" CLASS="linkplain" onclick="forceNewSignaturePassword()">[~Establecer una nueva clave de firma~]</A>
-  </DIV>
+  <FORM METHOD="post" AUTOCOMPLETE="off" ACTION="pwdlogin.jsp">
+    <INPUT TYPE="hidden" NAME="selected" VALUE="<%=request.getParameter("selected")%>">
+    <INPUT TYPE="hidden" NAME="subselected" VALUE="<%=request.getParameter("subselected")%>">
+    <TABLE CLASS="formback" SUMMARY="Form Back frame">
+      <TR><TD>
+        <TABLE WIDTH="100%" CLASS="formfront" SUMMARY="Form Background">
+          <TR>
+            <TD ALIGN="right" WIDTH="160" CLASS="formplain">[~Clave de firma~]</TD>
+            <TD ALIGN="left" WIDTH="340"><INPUT TYPE="password" NAME="pwd1" MAXLENGTH="20">&nbsp;&nbsp;<INPUT TYPE="submit" VALUE="[~Entrar~]"></TD>
+          </TR>
+          <TR>
+            <TD ALIGN="right" WIDTH="160"></TD>
+            <TD ALIGN="left" WIDTH="340">
+  					  <DIV id="reminderlink" STYLE="display:block">
+  						  <A HREF="#" CLASS="linkplain" onclick="document.getElementById('reminderlink').style.display='none'; document.getElementById('reminder').style.display='block';"><IMG SRC="../images/images/forgotpwd.gif" WIDTH="17" HEIGHT="16" BORDER="0" ALT="Forgot password?">&nbsp;[~&iquest;Olvid&oacute; la clave de firma?~]</A>
+  						</DIV>
+            </TD>
+          </TR>
+          <TR>
+            <TD COLSPAN="2">
+              <DIV id="reminder" STYLE="display:none">
+                <FONT CLASS="textplain">[~Por motivos de seguridad, la clave de firma no puede ser recuperada ni re-enviada~]</FONT>
+				        <% if (aStr[1]!=null) { %>
+                <BR/>
+                <FONT CLASS="textplain">[~La frase que introdujo como recordatorio de su clave es~]&nbsp;"<%=aStr[1]%>"</FONT>
+                <% } %>
+                <BR/>
+                <A HREF="#" CLASS="linkplain" onclick="forceNewSignaturePassword()">[~Establecer una nueva clave de firma~]</A>
+              </DIV>
+            </TD>
+          </TR>
+        </TABLE>
+      </TD><TR>
+    </TABLE>  
+  </FORM>
+  <FORM NAME="newauthstr" AUTOCOMPLETE="off" METHOD="post" ACTION="pwd_change.jsp" onsubmit="return checkNewAuthStr()">
+    <INPUT TYPE="hidden" NAME="selected" VALUE="<%=request.getParameter("selected")%>">
+    <INPUT TYPE="hidden" NAME="subselected" VALUE="<%=request.getParameter("subselected")%>">
+    <TABLE CLASS="formback" SUMMARY="Form Back frame">
+      <TR><TD>
+        <TABLE WIDTH="100%" CLASS="formfront" SUMMARY="Form Background">
+          <TR>
+            <TD ALIGN="left" WIDTH="500" COLSPAN="2"><A HREF="\#\" CLASS="linkplain" onclick="for (var c=1; c<=8; c++) document.getElementById('c'+String(c)).style.display='block';">[~Cambiar clave ordinaria de entrada a la aplicaci&oacute;n~]</A></TD>
+          </TR>
+          <TR>
+            <TD ALIGN="right" WIDTH="160" CLASS="formplain"><DIV id="c1" style="display:none">[~Clave actual~]</DIV></TD>            
+            <TD WIDTH="340"><DIV id="c2" style="display:none"><INPUT TYPE="password" NAME="tx_pwd_old"></DIV></TD>
+          </TR>
+          <TR>
+            <TD ALIGN="right" WIDTH="160" CLASS="formplain"><DIV id="c3" style="display:none">[~Nueva clave~]</DIV></TD>            
+            <TD WIDTH="340"><DIV id="c4" style="display:none"><INPUT TYPE="password" NAME="tx_pwd_new1"></DIV></TD>
+          </TR>
+          <TR>
+            <TD ALIGN="right" WIDTH="160" CLASS="formplain"><DIV id="c5" style="display:none">[~Repetir clave~]</DIV></TD>            
+            <TD WIDTH="340"><DIV id="c6" style="display:none"><INPUT TYPE="password" NAME="tx_pwd_new2"></DIV></TD>
+          </TR>
+          <TR>
+            <TD ALIGN="right" WIDTH="160"><DIV id="c7" style="display:none"></DIV></TD>            
+            <TD WIDTH="340"><DIV id="c8" style="display:none"><INPUT TYPE="submit" CLASS="pushbutton" VALUE="[~Cambiar~]"></DIV></TD>
+          </TR>
+        </TABLE>
+      </TD><TR>
+    </TABLE>  
   </FORM>
 <%   }
    } %>

@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.acl.PasswordRecordTemplate,com.knowgate.acl.PasswordRecordLine" language="java" session="true" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.acl.PasswordRecordTemplate,com.knowgate.acl.PasswordRecordLine" language="java" session="true" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="pwdtemplates.jspf" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*  
   Copyright (C) 2003-2009  Know Gate S.L. All rights reserved.
@@ -48,7 +48,7 @@
   
   String sSkin = getCookie(request, "skin", "xp");
   String sLanguage = getNavigatorLanguage(request);
-  String sStorage = Environment.getProfilePath(GlobalDBBind.getProfileName(), "storage");
+  String sStorage = GlobalDBBind.getPropertyPath("storage");
   
   String id_domain = request.getParameter("id_domain");
   String gu_workarea = request.getParameter("gu_workarea");
@@ -60,7 +60,6 @@
   oRec.load(Gadgets.chomp(getTemplatesPath(sStorage, id_domain, gu_workarea, id_user),File.separator)+nm_template);
       
 %>
-<!-- <% out.write(Gadgets.chomp(getTemplatesPath(sStorage, id_domain, gu_workarea, id_user),File.separator)+request.getParameter("nm_template")); %> -->
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: [~Nuevo~] <%=oRec.getName()%></TITLE>
@@ -176,11 +175,12 @@
     <INPUT TYPE="hidden" NAME="gu_user" VALUE="<%=id_user%>">
     <INPUT TYPE="hidden" NAME="gu_writer" VALUE="<%=id_user%>">
     <INPUT TYPE="hidden" NAME="nm_template" VALUE="<%=nm_template%>">
+    <INPUT TYPE="hidden" NAME="id_pwd" VALUE="<% if (nm_template.startsWith("brands"+File.separator)) out.write(Gadgets.substrBetween(nm_template, File.separator, ".")); %>">
     <INPUT TYPE="hidden" NAME="id_enc_method" VALUE="<% out.write(nm_template.startsWith("brands"+File.separator) ? "NONE" : "RC4"); %>">   
 <% for (PasswordRecordLine rcl : oRec.lines()) { %>
     <INPUT TYPE="hidden" NAME="lbl_<%=rcl.getId()%>" VALUE="<%=rcl.getLabel()%>">   
 <% } %>
-    <TABLE CLASS="formback">
+    <TABLE CLASS="formback" WIDTH="480">
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
@@ -192,8 +192,8 @@
           </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>
     	    </TD>
     	  </TR>            
