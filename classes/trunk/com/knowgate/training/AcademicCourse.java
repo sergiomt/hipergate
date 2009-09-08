@@ -558,8 +558,8 @@ public class AcademicCourse extends DBPersist {
       DebugFile.incIdent();
     }
     
-    String sGuProduct = DBCommand.queryStr(oConn, "SELECT "+DB.gu_product+" FROM "+DB.k_academic_courses+" WHERE "+DB.gu_acourse+"='"+sGuACourse+"'");
-    if (null!=sGuProduct) new Product(sGuProduct).delete(oConn);
+    Product oProd = new Product(sGuACourse);
+    if (oProd.exists(oConn)) oProd.delete(oConn);
     
     if (oConn.getDataBaseProduct()==JDCConnection.DBMS_POSTGRESQL) {
       if (DebugFile.trace) {
