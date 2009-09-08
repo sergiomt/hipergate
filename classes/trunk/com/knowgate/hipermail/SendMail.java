@@ -67,7 +67,7 @@ import com.enterprisedt.net.ftp.FTPException;
 /**
  * Send a given mail to a recipients list
  * @author Sergio Montoro Ten
- * @version 1.0
+ * @version 5.0
  */
 public final class SendMail {
 
@@ -184,14 +184,20 @@ public final class SendMail {
 	  	
 	  if (DebugFile.trace) {
 	    DebugFile.incIdent();
-	    DebugFile.writeln("Begin SendMail.send([Properties],"+sUserDir+",text/html,text/plain"+","+
-	    	              sEncoding+",String[],"+sSubject+","+sFromAddr+","+sFromPersonal+","+
-	    	              sReplyAddr+","+(aRecipients==null ? null : "{"+Gadgets.join(aRecipients,";")+"}")+","+
+	    DebugFile.writeln("Begin SendMail.send("+
+	    				  "{mail.smtp.host="+oSessionProps.getProperty("mail.smtp.host","")+","+
+	    	              "mail.user="+oSessionProps.getProperty("mail.user","")+","+
+	    	              "mail.account="+oSessionProps.getProperty("mail.account","")+","+
+	    	              "mail.outgoing="+oSessionProps.getProperty("mail.outgoing","")+","+
+	    	              "mail.transport.protocol="+oSessionProps.getProperty("mail.transport.protocol","")+"}, "+
+	    				  sUserDir+",text/html, text/plain"+","+
+	    	              sEncoding+",String[],\""+sSubject+"\",<"+sFromAddr+">,"+sFromPersonal+",<"+
+	    	              sReplyAddr+">,"+(aRecipients==null ? null : "{"+Gadgets.join(aRecipients,";")+"}")+","+
 	    	              sRecipientType+","+sId+","+sEnvCnfFileName+","+sJobTl+",[DBbind])");
 	  } // fi (trace)
 	
 	  DBBind oDbb;
-	  ArrayList aWarnings = new ArrayList();
+	  ArrayList<String> aWarnings = new ArrayList<String>();
 
 	  // *******************************************
 	  // Setup default values for missing parameters
@@ -350,6 +356,9 @@ public final class SendMail {
 	  }// fi (sJobTl)
 
 	  if (DebugFile.trace) {
+	  	for (String w : aWarnings) {
+	  	  DebugFile.writeln(w);
+	  	}
 	    DebugFile.decIdent();
 	    DebugFile.writeln("End SendMail.send()");
 	  }
@@ -414,7 +423,7 @@ public final class SendMail {
 	    				  sId+")");
 	  } // fi (trace)
 
-	  ArrayList aWarnings = new ArrayList();
+	  ArrayList<String> aWarnings = new ArrayList<String>();
 	  
 	  // *******************************************
 	  // Setup default values for missing parameters
@@ -495,6 +504,9 @@ public final class SendMail {
 	  oSssnHndlr.close();	  	
 
 	  if (DebugFile.trace) {
+	  	for (String w : aWarnings) {
+	  	  DebugFile.writeln(w);
+	  	}
 	    DebugFile.decIdent();
 	    DebugFile.writeln("End SendMail.send()");
 	  }
@@ -538,6 +550,18 @@ public final class SendMail {
       throws IOException,IllegalAccessException,NullPointerException,
              MessagingException,SQLException,ClassNotFoundException,InstantiationException {
 
+	  if (DebugFile.trace) {
+	    DebugFile.writeln("SendMail.send({mail.smtp.host="+oSessionProps.getProperty("mail.smtp.host","")+","+
+	    	                             "mail.user="+oSessionProps.getProperty("mail.user","")+","+
+	    	                             "mail.account="+oSessionProps.getProperty("mail.account","")+","+
+	    	                             "mail.outgoing="+oSessionProps.getProperty("mail.outgoing","")+"},"+
+	    	                             "mail.transport.protocol="+oSessionProps.getProperty("mail.transport.protocol","")+","+
+	    	                             "\""+Gadgets.left(sTextPlain,80).replace('\n',' ')+"\", \""+sSubject+"\", "+
+	    	                             sFromAddr+", \""+sFromPersonal+"\", "+sReplyAddr+", {"+
+	    	                             Gadgets.join(aRecipients,",")+"})");
+        DebugFile.incIdent();
+	  }
+
 	  final String StrNull = null;
 	  final String ArrNull[] = null;
 
@@ -550,6 +574,12 @@ public final class SendMail {
 	    oRetMsgs = send(oSessionProps, StrNull, StrNull, sTextPlain, "UTF-8", ArrNull, sSubject, sFromAddr, sFromPersonal, sReplyAddr, aRecipients, "to", StrNull, StrNull, StrNull);
 	  } catch (FileNotFoundException neverthrown) {}
 	    catch (FTPException neverthrown) {}
+
+	  if (DebugFile.trace) {
+        DebugFile.decIdent();
+        DebugFile.writeln("End SendMail.send()");
+	  }
+
       return oRetMsgs;
     } // send
 
