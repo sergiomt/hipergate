@@ -1238,6 +1238,27 @@ public class DBBind extends Beans implements DataSource {
   // ----------------------------------------------------------
 
   /**
+   * <p>Get a {@link JDCConnection} instance from connection pool</p>
+   * @param sCaller Symbolic name identifying the caller program or subroutine,
+   * this field is used for statistical control of database accesses,
+   * performance tunning and debugging open/close mismatch.
+   * @param bReadOnly <b>true</b> if connection must be put into read-only mode,
+   * <b>false</b> otherwise
+   * @return An open connection to the database.
+   * @throws SQLException
+   * @since 5.0
+   */
+
+  public synchronized JDCConnection getConnection(String sCaller, boolean bReadOnly)
+  	throws SQLException {
+    JDCConnection oConn = getConnection(sCaller);
+	if (null!=oConn) oConn.setReadOnly(bReadOnly);
+    return oConn;
+  } // getConnection()
+
+  // ----------------------------------------------------------
+
+  /**
    * <p>Get a Connection instance from connection pool</p>
    * @param sCaller Symbolic name identifying the caller program or subroutine,
    * this field is used for statistical control of database accesses,

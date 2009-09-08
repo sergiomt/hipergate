@@ -1028,8 +1028,19 @@ public class DBPersist implements Map {
       throw new NullPointerException("DBPersist.put(String,String) field name cannot be null");
     if (null==sVal)
       AllVals.put(sKey, null);
-    else if (bAllCaps)
-      AllVals.put(sKey, sVal.toUpperCase());
+    else if (bAllCaps) {
+      if (sKey.equalsIgnoreCase(DB.tx_email) ||
+    	  sKey.equalsIgnoreCase(DB.tx_alt_email) ||
+    	  sKey.equalsIgnoreCase(DB.tx_email_alt) ||
+    	  sKey.equalsIgnoreCase(DB.tx_main_email) ||
+    	  sKey.equalsIgnoreCase(DB.tx_email_to) ||
+    	  sKey.equalsIgnoreCase(DB.tx_email_from) ||
+		  sKey.equalsIgnoreCase(DB.tx_email_reply))
+        AllVals.put(sKey, sVal);
+      else
+        AllVals.put(sKey, sVal.toUpperCase());
+    }
+    	     
     else
       AllVals.put(sKey, sVal);
   }

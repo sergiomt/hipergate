@@ -107,6 +107,7 @@ public class DBCommand {
 	} catch (SQLException sqle) {
 	  if (oRst!=null) oRst.close();
 	  if (oStm!=null) oStm.close();
+	  throw new SQLException(sqle.getMessage());
 	}
 
     if (DebugFile.trace) {

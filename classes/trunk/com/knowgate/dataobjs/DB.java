@@ -798,6 +798,7 @@ public final class DB {
   public static final String tx_division = "tx_division";
   public static final String nu_notes = "nu_notes";
   public static final String nu_attachs = "nu_attachs";
+  public static final String id_nationality = "id_nationality";
 
   // k_sales_men
   public static final String gu_sales_man = "gu_sales_man";
@@ -1068,6 +1069,9 @@ public final class DB {
   // k_academic_courses
   public static final String gu_acourse = "gu_acourse";
   public static final String pr_acourse = "pr_acourse";
+  public static final String pr_booking = "pr_booking";
+  public static final String pr_payment = "pr_payment";
+  public static final String nu_payments = "nu_payments";
   public static final String bo_confirmed = "bo_confirmed";
   public static final String bo_paid = "bo_paid";
   public static final String bo_waiting = "bo_waiting";
