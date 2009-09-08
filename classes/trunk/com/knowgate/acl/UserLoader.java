@@ -515,6 +515,8 @@ public class UserLoader implements ImportLoader {
         } catch (SQLException ignore) {
           if (DebugFile.trace)
             DebugFile.writeln("UserLoader.store() User "+getColNull(tx_nickname)+"("+getColNull(gu_user)+") already exists at group "+getColNull(nm_acl_group)+"("+getColNull(gu_acl_group)+")");
+            oGroupInsr.close();
+            oGroupInsr= oConn.prepareStatement("INSERT INTO k_x_group_user (gu_user,gu_acl_group) VALUES(?,?)");
         }
       } // fi
 

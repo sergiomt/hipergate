@@ -141,8 +141,6 @@ public final class ACL {
 
         oCall = oConn.prepareCall("{ call k_sp_autenticate (?,?,?)}");
 
-        try {oCall.setQueryTimeout(20);} catch (SQLException sqle) {}
-
         oCall.setString(1,sUserId);
         oCall.setString(2,sPassword);
         oCall.registerOutParameter(3, java.sql.Types.DECIMAL);
@@ -160,8 +158,6 @@ public final class ACL {
         if (DebugFile.trace) DebugFile.writeln("  Connection.prepareCall({ call k_sp_autenticate (" + sUserId + "," + sPassword + ",?)})");
 
         oCall = oConn.prepareCall("{ call k_sp_autenticate (?,?,?)}");
-
-        try {oCall.setQueryTimeout(20);} catch (SQLException sqle) {}
 
         oCall.setString(1,sUserId);
         oCall.setString(2,sPassword);
