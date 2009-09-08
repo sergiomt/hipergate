@@ -1,0 +1,42 @@
+<%!
+public static String nullif(String sParam) {
+  if (null!=sParam)
+    return sParam;  
+  else
+    return "";
+}
+
+public static String nullif(String sParam, String sDefaultVal) {
+  if (null!=sParam)
+    return sParam;  
+  else
+    return sDefaultVal;
+}
+
+public static int nullif(String sParam, int iDefaultVal) {  
+  int iRetVal = iDefaultVal;
+  try {
+    if (null!=sParam)
+      iRetVal = Integer.parseInt(sParam);
+  } catch (NumberFormatException nfe) { }
+  return iRetVal;
+}
+
+public static String floor(float f) {
+  Float oFlt = new Float(f);
+  return String.valueOf(oFlt.intValue());
+}
+
+public static String decode(String sInput, String sCode, String sReplaceWith) {
+    if (sInput==null)
+      if (sCode==null)
+        return sReplaceWith;
+      else
+        return sInput;
+    else
+      if (sInput.equals(sCode))
+        return sReplaceWith;
+      else
+        return sInput;    
+}
+%>
