@@ -1,9 +1,13 @@
+<%@ page language="java" session="true" contentType="text/html;charset=ISO-8859-1" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
-<%@ include file="../methods/cookies.jspf" %>
-<%
+<%@ include file="../methods/cookies.jspf" %><%
+
   response.addHeader ("Pragma", "no-cache");
   response.addHeader ("cache-control", "no-store");
   response.setIntHeader("Expires", 0);
+
+  session.removeAttribute("validated");
+  session.removeAttribute("signature");
   
   String gu_user = getCookie (request, "userid", null);
 
@@ -32,7 +36,7 @@
 <HTML>
   <HEAD>
     <TITLE>Wait...</TITLE>
-    <SCRIPT LANGUAGE="javascript" SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
       <!--      
         deleteCookie ("domainid");

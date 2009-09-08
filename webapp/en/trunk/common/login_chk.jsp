@@ -379,19 +379,19 @@
         if (null!=sUserId) {
 
 	        if (sAuthMethod.equals("native")) {
-            iStatus = ACL.autenticate(oConn, sUserId, sAuthStr, ENCRYPT_ALGORITHM);
+            iStatus = ACL.autenticate(oConn, sUserId, sAuthStr, ACL.PWD_CLEAR_TEXT);
             if (ACL.PASSWORD_EXPIRED==iStatus && sAuthNew.length()>0) {
 					    ACLUser.resetPassword (oConn, sUserId, sAuthNew, null, GlobalCacheClient);
-              iStatus = ACL.autenticate(oConn, sUserId, sAuthNew, ENCRYPT_ALGORITHM);
+              iStatus = ACL.autenticate(oConn, sUserId, sAuthNew, ACL.PWD_CLEAR_TEXT);
 					    sAuthStr = sAuthNew;
 					  }
           }
 	        else if (sAuthMethod.equals("captcha")) {
-            iStatus = ACL.autenticate(oConn, sUserId, sAuthStr, ENCRYPT_ALGORITHM,
+            iStatus = ACL.autenticate(oConn, sUserId, sAuthStr, ACL.PWD_CLEAR_TEXT,
                                       lCaptchaTimestamp, 300000l, sCaptchaText, sCaptchaKey);
             if (ACL.PASSWORD_EXPIRED==iStatus && sAuthNew.length()>0) {
 					    ACLUser.resetPassword (oConn, sUserId, sAuthNew, null, GlobalCacheClient);
-              iStatus = ACL.autenticate(oConn, sUserId, sAuthNew, ENCRYPT_ALGORITHM,
+              iStatus = ACL.autenticate(oConn, sUserId, sAuthNew, ACL.PWD_CLEAR_TEXT,
                                         lCaptchaTimestamp, 300000l, sCaptchaText, sCaptchaKey);
 					    sAuthStr = sAuthNew;
 					  }
@@ -481,18 +481,16 @@
         															   DB.dt_last_visit + "=" + DBBind.Functions.GETDATE + "," +
 																			   DB.nu_login_attempts + "=" + ((short)0==iStatus ? "0" : DB.nu_login_attempts+"+1") +
         															   " WHERE " + DB.gu_user + "=?");
-
-          oStmt.setQueryTimeout(10);
-
           oStmt.setString(1, sUserId);
-          oStmt.execute();
-          
-        } catch (SQLException ignore) {
+          oStmt.executeUpdate();
+          oStmt.close();
+          oStmt=null;
+        } catch (SQLException e) {
+          if (DebugFile.trace) DebugFile.writeln("SQLException "+e.getMessage());
         } finally {
           if (null!=oStmt) oStmt.close();        
-        } 
-        
-			  oStmt = null;
+          oStmt = null;
+        }
       } // fi ()
 
       oConn.setAutoCommit (true); 
@@ -505,10 +503,8 @@
         if (DebugFile.trace) DebugFile.writeln("Conenction.prepareStatement(UPDATE " + DB.k_users + " SET " + DB.bo_active + "=0 WHERE " + DB.gu_user + "='" + sUserId + "'");
 
         oStmt = oConn.prepareStatement("UPDATE " + DB.k_users + " SET " + DB.bo_active + "=0 WHERE " + DB.gu_user + "=?");
-
-        oStmt.setQueryTimeout(10);
         oStmt.setString(1, sUserId);
-        oStmt.execute();
+        oStmt.executeUpdate();
         oStmt.close();
 
 	      oStmt = null;

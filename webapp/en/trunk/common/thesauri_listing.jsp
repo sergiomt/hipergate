@@ -118,11 +118,7 @@
     oConn.close("thesauri_listing");
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("thesauri_listing");
-      }
+    disposeConnection(oConn,"thesauri_listing");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }

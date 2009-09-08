@@ -1,6 +1,5 @@
-﻿<%@ page import="java.util.Date,java.net.URLDecoder" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/cookies.jspf" %>
-<%!
+<%@ page import="java.util.Date,java.net.URLDecoder" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ include file="../methods/cookies.jspf" %><%!
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -41,6 +40,9 @@
      String MonthNamesDE[] = { "Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember" };
      String MonthNamesPT[] = { "Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro" };
      String MonthNamesNO[] = { "januar","februar","mars","april","mai","juni","juli","august","september","oktober","november","desember" };
+     String MonthNamesRU[] = { "Январь", "	Февраль", "март", "Апрель", "Пусть", "июня", "Июль", "Август", "сентябрь", "Октябрь", "Ноябрь", "Декабрь" };
+     String MonthNamesCN[] = { "一月","二月","3月","4月","五月","六月","7月","8月","9月","10月","十一月","12月" };
+     String MonthNamesPL[] = { "Styczen","Luty","Marzec","Kwiecien","Maj","Czerwiec","Lipiec","Sierpien","Wrzesien","Pazdziernik","Listopad","Grudzien" };
     
     if (sLangId.equalsIgnoreCase("es"))
       return MonthNamesES[MyMonth];
@@ -52,8 +54,14 @@
       return MonthNamesDE[MyMonth];
     else if (sLangId.equalsIgnoreCase("pt"))
       return MonthNamesPT[MyMonth];
+    else if (sLangId.equalsIgnoreCase("ru"))
+      return MonthNamesRU[MyMonth];
+    else if (sLangId.equalsIgnoreCase("cn"))
+      return MonthNamesCN[MyMonth];
     else if (sLangId.equalsIgnoreCase("no"))
       return MonthNamesNO[MyMonth];
+    else if (sLangId.equalsIgnoreCase("pl"))
+      return MonthNamesPL[MyMonth];
     else
       return MonthNamesEN[MyMonth];    
   } // MonthName

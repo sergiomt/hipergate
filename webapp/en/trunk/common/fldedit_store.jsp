@@ -1,11 +1,7 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.MetaAttribute" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.DBLanguages,com.knowgate.hipergate.MetaAttribute" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
-<%@ include file="../methods/cookies.jspf" %>
-<%@ include file="../methods/authusrs.jspf" %>
-<%@ include file="../methods/clientip.jspf" %>
-<%@ include file="../methods/reqload.jspf" %>
-<%
+<%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -61,25 +57,18 @@
     
     oObj.store(oConn);
 
-    GlobalCacheClient.expire(oObj.getString(DB.nm_table) + "#es" + "[" + oObj.getString(DB.gu_owner) + "]");
-    GlobalCacheClient.expire(oObj.getString(DB.nm_table) + "#en" + "[" + oObj.getString(DB.gu_owner) + "]");
-    GlobalCacheClient.expire(oObj.getString(DB.nm_table) + "#fr" + "[" + oObj.getString(DB.gu_owner) + "]");
-    GlobalCacheClient.expire(oObj.getString(DB.nm_table) + "#it" + "[" + oObj.getString(DB.gu_owner) + "]");
-    GlobalCacheClient.expire(oObj.getString(DB.nm_table) + "#de" + "[" + oObj.getString(DB.gu_owner) + "]");
-    GlobalCacheClient.expire(oObj.getString(DB.nm_table) + "#pt" + "[" + oObj.getString(DB.gu_owner) + "]");
+    for (int l=0; l<DBLanguages.SupportedLanguages.length; l++) {
+      GlobalCacheClient.expire(oObj.getString(DB.nm_table) + "#" + DBLanguages.SupportedLanguages[l] + "[" + oObj.getString(DB.gu_owner) + "]");
+    }
     
-    DBAudit.log(oConn, MetaAttribute.ClassId, "NDLS", id_user, oObj.getString(DB.gu_owner), oObj.getString(DB.nm_table) + oObj.getString(DB.id_section), 0, 0, null, null);
+    DBAudit.log(oConn, MetaAttribute.ClassId, "NDLS", id_user, oObj.getString(DB.gu_owner), null, 0, 0, oObj.getString(DB.nm_table) + oObj.getString(DB.id_section), null);
     
     oConn.commit();
     oConn.close("fldeditstore");
   }
-  catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("fldeditstore");      
-      }
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_back"));
+  catch (Exception e) {  
+    disposeConnection(oConn,"fldeditstore");
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=" + e.getClass().getName() + "&desc=" + e.getMessage() + "&resume=_back"));
   }
   oConn = null;
   

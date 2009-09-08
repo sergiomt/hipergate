@@ -91,11 +91,7 @@
     GlobalCacheClient.expire("k_queries.companies" + "[" + gu_workarea + "]");
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("qbf_store");      
-      }
+    disposeConnection(oConn,"qbf_store");
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }
   oConn = null;

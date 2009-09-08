@@ -41,6 +41,8 @@
   oMap.put("com.knowgate.http.portlets.OportunitiesTab","home_oportunities.xsl");                                                                                                                                                                                                                               
   oMap.put("com.knowgate.http.portlets.RecentContactsTab","home_contacts.xsl");
   oMap.put("com.knowgate.http.portlets.RecentPostsTab","home_posts.xsl");
+  oMap.put("com.knowgate.http.portlets.NewMail","home_email.xsl");
+  oMap.put("com.knowgate.http.portlets.Favorites","home_favorites.xsl");
   
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
   
@@ -102,11 +104,7 @@
     oConn.close("desktop_store");
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("desktop_store");      
-      }
+    disposeConnection(oConn,"desktop_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }

@@ -60,11 +60,7 @@
     oConn.close(PAGE_NAME);
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close(PAGE_NAME);
-      }
+    disposeConnection(oConn,PAGE_NAME);
     oConn = null;
 
     if (com.knowgate.debug.DebugFile.trace) {

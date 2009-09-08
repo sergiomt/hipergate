@@ -19,7 +19,6 @@
   String tx_like = request.getParameter("tx_like");
   String gu_shop = nullif(request.getParameter("gu_shop"));
 
-  if (
   JDCConnection oConn = null;  
   DBSubset oResults=null,oResults2=null;
 
@@ -33,25 +32,29 @@
     if (nullif(nm_table).equalsIgnoreCase("k_contact_company")) {
       oResults = new DBSubset(DB.k_contacts,
       												DB.gu_contact+","+DB.gu_company+","+DBBind.Functions.strCat(new String[]{DB.tx_name,DB.tx_surname},' ')+","+DB.sn_passport+",'"+String.valueOf(Contact.ClassId)+"'",
-  								            DB.gu_contact+" IS NOT NULL AND "+DB.gu_workarea+"=? AND ("+DB.sn_passport+"=? OR "+DB.tx_name+" "+DBBind.Functions.ILIKE+" ? OR "+DB.tx_surname+" "+DBBind.Functions.ILIKE+" ?) ORDER BY 2", 10);
+  								            DB.gu_company+" IS NOT NULL AND "+DB.gu_workarea+"=? AND ("+DB.sn_passport+"=? OR "+DB.tx_name+" "+DBBind.Functions.ILIKE+" ? OR "+DB.tx_surname+" "+DBBind.Functions.ILIKE+" ?) ORDER BY 2", 10);
       oResults2= new DBSubset(DB.k_companies,
       												DB.gu_contact+","+DB.gu_company+","+DBBind.Functions.ISNULL+"("+DB.nm_commercial+","+DB.nm_legal+")"+DB.id_legal+",'"+String.valueOf(Company.ClassId)+"'",
-  								            DB.gu_company+" IS NOT NULL AND "+DB.gu_workarea+"=? AND ("+DB.id_legal+"=? OR "+DB.nm_commercial+" "+DBBind.Functions.ILIKE+" ? OR "+DB.nm_legal+" "+DBBind.Functions.ILIKE+" ?) ORDER BY 2", 10);
+  								            DB.gu_workarea+"=? AND ("+DB.id_legal+"=? OR "+DB.nm_commercial+" "+DBBind.Functions.ILIKE+" ? OR "+DB.nm_legal+" "+DBBind.Functions.ILIKE+" ?) ORDER BY 2", 10);
+	  }	else if (nullif(nm_table).equalsIgnoreCase("k_contact_doc_id")) {
+      oResults = new DBSubset(DB.k_contacts,
+      												DB.gu_contact+","+DBBind.Functions.strCat(new String[]{DB.tx_name,DB.tx_surname},' ')+",''",
+  								            DB.gu_workarea+"=? AND "+DB.sn_passport+"=? ORDER BY 2", 10);
 	  } else if (nullif(nm_table).equalsIgnoreCase("v_invoices")) {
 		  if (nm_valuecolumn.equals("pg_invoice")) {
-          oResults = new DBSubset(nm_table,"pg_invoice,nm_legal"),
+          oResults = new DBSubset(nm_table,"pg_invoice,nm_legal",
   								                "gu_workarea=? AND pg_invoice=?", 10);
 		  } else if (nm_valuecolumn.equals("id_ref")) {
-          oResults = new DBSubset(nm_table,"pg_invoice,id_ref"),
+          oResults = new DBSubset(nm_table,"pg_invoice,id_ref",
   								                "gu_workarea=? AND id_ref " + DBBind.Functions.ILIKE + " ?", 10);
 		  } else if (nm_valuecolumn.equals("id_ref")) {
-          oResults = new DBSubset(nm_table,"pg_invoice,nm_legal"),
+          oResults = new DBSubset(nm_table,"pg_invoice,nm_legal",
   								                "gu_workarea=? AND nm_legal " + DBBind.Functions.ILIKE + " ?", 10);
 		  } else if (nm_valuecolumn.equals("id_ref")) {
-          oResults = new DBSubset(nm_table,"pg_invoice,id_legal"),
+          oResults = new DBSubset(nm_table,"pg_invoice,id_legal",
   								                "gu_workarea=? AND id_legal " + DBBind.Functions.ILIKE + " ?", 10);
 		  } else if (nm_valuecolumn.equals("id_ref")) {
-          oResults = new DBSubset(nm_table,"pg_invoice,tx_comments"),
+          oResults = new DBSubset(nm_table,"pg_invoice,tx_comments",
   								                "gu_workarea=? AND tx_comments " + DBBind.Functions.ILIKE + " ?", 10);
 		  }
     } else {
@@ -73,7 +76,13 @@
       if (nullif(nm_table).equalsIgnoreCase("k_contact_company")) {
         nResults = oResults.load(oConn, new Object[]{gu_workarea,tx_like,tx_like+"%",tx_like+"%"});
       } else if (nullif(nm_table).equalsIgnoreCase("v_invoices")) {
-      	
+		    if (nm_valuecolumn.equals("pg_invoice")) {
+          nResults = oResults.load(oConn, new Object[]{gu_workarea,new Integer(tx_like)});		  
+		    } else {
+          nResults = oResults.load(oConn, new Object[]{gu_workarea,tx_like+"%"});		  
+		    }      	
+      } else if (nullif(nm_table).equalsIgnoreCase("k_contact_doc_id")) {
+          nResults = oResults.load(oConn, new Object[]{gu_workarea,tx_like});		        	
       } else {
         nResults = oResults.load(oConn, new Object[]{gu_workarea,tx_like+"%"});
       }

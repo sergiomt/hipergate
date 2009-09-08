@@ -251,20 +251,12 @@
     oConn.close("addr_edit_store");    
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("addr_edit_store");      
-      } // fi (isClosed)
+    disposeConnection(oConn,"addr_edit_store"); // fi (isClosed)
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getMessage() + "&resume=_back"));
   } // catch()
   catch (com.knowgate.ldap.LDAPException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("addr_edit_store");      
-      } // fi (isClosed)
+    disposeConnection(oConn,"addr_edit_store"); // fi (isClosed)
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=LDAPException&desc=" + e.getMessage() + "&resume=_back"));
   } // catch()

@@ -116,11 +116,7 @@
 		}
   }
   catch (Exception e) {  
-    if (oCon!=null)
-      if (!oCon.isClosed()) {
-        if (oCon.getAutoCommit()) oCon.rollback();
-        oCon.close(PAGE_NAME);
-      }
+    disposeConnection(oCon,PAGE_NAME);
     oCon = null;
 
     if (com.knowgate.debug.DebugFile.trace) {

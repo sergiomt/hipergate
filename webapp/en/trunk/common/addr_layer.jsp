@@ -32,6 +32,10 @@
   You should have received a copy of hipergate License with this code;
   if not, visit http://www.hipergate.org or mail to info@hipergate.org
 */
+
+  final int Hipermail=21;
+
+  final int iAppMask = Integer.parseInt(getCookie(request, "appmask", "0"));
  
   response.addHeader ("Pragma", "no-cache");
   response.addHeader ("cache-control", "no-store");
@@ -158,7 +162,17 @@
       sAddrZp = oAddresses.getStringNull(5,i,"");
       sAddrCt = oAddresses.getStringNull(6,i,"");      
       sAddrEm = oAddresses.getStringNull(7,i,"");
-      if (sAddrEm.length()>0) sAddrEm = "<A HREF=\"mailto:" + sAddrEm + "\" TITLE=\"Send Message\">" + sAddrEm + "</A>";
+
+			if (sAddrEm.length()>0)  {
+			  if (((iAppMask & (1<<Hipermail))!=0)) {
+          if (sLinkTable.equals(DB.k_x_contact_addr))
+            sAddrEm = "<A HREF=\"../hipermail/msg_new_f.jsp?to="+sAddrEm+"&gu_contact="+sLinkValue+"\" TARGET=\"_blank\" TITLE=\"Send Message\">" + sAddrEm + "</A>";
+					else
+            sAddrEm = "<A HREF=\"../hipermail/msg_new_f.jsp?to="+sAddrEm+"\" TARGET=\"_blank\" TITLE=\"Send Message\">" + sAddrEm + "</A>";						
+		    } else {
+          sAddrEm = "<A HREF=\"mailto:" + sAddrEm + "\" TITLE=\"Send Message\">" + sAddrEm + "</A>";
+        }
+      }
 
       if (null!=sAddrTp) sResult += "Address Type" + sAddrTp + "<BR>";
 
@@ -179,7 +193,12 @@
       oAddrPh = oAddresses.get(10,i);
       sResult += (oAddrPh==null ? "" : "Personal Phone" + oAddrPh + "<BR>");
       oAddrPh = oAddresses.get(11,i);
-      sResult += (oAddrPh==null ? "" : "Mobile Phone" + oAddrPh + "<BR>");
+      if (oAddrPh!=null) {
+        if (GlobalDBBind.getProperty("smsprovider","").length()==0)
+          sResult += "Mobile Phone" + oAddrPh + "<BR>";
+				else
+          sResult += "Mobile Phone <A HREF=\"#\" onclick=\"addrIFrame.sendSms("+String.valueOf(i)+")\">" + oAddrPh + "</A><BR>";
+      }
       oAddrPh = oAddresses.get(12,i);
       sResult += (oAddrPh==null ? "" : "Fax" + oAddrPh + "<BR>");
     } // next(i)
@@ -188,7 +207,24 @@
 <HTML>
 <HEAD>
   <TITLE>hipergate :: Address</TITLE>
-  <LINK REL="stylesheet" TYPE="text/css" HREF="../skins/xp/styles.css">
+  <LINK REL="stylesheet" TYPE="text/css" HREF="../skins/xp/styles.css" />
+  <SCRIPT TYPE="text/javascript" LANGUAGE="JavaScript">
+    <!--
+      var nums = new Array(<% for (int i=0; i<iAddressCount; i++) out.write((i>0 ? "," : "")+"\""+Gadgets.URLEncode(oAddresses.getStringNull(11,i,""))+"\""); %>);
+      var guids= new Array(<% for (int i=0; i<iAddressCount; i++) out.write((i>0 ? "," : "")+"\""+oAddresses.getString(0,i)+"\""); %>);
+
+      function sendSms(a) {
+      	var qry = "?nu_msisdn="+nums[a]+"&gu_address="+guids[a];
+<%      if (sLinkTable.equals(DB.k_x_contact_addr)) { %>
+				  qry += "&gu_contact=<%=sLinkValue%>"
+<%      } else if (sLinkTable.equals(DB.k_x_company_addr)) { %>
+				  qry += "&gu_company=<%=sLinkValue%>"
+<%      }  %>
+	
+				window.open("../common/sms_edit.jsp"+qry,null,"directories=no,toolbar=no,scrollbars=yes,menubar=no,width=400,height=320");
+      }
+    //-->
+  </SCRIPT>
 </HEAD>
 <BODY marginheight="0" marginwidth="0" topmargin="0" leftmargin="0" class="textsmall">
   <SCRIPT language="JavaScript" type="text/javascript">

@@ -129,11 +129,7 @@
     } // fi (iErrorLevel)
   }
   catch (SQLException e) {
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("lookup_store2");
-      }
+    disposeConnection(oConn,"lookup_store2");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=DB Access Error&desc=" + e.getLocalizedMessage() + "&resume=_back"));
     return;

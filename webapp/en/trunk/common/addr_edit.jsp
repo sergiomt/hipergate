@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %><%
 
@@ -315,7 +315,7 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Address Type</FONT></TD>
+            <TD ALIGN="right" WIDTH="160"><FONT CLASS="formplain">Address Type</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="0" BORDER="0"><TR>
                 <TD ALIGN="left">
@@ -332,13 +332,13 @@
           </TR>
 <% if (sLanguage.equalsIgnoreCase("es") || sLanguage.equalsIgnoreCase("it")) { %>
           <TR>
-            <TD ALIGN="right" WIDTH="140">
+            <TD ALIGN="right" WIDTH="160">
               <A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View street types"></A>&nbsp;
               <SELECT CLASS="combomini" NAME="sel_street"><OPTION VALUE=""></OPTION><%=sStreetLookUp%></SELECT>
             </TD>
             <TD ALIGN="left" WIDTH="460">
               <INPUT TYPE="hidden" NAME="tp_street" VALUE="<%=oAddr.getStringNull(DB.tp_street,"")%>">
-              <INPUT TYPE="text" NAME="nm_street" MAXLENGTH="100" SIZE="40" VALUE="<%=oAddr.getStringNull(DB.nm_street,"")%>">             
+              <INPUT TYPE="text" NAME="nm_street" MAXLENGTH="100" SIZE="30" VALUE="<%=oAddr.getStringNull(DB.nm_street,"")%>">             
               &nbsp;&nbsp;
               <FONT CLASS="formplain">Num.</FONT>&nbsp;<INPUT TYPE="text" NAME="nu_street" MAXLENGTH="16" SIZE="4" VALUE="<%=oAddr.getStringNull(DB.nu_street,"")%>">
 <% if (!oAddr.isNull(DB.nm_street) && !oAddr.isNull(DB.mn_city)) { %>
@@ -350,7 +350,7 @@
           </TR>
 <% } else if (sLanguage.equalsIgnoreCase("fr")) { %>
           <TR>
-            <TD ALIGN="right" WIDTH="140">
+            <TD ALIGN="right" WIDTH="160">
 	            <FONT CLASS="formplain">Num.</FONT>&nbsp;
             </TD>
             <TD ALIGN="left" WIDTH="460">
@@ -366,7 +366,7 @@
 <% } %>
 <% } else { %>
           <TR>
-            <TD ALIGN="right" WIDTH="140">
+            <TD ALIGN="right" WIDTH="160">
 	            <FONT CLASS="formplain">Num.</FONT>&nbsp;
             </TD>
             <TD ALIGN="left" WIDTH="460">
@@ -384,7 +384,7 @@
           </TR>
 <% } %>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Flat</FONT></TD>
+            <TD ALIGN="right" WIDTH="160"><FONT CLASS="formplain">Flat</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <INPUT TYPE="text" NAME="tx_addr1" MAXLENGTH="100" SIZE="10" VALUE="<%=oAddr.getStringNull(DB.tx_addr1,"")%>">
               &nbsp;&nbsp;
@@ -393,7 +393,7 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Country:</FONT></TD>
+            <TD ALIGN="right" WIDTH="160"><FONT CLASS="formplain">Country:</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
 	            <SELECT CLASS="combomini" NAME="sel_country" onchange="loadstates()"><OPTION VALUE=""></OPTION><%=sCountriesLookUp%></SELECT>
               <INPUT TYPE="hidden" NAME="id_country" VALUE="<%=oAddr.getStringNull(DB.id_country,"").trim()%>">
@@ -401,7 +401,7 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">State/Region:</FONT></TD>
+            <TD ALIGN="right" WIDTH="160"><FONT CLASS="formplain">State/Region:</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View states"></A>&nbsp;<SELECT CLASS="combomini" NAME="sel_state"></SELECT>
               <INPUT TYPE="hidden" NAME="id_state" MAXLENGTH="16" VALUE="<%=oAddr.getStringNull(DB.id_state,"")%>">
@@ -409,7 +409,7 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">City:</FONT></TD>
+            <TD ALIGN="right" WIDTH="160"><FONT CLASS="formplain">City:</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <INPUT TYPE="text" NAME="mn_city" STYLE="text-transform:uppercase" MAXLENGTH="50" SIZE="30" VALUE="<%=oAddr.getStringNull(DB.mn_city,"")%>">
               &nbsp;&nbsp;
@@ -419,7 +419,7 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140">
+            <TD ALIGN="right" WIDTH="160">
               <FONT CLASS="formplain">Telephones</FONT>
             </TD>
             <TD ALIGN="left" WIDTH="460">
@@ -433,24 +433,29 @@
                 </TR>
                 <TR>
                   <TD><FONT CLASS="textsmall">Personnel</FONT></TD>
-                  <TD><INPUT TYPE="text" NAME="home_phone" MAXLENGTH="16" SIZE="10" VALUE="<%=oAddr.getStringNull(DB.home_phone,"")%>"></TD>              
+                  <TD><INPUT TYPE="text" NAME="home_phone" MAXLENGTH="16" SIZE="12" VALUE="<%=oAddr.getStringNull(DB.home_phone,"")%>"></TD>              
                   <TD>&nbsp;&nbsp;&nbsp;&nbsp;</TD>
                   <TD><FONT CLASS="textsmall">Mobile</FONT></TD>
-                  <TD><INPUT TYPE="text" NAME="mov_phone" MAXLENGTH="16" SIZE="10" VALUE="<%=oAddr.getStringNull(DB.mov_phone,"")%>"></TD>
+                  <TD>
+                  	<INPUT TYPE="text" NAME="mov_phone" MAXLENGTH="16" SIZE="12" VALUE="<%=oAddr.getStringNull(DB.mov_phone,"")%>">
+<%                  if (gu_address.length()>0 && GlobalDBBind.getProperty("smsprovider","").length()>0) { %>
+										  &nbsp;<A HREF="sms_edit.jsp?gu_address=<%=gu_address%>&nu_msisdn=<%=Gadgets.URLEncode(oAddr.getStringNull(DB.mov_phone,""))%>&<%=sLinkField%>=<%=sLinkValue%>" TITLE="[~Enviar SMS~]"><IMG SRC="../images/images/mobilephone16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Enviar SMS~]" /></A>
+<%                  } %>
+                  </TD>
                   <TD>&nbsp;&nbsp;&nbsp;&nbsp;</TD>
                 </TR>
                 <TR>                
                   <TD><FONT CLASS="textsmall">Fax</FONT></TD>
-                  <TD><INPUT TYPE="text" NAME="fax_phone" MAXLENGTH="16" SIZE="10" VALUE="<%=oAddr.getStringNull(DB.fax_phone,"")%>"></TD>
+                  <TD><INPUT TYPE="text" NAME="fax_phone" MAXLENGTH="16" SIZE="12" VALUE="<%=oAddr.getStringNull(DB.fax_phone,"")%>"></TD>
                   <TD>&nbsp;&nbsp;&nbsp;&nbsp;</TD>
                   <TD><FONT CLASS="textsmall">Other</FONT></TD>
-                  <TD><INPUT TYPE="text" NAME="other_phone" MAXLENGTH="16" SIZE="10" VALUE="<%=oAddr.getStringNull(DB.other_phone,"")%>"></TD>
+                  <TD><INPUT TYPE="text" NAME="other_phone" MAXLENGTH="16" SIZE="12" VALUE="<%=oAddr.getStringNull(DB.other_phone,"")%>"></TD>
                 </TR>
               </TABLE>
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">e-mail:</FONT></TD>
+            <TD ALIGN="right" WIDTH="160"><FONT CLASS="formplain">e-mail:</FONT></TD>
             <TD ALIGN="left" WIDTH="460"><INPUT TYPE="text" NAME="tx_email" STYLE="text-transform:lowercase" MAXLENGTH="100" SIZE="42" VALUE="<%=oAddr.getStringNull(DB.tx_email,"")%>">
 <% 	    if (!oAddr.isNull(DB.tx_email))
                  out.write ("            &nbsp;<A HREF=\"mailto:" + oAddr.getString(DB.tx_email) + "\" TITLE=\"Send e-mail\"><IMG SRC=\"../images/images/mailto16x16.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"Send e-mail\"></A>");
@@ -458,7 +463,7 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">URL:</FONT></TD>
+            <TD ALIGN="right" WIDTH="160"><FONT CLASS="formplain">URL:</FONT></TD>
             <TD ALIGN="left" WIDTH="460"><INPUT TYPE="text" NAME="url_addr" MAXLENGTH="254" SIZE="42" VALUE="<%=oAddr.getStringNull(DB.url_addr,"")%>">
 <% 	    if (!oAddr.isNull(DB.url_addr)) {
 	      String sURL = oAddr.getString(DB.url_addr).toLowerCase();
@@ -472,7 +477,7 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Contact Person:</FONT></TD>
+            <TD ALIGN="right" WIDTH="160"><FONT CLASS="formplain">Contact Person:</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <A HREF="javascript:lookup(5)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Salutations"></A>&nbsp;
               <SELECT CLASS="combomini" NAME="sel_salutation"><OPTION VALUE=""></OPTION><%=sSalutationLookUp%></SELECT>&nbsp;
@@ -481,7 +486,7 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">e-mail Contact:</FONT></TD>
+            <TD ALIGN="right" WIDTH="160"><FONT CLASS="formplain">e-mail Contact:</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <INPUT TYPE="text" NAME="tx_email_alt" STYLE="text-tansform:lowercase" MAXLENGTH="100" SIZE="42" VALUE="<%=oAddr.getStringNull("tx_email_alt","")%>">
 <% 	    if (!oAddr.isNull("tx_email_alt"))
@@ -490,7 +495,7 @@
             </TD>
           </TR>          
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Comments:</FONT></TD>
+            <TD ALIGN="right" WIDTH="160"><FONT CLASS="formplain">Comments:</FONT></TD>
             <TD ALIGN="left" WIDTH="460"><TEXTAREA NAME="tx_remarks" ROWS="2" COLS="40"><%=oAddr.getStringNull(DB.tx_remarks,"")%></TEXTAREA></TD>
           </TR>
           <TR>

@@ -335,26 +335,9 @@
     <INPUT TYPE="hidden" NAME="gu_owner" VALUE="<%=gu_workarea%>">
     <INPUT TYPE="hidden" NAME="nm_table" VALUE="<%=nm_table%>">
     <INPUT TYPE="hidden" NAME="tp_attr" VALUE="1"> <!-- De momento solo hay soporte para campo tipo INPUT -->
-    <INPUT TYPE="hidden" NAME="tr_es">
-    <INPUT TYPE="hidden" NAME="tr_en">
-    <INPUT TYPE="hidden" NAME="tr_de">
-    <INPUT TYPE="hidden" NAME="tr_fr">
-    <INPUT TYPE="hidden" NAME="tr_it">
-    <INPUT TYPE="hidden" NAME="tr_pt">
-    <INPUT TYPE="hidden" NAME="tr_ca">
-    <INPUT TYPE="hidden" NAME="tr_eu">
-    <INPUT TYPE="hidden" NAME="tr_ja">
-    <INPUT TYPE="hidden" NAME="tr_cn">
-    <INPUT TYPE="hidden" NAME="tr_tw">
-    <INPUT TYPE="hidden" NAME="tr_fi">
-    <INPUT TYPE="hidden" NAME="tr_ru">
-    <INPUT TYPE="hidden" NAME="tr_nl">
-    <INPUT TYPE="hidden" NAME="tr_th">
-    <INPUT TYPE="hidden" NAME="tr_cs">
-    <INPUT TYPE="hidden" NAME="tr_uk">
-    <INPUT TYPE="hidden" NAME="tr_no">
-    <INPUT TYPE="hidden" NAME="tr_sk">
-    <INPUT TYPE="hidden" NAME="tr_pl">
+<% for (int l=0; l<DBLanguages.SupportedLanguages.length; l++) { %>
+    <INPUT TYPE="hidden" NAME="tr_<%=DBLanguages.SupportedLanguages[l]%>">
+<% } %>
 
     <TABLE WIDTH="600" CLASS="formback">
       <TR><TD>

@@ -71,11 +71,7 @@
     oCon.close("bankaccount_delete");
   }
   catch(SQLException e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("bankaccount_delete");      
-        }
+      disposeConnection(oCon,"bankaccount_delete");
       oCon = null; 
       response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_back"));
     }

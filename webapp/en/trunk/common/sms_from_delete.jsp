@@ -27,11 +27,7 @@
     oCon.close("sms_msisdn_delete");
   } 
   catch(SQLException e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("sms_msisdn_delete");      
-        }
+      disposeConnection(oCon,"sms_msisdn_delete");
       oCon = null; 
       response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_back"));
     }

@@ -17,11 +17,7 @@
     oCon.close("qbf_delete");
   } 
   catch(SQLException e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("qbf_delete");      
-        }
+      disposeConnection(oCon,"qbf_delete");
       oCon = null; 
       response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));
     }

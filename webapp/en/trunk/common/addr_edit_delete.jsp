@@ -96,11 +96,7 @@
     oCon.close("addresses_delete");
   }
   catch(Exception e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("addresses_delete");      
-        }
+      disposeConnection(oCon,"addresses_delete");
       oCon = null; 
       response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_back"));
     }
