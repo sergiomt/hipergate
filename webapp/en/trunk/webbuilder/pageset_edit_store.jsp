@@ -130,11 +130,7 @@
     oConn.close("pageset_edit_store");
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("pageset_edit_store");      
-      }
+    disposeConnection(oConn,"pageset_edit_store");
     oConn = null;
     
     if (com.knowgate.debug.DebugFile.trace) {
@@ -144,11 +140,7 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }
   catch (FileNotFoundException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("pageset_edit_store");      
-      }
+    disposeConnection(oConn,"pageset_edit_store");
     oConn = null;
 
     if (com.knowgate.debug.DebugFile.trace) {
@@ -158,11 +150,7 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getMessage() + "&resume=_back"));
   }
   catch (IOException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("pageset_edit_store");      
-      }
+    disposeConnection(oConn,"pageset_edit_store");
     oConn = null;
 
     if (com.knowgate.debug.DebugFile.trace) {
@@ -172,11 +160,7 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getMessage() + "&resume=_back"));
   }
   catch (NullPointerException e) {  
-   if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("pageset_edit_store");      
-      }
+   disposeConnection(oConn,"pageset_edit_store");
     oConn = null;
 
     if (com.knowgate.debug.DebugFile.trace) {
@@ -186,11 +170,7 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=" + e.getMessage() + "&resume=_back"));
   }
   catch (ClassNotFoundException e) {  
-   if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("pageset_edit_store");      
-      }
+   disposeConnection(oConn,"pageset_edit_store");
     oConn = null;
 
     if (com.knowgate.debug.DebugFile.trace) {
@@ -200,11 +180,7 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=ClassNotFoundException&desc=" + e.getMessage() + "&resume=_back"));
   }
   catch (IllegalAccessException e) {  
-   if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("pageset_edit_store");      
-      }
+   disposeConnection(oConn,"pageset_edit_store");
     oConn = null;
 
     if (com.knowgate.debug.DebugFile.trace) {

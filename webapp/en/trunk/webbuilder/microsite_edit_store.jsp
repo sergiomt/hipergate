@@ -137,7 +137,7 @@
   catch (SQLException e) {  
     if (oConn!=null) {
       if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
+        if (!oConn.getAutoCommit()) oConn.rollback();
         oConn.close("microsite_edit_store");
       }
     }
@@ -147,7 +147,7 @@
   catch (NumberFormatException e) {
     if (oConn!=null) {
       if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
+        if (!oConn.getAutoCommit()) oConn.rollback();
         oConn.close("microsite_edit_store");
       }
     }

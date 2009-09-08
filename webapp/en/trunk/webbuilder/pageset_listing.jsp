@@ -1,8 +1,7 @@
 ﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
-<%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
-<%
+<%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -165,14 +164,17 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/dynapi.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
+
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
-    DynAPI.setLibraryPath('../javascript/dynapi/lib/');
-    DynAPI.include('dynapi.api.*');
-  </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" >
+    dynapi.library.setPath('../javascript/dynapi3/');
+    dynapi.library.include('dynapi.api.DynLayer');
+
     var menuLayer;
-    DynAPI.onLoad = function() { 
+    
+    dynapi.onLoad(init);
+
+		function init() {
       setCombos();
       menuLayer = new DynLayer();
       menuLayer.setWidth(160);
@@ -180,7 +182,7 @@
       menuLayer.setHTML(rightMenuHTML);
     }
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/rightmenu.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
     	var jsPageSetId;
@@ -250,6 +252,12 @@
 		    	  
 	  document.location = "pageset_listing.jsp?doctype=<%=sDocType%>&id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + (getURLParam("orderby")!=null ? "&orderby="+request.getParameter("orderby") : "") + qry + "&id_language=" + getCombo(frm.id_language) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&maxrows=<%=iMaxRows%>&skip=<%=iSkip%>";
 	} // findRecords
+
+	// ----------------------------------------------------
+	
+	function clonePageSet(id) {
+	  document.location = "pageset_clone.jsp?gu_pageset=" + id + "&doctype=<%=sDocType%>&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
+	}
 	
 	// ----------------------------------------------------
 	
@@ -597,6 +605,7 @@
       addMenuOption("Edit","modifyPageSet(jsPageSetId,jsPageSetName)",1);
       addMenuOption("Preview","previewPageSet(jsPageSetId,jsPageSetName)",0);
       addMenuOption("Properties","changePageSet(jsPageSetId)",0);
+      addMenuOption("[~Duplicar~]","clonePageSet(jsPageSetId)",0);
       <% if (sDocType.equals("newsletter")) { %>
       addMenuSeparator();
       addMenuOption("Schedule","selectList(jsPageSetId)",0);

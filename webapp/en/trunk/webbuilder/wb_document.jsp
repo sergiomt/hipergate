@@ -105,15 +105,14 @@
   
   if (null==sWebRoot) {
     sWebRoot = request.getRequestURI();
-  
     sWebRoot = sWebRoot.substring(0,sWebRoot.lastIndexOf("/"));
     sWebRoot = sWebRoot.substring(0,sWebRoot.lastIndexOf("/"));
   }
   
   sWebRoot = com.knowgate.misc.Gadgets.dechomp (sWebRoot, "/");
   
-  String sURLRoot       = request.getRealPath(request.getServletPath());
-         sURLRoot       = sURLRoot.substring(0,sURLRoot.lastIndexOf(sSep)) + "/../";
+  String sURLRoot = request.getRealPath(request.getServletPath());
+         sURLRoot = sURLRoot.substring(0,sURLRoot.lastIndexOf(sSep)) + "/../";
 
   String sStorageRoot = Environment.getProfilePath(GlobalDBBind.getProfileName(), "storage");
   String sEnvWorkGet	= Environment.getProfileVar(GlobalDBBind.getProfileName() , "workareasget", sDefWrkArGet);
@@ -121,7 +120,7 @@
  
   String sMenuPath = sWebRoot + "/webbuilder/wb_mnuintegrador.jsp?id_domain=" + id_domain + "&gu_workarea=" + gu_workarea + "&gu_pageset=" + gu_pageset + "&doctype=" + sDocType + "&page=" + sPage;
   String sOutputPathEdit = sEnvWorkPut + sSep + gu_workarea + sSep + "apps" + sSep + sAppDir + sSep + "html" + sSep + gu_pageset + sSep;
-  String sURLEdit 	 = sEnvWorkGet + "/" + gu_workarea + "/apps/" + sAppDir + "/html/" + gu_pageset + "/";
+  String sURLEdit = sEnvWorkGet + "/" + gu_workarea + "/apps/" + sAppDir + "/html/" + gu_pageset + "/";
   String sIntegradorPath = sWebRoot + "/javascript/integrador.js";
 
   String sFilePageSet=null, sFileTemplate=null, sCompanyGUID=null, sParamName=null, sParamsQry=null, sSQL=null, sQueryString="?offset=0&limit=1000";
@@ -338,7 +337,6 @@
     }
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=TransformerException&desc=" + texc.getMessage() + "<BR>" + sStorageRoot + "<BR>" + sOutputPathEdit + "&resume=_close")); 
   }
-  /*
   catch (NullPointerException npex) {
     oPageSet = null;
     if (DebugFile.trace) {
@@ -347,7 +345,7 @@
     }
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=" + npex.getMessage() + "<BR>" + sStorageRoot + "<BR>" + sOutputPathEdit + "&resume=_close"));
   }
-  */
+
   if (null==oPageSet) return;
       
   // Redirección a la página renderizada

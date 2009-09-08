@@ -102,11 +102,7 @@
     oCon.close("pageset_edit_delete");
   }
   catch (SQLException sqle) {
-    if (oCon!=null)
-      if (!oCon.isClosed()) {
-        if (oCon.getAutoCommit()) oCon.rollback();
-        oCon.close("pageset_edit_delete");
-      }
+    disposeConnection(oCon,"pageset_edit_delete");
     oCon = null;
 
     if (com.knowgate.debug.DebugFile.trace) {
@@ -116,11 +112,7 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + sqle.getMessage() + "&resume=_back"));
   }
   catch (IOException ioe) {
-    if (oCon!=null)
-      if (!oCon.isClosed()) {
-        if (oCon.getAutoCommit()) oCon.rollback();
-        oCon.close("pageset_edit_delete");
-      }
+    disposeConnection(oCon,"pageset_edit_delete");
     oCon = null;
 
     if (com.knowgate.debug.DebugFile.trace) {
@@ -130,11 +122,7 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=IOException&desc=" + ioe.getMessage() + "&resume=_back"));
   }
   catch (Exception xcpt) {
-    if (oCon!=null)
-      if (!oCon.isClosed()) {
-        if (oCon.getAutoCommit()) oCon.rollback();
-        oCon.close("pageset_edit_delete");
-      }      
+    disposeConnection(oCon,"pageset_edit_delete");      
     oCon = null;
 
     if (com.knowgate.debug.DebugFile.trace) {

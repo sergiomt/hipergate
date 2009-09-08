@@ -1,7 +1,6 @@
 ﻿<%@ page import="com.knowgate.dataxslt.db.PageSetDB,com.knowgate.dataxslt.db.PageDB,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %>
-<%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %>
-<%
+<%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -70,23 +69,21 @@
 		  } // fi
 		} else {
 			PageDB[] aPages = oPgDb.getPages(oConn);
-      for (int p=0; p<aPages.length; p++) {
-        oPage = aPages[p];
-		    oPage.replace(DB.path_publish, request.getParameter("path_publish_"+String.valueOf(oPage.getInt(DB.pg_page))));
-		    oPage.store(oConn);
-        DBAudit.log(oConn, PageDB.ClassId, "MSPG", id_user, DB.gu_page, null, 0, 0, oPage.getStringNull(DB.path_publish,""), null);
-      } // next		  
-		} // fi
+      if (null!=aPages) {
+        for (int p=0; p<aPages.length; p++) {
+          oPage = aPages[p];
+		      oPage.replace(DB.path_publish, request.getParameter("path_publish_"+String.valueOf(oPage.getInt(DB.pg_page))));
+		      oPage.store(oConn);
+          DBAudit.log(oConn, PageDB.ClassId, "MSPG", id_user, DB.gu_page, null, 0, 0, oPage.getStringNull(DB.path_publish,""), null);
+        } // next		  
+		  } // fi (aPages)
+		} // fi (path_publish!=null && gu_page!="")
     
     oConn.commit();
     oConn.close("pageset_change_store");
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("pageset_change_store");      
-      }
+    disposeConnection(oConn,"pageset_change_store");
 
     oConn = null;
 

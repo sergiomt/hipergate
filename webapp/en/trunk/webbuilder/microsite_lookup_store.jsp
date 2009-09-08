@@ -145,11 +145,7 @@
     } // fi (iErrorLevel)
   }
   catch (SQLException e) {
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("lookup_store");
-      }
+    disposeConnection(oConn,"lookup_store");
     oConn = null;
 
     if (com.knowgate.debug.DebugFile.trace) {

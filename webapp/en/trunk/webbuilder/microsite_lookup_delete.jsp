@@ -82,11 +82,7 @@
     oConn = null;
   }
   catch (SQLException e) {
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("lookup_delete");
-      }
+    disposeConnection(oConn,"lookup_delete");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Error de Acceso a la Base de Datos&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }
