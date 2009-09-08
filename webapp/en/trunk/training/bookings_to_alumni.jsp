@@ -26,11 +26,7 @@
     oCon.close("bookings_to_alumni");
   } 
   catch(SQLException e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("bookings_to_alumni");      
-        }
+      disposeConnection(oCon,"bookings_to_alumni");
       oCon = null; 
       response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_back"));
     } 

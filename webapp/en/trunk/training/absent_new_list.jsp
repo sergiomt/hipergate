@@ -89,7 +89,7 @@
   }
   
   try {
-    oConn = GlobalDBBind.getConnection("absent_new_list");
+    oConn = GlobalDBBind.getConnection("absent_new_list", true);
     
     iStudents = oStudents.load(oConn, aStudentParams);
     iSubjects = oSubjects.load(oConn, aSubjectParams);

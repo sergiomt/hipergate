@@ -65,7 +65,7 @@
   
   try {
     
-    oConn = GlobalDBBind.getConnection("acourse_edit");  
+    oConn = GlobalDBBind.getConnection("acourse_edit", true);  
   
     iCourses = oCourses.load(oConn, new Object[]{gu_workarea});
       
@@ -206,6 +206,20 @@
   } else {
     frm.pr_acourse.value = frm.pr_acourse.value.replace(",",".");
   }
+
+  if (frm.pr_booking.value.length>0 && !isFloatValue(frm.pr_booking.value.replace(",","."))) {
+	  alert ("[~El precio de la reserva no es válido~]");
+	  return false;
+  } else {
+    frm.pr_booking.value = frm.pr_booking.value.replace(",",".");
+  }
+
+  if (frm.pr_payment.value.length>0 && !isFloatValue(frm.pr_payment.value.replace(",","."))) {
+	  alert ("[~El precio de la mensualidad no es válido~]");
+	  return false;
+  } else {
+    frm.pr_payment.value = frm.pr_payment.value.replace(",",".");
+  }
 	
 	frm.nm_course.value = frm.nm_course.value.toUpperCase();
 	frm.id_course.value = frm.id_course.value.toUpperCase();
@@ -224,6 +238,7 @@
         var frm = document.forms[0];
 
         setCombo(frm.sel_course,"<% out.write(oCur.getStringNull(DB.gu_course,"")); %>");
+        setCombo(frm.nu_payments,"<% if (!oCur.isNull(DB.nu_payments)) out.write(String.valueOf(oCur.getInt(DB.nu_payments))); %>");
 <%      if (gu_category!=null) { %>
           setCombo(frm.gu_category,"<% out.write(gu_category); %>");
 <%      } %>	
@@ -251,28 +266,28 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Active:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="checkbox" NAME="chk_active" <% if (!oCur.isNull(DB.bo_active)) out.write(oCur.getShort(DB.bo_active)!=0 ? "CHECKED" : ""); else out.write("CHECKED"); %>></TD>
+            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formstrong">Active:</FONT></TD>
+            <TD ALIGN="left" WIDTH="500"><INPUT TYPE="checkbox" NAME="chk_active" <% if (!oCur.isNull(DB.bo_active)) out.write(oCur.getShort(DB.bo_active)!=0 ? "CHECKED" : ""); else out.write("CHECKED"); %>></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Name:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="nm_course" MAXLENGTH="100" SIZE="48" STYLE="text-transform:uppercase" VALUE="<%=oCur.getStringNull(DB.nm_course,"")%>"></TD>
+            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formstrong">Name:</FONT></TD>
+            <TD ALIGN="left" WIDTH="500"><INPUT TYPE="text" NAME="nm_course" MAXLENGTH="100" SIZE="48" STYLE="text-transform:uppercase" VALUE="<%=oCur.getStringNull(DB.nm_course,"")%>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Identifier:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="id_course" MAXLENGTH="50" SIZE="10" STYLE="text-transform:uppercase" VALUE="<%=oCur.getStringNull(DB.id_course,"")%>"></TD>
+            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">Identifier:</FONT></TD>
+            <TD ALIGN="left" WIDTH="500"><INPUT TYPE="text" NAME="id_course" MAXLENGTH="50" SIZE="10" STYLE="text-transform:uppercase" VALUE="<%=oCur.getStringNull(DB.id_course,"")%>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Start:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370">
+            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formstrong">Start:</FONT></TD>
+            <TD ALIGN="left" WIDTH="500">
               <INPUT TYPE="text" NAME="tx_start" MAXLENGTH="30" SIZE="15" STYLE="text-transform:uppercase" VALUE="<%=oCur.getStringNull(DB.tx_start,"")%>">
               &nbsp;&nbsp;<FONT CLASS="formstrong">End:</FONT>&nbsp;
 	            <INPUT TYPE="text" NAME="tx_end" MAXLENGTH="30" SIZE="15" STYLE="text-transform:uppercase" VALUE="<%=oCur.getStringNull(DB.tx_end,"")%>">              
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Base Course:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370">
+            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">Base Course:</FONT></TD>
+            <TD ALIGN="left" WIDTH="500">
               <INPUT TYPE="hidden" NAME="gu_course">
               <SELECT NAME="sel_course" CLASS="combomini"><OPTION VALUE=""></OPTION>
               <% for (int c=0; c<iCourses; c++)
@@ -284,20 +299,32 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Precio~]:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="pr_acourse" MAXLENGTH="10" SIZE="12" VALUE="<% if (!oCur.isNull(DB.pr_acourse)) { DecimalFormat oFmt2 = new DecimalFormat(); oFmt2.setMaximumFractionDigits(2); out.write(oFmt2.format(oCur.getDecimal(DB.pr_acourse).doubleValue())); } %>"></TD>
+            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">[~Precio~]:</FONT></TD>
+            <TD ALIGN="left" WIDTH="500"><INPUT TYPE="text" NAME="pr_acourse" MAXLENGTH="10" SIZE="12" VALUE="<% if (!oCur.isNull(DB.pr_acourse)) { DecimalFormat oFmt2 = new DecimalFormat(); oFmt2.setMaximumFractionDigits(2); out.write(oFmt2.format(oCur.getDecimal(DB.pr_acourse).doubleValue())); } %>"></TD>
+          </TR>
+          <TR>
+            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">[~Reserva~]:</FONT></TD>
+            <TD ALIGN="left" WIDTH="500"><INPUT TYPE="text" NAME="pr_booking" MAXLENGTH="10" SIZE="12" VALUE="<% if (!oCur.isNull(DB.pr_booking)) { DecimalFormat oFmt2 = new DecimalFormat(); oFmt2.setMaximumFractionDigits(2); out.write(oFmt2.format(oCur.getDecimal(DB.pr_booking).doubleValue())); } %>"></TD>
+          </TR>
+          <TR>
+            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">[~Mensualidades~]:</FONT></TD>
+            <TD ALIGN="left" WIDTH="500">
+            	<SELECT NAME="nu_payments"><OPTION VALUE="0">0</OPTION><OPTION VALUE="1">1</OPTION><OPTION VALUE="2">2</OPTION><OPTION VALUE="3">3</OPTION><OPTION VALUE="4">4</OPTION><OPTION VALUE="5">5</OPTION><OPTION VALUE="6">6</OPTION><OPTION VALUE="7">7</OPTION><OPTION VALUE="8">8</OPTION><OPTION VALUE="9">9</OPTION><OPTION VALUE="10">10</OPTION><OPTION VALUE="11">11</OPTION><OPTION VALUE="12">12</OPTION></SELECT>
+            	&nbsp;&nbsp;&nbsp;
+            	<INPUT TYPE="text" NAME="pr_payment" MAXLENGTH="10" SIZE="12" VALUE="<% if (!oCur.isNull(DB.pr_payment)) { DecimalFormat oFmt2 = new DecimalFormat(); oFmt2.setMaximumFractionDigits(2); out.write(oFmt2.format(oCur.getDecimal(DB.pr_payment).doubleValue())); } %>">
+            </TD>
           </TR>
 <% if (bShopActivated) { %>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Categoría~]:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370">
+            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">[~Categoría~]:</FONT></TD>
+            <TD ALIGN="left" WIDTH="500">
 						  <SELECT NAME="gu_category" CLASS="combomini"><%=oSelParents.toString()%></SELECT>
             </TD>
           </TR>
 <% } %>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">[~Dirección~]:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="hidden" NAME="gu_address" VALUE="<%=oAdr.getStringNull(DB.gu_address,"")%>">
+            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">[~Dirección~]:</FONT></TD>
+            <TD ALIGN="left" WIDTH="500"><INPUT TYPE="hidden" NAME="gu_address" VALUE="<%=oAdr.getStringNull(DB.gu_address,"")%>">
 <% if (oCur.isNull(DB.gu_address)) { %>
 						  <DIV ID="address_line"><A HREF="#" CLASS="linkplain" onclick="editAddress()">Agregar dirección</A></DIV>
 <% } else { %>
@@ -306,16 +333,16 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Tutor:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="nm_tutor" MAXLENGTH="200" SIZE="48" VALUE="<%=oCur.getStringNull(DB.nm_tutor,"")%>"></TD>
+            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">Tutor:</FONT></TD>
+            <TD ALIGN="left" WIDTH="500"><INPUT TYPE="text" NAME="nm_tutor" MAXLENGTH="200" SIZE="48" VALUE="<%=oCur.getStringNull(DB.nm_tutor,"")%>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">e-mail:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="tx_tutor_email" MAXLENGTH="100" SIZE="48" VALUE="<%=oCur.getStringNull(DB.tx_tutor_email,"")%>"></TD>
+            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">e-mail:</FONT></TD>
+            <TD ALIGN="left" WIDTH="500"><INPUT TYPE="text" NAME="tx_tutor_email" MAXLENGTH="100" SIZE="48" VALUE="<%=oCur.getStringNull(DB.tx_tutor_email,"")%>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Description:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370"><TEXTAREA ROWS="2" COLS="32" NAME="de_course"<%=oCur.getStringNull(DB.de_course,"")%>></TEXTAREA></TD>
+            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formstrong">Description:</FONT></TD>
+            <TD ALIGN="left" WIDTH="500"><TEXTAREA ROWS="2" COLS="32" NAME="de_course"<%=oCur.getStringNull(DB.de_course,"")%>></TEXTAREA></TD>
           </TR>
           <TR>
             <TD COLSPAN="2"><HR></TD>

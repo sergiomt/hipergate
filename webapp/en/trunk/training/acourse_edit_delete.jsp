@@ -22,11 +22,7 @@
     oCon.close("acourse_delete");
   } 
   catch(SQLException e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("acourse_delete");      
-        }
+      disposeConnection(oCon,"acourse_delete");
       oCon = null; 
       response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));
     }

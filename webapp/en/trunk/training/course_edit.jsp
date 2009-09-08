@@ -61,7 +61,7 @@
     
   try {
     
-    oConn = GlobalDBBind.getConnection("course_edit");  
+    oConn = GlobalDBBind.getConnection("course_edit", true);  
     
     sDeptsLookUp  = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_courses_lookup, gu_workarea, DB.tx_dept, sLanguage);
     sAreasLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_courses_lookup, gu_workarea, DB.tx_area, sLanguage);

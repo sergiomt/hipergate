@@ -45,7 +45,7 @@
   String id_domain = request.getParameter("id_domain");
   String gu_workarea = request.getParameter("gu_workarea");
   String gu_acourse = request.getParameter("gu_acourse");
-  int iFilter= Integer.parseInt(nullif(request.getParameter("filter"),"1"));
+  int iFilter= Integer.parseInt(nullif(request.getParameter("filter"),"0"));
 
   JDCConnection oConn = null;
   AcademicCourse oAcrs = new AcademicCourse();
@@ -58,7 +58,7 @@
   oFmt2.setMaximumFractionDigits(2);
       
   try {
-    oConn = GlobalDBBind.getConnection("bookings_edit");  
+    oConn = GlobalDBBind.getConnection("bookings_edit", true);  
 
     oAcrs.load(oConn, new Object[]{gu_acourse});
     
@@ -86,7 +86,7 @@
   }
   catch (SQLException e) {  
     if (oConn!=null)
-      if (!oConn.isClosed()) oConn.close("...");
+      if (!oConn.isClosed()) oConn.close("bookings_edit");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_close"));  
   }
@@ -247,7 +247,7 @@
       <OPTION VALUE="5">[~Listar alumnos que han pagado~]</OPTION>
       <OPTION VALUE="6">[~Listar alumnos que no han pagado~]</OPTION>
       <OPTION VALUE="7">[~Listar sólo inscripciones canceladas~]</OPTION>
-      <OPTION VALUE="0">[~Listar todos~]</OPTION>
+      <OPTION VALUE="0" SELECTED="selected">[~Listar todos~]</OPTION>
       </SELECT>
       <BR/>
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">

@@ -44,8 +44,6 @@
   response.addHeader ("cache-control", "no-store");
   response.setIntHeader("Expires", 0);
 
-  // 03. Get parameters
-
   String sSkin = getCookie(request, "skin", "xp");
   String sLanguage = getNavigatorLanguage(request);
   
@@ -63,7 +61,7 @@
   
   try {
     
-    oConn = GlobalDBBind.getConnection("subject_edit");  
+    oConn = GlobalDBBind.getConnection("subject_edit", true);  
     
     iCourses = oCourses.load(oConn, new Object[]{gu_workarea});
 

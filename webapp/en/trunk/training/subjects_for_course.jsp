@@ -8,7 +8,7 @@
   JDCConnection oConn = null;  
       
   try {
-    oConn = GlobalDBBind.getConnection("subjects_for_course");
+    oConn = GlobalDBBind.getConnection("subjects_for_course", true);
     Subject[] aSbjts;
     if (null==gu_acourse)
       aSbjts = new Course(oConn, gu_course).getSubjects(oConn);

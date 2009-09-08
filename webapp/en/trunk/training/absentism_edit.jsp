@@ -64,7 +64,7 @@
     
   try {
     
-    oConn = GlobalDBBind.getConnection("absentism_edit");  
+    oConn = GlobalDBBind.getConnection("absentism_edit", true);  
     
     if (oAbsm.load(oConn, new Object[]{gu_absentism})) {
       iAcrs = oAcrs.load(oConn, new Object[]{gu_workarea, oAbsm.get(DB.gu_acourse)});

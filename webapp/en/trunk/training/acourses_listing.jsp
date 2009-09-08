@@ -33,6 +33,8 @@
   if not, visit http://www.hipergate.org or mail to info@hipergate.org
 */
 
+  if (autenticateSession(GlobalDBBind, request, response)<0) return;
+
   response.addHeader ("Pragma", "no-cache");
   response.addHeader ("cache-control", "no-store");
   response.setIntHeader("Expires", 0);
@@ -116,13 +118,11 @@
 
     bIsGuest = isDomainGuest (GlobalCacheClient, GlobalDBBind, request, response);
     
-    oConn = GlobalDBBind.getConnection("courselisting");
+    oConn = GlobalDBBind.getConnection("courselisting", true);
 
     iCourses = oCourses.load(oConn, new Object[]{gu_workarea});
 
     if (sWhere.length()>0) {
-
-      // 09. QBF Filtered Listing
 
       oQBF = new QueryByForm("file://" + sStorage + "qbf" + File.separator + request.getParameter("queryspec") + ".xml");
 
@@ -179,21 +179,22 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/dynapi.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
-    DynAPI.setLibraryPath('../javascript/dynapi/lib/');
-    DynAPI.include('dynapi.api.*');
+    dynapi.library.setPath('../javascript/dynapi3/');
+    dynapi.library.include('dynapi.api.DynLayer');
     var menuLayer,addrLayer;
-    DynAPI.onLoad = function() {
+    dynapi.onLoad(init);
+    function init() {
+
       setCombos();
       menuLayer = new DynLayer();
       menuLayer.setWidth(160);
       menuLayer.setHTML(rightMenuHTML);
     }
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/dynapi/rightmenu.js" TYPE="text/javascript"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/dynapi/floatdiv.js" TYPE="text/javascript"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/dynapi3/rightmenu.js" TYPE="text/javascript"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/dynapi3/floatdiv.js" TYPE="text/javascript"></SCRIPT>
 
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
@@ -223,7 +224,7 @@
 
 	function createCourse() {
 
-	  self.open ("acourse_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>", "editacourse", "directories=no,toolbar=no,menubar=no,width=500,height=440");
+	  self.open ("acourse_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>", "editacourse", "directories=no,toolbar=no,menubar=no,width=690,height=540");
 	} // createCourse()
 
         // ----------------------------------------------------
@@ -259,7 +260,7 @@
 
 	function modifyCourse(id) {
 
-	  self.open ("acourse_edit.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>" + "&gu_acourse=" + id, "editacourse", "directories=no,toolbar=no,menubar=no,width=500,height=440");
+	  self.open ("acourse_edit.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>" + "&gu_acourse=" + id, "editacourse", "directories=no,toolbar=no,menubar=no,width=690,height=540");
 	} // modifyCourse
 
         // ----------------------------------------------------
@@ -339,13 +340,13 @@
       // ----------------------------------------------------
 
       function listStudents() {
-	window.document.location.href="../crm/contact_listing_f.jsp?selected=2&subselected=1&screen_width="+String(screen.width)+"&field=nm_course&find="+escape(jsCourseNm);
+	      window.document.location.href="../crm/contact_listing_f.jsp?face=edu&selected=2&subselected=1&screen_width="+String(screen.width)+"&field=nm_course&find="+escape(jsCourseNm);
       }
 
       // ----------------------------------------------------
 
       function editStudents() {
-        self.open ("bookings_edit.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>" + "&gu_acourse=" + jsCourseId, "editbookings", "scrollbars=yes,directories=no,toolbar=no,menubar=no,width=760,height=560");
+        self.open ("bookings_edit.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>" + "&gu_acourse=" + jsCourseId, "editbookings", "scrollbars=yes,directories=no,toolbar=no,menubar=no,width="+String(screen.width-80)+",height=560");
       }
 
     //-->
@@ -465,9 +466,9 @@
             sStrip = String.valueOf((i%2)+1);
 %>
             <TR HEIGHT="14">
-            	<TD CLASS="strip<% out.write (sStrip); %>"><A HREF="#" onclick="jsCourseId='<%=sGuCourse%>'; jsCourseNm='<%=sNmCourse%>'; editStudents();"><IMG SRC="../images/images/training/student16.gif" WIDTH="15" HEIGHT="18" BORDER="0" ALT="Edit Registrations"></A></TD>
+            	<TD CLASS="strip<% out.write (sStrip); %>"><A HREF="#" onclick="jsCourseId='<%=sGuCourse%>'; jsCourseNm='<%=Gadgets.URLEncode(sNmCourse)%>'; editStudents();"><IMG SRC="../images/images/training/student16.gif" WIDTH="15" HEIGHT="18" BORDER="0" ALT="Edit Registrations"></A></TD>
               <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<%=sIdCourse%></TD>
-              <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<A HREF="#" oncontextmenu="jsCourseId='<%=sGuCourse%>'; jsCourseNm='<%=sNmCourse%>'; return showRightMenu(event);" onclick="modifyCourse('<%=sGuCourse%>')" TITLE="Click right mouse button to open context menu"><%=sNmCourse%></A></TD>
+              <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<A HREF="#" oncontextmenu="jsCourseId='<%=sGuCourse%>'; jsCourseNm='<%=Gadgets.URLEncode(sNmCourse)%>'; return showRightMenu(event);" onclick="modifyCourse('<%=sGuCourse%>')" TITLE="Click right mouse button to open context menu"><%=sNmCourse%></A></TD>
               <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<%=sStatus%></TD>
               <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<%=sTxStart%></TD>
               <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<%=sTxEnd%></TD>

@@ -57,6 +57,7 @@
     oStmt.setString(1, gu_alumni);
     oStmt.executeUpdate();
     oStmt.close();
+    oStmt=null;
     oStmt = oConn.prepareStatement("INSERT INTO "+DB.k_x_course_alumni+"("+DB.gu_acourse+","+DB.gu_alumni+","+DB.id_classroom+") VALUES (?,'"+gu_alumni+"',?)");
     for (int c=0; c<a_items.length; c++) {
         oStmt.setString(1, a_items[c]);
@@ -64,16 +65,13 @@
         oStmt.executeUpdate();
     } // next
     oStmt.close();
-    
+    oStmt=null;    
     oConn.commit();
     oConn.close("acourses_assign_store");
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("acourses_assign_store");      
-      }
+    try { if (oStmt!=null) oStmt.close(); } catch (SQLException ignore) { }
+    disposeConnection(oConn,"acourses_assign_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }

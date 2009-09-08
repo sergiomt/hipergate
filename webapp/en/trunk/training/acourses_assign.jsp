@@ -81,7 +81,7 @@
 
     bIsGuest = isDomainGuest (GlobalCacheClient, GlobalDBBind, request, response);
     
-    oConn = GlobalDBBind.getConnection("acourseassign");
+    oConn = GlobalDBBind.getConnection("acourseassign", true);
 
     iCourses = oCourses.load(oConn, new Object[]{gu_workarea});
 

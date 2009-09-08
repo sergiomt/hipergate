@@ -56,65 +56,29 @@
   
     loadRequest(oConn, request, oAcr);
 
+		if (nullif(request.getParameter("gu_category")).length()>0) {
+		  oAcr.replace(DB.gu_category, request.getParameter("gu_category"));
+      oAcr.replace(DB.gu_owner, id_user);
+    }
+    
     oConn.setAutoCommit (false);
     
     if (!oAdr.exists(oConn)) oAcr.remove(DB.gu_address);
 
     oAcr.store(oConn);
-		
-		if (gu_category!=null) {
-		  if (gu_acourse.length()>0) {
-		    DBCommand.executeUpdate(oConn, "DELETE FROM "+DB.k_x_cat_objs+" WHERE "+DB.gu_object+"='"+gu_acourse+"' AND "+DB.id_class+"="+String.valueOf(AcademicCourse.ClassId));
-		  }
-		  if (gu_category.length()>0) {
-
-		    if (gu_acourse.length()==0) {
-		      oProd = new Product(oAcr.getString(DB.gu_acourse));
-		      oProd.put(DB.pct_tax_rate, 0f);
-		      oProd.put(DB.is_tax_included, (short) 1);
-		    } else {
-		      oProd = new Product(oConn, gu_acourse);
-		    }
-		    oProd.replace(DB.id_status, request.getParameter("bo_active").equals("1") ? Product.STATUS_ACTIVE : Product.STATUS_RETIRED);		      
-		    oProd.replace(DB.gu_owner, id_user);
-		    oProd.replace(DB.nm_product, request.getParameter("nm_course"));
-		    oProd.replace(DB.id_ref, request.getParameter("id_course"));
-		    if (!oAcr.isNull(DB.gu_address))
-		      oProd.replace(DB.gu_address, oAcr.getString(DB.gu_address));
-		    else
-		      oProd.remove(DB.gu_address);		    	
-		    if (request.getParameter("pr_acourse").length()>0)
-		      oProd.replace(DB.pr_list, new BigDecimal(request.getParameter("pr_acourse")));
-		    else
-		      oProd.remove(DB.pr_list);
-				oProd.store(oConn);
-
-		    Category oCatg = new Category(gu_category);
-		    oCatg.addObject(oConn, oAcr.getString(DB.gu_acourse), AcademicCourse.ClassId, 0, 0);
-
-		  } // fi (gu_category!="")
-		} // fi (gu_category!=null)
-    
-    // DBAudit.log(oConn, oAcr.ClassId, sOpCode, id_user, oAcr.getString(DB.gu_acourse), null, 0, 0, null, null);
+		    
+    DBAudit.log(oConn, oAcr.ClassId, sOpCode, id_user, oAcr.getString(DB.gu_acourse), oAcr.getStringNull(DB.gu_category,null), 0, 0, oAcr.getStringNull(DB.nm_acourse,null), null);
     
     oConn.commit();
     oConn.close("acourse_edit_store");
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("acourse_edit_store");      
-      }
+    disposeConnection(oConn,"acourse_edit_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }
   catch (NumberFormatException e) {
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("acourse_edit_store");      
-      }
+    disposeConnection(oConn,"acourse_edit_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NumberFormatException&desc=" + e.getMessage() + "&resume=_back"));
   }

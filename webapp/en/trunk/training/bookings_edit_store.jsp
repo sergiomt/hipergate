@@ -75,21 +75,13 @@
   catch (SQLException e) {
     if (oStm2!=null) { try { oStm2.close(); } catch (Exception ignore) {}  }
     if (oStmt!=null) { try { oStmt.close(); } catch (Exception ignore) {}  }
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("bookings_edit_store");
-      }
+    disposeConnection(oConn,"bookings_edit_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }
   catch (NumberFormatException e) {
     if (oStmt!=null) { try { oStmt.close(); } catch (Exception ignore) {}  }
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("bookings_edit_store");
-      }
+    disposeConnection(oConn,"bookings_edit_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NumberFormatException&desc=" + e.getMessage() + "&resume=_back"));
   }

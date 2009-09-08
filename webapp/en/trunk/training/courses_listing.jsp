@@ -114,11 +114,9 @@
 
     bIsGuest = isDomainGuest (GlobalCacheClient, GlobalDBBind, request, response);
 
-    oConn = GlobalDBBind.getConnection("courselisting");
+    oConn = GlobalDBBind.getConnection("courselisting", true);
 
     if (sWhere.length()>0) {
-
-      // 09. QBF Filtered Listing
 
       oQBF = new QueryByForm("file://" + sStorage + "qbf" + File.separator + request.getParameter("queryspec") + ".xml");
 
@@ -176,20 +174,22 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
 
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/dynapi.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
-    DynAPI.setLibraryPath('../javascript/dynapi/lib/');
-    DynAPI.include('dynapi.api.*');
+    dynapi.library.setPath('../javascript/dynapi3/');
+    dynapi.library.include('dynapi.api.DynLayer');
     var menuLayer,addrLayer;
-    DynAPI.onLoad = function() {
+    dynapi.onLoad(init);
+    function init() {
+
       setCombos();
       menuLayer = new DynLayer();
       menuLayer.setWidth(220);
       menuLayer.setHTML(rightMenuHTML);
     }
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/dynapi/rightmenu.js" TYPE="text/javascript"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/dynapi/floatdiv.js" TYPE="text/javascript"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/dynapi3/rightmenu.js" TYPE="text/javascript"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/dynapi3/floatdiv.js" TYPE="text/javascript"></SCRIPT>
 
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
