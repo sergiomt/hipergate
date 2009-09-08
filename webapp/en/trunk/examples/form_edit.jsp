@@ -2,9 +2,7 @@
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*
-  Form for editing a DBPersist subclass object.
-  
-  Copyright (C) 2003-2008  Know Gate S.L. All rights reserved.
+  Copyright (C) 2003-2009  Know Gate S.L. All rights reserved.
                            C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
@@ -50,9 +48,8 @@
   int iAppMask = Integer.parseInt(getCookie(request, "appmask", "0"));
   
   String id_domain = request.getParameter("id_domain");
-  String n_domain = request.getParameter("n_domain");
   String gu_workarea = request.getParameter("gu_workarea");
-  String gu_example = request.getParameter("gu_instance");
+  String gu_example = request.getParameter("gu_example");
 
   String id_user = getCookie(request, "userid", "");
 
@@ -68,6 +65,8 @@
 
     oConn = GlobalDBBind.getConnection(PAGE_NAME);  
 
+		oConn.setReadOnly(true);
+
     sTypeLookUp  = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, "k_examples_lookup", gu_workarea, "tp_example", sLanguage);
     
     if (null!=gu_example) oObj.load(oConn, new Object[]{gu_example});
@@ -76,7 +75,7 @@
   }
   catch (SQLException e) {  
     if (oConn!=null)
-      if (!oConn.isClosed()) oConn.close(PAGE_NAME);
+      if (!oConn.isClosed()) oConn.dispose(PAGE_NAME);
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_close"));  
   }
@@ -94,7 +93,9 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
+  
   <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
     <!--
 
@@ -173,7 +174,6 @@
   </TABLE>  
   <FORM NAME="" METHOD="post" ACTION="form_store.jsp" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
-    <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
     <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
     <INPUT TYPE="hidden" NAME="gu_example" VALUE="<%=oObj.getStringNull("gu_example","")%>">
     <INPUT TYPE="hidden" NAME="gu_writer" VALUE="<%=id_user%>">

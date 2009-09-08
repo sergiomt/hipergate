@@ -19,7 +19,7 @@
     // Si algo peta 
     if (oConn!=null)
       if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
+        if (!oConn.getAutoCommit()) oConn.rollback();
         oConn.close("poner_aqui_el_nombre_(cualquiera)_de_la_conexion");
       }
     oConn = null;
