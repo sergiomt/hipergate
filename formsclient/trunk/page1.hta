@@ -1,0 +1,101 @@
+<html>
+	<head>
+		<title>Data Entry Forms Example</title>
+		<HTA:APPLICATION ID="oHTA"
+			APPLICATIONNAME="DataEntryForms"
+			BORDER="thick"
+			BORDERSTYLE="normal"
+			CAPTION="yes"
+			CONTEXTMENU="no"
+			ICON="_img/knowgate.ico"
+			INNERBORDER="yes"
+			MAXIMIZEBUTTON="no"
+			MINIMIZEBUTTON="yes"
+			NAVIGABLE="yes"
+			SCROLL="no"
+			SCROLLFLAT="yes"
+			SELECTION="no"
+			SHOWINTASKBAR="yes"
+			SINGLEINSTANCE="yes"
+			SYSMENU="yes"
+			VERSION="1"
+			WINDOWSTATE="maximize"
+		/>
+		<meta http-equiv="content-type" content="application/hta; charset=iso-8859-1">
+		<link rel="stylesheet" type="text/css" href="_img/styles.css" />
+		<script type="text/javascript" language="JavaScript" src="_js/globvars.js"></script>
+		<script type="text/javascript" language="JavaScript" src="_js/resources_es.js"></script>
+		<script type="text/javascript" language="JavaScript" src="_js/formutils.js"></script>
+		<script type="text/javascript" language="JavaScript" src="_js/vbaautils.js"></script>
+		<script type="text/javascript" language="JavaScript" src="_js/xmlhttprequest.js"></script>
+		<script type="text/javascript" language="JavaScript" src="_js/autosuggest_city.js"></script>
+		<script type="text/javascript" language="JavaScript">
+		<!--
+
+			// Set here the name of the next page at forms chain
+			var action_target = "page2.hta";
+
+		  function initialize() {		  	
+		    var frm = document.forms[0];
+
+				readPredefinedURLParamsIntoForm(frm);
+				setDefaultValues(frm);
+
+				// ********************************************************************
+				// Customize fields to be displayed here
+
+				D ("tx_name", 20, left_padding, "ttu");
+				D ("tx_surname", 80, left_padding, "ttu");
+				D ("bo_allows_ads", 140, left_padding, "ttu");
+				D ("mov_phone", 180, left_padding, "ttu");
+				D ("tx_email", 180, left_padding, "");
+				D ("id_country", 240, left_padding, "");
+				D ("id_state", 300, left_padding, "");
+				D ("zipcode", 360, left_padding, "");
+				D ("mn_city", 400, left_padding, "");
+
+				B ("continue", 500, left_padding, Resources["btn_continue"]);
+				
+				// ********************************************************************
+				
+      } // initialize
+
+      // -----------------------------------------------------------------
+		
+		  function validate() {
+		    var frm = document.forms[0];
+		    if (check_all(frm, "es")) {
+		      frm.action = action_target;
+		      frm.submit();
+		      return true;
+		    } else {
+		      return false;
+		    }
+		  } // validate
+
+		-->
+		</script>
+	</head>
+	<body onload="initialize()">
+
+		  <div id="pageheader">
+		    <!--
+		        Put any page header text and images here
+		     -->
+		  </div>
+		  <div id="pagefields">
+		    <script type="text/javascript" language="JavaScript">
+				  <!--
+				    // Write <input> controls into page
+				    includeFile("inputs.htm", 0);
+				  //-->
+				</script>
+		  </div>
+	</body>
+	<script language="JavaScript" type="text/javascript">
+    <!--
+      // Activate this JavaScript for suggestions of cities in Spain based on their postal code
+      var autosuggest = new AutoSuggest("mn_city", { varname:"mn_city", minchars:2, form:0 } );
+    //-->
+  </script>
+</html>

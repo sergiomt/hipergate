@@ -1,0 +1,93 @@
+<html>
+	<head>
+		<title>Data Synchronize</title>
+		<HTA:APPLICATION ID="oHTA"
+			APPLICATIONNAME="DataSynchronization"
+			BORDER="thick"
+			BORDERSTYLE="normal"
+			CAPTION="yes"
+			CONTEXTMENU="no"
+			ICON="_img/sync.ico"
+			INNERBORDER="yes"
+			MAXIMIZEBUTTON="no"
+			MINIMIZEBUTTON="yes"
+			NAVIGABLE="yes"
+			SCROLL="no"
+			SCROLLFLAT="yes"
+			SELECTION="no"
+			SHOWINTASKBAR="yes"
+			SINGLEINSTANCE="yes"
+			SYSMENU="yes"
+			VERSION="1"
+			WINDOWSTATE="maximize"
+		/>
+		<meta http-equiv="content-type" content="application/hta; charset=iso-8859-1">
+		<link rel="stylesheet" type="text/css" href="_img/styles.css" />
+		<script type="text/javascript" language="JavaScript" src="_js/globvars.js"></script>
+		<script type="text/javascript" language="JavaScript" src="_js/xmlhttprequest.js"></script>
+		
+		<script type="text/javascript" language="JavaScript">
+		<!--
+
+      var fso = new ActiveXObject('Scripting.FileSystemObject');
+		  var pending;
+		  var intervalId;
+		  
+      function sync() {
+      	clearInterval(intervalId);
+      	var err = false;
+        var fld = fso.GetFolder("_sync");
+        var fcl = new Enumerator(fld.Files);
+        var pending = fld.Files.Count;
+   			var colnames;
+   			var colvalues;
+   			while (!fcl.atEnd()) {
+      		var fle = fso.OpenTextFile("_sync\\"+fcl.item().Name, 1, false, -1);
+					colnames = fle.ReadLine();
+					colvalues = fle.ReadLine().split("|");
+					for (var c=0; c<colvalues.length; c++)
+					  colvalues[c] = escape(encodeURI(colvalues[c]));
+					colvalues = colvalues.join("|");
+					fle.close();
+					var par = "gu_workarea="+target_workarea+"&nm_machine="+escape(new ActiveXObject("WScript.NetWork").ComputerName)+"&gu_list="+target_list+"&gu_writer="+writer_user+"&tx_coldelimiter=|&tx_colnames="+colnames+"&tx_colvalues="+colvalues;
+  				var pst = createXMLHttpRequest();
+  				pst.open("POST",host_webapp_url+"marketing/activity_audience_load.jsp",false);
+  				pst.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  				pst.setRequestHeader("Content-length", par.length);
+  				pst.setRequestHeader("Connection", "close");
+  				try {
+  				  pst.send(par);
+  				  if (pst.responseText.indexOf("1.0:OK")<0) {
+  				    err = true;
+  				    document.getElementById("feedback").innerHTML = "Se ha producido un error en la sincronización del registro <br/>por favor envía el texto completo que aparece a continuación a <a href=\"mailto:sergiom@knowgate.com\">sergiom@knowgate.com</a><br/>"+pst.responseText+"";
+              break;
+            } else {
+              fso.MoveFile("_sync\\"+fcl.item().name, "_done\\"+fcl.item().name);
+            }
+          
+            document.getElementById("pending").innerHTML = "Registros pendientes de sincronizar: "+String(--pending);
+   			  } catch (xcpt) {
+  				  document.getElementById("feedback").innerHTML = xcpt.name+" "+xcpt.message;
+   			  }
+   			  fcl.moveNext();
+   			} // wend
+				if (!err) intervalId = setInterval ("sync()", 5000);
+      } // sync
+
+      function initialize() {
+        var pending = fso.GetFolder("_sync").Files.Count;
+        document.getElementById("pending").innerHTML = "Registros pendientes de sincronizar: "+String(pending);
+        intervalId = setInterval ("sync()", 5000);
+      }
+
+		-->
+		</script>
+	</head>
+	<body onload="initialize()">
+		<div id="pageheader">
+			<h1>Sincronizador de Datos</h1>
+		</div>
+		<div id="pending" style="font-size:12pt;font-weight:bold;color:white;position:absolute;top:180;left:20"></div>
+		<div id="feedback" style="font-size:10pt;font-weight:bold;color:white;position:absolute;top:220;left:20"></div>
+	</body>
+</html>

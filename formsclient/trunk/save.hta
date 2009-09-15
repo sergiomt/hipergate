@@ -1,0 +1,55 @@
+<html>
+	<head>
+		<title>Data Entry Forms Example</title>
+		<HTA:APPLICATION ID="oHTA"
+			APPLICATIONNAME="DataEntryForms"
+			BORDER="thick"
+			BORDERSTYLE="normal"
+			CAPTION="yes"
+			CONTEXTMENU="no"
+			ICON="_img/knowgate.ico"
+			INNERBORDER="yes"
+			MAXIMIZEBUTTON="no"
+			MINIMIZEBUTTON="yes"
+			NAVIGABLE="yes"
+			SCROLL="no"
+			SCROLLFLAT="yes"
+			SELECTION="no"
+			SHOWINTASKBAR="yes"
+			SINGLEINSTANCE="yes"
+			SYSMENU="yes"
+			VERSION="1"
+			WINDOWSTATE="maximize"
+		/>
+		<meta http-equiv="content-type" content="application/hta; charset=iso-8859-1">
+		<link rel="stylesheet" type="text/css" href="_img/styles.css" />
+		<script type="text/javascript" language="JavaScript" src="_js/globvars.js"></script>
+		<script type="text/javascript" language="JavaScript" src="_js/resources_es.js"></script>
+		<script type="text/javascript" language="JavaScript" src="_js/formutils.js"></script>
+		<script type="text/javascript" language="JavaScript" src="_js/vbaautils.js"></script>
+		<script type="text/javascript" language="JavaScript">
+		<!--
+		  function save() {
+		    var frm = document.forms[0];
+		    readPredefinedURLParamsIntoForm(frm);
+		    saveRecord(frm);
+		  }
+		-->
+		</script>
+	</head>
+	<body onload="save()">
+		<script type="text/javascript" language="JavaScript">
+		  <!--
+			    includeFile("inputs.htm", 0);
+	    //-->
+	  </script>
+		<div id="cabecera">
+		</div>
+		<div id="feedback" style="font-size:22pt;font-weight:bold;color:white;position:absolute;top:150;left:20"></div>
+		<div style="position:absolute;top:230;left:20;">
+	  </div>
+		<div style="position:absolute;top:340;left:20">
+	  <form action="page1.hta" method="get"><input type="submit" class="button" value="Nuevo Registro" /></form>
+	  </div>
+	</body>
+</html>
