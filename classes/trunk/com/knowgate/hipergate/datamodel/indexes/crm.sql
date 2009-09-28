@@ -17,6 +17,9 @@ CREATE INDEX i6_contacts ON k_contacts(gu_workarea,ny_age);
 CREATE INDEX i7_contacts ON k_contacts(gu_writer);
 CREATE INDEX i8_contacts ON k_contacts(sn_passport);
 
+CREATE INDEX i1_x_contact_addr ON k_x_contact_addr(gu_contact);
+CREATE INDEX i2_x_contact_addr ON k_x_contact_addr(gu_address);
+
 CREATE INDEX i1_oportunities ON k_oportunities(gu_workarea);
 CREATE INDEX i2_oportunities ON k_oportunities(gu_writer);
 CREATE INDEX i3_oportunities ON k_oportunities(tl_oportunity);
