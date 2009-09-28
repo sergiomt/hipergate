@@ -1469,8 +1469,11 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
    * @throws IllegalArgumentException if sContentType is not "plain" or "html"
    */
   public SMTPMessage composeFinalMessage(Session oMailSession, String sSubject, String sBody,
-                                         String sId, String sContentType, String sEncoding)
+                                         String sId, String sContentType, String sEncoding,
+                                         boolean bAttachInlineImages)
     throws IOException,MessagingException,IllegalArgumentException,SecurityException {
+
+    int iWebBeaconStart, iWebBeaconEnd, iSrcTagStart, iSrcTagEnd;
 
     if (DebugFile.trace) {
       DebugFile.writeln("Begin DBMimeMessage.composeFinalMessage([Session],"+sSubject+",...,"+sId+","+sContentType+")");
@@ -1508,6 +1511,7 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
       // Replace image CIDs
 
       HashMap oDocumentImages = new HashMap(23);
+      int nImgs = 0;
 
       StringSubstitution oSrcSubs = new StringSubstitution();
 
@@ -1546,54 +1550,56 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
         // *****************************************
         // Iterate images from HTML and replace CIDs
 
-        oPrsr = Parser.createParser(sBody, getEncoding());
+		if (bAttachInlineImages) {
+          oPrsr = Parser.createParser(sBody, getEncoding());
 
-        NodeList oCollectionList = new NodeList();
-        TagNameFilter oImgFilter = new TagNameFilter ("IMG");
-        for (NodeIterator e = oPrsr.elements(); e.hasMoreNodes();)
-          e.nextNode().collectInto(oCollectionList, oImgFilter);
+          NodeList oCollectionList = new NodeList();
+          TagNameFilter oImgFilter = new TagNameFilter ("IMG");
+          for (NodeIterator e = oPrsr.elements(); e.hasMoreNodes();)
+            e.nextNode().collectInto(oCollectionList, oImgFilter);
 
-        final int nImgs = oCollectionList.size();
+          nImgs = oCollectionList.size();
 
-        if (DebugFile.trace) DebugFile.writeln("NodeList.size() = " + String.valueOf(nImgs));
+          if (DebugFile.trace) DebugFile.writeln("NodeList.size() = " + String.valueOf(nImgs));
 
-        for (int i=0; i<nImgs; i++) {
+          for (int i=0; i<nImgs; i++) {
 
-          sSrc = ((ImageTag) oCollectionList.elementAt(i)).extractImageLocn();
-          sSrc = sSrc.replace('\\','/');
+            sSrc = ((ImageTag) oCollectionList.elementAt(i)).extractImageLocn();
+            sSrc = sSrc.replace('\\','/');
 
-          // Keep a reference to every related image name so that the same image is not included twice in the message
-          if (!oDocumentImages.containsKey(sSrc)) {
+            // Keep a reference to every related image name so that the same image is not included twice in the message
+            if (!oDocumentImages.containsKey(sSrc)) {
 
-            // Find last slash from image url
-            int iSlash = sSrc.lastIndexOf('/');
+              // Find last slash from image url
+              int iSlash = sSrc.lastIndexOf('/');
 
-            // Take image name
-            if (iSlash>=0) {
-              while (sSrc.charAt(iSlash)=='/') { if (++iSlash==sSrc.length()) break; }
-              sCid = sSrc.substring(iSlash);
-            }
-            else {
-              sCid = sSrc;
-            }
+              // Take image name
+              if (iSlash>=0) {
+                while (sSrc.charAt(iSlash)=='/') { if (++iSlash==sSrc.length()) break; }
+                sCid = sSrc.substring(iSlash);
+              }
+              else {
+                sCid = sSrc;
+              }
 
-            //String sUid = Gadgets.generateUUID();
-            //sCid = sUid.substring(0,12)+"$"+sUid.substring(12,20)+"$"+sUid.substring(20,28)+"@hipergate.org";
+              // String sUid = Gadgets.generateUUID();
+              // sCid = sUid.substring(0,12)+"$"+sUid.substring(12,20)+"$"+sUid.substring(20,28)+"@hipergate.org";
 
-            if (DebugFile.trace) DebugFile.writeln("HashMap.put("+sSrc+","+sCid+")");
+              if (DebugFile.trace) DebugFile.writeln("HashMap.put("+sSrc+","+sCid+")");
 
-            oDocumentImages.put(sSrc, sCid);
-          } // fi (!oDocumentImages.containsKey(sSrc))
+              oDocumentImages.put(sSrc, sCid);
+            } // fi (!oDocumentImages.containsKey(sSrc))
 
-          try {
-            Pattern oPattern = oCompiler.compile(Gadgets.replace(((ImageTag) oCollectionList.elementAt(i)).extractImageLocn(),'\\',"\\\\"),
-            									 Perl5Compiler.SINGLELINE_MASK);
-            oSrcSubs.setSubstitution("cid:"+oDocumentImages.get(sSrc));
-            if (DebugFile.trace) DebugFile.writeln("Util.substitute([PatternMatcher],"+ sSrc + ",cid:"+oDocumentImages.get(sSrc)+",...)");
-            sBody = Util.substitute(oMatcher, oPattern, oSrcSubs, sBody);
-          } catch (MalformedPatternException neverthrown) { }
+            try {
+              Pattern oPattern = oCompiler.compile(Gadgets.replace(((ImageTag) oCollectionList.elementAt(i)).extractImageLocn(),'\\',"\\\\"),
+            									   Perl5Compiler.SINGLELINE_MASK);
+              oSrcSubs.setSubstitution("cid:"+oDocumentImages.get(sSrc));
+              if (DebugFile.trace) DebugFile.writeln("Util.substitute([PatternMatcher],"+ sSrc + ",cid:"+oDocumentImages.get(sSrc)+",...)");
+              sBody = Util.substitute(oMatcher, oPattern, oSrcSubs, sBody);
+            } catch (MalformedPatternException neverthrown) { }
 
-        } // next
+          } // next
+		} // fi (bAttachInlineImages)
       }
       catch (ParserException pe) {
         if (DebugFile.trace) {
@@ -1613,13 +1619,13 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
 
           // ****************************************************************************
           // Replace <!--WEBBEACON SRC="http://..."--> tag by an <IMG SRC="http://..." />
-          
+
 	      try {
-            int iWebBeaconStart = Gadgets.indexOfIgnoreCase(sBody,"<!--WEBBEACON", 0);
+            iWebBeaconStart = Gadgets.indexOfIgnoreCase(sBody,"<!--WEBBEACON", 0);
             if (iWebBeaconStart>0) {
-              int iSrcTagStart = sBody.indexOf('"', iWebBeaconStart+13);
-              int iSrcTagEnd = sBody.indexOf('"', iSrcTagStart+1);
-              int iWebBeaconEnd = sBody.indexOf("-->", iWebBeaconStart+13);
+              iSrcTagStart = sBody.indexOf('"', iWebBeaconStart+13);
+              iSrcTagEnd = sBody.indexOf('"', iSrcTagStart+1);
+              iWebBeaconEnd = sBody.indexOf("-->", iWebBeaconStart+13);
               if (iWebBeaconEnd>0) {
 		        sBody = sBody.substring(0,iWebBeaconStart)+"<IMG SRC=\""+sBody.substring(iSrcTagStart+1,iSrcTagEnd)+"\" WIDTH=\"1\" HEIGHT=\"1\" BORDER=\"0\" ALT=\"\" />"+sBody.substring(iWebBeaconEnd+3);
               }
@@ -1627,7 +1633,7 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
 	      } catch (Exception malformedwebbeacon) {
 	  	    if (DebugFile.trace) DebugFile.writeln("Malformed Web Beacon");
 	      } 
-	  	              
+          
           oMsgHtml.setText(sBody,sEncoding,"html");
           oTextHtmlAlt.addBodyPart(oMsgHtml);
       } else {
@@ -1636,6 +1642,24 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
 
         MimeBodyPart oMsgHtmlText = new MimeBodyPart();
         oMsgHtmlText.setDisposition("inline");
+
+        // ****************************************************************************
+        // Replace <!--WEBBEACON SRC="http://..."--> tag by an <IMG SRC="http://..." />
+          
+        try {
+          iWebBeaconStart = Gadgets.indexOfIgnoreCase(sBody,"<!--WEBBEACON", 0);
+          if (iWebBeaconStart>0) {
+            iSrcTagStart = sBody.indexOf('"', iWebBeaconStart+13);
+            iSrcTagEnd = sBody.indexOf('"', iSrcTagStart+1);
+            iWebBeaconEnd = sBody.indexOf("-->", iWebBeaconStart+13);
+            if (iWebBeaconEnd>0) {
+		        sBody = sBody.substring(0,iWebBeaconStart)+"<IMG SRC=\""+sBody.substring(iSrcTagStart+1,iSrcTagEnd)+"\" WIDTH=\"1\" HEIGHT=\"1\" BORDER=\"0\" ALT=\"\" />"+sBody.substring(iWebBeaconEnd+3);
+            }
+          }
+	    } catch (Exception malformedwebbeacon) {
+	  	    if (DebugFile.trace) DebugFile.writeln("Malformed Web Beacon");
+	    } 
+
         oMsgHtmlText.setText(sBody,sEncoding,"html");
         if (DebugFile.trace) DebugFile.writeln("MimeBodyPart(multipart/related).addBodyPart(text/html)");
         oHtmlRelated.addBodyPart(oMsgHtmlText);
@@ -1755,6 +1779,35 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
     return oSentMessage;
   } // composeFinalMessage
 
+  // ---------------------------------------------------------------------------
+
+  /**
+   * <p>Create an SMTPMessage object from given components</p>
+   * Depending on what is inside, message structure is as follows :<br>
+   * <table>
+   * <tr><td><b>Format/Attachments</b></td><td><b>No</b></td><td><b>Yes</b></td></tr>
+   * <tr><td><b>plain</b></td><td><b>text/plain</b></td><td><b>multipart/mixed [text/plain, {attachment}]</b></td></tr>
+   * <tr><td><b>html without images</b></td><td><b>multipart/alternative [text/plain, text/html]</b></td><td><b>multipart/mixed [multipart/alternative [text/plain, text/html], {attachment}]</b></td></tr>
+   * <tr><td><b>html with images</b></td><td><b>multipart/alternative [text/plain, multipart/related[text/html, {image}]]</b></td><td><b>multipart/mixed [multipart/alternative [text/plain, multipart/related[text/html, {image}]], {attachment}]</b></td></tr>
+   * </table>
+   * @param oMailSession Session
+   * @param sSubject String Message subject or <b>null</b>
+   * @param sBody String Message text body or <b>null</b>
+   * @param sId String Contend-ID for message or <b>null</b>
+   * @param sContentType String should be either "plain" or "html"
+   * @param sEncoding Character encoding for text
+   * @return SMTPMessage
+   * @throws IOException
+   * @throws MessagingException
+   * @throws SecurityException
+   * @throws IllegalArgumentException if sContentType is not "plain" or "html"
+   */
+  public SMTPMessage composeFinalMessage(Session oMailSession, String sSubject, String sBody,
+                                         String sId, String sContentType, String sEncoding)
+    throws IOException,MessagingException,IllegalArgumentException,SecurityException {
+    return composeFinalMessage(oMailSession, sSubject, sBody, sId, sContentType, sEncoding, true);
+  }
+
   /**
    * <p>Create an SMTPMessage object from given components using UTF-8 for text encoding</p>
    * Depending on what is inside, message structure is as follows :<br>
@@ -1778,7 +1831,7 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
   public SMTPMessage composeFinalMessage(Session oMailSession, String sSubject, String sBody,
                                          String sId, String sContentType)
     throws IOException,MessagingException,IllegalArgumentException,SecurityException {
-    return composeFinalMessage(oMailSession, sSubject, sBody, sId, sContentType, "utf-8");
+    return composeFinalMessage(oMailSession, sSubject, sBody, sId, sContentType, "utf-8", true);
   }
   
   // ---------------------------------------------------------------------------

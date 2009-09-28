@@ -43,17 +43,22 @@ import java.sql.SQLException;
 
 import java.util.Properties;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.mail.MessagingException;
 import javax.mail.Message.RecipientType;
+
+import org.apache.oro.text.regex.MalformedPatternException;
 
 import com.oreilly.servlet.MailMessage;
 
 import com.knowgate.acl.ACLUser;
 import com.knowgate.jdc.JDCConnection;
+import com.knowgate.debug.StackTraceUtil;
 import com.knowgate.debug.DebugFile;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBBind;
+import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.dataobjs.DBPersist;
 import com.knowgate.dfs.FileSystem;
 import com.knowgate.misc.Environment;
@@ -79,9 +84,11 @@ public final class SendMail {
         super("SystemOutPrintln");
       }
 
-      public void call(String sThreadId, int iOpCode, String sMessage, Exception oXcpt, Object oParam) {
+      public void call(String sThreadId, int iOpCode, String sMessage, Exception oXcpt, Object oParam) {        
         if (-1==iOpCode) {
-          System.out.println("ERROR "+sMessage);
+          String sStackTrace = "";
+          try { sStackTrace = StackTraceUtil.getStackTrace(oXcpt); } catch (Exception ignore) {}
+          System.out.println("ERROR "+sMessage+"\n"+sStackTrace);
         } else {
           System.out.println("OK "+oParam);
         }
@@ -96,7 +103,9 @@ public final class SendMail {
 
       public void call(String sThreadId, int iOpCode, String sMessage, Exception oXcpt, Object oParam) {
         if (-1==iOpCode) {
-          DebugFile.writeln("ERROR "+sMessage);
+          String sStackTrace = "";        	
+          try { sStackTrace = StackTraceUtil.getStackTrace(oXcpt); } catch (Exception ignore) {}
+          DebugFile.writeln("ERROR "+sMessage+"\n"+sStackTrace);
         } else {
           DebugFile.writeln("OK "+oParam);
         }
@@ -183,7 +192,6 @@ public final class SendMail {
 	        ClassNotFoundException,InstantiationException {
 	  	
 	  if (DebugFile.trace) {
-	    DebugFile.incIdent();
 	    DebugFile.writeln("Begin SendMail.send("+
 	    				  "{mail.smtp.host="+oSessionProps.getProperty("mail.smtp.host","")+","+
 	    	              "mail.user="+oSessionProps.getProperty("mail.user","")+","+
@@ -194,7 +202,15 @@ public final class SendMail {
 	    	              sEncoding+",String[],\""+sSubject+"\",<"+sFromAddr+">,"+sFromPersonal+",<"+
 	    	              sReplyAddr+">,"+(aRecipients==null ? null : "{"+Gadgets.join(aRecipients,";")+"}")+","+
 	    	              sRecipientType+","+sId+","+sEnvCnfFileName+","+sJobTl+",[DBbind])");
+	    DebugFile.incIdent();
 	  } // fi (trace)
+
+	  boolean bTestMode = oSessionProps.getProperty("testmode","no").equalsIgnoreCase("yes") || oSessionProps.getProperty("testmode","false").equalsIgnoreCase("true") || oSessionProps.getProperty("testmode","0").equalsIgnoreCase("1");
+	  if (bTestMode) {
+	    if (DebugFile.trace) DebugFile.writeln("test mode activated no e-mail will be actually sent");
+	  }
+
+	  boolean bAttachImages = oSessionProps.getProperty("attachimages","yes").equalsIgnoreCase("yes") || oSessionProps.getProperty("attachimages","true").equalsIgnoreCase("true") || oSessionProps.getProperty("attachimages","1").equalsIgnoreCase("1");
 	
 	  DBBind oDbb;
 	  ArrayList<String> aWarnings = new ArrayList<String>();
@@ -202,7 +218,7 @@ public final class SendMail {
 	  // *******************************************
 	  // Setup default values for missing parameters
 	   	  
- 	  if (null==sEncoding) sEncoding = "ISO-8859-1";
+ 	  if (null==sEncoding) sEncoding = "UTF-8";
 	  if (null==sReplyAddr) sReplyAddr = sFromAddr;
 	  if (null==sRecipientType) sRecipientType = "to";
 	  if (null==sId) sId = Gadgets.generateUUID();
@@ -280,23 +296,33 @@ public final class SendMail {
 														   oUsr.getString(DB.gu_workarea),
 														   oUsr.getString(DB.gu_user),
 														   sTextHtml==null ? "plain" : "html");
+			String sMsgId = DBCommand.queryStr(oCon, "SELECT "+DB.id_message+" FROM "+DB.k_mime_msgs+
+    								 	             " WHERE "+DB.gu_mimemsg+"='"+oMsg.getMessageGuid()+"'");
     		DraftsHelper.draftUpdate(oCon, oUsr.getInt(DB.id_domain),
     								 oUsr.getString(DB.gu_workarea),
-    								 oMsg.getMessageGuid(), oMsg.getMessageID(),
+    								 oMsg.getMessageGuid(), sMsgId,
                              	     sFromAddr,sReplyAddr,sFromPersonal,
                              	     sSubject, "text/"+(sTextHtml==null ? "plain" : "html")+";charset="+sEncoding,
                              	    (sTextHtml==null ? sTextPlain : sTextHtml), null, null, null);
-			
-		  	oJob.put(DB.gu_job, Gadgets.generateUUID());
+
+			sJobId = Gadgets.generateUUID();
+		  	oJob.put(DB.gu_job, sJobId);
 		    oJob.put(DB.gu_workarea, oUsr.getString(DB.gu_workarea));
 		    oJob.put(DB.gu_writer, oUsr.getString(DB.gu_user));
 		    oJob.put(DB.id_command, Job.COMMAND_SEND);
 		    oJob.put(DB.id_status, Job.STATUS_SUSPENDED);		    
 		    oJob.put(DB.tl_job, sJobTl);
-		    oJob.put(DB.tx_parameters, "message:"+oMsg.getMessageGuid()+",id:"+(oMsg.getMessageID()==null ? oMsg.getMessageGuid() : oMsg.getMessageID())+",profile:"+oDbb.getProfileName()+",account:"+oMacc.getString(DB.gu_account)+",personalized:false");
+		    oJob.put(DB.tx_parameters, (bTestMode ? "testmode:true," : "")+
+		    	                       "message:"+oMsg.getMessageGuid()+","+
+		    	                       "id:"+sMsgId+","+
+		    	                       "profile:"+oDbb.getProfileName()+","+
+		    	                       "account:"+oMacc.getString(DB.gu_account)+","+
+		    	                       "personalized:true"+","+
+		    	                       "attachimages:"+(bAttachImages ? "true" : "false")+","+
+		    	                       "encoding:"+sEncoding);
 		    oJob.store(oCon);
 
-		    oSnd = Job.instantiate(oCon, oJob.getString(DB.gu_job), oDbb.getProperties());
+		    oSnd = Job.instantiate(oCon, sJobId, oDbb.getProperties());
 		    
 		    oSnd.insertRecipients(oCon, aRecipients, sRecipientType,
 		                          sTextHtml==null ? "text" : "html",
@@ -313,17 +339,9 @@ public final class SendMail {
 		  oCon.close("SendMail");
 		  oCon = null;
 		  
-		  SingleThreadExecutor oSte;
-		  
-		  if (null==oGlobalDbb) 
-		    oSte = new SingleThreadExecutor(oDbb.getProperties(), oJob.getString(DB.gu_job));
-		  else
-		    oSte = new SingleThreadExecutor(oDbb, oJob.getString(DB.gu_job));
-		  	
+		  SingleThreadExecutor oSte = new SingleThreadExecutor(oDbb, sJobId);
 		  oSte.registerCallback(SendMail.DEBUGLN);
-
-		  if (null==oGlobalDbb && null!=oDbb) oDbb.close();
-		  oDbb = null;
+		  oSte.registerCallback(SendMail.PRINTLN);
 
 		  oSte.run();		  
 		  
@@ -642,7 +660,7 @@ public final class SendMail {
 
     /**
      * <p>Send a dual plain text and HTML message to a given recipients list</p>
-     * The message will be sent inmediately indipendently to each recipient
+     * The message will be sent inmediately independently to each recipient
      * @param oSessionProps Properties
      * <table><tr><th>Property</th><th>Description></th><th>Default value</th></tr>
      *        <tr><td>mail.user</td><td>Store and transport user</td><td></td></tr>
@@ -701,8 +719,9 @@ public final class SendMail {
 	 throws FileNotFoundException,IOException,
 	 	    IllegalAccessException,NullPointerException,
 	        MessagingException,FTPException,SQLException,
-	        ClassNotFoundException,InstantiationException {
-	  
+	        ClassNotFoundException,InstantiationException,
+	        MalformedPatternException {
+
 	  if (null==args)
 	  	throw new NullPointerException("SendMail.main() Path of properties file is required");
 
@@ -733,6 +752,8 @@ public final class SendMail {
 	  Properties oProps = new Properties();
 	  oProps.load(oInStrm);
 	  
+	  System.out.println("Running job "+oProps.getProperty("job"));
+
 	  // *************************************************************************
 	  // Recipients list must be an ASCII encoded file with one recipient per line
 	  
@@ -750,16 +771,82 @@ public final class SendMail {
 	    if (DebugFile.trace) DebugFile.decIdent();
 	  	throw new NullPointerException("Recipients file is empty");
 	  }
+
+	  // ***********************************
+	  // Load Black List into a sorted array
+
+	  String[] aBlackList = null;
+	  String sBlackListFile = oProps.getProperty("blacklist");
+	  if (null!=sRecipientsFile) {
+	    if (sRecipientsFile.trim().length()>0) {
+	      String sBlackList = oFS.readfilestr(sBlackListFile, "ASCII");
+	      if (sBlackList.length()>0) {
+	        aBlackList = Gadgets.split(sBlackList, "\n");
+	        final int nBlackList = aBlackList.length;
+	        for (int b=0; b<nBlackList; b++) {
+	          aBlackList[b] = aBlackList[b].toLowerCase();
+	        } // next
+	        Arrays.sort(aBlackList, String.CASE_INSENSITIVE_ORDER);
+	      }
+	    } // fi
+	  } // fi
 	  
 	  String aRecipients[] = Gadgets.split(sRecipientsList, "\n");
-	  final int nRecipients = aRecipients.length;
+	  int nRecipients = aRecipients.length;	  
 
-	  if (DebugFile.trace) DebugFile.writeln("recipient count is"+String.valueOf(nRecipients));
+      System.out.println("total recipients count is "+String.valueOf(nRecipients));
+
+	  // ********************************************************************
+	  // Remove duplicated e-mail addresses and those found at the black list
+
+	  Arrays.sort(aRecipients, String.CASE_INSENSITIVE_ORDER);
+	  ArrayList<String> oRecipientsWithoutDuplicates = new ArrayList<String>(nRecipients);
+	  String sAllowPattern = oProps.getProperty("allow","");
+	  String sDenyPattern = oProps.getProperty("deny","");
+	  boolean bAllowed;
+	  for (int r=0; r<nRecipients-1; r++) {
+		bAllowed = true;
+		if (sAllowPattern.length()>0) bAllowed &= Gadgets.matches(aRecipients[r], sAllowPattern);
+		if (sDenyPattern.length()>0) bAllowed &= !Gadgets.matches(aRecipients[r], sDenyPattern);
+		if (bAllowed) {
+	  	  if (!aRecipients[r].equalsIgnoreCase(aRecipients[r+1])) {
+	  	    if (aBlackList==null) {
+	  	      if (aRecipients[r].trim().length()>0) oRecipientsWithoutDuplicates.add(aRecipients[r].trim());
+	  	    } else if (Arrays.binarySearch(aBlackList, aRecipients[r].toLowerCase(), String.CASE_INSENSITIVE_ORDER)<0) {
+	  	      if (aRecipients[r].trim().length()>0) oRecipientsWithoutDuplicates.add(aRecipients[r].trim());
+	  	    } // fi
+	  	  } // fi
+	  	} else {
+	  	  System.out.println("SKIP "+aRecipients[r]);
+	  	}// fi
+	  } // next
+
+	  bAllowed=true;
+	  if (sAllowPattern.length()>0) bAllowed &= Gadgets.matches(aRecipients[nRecipients-1], sAllowPattern);
+	  if (sDenyPattern.length()>0) bAllowed &= !Gadgets.matches(aRecipients[nRecipients-1], sDenyPattern);
+	  if (bAllowed) {
+	    if (aBlackList==null) {
+	      if (aRecipients[nRecipients-1].trim().length()>0) oRecipientsWithoutDuplicates.add(aRecipients[nRecipients-1].trim());
+	    } else if (Arrays.binarySearch(aBlackList, aRecipients[nRecipients-1].toLowerCase(), String.CASE_INSENSITIVE_ORDER)<0) {
+	  	  if (aRecipients[nRecipients-1].trim().length()>0) oRecipientsWithoutDuplicates.add(aRecipients[nRecipients-1].trim());
+	    }
+	  } else {
+	    System.out.println("SKIP "+aRecipients[nRecipients-1]);
+	  }// fi
+
+	  if (DebugFile.trace) DebugFile.writeln("total recipients count is"+String.valueOf(nRecipients));
+
+	  aRecipients = oRecipientsWithoutDuplicates.toArray(new String[oRecipientsWithoutDuplicates.size()]);
+	  nRecipients = oRecipientsWithoutDuplicates.size();
+
+	  if (DebugFile.trace) DebugFile.writeln("unique and allowed recipients count is"+String.valueOf(nRecipients));
+
+      System.out.println("unique and allowed recipients count is "+String.valueOf(nRecipients));
 	  
 	  // ******************
 	  // Get Mail enconding
 	  
-	  String sEncoding = oProps.getProperty("encoding","ISO8859_1");
+	  String sEncoding = oProps.getProperty("encoding","UTF-8");
 	  
 	  // ******************************************************
 	  // Get base directory where mail source files are located
@@ -816,6 +903,9 @@ public final class SendMail {
 
 	  // Generate a unique message Id.
 	  String sId = oProps.getProperty("messageid", Gadgets.generateUUID());
+
+	  if (oProps.getProperty("testmode","no").equalsIgnoreCase("yes") || oProps.getProperty("testmode","false").equalsIgnoreCase("true") || oProps.getProperty("testmode","0").equalsIgnoreCase("1"))
+	  	System.out.println("test mode activated no e-mail will be actually sent");
 
 	  ArrayList aWarns = send(oProps, sUserDir, sTextHtml, sTextPlain, sEncoding,
 		   aAttachments, sSubject,
