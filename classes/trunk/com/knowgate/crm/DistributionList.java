@@ -32,6 +32,7 @@
 
 package com.knowgate.crm;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -43,6 +44,8 @@ import com.knowgate.debug.DebugFile;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.dataobjs.DB;
+import com.knowgate.dataobjs.DBBind;
+import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.dataobjs.DBPersist;
 
 import com.knowgate.hipergate.QueryByForm;
@@ -584,7 +587,7 @@ public class DistributionList extends DBPersist {
    * @throws IllegalStateException if this DistributionList has not been previously loaded
    * @since 5.0
    */
-  public int addContact(JDCConnection oConn, String sContactGUID)
+  public int addContact(Connection oConn, String sContactGUID)
   	throws IllegalStateException,SQLException {
     
     if (isNull(DB.gu_list)) throw new IllegalStateException("DistributionList.addContact() List GUID not set");
@@ -592,18 +595,12 @@ public class DistributionList extends DBPersist {
     if (isNull(DB.tp_list)) throw new IllegalStateException("DistributionList.addContact() List Type not set");
 	if (getShort(DB.tp_list)==TYPE_DYNAMIC) throw new SQLException ("DistributionList.addContact() Dynamic list "+getString(DB.gu_list)+" does not allow manual addition of contact members");
 
-  	String sSQL = "INSERT INTO " + DB.k_x_list_members + " (gu_list,tx_email,tx_name,tx_surname,dt_created,gu_company,gu_contact) SELECT '" + getString(DB.gu_list) + "',tx_email,tx_name,tx_surname,dt_created,gu_company,gu_contact FROM "+DB.k_member_address+" WHERE gu_workarea='"+getString(DB.gu_workarea)+"' AND gu_contact='"+sContactGUID+"' AND tx_email IS NOT NULL";
-
     if (DebugFile.trace) {
       DebugFile.writeln("Begin DistributionList.addContact([JDCConnection], "+sContactGUID+")");
       DebugFile.incIdent();
-      DebugFile.writeln("Statement.executeUpdate("+sSQL+")");
     }
   	
-  	Statement oStmt = oConn.createStatement();
-  	int iAffected = oStmt.executeUpdate(sSQL);
-  	oStmt.close();
-
+	int iAffected = DBCommand.executeUpdate(oConn, "INSERT INTO "+DB.k_x_list_members+" (gu_list,tx_email,tx_name,tx_surname,mov_phone,dt_created,gu_company,gu_contact) SELECT '"+getString(DB.gu_list)+"',"+DBBind.Functions.ISNULL+"(tx_email,'"+sContactGUID+"@hasnoemailaddress.net'),tx_name,tx_surname,mov_phone,dt_created,gu_company,gu_contact FROM "+DB.k_member_address+" WHERE "+DB.gu_workarea+"='"+getString(DB.gu_workarea)+"' AND "+DB.gu_contact+"='"+sContactGUID+"' AND "+DB.gu_contact+" NOT IN (SELECT "+DB.gu_contact+" FROM "+DB.k_x_list_members+" WHERE "+DB.gu_list+"='"+getString(DB.gu_list)+"') AND ("+DB.tx_email+" IS NOT NULL OR "+DB.mov_phone+" IS NOT NULL)");
 
     if (DebugFile.trace) {
       DebugFile.decIdent();
@@ -659,7 +656,7 @@ public class DistributionList extends DBPersist {
 
       // Componer la sentencia SQL de filtrado de datos a partir de la definición de la consulta almacenada en la tabla k_queries
       QueryByForm oQBF = new QueryByForm(oConn, DB.k_member_address, "ma", oAppendedList.getString(DB.gu_query));
-      sColumnList = DB.tx_email + "," + DB.tx_name + "," + DB.tx_surname + "," + DB.tx_salutation + "," + DB.gu_company + "," + DB.gu_contact;
+      sColumnList = DB.mov_phone + "," + DB.tx_email + "," + DB.tx_name + "," + DB.tx_surname + "," + DB.tx_salutation + "," + DB.gu_company + "," + DB.gu_contact;
 
       sSQL = "INSERT INTO " + DB.k_x_list_members + " ("+DB.gu_list+"," + sColumnList + ") " +
              "SELECT '" + getString(DB.gu_list) + "'," + sColumnList + " FROM " + DB.k_member_address  + " ma WHERE ma.gu_workarea='" + oAppendedList.getString(DB.gu_workarea) + "' AND (" + oQBF.composeSQL() + ") AND " +
@@ -724,7 +721,7 @@ public class DistributionList extends DBPersist {
 
     oAppendedList = new DistributionList(oConn, sListGUID);
 
-    sColumnList = DB.tx_email + "," + DB.tx_name + "," + DB.tx_surname + "," + DB.tx_salutation + "," + DB.bo_active + "," + DB.gu_company + "," + DB.gu_contact + "," + DB.id_format;
+    sColumnList = DB.mov_phone + DB.tx_email + "," + DB.tx_name + "," + DB.tx_surname + "," + DB.tx_salutation + "," + DB.bo_active + "," + DB.gu_company + "," + DB.gu_contact + "," + DB.id_format;
 
     // ************************************************************************************
     // Actualizar los miembros de la lista a añadir que ya estén presentes en la lista base

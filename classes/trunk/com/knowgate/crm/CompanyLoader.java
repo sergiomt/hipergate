@@ -45,7 +45,7 @@ import com.knowgate.hipergate.datamodel.ColumnList;
  * @author Sergio Montoro Ten
  * @version 4.0
  */
-public class CompanyLoader implements ImportLoader {
+public final class CompanyLoader implements ImportLoader {
 	
 	private ContactLoader oDelegateTo;
 	/**
@@ -184,4 +184,5 @@ public class CompanyLoader implements ImportLoader {
     public static final int WRITE_LOOKUPS = ImportLoader.WRITE_LOOKUPS;
 
     public static final int WRITE_ADDRESSES = 128;
+    public static final int ADD_TO_LIST = ContactLoader.ADD_TO_LIST;
 }
