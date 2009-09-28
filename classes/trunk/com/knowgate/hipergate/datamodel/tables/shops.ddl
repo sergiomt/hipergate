@@ -361,7 +361,7 @@ CREATE TABLE k_invoices (
   tx_location    VARCHAR(100) NULL,
   gu_company     CHAR(32)     NULL,
   gu_contact     CHAR(32)     NULL,
-  nm_client	 VARCHAR(200) NULL,
+  nm_client	     VARCHAR(200) NULL,
   gu_ship_addr   CHAR(32)     NULL,
   gu_bill_addr   CHAR(32)     NULL,
   id_ref         VARCHAR(50)  NULL,
@@ -442,6 +442,8 @@ CREATE TABLE k_invoice_payments (
   tp_billing     CHAR(1)       NULL,
   id_ref         VARCHAR(50)   NULL,
   id_transact    VARCHAR(32)   NULL,
+  id_country     CHAR(3)       NULL,
+  id_authcode    VARCHAR(6)    NULL,  
   nm_client	     VARCHAR(200)  NULL,
   tx_comments    VARCHAR(254)  NULL,
 

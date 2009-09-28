@@ -77,7 +77,7 @@ GO;
 
 CREATE TABLE k_x_activity_audience (
 gu_activity   CHAR(32)      NOT NULL,
-gu_contact    CHAR(32)      NULL,
+gu_contact    CHAR(32)      NOT NULL,
 gu_address    CHAR(32)      NULL,
 gu_list       CHAR(32)      NULL,
 gu_writer     CHAR(32)      NULL,
@@ -94,6 +94,7 @@ id_transact   VARCHAR(32)   NULL,
 tp_billing    CHAR(1)       NULL,
 bo_went       SMALLINT DEFAULT 0,
 bo_allows_ads SMALLINT DEFAULT 0,
+gu_sales_man  CHAR(32)      NULL,
 id_data1      VARCHAR(32)   NULL,
 de_data1      VARCHAR(100)  NULL,
 tx_data1      VARCHAR(254)  NULL,
