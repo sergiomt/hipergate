@@ -75,6 +75,7 @@ public class DBBind extends Beans implements DataSource {
   private String sDatabaseProductName;
   private int iDatabaseProductId;
   private Exception oConnectXcpt;
+  private Properties oCustomEnvProps;
 
   private static HashMap oGlobalTableMap;
 
@@ -100,13 +101,55 @@ public class DBBind extends Beans implements DataSource {
     // If DriverManager.getConnection() fails the the exception will be stored and
     // re-thrown each time DBBind.getConnection() is called.
     oConnectXcpt = null;
-
+	
+	oCustomEnvProps = null;
+	
     try {
       initialize("hipergate");
     } catch (Exception e) {
        oConnectXcpt=e;
 	   System.err.println("DBBind.initialize() "+e.getClass().getName() + " "  + e.getMessage());
        if (DebugFile.trace) DebugFile.writeln(e.getClass().getName() + " "  + e.getMessage());
+    }
+  }
+
+  /**
+   * <p>Create DBBind.</p>
+   * Read database connection properties from specified properties file.
+   * @param Properties<br>
+   */
+  public DBBind(Properties oProps) {
+
+    oConnectXcpt = null;
+
+	oCustomEnvProps = oProps;
+
+    try {
+      initialize(oCustomEnvProps, "custom");
+    }
+    catch (AccessControlException e) {
+      oConnectXcpt=e;
+      if (DebugFile.trace) DebugFile.writeln("AccessControlException " + e.getMessage());
+    }
+    catch (ClassNotFoundException e) {
+      oConnectXcpt=e;
+      if (DebugFile.trace) DebugFile.writeln("ClassNotFoundException " + e.getMessage());
+    }
+    catch (SQLException e) {
+      oConnectXcpt=e;
+      if (DebugFile.trace) DebugFile.writeln("SQLException " + e.getMessage());
+    }
+    catch (NullPointerException e) {
+      oConnectXcpt=e;
+      if (DebugFile.trace) DebugFile.writeln("NullPointerException " + e.getMessage());
+    }
+    catch (UnsatisfiedLinkError e) {
+      oConnectXcpt = new Exception("UnsatisfiedLinkError " + e.getMessage(), e);
+      if (DebugFile.trace) DebugFile.writeln("UnsatisfiedLinkError " + e.getMessage());
+    }
+    catch (NumberFormatException e) {
+      oConnectXcpt = new Exception("NumberFormatException " + e.getMessage(), e);
+      if (DebugFile.trace) DebugFile.writeln("NumberFormatException " + e.getMessage());
     }
   }
 
@@ -121,6 +164,8 @@ public class DBBind extends Beans implements DataSource {
   public DBBind(String sProfile) {
 
     oConnectXcpt = null;
+
+	oCustomEnvProps = null;
 
     try {
       initialize(sProfile);
@@ -231,20 +276,20 @@ public class DBBind extends Beans implements DataSource {
 
   // ----------------------------------------------------------
 
-  private void loadDriver(String sProfile)
+  private void loadDriver(Properties oProps)
     throws ClassNotFoundException, NullPointerException  {
 
     Class oDriver;
     String sDriver;
 
-    if (DebugFile.trace) DebugFile.writeln("Begin DBBind.loadDriver(" + sProfile + ")" );
+    if (DebugFile.trace) DebugFile.writeln("Begin DBBind.loadDriver()" );
 
-    sDriver = Environment.getProfileVar(sProfile, "driver");
+    sDriver = oProps.getProperty("driver");
 
     if (DebugFile.trace) DebugFile.writeln("  driver=" +  sDriver);
 
     if (null==sDriver)
-      throw new NullPointerException("Could not find property driver at " + sProfile);
+      throw new NullPointerException("Could not find property driver");
 
     oDriver = Class.forName(sDriver);
 
@@ -273,6 +318,17 @@ public class DBBind extends Beans implements DataSource {
     throws ClassNotFoundException, SQLException, NullPointerException,
            AccessControlException,UnsatisfiedLinkError,NumberFormatException {
 
+    Properties oProfEnvProps = Environment.getProfile(sProfile);
+
+    initialize (oProfEnvProps, sProfile);
+  }
+
+  // ----------------------------------------------------------
+
+  protected void initialize(Properties oProfEnvProps, String sProfile)
+    throws ClassNotFoundException, SQLException, NullPointerException,
+           AccessControlException,UnsatisfiedLinkError,NumberFormatException {
+
     int i;
     Connection oConn;
     DatabaseMetaData oMData;
@@ -294,7 +350,7 @@ public class DBBind extends Beans implements DataSource {
       DebugFile.writeln("hipergate package build " + DBBind.VERSION);
       DebugFile.envinfo();
 
-      DebugFile.writeln("Begin DBBind.initialize(" + sProfile+ ")" );
+      DebugFile.writeln("Begin DBBind.initialize("+sProfile+")");
       DebugFile.incIdent();
       }
 
@@ -302,36 +358,36 @@ public class DBBind extends Beans implements DataSource {
 
       // ****************
       // Load JDBC driver
-      loadDriver(sProfile);
+      loadDriver(oProfEnvProps);
 
-      if (DebugFile.trace) DebugFile.writeln("Load Driver " + Environment.getProfileVar(sProfile, "driver") + " : OK\n" );
+      if (DebugFile.trace) DebugFile.writeln("Load Driver " + oProfEnvProps.getProperty("driver") + " : OK\n" );
 
-      if (DebugFile.trace) DebugFile.writeln("Trying to connect to " + Environment.getProfileVar(sProfile, "dburl") + " with user " + Environment.getProfileVar(sProfile, "dbuser"));
+      if (DebugFile.trace) DebugFile.writeln("Trying to connect to " + oProfEnvProps.getProperty("dburl") + " with user " + oProfEnvProps.getProperty("dbuser"));
 
       // **********************************************************
       // Get database connection parameters from file hipergate.cnf
 
       // New for v2.2 *
       try {
-        DriverManager.setLoginTimeout(Integer.parseInt(Environment.getProfileVar(sProfile, "logintimeout", "20")));
+        DriverManager.setLoginTimeout(Integer.parseInt(oProfEnvProps.getProperty("logintimeout", "20")));
       } catch (Exception x) {
         if (DebugFile.trace) DebugFile.writeln("DriverManager.setLoginTimeout() "+x.getClass().getName()+" "+x.getMessage());
       }
       // **************
 
       try {
-        oConn = DriverManager.getConnection(Environment.getProfileVar(sProfile, "dburl"),
-                                            Environment.getProfileVar(sProfile, "dbuser"),
-                                            Environment.getProfileVar(sProfile, "dbpassword"));
+        oConn = DriverManager.getConnection(oProfEnvProps.getProperty("dburl"),
+                                            oProfEnvProps.getProperty("dbuser"),
+                                            oProfEnvProps.getProperty("dbpassword"));
       }
       catch (SQLException e) {
-        if (DebugFile.trace) DebugFile.writeln("DriverManager.getConnection("+Environment.getProfileVar(sProfile, "dburl")+","+Environment.getProfileVar(sProfile, "dbuser")+", ...) SQLException [" + e.getSQLState() + "]:" + String.valueOf(e.getErrorCode()) + " " + e.getMessage());
-        oConnectXcpt = new SQLException("DriverManager.getConnection("+Environment.getProfileVar(sProfile, "dburl")+","+Environment.getProfileVar(sProfile, "dbuser")+", ...) "+e.getMessage(), e.getSQLState(), e.getErrorCode());
+        if (DebugFile.trace) DebugFile.writeln("DriverManager.getConnection("+oProfEnvProps.getProperty("dburl")+","+oProfEnvProps.getProperty("dbuser")+", ...) SQLException [" + e.getSQLState() + "]:" + String.valueOf(e.getErrorCode()) + " " + e.getMessage());
+        oConnectXcpt = new SQLException("DriverManager.getConnection("+oProfEnvProps.getProperty("dburl")+","+oProfEnvProps.getProperty("dbuser")+", ...) "+e.getMessage(), e.getSQLState(), e.getErrorCode());
         throw (SQLException) oConnectXcpt;
       }
 
       if (DebugFile.trace) {
-        DebugFile.writeln("Database Connection to " + Environment.getProfileVar(sProfile, "dburl") + " : OK\n" );
+        DebugFile.writeln("Database Connection to " + oProfEnvProps.getProperty("dburl") + " : OK\n" );
         DebugFile.writeln("Calling Connection.getMetaData()");
       }
 
@@ -378,7 +434,7 @@ public class DBBind extends Beans implements DataSource {
 
       if (DebugFile.trace) DebugFile.writeln("Gather metadata : OK" );
 
-      sSchema = Environment.getProfileVar(sProfile, "schema", "");
+      sSchema = oProfEnvProps.getProperty("schema", "");
 
       if (DebugFile.trace) DebugFile.writeln("Schema is \"" + sSchema + "\"");
 
@@ -482,7 +538,7 @@ public class DBBind extends Beans implements DataSource {
             sTableName = oRSet.getString(3);
 
             if (!oRSet.wasNull()) {
-              oTable = new DBTable (sCatalog, Environment.getProfileVar(sProfile, "schema", "dbo"), sTableName, ++i);
+              oTable = new DBTable (sCatalog, oProfEnvProps.getProperty("schema", "dbo"), sTableName, ++i);
 
               sTableName = oTable.getName().toLowerCase();
 
@@ -542,7 +598,7 @@ public class DBBind extends Beans implements DataSource {
 
       // Create database connection pool
 
-      if (DebugFile.trace) DebugFile.writeln("new JDCConnectionPool("+Environment.getProfileVar(sProfile,"dburl")+","+Environment.getProfileVar(sProfile,"dbuser")+",...,"+Environment.getProfileVar(sProfile,"poolsize", "32")+","+Environment.getProfileVar(sProfile,"maxconnections", "100")+")");
+      if (DebugFile.trace) DebugFile.writeln("new JDCConnectionPool("+oProfEnvProps.getProperty("dburl")+","+oProfEnvProps.getProperty("dbuser")+",...,"+oProfEnvProps.getProperty("poolsize", "32")+","+oProfEnvProps.getProperty("maxconnections", "100")+")");
 
       // ***************************************************************
       // New for v2.2
@@ -553,7 +609,7 @@ public class DBBind extends Beans implements DataSource {
       long iConnectionTimeout;
 
       try {
-        iPoolSize=Integer.parseInt(Environment.getProfileVar(sProfile,"poolsize", "32"));
+        iPoolSize=Integer.parseInt(oProfEnvProps.getProperty("poolsize", "32"));
         if (iPoolSize<0) throw new NumberFormatException();
       }
       catch (NumberFormatException nfe) {
@@ -565,7 +621,7 @@ public class DBBind extends Beans implements DataSource {
       }
 
       try {
-        iMaxConns=Integer.parseInt(Environment.getProfileVar(sProfile,"maxconnections", "100"));
+        iMaxConns=Integer.parseInt(oProfEnvProps.getProperty("maxconnections", "100"));
         if (iMaxConns<0) throw new NumberFormatException();
       }
       catch (NumberFormatException nfe) {
@@ -577,7 +633,7 @@ public class DBBind extends Beans implements DataSource {
       }
 
       try {
-        iLoginTimeout=Integer.parseInt(Environment.getProfileVar(sProfile,"logintimeout", "20"));
+        iLoginTimeout=Integer.parseInt(oProfEnvProps.getProperty("logintimeout", "20"));
       }
       catch (NumberFormatException nfe) {
         if (DebugFile.trace) {
@@ -595,7 +651,7 @@ public class DBBind extends Beans implements DataSource {
       }
 
       try {
-        iConnectionTimeout=Long.parseLong(Environment.getProfileVar(sProfile,"connectiontimeout", "60000"));
+        iConnectionTimeout=Long.parseLong(oProfEnvProps.getProperty("connectiontimeout", "60000"));
       }
       catch (NumberFormatException nfe) {
         if (DebugFile.trace) {
@@ -615,16 +671,16 @@ public class DBBind extends Beans implements DataSource {
       // ***************************************************************
 
       oConnPool = new JDCConnectionPool(this,
-                                        Environment.getProfileVar(sProfile,"dburl"),
-                                        Environment.getProfileVar(sProfile,"dbuser"),
-                                        Environment.getProfileVar(sProfile,"dbpassword"),
+                                        oProfEnvProps.getProperty("dburl"),
+                                        oProfEnvProps.getProperty("dbuser"),
+                                        oProfEnvProps.getProperty("dbpassword"),
                                         iPoolSize,iMaxConns,iLoginTimeout,iConnectionTimeout);
 
       if (null!=oConnPool) {
         if (DebugFile.trace) DebugFile.writeln("Connection pool creation : OK" );
 
         try {
-          oConnPool.setReaperDaemonDelay(Long.parseLong(Environment.getProfileVar(sProfile,"connectionreaperdelay", "600000")));
+          oConnPool.setReaperDaemonDelay(Long.parseLong(oProfEnvProps.getProperty("connectionreaperdelay", "600000")));
         }
         catch (NumberFormatException nfe) {
           if (DebugFile.trace) {
@@ -686,7 +742,7 @@ public class DBBind extends Beans implements DataSource {
    * @since 4.0
    */
   public Properties getProperties() {
-    return Environment.getProfile(getProfileName());
+    return oCustomEnvProps==null ? Environment.getProfile(getProfileName()) : oCustomEnvProps;
   }
 
   // ----------------------------------------------------------
@@ -698,7 +754,7 @@ public class DBBind extends Beans implements DataSource {
    * @since 4.0
    */
   public String getProperty(String sVarName) {
-    return Environment.getProfileVar(getProfileName(),sVarName);
+    return oCustomEnvProps==null ? Environment.getProfileVar(getProfileName(),sVarName) : oCustomEnvProps.getProperty(sVarName);
   }
 
   // ----------------------------------------------------------
@@ -711,7 +767,7 @@ public class DBBind extends Beans implements DataSource {
    * @since 4.0
    */
   public String getProperty(String sVarName, String sDefault) {
-    return Environment.getProfileVar(getProfileName(),sVarName,sDefault);
+    return oCustomEnvProps==null ? Environment.getProfileVar(getProfileName(),sVarName,sDefault) : oCustomEnvProps.getProperty(sVarName, sDefault);
   }
 
   // ----------------------------------------------------------
@@ -727,7 +783,7 @@ public class DBBind extends Beans implements DataSource {
    * @since 4.0
    */
   public boolean getPropertyBool(String sVarName, boolean bDefault) {
-    return Environment.getProfileBool(getProfileName(),sVarName,bDefault);
+    return oCustomEnvProps==null ? Environment.getProfileBool(getProfileName(),sVarName,bDefault) : Boolean.valueOf(oCustomEnvProps.getProperty(sVarName));
   }
 
   // ----------------------------------------------------------
@@ -739,7 +795,7 @@ public class DBBind extends Beans implements DataSource {
    * @since 4.0
    */
   public String getPropertyPath(String sVarName) {
-    return Environment.getProfilePath(getProfileName(),sVarName);
+    return oCustomEnvProps==null ? Environment.getProfilePath(getProfileName(),sVarName) : oCustomEnvProps.getProperty(sVarName);
   }
 
   // ----------------------------------------------------------

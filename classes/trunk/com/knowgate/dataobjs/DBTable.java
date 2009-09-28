@@ -58,7 +58,7 @@ import com.knowgate.jdc.*;
 /**
  * <p>A database table as a Java Object</p>
  * @author Sergio Montoro Ten
- * @version 3.0
+ * @version 5.0
  */
 
 public class DBTable {
@@ -752,7 +752,7 @@ public class DBTable {
    * @return List of {@link DBColumn} objects composing this table.
    */
 
-  public LinkedList getColumns() {
+  public LinkedList<DBColumn> getColumns() {
     return oColumns;
   }
 

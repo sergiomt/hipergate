@@ -838,6 +838,10 @@ public class DBCommand {
         DebugFile.decIdent();
       }
       if (null!=oStm) { try { oStm.close(); } catch (Exception ignore) {} }
+      if (DebugFile.trace) {
+      	DebugFile.writeln("SQLException "+sqle.getMessage());
+        DebugFile.decIdent();
+      }
       throw new SQLException(sSQL+" "+sqle.getMessage(),sqle.getSQLState(),sqle.getErrorCode(), sqle.getCause());
     }
 

@@ -248,8 +248,8 @@ public class DBPersist implements Map {
     ResultSet oRSet = null;
     PreparedStatement oStmt = null;
     DBTable oTbl = getTable(oConn);
-    LinkedList oList = oTbl.getPrimaryKey();
-    ListIterator oIter;
+    LinkedList<String> oList = oTbl.getPrimaryKey();
+    ListIterator<String> oIter;
     String sSQL = "SELECT "+DB.dt_created+" FROM "+oTbl.getName()+" WHERE 1=1";
     oIter = oList.listIterator();
     while (oIter.hasNext())
@@ -1562,6 +1562,25 @@ public class DBPersist implements Map {
     AllVals.put(sKey, oPattern.parse(sDate));
   }
 
+  /**
+   * <p>Replace value at internal collection</p>
+   * @param sKey Field Name
+   * @param sData Field Value as a String. If iSQLType is BLOB or LONGVARBINARY
+   * then sData is interpreted as a full file path uri.
+   * @param iSQLType SQL Type for field
+   * @throws NullPointerException If sKey is <b>null</b>
+   * @throws IllegalArgumentException If SQL Type is not recognized.
+   * Recognized types are { CHAR, VARCHAR, LONGVARCHAR, CLOB, INTEGER, SMALLINT,
+   * DATE, TIMESTAMP, DOUBLE, FLOAT, REAL, DECIMAL, NUMERIC, BLOB, LONGVARBINARY }
+   * @since 5.0
+   */
+
+  public void replace(String sKey, String sData, int iSQLType)
+    throws FileNotFoundException, IllegalArgumentException, NullPointerException {
+    remove(sKey);
+    put(sKey, sData, iSQLType);
+  }
+    
   /**
    * Convert value kept with given key to lowercase
    * @param sKey String

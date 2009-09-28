@@ -871,7 +871,8 @@ public final class DB {
   public static final String tl_activity = "tl_activity";
   public static final String de_activity = "de_activity";
   public static final String nu_capacity = "nu_capacity";
-  
+  public static final String bo_allows_ads = "bo_allows_ads";
+  	
   // k_microsites
   public static final String gu_microsite = "gu_microsite";
   public static final String id_app = "id_app";
@@ -1073,7 +1074,9 @@ public final class DB {
   public static final String pr_payment = "pr_payment";
   public static final String nu_payments = "nu_payments";
   public static final String bo_confirmed = "bo_confirmed";
+  public static final String dt_confirmed = "dt_confirmed";
   public static final String bo_paid = "bo_paid";
+  public static final String bo_went = "bo_went";
   public static final String bo_waiting = "bo_waiting";
   public static final String bo_canceled = "bo_canceled";
   public static final String tx_start = "tx_start";
