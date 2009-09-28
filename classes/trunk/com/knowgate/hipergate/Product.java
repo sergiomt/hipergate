@@ -519,12 +519,20 @@ public class Product extends DBPersist {
    * @return A DBSubset with all columns from k_prod_locats for ProductLocations
    * with gu_product is equal to this Product GUID.
    * @throws SQLException
+   * @throws NullPointerException if gu_product property is not set for this object
    */
-  public DBSubset getLocations(JDCConnection oConn) throws SQLException {
+  public DBSubset getLocations(JDCConnection oConn)
+  	throws SQLException, NullPointerException {
     if (DebugFile.trace) {
       DebugFile.writeln("Begin Product.getLocations([Connection])" );
       DebugFile.incIdent();
     }
+
+	if (isNull(DB.gu_product)) {
+      DebugFile.decIdent();
+	  throw new NullPointerException("Product.getLocations() gu_product property not set");
+	}
+    
     int iLoca;
     ProductLocation oLoca = new ProductLocation();
     Object aProd[] = { get(DB.gu_product) };
@@ -638,7 +646,7 @@ public class Product extends DBPersist {
     boolean bRetVal = super.store(oConn);
 
     if (bNew) {
-      DebugFile.writeln("new ProductAttribute("+getStringNull(DB.gu_product,"null")+")");
+      if (DebugFile.trace) DebugFile.writeln("new ProductAttribute("+getStringNull(DB.gu_product,"null")+")");
       new ProductAttribute(getString(DB.gu_product)).store(oConn);
     }
 
@@ -669,7 +677,10 @@ public class Product extends DBPersist {
 
     try {
       eraseImages(oConn);
-    } catch (SQLException sqle) { if (DebugFile.trace) DebugFile.writeln("SQLException: " + sqle.getMessage());}
+    } catch (SQLException sqle) {
+      if (DebugFile.trace) DebugFile.writeln("SQLException: Product.eraseImages() " + sqle.getMessage());
+      throw new SQLException(sqle.getMessage());
+    }
 
     // Begin SQLException
       eraseLocations(oConn);
@@ -695,16 +706,24 @@ public class Product extends DBPersist {
    * <p>Delete Associated images</p>
    * @param oConn Database Connection
    * @throws SQLException
+   * @throws NullPointerException if gu_product property is not set for this object
    * @see com.knowgate.hipergate.Image#delete(JDCConnection)
    */
-  private void eraseImages(JDCConnection oConn) throws SQLException {
+  private void eraseImages(JDCConnection oConn)
+  	throws SQLException, NullPointerException {
+
     if (DebugFile.trace) {
       DebugFile.writeln("Begin Product.eraseImages(Connection)" );
       DebugFile.incIdent();
     }
 
+	if (isNull(DB.gu_product)) {
+      DebugFile.decIdent();
+	  throw new NullPointerException("Product.eraseImages() gu_product property not set");
+	}
+	
     DBSubset oImages = new DBSubset(DB.k_images, DB.gu_image + "," + DB.path_image, DB.gu_product + "=?", 10);
-    int iImgCount = oImages.load(oConn, new Object[]{getString(DB.gu_product)});
+    int iImgCount = oImages.load(oConn, new Object[]{get(DB.gu_product)});
     Image oImg = new Image();
 
     for (int i=0; i<iImgCount; i++) {
@@ -728,9 +747,10 @@ public class Product extends DBPersist {
    * <p>Delete ProductLocations including disk files.</p>
    * @param oConn Database Connection
    * @throws SQLException
+   * @throws NullPointerException if gu_product property is not set for this object
    * @see com.knowgate.hipergate.ProductLocation#delete(JDCConnection)
    */
-  public int eraseLocations(JDCConnection oConn) throws SQLException {
+  public int eraseLocations(JDCConnection oConn) throws SQLException, NullPointerException {
 
     if (DebugFile.trace) {
       DebugFile.writeln("Begin Product.eraseLocations(Connection)" );

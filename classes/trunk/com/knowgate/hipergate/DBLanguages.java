@@ -482,7 +482,6 @@ public class DBLanguages {
 
     try {
       if (oConn.getDataBaseProduct()!=JDCConnection.DBMS_POSTGRESQL) {
-        oStmt.setQueryTimeout(20);
         oStmt.setFetchSize(100);
       }
     } catch (SQLException sqle) {
@@ -783,7 +782,7 @@ public class DBLanguages {
 
   public static boolean addLookup (Connection oConn, String sLookupTableName,
                                    String sGuOwner, String sIdSection,
-                                   String sVlLookUp, HashMap oTranslatMap)
+                                   String sVlLookUp, HashMap<String,String> oTranslatMap)
     throws SQLException {
 
     if (DebugFile.trace) {
@@ -806,7 +805,7 @@ public class DBLanguages {
     if (!bAlreadyExists) {
       if (DebugFile.trace) DebugFile.writeln("lookup does not already exists");
       
-      HashMap oTrColumnMap = new HashMap(197);
+      HashMap<String,String> oTrColumnMap = new HashMap<String,String>(197);
       oStmt = oConn.prepareStatement("SELECT * FROM "+sLookupTableName+" WHERE 1=0");
       oRSet = oStmt.executeQuery();
       ResultSetMetaData oMDat = oRSet.getMetaData();

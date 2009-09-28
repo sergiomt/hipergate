@@ -435,7 +435,7 @@ public class Address extends DBPersist {
     * @throws SQLException
     * @since 3.0
     */
-   public static boolean addLookupState (Connection oConn, String sGuWorkArea, String sIdCountry, String sNmState, HashMap oTranslations)
+   public static boolean addLookupState (Connection oConn, String sGuWorkArea, String sIdCountry, String sNmState, HashMap<String,String> oTranslations)
     throws SQLException {
       return DBLanguages.addLookup(oConn,DB.k_addresses_lookup, sGuWorkArea, sIdCountry, sNmState, oTranslations);
     }
@@ -450,7 +450,7 @@ public class Address extends DBPersist {
      * @throws SQLException
      * @since 3.0
      */
-    public static boolean addLookupStreetType (Connection oConn, String sGuWorkArea, String sTpStreet, HashMap oTranslations)
+    public static boolean addLookupStreetType (Connection oConn, String sGuWorkArea, String sTpStreet, HashMap<String,String> oTranslations)
      throws SQLException {
      return DBLanguages.addLookup(oConn,DB.k_addresses_lookup, sGuWorkArea, DB.tp_street, sTpStreet, oTranslations);
    }

@@ -33,11 +33,14 @@
 package com.knowgate.hipergate;
 
 import java.util.Date;
-import java.sql.SQLException;
 
-import com.knowgate.dataobjs.*;
+import java.sql.SQLException;
+import java.sql.PreparedStatement;
+
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.debug.DebugFile;
+import com.knowgate.dataobjs.DB;
+import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.dataobjs.DBPersist;
 
 public class InvoicePayment extends DBPersist {
@@ -65,6 +68,17 @@ public class InvoicePayment extends DBPersist {
 	return super.store(oConn);    
   } // store
 
+  public boolean delete(JDCConnection oConn) throws SQLException {
+    if (!isNull(DB.dt_paid) && !isNull(DB.im_paid)) {    	
+      PreparedStatement oUpdt = oConn.prepareStatement("UPDATE "+DB.k_invoices+" SET "+DB.im_paid+"="+DB.im_paid+"-? WHERE "+DB.gu_invoice+"=?");
+	  oUpdt.setBigDecimal(1, getDecimal(DB.im_paid));
+	  oUpdt.setString(2, getString(DB.gu_invoice));
+	  oUpdt.executeUpdate();
+	  oUpdt.close();
+    }
+	return super.delete(oConn);
+  }
+  
   // **********************************************************
   // Constantes Publicas
 

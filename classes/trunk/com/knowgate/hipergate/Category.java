@@ -2124,8 +2124,10 @@ public class Category  extends DBPersist {
           // los cursos academicos no se borran cuando se borra la categoria
           // pero si se borran sus productos asociados en la tienda
         case com.knowgate.hipergate.Product.ClassId:
-          oProd = new Product(oConn, oObjs.getString(0, o));
-          oProd.delete(oConn);
+          oProd = new Product(oObjs.getString(0, o));
+          if (oProd.exists(oConn)) {
+            oProd.delete(oConn);          
+          }
           break;
         case com.knowgate.crm.Company.ClassId:
           com.knowgate.crm.Company.delete(oConn, oObjs.getString(0, o));
