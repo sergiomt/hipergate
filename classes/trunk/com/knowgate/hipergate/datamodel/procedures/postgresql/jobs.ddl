@@ -2,6 +2,8 @@ CREATE SEQUENCE seq_k_job_atoms INCREMENT 1 MINVALUE 1 START 1;
 
 CREATE FUNCTION k_sp_del_job (CHAR) RETURNS INTEGER AS '
 BEGIN
+  DELETE FROM k_job_atoms_tracking WHERE gu_job=$1;
+  DELETE FROM k_job_atoms_archived WHERE gu_job=$1;
   DELETE FROM k_job_atoms WHERE gu_job=$1;
   DELETE FROM k_jobs WHERE gu_job=$1;
   RETURN 0;

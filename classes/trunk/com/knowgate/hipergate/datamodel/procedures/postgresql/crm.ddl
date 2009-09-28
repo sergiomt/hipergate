@@ -17,6 +17,7 @@ DECLARE
   GuWorkArea CHAR(32);
 
 BEGIN
+  UPDATE k_sms_audit SET gu_contact=NULL WHERE gu_contact=$1;
   DELETE FROM k_x_activity_audience WHERE gu_contact=$1;
   DELETE FROM k_contact_education WHERE gu_contact=$1;
   DELETE FROM k_x_duty_resource WHERE nm_resource=$1;
