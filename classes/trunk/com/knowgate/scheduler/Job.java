@@ -64,6 +64,8 @@ import com.knowgate.crm.MemberAddress;
 import com.knowgate.hipergate.Address;
 import com.knowgate.misc.Gadgets;
 
+import com.oreilly.servlet.MailMessage;
+
 /**
  * <p>Abstract base class for Job Commands Implementations</p>
  * @author Sergio Montoro Ten
@@ -101,7 +103,7 @@ public abstract class Job extends DBPersist {
    */
   public abstract Object process (Atom oAtm)
       throws SQLException,FileNotFoundException,IOException,MessagingException,
-      NullPointerException;
+      NullPointerException,ClassNotFoundException,InstantiationException,IllegalAccessException;
 
   // ----------------------------------------------------------
 
@@ -832,6 +834,7 @@ public abstract class Job extends DBPersist {
 	final int nCols = aAddrCols.length;
 	String[] aAddrVals = new String[nCols];
     String sSQL;
+    String sMailAddr;
     
 	sSQL = "SELECT "+Gadgets.join(aAddrCols,",")+" FROM "+DB.k_member_address+" WHERE "+DB.gu_workarea+"='"+getString(DB.gu_workarea)+"' AND "+DB.tx_email+"=?";
 	if (DebugFile.trace) DebugFile.writeln("PreparedStatement.prepareStatement("+sSQL+")");
@@ -861,7 +864,7 @@ public abstract class Job extends DBPersist {
 	    if (oRSet.next()) {
 	      if (DebugFile.trace) DebugFile.writeln("Found user for recipient "+aRecipients[r]);
 	      Arrays.fill(aAddrVals,null);
-	      aAddrVals[2] = oRSet.getString(3);
+	      aAddrVals[2] = MailMessage.sanitizeAddress(oRSet.getString(3));
 	      aAddrVals[3] = oRSet.getString(4);
 	      aAddrVals[4] = oRSet.getString(5);
 	      aAddrVals[6] = oRSet.getString(7);
@@ -870,7 +873,7 @@ public abstract class Job extends DBPersist {
 	      if (DebugFile.trace) DebugFile.writeln("Neither member nor user found for recipient "+aRecipients[r]);
 	      oRSet.close();
 	      Arrays.fill(aAddrVals,null);
-	      aAddrVals[2] = aRecipients[r];
+	      aAddrVals[2] = MailMessage.sanitizeAddress(aRecipients[r]);
 	    }
 	  }
 

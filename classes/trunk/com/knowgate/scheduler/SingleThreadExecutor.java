@@ -23,6 +23,7 @@ import com.knowgate.dataobjs.DBBind;
 import com.knowgate.dataobjs.DBSubset;
 
 import com.knowgate.debug.DebugFile;
+import com.knowgate.debug.StackTraceUtil;
 
 import com.knowgate.misc.Gadgets;
 
@@ -86,6 +87,8 @@ public class SingleThreadExecutor extends Thread {
   public SingleThreadExecutor (String sPropertiesFilePath)
     throws FileNotFoundException, IOException {
 
+    if (DebugFile.trace) DebugFile.writeln("new SingleThreadExecutor("+sPropertiesFilePath+")");
+
 	oGlobalDbb = null;
 	
     sJob = null;
@@ -116,6 +119,8 @@ public class SingleThreadExecutor extends Thread {
   public SingleThreadExecutor (String sPropertiesFilePath, String sJobId)
     throws FileNotFoundException, IOException {
 
+    if (DebugFile.trace) DebugFile.writeln("new SingleThreadExecutor("+sPropertiesFilePath+","+sJobId+")");
+
 	oGlobalDbb = null;
 
     sJob = sJobId;
@@ -145,6 +150,8 @@ public class SingleThreadExecutor extends Thread {
    */
   public SingleThreadExecutor (Properties oProps, String sJobId) {
 
+    if (DebugFile.trace) DebugFile.writeln("new SingleThreadExecutor([Properties],"+sJobId+")");
+
 	oGlobalDbb = null;
 
     sJob = sJobId;
@@ -152,6 +159,10 @@ public class SingleThreadExecutor extends Thread {
     bContinue = true;
 
     oEnvProps = oProps;
+    
+    oGlobalDbb = new DBBind(oProps);
+
+	sEnvProps = oGlobalDbb.getProfileName();
 
     oCallbacks = new LinkedList();
   } // SingleThreadExecutor
@@ -332,14 +343,31 @@ public class SingleThreadExecutor extends Thread {
 
             oAtm = new Atom(oRst, oMDt);
 
-            oJob.process(oAtm);
-
-            if (DebugFile.trace)
+		    try {
+              oJob.process(oAtm);
+              oAtm.archive(oCon);          	
+              if (DebugFile.trace)
               DebugFile.writeln("Thread " + String.valueOf(currentThread().getId()) + " consumed Atom " + String.valueOf(oAtm.getInt(DB.pg_atom)));
+      		  if (iCallbacks>0) callBack(WorkerThreadCallback.WT_ATOM_CONSUME, oJob.getString(DB.gu_job), null, oAtm.getString(DB.tx_email));
+		    }
+            catch (Exception e) {
+              if (DebugFile.trace) {
+                DebugFile.writeln(getName() + " " + e.getClass().getName() + " job " + oJob.getString(DB.gu_job) + " atom " + String.valueOf(oAtm.getInt(DB.pg_atom)) + e.getMessage());
+                DebugFile.writeln(StackTraceUtil.getStackTrace(e));
+              }
 
-            oAtm.archive(oCon);
+              sLastError = e.getClass().getName() + ", job " + oJob.getString(DB.gu_job) + " ";
+              sLastError = "atom " + String.valueOf(oAtm.getInt(DB.pg_atom)) + " ";
+              sLastError += e.getMessage() + "\n" + StackTraceUtil.getStackTrace(e) + "\n";
+              try {
+                oAtm.setStatus(oCon, Atom.STATUS_INTERRUPTED, e.getClass().getName() + " " + e.getMessage());
+              } catch (SQLException sqle) {
+                if (DebugFile.trace) DebugFile.writeln("Atom.setStatus() SQLException " + sqle.getMessage());
+              }
+              oJob.log(sLastError);
 
-      		if (iCallbacks>0) callBack(WorkerThreadCallback.WT_ATOM_CONSUME, oJob.getString(DB.gu_job), null, oAtm.getString(DB.tx_email));
+              if (iCallbacks>0) callBack(WorkerThreadCallback.WT_ATOM_CONSUME, "Thread " + getName() + " " + sLastError, e, oJob);
+            }
 
             if (oJob.pending()==0) {
               oJob.setStatus(oCon, Job.STATUS_FINISHED);
@@ -358,19 +386,6 @@ public class SingleThreadExecutor extends Thread {
         oCon.close("SingleThreadExecutor_"+String.valueOf(currentThread().getId()));
 
       if (oGlobalDbb==null && oDBB!=null) oDBB.close();
-    }
-    catch (MessagingException e) {
-
-	  try { if (oCon!=null) if (!oCon.isClosed()) oCon.close(); } catch (Exception ignore) {}
-	  
-      if (oGlobalDbb==null && oDBB!=null) oDBB.close();
-
-      sLastError = "MessagingException " + e.getMessage();
-
-      if (iCallbacks>0) callBack(-1, sLastError, new MessagingException(e.getMessage(), e.getNextException()), null);
-
-      if (oJob!=null) oJob.log(sLastError + "\n");
-
     }
     catch (SQLException e) {
 
