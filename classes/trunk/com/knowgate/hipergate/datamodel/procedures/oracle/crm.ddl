@@ -14,6 +14,7 @@ CREATE OR REPLACE PROCEDURE k_sp_del_contact (ContactId CHAR) IS
   GuWorkArea CHAR(32);
 
 BEGIN
+  UPDATE k_sms_audit SET gu_contact=NULL WHERE gu_contact=ContactId;
   DELETE k_x_activity_audience WHERE gu_contact=ContactId;
   DELETE k_contact_education WHERE gu_contact=ContactId;
   DELETE k_x_duty_resource WHERE nm_resource=ContactId;
