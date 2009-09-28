@@ -62,10 +62,12 @@ import com.knowgate.misc.VCardParser;
 import com.knowgate.acl.UserLoader;
 import com.knowgate.crm.ContactLoader;
 import com.knowgate.crm.CompanyLoader;
+import com.knowgate.crm.DistributionList;
 import com.knowgate.crm.VCardLoader;
 import com.knowgate.addrbook.FellowLoader;
 import com.knowgate.hipergate.ProductLoader;
 import com.knowgate.hipergate.DespatchAdviceLoader;
+import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBSubset;
 import com.knowgate.dataobjs.DBColumn;
 
@@ -76,7 +78,7 @@ public class ImportExport {
   "DISCARDFILE", "CHARSET", "CHARACTERSET", "ROWDELIM", "COLDELIM", "RECOVERABLE",
   "UNRECOVERABLE", "PRESERVESPACE", "WORKAREA", "MAXERRORS", "INSERTLOOKUPS", "SKIP",
   "CATEGORY", "USERS", "CONTACTS", "COMPANIES", "PRODUCTS", "FELLOWS", "DESPATCHS","VCARDS",
-  "WITHOUT", "DUPLICATED", "NAMES", "EMAILS" };
+  "WITHOUT", "DUPLICATED", "NAMES", "EMAILS", "LIST" };
 
   // ---------------------------------------------------------------------------
 
@@ -100,7 +102,7 @@ public class ImportExport {
    * @return Count of errors found or zero if operation was successfully completed
    * @throws ImportExportException
    */
-  public int perform (String sControlCmdLine)
+  public int perform (final String sControlCmdLine)
     throws ImportExportException {
 
     if (DebugFile.trace) {
@@ -117,7 +119,7 @@ public class ImportExport {
     String sCmd=null, sEntity=null, sCharSet="ISO8859_1", sInFile=null,
            sBadFile=null, sDiscardFile=null,sOutFile=null,
            sConnectStr=null, sUser=null, sPwd=null, sSchema=null,
-           sWorkArea=null,sCategory=null,sWhere=null;
+           sWorkArea=null,sCategory=null,sWhere=null,sDeList=null,sGuList=null;
     int iFlags = 0;
     boolean bRecoverable=true, bPreserveSpace=false, bAllCaps=false;
     String sToken,sLine;
@@ -409,6 +411,16 @@ public class ImportExport {
             throw new ImportExportException("WITHOUT clause is only allowed for CONTACTS not for "+sEntity);
 		  }
         } // fi
+        else if (sToken.equalsIgnoreCase("LIST")) {
+		  if (sEntity.equalsIgnoreCase("CONTACTS")) {
+		    iFlags |= ContactLoader.ADD_TO_LIST;
+		  } else if (sEntity.equalsIgnoreCase("COMPANIES")) {
+		    iFlags |= CompanyLoader.ADD_TO_LIST;
+		  } else {
+            throw new ImportExportException("Only CONTACTS or COMPANIES may be added to a LIST");
+		  }
+          sDeList=aCmdLine[++t];
+        } // fi
         else if (sToken.equalsIgnoreCase("(")) {
           iParenthesisNesting++;
           if (DebugFile.trace) DebugFile.writeln("open parenthesis, count is "+String.valueOf(iParenthesisNesting));
@@ -579,6 +591,48 @@ public class ImportExport {
         throw new ImportExportException("SQLException " + sqle.getMessage());
       }
     } // fi
+
+	// Get List GUID or create a new one
+	if (sDeList!=null) {
+      if (DebugFile.trace) DebugFile.writeln("  Retrieving GUID for list "+sDeList);
+	  if (sWorkArea==null)  
+        throw new ImportExportException("WORKAREA parameter is required when specifying a target LIST");
+	  short iTpList = 0;
+	  PreparedStatement oList = null;
+	  ResultSet oRist = null;
+	  try {
+	    oList = oConn.prepareStatement("SELECT "+DB.gu_list+","+DB.tp_list+" FROM "+DB.k_lists+" WHERE "+DB.gu_workarea+"=? AND ("+DB.gu_list+"=? OR "+DB.de_list+"=?)",ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+        oList.setString(1, sWorkArea);
+	    oList.setString(2, sDeList);
+	    oList.setString(3, sDeList);
+	    oRist = oList.executeQuery();
+	    if (oRist.next()) {
+	      sGuList = oRist.getString(1);
+		  iTpList = oRist.getShort(2);
+	    }
+	    oRist.close();
+	    oRist=null;
+	    oList.close();
+	    oList=null;
+	    if (sGuList==null) {
+	  	  sGuList = Gadgets.generateUUID();
+	  	  oList = oConn.prepareStatement("INSERT INTO "+DB.k_lists+"("+DB.gu_list+","+DB.tp_list+","+DB.gu_workarea+","+DB.de_list+","+DB.tx_subject+") VALUES(?,?,?,?,?)");
+		  oList.setString(1, sGuList);
+		  oList.setShort (2, DistributionList.TYPE_STATIC);
+		  oList.setString(3, sWorkArea);
+		  oList.setString(4, sDeList);
+		  oList.setString(5, sDeList);
+		  oList.executeUpdate();
+		  oList.close();	
+	      oList=null;
+	    } else if (iTpList!=DistributionList.TYPE_STATIC && iTpList!=DistributionList.TYPE_DIRECT)
+          throw new ImportExportException(sEntity+" can only be loaded at STATIC or DIRECT lists");	  
+        if (DebugFile.trace) DebugFile.writeln("  gu_list="+sGuList);
+	  } catch (SQLException sqle) {
+	    if (oRist!=null) { try { oRist.close(); } catch (SQLException ignore) {} }
+	    if (oList!=null) { try { oList.close(); } catch (SQLException ignore) {} }
+	  }	
+	} // fi (sDeList)
 
     // ***************
     // File handlers
@@ -804,11 +858,27 @@ public class ImportExport {
                         for (c=0; c<iColFmtsCount; c++) {
                           oColFmt = oColumns.getColumn(c);
                           if (oColFmt.getSqlType()!=Types.NULL) {
-                            if (DebugFile.trace) DebugFile.writeln("  ImportLoader.put("+oColFmt.getName()+"("+String.valueOf(oColFmt.getPosition())+"),"+aLine[c]+")");
-                            oImplLoad.put(oColFmt.getPosition(), oColFmt.convert(aLine[c].toUpperCase()));
+                          	String sColName = oColFmt.getName();
+                            if (DebugFile.trace) DebugFile.writeln("  ImportLoader.put("+sColName+"("+String.valueOf(oColFmt.getPosition())+"),"+aLine[c]+")");
+                            if (sColName.equalsIgnoreCase(DB.tx_email) ||
+                            	sColName.equalsIgnoreCase(DB.tx_email_alt) ||
+                                sColName.equalsIgnoreCase(DB.tx_alt_email) ||
+                                sColName.equalsIgnoreCase(DB.tx_main_email) ||
+                                sColName.equalsIgnoreCase(DB.tx_comments) ||
+                                sColName.equalsIgnoreCase(DB.tx_remarks) ||
+                                sColName.equalsIgnoreCase(DB.tx_nickname) ||
+                                sColName.equalsIgnoreCase(DB.tx_pwd) ||
+                                sColName.equalsIgnoreCase(DB.tx_pwd_sign) ||
+                                sColName.startsWith("url_") ||
+                                sColName.startsWith("de_") ||
+                                sColName.startsWith("gu_") ||
+                                sColName.startsWith("id_") ||
+                                sColName.startsWith("tp_") )
+                              oImplLoad.put(oColFmt.getPosition(), oColFmt.convert(aLine[c]));
+                            else
+                              oImplLoad.put(oColFmt.getPosition(), oColFmt.convert(aLine[c].toUpperCase()));
                           } // fi (getSqlType()!=NULL)
                         } // next c)
-                        if (null!=sCategory) oImplLoad.put("gu_category", sCategory);
                       } else {
                         for (c=0; c<iColFmtsCount; c++) {
                           oColFmt = oColumns.getColumn(c);
@@ -817,8 +887,9 @@ public class ImportExport {
                             oImplLoad.put(oColFmt.getPosition(), oColFmt.convert(aLine[c]));
                           } // fi (getSqlType()!=NULL)
                         } // next c)
-                        if (null!=sCategory) oImplLoad.put("gu_category", sCategory);
                       } // fi (ALLCAPS)
+                      if (null!=sCategory) oImplLoad.put("gu_category", sCategory);
+                      if (null!=sGuList) oImplLoad.put("gu_list", sGuList);
                       oImplLoad.store(oConn, sWorkArea, iFlags);
                     } catch (NumberFormatException xcpt) {
                       iErrorCount++;
