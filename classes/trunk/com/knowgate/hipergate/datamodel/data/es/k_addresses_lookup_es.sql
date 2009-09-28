@@ -51,15 +51,15 @@ INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es,tr
 INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es,tr_en) VALUES('d595ec151032e53e7e9100062b8c605a','es',49,'49','ZAMORA',                 'ZAMORA');
 INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es,tr_en) VALUES('d595ec151032e53e7e9100062b8c605a','es',50,'50','ZARAGOZA',               'ZARAGOZA');
 
-INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',1,'ACCESO','ACCESO');
-INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',2,'ACEQUIA','ACEQUIA');
-INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',3,'ALAMEDA','ALAMEDA');
-INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',4,'ALQUERIA','ALQUERIA');
-INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',5,'ALQUERIAS','ALQUERIAS');
-INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',6,'ALTO','ALTO');
-INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',7,'APARTAMENTOS','APARTAMENTOS');
-INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',8,'APARTAMENTS','APARTAMENTS');
-INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',9,'APEADEIRO','APEADEIRO');
+INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',1, 'ACCESO','ACCESO');
+INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',2, 'ACEQUIA','ACEQUIA');
+INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',3, 'ALAMEDA','ALAMEDA');
+INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',4, 'ALQUERIA','ALQUERIA');
+INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',5, 'ALQUERIAS','ALQUERIAS');
+INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',6, 'ALTO','ALTO');
+INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',7, 'APARTAMENTOS','APARTAMENTOS');
+INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',8, 'APARTAMENTS','APARTAMENTS');
+INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',9, 'APEADEIRO','APEADEIRO');
 INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',10,'APDO. POSTAL','APDO. POSTAL');
 INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',11,'APEADERO','APEADERO');
 INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',12,'ARCO','ARCO');
@@ -196,8 +196,3 @@ INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) V
 INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',143,'PROLONGACIÓ','PROLONGACIÓ');
 INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',144,'PROLONGACIÓN','PROLONGACIÓN');
 INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',145,'PUEBLO','PUEBLO');
-INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',146,'POLÍGONO','POLÍGONO');
-INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',147,'RUA','RUA');
-INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',148,'RUE','RUE');
-INSERT INTO k_addresses_lookup (gu_owner,id_section,pg_lookup,vl_lookup,tr_es) VALUES ('d595ec151032e53e7e9100062b8c605a','tp_street',149,'URBANIZACIÓN','URBANIZACIÓN');
-
