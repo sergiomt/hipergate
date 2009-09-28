@@ -36,89 +36,179 @@ import java.util.Date;
 
 import java.sql.SQLException;
 
+import java.util.Enumeration;
+import java.util.NoSuchElementException;
+
+import com.knowgate.addrbook.Meeting;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBBind;
 import com.knowgate.dataobjs.DBSubset;
 import com.knowgate.misc.Calendar;
+import com.knowgate.misc.Month;
 
-public class MonthPlan {
+/**
+ * Enumeration of meetings for a given month
+ */
+ 
+public class MonthPlan implements Enumeration<Meeting> {
 
   private DBSubset oMeetings;
   private int iMeetCount;
-  
-  private Date dtFirstDay, dtLastDay, dtNextMonth;
+  private int iIterator;
+  private Month oThisMonth;
+  private final long lOneDayMilis = 24l*60l*60l*1000l;
     
-  public MonthPlan() { 
-    iMeetCount = 0;    
+  public MonthPlan() {
+  	oThisMonth = null;
+  	oMeetings = null;
+    iMeetCount = 0;
+    iIterator = 2147483647;
   }
   
-  private void setDays (int iYearMinus1900, int iMonthZeroBased)  {
-  	final long lOneDayMilis = 24l*60l*60l*1000l;
-    dtFirstDay = new Date(iYearMinus1900, iMonthZeroBased, 1);
-    dtNextMonth = new Date(dtFirstDay.getTime()+(((long)Calendar.LastDay(iMonthZeroBased,iYearMinus1900+1900))*lOneDayMilis));
-    dtLastDay = new Date(dtNextMonth.getTime()-lOneDayMilis);
+  /**
+   * @return Date of first day of the month
+   */
+  public Date firstDay() {
+  	return oThisMonth.firstDay();
   }
 
-  public Date firstDay() {
-  	return dtFirstDay;
-  }
+  /**
+   * @return Date of last day of the month
+   */
   
   public Date lastDay() {
-  	return dtLastDay;
+  	return oThisMonth.lastDay();
   }
 
+  /**
+   * @return Date of first day of next month
+   */
   public Date nextMonth() {
-  	return dtNextMonth;
+  	return new Date(firstDay().getTime()+(((long)Calendar.LastDay(oThisMonth.getMonth(),oThisMonth.getYear()+1900))*lOneDayMilis));
   }
+
+  /**
+   * @return <b>true</b> if the given month day [1..31] has any mettings
+   * @since 5.0
+   */
+
+  public boolean hasAnyMeeting(int nMonthDay) {
+	boolean bHasMeetings = false;
+	long lDay = new Date(this.firstDay().getTime()+((long) nMonthDay)*lOneDayMilis).getTime();
+    int m = 0;
+    while (m<iMeetCount && oMeetings.getDate(2,m).getTime()<lDay) m++;
+	lDay += lOneDayMilis;
+	if (m<iMeetCount) {
+	  bHasMeetings = oMeetings.getDate(2,m).getTime()<lDay;
+	}
+	return bHasMeetings;
+  } // hasAnyMeeting
+
+  /**
+   * Load meetings for a Fellow
+   * @param oConn JDCConnection
+   * @param iDomainId int Domain Id.
+   * @param sWorkAreaId Work Area GUID
+   * @param sFellowId Fellow GUID
+   * @param iYearMinus1900 int Desired year minus 1900
+   * @param iMonthZeroBased int Desired month (zero based) [0..11]
+   * @throws SQLException
+   * @return Total number of meetings in given month
+   */
 
   public int loadMeetingsForFellow(JDCConnection oConn, int iDomainId, String sWorkAreaId,
                                    String sFellowId, int iYearMinus1900, int iMonthZeroBased)
     throws SQLException {
   
-    setDays (iYearMinus1900, iMonthZeroBased);
+    oThisMonth = new Month(iYearMinus1900, iMonthZeroBased);
     
     oMeetings = new DBSubset(DB.k_meetings + " m," + DB.k_x_meeting_fellow + " f",
     			"m." + DB.gu_meeting + ",m." + DB.dt_start + ",m." + DB.bo_private + ",m." + DB.tx_meeting + ",m." + DB.dt_end,
 				"m."+DB.id_domain+"=? AND m."+DB.gu_workarea+"=? AND "+
-    			"f." + DB.gu_meeting + "=m." + DB.gu_meeting + " AND f." + DB.gu_fellow + "=? AND m." + DB.dt_start + " BETWEEN " + DBBind.escape(dtFirstDay, "d") + " AND " + DBBind.escape(dtNextMonth, "d") + " ORDER BY 2", 60);
+    			"f." + DB.gu_meeting + "=m." + DB.gu_meeting + " AND f." + DB.gu_fellow + "=? AND m." + DB.dt_start + " BETWEEN " + DBBind.escape(firstDay(), "d") + " AND " + DBBind.escape(nextMonth(), "d") + " ORDER BY 2", 60);
 
     iMeetCount = oMeetings.load(oConn, new Object[]{new Integer(iDomainId), sWorkAreaId, sFellowId});    
 
+    iIterator = 0;
+
     return iMeetCount;
   } // loadMeetingsForFellow
+
+  /**
+   * Load meetings taking place at a Room
+   * @param oConn JDCConnection
+   * @param iDomainId int Domain Id.
+   * @param sWorkAreaId Work Area GUID
+   * @param sFellowId Fellow GUID
+   * @param iYearMinus1900 int Desired year minus 1900
+   * @param iMonthZeroBased int Desired month (zero based) [0..11]
+   * @throws SQLException
+   * @return Total number of meetings in given month
+   */
   
   public int loadMeetingsForRoom(JDCConnection oConn, int iDomainId, String sWorkAreaId,
                                  String sRoomNm, int iYearMinus1900, int iMonthZeroBased)
     throws SQLException {
   
-    setDays (iYearMinus1900, iMonthZeroBased);
+    oThisMonth = new Month(iYearMinus1900, iMonthZeroBased);
     
     oMeetings = new DBSubset(DB.k_meetings + " m," + DB.k_x_meeting_room + " f",
     			"m." + DB.gu_meeting + ",m." + DB.dt_start + ",m." + DB.bo_private + ",m." + DB.tx_meeting + ",m." + DB.dt_end,
 				"m."+DB.id_domain+"=? AND m."+DB.gu_workarea+"=? AND "+
-    			"f." + DB.gu_meeting + "=m." + DB.gu_meeting + " AND f." + DB.nm_room + "=? AND m." + DB.dt_start + " BETWEEN " + DBBind.escape(dtFirstDay, "d") + " AND " + DBBind.escape(dtNextMonth, "d") + " ORDER BY 2", 60);
+    			"f." + DB.gu_meeting + "=m." + DB.gu_meeting + " AND f." + DB.nm_room + "=? AND m." + DB.dt_start + " BETWEEN " + DBBind.escape(firstDay(), "d") + " AND " + DBBind.escape(nextMonth(), "d") + " ORDER BY 2", 60);
 
     iMeetCount = oMeetings.load(oConn, new Object[]{new Integer(iDomainId), sWorkAreaId, sRoomNm});
 
+    iIterator = 0;
+
     return iMeetCount;
   } // loadMeetingsForRoom
+
+  /**
+   * Load meetings taking place at an Address
+   * @param oConn JDCConnection
+   * @param iDomainId int Domain Id.
+   * @param sWorkAreaId Work Area GUID
+   * @param sAddrId Address GUID
+   * @param iYearMinus1900 int Desired year minus 1900
+   * @param iMonthZeroBased int Desired month (zero based) [0..11]
+   * @throws SQLException
+   * @return Total number of meetings in given month
+   */
 
   public int loadMeetingsForAddress(JDCConnection oConn, int iDomainId, String sWorkAreaId,
                                     String sAddrId, int iYearMinus1900, int iMonthZeroBased)
     throws SQLException {
   
-    setDays (iYearMinus1900, iMonthZeroBased);
+    oThisMonth = new Month(iYearMinus1900, iMonthZeroBased);
     
     oMeetings = new DBSubset(DB.k_meetings + " m",
     			"m." + DB.gu_meeting + ",m." + DB.dt_start + ",m." + DB.bo_private + ",m." + DB.tx_meeting + ",m." + DB.dt_end,
 				"m."+DB.id_domain+"=? AND m."+DB.gu_workarea+"=? AND "+
-    			"m." + DB.gu_address + "=? AND m." + DB.dt_start + " BETWEEN " + DBBind.escape(dtFirstDay, "d") + " AND " + DBBind.escape(dtNextMonth, "d") + " ORDER BY 2", 60);
+    			"m." + DB.gu_address + "=? AND m." + DB.dt_start + " BETWEEN " + DBBind.escape(firstDay(), "d") + " AND " + DBBind.escape(nextMonth(), "d") + " ORDER BY 2", 60);
 
     iMeetCount = oMeetings.load(oConn, new Object[]{new Integer(iDomainId), sWorkAreaId, sAddrId});    
 
+    iIterator = 0;
+
     return iMeetCount;
   } // loadMeetingsForAddress
+  
+  public boolean hasMoreElements() {
+    return iIterator < iMeetCount;
+  }
+
+  public Meeting nextElement() throws NoSuchElementException {
+    if (iIterator>=iMeetCount) throw new NoSuchElementException("MonthPlan.nextElement()");
+	Meeting oMeet = new Meeting(getMeetingGuid(iIterator));
+	oMeet.put(DB.tx_meeting, getMeetingTitle(iIterator));
+	oMeet.put(DB.dt_start, getMeetingStart(iIterator));
+	oMeet.put(DB.dt_end, getMeetingEnd(iIterator));
+	oMeet.put(DB.bo_private, isMeetingPrivate(iIterator));
+    iIterator++;
+    return oMeet;
+  }
   
   public String getMeetingGuid(int nMeeting) {
   	return oMeetings.getString(0, nMeeting);

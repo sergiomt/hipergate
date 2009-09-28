@@ -255,7 +255,7 @@ public class Meeting extends DBPersist {
     Statement oStmt = oConn.createStatement();
     oStmt.executeUpdate("DELETE FROM " + DB.k_x_meeting_fellow + " WHERE " + DB.gu_meeting + "='" + getString(DB.gu_meeting) + "'");
     oStmt.executeUpdate("DELETE FROM " + DB.k_x_meeting_contact + " WHERE " + DB.gu_meeting + "='" + getString(DB.gu_meeting) + "'");
-    oStmt.executeUpdate("UPDATE " + DB.k_meetings + " SET " + DB.dt_modified + "=" + DBBind.Functions.GETDATE);
+    oStmt.executeUpdate("UPDATE " + DB.k_meetings + " SET " + DB.dt_modified + "=" + DBBind.Functions.GETDATE + " WHERE " + DB.gu_meeting + "='" + getString(DB.gu_meeting) + "'");
     oStmt.close();
 
   } // clearAttendants
@@ -272,7 +272,7 @@ public class Meeting extends DBPersist {
   public void clearRooms(JDCConnection oConn) throws SQLException {
     Statement oStmt = oConn.createStatement();
     oStmt.executeUpdate("DELETE FROM " + DB.k_x_meeting_room + " WHERE " + DB.gu_meeting + "='" + getString(DB.gu_meeting) + "'");
-    oStmt.executeUpdate("UPDATE " + DB.k_meetings + " SET " + DB.dt_modified + "=" + DBBind.Functions.GETDATE);
+    oStmt.executeUpdate("UPDATE " + DB.k_meetings + " SET " + DB.dt_modified + "=" + DBBind.Functions.GETDATE + " WHERE " + DB.gu_meeting + "='" + getString(DB.gu_meeting) + "'");
     oStmt.close();
   } // clearRooms
 
@@ -323,7 +323,7 @@ public class Meeting extends DBPersist {
     }
 
     Statement oUpdt = oConn.createStatement();
-    oUpdt.executeUpdate("UPDATE " + DB.k_meetings + " SET " + DB.dt_modified + "=" + DBBind.Functions.GETDATE);
+    oUpdt.executeUpdate("UPDATE " + DB.k_meetings + " SET " + DB.dt_modified + "=" + DBBind.Functions.GETDATE  + " WHERE " + DB.gu_meeting + "='" + getString(DB.gu_meeting) + "'");
     oUpdt.close();
 
     if (DebugFile.trace) {
@@ -331,6 +331,76 @@ public class Meeting extends DBPersist {
       DebugFile.writeln("End Meeting.setRoom()");
     }
   } // setRoom
+
+  // ----------------------------------------------------------
+
+  /**
+   * <p>Assign Attendant to Meeting</p>
+   * <p>Attendants may be Fellows or Contacts</p>
+   * <p>If Attendant was already assigned an SQLException in thrown.</p>
+   * @param oConn Database Connection
+   * @param sAttendantId {@link Fellow} or {@link Contact} Unique Identifier
+   * @throws SQLException
+   * @since 5.0
+   */
+
+  public void addAttendant(JDCConnection oConn, String sAttendantId) throws SQLException {
+    boolean bExists;
+    PreparedStatement oStmt;
+    Statement oExec;
+    Statement oUpdt;
+    ResultSet oRSet;
+    String sSQL;
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin Meeting.addAttendant([Connection], " + sAttendantId + ")");
+      DebugFile.incIdent();
+    }
+
+    sSQL = "SELECT NULL FROM " + DB.k_fellows + " WHERE " + DB.gu_fellow + "=?";
+    if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement( " + sSQL + ")");
+    oStmt = oConn.prepareStatement(sSQL, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+    oStmt.setString(1,sAttendantId);
+    oRSet = oStmt.executeQuery();
+    bExists = oRSet.next();
+    oRSet.close();
+    oStmt.close();
+
+    if (bExists) {
+      sSQL = "INSERT INTO " + DB.k_x_meeting_fellow + "(" + DB.gu_meeting + "," + DB.gu_fellow + "," + DB.dt_start + "," + DB.dt_end + ") VALUES ('" + getString(DB.gu_meeting) + "','" + sAttendantId + "'," + DBBind.escape(getTimestamp(DB.dt_start), "ts") + "," + DBBind.escape(getTimestamp(DB.dt_end), "ts") + ")";
+      oExec = oConn.createStatement();
+      if (DebugFile.trace) DebugFile.writeln("Statement.execute(" + sSQL + ")");
+      oExec.executeUpdate(sSQL);
+      oExec.close();
+     }
+     else {
+       sSQL = "SELECT NULL FROM " + DB.k_contacts + " WHERE " + DB.gu_contact + "=?";
+       if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement( " + sSQL + ")");
+       oStmt = oConn.prepareStatement(sSQL, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+       oStmt.setString(1,sAttendantId);
+       oRSet = oStmt.executeQuery();
+       bExists = oRSet.next();
+       oRSet.close();
+       oStmt.close();
+
+       if (bExists) {
+         sSQL = "INSERT INTO " + DB.k_x_meeting_contact + "(" + DB.gu_meeting + "," + DB.gu_contact + "," + DB.dt_start + "," + DB.dt_end + ") VALUES ('" + getString(DB.gu_meeting) + "','" + sAttendantId + "'," + DBBind.escape(getTimestamp(DB.dt_start), "ts") + "," + DBBind.escape(getTimestamp(DB.dt_end), "ts") + ")";
+         oExec = oConn.createStatement();
+         if (DebugFile.trace) DebugFile.writeln("Statement.execute(" + sSQL + ")");
+         oExec.executeUpdate(sSQL);
+         oExec.close();
+        }
+      }
+
+    oUpdt = oConn.createStatement();
+    oUpdt.executeUpdate("UPDATE " + DB.k_meetings + " SET " + DB.dt_modified + "=" + DBBind.Functions.GETDATE + " WHERE " + DB.gu_meeting + "='" + getString(DB.gu_meeting) + "'");
+    oUpdt.close();
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End Meeting.addAttendant()");
+    }
+  } // addAttendant
 
   // ----------------------------------------------------------
 
@@ -347,6 +417,7 @@ public class Meeting extends DBPersist {
     boolean bAttends;
     boolean bExists;
     PreparedStatement oStmt;
+    Statement oUpdt;
     Statement oExec;
     ResultSet oRSet;
     String sSQL;
@@ -369,8 +440,12 @@ public class Meeting extends DBPersist {
       oExec = oConn.createStatement();
 
       if (DebugFile.trace) DebugFile.writeln("Statement.execute(" + sSQL + ")");
-      oExec.execute(sSQL);
+      oExec.executeUpdate(sSQL);
       oExec.close();
+
+      oUpdt = oConn.createStatement();
+      oUpdt.executeUpdate("UPDATE " + DB.k_meetings + " SET " + DB.dt_modified + "=" + DBBind.Functions.GETDATE + " WHERE " + DB.gu_meeting + "='" + getString(DB.gu_meeting) + "'");
+      oUpdt.close();
     }
     else {
       sSQL = "SELECT NULL FROM " + DB.k_x_meeting_contact + " WHERE " + DB.gu_meeting + "=? AND " + DB.gu_contact + "=?";
@@ -387,50 +462,19 @@ public class Meeting extends DBPersist {
         sSQL = "UPDATE " + DB.k_x_meeting_contact + " SET " + DB.dt_start + "=" + DBBind.escape(getTimestamp(DB.dt_start), "ts") + "," + DB.dt_end + "=" + DBBind.escape(getTimestamp(DB.dt_end), "ts") + " WHERE " + DB.gu_meeting + "='" + getString(DB.gu_meeting) + "' AND " + DB.gu_contact + "='" + sAttendantId + "'";
         oExec = oConn.createStatement();
         if (DebugFile.trace) DebugFile.writeln("Statement.execute(" + sSQL + ")");
-        oExec.execute(sSQL);
+        oExec.executeUpdate(sSQL);
         oExec.close();
-      }
+
+        oUpdt = oConn.createStatement();
+        oUpdt.executeUpdate("UPDATE " + DB.k_meetings + " SET " + DB.dt_modified + "=" + DBBind.Functions.GETDATE + " WHERE " + DB.gu_meeting + "='" + getString(DB.gu_meeting) + "'");
+        oUpdt.close();      }
+
       else {
-        sSQL = "SELECT NULL FROM " + DB.k_fellows + " WHERE " + DB.gu_fellow + "=?";
-        if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement( " + sSQL + ")");
-        oStmt = oConn.prepareStatement(sSQL, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-        oStmt.setString(1,sAttendantId);
-        oRSet = oStmt.executeQuery();
-        bExists = oRSet.next();
-        oRSet.close();
-        oStmt.close();
 
-        if (bExists) {
-          sSQL = "INSERT INTO " + DB.k_x_meeting_fellow + "(" + DB.gu_meeting + "," + DB.gu_fellow + "," + DB.dt_start + "," + DB.dt_end + ") VALUES ('" + getString(DB.gu_meeting) + "','" + sAttendantId + "'," + DBBind.escape(getTimestamp(DB.dt_start), "ts") + "," + DBBind.escape(getTimestamp(DB.dt_end), "ts") + ")";
-          oExec = oConn.createStatement();
-          if (DebugFile.trace) DebugFile.writeln("Statement.execute(" + sSQL + ")");
-          oExec.execute(sSQL);
-          oExec.close();
-        }
-        else {
-          sSQL = "SELECT NULL FROM " + DB.k_contacts + " WHERE " + DB.gu_contact + "=?";
-          if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement( " + sSQL + ")");
-          oStmt = oConn.prepareStatement(sSQL, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-          oStmt.setString(1,sAttendantId);
-          oRSet = oStmt.executeQuery();
-          bExists = oRSet.next();
-          oRSet.close();
-          oStmt.close();
+		addAttendant(oConn, sAttendantId);
 
-          if (bExists) {
-            sSQL = "INSERT INTO " + DB.k_x_meeting_contact + "(" + DB.gu_meeting + "," + DB.gu_contact + "," + DB.dt_start + "," + DB.dt_end + ") VALUES ('" + getString(DB.gu_meeting) + "','" + sAttendantId + "'," + DBBind.escape(getTimestamp(DB.dt_start), "ts") + "," + DBBind.escape(getTimestamp(DB.dt_end), "ts") + ")";
-            oExec = oConn.createStatement();
-            if (DebugFile.trace) DebugFile.writeln("Statement.execute(" + sSQL + ")");
-            oExec.execute(sSQL);
-            oExec.close();
-          }
-        }
       }
     } // fi (bAttends)
-
-    Statement oUpdt = oConn.createStatement();
-    oUpdt.executeUpdate("UPDATE " + DB.k_meetings + " SET " + DB.dt_modified + "=" + DBBind.Functions.GETDATE);
-    oUpdt.close();
 
     if (DebugFile.trace) {
       DebugFile.decIdent();
