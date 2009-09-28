@@ -57,7 +57,7 @@ import com.knowgate.workareas.WorkArea;
  * @author Sergio Montoro Ten
  * @version 1.0
  */
-public class UserLoader implements ImportLoader {
+public final class UserLoader implements ImportLoader {
 
   private Object[] aValues;
 
