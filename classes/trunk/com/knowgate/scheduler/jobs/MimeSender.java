@@ -374,6 +374,8 @@ public class MimeSender extends Job {
   // ---------------------------------------------------------------------------
 
   public Object process(Atom oAtm) throws SQLException, MessagingException, NullPointerException {
+    final String Activated = "true";
+    final String Yes = "1";
 
     if (DebugFile.trace) {
       DebugFile.writeln("Begin MimeSender.process("+oAtm.getString(DB.gu_job)+":"+String.valueOf(oAtm.getInt(DB.pg_atom))+")");
@@ -421,15 +423,22 @@ public class MimeSender extends Job {
       String sFormat = oAtm.getStringNull(DB.id_format,"plain").toLowerCase();
       if (sFormat.equals("text") || sFormat.equals("txt")) sFormat = "plain";
       if (sFormat.equals("htm")) sFormat = "html";
+      
+	  String sAttachInlineImages = getParameter("attachimages");
+	  if (sAttachInlineImages==null) sAttachInlineImages = Yes;
+	  boolean bAttachInlineImages = Yes.equals(sAttachInlineImages) || Activated.equals(sAttachInlineImages);
 
+	  String sEncoding = getParameter("encoding");
+	  if (sEncoding==null) sEncoding = "UTF-8";
+	  
       if (bPersonalized)
         oSentMsg = oDraft.composeFinalMessage(oHndlr.getSession(), oDraft.getSubject(),
                                               personalizeBody(oAtm), getParameter("id"),
-                                              sFormat);
+                                              sFormat, sEncoding, bAttachInlineImages);
       else
         oSentMsg = oDraft.composeFinalMessage(oHndlr.getSession(), oDraft.getSubject(),
                                               sBody, getParameter("id"),
-                                              sFormat);
+                                              sFormat, sEncoding, bAttachInlineImages);
 
       // If there is no mail address at the atom then send message to recipients
       // that are already set into message object itself.
@@ -455,13 +464,17 @@ public class MimeSender extends Job {
       oSentMsg.setReplyTo(aReply);
 
 	  // Request read notification
-      if ("true".equals(getParameter("notification"))) {
+	  String sNotification = getParameter("notification");
+      if (Activated.equals(sNotification) || Yes.equals(sNotification)) {
         if (DebugFile.trace) DebugFile.writeln("Disposition-Notification-To "+aFrom[0].getAddress());
 	    oSentMsg.addHeader("Disposition-Notification-To", aFrom[0].getAddress());
       }
 	  
       // Send message here
-      oHndlr.sendMessage(oSentMsg);
+      String sTestMode = getParameter("testmode");
+      if (!Activated.equals(sTestMode) && !Yes.equals(sTestMode)) {
+        oHndlr.sendMessage(oSentMsg);
+      }
 
     } catch (Exception e) {
       if (DebugFile.trace) {
@@ -728,7 +741,9 @@ public class MimeSender extends Job {
                                                                 oUsr.getString(DB.gu_user), sType);
                  DraftsHelper.draftUpdate (oCon, oUsr.getInt(DB.id_domain),
                                            oUsr.getString(DB.gu_workarea),
-                                           oMsg.getMessageGuid(), oMsg.getMessageID(),
+                                           oMsg.getMessageGuid(),
+                                           DBCommand.queryStr(oCon, "SELECT "+DB.id_message+" FROM "+DB.k_mime_msgs+
+    								 	                      " WHERE "+DB.gu_mimemsg+"='"+oMsg.getMessageGuid()+"'"),
                                            oLst.getString(DB.tx_from),
                                            oLst.getStringNull(DB.tx_reply,oLst.getString(DB.tx_from)),
                                            oLst.getStringNull(DB.tx_sender,oLst.getString(DB.tx_from)),
