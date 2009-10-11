@@ -56,6 +56,7 @@
     if (oConn!=null)
       if (!oConn.isClosed()) oConn.close(PAGE_NAME);
     response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title="+xcpt.getClass().getName()+"&desc=" + xcpt.getMessage() + "&resume=home.jsp"));    
+    return;
   }
   
 %><?xml version="1.0"?>

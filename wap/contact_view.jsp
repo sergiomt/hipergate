@@ -1,4 +1,4 @@
-﻿<%@ page import="com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBCommand,com.knowgate.crm.Contact,com.knowgate.crm.MemberAddress,com.knowgate.hipergate.Address,com.knowgate.hipergate.DBLanguages" language="java" session="true" contentType="text/vnd.wap.wml;charset=UTF-8" %><%@ include file="inc/dbbind.jsp" %><%
+﻿<%@ page import="com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBCommand,com.knowgate.dataobjs.DBPersist,com.knowgate.dataobjs.RecentlyUsed,com.knowgate.crm.Contact,com.knowgate.crm.MemberAddress,com.knowgate.hipergate.Address,com.knowgate.hipergate.DBLanguages" language="java" session="true" contentType="text/vnd.wap.wml;charset=UTF-8" %><%@ include file="inc/dbbind.jsp" %><%
 /*
   Copyright (C) 2009  Know Gate S.L. All rights reserved.
 
@@ -56,12 +56,22 @@
         sTitle = DBLanguages.getLookUpTranslation(oConn, DB.k_contacts_lookup, oUser.getString(DB.gu_workarea), DB.de_title, sLanguage, oCont.getString(DB.de_title));
     }
 
+    RecentlyUsed oRecent = new RecentlyUsed (DB.k_contacts_recent, 10, DB.gu_contact, DB.gu_user);
+	  DBPersist oItem = new DBPersist (DB.k_contacts_recent, "RecentContact");		
+	  oItem.put (DB.gu_contact, oCont.getString(DB.gu_contact));
+	  oItem.put (DB.full_name, oCont.getStringNull(DB.tx_name,"") + " " + oCont.getStringNull(DB.tx_surname,""));
+	  oItem.put (DB.gu_user, oUser.getString(DB.gu_user));
+	  oItem.put (DB.gu_workarea, oUser.getString(DB.gu_workarea));	
+	  if (!oAddr.isNull(DB.nm_company)) oItem.put (DB.nm_company, oAddr.getString(DB.nm_company));	  
+	  oRecent.add (oConn, oItem);
+
 		oConn.close(PAGE_NAME);
-    
+
   } catch (Exception xcpt) {
     if (oConn!=null)
       if (!oConn.isClosed()) oConn.close(PAGE_NAME);
     response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title="+xcpt.getClass().getName()+"&desc=" + xcpt.getMessage() + "&resume=home.jsp"));    
+    return;
   }
   
 %><?xml version="1.0"?>

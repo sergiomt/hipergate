@@ -136,6 +136,7 @@
 	      DBSubset oUserGroups = oUser.getGroups(oConn);
 	      oUserGroups.setRowDelimiter("','");
 	      oUser.put("groups", "'" + Gadgets.dechomp(oUserGroups.toString(),"','") + "'");
+	      oUser.put("appmask", iAppMask);
 				
 				oUser.allcaps(true);
 

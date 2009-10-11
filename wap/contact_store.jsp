@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.HashMap,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBAudit,com.knowgate.crm.Contact,com.knowgate.crm.Company,com.knowgate.hipergate.Address,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets,com.knowgate.debug.StackTraceUtil" language="java" session="true" contentType="text/vnd.wap.wml;charset=UTF-8" %><%@ include file="inc/dbbind.jsp" %><%
+﻿<%@ page import="java.util.HashMap,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBAudit,com.knowgate.dataobjs.DBPersist,com.knowgate.dataobjs.RecentlyUsed,com.knowgate.crm.Contact,com.knowgate.crm.Company,com.knowgate.hipergate.Address,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets,com.knowgate.debug.StackTraceUtil" language="java" session="true" contentType="text/vnd.wap.wml;charset=UTF-8" %><%@ include file="inc/dbbind.jsp" %><%
 /*
   Copyright (C) 2009  Know Gate S.L. All rights reserved.
 
@@ -254,6 +254,15 @@
       Address.addLookupState (oConn, gu_workarea, id_country, nm_state, oState);
     }
  
+    RecentlyUsed oRecent = new RecentlyUsed (DB.k_contacts_recent, 10, DB.gu_contact, DB.gu_user);
+	  DBPersist oItem = new DBPersist (DB.k_contacts_recent, "RecentContact");		
+	  oItem.put (DB.gu_contact, oCont.getString(DB.gu_contact));
+	  oItem.put (DB.full_name, oCont.getStringNull(DB.tx_name,"") + " " + oCont.getStringNull(DB.tx_surname,""));
+	  oItem.put (DB.gu_user, oUser.getString(DB.gu_user));
+	  oItem.put (DB.gu_workarea, oUser.getString(DB.gu_workarea));	
+	  if (!oAddr.isNull(DB.nm_company)) oItem.put (DB.nm_company, oAddr.getString(DB.nm_company));	  
+	  oRecent.add (oConn, oItem);
+
     DBAudit.log(oConn, Contact.ClassId, sOpCode, oUser.getString(DB.gu_user), oCont.getString(DB.gu_contact), oCont.getStringNull(DB.gu_company,""), 0, 0, oCont.getStringNull(DB.tx_name,"")+" "+oCont.getStringNull(DB.tx_surname,""), oComp.getStringNull(DB.nm_legal,""));
     
     oConn.commit();

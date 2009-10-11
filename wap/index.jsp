@@ -37,20 +37,20 @@ final java.util.ResourceBundle Labels =  java.util.ResourceBundle.getBundle("Lab
 "http://www.wapforum.org/DTD/wml_1.1.xml">
 <wml>
   <card id="login" newcontext="true" title="<%=Labels.getString("title_login")%>">
-    <%=Labels.getString("lbl_welcome")%>
+    hipergate :: <%=Labels.getString("lbl_welcome")%>
     <fieldset>
       <%=Labels.getString("lbl_email")%><br/>
-      <input type="text" name="email" value="admisiones1@eoi.es" />
+      <input type="text" name="email" value="" />
       <br/>
       <%=Labels.getString("lbl_passw")%><br/>
-      <input type="password" name="passw" value="mides13" />
-    </fieldset>
-    
-    <anchor><%=Labels.getString("a_enter")%>
-      <go href="login.jsp" accept-charset="UTF-8" method="post">
-        <postfield name="nickname" value="$(email)"/>
-        <postfield name="pwd_text" value="$(passw)"/>
+      <input type="password" name="passw" value="" />
+      <br/>
+      <anchor><%=Labels.getString("a_enter")%>
+        <go href="login.jsp" accept-charset="UTF-8" method="post">
+          <postfield name="nickname" value="$(email)"/>
+          <postfield name="pwd_text" value="$(passw)"/>
       </go>
-    </anchor>
+      </anchor>
+    </fieldset>
   </card>
 </wml>

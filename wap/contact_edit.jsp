@@ -66,19 +66,21 @@
     sStreetLookUp = Gadgets.replace(Gadgets.replace(GlobalDBLang.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_addresses_lookup, oUser.getString(DB.gu_workarea), DB.tp_street, sLanguage),"<OPTION VALUE=", "<option value="),"</OPTION>","</option>");
     sTitleLookUp  = Gadgets.replace(Gadgets.replace(GlobalDBLang.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_contacts_lookup, oUser.getString(DB.gu_workarea), DB.de_title, sLanguage),"<OPTION VALUE=", "<option value="),"</OPTION>","</option>");
     sCountriesLookUp = Gadgets.replace(Gadgets.replace(GlobalDBLang.getHTMLCountrySelect(oConn, sLanguage),"<OPTION VALUE=", "<option value="),"</OPTION>","</option>");
-    
+
 		oConn.close(PAGE_NAME);
     
   } catch (Exception xcpt) {
     if (oConn!=null)
       if (!oConn.isClosed()) oConn.close(PAGE_NAME);
     response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title="+xcpt.getClass().getName()+"&desc=" + xcpt.getMessage() + "&resume=home.jsp"));    
+    return;
   }
   
 %><?xml version="1.0"?>
 <!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN"
 "http://www.wapforum.org/DTD/wml_1.1.xml">
 <wml>
+  <head><meta http-equiv="cache-control" content="no-cache"/></head>
   <card id="contact_view">
     <%=Labels.getString("lbl_name")%><br/>
     <input type="text" name="name<%=N%>" format="<%=F%>" maxlength="100" value="<%=oCont.getStringNull(DB.tx_name,"")%>" /><br/>
