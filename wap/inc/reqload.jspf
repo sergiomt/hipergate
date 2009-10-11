@@ -1,0 +1,147 @@
+<%!
+
+public static String utf8(String sInput) {
+  String sOutput = null;
+  if (null==sInput) return null;
+  try {
+    sOutput = new String(sInput.getBytes("8859_1"),"UTF8");
+  }
+  catch (java.io.UnsupportedEncodingException neverthrown) { }    
+  return sOutput;
+}
+
+public static void loadRequest(com.knowgate.jdc.JDCConnection j, HttpServletRequest r, DBPersist p)
+  throws java.text.ParseException, java.lang.NullPointerException, java.sql.SQLException,
+         org.apache.oro.text.regex.MalformedPatternException
+  {
+  java.util.Iterator i = null;
+  
+  try {
+    i = p.getTable(j).getColumns().iterator();
+  }
+  catch (NullPointerException npe) {
+    throw new NullPointerException("Could not find table " + p.getTableName());
+  }
+  
+  com.knowgate.dataobjs.DBColumn c;
+  String n;
+  String s;
+  String aDt[];
+  java.text.SimpleDateFormat oDateFormat;
+  
+  while (i.hasNext())
+    {
+    c = (com.knowgate.dataobjs.DBColumn) i.next();
+    
+    n = c.getName();
+        
+    s = r.getParameter(n);
+    
+    if (null!=s)
+      {
+      
+      // if (r.getCharacterEncoding()==null) s = utf8(s);
+      
+      s = s.trim();
+      
+      if (s.length()>0)
+        {
+        switch(c.getSqlType())
+          {
+          case java.sql.Types.CHAR:
+          case java.sql.Types.VARCHAR:
+              p.replace(n, s);
+            break;
+          case java.sql.Types.INTEGER:
+            try {
+              p.replace(n, new Integer(s));
+            } catch (NumberFormatException nfe) {
+              throw new NumberFormatException("Value for " + n + " is " + s);
+            }
+            break;
+
+          case java.sql.Types.SMALLINT:    	        	               
+            try {
+              p.replace(n, new Short(s));
+            } catch (NumberFormatException nfe) {
+              throw new NumberFormatException("Value for " + n + " is " + s);
+            }
+            break;
+
+          case java.sql.Types.DOUBLE:
+          case java.sql.Types.REAL:
+            try {
+              p.replace(n, new Double(s.replace(',','.')));
+            } catch (NumberFormatException nfe) {
+              throw new NumberFormatException("Value for " + n + " is " + s);
+            }
+            break;        
+
+          case java.sql.Types.FLOAT:
+            try {
+              p.replace(n, new Float(s.replace(',','.')));
+            } catch (NumberFormatException nfe) {
+              throw new NumberFormatException("Value for " + n + " is " + s);
+            }
+            break;
+
+          case java.sql.Types.NUMERIC:
+          case java.sql.Types.DECIMAL:
+            try {
+              p.replace(n, new java.math.BigDecimal(s.replace(',','.')));
+            } catch (NumberFormatException nfe) {
+              throw new NumberFormatException("Value for " + n + " is " + s);
+            }
+            break;
+            
+	        case java.sql.Types.DATE:
+	          if (s.length()>10) s = s.substring(0,10);
+	          if (com.knowgate.misc.Gadgets.matches(s, "[\\d]{4}-[\\d]{2}-[\\d]{2}")) {
+	            aDt = com.knowgate.misc.Gadgets.split(s,'-');
+	            p.replace(n, new java.util.Date(Integer.parseInt(aDt[0])-1900,Integer.parseInt(aDt[1])-1,Integer.parseInt(aDt[2])));
+	          } else {
+	            oDateFormat = com.knowgate.workareas.WorkArea.getSimpleDateFormat((java.sql.Connection) j, getCookie(r,"workarea", null));
+              p.replace(n, new java.util.Date(oDateFormat.parse(s).getTime()));
+	          }
+
+	          break;
+	    	    
+    	    case java.sql.Types.TIMESTAMP:
+            if (s.length()==10) {
+	            if (com.knowgate.misc.Gadgets.matches(s, "[\\d]{4}-[\\d]{2}-[\\d]{2}")) {
+	              aDt = com.knowgate.misc.Gadgets.split(s,'-');            
+	              p.replace(n, new java.sql.Timestamp(new java.util.Date(Integer.parseInt(aDt[0])-1900,Integer.parseInt(aDt[1])-1,Integer.parseInt(aDt[2])).getTime()));
+              } else {
+	              oDateFormat = new java.text.SimpleDateFormat(com.knowgate.workareas.WorkArea.getDateFormat((java.sql.Connection) j, getCookie(r,"workarea", null))+" HH:mm:ss");
+                p.replace(n, new java.sql.Timestamp(oDateFormat.parse(s).getTime()));              
+              }
+            }
+            else {
+              if (com.knowgate.misc.Gadgets.matches(s, "[\\d]{4}-[\\d]{2}-[\\d]{2} [\\d]{2}:[\\d]{2}:[\\d]{2}")) {
+                oDateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                p.replace(n, new java.sql.Timestamp(oDateFormat.parse(s).getTime()));
+              } else {
+	              oDateFormat = new java.text.SimpleDateFormat(com.knowgate.workareas.WorkArea.getDateFormat((java.sql.Connection) j, getCookie(r,"workarea", null))+" HH:mm:ss");
+                p.replace(n, new java.sql.Timestamp(oDateFormat.parse(s).getTime()));
+              }
+            }
+	          break;
+
+    	    case 1111: // PostgreSQL INTERVAL
+	          try { p.put(n, s, 1111); } catch (java.io.FileNotFoundException neverthrown) {}
+	          break;
+   		                
+          default:
+            try {
+              p.put(n, s, c.getSqlType());
+            } catch (java.io.FileNotFoundException ioe) { /* never thrown */ }
+            //if (c.getSqlType()!=1 && c.getSqlType()!=12) throw new SQLException("Unrecognized type" + String.valueOf(c.getSqlType()));
+          } // end switch
+        } // fi (s!="")
+        else {
+          if (!p.isNull(n)) p.replace(n, null);
+        }
+      } // fi (s!=null)
+    } // wend
+  }
+%>
