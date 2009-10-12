@@ -143,6 +143,7 @@ public final class DB {
 
   public static final String k_bugs = "k_bugs";
   public static final String k_bugs_changelog = "k_bugs_changelog";
+  public static final String k_bugs_track = "k_bugs_track";
   public static final String k_duties = "k_duties";
   public static final String k_duties_lookup = "k_duties_lookup";
   public static final String k_duties_attach = "k_duties_attach";
@@ -744,6 +745,7 @@ public final class DB {
   // k_bugs
   public static final String gu_bug = "gu_bug";
   public static final String pg_bug = "pg_bug";
+  public static final String pg_bug_track = "pg_bug_track";
   public static final String tl_bug = "tl_bug";
   public static final String tp_bug = "tp_bug";
   public static final String gu_bug_ref = "gu_bug_ref";
@@ -763,6 +765,7 @@ public final class DB {
   public static final String tx_bug_brief = "tx_bug_brief";
   public static final String tx_bug_info = "tx_bug_info";
   public static final String id_client = "id_client";
+  public static final String tx_bug_track = "tx_bug_track";
 
   // k_bugs_changelog
   public static final String nm_column = "nm_column";
