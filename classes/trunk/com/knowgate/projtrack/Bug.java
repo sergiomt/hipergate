@@ -62,7 +62,7 @@ import java.sql.Types;
 /**
  * <p>Bug or Project Incident</p>
  * @author Sergio Montoro Ten
- * @version 3.0
+ * @version 5.0
  */
 public class Bug extends DBPersist {
 
@@ -408,6 +408,36 @@ public class Bug extends DBPersist {
     } // fi
     return aBcl;
   } // changeLog
+
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get track of conversations for a bug
+   * @param oConn JDCConnection
+   * @return BugTrack[] or <b>null</b> if there is no track record for this bug
+   * @throws SQLException
+   * @since 3.0
+   */
+  public BugTrack[] getTrack(JDCConnection oConn)
+    throws SQLException {
+    BugTrack[] aTrk;
+    DBSubset oTrk = new DBSubset(DB.k_bugs_track,
+                                 DB.gu_bug+","+DB.pg_bug_track+","+DB.dt_created+","+DB.nm_reporter+","+DB.tx_rep_mail+","+DB.gu_writer+","+DB.tx_bug_track,
+                                 DB.gu_bug+"=? ORDER BY 2 DESC", 20);
+    int iTrk = oTrk.load(oConn, new Object[]{getString(DB.gu_bug)});
+    if (0==iTrk) {
+      aTrk = null;
+    } else {
+      aTrk = new BugTrack[iTrk];
+      for (int l=0; l<iTrk; l++) {
+        aTrk[l] = new BugTrack();
+        aTrk[l].putAll(oTrk.getRowAsMap(l));
+      } // next
+    } // fi
+    return aTrk;
+  } // getTrack
+
+  // ---------------------------------------------------------------------------
 
 
   // ***************************************************************************
