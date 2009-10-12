@@ -1,6 +1,9 @@
 INSERT INTO k_sequences (nm_table,nu_initial,nu_maxval,nu_increase,nu_current) VALUES ('seq_k_bugs', 1, 2147483647, 1, 1)
 GO;
 
+INSERT INTO k_sequences (nm_table,nu_initial,nu_maxval,nu_increase,nu_current) VALUES ('seq_k_bugs_track', 1, 2147483647, 1, 1)
+GO;
+
 CREATE PROCEDURE k_sp_prj_expand @StartWith CHAR(32) AS
 
 DECLARE @lvl AS INTEGER,
@@ -61,6 +64,7 @@ GO;
 
 CREATE PROCEDURE k_sp_del_bug @BugId CHAR(32) AS
   UPDATE k_bugs SET gu_bug_ref=NULL WHERE gu_bug_ref=@BugId
+  DELETE FROM k_bugs_track WHERE gu_bug=@BugId
   DELETE FROM k_bugs_changelog WHERE gu_bug=@BugId
   DELETE FROM k_bugs_attach WHERE gu_bug=@BugId
   DELETE FROM k_bugs WHERE gu_bug=@BugId
