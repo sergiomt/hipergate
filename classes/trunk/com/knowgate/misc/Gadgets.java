@@ -1338,6 +1338,28 @@ public final class Gadgets {
   // ----------------------------------------------------------
 
   /**
+   * Perform case sensitive brute force search of a String into an Array
+   * @param aList Array of Strings
+   * @param sSought String sought
+   * @return String index into Array or -1 if not found or sSought is null
+   * @since v5.0
+   */
+
+  public static int search (String[] aList, String sSought) {
+    if (null==sSought) return -1;
+    int iRetVal = -1;
+    final int nList = aList.length;
+    for (int a=0; a<=nList && iRetVal==-1; a++) {
+      if (sSought.equals(aList[a])) {
+      	iRetVal = a;
+      }
+    } //next
+    return iRetVal;
+  } // search
+
+  // ----------------------------------------------------------
+
+  /**
    * Get index of a substring inside another string
    * @param sSource String String to be scanned
    * @param sSought Substring to be sought
@@ -2064,36 +2086,11 @@ public final class Gadgets {
    * @return <b>true</b> if e-mail address is syntactically valid.
    */
   public static boolean checkEMail(String sEMailAddr) {
-    final String nu = "1234567890";
-    final String ok = "1234567890qwertyuiop[]asdfghjklzxcvbnm.@-_QWERTYUIOPASDFGHJKLZXCVBNM";
-    int iAt, iDot;
-
-    if (sEMailAddr==null) return false;
-
-    if (sEMailAddr.trim().length()==0) return false;
-
-    iAt = sEMailAddr.indexOf("@");
-    iDot = sEMailAddr.lastIndexOf(".");
-
-    // Domain extension must exist
-    if (iDot<=0) return false;
-
-    if (iAt<=0 || iAt==sEMailAddr.length()-1) return false;
-
-    // Domain name must exist
-    if (ok.indexOf(sEMailAddr.substring(iAt-1, iAt))<0 ||
-        ok.indexOf(sEMailAddr.substring(iAt+1, iAt+2))<0) return false;
-
-    // Domain name cannot start with a number
-    if (nu.indexOf(sEMailAddr.substring(iAt+1, iAt+2))>=0) return false;
-
-    // Domain extension is at most 4 characters
-    if (iDot<sEMailAddr.length()-5) return false;
-
-    // Domain extension is at least 2 characters
-    if (iDot>sEMailAddr.length()-3) return false;
-
-  return true;
+	boolean b = false;
+	try {
+      b = matches (sEMailAddr, "[\\w\\x2E_-]+@[\\w\\x2E_-]+\\x2E\\D{2,4}");
+    } catch (MalformedPatternException neverthrown) { }	
+    return b;
   } // checkEMail
 
   // ----------------------------------------------------------

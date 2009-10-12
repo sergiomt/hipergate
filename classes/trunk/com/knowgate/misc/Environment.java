@@ -51,7 +51,7 @@ import com.knowgate.debug.*;
 /**
  * <p>Reads and keeps in memory properties from .cnf initialization files.</p>
  * @author Sergio Montoro Ten
- * @version 3.0
+ * @version 5.0
  */
 
 public class Environment {
@@ -79,7 +79,7 @@ public class Environment {
 
   //-----------------------------------------------------------
 
-  private static void readEnvVars() throws java.lang.IllegalArgumentException {
+  private static void readEnvVars() throws IllegalArgumentException {
     envVars = new Properties();
     Runtime oRT;
     Process oPT;
@@ -188,7 +188,7 @@ public class Environment {
 
   /**
    * <p>Get value for an environment variable.</p>
-   * This is not a Pure Java method since it uses the Runtime obeject for calling
+   * This is not a Pure Java method since it uses the Runtime object for calling
    * OS specific shell commands.
    * @param sVarName Name of the variable to be readed.
    * @return Value of variable or sDefault if no environment variable with such name was found.
@@ -253,15 +253,17 @@ public class Environment {
    * last if neither is found the default C:\WINNT\ C:\WINDOWS\ or /etc/ is returned
    */
   public static Properties getProfile(String sProfile) {
-    String sProfilesHome;
-    Properties oProfile;
+    String sProfilesHome = null;
+    Properties oProfile = null;
 
     if (DebugFile.trace) DebugFile.writeln("Begin Environment.getProfile()");
 
     oProfile = (Properties ) profiles.get(sProfile);
 
+	if (oProfile==null) oProfile = loadProfile(sProfile);
+	
     if (oProfile==null) {
-
+	  
       try {
         sProfilesHome = System.getProperty("KNOWGATE_PROFILES", getEnvVar("KNOWGATE_PROFILES"));
       }
@@ -318,6 +320,46 @@ public class Environment {
     }
     catch (IOException ioe) {
       if (DebugFile.trace) DebugFile.writeln("IOException " + sPath + " " + ioe.getMessage());
+    }
+
+    if (DebugFile.trace) DebugFile.writeln("End Environment.loadProfile()");
+
+    return oProfile;
+  } // loadProfile
+
+  //-----------------------------------------------------------
+
+  /**
+   * <p>Load a Profile from a resource bundle</p>
+   * <p>The loaded Profile is cached in memory and will be returned in
+   * future calls to getProfile()</p>
+   * <p>If profile had been already loaded, then it is overwritten.</p>
+   * @param sProfile Profile name, for example "hipergate"
+   * @since 5.0
+   */
+  public static Properties loadProfile(String sProfile) {
+    Properties oProfile = null;
+
+    if (DebugFile.trace) DebugFile.writeln("Begin Environment.loadProfile(" + sProfile + ")");
+
+    if (profiles.containsKey(sProfile))
+      profiles.remove(sProfile);
+
+    try  {
+      Class oThisClass = Class.forName("com.knowgate.misc.Environment");
+	  InputStream oInStrm = oThisClass.getResourceAsStream((sProfile.endsWith(".cnf") ? sProfile : sProfile + ".cnf"));
+      if (oInStrm!=null) {    
+        oProfile = new Properties();
+        oProfile.load(oInStrm);
+        oInStrm.close();
+        profiles.put(sProfile, oProfile);
+      } else {
+      	oProfile = null;
+      }
+    }
+    catch (ClassNotFoundException neverthrown) { }
+    catch (IOException ioe) {
+      if (DebugFile.trace) DebugFile.writeln("IOException " + ioe.getMessage());
     }
 
     if (DebugFile.trace) DebugFile.writeln("End Environment.loadProfile()");
