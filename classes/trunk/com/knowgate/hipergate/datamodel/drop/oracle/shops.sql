@@ -11,3 +11,4 @@ DROP VIEW v_x_shops_order_spoints;
 
 DROP SEQUENCE seq_k_orders;
 DROP SEQUENCE seq_k_invoices;
+DROP SEQUENCE seq_k_transactions;
