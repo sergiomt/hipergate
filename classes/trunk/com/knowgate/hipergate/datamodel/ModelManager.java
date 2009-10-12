@@ -831,9 +831,12 @@ public class ModelManager {
       if (null == oInStrm) {
         iErrors = 1;
         if (null!=oStrLog) oStrLog.append("FileNotFoundException "+sResourcePath);
-        if (DebugFile.trace) DebugFile.decIdent();
+        if (DebugFile.trace) {
+          DebugFile.writeln("FileNotFoundException "+sResourcePath);
+          DebugFile.decIdent();
+        }
         throw new FileNotFoundException("executeBulk() " + sResourcePath);
-      }
+      } // fi
 
       if (DebugFile.trace) DebugFile.writeln("new InputStreamReader([InputStream], "+sEncoding+")");
 
