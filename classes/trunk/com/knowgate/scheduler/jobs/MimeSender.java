@@ -281,6 +281,7 @@ public class MimeSender extends Job {
           aReply = aFrom;
         else
           aReply = new InternetAddress[]{new InternetAddress(oHeaders.getProperty(DB.tx_reply_email))};
+        
         sBody = oDraft.getText();
         if (DebugFile.trace) {
           if (null==sBody)
