@@ -1,6 +1,9 @@
 CREATE SEQUENCE seq_k_bugs INCREMENT BY 1 START WITH 1
 GO;
 
+CREATE SEQUENCE seq_k_bugs_track INCREMENT BY 1 START WITH 1
+GO;
+
 CREATE OR REPLACE PROCEDURE k_sp_prj_expand (StartWith CHAR) IS
 
   wlk  NUMBER(11) := 1;
@@ -42,6 +45,7 @@ GO;
 CREATE OR REPLACE PROCEDURE k_sp_del_bug (BugId CHAR) IS
 BEGIN
   UPDATE k_bugs SET gu_bug_ref=NULL WHERE gu_bug_ref=BugId;
+  DELETE FROM k_bugs_track WHERE gu_bug=BugId;  
   DELETE FROM k_bugs_changelog WHERE gu_bug=BugId;
   DELETE FROM k_bugs_attach WHERE gu_bug=BugId;
   DELETE FROM k_bugs WHERE gu_bug=BugId;
