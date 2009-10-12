@@ -1,4 +1,9 @@
+DROP VIEW v_contact_education_degree;
 DROP VIEW v_active_courses;
+DROP TABLE k_contact_education;
+DROP TABLE k_education_degree_lookup;
+DROP TABLE k_education_degree;
+DROP TABLE k_education_institutions;
 DROP TABLE k_absentisms_lookup;
 DROP TABLE k_absentisms;
 DROP TABLE k_evaluations;

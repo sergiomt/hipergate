@@ -35,6 +35,7 @@ DROP INDEX k_bugs.i1_bugs;
 DROP INDEX k_bugs.i2_bugs;
 DROP INDEX k_bugs.i3_bugs;
 
+DROP TABLE k_bugs_track;
 DROP TABLE k_bugs_attach;
 DROP TABLE k_bugs_lookup;
 DROP TABLE k_bugs_changelog;

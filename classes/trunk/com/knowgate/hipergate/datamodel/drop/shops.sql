@@ -42,6 +42,10 @@ ALTER TABLE k_shops DROP CONSTRAINT f1_shops;
 ALTER TABLE k_shops DROP CONSTRAINT f2_shops;
 ALTER TABLE k_shops DROP CONSTRAINT f3_shops;
 
+DROP TABLE k_quotations_next;
+DROP TABLE k_x_quotations_orders;
+DROP TABLE k_quotation_lines;
+DROP TABLE k_quotations;
 DROP TABLE k_x_orders_invoices;
 DROP TABLE k_invoice_payments;
 DROP TABLE k_invoice_lines;

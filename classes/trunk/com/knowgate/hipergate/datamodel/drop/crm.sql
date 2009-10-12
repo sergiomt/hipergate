@@ -13,6 +13,9 @@ DROP VIEW v_contact_titles;
 DROP VIEW v_company_address;
 DROP VIEW v_active_company_address;
 
+DROP TABLE k_sms_audit;
+DROP TABLE k_sms_msisdn;
+
 DROP TABLE k_welcome_packs_changelog;
 DROP TABLE k_welcome_packs;
 DROP TABLE k_welcome_packs_lookup;
