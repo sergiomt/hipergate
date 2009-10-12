@@ -1,0 +1,1 @@
+DROP PROCEDURE k_sp_del_activity;
