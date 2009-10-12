@@ -33,6 +33,7 @@
 package com.knowgate.acl;
 
 import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 
 import java.util.ArrayList;
@@ -143,7 +144,7 @@ public class PasswordRecordTemplate {
    * @throws IOException
    */
   public void load(String sFilePath)
-  	throws MalformedURLException, FTPException, IOException {
+  	throws MalformedURLException, FTPException, FileNotFoundException, IOException {
 
   	if (DebugFile.trace) {
   	  DebugFile.writeln("Begin PasswordRecordTemplate.load("+sFilePath+")");
@@ -151,11 +152,18 @@ public class PasswordRecordTemplate {
   	}
 
   	FileSystem oFs = new FileSystem();
-
   	if (!sFilePath.startsWith("file://") && !sFilePath.startsWith("ftp://") &&
   		!sFilePath.startsWith("ftps://") && !sFilePath.startsWith("https://") &&
   		!sFilePath.startsWith("http://") && !sFilePath.startsWith("file://"))
   	  sFilePath = "file://" + sFilePath;
+
+	if (!oFs.exists(sFilePath)) {
+  	  if (DebugFile.trace) {
+  	    DebugFile.writeln("FileNotFoundException: PasswordRecordTemplate.load() "+sFilePath);
+  	    DebugFile.decIdent();
+  	  }
+  	  throw new FileNotFoundException("PasswordRecordTemplate.load() "+sFilePath);
+	}
 
   	String sTemplate = oFs.readfilestr(sFilePath, "UTF-8");
 

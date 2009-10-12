@@ -68,7 +68,8 @@ public class PasswordRecord extends DBPersist {
   	setKey(sKey);  	
   }
 
-  public void setKey (String sKey) {
+  public void setKey (String sKey) throws NullPointerException {
+    if (null==sKey) throw new NullPointerException("PasswordRecord.setKey() Key value may not be null");
     sRC4Key = sKey;
   }
 
@@ -169,7 +170,7 @@ public class PasswordRecord extends DBPersist {
   }
   	
   public boolean store (JDCConnection oConn)
-  	throws SQLException, AccessControlException, IllegalArgumentException {
+  	throws SQLException, AccessControlException, IllegalArgumentException, NullPointerException {
 
 	boolean bIsNew = isNull(DB.gu_pwd);
 	if (!bIsNew) bIsNew = !exists(oConn);
@@ -192,8 +193,10 @@ public class PasswordRecord extends DBPersist {
  	if (isNull(DB.id_enc_method)) put(DB.id_enc_method, "RC4");
  	
  	if (getString(DB.id_enc_method).equalsIgnoreCase("RC4")) {
+      if (null==sRC4Key) throw new NullPointerException("PasswordRecord.store() RC4 Key value may not be null");
   	  try {
-  	    replace(DB.tx_lines, Base64Encoder.encode(new RC4(sRC4Key).rc4(Gadgets.dechomp(oLines.toString(),'\n').getBytes("UTF-8"))));
+  	  	RC4 oRc4 = new RC4(sRC4Key);
+  	    replace(DB.tx_lines, Base64Encoder.encode(oRc4.rc4(Gadgets.dechomp(oLines.toString(),'\n').getBytes("UTF-8"))));
       } catch (UnsupportedEncodingException neverthrown) { }
  	}
     else if (getString(DB.id_enc_method).equalsIgnoreCase("NONE"))
@@ -223,7 +226,7 @@ public class PasswordRecord extends DBPersist {
   } // store
 
   public boolean store (JDCConnection oConn, String sGuCategory)
-  	throws SQLException, AccessControlException, IllegalArgumentException {
+  	throws SQLException, AccessControlException, IllegalArgumentException, NullPointerException {
 
 	boolean bIsNew = isNull(DB.gu_pwd);
 	if (!bIsNew) bIsNew = !exists(oConn);
@@ -242,8 +245,10 @@ public class PasswordRecord extends DBPersist {
  	if (isNull(DB.id_enc_method)) put(DB.id_enc_method, "RC4");
  	
  	if (getString(DB.id_enc_method).equalsIgnoreCase("RC4")) {
+      if (null==sRC4Key) throw new NullPointerException("PasswordRecord.store() RC4 Key value may not be null");
   	  try {
-  	    replace(DB.tx_lines, Base64Encoder.encode(new RC4(sRC4Key).rc4(Gadgets.dechomp(oLines.toString(),'\n').getBytes("UTF-8"))));
+  	  	RC4 oRc4 = new RC4(sRC4Key);
+  	    replace(DB.tx_lines, Base64Encoder.encode(oRc4.rc4(Gadgets.dechomp(oLines.toString(),'\n').getBytes("UTF-8"))));
       } catch (UnsupportedEncodingException neverthrown) { }
  	}
     else if (getString(DB.id_enc_method).equalsIgnoreCase("NONE"))
