@@ -95,12 +95,12 @@ public class MonthPlan implements Enumeration<Meeting> {
 
   public boolean hasAnyMeeting(int nMonthDay) {
 	boolean bHasMeetings = false;
-	long lDay = new Date(this.firstDay().getTime()+((long) nMonthDay)*lOneDayMilis).getTime();
+	long lDay = new Date(this.firstDay().getTime()+((long) nMonthDay-1)*lOneDayMilis).getTime();
     int m = 0;
-    while (m<iMeetCount && oMeetings.getDate(2,m).getTime()<lDay) m++;
+    while (m<iMeetCount && oMeetings.getDate(1,m).getTime()<lDay) m++;
 	lDay += lOneDayMilis;
 	if (m<iMeetCount) {
-	  bHasMeetings = oMeetings.getDate(2,m).getTime()<lDay;
+	  bHasMeetings = oMeetings.getDate(1,m).getTime()<lDay;
 	}
 	return bHasMeetings;
   } // hasAnyMeeting
