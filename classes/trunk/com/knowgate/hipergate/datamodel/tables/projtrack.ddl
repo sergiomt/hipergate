@@ -11,9 +11,9 @@ dt_start     DATETIME             NULL, /* Actual Start Date */
 dt_scheduled DATETIME             NULL, /* Date when project start was scheduled */
 dt_end       DATETIME             NULL, /* Actual End Date */
 pr_cost      FLOAT                NULL, /* Cost */
-gu_company   CHAR(32)		          NULL, /* Company */
-gu_contact   CHAR(32)		          NULL, /* Contact */
-gu_user      CHAR(32)		          NULL, /* Contact */
+gu_company   CHAR(32)		      NULL, /* Company */
+gu_contact   CHAR(32)		      NULL, /* Contact */
+gu_user      CHAR(32)		      NULL, /* User */
 id_ref       VARCHAR(50)          NULL, /* External reference identifier */
 de_project   VARCHAR(1000)        NULL, /* Description */
 
@@ -248,6 +248,19 @@ CONSTRAINT c3_bugs CHECK(dt_verified IS NULL OR dt_verified>=dt_closed)
 )
 GO;
 
+CREATE TABLE k_bugs_track (
+gu_bug       CHAR(32)      NOT NULL,
+pg_bug       INTEGER       NOT NULL,
+pg_bug_track INTEGER       NOT NULL,
+dt_created   DATETIME      DEFAULT CURRENT_TIMESTAMP,
+nm_reporter  VARCHAR(50)       NULL,
+tx_rep_mail  VARCHAR(100)      NULL,
+gu_writer    CHAR(32)		   NULL,
+tx_bug_track VARCHAR(2000)     NULL,
+CONSTRAINT pk_bugs_track PRIMARY KEY (gu_bug,pg_bug_track)
+)
+GO;
+
 CREATE TABLE k_bugs_changelog (
 gu_bug       CHAR(32)      NOT NULL,
 pg_bug       INTEGER       NOT NULL,
@@ -297,6 +310,7 @@ CREATE TABLE k_bugs_attach
 gu_bug   CHAR(32)      NOT NULL,
 tx_file  VARCHAR(250)  NOT NULL,
 len_file INTEGER       NOT NULL,
+pg_bug_track INTEGER       NULL,
 bin_file LONGVARBINARY NOT NULL,
 CONSTRAINT pk_bugs_attach PRIMARY KEY (gu_bug,tx_file)
 )

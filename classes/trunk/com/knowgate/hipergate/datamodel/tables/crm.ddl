@@ -6,6 +6,7 @@ gu_geozone     CHAR(32)     NULL,
 id_country     CHAR(3)      NULL,
 id_state       CHAR(9)      NULL,
 id_sales_group VARCHAR(50)  NULL,
+id_bpartner    VARCHAR(32)  NULL,
 
 CONSTRAINT pk_sales_men PRIMARY KEY (gu_sales_man)
 )
@@ -96,6 +97,7 @@ id_sector      VARCHAR(16)     NULL,
 id_status      VARCHAR(30)     NULL,
 id_ref         VARCHAR(50)     NULL,
 id_fare        VARCHAR(32)     NULL,
+id_bpartner    VARCHAR(32)     NULL,
 tp_company     VARCHAR(30)     NULL,
 gu_geozone     CHAR(32)        NULL,
 nu_employees   INTEGER         NULL,
@@ -233,6 +235,7 @@ id_batch       VARCHAR(32)  NULL,  /* Lote de trabajo del cual provenia la carga
 id_status      VARCHAR(30)  NULL,  /* Estado, activo, cambio de trabajo, etc. */
 id_ref         VARCHAR(50)  NULL,  /* Identificador externo de registro (para interfaz con otras applicaciones) */
 id_fare        VARCHAR(32)  NULL,  /* Tarifa aplicable al contacto */
+id_bpartner    VARCHAR(32)  NULL,  /* Identificador de el contacto en Openbravo */
 tx_name        VARCHAR(100) NULL,  /* Nombre de Pila */
 tx_surname     VARCHAR(100) NULL,  /* Apellidos */
 de_title       VARCHAR(70)  NULL,  /* Empleo/Puesto */
@@ -630,6 +633,7 @@ dt_modified    DATETIME        NULL,
 id_legal       VARCHAR(16)     NULL,
 id_status      VARCHAR(30)     NULL,
 id_ref         VARCHAR(50)     NULL,
+id_bpartner    VARCHAR(32)     NULL,
 tp_supplier    VARCHAR(30)     NULL,
 gu_geozone     CHAR(32)        NULL,
 de_supplier    VARCHAR(254)    NULL,
