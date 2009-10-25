@@ -313,6 +313,16 @@ public class WorkArea extends DBPersist {
     // -----------------------------------------------------------------------------------
     // Borrar los e-mails
 
+	if (DBBind.exists(oConn, DB.k_adhoc_mailings, "U")) {
+      oStmt = oConn.createStatement();
+      if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(DELETE FROM " + DB.k_adhoc_mailings_lookup + " WHERE " + DB.gu_owner + "='" + sWrkAreaGUID + "')");
+      oStmt.executeUpdate("DELETE FROM " + DB.k_adhoc_mailings_lookup + " WHERE  " + DB.gu_owner + "='" + sWrkAreaGUID + "'");
+      oStmt.close();
+      if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(DELETE FROM " + DB.k_adhoc_mailings + " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "')");
+      oStmt.executeUpdate("DELETE FROM " + DB.k_adhoc_mailings + " WHERE  " + DB.gu_workarea + "='" + sWrkAreaGUID + "'");
+      oStmt.close();
+	}
+
     if (DBBind.exists(oConn, DB.k_mime_msgs, "U")) {
       oStmt = oConn.createStatement();
 
