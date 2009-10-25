@@ -47,6 +47,8 @@ import java.security.Security;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
+import javax.mail.Authenticator;
+import javax.mail.PasswordAuthentication;
 import javax.mail.BodyPart;
 import javax.mail.AuthenticationFailedException;
 import javax.mail.NoSuchProviderException;
@@ -98,6 +100,8 @@ import com.knowgate.dataobjs.DB;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.dataxslt.FastStreamReplacer;
 
+import com.sun.mail.smtp.SMTPTransport;
+
 /**
  * <p>A wrapper around javax.mail.Store and javax.mail.Transport</p>
  * @author Sergio Montoro Ten
@@ -122,7 +126,7 @@ public class SessionHandler {
   private boolean bIsTransportConnected;
   private boolean bIncomingSSL;
   private boolean bOutgoingSSL;
-
+  
   // ---------------------------------------------------------------------------
 
   /**
@@ -427,14 +431,35 @@ public class SessionHandler {
         // if (DebugFile.trace) DebugFile.decIdent();
         if (DebugFile.trace) DebugFile.writeln("SessionHandler.getSmtpSession() smtp account name not set");
       }
+
+      if (oProps.getProperty("mail.smtp.starttls.enable","false").equalsIgnoreCase("true")) {
+        if (DebugFile.trace) DebugFile.writeln("Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider())");
+          Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+      }
+
       if (sOutAccountName.trim().length()==0) {
         if (DebugFile.trace) DebugFile.writeln("Session.getInstance([Properties])");
-        oSmtpSession = Session.getInstance(oProps);
+
+		if (oProps.getProperty("mail.smtp.auth","true").equalsIgnoreCase("true")) {
+          if (DebugFile.trace) DebugFile.writeln("new SilentAuthenticator("+sOutAccountName+", ...)");
+          SilentAuthenticator oAuth = new SilentAuthenticator(sOutAccountName, sOutAuthStr);
+          if (DebugFile.trace) DebugFile.writeln("Session.getInstance([Properties],[SilentAuthenticator])");
+          oSmtpSession = Session.getInstance(oProps, oAuth);
+		} else {
+          oSmtpSession = Session.getInstance(oProps);
+		} // fi
+        
       } else {
-        if (DebugFile.trace) DebugFile.writeln("new SilentAuthenticator("+sOutAccountName+", ...)");
-        SilentAuthenticator oAuth = new SilentAuthenticator(sOutAccountName, sOutAuthStr);
-        if (DebugFile.trace) DebugFile.writeln("Session.getInstance([Properties],[SilentAuthenticator])");
-        oSmtpSession = Session.getInstance(oProps, oAuth);
+
+		if (oProps.getProperty("mail.smtp.auth","true").equalsIgnoreCase("true")) {
+          if (DebugFile.trace) DebugFile.writeln("new SilentAuthenticator("+sOutAccountName+", ...)");
+          SilentAuthenticator oAuth = new SilentAuthenticator(sOutAccountName, sOutAuthStr);
+          if (DebugFile.trace) DebugFile.writeln("Session.getInstance([Properties],[SilentAuthenticator])");
+          oSmtpSession = Session.getInstance(oProps, oAuth);
+		} else {
+          oSmtpSession = Session.getInstance(oProps);
+		} // fi
+
       } // fi
     }
     if (DebugFile.trace) {
@@ -494,6 +519,12 @@ public class SessionHandler {
     if (null==oMailTransport) {
       if (DebugFile.trace) DebugFile.writeln("Session.getTransport()");
       oMailTransport = getSmtpSession().getTransport();
+      if (oMailTransport instanceof com.sun.mail.smtp.SMTPTransport &&
+      	  oProps.getProperty("mail.smtp.starttls.enable","false").equalsIgnoreCase("true")) {
+        if (DebugFile.trace) DebugFile.writeln("setStartTLS(true)");
+        ((com.sun.mail.smtp.SMTPTransport) oMailTransport).setStartTLS(true);
+        ((com.sun.mail.smtp.SMTPTransport) oMailTransport).setRequireStartTLS(true);
+      }
       oMailTransport.connect();
     }
     if (DebugFile.trace) {

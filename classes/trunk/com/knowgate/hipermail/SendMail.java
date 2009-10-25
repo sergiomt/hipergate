@@ -85,7 +85,7 @@ public final class SendMail {
       }
 
       public void call(String sThreadId, int iOpCode, String sMessage, Exception oXcpt, Object oParam) {        
-        if (-1==iOpCode) {
+        if (iOpCode==WorkerThreadCallback.WT_EXCEPTION) {
           String sStackTrace = "";
           try { sStackTrace = StackTraceUtil.getStackTrace(oXcpt); } catch (Exception ignore) {}
           System.out.println("ERROR "+sMessage+"\n"+sStackTrace);
@@ -284,6 +284,11 @@ public final class SendMail {
 
 		  if (null==sJobId) {
 		    if (DebugFile.trace) DebugFile.writeln("Job "+sJobTl+" not found, creating a new one...");
+			
+			if (oMacc.isNull(DB.gu_account)) {
+			  if (DebugFile.trace) DebugFile.decIdent();
+		      throw new SQLException("No MailAccount found for user "+oUsr.getString(DB.gu_user),"01S06");			  
+			}
 
 		  	String sMBoxDir = DBStore.MBoxDirectory(oDbb.getProfileName(),oUsr.getInt(DB.id_domain),oUsr.getString(DB.gu_workarea));
 
@@ -334,6 +339,11 @@ public final class SendMail {
 		    if (DebugFile.trace) DebugFile.writeln("Job "+sJobTl+" found with GUID "+sJobId);
 
 		    oSnd = Job.instantiate(oCon, sJobId, oDbb.getProperties());		    		  	
+
+		    oSnd.insertRecipients(oCon, aRecipients, sRecipientType,
+		                          sTextHtml==null ? "text" : "html",
+		                          Job.STATUS_PENDING);
+
 		  }
 
 		  oCon.close("SendMail");
@@ -792,56 +802,17 @@ public final class SendMail {
 	  } // fi
 	  
 	  String aRecipients[] = Gadgets.split(sRecipientsList, "\n");
-	  int nRecipients = aRecipients.length;	  
 
-      System.out.println("total recipients count is "+String.valueOf(nRecipients));
+      System.out.println("total recipients count is "+String.valueOf(aRecipients.length));
+	  if (DebugFile.trace) DebugFile.writeln("total recipients count is "+String.valueOf(aRecipients.length));
 
-	  // ********************************************************************
-	  // Remove duplicated e-mail addresses and those found at the black list
+	  AdHocMailing oAdHoc = new AdHocMailing();
+	  oAdHoc.addBlackList (aBlackList );
+	  oAdHoc.addRecipients(aRecipients);
+	  aRecipients = oAdHoc.getRecipients();
 
-	  Arrays.sort(aRecipients, String.CASE_INSENSITIVE_ORDER);
-	  ArrayList<String> oRecipientsWithoutDuplicates = new ArrayList<String>(nRecipients);
-	  String sAllowPattern = oProps.getProperty("allow","");
-	  String sDenyPattern = oProps.getProperty("deny","");
-	  boolean bAllowed;
-	  for (int r=0; r<nRecipients-1; r++) {
-		bAllowed = true;
-		if (sAllowPattern.length()>0) bAllowed &= Gadgets.matches(aRecipients[r], sAllowPattern);
-		if (sDenyPattern.length()>0) bAllowed &= !Gadgets.matches(aRecipients[r], sDenyPattern);
-		if (bAllowed) {
-	  	  if (!aRecipients[r].equalsIgnoreCase(aRecipients[r+1])) {
-	  	    if (aBlackList==null) {
-	  	      if (aRecipients[r].trim().length()>0) oRecipientsWithoutDuplicates.add(aRecipients[r].trim());
-	  	    } else if (Arrays.binarySearch(aBlackList, aRecipients[r].toLowerCase(), String.CASE_INSENSITIVE_ORDER)<0) {
-	  	      if (aRecipients[r].trim().length()>0) oRecipientsWithoutDuplicates.add(aRecipients[r].trim());
-	  	    } // fi
-	  	  } // fi
-	  	} else {
-	  	  System.out.println("SKIP "+aRecipients[r]);
-	  	}// fi
-	  } // next
-
-	  bAllowed=true;
-	  if (sAllowPattern.length()>0) bAllowed &= Gadgets.matches(aRecipients[nRecipients-1], sAllowPattern);
-	  if (sDenyPattern.length()>0) bAllowed &= !Gadgets.matches(aRecipients[nRecipients-1], sDenyPattern);
-	  if (bAllowed) {
-	    if (aBlackList==null) {
-	      if (aRecipients[nRecipients-1].trim().length()>0) oRecipientsWithoutDuplicates.add(aRecipients[nRecipients-1].trim());
-	    } else if (Arrays.binarySearch(aBlackList, aRecipients[nRecipients-1].toLowerCase(), String.CASE_INSENSITIVE_ORDER)<0) {
-	  	  if (aRecipients[nRecipients-1].trim().length()>0) oRecipientsWithoutDuplicates.add(aRecipients[nRecipients-1].trim());
-	    }
-	  } else {
-	    System.out.println("SKIP "+aRecipients[nRecipients-1]);
-	  }// fi
-
-	  if (DebugFile.trace) DebugFile.writeln("total recipients count is"+String.valueOf(nRecipients));
-
-	  aRecipients = oRecipientsWithoutDuplicates.toArray(new String[oRecipientsWithoutDuplicates.size()]);
-	  nRecipients = oRecipientsWithoutDuplicates.size();
-
-	  if (DebugFile.trace) DebugFile.writeln("unique and allowed recipients count is"+String.valueOf(nRecipients));
-
-      System.out.println("unique and allowed recipients count is "+String.valueOf(nRecipients));
+	  System.out.println("unique and allowed recipients count is"+String.valueOf(aRecipients.length));
+	  if (DebugFile.trace) DebugFile.writeln("unique and allowed recipients count is"+String.valueOf(aRecipients.length));
 	  
 	  // ******************
 	  // Get Mail enconding

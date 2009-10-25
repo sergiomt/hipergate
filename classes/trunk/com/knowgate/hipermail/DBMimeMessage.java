@@ -88,23 +88,8 @@ import com.sun.mail.smtp.SMTPMessage;
 import com.sun.mail.dsn.MultipartReport;
 
 import org.htmlparser.Parser;
-import org.htmlparser.Node;
-import org.htmlparser.util.NodeList;
-import org.htmlparser.util.NodeIterator;
 import org.htmlparser.util.ParserException;
-import org.htmlparser.tags.ImageTag;
 import org.htmlparser.beans.StringBean;
-import org.htmlparser.filters.TagNameFilter;
-
-import org.apache.oro.text.regex.Pattern;
-import org.apache.oro.text.regex.PatternMatcher;
-import org.apache.oro.text.regex.PatternCompiler;
-import org.apache.oro.text.regex.StringSubstitution;
-import org.apache.oro.text.regex.Perl5Matcher;
-import org.apache.oro.text.regex.Perl5Compiler;
-import org.apache.oro.text.regex.MalformedPatternException;
-import org.apache.oro.text.regex.Util;
-
 /**
  * MIME messages stored at database BLOB columns or MBOX files
  * @author Sergio Montoro Ten
@@ -118,8 +103,8 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
   private Address[] aAddrs;
   private HashMap oHeaders;
 
-  private static PatternMatcher oMatcher = new Perl5Matcher();
-  private static PatternCompiler oCompiler = new Perl5Compiler();
+  // private static PatternMatcher oMatcher = new Perl5Matcher();
+  // private static PatternCompiler oCompiler = new Perl5Compiler();
 
   /**
    * Create an empty message
@@ -1510,16 +1495,18 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
       // ************************************************************************
       // Replace image CIDs
 
-      HashMap oDocumentImages = new HashMap(23);
-      int nImgs = 0;
+      //HashMap oDocumentImages = new HashMap(23);
+      //int nImgs = 0;
 
-      StringSubstitution oSrcSubs = new StringSubstitution();
+      //StringSubstitution oSrcSubs = new StringSubstitution();
 
-      String sText = "";
+      String sSrc, sCid, sText = "";
 
       Parser oPrsr = Parser.createParser(sBody, getEncoding());
 
-      String sCid, sSrc;
+      // String sCid, sSrc;
+
+      HtmlMimeBodyPart oHtmBdy = new HtmlMimeBodyPart(sBody, getEncoding());
 
       try {
 
@@ -1551,54 +1538,7 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
         // Iterate images from HTML and replace CIDs
 
 		if (bAttachInlineImages) {
-          oPrsr = Parser.createParser(sBody, getEncoding());
-
-          NodeList oCollectionList = new NodeList();
-          TagNameFilter oImgFilter = new TagNameFilter ("IMG");
-          for (NodeIterator e = oPrsr.elements(); e.hasMoreNodes();)
-            e.nextNode().collectInto(oCollectionList, oImgFilter);
-
-          nImgs = oCollectionList.size();
-
-          if (DebugFile.trace) DebugFile.writeln("NodeList.size() = " + String.valueOf(nImgs));
-
-          for (int i=0; i<nImgs; i++) {
-
-            sSrc = ((ImageTag) oCollectionList.elementAt(i)).extractImageLocn();
-            sSrc = sSrc.replace('\\','/');
-
-            // Keep a reference to every related image name so that the same image is not included twice in the message
-            if (!oDocumentImages.containsKey(sSrc)) {
-
-              // Find last slash from image url
-              int iSlash = sSrc.lastIndexOf('/');
-
-              // Take image name
-              if (iSlash>=0) {
-                while (sSrc.charAt(iSlash)=='/') { if (++iSlash==sSrc.length()) break; }
-                sCid = sSrc.substring(iSlash);
-              }
-              else {
-                sCid = sSrc;
-              }
-
-              // String sUid = Gadgets.generateUUID();
-              // sCid = sUid.substring(0,12)+"$"+sUid.substring(12,20)+"$"+sUid.substring(20,28)+"@hipergate.org";
-
-              if (DebugFile.trace) DebugFile.writeln("HashMap.put("+sSrc+","+sCid+")");
-
-              oDocumentImages.put(sSrc, sCid);
-            } // fi (!oDocumentImages.containsKey(sSrc))
-
-            try {
-              Pattern oPattern = oCompiler.compile(Gadgets.replace(((ImageTag) oCollectionList.elementAt(i)).extractImageLocn(),'\\',"\\\\"),
-            									   Perl5Compiler.SINGLELINE_MASK);
-              oSrcSubs.setSubstitution("cid:"+oDocumentImages.get(sSrc));
-              if (DebugFile.trace) DebugFile.writeln("Util.substitute([PatternMatcher],"+ sSrc + ",cid:"+oDocumentImages.get(sSrc)+",...)");
-              sBody = Util.substitute(oMatcher, oPattern, oSrcSubs, sBody);
-            } catch (MalformedPatternException neverthrown) { }
-
-          } // next
+		  sBody = oHtmBdy.addPreffixToImgSrc("cid:");          
 		} // fi (bAttachInlineImages)
       }
       catch (ParserException pe) {
@@ -1612,7 +1552,7 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
       // ************************************************************************
       // Add HTML related images
 
-      if (oDocumentImages.isEmpty()) {
+      if (oHtmBdy.getImagesCids().isEmpty()) {
           // Set HTML part
           MimeBodyPart oMsgHtml = new MimeBodyPart();
           oMsgHtml.setDisposition("inline");
@@ -1666,13 +1606,13 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
 
         // Set HTML text related inline images
 
-        Iterator oImgs = oDocumentImages.keySet().iterator();
+        Iterator oImgs = oHtmBdy.getImagesCids().keySet().iterator();
 
         while (oImgs.hasNext()) {
           BodyPart oImgBodyPart = new MimeBodyPart();
 
           sSrc = (String) oImgs.next();
-          sCid = (String) oDocumentImages.get(sSrc);
+          sCid = (String) oHtmBdy.getImagesCids().get(sSrc);
 
           if (sSrc.startsWith("www."))
             sSrc = "http://" + sSrc;

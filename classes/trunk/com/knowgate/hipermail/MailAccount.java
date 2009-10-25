@@ -142,6 +142,8 @@ public class MailAccount extends DBPersist {
   // ----------------------------------------------------------
 
   public void setProperties(Properties oProps) {
+    replace(DB.incoming_account, oProps.getProperty("mail.user"));
+    replace(DB.outgoing_account, oProps.getProperty("mail.user"));
     replace(DB.incoming_protocol, oProps.getProperty("mail.store.protocol","pop3"));
     replace(DB.outgoing_protocol, oProps.getProperty("mail.transport.protocol","smtp"));
     replace(DB.incoming_server, oProps.getProperty("mail."+getString(DB.incoming_protocol)+".host",oProps.getProperty("mail.incoming","localhost")));
