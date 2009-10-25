@@ -84,3 +84,65 @@ CREATE TABLE k_mime_parts (
   CONSTRAINT c3_mime_parts CHECK (id_disposition<>'reference' OR file_name IS NOT NULL)
 )
 GO;
+
+CREATE TABLE k_adhoc_mailings (
+  gu_mailing     CHAR(32) NOT NULL,
+  gu_workarea    CHAR(32) NOT NULL,
+  gu_writer      CHAR(32) NOT NULL,
+  pg_mailing     INTEGER  NOT NULL,
+  dt_created     DATETIME DEFAULT CURRENT_TIMESTAMP,  
+  nm_mailing     VARCHAR(30) NOT NULL,
+  bo_html_part   SMALLINT NOT NULL,
+  bo_plain_part  SMALLINT NOT NULL,
+  bo_attachments SMALLINT NOT NULL,
+  id_status      CHARACTER VARYING(30) NULL,
+  dt_modified    DATETIME NULL,
+  dt_execution   DATETIME NULL,
+  tx_email_from  CHARACTER VARYING(254) NULL,
+  tx_email_reply CHARACTER VARYING(254) NULL,  
+  nm_from        VARCHAR(254)  NULL,
+  tx_subject     VARCHAR(254)  NULL,
+  tx_allow_regexp VARCHAR(254) NULL,
+  tx_deny_regexp VARCHAR(254)  NULL,
+  tx_parameters  VARCHAR(2000) NULL,
+  CONSTRAINT pk_adhoc_mailings PRIMARY KEY (gu_mailing),
+  CONSTRAINT u1_adhoc_mailings UNIQUE (pg_mailing),
+  CONSTRAINT u2_adhoc_mailings UNIQUE (nm_mailing)
+)
+GO;
+
+CREATE TABLE k_adhoc_mailings_lookup
+(
+gu_owner   CHAR(32)     NOT NULL,
+id_section CHARACTER VARYING(30)  NOT NULL,
+pg_lookup  INTEGER      NOT NULL,
+vl_lookup  VARCHAR(255)     NULL,
+tr_es      VARCHAR(50)      NULL,
+tr_en      VARCHAR(50)      NULL,
+tr_de      VARCHAR(50)      NULL,
+tr_it      VARCHAR(50)      NULL,
+tr_fr      VARCHAR(50)      NULL,
+tr_pt      VARCHAR(50)      NULL,
+tr_ca      VARCHAR(50)      NULL,
+tr_gl      VARCHAR(50)      NULL,
+tr_eu      VARCHAR(50)      NULL,
+tr_ja      VARCHAR(50)      NULL,
+tr_cn      VARCHAR(50)      NULL,
+tr_tw      VARCHAR(50)      NULL,
+tr_fi      VARCHAR(50)      NULL,
+tr_ru      VARCHAR(50)      NULL,
+tr_nl      VARCHAR(50)      NULL,
+tr_th      VARCHAR(50)      NULL,
+tr_cs      VARCHAR(50)      NULL,
+tr_uk      VARCHAR(50)      NULL,
+tr_no      VARCHAR(50)      NULL,
+tr_ko      VARCHAR(50)      NULL,
+tr_sk      VARCHAR(50)      NULL,
+tr_pl      VARCHAR(50)      NULL,
+tr_vn      VARCHAR(50)      NULL,
+
+CONSTRAINT pk_adhoc_mailings_lookup PRIMARY KEY (gu_owner,id_section,pg_lookup),
+CONSTRAINT u1_adhoc_mailings_lookup UNIQUE (gu_owner,id_section,vl_lookup)
+)
+GO;
+  
