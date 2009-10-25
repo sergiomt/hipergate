@@ -1349,7 +1349,7 @@ public final class Gadgets {
     if (null==sSought) return -1;
     int iRetVal = -1;
     final int nList = aList.length;
-    for (int a=0; a<=nList && iRetVal==-1; a++) {
+    for (int a=0; a<nList && iRetVal==-1; a++) {
       if (sSought.equals(aList[a])) {
       	iRetVal = a;
       }
