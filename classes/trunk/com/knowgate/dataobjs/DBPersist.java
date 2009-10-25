@@ -1294,11 +1294,14 @@ public class DBPersist implements Map {
         break;
       case java.sql.Types.TIMESTAMP:
       	long lTime = 0l;
-      	try {
-      	  lTime = java.util.Date.parse(sData);
+      	try {      		
+      	  SimpleDateFormat oSfmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+      	  lTime = oSfmt.parse(sData).getTime();
       	} catch (IllegalArgumentException id) {
           throw new IllegalArgumentException("DBPersist.put() IllegalArgumentException Can't parse Date "+sData+" for SQL Type TIMESTAMP");
-      	}
+      	} catch (ParseException pe) {
+          throw new IllegalArgumentException("DBPersist.put() IllegalArgumentException Can't parse Date "+sData+" for SQL Type TIMESTAMP");
+      	}      	
         if (null != sData)
           AllVals.put(sKey, new java.sql.Timestamp(lTime));
         else

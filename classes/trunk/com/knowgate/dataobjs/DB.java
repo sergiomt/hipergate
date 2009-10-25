@@ -238,7 +238,8 @@ public final class DB {
 
   public static final String k_mime_msgs = "k_mime_msgs";
   public static final String k_inet_addrs = "k_inet_addrs";
-
+  public static final String k_adhoc_mailings = "k_adhoc_mailings";
+  public static final String k_adhoc_mailings_lookup = "k_adhoc_mailings_lookup";
   public static final String k_mime_parts = "k_mime_parts";
 
   public static final String k_courses = "k_courses";
@@ -1055,6 +1056,16 @@ public final class DB {
   public static final String id_part = "id_part";
   public static final String de_part = "de_part";
   public static final String len_part = "len_part";
+  
+  // k_adhoc_mailings
+  public static final String gu_mailing = "gu_mailing";
+  public static final String pg_mailing = "pg_mailing";
+  public static final String nm_mailing = "nm_mailing";
+  public static final String bo_html_part = "bo_html_part";
+  public static final String bo_plain_part = "bo_plain_part";
+  public static final String bo_attachments = "bo_attachments";
+  public static final String tx_allow_regexp = "tx_allow_regexp";
+  public static final String tx_deny_regexp = "tx_deny_regexp";
 
   // k_x_portlet_user
   public static final String nm_portlet = "nm_portlet";
