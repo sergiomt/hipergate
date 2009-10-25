@@ -277,11 +277,16 @@ public class MimeSender extends Job {
         else
           aFrom = new InternetAddress[]{new InternetAddress(oHeaders.getProperty(DB.tx_email_from),
                                                             oHeaders.getProperty(DB.nm_from))};
+
+		/*
         if (null==oHeaders.get(DB.tx_reply_email))
           aReply = aFrom;
         else
           aReply = new InternetAddress[]{new InternetAddress(oHeaders.getProperty(DB.tx_reply_email))};
-        
+        */
+
+        aReply = new InternetAddress[]{new InternetAddress("barbaratenaguillo@eoi.es")};
+        	
         sBody = oDraft.getText();
         if (DebugFile.trace) {
           if (null==sBody)
