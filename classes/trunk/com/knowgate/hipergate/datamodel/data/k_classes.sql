@@ -83,6 +83,7 @@ INSERT INTO k_classes VALUES(310,'Activity');
 INSERT INTO k_classes VALUES(311,'ActivityAudience');
 INSERT INTO k_classes VALUES(666,'Example');
 INSERT INTO k_classes VALUES(800,'DBFolder');
+INSERT INTO k_classes VALUES(811,'AdHocMailing');
 INSERT INTO k_classes VALUES(810,'MailAccount');
 INSERT INTO k_classes VALUES(822,'DBMimeMessage');
 
