@@ -848,6 +848,16 @@ public abstract class Job extends DBPersist {
 	if (DebugFile.trace) DebugFile.writeln("PreparedStatement.prepareStatement("+sSQL+")");
 	PreparedStatement oAtom = oConn.prepareStatement(sSQL);
 
+	sSQL = "INSERT INTO "+DB.k_job_atoms_archived+" ("+DB.gu_job+","+DB.dt_execution+","+DB.id_status+","+DB.id_format+","+Gadgets.join(aAddrCols,",")+","+DB.tx_log+","+DB.pg_atom+") VALUES ('"+getString(DB.gu_job)+"',NULL,"+String.valueOf(Job.STATUS_ABORTED)+",'"+sFormat+"',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'Invalid e-mail address syntax',?)";
+	if (DebugFile.trace) DebugFile.writeln("PreparedStatement.prepareStatement("+sSQL+")");
+	PreparedStatement oArchived = oConn.prepareStatement(sSQL);
+
+	sSQL = "SELECT NULL FROM "+DB.k_job_atoms+" WHERE "+DB.gu_job+"='"+getString(DB.gu_job)+"' AND "+DB.tx_email+"=?";
+	PreparedStatement oExistsPending = oConn.prepareStatement(sSQL);
+
+	sSQL = "SELECT NULL FROM "+DB.k_job_atoms_archived+" WHERE "+DB.gu_job+"='"+getString(DB.gu_job)+"' AND "+DB.tx_email+"=?";
+	PreparedStatement oExistsArchived = oConn.prepareStatement(sSQL);
+	
 	for (int r=0; r<nRecipients; r++) {
 		
 	  oAddr.setString(1, aRecipients[r]);
@@ -877,13 +887,44 @@ public abstract class Job extends DBPersist {
 	    }
 	  }
 
-	  for (int i=1; i<=nCols; i++)
-	    oAtom.setString(i,aAddrVals[i-1]);
+	  // Avoid any recipient from being inserted twice at the database
+	  boolean bAlreadyExists = false;
+	  oExistsPending.setString(1, aAddrVals[2]);
+	  oRSet = oExistsPending.executeQuery();
+	  bAlreadyExists = oRSet.next();
+	  oRSet.close();
+	  if (!bAlreadyExists) {
+	    oExistsArchived.setString(1, aAddrVals[2]);
+	    oRSet = oExistsArchived.executeQuery();
+	    bAlreadyExists = oRSet.next();
+	    oRSet.close();	    
+	  } // fi (!bAlreadyExists)
+	  
+	  if (!bAlreadyExists) {
+      	if (Gadgets.checkEMail(aAddrVals[2])) {
+	      for (int i=1; i<=nCols; i++)
+	        oAtom.setString(i,aAddrVals[i-1]);
 	    
-	  if (DebugFile.trace) DebugFile.writeln("PreparedStatement.executeUpdate("+aAddrVals[2]+")");
+	      if (DebugFile.trace) DebugFile.writeln("PreparedStatement.executeUpdate("+aAddrVals[2]+")");
       	
-	  oAtom.executeUpdate();
+	      oAtom.executeUpdate();
+      	} else {
+	      for (int i=1; i<=nCols; i++)
+	        oArchived.setString(i,aAddrVals[i-1]);
+	    
+	      if (DebugFile.trace) DebugFile.writeln("PreparedStatement.executeUpdate("+aAddrVals[2]+",Invalid e-mail address syntax)");
+      	
+      	  oArchived.setInt(nCols+1, DBBind.nextVal(oConn, "seq_k_job_atoms"));
+	      oArchived.executeUpdate();      	
+      	}// fi
+	  } else {
+	    if (DebugFile.trace) DebugFile.writeln("Skip "+aAddrVals[2]+" because is already a recipient");
+	  }// fi (!bAlreadyExists)
+
 	} // next
+	oExistsArchived.close();
+	oExistsPending.close();
+	oArchived.close();
 	oAtom.close();
 	oAddr.close();
 

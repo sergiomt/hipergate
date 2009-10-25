@@ -110,6 +110,7 @@ public class AtomFeeder {
     oQBF = new QueryByForm(oConn, DB.k_member_address, "ma", sQueryGUID);
 
     // Insertar los registros a capón haciendo un snapshot de k_member_address a k_job_atoms
+    // y evitando los atomos cuyo e-mail ya este en k_job_atoms o k_job_atoms_archived
     oStmt = oConn.createStatement();
 
     sSQL = "INSERT INTO " + DB.k_job_atoms +
@@ -120,7 +121,11 @@ public class AtomFeeder {
            " FROM " + DB.k_lists + " b, " + DB.k_x_list_members + " x WHERE b." +
            DB.gu_list + "=x." + DB.gu_list + " AND b." + DB.gu_query + "='" + sListGUID +
            "' AND b." + DB.tp_list + "=" + String.valueOf(DistributionList.TYPE_BLACK) +
-           " AND x." + DB.tx_email + "=ma." + DB.tx_email + "))";
+           " AND x." + DB.tx_email + "=ma." + DB.tx_email + ") AND NOT EXISTS (SELECT j." + DB.tx_email +
+           " FROM " + DB.k_job_atoms + " j WHERE j." + DB.gu_job + "='" + sJobGUID + "' AND " +
+           " j." +DB.tx_email + "=ma." + DB.tx_email+") AND NOT EXISTS (SELECT a." + DB.tx_email +
+           " FROM " + DB.k_job_atoms_archived + " a WHERE a." + DB.gu_job + "='" + sJobGUID + "' AND " +
+           " a." +DB.tx_email + "=ma." + DB.tx_email+"))"; 
 
     if (DebugFile.trace) DebugFile.writeln("Connection.executeUpdate(" + sSQL + ")");
 
@@ -169,11 +174,16 @@ public class AtomFeeder {
            " (gu_job,id_status," + sColumns + ") " +
            " (SELECT '" + sJobGUID + "'," + String.valueOf(iInitialStatus) +
            "," + sColumns + " FROM " + DB.k_x_list_members + " m WHERE " +
-           DB.gu_list + "='" + sListGUID + "' AND m." + DB.bo_active + "<>0 AND " +
-           "NOT EXISTS (SELECT x." + DB.tx_email + " FROM " + DB.k_lists + " b, " +
+           DB.gu_list + "='" + sListGUID + "' AND m." + DB.bo_active + "<>0 " +
+           " AND NOT EXISTS (SELECT x." + DB.tx_email + " FROM " + DB.k_lists + " b, " +
            DB.k_x_list_members + " x WHERE b." + DB.gu_list + "=x." + DB.gu_list +
            " AND b." + DB.gu_query + "='" + sListGUID + "' AND b." + DB.tp_list +
-           "=" + String.valueOf(DistributionList.TYPE_BLACK) + " AND x." + DB.tx_email + "=m." + DB.tx_email + "))";
+           "=" + String.valueOf(DistributionList.TYPE_BLACK) + " AND x." + DB.tx_email + "=m." + DB.tx_email + ") "+
+		   " AND NOT EXISTS (SELECT j." + DB.tx_email +
+           " FROM " + DB.k_job_atoms + " j WHERE j." + DB.gu_job + "='" + sJobGUID + "' AND " +
+           " j." +DB.tx_email + "=m." + DB.tx_email+") AND NOT EXISTS (SELECT a." + DB.tx_email +
+           " FROM " + DB.k_job_atoms_archived + " a WHERE a." + DB.gu_job + "='" + sJobGUID + "' AND " +
+           " a." +DB.tx_email + "=m." + DB.tx_email+"))";
 
     if (DebugFile.trace) DebugFile.writeln("Connection.executeUpdate(" + sSQL + ")");
 

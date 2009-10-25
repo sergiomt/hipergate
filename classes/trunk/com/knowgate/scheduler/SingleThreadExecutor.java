@@ -347,7 +347,7 @@ public class SingleThreadExecutor extends Thread {
               oJob.process(oAtm);
               oAtm.archive(oCon);          	
               if (DebugFile.trace)
-              DebugFile.writeln("Thread " + String.valueOf(currentThread().getId()) + " consumed Atom " + String.valueOf(oAtm.getInt(DB.pg_atom)));
+                DebugFile.writeln("Thread " + String.valueOf(currentThread().getId()) + " consumed Atom " + String.valueOf(oAtm.getInt(DB.pg_atom)));
       		  if (iCallbacks>0) callBack(WorkerThreadCallback.WT_ATOM_CONSUME, oJob.getString(DB.gu_job), null, oAtm.getString(DB.tx_email));
 		    }
             catch (Exception e) {
@@ -366,7 +366,7 @@ public class SingleThreadExecutor extends Thread {
               }
               oJob.log(sLastError);
 
-              if (iCallbacks>0) callBack(WorkerThreadCallback.WT_ATOM_CONSUME, "Thread " + getName() + " " + sLastError, e, oJob);
+              if (iCallbacks>0) callBack(WorkerThreadCallback.WT_EXCEPTION, "Thread " + getName() + " " + sLastError, e, oJob);
             }
 
             if (oJob.pending()==0) {
