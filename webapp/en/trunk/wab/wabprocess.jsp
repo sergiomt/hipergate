@@ -154,11 +154,7 @@
   }
   catch (SQLException e) {  
     try {if (oStmt!=null) oStmt.close(); } catch (SQLException ignore) {}
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("wabprocess");      
-      }
+    disposeConnection(oConn,"wabprocess");
     oConn = null;
     
     if (DebugFile.trace) DebugFile.writeln("SQLException " + e.getMessage());
