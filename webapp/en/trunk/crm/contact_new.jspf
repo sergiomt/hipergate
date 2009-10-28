@@ -135,7 +135,7 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="true">
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="true">
     <!--
 
 		  var zone_salesman = new Object();
@@ -539,6 +539,7 @@
   	    document.forms[0].sel_passport.style.visibility = "visible";
   	    document.forms[0].sel_geozone.style.visibility = "visible";
   	    document.forms[0].sel_salesman.style.visibility = "visible";
+  	    document.forms[0].id_nationality.style.visibility = "visible";
 
   	    document.forms[1].sel_company.style.visibility = "hidden";
   	    document.forms[1].sel_acourse.style.visibility = "hidden";
@@ -559,6 +560,7 @@
   	    document.forms[0].sel_passport.style.visibility = "hidden";
   	    document.forms[0].sel_geozone.style.visibility = "hidden";
   	    document.forms[0].sel_salesman.style.visibility = "hidden";
+  	    document.forms[0].id_nationality.style.visibility = "hidden";
 
   	    document.forms[1].sel_company.style.visibility = "visible";
   	    
@@ -584,6 +586,7 @@
   	    document.forms[0].sel_passport.style.visibility = "hidden";
   	    document.forms[0].sel_geozone.style.visibility = "hidden";
   	    document.forms[0].sel_salesman.style.visibility = "hidden";
+  	    document.forms[0].id_nationality.style.visibility = "hidden";
 
  	      document.forms[1].sel_company.style.visibility = "hidden";
   	    document.forms[1].sel_acourse.style.visibility = "hidden";

@@ -69,11 +69,7 @@
   }
   catch (SQLException e) {
     // Si algo peta 
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("oportunity_won_store");
-      }
+    disposeConnection(oConn,"oportunity_won_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=" + e.getClass().getName() + "&desc=" + e.getMessage() + "&resume=_back"));
   }

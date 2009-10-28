@@ -67,7 +67,6 @@
       
       oStmt = oConn.createStatement();
       oStmt.execute("INSERT INTO " + DB.k_x_list_members + "(gu_list,tx_email,tx_name,tx_surname,tx_salutation,bo_active,tp_member,gu_company,gu_contact,id_format) SELECT '" + oBaseList.getString(DB.gu_list) + "',tx_email,tx_name,tx_surname,tx_salutation,bo_active,tp_member,gu_company,gu_contact,id_format FROM " + DB.k_x_list_members + " WHERE " + DB.gu_list + "='" + gu_base_list + "'");
-      oStmt.setQueryTimeout(60);
       oStmt.close();
       
     }
@@ -87,11 +86,7 @@
     oConn.close("list_merge_store");
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-    	if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("list_merge_store");      
-      }
+    disposeConnection(oConn,"list_merge_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_close"));
   }

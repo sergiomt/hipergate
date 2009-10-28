@@ -163,20 +163,12 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Address not Found&desc=" + e.getMessage() + "&resume=_back"));
   }
   catch (NoSuchFieldException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("subscriptions_store");
-      }
+    disposeConnection(oConn,"subscriptions_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NoSuchFieldException&desc=" + e.getMessage() + "&resume=_back"));
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("subscriptions_store");
-      }
+    disposeConnection(oConn,"subscriptions_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getMessage() + "&resume=_back"));
   }

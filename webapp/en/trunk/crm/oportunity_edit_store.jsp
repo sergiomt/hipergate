@@ -160,22 +160,14 @@
     
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("oportunitystore");      
-      }
+    disposeConnection(oConn,"oportunitystore");
     
     oConn = null;
     
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }
   catch (ParseException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("oportunitystore");      
-      }
+    disposeConnection(oConn,"oportunitystore");
     
     oConn = null;
     

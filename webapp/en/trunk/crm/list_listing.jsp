@@ -147,14 +147,16 @@
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>  
 
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/dynapi/dynapi.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript">
-    DynAPI.setLibraryPath('../javascript/dynapi/lib/');
-    DynAPI.include('dynapi.api.*');
+    dynapi.library.setPath('../javascript/dynapi3/');
+    dynapi.library.include('dynapi.api.DynLayer');
   </SCRIPT>
   <SCRIPT LANGUAGE="JavaScript">
     var menuLayer,addrLayer;
-    DynAPI.onLoad = function() { 
+    dynapi.onLoad(init);
+    function init() {
+ 
       setCombos();
       menuLayer = new DynLayer();
       menuLayer.setWidth(160);
@@ -162,7 +164,7 @@
       menuLayer.setHTML(rightMenuHTML);
     }
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/dynapi/rightmenu.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
 
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--

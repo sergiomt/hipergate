@@ -362,14 +362,17 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/dynapi.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" >
-    DynAPI.setLibraryPath('../javascript/dynapi/lib/');
-    DynAPI.include('dynapi.api.*');
+    dynapi.library.setPath('../javascript/dynapi3/');
+    dynapi.library.include('dynapi.api.DynLayer');
   </SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" >
     var menuLayer,addrLayer;
-    DynAPI.onLoad = function() { 
+
+    dynapi.onLoad(init);
+
+		function init() { 
       setCombos();
       menuLayer = new DynLayer();
       menuLayer.setWidth(160);
@@ -381,8 +384,8 @@
       addrLayer.setZIndex(200);
     }
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/rightmenu.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/floatdiv.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/floatdiv.js"></SCRIPT>
 
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
@@ -444,7 +447,7 @@
 	  if (window.confirm("[~¿Está seguro de que desea eliminar los individuos seleccionados?~]")) {
 	    chi.value = "";
 
-	    frm.action = "contact_edit_delete.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
+	    frm.action = "contact_edit_delete.jsp?face=<%=sFace%>selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
          
             while (frm.elements[offset].type!="checkbox") offset++;
                  
@@ -477,9 +480,9 @@
 	function sortBy(fld) {
 	  var frm = document.forms[0];
 <% if (bIsAdmin) { %>
-	  document.location = "contact_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=" + fld + "&field=<%=sField%>&find=<%=sFind%>&query=<%=sQuery%>&where=<%=Gadgets.URLEncode(sWhere)%>" + "&salesman=" + getCombo(frm.salesman) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
+	  document.location = "contact_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=" + fld + "&field=<%=sField%>&find=<%=sFind%>&query=<%=sQuery%>&where=<%=Gadgets.URLEncode(sWhere)%>" + "&salesman=" + getCombo(frm.salesman) + "&face=<%=sFace%>&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
 <% } else { %>
-	  document.location = "contact_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=" + fld + "&field=<%=sField%>&find=<%=sFind%>&query=<%=sQuery%>&where=<%=Gadgets.URLEncode(sWhere)%>" + "&private=" + (frm.private[0].checked ? "1" : "0") + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
+	  document.location = "contact_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=" + fld + "&field=<%=sField%>&find=<%=sFind%>&query=<%=sQuery%>&where=<%=Gadgets.URLEncode(sWhere)%>" + "&private=" + (frm.private[0].checked ? "1" : "0") + "&face=<%=sFace%>&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
 <% } %>
 	}
 				
@@ -500,9 +503,9 @@
 	  var frm = document.forms[0];
 		
 <% if (bIsAdmin) { %>
-	  window.location="contact_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=<%=sOrderBy%>&field=" + getCombo(frm.sel_searched) + "&find=" + escape(frm.find.value) + "&salesman=" + getCombo(frm.salesman) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");	
+	  window.location="contact_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=<%=sOrderBy%>&field=" + getCombo(frm.sel_searched) + "&find=" + escape(frm.find.value) + "&salesman=" + getCombo(frm.salesman) + "&face=<%=sFace%>&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");	
 <% } else { %>
-	  window.location="contact_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=<%=sOrderBy%>&field=" + getCombo(frm.sel_searched) + "&find=" + escape(frm.find.value) + "&private=" + (frm.private[0].checked ? "0" : "1") + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");	
+	  window.location="contact_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=<%=sOrderBy%>&field=" + getCombo(frm.sel_searched) + "&find=" + escape(frm.find.value) + "&private=" + (frm.private[0].checked ? "0" : "1") + "&face=<%=sFace%>&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");	
 <% } %>
 	} // findContact()
 
@@ -649,9 +652,9 @@
         
         if (qry.length>0) {
 <% if (bIsAdmin) { %>
-          window.top.location.href = "contact_listing_f.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&salesman=" + getCombo(frm.salesman) + "&orderby=<%=sOrderBy%>&gu_query=" + qry + "&selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>";
+          window.top.location.href = "contact_listing_f.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&salesman=" + getCombo(frm.salesman) + "&orderby=<%=sOrderBy%>&gu_query=" + qry + "&face=<%=sFace%>&selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>";
 <% } else { %>
-          window.top.location.href = "contact_listing_f.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&private=" + (frm.private[0].checked ? "0" : "1") + "&orderby=<%=sOrderBy%>&gu_query=" + qry + "&selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>";
+          window.top.location.href = "contact_listing_f.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&private=" + (frm.private[0].checked ? "0" : "1") + "&orderby=<%=sOrderBy%>&gu_query=" + qry + "&face=<%=sFace%>&selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>";
 <% } %>
         }
       }
@@ -771,11 +774,11 @@
           <TD COLSPAN="2" ALIGN="left">
 <%
           if (iSkip>0)
-            out.write("            <A HREF=\"contact_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
+            out.write("            <A HREF=\"contact_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&face="+sFace+"&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
     
     	  if (oContacts!=null)
             if (!oContacts.eof())
-              out.write("            <A HREF=\"contact_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
+              out.write("            <A HREF=\"contact_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&face="+sFace+"&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
 %>
           </TD>
 <% if (((iAppMask & (1<<Training))!=0) && face.equals("edu") && !bIsGuest) { %>
@@ -845,15 +848,13 @@
       %>          	  
         <TR>
           <TD COLSPAN="5" ALIGN="left">
-<%
-    	  // [~//Pintar los enlaces de siguiente y anterior~]
-    
+<%    
           if (iSkip>0)
-            out.write("            <A HREF=\"contact_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
+            out.write("            <A HREF=\"contact_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&face="+sFace+"&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
     
     	  if (oContacts!=null)
             if (!oContacts.eof())
-              out.write("            <A HREF=\"contact_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
+              out.write("            <A HREF=\"contact_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&query=" + sQuery + "&orderby=" + sOrderBy + "&where=" + Gadgets.URLEncode(sWhere) + "&field=" + sField + "&find=" + sFind + "&face="+sFace+"&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
 %>
           </TD>
         </TR>

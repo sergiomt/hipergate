@@ -81,11 +81,7 @@
     oConn = GlobalDBBind.getConnection("rp_saleswinlost");
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("rp_saleswinlost");
-      }
+    disposeConnection(oConn,"rp_saleswinlost");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }
@@ -98,20 +94,12 @@
     oConn.close("rp_saleswinlost");
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("rp_saleswinlost");
-      }
+    disposeConnection(oConn,"rp_saleswinlost");
     oConn = null;
   }
 
   catch (NullPointerException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("rp_saleswinlost");
-      }
+    disposeConnection(oConn,"rp_saleswinlost");
     oConn = null;
   }
   

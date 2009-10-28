@@ -106,7 +106,7 @@
 	  oItem.put (DB.nm_company, nm_company);	  
 	  oRecent.add (oConn, oItem);
     
-    DBAudit.log(oConn, oContact.ClassId, sOpCode, id_user, oContact.getString(DB.gu_contact), null, 0, 0, request.getParameter("nm_legal"), null);
+    DBAudit.log(oConn, oContact.ClassId, sOpCode, id_user, oContact.getString(DB.gu_contact), oContact.getStringNull(DB.gu_company,""), 0, 0, oContact.getString(DB.tx_name)+" "+oContact.getString(DB.tx_surname), request.getParameter("nm_legal"));
 
     oConn.commit();
         
@@ -116,7 +116,7 @@
     if (oConn!=null) {
       if (oStmt!=null) { try {oStmt.close(); } catch (Exception ignore) {} }
       if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
+        if (!oConn.getAutoCommit()) oConn.rollback();
         oConn.close("contact_edit_store");             
       }
     }

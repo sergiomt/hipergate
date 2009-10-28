@@ -136,6 +136,12 @@
             </TD>
           </TR>
           <TR>
+            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">[~Nacionalidad:~]</FONT></TD>
+            <TD ALIGN="left" WIDTH="420">
+              <SELECT CLASS="combomini" NAME="id_nationality"><OPTION VALUE=""></OPTION><%=sCountriesLookUp%></SELECT>
+            </TD>
+          </TR>
+          <TR>
             <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Salesman:</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
             <INPUT TYPE="hidden" NAME="gu_sales_man" VALUE="<%=oCont.getStringNull(DB.gu_sales_man,"")%>">

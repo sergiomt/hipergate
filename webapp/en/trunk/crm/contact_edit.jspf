@@ -37,6 +37,7 @@
   String sPassportLookUp = "";
   String sTitleLookUp = "";  
   String sCompanyLookUp = "";
+  String sCountriesLookUp = "";
   String sTerms = "";
   int iCompanyCount = 0;
   DBSubset oContanies = null;
@@ -95,7 +96,8 @@
     sStatusLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_contacts_lookup, gu_workarea, "id_status", sLanguage);    
     sTitleLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_contacts_lookup, gu_workarea, "de_title", sLanguage);    
     sPassportLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_contacts_lookup, gu_workarea, "tp_passport", sLanguage);
-    
+    sCountriesLookUp = GlobalDBLang.getHTMLCountrySelect(oConn, sLanguage);
+
     if (bOk) {
       oContanies = new DBSubset (DB.k_companies, 
       			         DB.gu_company + "," + DB.nm_legal ,
@@ -352,6 +354,7 @@
           setCombo(frm.sel_passport,"<%=oCont.getStringNull(DB.tp_passport,"")%>");
           setCombo(frm.sel_geozone,"<%=oCont.getStringNull(DB.gu_geozone,"")%>");
           setCombo(frm.sel_salesman,"<%=oCont.getStringNull(DB.gu_sales_man,"")%>");
+          setCombo(frm.id_nationality,"<%=oCont.getStringNull(DB.id_nationality,"")%>");
         } // setCombos()
         
       //-->     

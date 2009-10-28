@@ -87,7 +87,7 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript">
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
 
       function setCombos() {
@@ -235,7 +235,7 @@
             window.open("../common/lookup_f.jsp?nm_table=k_oportunities_lookup&id_language=" + getUserLanguage() + "&id_section=id_objetive&tp_control=2&nm_control=sel_objetive&nm_coding=id_objetive", "lookupobjective", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
             break;
           case 2:
-            window.open("../common/lookup_f.jsp?nm_table=k_addresses_lookup&id_language=" + getUserLanguage() + "&id_section=tp_location&tp_control=2&nm_control=sel_location&nm_coding=tp_location", "lookupaddrlocation", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
+            window.open("../common/lookup_f.jsp?nm_table=k_oportunities_lookup&id_language=" + getUserLanguage() + "&id_section=id_status&tp_control=2&nm_control=sel_status&nm_coding=id_status", "lookupstatus", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
             break;
           case 3:
             window.open("../common/lookup_f.jsp?nm_table=k_addresses_lookup&id_language=" + getUserLanguage() + "&id_section=tp_street&tp_control=2&nm_control=sel_street&nm_coding=tp_street", "lookupaddrstreet", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
@@ -247,9 +247,6 @@
               alert ("Must select a country before choosing the state");
             break;
           case 5:
-            window.open("../common/lookup_f.jsp?nm_table=k_oportunities_lookup&id_language=" + getUserLanguage() + "&id_section=id_status&tp_control=2&nm_control=sel_status&nm_coding=id_status", "lookupstatus", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
-            break;
-          case 6:
             window.open("../common/lookup_f.jsp?nm_table=k_oportunities_lookup&id_language=" + getUserLanguage() + "&id_section=tp_origin&tp_control=2&nm_control=sel_origin&nm_coding=tp_origin", "lookuporigin", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
             break;
         } // end switch()

@@ -58,11 +58,7 @@
     oCon.close("oportunity_delete");
   }
   catch (SQLException e) {  
-    if (oCon!=null)
-      if (!oCon.isClosed()) {
-        if (oCon.getAutoCommit()) oCon.rollback();
-        oCon.close("oportunity_delete");      
-      } // fi (isClosed)
+    disposeConnection(oCon,"oportunity_delete"); // fi (isClosed)
     oCon = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   } // catch()

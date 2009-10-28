@@ -49,11 +49,7 @@
     GlobalCacheClient.expire("k_sales_men["+request.getParameter("gu_workarea")+"]");
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("salesman_new_store");      
-      }
+    disposeConnection(oConn,"salesman_new_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }

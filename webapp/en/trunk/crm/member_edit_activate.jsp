@@ -70,11 +70,7 @@
     oCon.close("listmember_activate");
   } 
   catch(SQLException e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("listmember_activate");      
-        }
+      disposeConnection(oCon,"listmember_activate");
       oCon = null;
       response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_close"));
     }

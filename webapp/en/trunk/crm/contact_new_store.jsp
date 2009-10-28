@@ -197,7 +197,7 @@
       if (oStmt!=null) { try {oStmt.close(); } catch (Exception ignore) {} }
       if (oPtmt!=null) { try {oPtmt.close(); } catch (Exception ignore) {} }      
       if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
+        if (!oConn.getAutoCommit()) oConn.rollback();
         oConn.close("contact_new_store");
       }
     }
@@ -205,30 +205,18 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }
   catch (com.knowgate.ldap.LDAPException e) {
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("contact_new_store");
-      }
+    disposeConnection(oConn,"contact_new_store");
     oConn = null;
     
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=LDAPException&desc=" + e.getMessage() + "&resume=_back"));
   }
   catch (ClassNotFoundException e) {
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("contact_new_store");
-      }
+    disposeConnection(oConn,"contact_new_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=ClassNotFoundException&desc=" + e.getMessage() + "&resume=_back"));
   }  
   catch (NumberFormatException e) {
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("contact_new_store");      
-      }
+    disposeConnection(oConn,"contact_new_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NumberFormatException&desc=" + e.getMessage() + "&resume=_back"));
   }

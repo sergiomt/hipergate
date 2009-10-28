@@ -136,11 +136,17 @@
                 </TD>
               </TR>
               <TR>
+                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">[~Nacionalidad:~]</FONT></TD>
+                <TD ALIGN="left" WIDTH="420">
+                  <SELECT CLASS="combomini" NAME="id_nationality"><OPTION VALUE=""></OPTION><%=sCountriesLookUp%></SELECT>
+                </TD>
+              </TR>
+              <TR>
                 <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Zone:</FONT></TD>
                 <TD ALIGN="left" WIDTH="370">
                   <INPUT TYPE="hidden" NAME="gu_geozone" VALUE="">
                   <INPUT TYPE="hidden" NAME="nm_geozone" SIZE="40" VALUE="">
-                  <SELECT NAME="sel_geozone" onchange="setCombo(document.forms[0].sel_salesman,zone_salesman[this.options[this.selectedIndex].value])"><% out.write (sTerms); %></SELECT>&nbsp;<A HREF="#" onclick="lookupZone()"><IMG SRC="../images/images/find16.gif" BORDER="0"></A>
+                  <SELECT NAME="sel_geozone" CLASS="combomini" onchange="setCombo(document.forms[0].sel_salesman,zone_salesman[this.options[this.selectedIndex].value])"><% out.write (sTerms); %></SELECT>&nbsp;<A HREF="#" onclick="lookupZone()"><IMG SRC="../images/images/find16.gif" BORDER="0"></A>
                 </TD>
               </TR>
               <TR>
