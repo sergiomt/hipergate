@@ -1,7 +1,6 @@
-﻿<%@ page import="java.util.StringTokenizer,java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.addrbook.Meeting,com.knowgate.addrbook.Fellow" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.util.HashMap,java.util.StringTokenizer,java.io.IOException,java.net.URLDecoder,java.sql.Statement,java.sql.PreparedStatement,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.addrbook.Meeting,com.knowgate.addrbook.Fellow" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
-
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -41,6 +40,7 @@
   String id_user = getCookie (request, "userid", null);
 
   String ts_start, ts_end;
+  final boolean bIsNew = nullif(request.getParameter("gu_meeting")).length()==0;
   String gu_meeting = nullif(request.getParameter("gu_meeting"));
   String bo_notify = nullif(request.getParameter("bo_notify"),"0");
   String gu_fellow = nullif(request.getParameter("gu_fellow"),id_user);
@@ -59,7 +59,8 @@
   String sOpCode = gu_meeting.length()>0 ? "NMET" : "MMET";
   String sSQL;
   PreparedStatement oStmt;
-  
+  Statement oUpdt;
+
   Meeting oMee;
   StringTokenizer oColTok;
 
@@ -104,7 +105,7 @@
   	ts_end = "{ts '" + request.getParameter("ts_end") + "'}";
     }
         
-    if (gu_meeting.length()==0) {
+    if (bIsNew) {
       gu_meeting = Gadgets.generateUUID();
             
       sSQL = "INSERT INTO " + DB.k_meetings + " (" + DB.gu_meeting + "," + DB.gu_workarea + "," + DB.id_domain + "," + DB.gu_fellow + "," + DB.dt_start + "," + DB.dt_end + "," + DB.bo_private + "," + DB.df_before + "," + DB.tp_meeting + "," + DB.tx_meeting + "," + DB.de_meeting + "," + DB.gu_writer + "," + DB.gu_address + "," + DB.pr_cost + ") VALUES (?,?,?,?," + ts_start + "," + ts_end + ",?,?,?,?,?,?,?,?)";
@@ -153,20 +154,42 @@
     }
 
     oMee = new Meeting(oConn, gu_meeting);
-    
-    oMee.clearAttendants(oConn);
+
+    if (!bIsNew) {
+      oUpdt = oConn.createStatement();
+      oUpdt.executeUpdate("DELETE FROM " + DB.k_x_meeting_fellow + " WHERE " + DB.gu_meeting + "='" + oMee.getString(DB.gu_meeting) + "'");
+      oUpdt.executeUpdate("DELETE FROM " + DB.k_x_meeting_contact + " WHERE " + DB.gu_meeting + "='" + oMee.getString(DB.gu_meeting) + "'");
+      oUpdt.close();
+    }
+
+    HashMap<String,String> oAttendants = new HashMap();
     oColTok = new StringTokenizer(request.getParameter("attendants"), ",");
     while (oColTok.hasMoreElements()) {
       String sAttendant = oColTok.nextToken();
-      com.knowgate.http.portlets.HipergatePortletConfig.touch(oConn, sAttendant, "com.knowgate.http.portlets.CalendarTab", gu_workarea);
-      oMee.setAttendant(oConn, sAttendant);
-    }
+      if (!oAttendants.containsKey(sAttendant)) {
+        com.knowgate.http.portlets.HipergatePortletConfig.touch(oConn, sAttendant, "com.knowgate.http.portlets.CalendarTab", gu_workarea);
+        oMee.addAttendant(oConn, sAttendant);
+        oAttendants.put(sAttendant,sAttendant);
+      } // fi
+    } // wend
     oColTok = null;
 
-    oMee.clearRooms(oConn);
+    if (!bIsNew) {
+      oUpdt = oConn.createStatement();
+      oUpdt.executeUpdate("DELETE FROM " + DB.k_x_meeting_room + " WHERE " + DB.gu_meeting + "='" + oMee.getString(DB.gu_meeting) + "'");
+      oUpdt.close();
+    }
+
     oColTok = new StringTokenizer(request.getParameter("rooms"), ",");
-    while (oColTok.hasMoreElements())
-      oMee.setRoom(oConn, oColTok.nextToken());
+		oStmt = oConn.prepareStatement("INSERT INTO " + DB.k_x_meeting_room + "(" + DB.gu_meeting + "," + DB.nm_room + "," + DB.dt_start + "," + DB.dt_end + ") VALUES (?,?,?,?)");
+    while (oColTok.hasMoreElements()) {
+			oStmt.setString(1, gu_meeting);
+			oStmt.setString(2, oColTok.nextToken());
+			oStmt.setTimestamp(3, oMee.getTimestamp(DB.dt_start));
+		  oStmt.setTimestamp(4, oMee.getTimestamp(DB.dt_end));
+			oStmt.executeUpdate();
+    } // wend
+	  oStmt.close();			
     oColTok = null;
 
     oMee = null;
