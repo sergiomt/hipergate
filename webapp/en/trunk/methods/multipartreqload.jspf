@@ -65,7 +65,7 @@ public void loadRequest(com.knowgate.jdc.JDCConnection j, com.oreilly.servlet.Mu
 	            aDt = com.knowgate.misc.Gadgets.split(s,'-');
 	            p.replace(n, new java.util.Date(Integer.parseInt(aDt[0])-1900,Integer.parseInt(aDt[1])-1,Integer.parseInt(aDt[2])));
 	          } else {
-	            oDateFormat = com.knowgate.workareas.WorkArea.getSimpleDateFormat((java.sql.Connection) j, getCookie(r,"workarea", null));
+	            oDateFormat = com.knowgate.workareas.WorkArea.getSimpleDateFormat((java.sql.Connection) j, getCookie((HttpServletRequest)r,"workarea", null));
               p.replace(n, new java.util.Date(oDateFormat.parse(s).getTime()));
 	          }
 
@@ -77,7 +77,7 @@ public void loadRequest(com.knowgate.jdc.JDCConnection j, com.oreilly.servlet.Mu
 	              aDt = com.knowgate.misc.Gadgets.split(s,'-');            
 	              p.replace(n, new java.sql.Timestamp(new java.util.Date(Integer.parseInt(aDt[0])-1900,Integer.parseInt(aDt[1])-1,Integer.parseInt(aDt[2])).getTime()));
               } else {
-	              oDateFormat = new java.text.SimpleDateFormat(com.knowgate.workareas.WorkArea.getDateFormat((java.sql.Connection) j, getCookie(r,"workarea", null))+" HH:mm:ss");
+	              oDateFormat = new java.text.SimpleDateFormat(com.knowgate.workareas.WorkArea.getDateFormat((java.sql.Connection) j, getCookie((HttpServletRequest)r,"workarea", null))+" HH:mm:ss");
                 p.replace(n, new java.sql.Timestamp(oDateFormat.parse(s).getTime()));              
               }
             }
@@ -86,7 +86,7 @@ public void loadRequest(com.knowgate.jdc.JDCConnection j, com.oreilly.servlet.Mu
                 oDateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 p.replace(n, new java.sql.Timestamp(oDateFormat.parse(s).getTime()));
               } else {
-	              oDateFormat = new java.text.SimpleDateFormat(com.knowgate.workareas.WorkArea.getDateFormat((java.sql.Connection) j, getCookie(r,"workarea", null))+" HH:mm:ss");
+	              oDateFormat = new java.text.SimpleDateFormat(com.knowgate.workareas.WorkArea.getDateFormat((java.sql.Connection) j, getCookie((HttpServletRequest)r,"workarea", null))+" HH:mm:ss");
                 p.replace(n, new java.sql.Timestamp(oDateFormat.parse(s).getTime()));
               }
             }
