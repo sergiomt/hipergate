@@ -73,7 +73,7 @@
   catch (SQLException e) {
     if(null!=oConn)
       if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
+        if (!oConn.getAutoCommit()) oConn.rollback();
         oConn.close("catusrs_store");
       }
     oConn = null;

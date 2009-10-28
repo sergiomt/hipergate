@@ -64,7 +64,7 @@
   catch (SQLException e) {
     if(null!=oConn)
       if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
+        if (!oConn.getAutoCommit()) oConn.rollback();
         oConn.close("catgrps_store");
       }
     oConn = null;

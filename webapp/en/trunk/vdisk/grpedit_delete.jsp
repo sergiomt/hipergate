@@ -75,7 +75,7 @@
   }
   catch (SQLException e) {
     if (!oConn.isClosed()) {
-      try { if (oConn.getAutoCommit()) oConn.rollback(); } catch (Exception ignore) {}
+      try { if (!oConn.getAutoCommit()) oConn.rollback(); } catch (Exception ignore) {}
       oConn.close("grpedit_delete");
     }
     oConn = null;

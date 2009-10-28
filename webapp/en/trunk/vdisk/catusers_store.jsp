@@ -62,7 +62,7 @@
   }
   catch (SQLException e) {
     if (!oConn.isClosed()) {
-      if (oConn.getAutoCommit()) oConn.rollback();
+      if (!oConn.getAutoCommit()) oConn.rollback();
       oConn.close("catusers_store");
     }
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error de Acceso a la Base de Datos&desc=" + e.getLocalizedMessage() + "&resume=_back"));

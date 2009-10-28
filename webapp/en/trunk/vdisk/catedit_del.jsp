@@ -70,11 +70,7 @@
     oCon.close("catedit_delete");
   } 
   catch(SQLException e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("catedit_delete");      
-        }
+      disposeConnection(oCon,"catedit_delete");
      oCon = null; 
      out.write("<HTML><HEAD><TITLE>Wait...</TITLE><SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>window.open('../common/errmsg.jsp?title=Error&desc=" + e.getMessage() + "&resume=_close');</SCRIPT></HEAD><BODY onload=\"window.close()\"></BODY></HTML>");
     }

@@ -99,7 +99,7 @@
   catch (SQLException e) {  
     if (oConn!=null)
       if (!oConn.isClosed()) {
-        try { if (oConn.getAutoCommit()) oConn.rollback(); } catch (SQLException r) { }
+        try { if (!oConn.getAutoCommit()) oConn.rollback(); } catch (SQLException r) { }
         oConn.close("domedit_store");
       }
     oConn = null;
@@ -108,7 +108,7 @@
   catch (NumberFormatException e) {  
     if (oConn!=null)
       if (!oConn.isClosed()) {
-        try { if (oConn.getAutoCommit()) oConn.rollback(); } catch (SQLException r) { }
+        try { if (!oConn.getAutoCommit()) oConn.rollback(); } catch (SQLException r) { }
         oConn.close("domedit_store");
       }
     oConn = null;

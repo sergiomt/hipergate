@@ -87,17 +87,13 @@
       oConn.commit();
     }
     else
-      if (oConn.getAutoCommit()) oConn.rollback();
+      if (!oConn.getAutoCommit()) oConn.rollback();
     
     oConn.close("docrename_store");
   }
   catch (Exception e) {
     if (oStmt!=null) { try {oStmt.close();} catch (Exception ignore) {} }   
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("docrename_store");      
-      }
+    disposeConnection(oConn,"docrename_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title="+e.getClass().getName()+"&desc=" + e.getMessage() + "&resume=_back"));
   }

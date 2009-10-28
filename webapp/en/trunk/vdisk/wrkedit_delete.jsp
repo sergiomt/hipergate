@@ -81,7 +81,7 @@
   }
   catch (SQLException e) {
     if (!oConn.isClosed()) {
-      if (oConn.getAutoCommit()) oConn.rollback();
+      if (!oConn.getAutoCommit()) oConn.rollback();
       oConn.close("wrkedit_delete");
     }
     oConn = null;
@@ -89,7 +89,7 @@
   }
   catch (IOException e) {
     if (!oConn.isClosed()) {
-      if (oConn.getAutoCommit()) oConn.rollback();
+      if (!oConn.getAutoCommit()) oConn.rollback();
       oConn.close("wrkedit_delete");
     }
     oConn = null;

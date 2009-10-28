@@ -111,7 +111,7 @@
   catch (NullPointerException d) {
     if (null!=oCon1)
       if (!oCon1.isClosed()) {
-        if (oCon1.getAutoCommit()) oCon1.rollback();
+        if (!oCon1.getAutoCommit()) oCon1.rollback();
         oCon1.close("catedit_store");
         oCon1 = null;
       }

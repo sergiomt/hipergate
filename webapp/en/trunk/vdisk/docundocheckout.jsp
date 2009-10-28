@@ -37,11 +37,7 @@
     out.write("SUCCESS\n1.0:OK");
   }
   catch (Exception e) {
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("undodoccheckout");
-      }
+    disposeConnection(oConn,"undodoccheckout");
     oConn = null;
     out.write("ERROR\n"+e.getClass().getName()+" "+e.getMessage());
   }

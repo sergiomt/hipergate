@@ -235,20 +235,12 @@
       oConn.close("useredit_modify");
   }
   catch (SQLException e) {
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("useredit_modify");      
-      }
+    disposeConnection(oConn,"useredit_modify");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getMessage() + "&resume=_back"));
   }
   catch (com.knowgate.ldap.LDAPException e) {
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("useredit_modify");      
-      }
+    disposeConnection(oConn,"useredit_modify");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=LDAPException&desc=" + e.getMessage() + "&resume=_back"));
   }  

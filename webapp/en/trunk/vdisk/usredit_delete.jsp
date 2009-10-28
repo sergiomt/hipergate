@@ -97,7 +97,7 @@
   catch (SQLException e) {
     if (null!=oConn) {
       if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
+        if (!oConn.getAutoCommit()) oConn.rollback();
         oConn.close("usredit_delete");
       }
       oConn = null;

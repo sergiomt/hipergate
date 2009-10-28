@@ -63,20 +63,12 @@
     oCon.close("domedit_delete");
   } 
   catch(SQLException e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("domedit_delete");      
-        }
+      disposeConnection(oCon,"domedit_delete");
       oCon = null; 
       response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));
     }
   catch (NumberFormatException e) {
-    if (oCon!=null)
-      if (!oCon.isClosed()) {
-        if (oCon.getAutoCommit()) oCon.rollback();
-        oCon.close("domedit_delete");      
-      }
+    disposeConnection(oCon,"domedit_delete");
     oCon = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NumberFormatException&desc=" + e.getMessage() + "&resume=_back"));
   }
