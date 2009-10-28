@@ -24,6 +24,7 @@
   String id_legal = "";
   short bo_active = (short)1;
   String gu_root_cat = "";
+  String gu_bundles_cat = "";
   
   Shop oShp = new Shop();
   DBSubset oShops = null;
@@ -43,6 +44,7 @@
       oShp.load(oConn, new Object[]{gu_shop});
       nm_shop = oShp.getString(DB.nm_shop).toUpperCase();
       gu_root_cat = oShp.getString(DB.gu_root_cat);
+      gu_bundles_cat = oShp.getString(DB.gu_bundles_cat);
       bo_active = oShp.getShort(DB.bo_active);
       gu_workarea = oShp.getString(DB.gu_workarea);
       id_domain = String.valueOf(oShp.getInt(DB.id_domain));
@@ -174,6 +176,7 @@
     <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
     <INPUT TYPE="hidden" NAME="gu_shop" VALUE="<%=gu_shop%>">
     <INPUT TYPE="hidden" NAME="gu_root_cat" VALUE="<%=gu_root_cat%>">
+    <INPUT TYPE="hidden" NAME="gu_bundles_cat" VALUE="<%=gu_bundles_cat%>">
     
     <TABLE CLASS="formback">
       <TR><TD>

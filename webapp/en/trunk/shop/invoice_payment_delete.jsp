@@ -20,8 +20,7 @@
     oCon.setAutoCommit (false);
   
       InvoicePayment oPay = new InvoicePayment();
-      oPay.put(DB.gu_invoice, gu_invoice);
-      oPay.put(DB.pg_payment, pg_payment);
+      oPay.load(oCon, new Object[]{gu_invoice new Integer(pg_payment)});
       
       oPay.delete(oCon);
 
@@ -31,11 +30,7 @@
     oCon.close("invoice_payment_delete");
   } 
   catch(SQLException e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("invoice_payment_delete");      
-        }
+      disposeConnection(oCon,"invoice_payment_delete");
       oCon = null; 
       response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_back"));
     }

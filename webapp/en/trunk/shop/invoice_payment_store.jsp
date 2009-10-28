@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.InvoicePayment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.InvoicePayment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%
 /*
   Copyright (C) 2003-2008  Know Gate S.L. All rights reserved.
@@ -36,38 +36,57 @@
   response.addHeader ("cache-control", "no-store");
   response.setIntHeader("Expires", 0);
 
-  final String PAGE_NAME = "invoice_payment";
+  final String PAGE_NAME = "invoice_payment_store";
 
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
       
   String id_user = getCookie (request, "userid", null);
-        
+  String gu_invoice = request.getParameter("gu_invoice") ;
+  String pg_payment = request.getParameter("pg_payment") ;
+  if (pg_payment==null) pg_payment = "";
+  boolean bAlreadyExists = (pg_payment.length()!=0);
+
   InvoicePayment oPay = new InvoicePayment();
 
   JDCConnection oConn = null;
+  PreparedStatement oStmt = null;
   
   try {
     oConn = GlobalDBBind.getConnection(PAGE_NAME); 
-  
-    loadRequest(oConn, request, oPay);
 
     oConn.setAutoCommit (false);
+
+	  if (bAlreadyExists) {
+      InvoicePayment oPrev = new InvoicePayment();
+      oPrev.load(oConn, new Object[]{gu_invoice, new Integer(pg_payment)});
+      if (!oPrev.isNull(DB.im_paid)) {
+        oStmt = oConn.prepareStatement("UPDATE "+DB.k_invoices+" SET "+DB.im_paid+"="+DBBind.Functions.ISNULL+"("+DB.im_paid+",0)-? WHERE "+DB.gu_invoice+"=?");
+        oStmt.setBigDecimal(1, oPrev.getDecimal(DB.im_paid));
+        oStmt.setString(2, gu_invoice);
+        oStmt.executeUpdate();
+        oStmt.close();
+      }
+    }
+    
+    loadRequest(oConn, request, oPay);
     
     oPay.store(oConn);
 
-    DBAudit.log(oConn, oPay.ClassId, "NPAY", id_user, oPay.getString(DB.gu_invoice), null, oPay.getInt(DB.pg_payment), 0, request.getParameter("dt_payment")+" "+request.getParameter("nm_client"), request.getParameter("im_paid"));
-    
-    DBCommand.executeUpdate(oConn,"UPDATE "+DB.k_invoices+" SET "+DB.im_paid+"="+DBBind.Functions.ISNULL+"("+DB.im_paid+",0)+"+request.getParameter("im_paid")+" WHERE "+DB.gu_invoice+"='"+oPay.getString(DB.gu_invoice)+"'");
+		if (!oPay.isNull(DB.im_paid)) {
+      oStmt = oConn.prepareStatement("UPDATE "+DB.k_invoices+" SET "+DB.im_paid+"="+DBBind.Functions.ISNULL+"("+DB.im_paid+",0)+? WHERE "+DB.gu_invoice+"=?");
+      oStmt.setBigDecimal(1, oPay.getDecimal(DB.im_paid));
+      oStmt.setString(2, gu_invoice);
+      oStmt.executeUpdate();
+      oStmt.close();
+    }
+
+    DBAudit.log(oConn, oPay.ClassId, bAlreadyExists ? "MPAY" : "NPAY", id_user, oPay.getString(DB.gu_invoice), null, oPay.getInt(DB.pg_payment), 0, request.getParameter("dt_payment")+" "+request.getParameter("nm_client"), request.getParameter("im_paid"));
 
     oConn.commit();
     oConn.close(PAGE_NAME);
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close(PAGE_NAME);
-      }
+    disposeConnection(oConn,PAGE_NAME);
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }

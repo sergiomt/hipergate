@@ -71,19 +71,11 @@
     oConn.close("shop_edit_store");
   }
   catch (SQLException e) {
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("shop_edit_store");      
-      }
+    disposeConnection(oConn,"shop_edit_store");
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getMessage() + "&resume=_close"));
   }
   catch (IllegalArgumentException e) {
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("shop_edit_store");      
-      }
+    disposeConnection(oConn,"shop_edit_store");
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=IllegalArgumentException&desc=" + e.getMessage() + "&resume=_close"));
   }
   oConn = null;

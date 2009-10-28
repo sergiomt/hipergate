@@ -317,11 +317,7 @@
     if (oStmt!=null)
       oStmt.close();
       
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("item_edit_store");      
-      }
+    disposeConnection(oConn,"item_edit_store");
     oConn=null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }
@@ -329,11 +325,7 @@
     if (oStmt!=null)
       oStmt.close();
       
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("item_edit_store");      
-      }
+    disposeConnection(oConn,"item_edit_store");
     oConn=null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=IOException&desc=" + e.getMessage() + "&resume=_back"));
   }
@@ -342,11 +334,7 @@
     if (oStmt!=null)
       oStmt.close();
       
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("item_edit_store");      
-      }
+    disposeConnection(oConn,"item_edit_store");
       oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=InstantiationException&desc=" + e.getMessage() + "&resume=_back"));
   }
@@ -355,11 +343,7 @@
     if (oStmt!=null)
       oStmt.close();
       
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("item_edit_store");      
-      }
+    disposeConnection(oConn,"item_edit_store");
       oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NoClassDefFoundError&desc=" + e.getMessage() + "&resume=_back"));
   }
@@ -368,11 +352,7 @@
     if (oStmt!=null)
       oStmt.close();
       
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("item_edit_store");      
-      }
+    disposeConnection(oConn,"item_edit_store");
       oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=UnsatisfiedLinkError&desc=" + e.getMessage() + "&resume=_back"));
   }
@@ -382,11 +362,7 @@
     if (oStmt!=null)
       oStmt.close();
       
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("item_edit_store");      
-      }
+    disposeConnection(oConn,"item_edit_store");
       oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=HeadlessException&desc=" + e.getMessage() + "&resume=_back"));
   }
@@ -396,11 +372,7 @@
     if (oStmt!=null)
       oStmt.close();
       
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("item_edit_store");      
-      }
+    disposeConnection(oConn,"item_edit_store");
       oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=ArrayIndexOutOfBoundsException&desc=" + e.getMessage() + "&resume=_back"));
   }
@@ -409,11 +381,7 @@
     if (oStmt!=null)
       oStmt.close();
       
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("item_edit_store");      
-      }
+    disposeConnection(oConn,"item_edit_store");
       oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=" + e.getMessage() + "&resume=_back"));
   }
@@ -421,11 +389,7 @@
     if (oStmt!=null)
       oStmt.close();
       
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("item_edit_store");      
-      }
+    disposeConnection(oConn,"item_edit_store");
     oConn=null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title="+e.getClass().getName()+"&desc=" + e.getMessage() + "&resume=_back"));
   }

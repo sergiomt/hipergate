@@ -237,18 +237,14 @@
     oConn.close("order_for_new_client_store");
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("order_for_new_client_store");      
-      }
+    disposeConnection(oConn,"order_for_new_client_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }
   catch (NumberFormatException e) {
     if (oConn!=null)
       if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
+        if (!oConn.getAutoCommit()) oConn.rollback();
         oConn.close("...");      
       }
     oConn = null;

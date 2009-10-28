@@ -185,11 +185,7 @@
     if (oDlte!=null) oDlte.close();
     if (oUpdt!=null) oUpdt.close();
 
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("cat_fastedit_store");
-      }
+    disposeConnection(oConn,"cat_fastedit_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }
@@ -197,11 +193,7 @@
     if (oDlte!=null) oDlte.close();
     if (oUpdt!=null) oUpdt.close();
 
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("cat_fastedit_store");
-      }
+    disposeConnection(oConn,"cat_fastedit_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=IOException&desc=" + e.getMessage() + "&resume=_back"));
   }

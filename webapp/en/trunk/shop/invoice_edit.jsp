@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.text.DecimalFormat,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><% 
 
@@ -17,6 +17,9 @@
   String gu_invoice = nullif(request.getParameter("gu_invoice"));
   
   String sLocationLookUp="", sStatusLookUp="", sPaymentLookUp="", sShipingLookUp="", sBillingLookUp="", sCardsLookUp="";
+
+  DecimalFormat oFmt2 = new DecimalFormat("#0.00");
+	oFmt2.setMaximumFractionDigits(2);
   
   Invoice oInvc = new Invoice();
   int iShops = 0;
@@ -74,16 +77,16 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Edit invoice</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/datefuncs.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/layer.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/grid.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/simplevalidations.js"></SCRIPT>   
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/layer.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/grid.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>   
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="true">
     <!--
       var taxcookiename = "recenttax";
@@ -574,7 +577,7 @@
       } // validate;
     //-->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript">
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
       var oProductGrid = GridCreate(0,7);
       var iProductCount = 0;
@@ -793,7 +796,7 @@
                     <SELECT CLASS="combomini" NAME="sel_pay_status"><OPTION VALUE=""></OPTION><% out.write(sPaymentLookUp); %></SELECT>&nbsp;
                     <A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Edit Payment Status"></A>
                   </TD>
-                  <TD><% if (gu_invoice.length()>0) { %> <A CLASS="linkplain" HREF="invoice_payments.jsp?gu_workarea=<%=gu_workarea%>&gu_invoice=<%=gu_invoice%>">Partial Payments</A> <% if (!oInvc.isNull(DB.im_paid)) out.write("("+oInvc.getDecimal(DB.im_paid).toString()+")"); } %></TD>
+                  <TD CLASS="formplain"><% if (gu_invoice.length()>0) { %> <A CLASS="linkplain" HREF="invoice_payments.jsp?gu_workarea=<%=gu_workarea%>&gu_invoice=<%=gu_invoice%>">Partial Payments</A> <% if (!oInvc.isNull(DB.im_paid)) out.write("("+oFmt2.format(oInvc.getDecimal(DB.im_paid))+")"); } %></TD>
                 </TR>
               </TABLE>
             </TD>

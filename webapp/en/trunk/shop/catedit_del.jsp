@@ -21,11 +21,7 @@
     oCon.close("shopcatedit_delete");
   } 
   catch(SQLException e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("shopcatedit_delete");      
-        }
+      disposeConnection(oCon,"shopcatedit_delete");
      oCon = null; 
      out.write("<HTML><HEAD><TITLE>Wait...</TITLE><SCRIPT LANGUAGE=\"JavaScript\" TYPE=\"text/javascript\">window.open(\"../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back\");</SCRIPT></HEAD></HTML>");
     }

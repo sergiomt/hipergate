@@ -31,11 +31,7 @@
     out.write("<HTML><HEAD><TITLE>Wait...</TITLE><SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>parent.msgslist.document.location = 'item_list.jsp?gu_shop=" + request.getParameter("gu_shop") + "&gu_category=" + request.getParameter("gu_category") + "&tr_category=" + Gadgets.URLEncode(request.getParameter("tr_category")) + "&top_parent_cat=" + request.getParameter("top_parent_cat") + "&orderby=10&screen_width=' + String(screen.width); self.document.location='../blank.htm';</SCRIPT></HEAD></HTML>");
   } 
   catch(SQLException e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("product_reorder");      
-        }
+      disposeConnection(oCon,"product_reorder");
       oCon = null; 
       out.write("<HTML><HEAD><TITLE>Wait...</TITLE><SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>window.open('../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_back'); self.document.location='../blank.htm';</SCRIPT></HEAD></HTML>");
     }

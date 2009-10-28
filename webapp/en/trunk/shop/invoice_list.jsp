@@ -432,12 +432,14 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/autosuggest20.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/dynapi.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
-    DynAPI.setLibraryPath('../javascript/dynapi/lib/');
-    DynAPI.include('dynapi.api.*');
+    dynapi.library.setPath('../javascript/dynapi3/');
+    dynapi.library.include('dynapi.api.DynLayer');
     var menuLayer;
-    DynAPI.onLoad = function() { 
+    dynapi.onLoad(init);
+    function init() {
+ 
       setCombos();
       menuLayer = new DynLayer();
       menuLayer.setWidth(160);
@@ -445,8 +447,8 @@
       menuLayer.setHTML(rightMenuHTML);      
     }
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/rightmenu.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/floatdiv.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/floatdiv.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="true">
     <!--
         var jsLocationsVl = Array(<% out.write(sLocationsVl); %>);
@@ -561,7 +563,7 @@
 	  
 	  var frm = document.forms[0];
 	  
-	  window.location = "invoice_list.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&sortby=" + fld + "&where=" + escape("<%=sWhere%>") + "&field=" + getCombo(frm.sel_searched) + "&findclause=" + escape(frm.findclause.value) + "&company=<%=sCompany%>&contact=<%=sContact%>&salesman=<%=sSalesMan%>&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&screen_width=" + String(screen.width);
+	  window.location = "invoice_list.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&sortby=" + (fld==2 ? "2 DESC" : String(fld)) + "&where=" + escape("<%=sWhere%>") + "&field=" + getCombo(frm.sel_searched) + "&findclause=" + escape(frm.findclause.value) + "&company=<%=sCompany%>&contact=<%=sContact%>&salesman=<%=sSalesMan%>&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&screen_width=" + String(screen.width);
 	}			
 
         // ----------------------------------------------------
@@ -815,9 +817,9 @@
 <%    
     	  if (iInvoiceCount>0) {
             if (iSkip>0) 
-              out.write("            <A HREF=\"invoice_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&sortby=" + sSortBy + "&findclause=" + sFindClause + "&selected=" + request.getParameter("selected") + "&contact=" + sContact + "&company=" + sCompany + "&salesman=" + sSalesMan + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");    
+              out.write("            <A HREF=\"invoice_list.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&sortby=" + sSortBy + "&findclause=" + sFindClause + "&selected=" + request.getParameter("selected") + "&contact=" + sContact + "&company=" + sCompany + "&salesman=" + sSalesMan + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");    
             if (!oInvoices.eof())
-              out.write("            <A HREF=\"invoice_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&sortby=" + sSortBy + "&findclause=" + sFindClause + "&selected=" + request.getParameter("selected") + "&contact=" + sContact + "&company=" + sCompany + "&salesman=" + sSalesMan + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
+              out.write("            <A HREF=\"invoice_list.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&sortby=" + sSortBy + "&findclause=" + sFindClause + "&selected=" + request.getParameter("selected") + "&contact=" + sContact + "&company=" + sCompany + "&salesman=" + sSalesMan + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
 	  } // fi (iInvoiceCount)
 %>
           </TD>
@@ -837,7 +839,11 @@
             sInvoiceId = oInvoices.getString(0,i);
             sInvoicePg = Gadgets.leftPad(String.valueOf(oInvoices.getInt(1,i)),'0',10);
               
-  	    bActive  = (oInvoices.getShort(3,i)==(short)1);
+  	        if (oInvoices.isNull(3,i))  	        
+  	          bActive  = false;
+  	        else
+  	          bActive  = (oInvoices.getShort(3,i)==(short)1);
+
             sInvoiceDt = oInvoices.getDateShort(4,i);
             sPayDt = oInvoices.getDateShort(5,i);
             
@@ -884,7 +890,7 @@
     	  // //Pintar los enlaces de siguiente y anterior
     
     	  if (iInvoiceCount>0) {
-            if (iSkip>0) // //Si iSkip>0 entonces hay registros anteriores
+            if (iSkip>0) 
               out.write("            <A HREF=\"invoice_list.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&sortby=" + sSortBy + "&findclause=" + sFindClause + "&selected=" + request.getParameter("selected") + "&contact=" + sContact + "&company=" + sCompany + "&salesman=" + sSalesMan + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
     
             if (!oInvoices.eof())
@@ -932,7 +938,7 @@
 												 "nm_table=v_invoices&nm_valuecolumn=id_ref&nm_textcolumn=id_ref&tx_where=",
 												 "nm_table=v_invoices&nm_valuecolumn=nm_legal&nm_textcolumn=nm_legal&tx_where=",
 												 "nm_table=v_invoices&nm_valuecolumn=id_legal&nm_textcolumn=id_legal&tx_where=",
-												 "nm_table=v_invoices&nm_valuecolumn=tx_comments&nm_textcolumn=tx_comments&tx_where=",
+												 "nm_table=v_invoices&nm_valuecolumn=tx_comments&nm_textcolumn=tx_comments&tx_where="
 												 );
     	  
     var asr = new AutoSuggest("tx_search", { script:"'../common/autocomplete.jsp?gu_workarea=<%=gu_workarea%>&'+qry[document.forms[0].sel_searched.selectedIndex>=0 ? document.forms[0].sel_searched.selectedIndex : 0]+escape(document.tx_search.value)+'&'",

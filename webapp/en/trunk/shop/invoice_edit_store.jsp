@@ -91,29 +91,17 @@
     oConn.close("invoice_edit_store");
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("invoice_edit_store");
-      }
+    disposeConnection(oConn,"invoice_edit_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }
   catch (ArrayIndexOutOfBoundsException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("invoice_edit_store");
-      }
+    disposeConnection(oConn,"invoice_edit_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=ArrayIndexOutOfBoundsException&desc=Array index " + e.getMessage() + " is out of bounds " + String.valueOf(iUBound) + "&resume=_back"));
   }
   catch (NumberFormatException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("invoice_edit_store");
-      }
+    disposeConnection(oConn,"invoice_edit_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NumberFormatException&desc=" + e.getMessage() + "&resume=_back"));
   }  

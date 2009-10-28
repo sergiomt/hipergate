@@ -18,8 +18,8 @@
   JDCConnection oConn = null;
   Invoice oInvc = new Invoice();
   DBSubset oPays = new DBSubset("k_invoice_payments",
-  															"gu_invoice,pg_payment,dt_payment,id_currency,im_paid,tp_billing,nm_client,tx_comments",
-  															DB.gu_invoice + "=? ORDER BY 3 DESC", 10);
+  															"gu_invoice,pg_payment,dt_payment,id_currency,im_paid,tp_billing,nm_client,tx_comments,dt_paid,bo_active",
+  															DB.gu_invoice + "=? ORDER BY 2", 10);
   int nPays = 0;
   
   try {
@@ -65,10 +65,12 @@
           	frm.dt_payment.focus();
             return false;
           } // fi
-          if (!isFloatValue(frm.im_paid.value)) {
+          if (!isFloatValue(removeThousandsDelimiter(frm.im_paid.value))) {
           	alert("[~El importe es válido~]");
           	frm.im_paid.focus();
             return false;
+          } else {
+            frm.im_paid.value = removeThousandsDelimiter(frm.im_paid.value);
           }
           if (frm.tp_billing.selectedIndex<=0) {
           	alert("Payment mean is required");
@@ -95,37 +97,64 @@
     	<INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
       <TABLE SUMMARY="Payments" CELLSPACING="1" CELLPADDING="0">
         <TR>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Date</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Amount</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="20"></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="80">&nbsp;<B>Date</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="120">&nbsp;<B>Amount</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Payment mean</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Paid by</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Comments</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"></TD>
 				</TR>
-<% BigDecimal oTotal = new BigDecimal(0);
+<% 
+   BigDecimal oTotal = new BigDecimal(0d);
+   BigDecimal oPaid = new BigDecimal(0d);
    for (int p=0; p<nPays; p++) {
       String sStrip = String.valueOf((p%2)+1);
+      boolean bPaid = !oPays.isNull(8,p);
+      boolean bActive;
+      if (oPays.isNull(9,p)) bActive = true; else bActive = (oPays.getShort(9,p)!=(short)0);
+      String sStrk1 = (bActive ? "" : "<STRIKE>");
+      String sStrk2 = (bActive ? "" : "</STRIKE>");
+      String sPayDate = (bPaid ? oPays.getDateShort(8,p) : oPays.getDateShort(2,p));
       oTotal = oTotal.add(oPays.getDecimal(4,p));
+      if (bPaid) oPaid = oPaid.add(oPays.getDecimal(4,p));
       CurrencyCode oCurCod = DBCurrencies.currencyCodeFor(Integer.parseInt(oPays.getString(3,p).trim()));
       if (oCurCod==null) throw new NullPointerException("Cannot find currency code for \""+oPays.getString(3,p).trim()+"\"");
-      out.write("<TR><TD CLASS=\"strip"+sStrip+"\">"+oPays.getDateShort(2,p)+"</TD>");      
-      out.write("<TD CLASS=\"strip"+sStrip+"\" ALIGN=\"right\">"+Gadgets.formatCurrency(oPays.getDecimal(4,p),oCurCod.alphaCode(),sLanguage,null)+"</TD>");
-      out.write("<TD CLASS=\"strip"+sStrip+"\">"+oBillingLookUp.get(oPays.getString(5,p))+"</TD>");
-      out.write("<TD CLASS=\"strip"+sStrip+"\">"+oPays.getStringNull(6,p,"")+"</TD>");
-      out.write("<TD CLASS=\"strip"+sStrip+"\">"+oPays.getStringNull(7,p,"")+"</TD>");
+      out.write("<TR><TD WIDTH=\"20\" CLASS=\"strip"+sStrip+"\"><IMG SRC=\"../images/images/"+(bPaid ? "corrected.gif" : "pending.gif")+"\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"[~Cobrado~]\"></TD>");
+      out.write("<TD WIDTH=\"80\" CLASS=\"strip"+sStrip+"\"><A HREF=\"invoice_payment_edit.jsp?gu_workarea="+gu_workarea+"&gu_invoice="+gu_invoice+"&pg_payment="+String.valueOf(oPays.getInt(1,p))+"\">"+sPayDate+"</A></TD>");      
+      out.write("<TD WIDTH=\"120\" CLASS=\"strip"+sStrip+"\" ALIGN=\"left\">"+sStrk1+Gadgets.formatCurrency(oPays.getDecimal(4,p),oCurCod.alphaCode(),sLanguage,null)+sStrk2+"</TD>");
+      out.write("<TD CLASS=\"strip"+sStrip+"\">"+sStrk1+oBillingLookUp.get(oPays.getString(5,p))+sStrk2+"</TD>");
+      out.write("<TD CLASS=\"strip"+sStrip+"\">"+sStrk1+oPays.getStringNull(6,p,"")+sStrk2+"</TD>");
+      out.write("<TD CLASS=\"strip"+sStrip+"\"><FONT CLASS=\"textsmall\">"+sStrk1+oPays.getStringNull(7,p,"")+sStrk2+"</FONT></TD>");
       out.write("<TD CLASS=\"strip"+sStrip+"\"><A HREF=\"invoice_payment_delete.jsp?gu_invoice="+gu_invoice+"&gu_workarea="+gu_workarea+"&pg_payment="+String.valueOf(oPays.getInt(1,p))+"\" TITLE=\"Delete Payent\"><IMG SRC=\"../images/images/delete.gif\" WIDTH=\"13\" HEIGHT=\"13\" BORDER=\"0\" ALT=\"Delete\"></A></TD></TR>");
    } %>
         <TR>
-          <TD CLASS="strip1"><B>Total Paid</B></TD>
-          <TD CLASS="strip1" ALIGN="right"><B><%=Gadgets.formatCurrency(oTotal,DBCurrencies.currencyCodeFor(Integer.parseInt(oInvc.getString(DB.id_currency).trim())).alphaCode(),sLanguage,null)%></B></TD>
-          <TD COLSPAN="5"></TD>
+          <TD CLASS="strip1" COLSPAN="8">
+            <B>[~Total Factura~]</B>&nbsp;<B><%=Gadgets.formatCurrency(oInvc.getDecimal(DB.im_total),DBCurrencies.currencyCodeFor(Integer.parseInt(oInvc.getString(DB.id_currency).trim())).alphaCode(),sLanguage,null)%></B>&nbsp;&nbsp;
+            <B>Total Paid</B>&nbsp;<B><%=Gadgets.formatCurrency(oPaid,DBCurrencies.currencyCodeFor(Integer.parseInt(oInvc.getString(DB.id_currency).trim())).alphaCode(),sLanguage,null)%></B>&nbsp;&nbsp;
+					  <B>[~Pte. de Cobro~]</B>&nbsp;<B><%=Gadgets.formatCurrency(oTotal.subtract(oPaid),DBCurrencies.currencyCodeFor(Integer.parseInt(oInvc.getString(DB.id_currency).trim())).alphaCode(),sLanguage,null)%></B>
+					</TD>
         </TR>
-        <TR>        	
-          <TD CLASS="strip1"><INPUT TYPE="text" MAXLENGTH="10" SIZE="12" NAME="dt_payment" VALUE="<%=new SimpleDateFormat("yyyy-MM-dd").format(new Date())%>"></TD>
-          <TD CLASS="strip1"><INPUT TYPE="text" MAXLENGTH="10" SIZE="8" NAME="im_paid">&nbsp<SELECT NAME="id_currency"><OPTION VALUE=""></OPTION><OPTION VALUE="978">EUR</OPTION><OPTION VALUE="840">USD</OPTION><OPTION VALUE="826">GBP</OPTION><OPTION VALUE="392">YEN</OPTION></SELECT></TD>
-          <TD CLASS="strip1"><SELECT NAME="tp_billing"><OPTION VALUE=""></OPTION><%=sBillingLookUp%></SELECT></TD>
-          <TD CLASS="strip1"><INPUT TYPE="text" MAXLENGTH="200" NAME="nm_client"></TD>
-          <TD CLASS="strip1"><INPUT TYPE="text" MAXLENGTH="254" NAME="tx_comments"></TD>
+        <TR>
+          <TD CLASS="strip1" COLSPAN="8"><HR/></TD>
+        </TR>
+        <TR>
+          <TD CLASS="strip1" COLSPAN="8"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nuevo Cobro~]">&nbsp;[~Nuevo Cobro~]</TD>
+        </TR>
+        <TR>
+          <TD CLASS="strip1" WIDTH="100" COLSPAN="2">Date</TD>
+          <TD CLASS="strip1" WIDTH="120">Amount</TD>
+          <TD CLASS="strip1">[~Forma de pago~]</TD>
+          <TD CLASS="strip1">Paid by</TD>
+          <TD CLASS="strip1">Comments</TD>
+          <TD CLASS="strip1"></TD>
+				</TR>
+        <TR>
+          <TD CLASS="strip1" WIDTH="100" COLSPAN="2"><INPUT CLASS="combomini" TYPE="text" MAXLENGTH="10" SIZE="12" NAME="dt_payment" VALUE="<%=new SimpleDateFormat("yyyy-MM-dd").format(new Date())%>"></TD>
+          <TD CLASS="strip1" WIDTH="120"><INPUT CLASS="combomini" TYPE="text" MAXLENGTH="10" SIZE="8" NAME="im_paid">&nbsp<SELECT CLASS="combomini" NAME="id_currency"><OPTION VALUE=""></OPTION><OPTION VALUE="978">EUR</OPTION><OPTION VALUE="840">USD</OPTION><OPTION VALUE="826">GBP</OPTION><OPTION VALUE="392">YEN</OPTION></SELECT></TD>
+          <TD CLASS="strip1"><SELECT CLASS="combomini" NAME="tp_billing"><OPTION VALUE=""></OPTION><%=sBillingLookUp%></SELECT></TD>
+          <TD CLASS="strip1"><INPUT CLASS="combomini" TYPE="text" MAXLENGTH="200" NAME="nm_client"></TD>
+          <TD CLASS="strip1"><INPUT CLASS="combomini" TYPE="text" MAXLENGTH="254" NAME="tx_comments"></TD>
           <TD CLASS="strip1"><INPUT TYPE="image" SRC="../images/images/floppy.gif"></TD>
 				</TR>
 		  </TABLE>      

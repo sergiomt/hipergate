@@ -59,11 +59,7 @@
     oCon.close("salepoint_delete");
   } 
   catch(SQLException e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("salepoint_delete");      
-        }
+      disposeConnection(oCon,"salepoint_delete");
       oCon = null; 
       response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_back"));
     }

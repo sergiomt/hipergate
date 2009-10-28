@@ -76,11 +76,7 @@
     oConn.close("salepoint_edit_store");    
   }
   catch (NullPointerException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("salepoint_edit_store");      
-      } // fi (isClosed)
+    disposeConnection(oConn,"salepoint_edit_store"); // fi (isClosed)
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getMessage() + "&resume=_back"));
   } // catch()

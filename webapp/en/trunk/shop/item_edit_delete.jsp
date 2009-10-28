@@ -35,11 +35,7 @@
     out.write("<HTML><HEAD><TITLE>Wait...</TITLE><SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>parent.msgslist.document.location.reload(true); self.document.location='../blank.htm';</SCRIPT></HEAD></HTML>");
   } 
   catch(SQLException e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("product_delete");      
-        }
+      disposeConnection(oCon,"product_delete");
       oCon = null; 
       out.write("<HTML><HEAD><TITLE>Wait...</TITLE><SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>window.open('../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_back'); self.document.location='../blank.htm';</SCRIPT></HEAD></HTML>");
     }
