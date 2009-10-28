@@ -66,11 +66,7 @@
     oConn.close("clone_project");
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("clone_project");      
-      }
+    disposeConnection(oConn,"clone_project");
     oConn = null;
 
     if (com.knowgate.debug.DebugFile.trace) {
