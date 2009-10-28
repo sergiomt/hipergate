@@ -1,6 +1,5 @@
 ﻿<%@ page import="java.net.URLDecoder,java.io.File,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.workareas.WorkArea,com.knowgate.scheduler.Atom" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
-<%
+<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 
   response.addHeader ("Pragma", "no-cache");
   response.addHeader ("cache-control", "no-store");
@@ -114,15 +113,15 @@
 
       oAtomsArchived = new DBSubset ("k_job_atoms_archived",
       			     "pg_atom,dt_execution,id_status,tx_email,tx_log",
-      			     DB.gu_job + "=? " + ") AND " + DB.id_status + "=?", iMaxRows);      				 
+      			     DB.gu_job + "=? " + " AND " + DB.id_status + "=?", iMaxRows);      				 
 
       oAtoms = new DBSubset ("k_job_atoms b", 
       				 "pg_atom,dt_execution,id_status,tx_email,tx_log",
-      				 DB.gu_job + "=? " + ") AND " + DB.id_status + "=?", iMaxRows);      				 
+      				 DB.gu_job + "=? " + " AND " + DB.id_status + "=?", iMaxRows);      				 
 
       oAtoms.setMaxRows(iMaxRows);
 
-      aFind = new Object[] { sGuJob, sStatusFilter };
+      aFind = new Object[] { sGuJob, Short.parseShort(sStatusFilter) };
     }
     oAtoms.setMaxRows(iMaxRows);
     oAtomsArchived.setMaxRows(iMaxRows);
@@ -155,76 +154,131 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--                    
-        <%
+<%
           // Write instance primary keys in a JavaScript Array
           // This Array is used when posting multiple elements
           
           out.write("var jsAtoms = new Array(");
+          boolean bFirst = true;
             
             for (int i=0; i<iAtomCount; i++) {
-              if (i>0) out.write(","); 
-              out.write("\"" + oAtoms.getString(0,i) + "\"");
+              short iAtomStatus = oAtoms.getShort(2,i);
+              if (iAtomStatus!=Atom.STATUS_FINISHED && iAtomStatus!=Atom.STATUS_PENDING && iAtomStatus!=Atom.STATUS_RUNNING) {
+                if (bFirst)
+                  bFirst=false;
+                else
+                  out.write(",");
+                out.write("\"" + oAtoms.getString(0,i) + "\"");
+              }
             }
             
           out.write(");\n        ");
-        %>
+%>
 
         // ----------------------------------------------------
 
-        // 15. Reload Page sorting by a field
+		    function retrySelectedAtoms() {
+          var frm = document.forms[0];
+				  var chi = "";
 
-	function sortBy(fld) {
-	  
-	  var frm = document.forms[0];
-	  
-	  window.location = "job_viewatoms.jsp?gu_job=<%=sGuJob%>&skip=0&orderby=" + fld + "&field=" + getCombo(frm.sel_status) + "&id_status=" + getCombo(frm.sel_status);
-	} // sortBy		
+          for (var c=0; c<jsAtoms.length; c++) {
+            if (frm.elements["A"+jsAtoms[c]].checked) {
+            	chi += (chi.length==0 ? "" : ",") + jsAtoms[c];
+            } // fi
+					} // next  
+					if (chi.length==0) {
+					  alert ("[~Debe seleccionar previamente algún átomo a re-ejecutar~]");
+					  return false;
+					} else {
+					  frm.checkeditems.value = chi;
+					  frm.submit();
+					}
+		    } // retrySelectedAtoms
 
         // ----------------------------------------------------
 
-        // 16. Select All Instances
+		    function retrySelectedAtoms() {
+          var frm = document.forms[0];
+				  var chi = "";
+
+          for (var c=0; c<jsAtoms.length; c++) {
+            if (frm.elements["A"+jsAtoms[c]].checked) {
+            	chi += (chi.length==0 ? "" : ",") + jsAtoms[c];
+            } // fi
+					} // next  
+					if (chi.length==0) {
+					  alert ("[~Debe seleccionar previamente algún átomo a re-ejecutar~]");
+					  return false;
+					} else {
+					  frm.checkeditems.value = chi;
+					  frm.submit();
+					}
+		    } // retrySelectedAtoms
+        // ----------------------------------------------------
+
+		    function retrySelectedAtoms() {
+          var frm = document.forms[0];
+				  var chi = "";
+
+          for (var c=0; c<jsAtoms.length; c++) {
+            if (frm.elements["A"+jsAtoms[c]].checked) {
+            	chi += (chi.length==0 ? "" : ",") + jsAtoms[c];
+            } // fi
+					} // next  
+					if (chi.length==0) {
+					  alert ("[~Debe seleccionar previamente algún átomo a suspender~]");
+					  return false;
+					} else {
+					  frm.checkeditems.value = chi;
+					  frm.submit();
+					}
+		    } // retrySelectedAtoms
+
+        // ----------------------------------------------------
+        
+        function filterByStatus(id) {
+          var frm = document.forms[0];
+	  	    window.location = "job_viewatoms.jsp?gu_job=<%=sGuJob%>&skip=0&orderby=<%=sOrderBy%>&field=" + getCombo(frm.sel_status) + "&id_status=" + getCombo(frm.sel_status);	        
+        } // filterByStatus
+
+        // ----------------------------------------------------
+
+	      function sortBy(fld) { 
+	        var frm = document.forms[0];
+	  
+	        window.location = "job_viewatoms.jsp?gu_job=<%=sGuJob%>&skip=0&orderby=" + fld + "&field=" + getCombo(frm.sel_status) + "&id_status=" + getCombo(frm.sel_status);
+	      } // sortBy		
+
+        // ----------------------------------------------------
 
         function selectAll() {
-          
           var frm = document.forms[0];
-          
+
           for (var c=0; c<jsAtoms.length; c++)                        
-            eval ("frm.elements['" + jsAtoms[c] + "'].click()");
+            eval ("frm.elements['A" + jsAtoms[c] + "'].click()");
         } // selectAll()
        
         // ----------------------------------------------------
-
-        // 17. Reload Page finding instances by a single field
-	
-	function filterByStatus() {
-	  	  
-	  var frm = document.forms[0];
-	  
-	  if (frm.sel_status.selectedIndex>0)
-	    window.location = "job_viewatoms.jsp?gu_job=<%=sGuJob%>&skip=0&orderby=<%=sOrderBy%>&id_status=" + getCombo(frm.sel_status);
-	  else
-	    window.location = "job_viewatoms.jsp?gu_job=<%=sGuJob%>&skip=0&orderby=<%=sOrderBy%>";
-
-	} // filterByStatus()
 
     //-->    
   </SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
-	function setCombos() {
-	  setCookie ("maxrows", "<%=iMaxRows%>");
-	  setCombo(document.forms[0].maxresults, "<%=iMaxRows%>");
-	} // setCombos()
+	    function setCombos() {
+	      setCookie ("maxrows", "<%=iMaxRows%>");
+	      setCombo(document.forms[0].maxresults, "<%=iMaxRows%>");
+	      setCombo(document.forms[0].sel_status, "<%=sStatusFilter%>");
+	    } // setCombos()
     //-->    
   </SCRIPT>
   <TITLE>hipergate :: [~Listado de átomos de una tarea~]</TITLE>
 </HEAD>
-<BODY  TOPMARGIN="8" MARGINHEIGHT="8">
+<BODY TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()">
     <DIV class="cxMnu1" style="width:220px"><DIV class="cxMnu2">
       <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="document.location='job_modify_f.jsp?gu_job=<%=sGuJob%>'"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
       <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Refresh"> Refresh</SPAN>
     </DIV></DIV>
-    <FORM METHOD="post">
+    <FORM METHOD="post" ACTION="<%=sStatusFilter.equals(String.valueOf(Atom.STATUS_PENDING)) ? "job_suspendatoms.jsp" : "job_retryatoms.jsp"%>">
       <INPUT TYPE="hidden" NAME="gu_job" VALUE="<%=sGuJob%>">
       <INPUT TYPE="hidden" NAME="maxrows" VALUE="<%=String.valueOf(iMaxRows)%>">
       <INPUT TYPE="hidden" NAME="skip" VALUE="<%=String.valueOf(iSkip)%>">      
@@ -235,7 +289,7 @@
         <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Find"></TD>
         <TD VALIGN="middle" CLASS="textplain">
           Status&nbsp;
-          <SELECT NAME="sel_status" CLASS="combomini"><OPTION VALUE="">All</OPTION>
+          <SELECT NAME="sel_status" CLASS="combomini" onChange="filterByStatus(this.options[this.selectedIndex].value)"><OPTION VALUE="">All</OPTION>
             <% for (int s=0; s<iStatus; s++)
                  out.write("<OPTION VALUE=\""+String.valueOf(aStatusId[s])+"\">"+aStatusTx[s]+"</OPTION>");
             %>
@@ -245,6 +299,22 @@
           <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;Show&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;results&nbsp;</FONT>
         </TD>
       </TR>
+<% if (sStatusFilter.equals(String.valueOf(Atom.STATUS_SUSPENDED)) || sStatusFilter.equals(String.valueOf(Atom.STATUS_INTERRUPTED))) { %>
+      <TR>
+        <TD></TD>
+        <TD VALIGN="middle" COLSPAN="2">
+          <A HREF="#" CLASS="linkplain" onclick="retrySelectedAtoms()">[~Re-intentar ejecuci&oacute;n de los &aacute;tomos seleccionados~]</A>
+        </TD>
+      </TR>
+<% } %>
+<% if (sStatusFilter.equals(String.valueOf(Atom.STATUS_PENDING))) { %>
+      <TR>
+        <TD></TD>
+        <TD VALIGN="middle" COLSPAN="2">
+          <A HREF="#" CLASS="linkplain" onclick="suspendSelectedAtoms()">[~Suspender ejecuci&oacute;n de los &aacute;tomos seleccionados~]</A>
+        </TD>
+      </TR>
+<% } %>
       <TR><TD COLSPAN="3" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       </TABLE>
       <TABLE CELLSPACING="1" CELLPADDING="0">
@@ -295,7 +365,7 @@
             sStrip = String.valueOf((i%2)+1);
 %>            
             <TR HEIGHT="14">
-              <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<A HREF="#" onclick="viewAtom(<%=sAtomPg%>)" TITLE="View detail"><%=sAtomPg%></A></TD>
+              <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<%=sAtomPg%></TD>
               <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<%=sStatusTx%></TD>
               <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<%=sExecDt%></TD>
               <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<%=sEMail%></TD>

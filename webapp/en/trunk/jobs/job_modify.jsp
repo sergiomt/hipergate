@@ -63,6 +63,8 @@
   try {
     oJob = Job.instantiate(oConn, gu_job, Environment.getProfile(GlobalDBBind.getProfileName()));
     
+    if (null==oJob) throw new InstantiationException("Could not instantiate job "+gu_job);
+
     oJobCmd = new DBSubset (DB.k_lu_job_commands, DB.tx_command, DB.id_command + "='" + oJob.getString(DB.id_command) + "'", 10);      				 
     oJobCmd.load (oConn);
     sTxCmmd = oJobCmd.getString(0,0);
@@ -135,7 +137,6 @@
 
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=" + e.getMessage() + "&resume=_close"));
   }
-
   if (null==oConn) return;
   
   oConn = null;  

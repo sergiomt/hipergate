@@ -73,11 +73,7 @@
     oConn.close("jobupdate");
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("jobupdate");      
-      }
+    disposeConnection(oConn,"jobupdate");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&SQLException=" + e.getLocalizedMessage() + "&resume=_close"));
   }

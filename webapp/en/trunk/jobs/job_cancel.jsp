@@ -56,11 +56,7 @@
     oConn.close("jobcancel");
    }
    catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("jobcancel");      
-      }
+    disposeConnection(oConn,"jobcancel");
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_back"));
    }
   }
