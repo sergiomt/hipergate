@@ -93,9 +93,12 @@ Resources["btn_finalize"] = "Finalizar";
 Resources["btn_new_record"] = "Nuevo Registro";
 
 Resources["msg_bo_ok"] = "Debe aceptar las condiciones legales de protección de datos";
+Resources["msg_dt_birth_required"] = "La fecha de nacimiento es obligatoria";
+Resources["msg_dt_birth_invalid"] = "La fecha de nacimiento no es válida";
 Resources["msg_id_gender_required"] = "Debe especificar el sexo Hombre o Mujer";
 Resources["msg_mn_city_required"] = "La ciudad es obligatoria";
 Resources["msg_mn_city_forbidden"] = "La ciudad contiene caracteres no permitidos";
+Resources["msg_sn_passport_required"] = "El DNI/NIF es obligatorio";
 Resources["msg_tx_email_required"] = "El e-mail es obligatorio";
 Resources["msg_tx_email_invalid"] = "El e-mail no es válido";
 Resources["msg_tx_email_duplicated"] = "La dirección de e-mail ya está asignada a otro asistente previamente registrado";

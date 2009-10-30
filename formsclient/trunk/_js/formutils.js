@@ -126,19 +126,116 @@ function hasForbiddenChars(str) {
   return (str.indexOf("|")>=0 || str.indexOf('"')>=0 || str.indexOf("*")>=0 || str.indexOf("?")>=0 || str.indexOf("&")>=0 || str.indexOf(";")>=0 || str.indexOf("`")>=0 || str.indexOf("\\")>=0)
 } // hasForbiddenChars
 
-// ----------------------------------------------------------------------------
+// ============================================================================
 
-function dateToString(dt, dtformat) {
-  var year = dt.getYear();
-  if (year<1970) year+=1900;
-  if ("d"==dtformat) {
+/*********************************************
+  JavaScript Functions for Date Validation
+*/
+
+/**
+  * Get last day of month taking into account leap years.
+  * @param month [0..11]
+  * @param year  (4 digits)
+*/
+  function getLastDay(month, year) {
+
+    switch(month) {
+      case 0:
+      case 2:
+      case 4:
+      case 6:
+      case 7:
+      case 9:
+      case 11:
+        return 31;
+      case 3:
+      case 5:
+      case 8:
+      case 10:
+        return 30;
+      case 1:
+	return ( (year%400==0) || ((year%4==0) && (year%100!=0)) ) ? 29 : 28;
+    } // end switch()
+    return 0;
+  } // getLastDay()
+  
+  // ----------------------------------------------------------
+  
+  /**
+    * Verify that a string represents a valid date
+    * @param Input string
+    * @param Date format. "d" for dates with format "YYYY-MM-DD"
+                          "s" for dates with format "DD/MM/YYYY"
+  */
+  function isDate (dtexpr, dtformat) {
+    var exp;
+    var ser;
+    var ret;
+    var yy;
+    var mm;
+    var dd;
+  
+    if (dtformat=="d") {
+      exp = new RegExp("[0-9]{4}-[0-9]{2}-[0-9]{2}");
+      if (exp.test(dtexpr)) {
+        ser = dtexpr.split("-");
+        yy = parseInt(ser[0],10);
+        mm = parseFloat(ser[1],10)-1;
+        dd = parseFloat(ser[2],10);
+      
+        if (mm<0 || mm>12) {
+          ret = false;
+        }
+        else if (dd>getLastDay(mm,yy)) {
+          ret = false;
+        }
+        else
+          ret = true;                
+      }
+      else {
+        ret = false;
+      }
+    } else if (dtformat=="s") {
+      exp = new RegExp("[0-9]{2}/[0-9]{2}/[0-9]{4}");
+      if (exp.test(dtexpr)) {
+        ser = dtexpr.split("/");
+        yy = parseInt(ser[2],10);
+        mm = parseFloat(ser[1],10)-1;
+        dd = parseFloat(ser[0],10);
+      
+        if (mm<0 || mm>12) {
+          ret = false;
+        }
+        else if (dd>getLastDay(mm,yy)) {
+          ret = false;
+        }
+        else
+          ret = true;                
+      }
+      else {
+        ret = false;
+      }
+    }
+    else {
+      ret = false;
+    }
+    
+    return ret;
+  } // isDate()
+
+  // ----------------------------------------------------------
+
+  function dateToString(dt, dtformat) {
+    var year = dt.getYear();
+    if (year<1970) year+=1900;
+    if ("d"==dtformat) {
       return String(year)+"-"+(dt.getMonth()+1<=9 ? "0" : "")+String(dt.getMonth()+1)+"-"+(dt.getDate()<=9 ? "0" : "")+String(dt.getDate());
-  } else if ("s"==dtformat) {
+    } else if ("s"==dtformat) {
       return (dt.getDate()<=9 ? "0" : "")+String(dt.getDate())+"/"+(dt.getMonth()+1<=9 ? "0" : "")+String(dt.getMonth()+1)+"/"+String(year);
-  } if ("ts"==dtformat) {
+    } if ("ts"==dtformat) {
       return String(year)+"-"+(dt.getMonth()+1<=9 ? "0" : "")+String(dt.getMonth()+1)+"-"+(dt.getDate()<=9 ? "0" : "")+String(dt.getDate())+" "+(dt.getHours()<=9 ? "0" : "")+String(dt.getHours())+":"+(dt.getMinutes()<=9 ? "0" : "")+String(dt.getMinutes())+":"+(dt.getSeconds()<=9 ? "0" : "")+String(dt.getSeconds());
-  }
-} // dateToString
+    }
+  } // dateToString
 
 // ============================================================================
 
@@ -347,6 +444,12 @@ function readPredefinedURLParamsIntoForm(frm) {
   for (var c=0; c<ncols; c++) {
     readURLParamIntoForm(frm, ColumnNames[c]);
   } // next
+  if (isDate(frm.dt_birth.value,"d")) {
+    var dt = frm.dt_birth.value.split("-");
+    setCombo(document.forms[0].sel_birth_year, dt[0]);
+    setCombo(document.forms[0].sel_birth_month, dt[1]);
+    setCombo(document.forms[0].sel_birth_day, dt[2]);
+  }
 } // readPredefinedURLParamsIntoForm
 
 // ----------------------------------------------------------------------------
@@ -469,10 +572,36 @@ function check_city(frm) {
   return true;
 } // check_city
 
+function check_birth_date(frm) {
+  if (frm.dt_birth.style.visibility=="visible" || frm.sel_birth_day.style.visibility=="visible") {
+    if (frm.dt_birth.value.length==0) {
+      alert (Resources["msg_dt_birth_required"]);
+		  return false;		    	
+    } else if (!isDate (frm.dt_birth.value, "d")) {
+      alert (Resources["msg_dt_birth_invalid"]);
+		  return false;		    	    
+    }
+  }
+  return true;
+} // check_birth_date
+
+function check_passport(frm,countrycode) {
+  var cpe = /[0-5][\d]{4}/;
+  if (frm.sn_passport.style.visibility=="visible") {
+    if (frm.sn_passport.value.length==0) {
+      alert (Resources["msg_sn_passport_required"]);
+      frm.sn_passport.focus();
+		  return false;   	
+    }
+  }
+  return true;
+} // check_passport
+
 // ----------------------------------------------------------------------------
 
 function check_all(frm,countrycode) {
-  return check_name(frm) && check_surname(frm) && check_mail(frm) && check_gender(frm) && check_city(frm) && check_zipcode(frm,countrycode);
+  return check_name(frm) && check_surname(frm) && check_mail(frm) && check_gender(frm) && check_city(frm) && check_zipcode(frm,countrycode) &&
+         check_passport(frm,countrycode) && check_birth_date(frm);
 } // check_all
 
 // ----------------------------------------------------------------------------
@@ -503,18 +632,44 @@ function processMailLookUp() {
 var tabidx = 1;
 
 function D (id, tp, lf, nm) {
-  var ui = document.getElementById(id);
   var dv = document.getElementById("div_"+id);
   var lb = document.getElementById("lbl_"+id);
-  ui.style.visibility = "visible";
-  ui.style.display = "block";  
-  ui.tabIndex = tabidx++;
+  if (id=="sel_birth") {
+    ui = document.getElementById(id+"_year");
+    ui.style.visibility = "visible";
+    ui.style.display = "block";  
+    ui.tabIndex = tabidx++;
+    if (nm.length>0) ui.className = nm;
+    ui = document.getElementById(id+"_month");
+    ui.style.visibility = "visible";
+    ui.style.display = "block";  
+    ui.tabIndex = tabidx++;
+    if (nm.length>0) ui.className = nm;
+    ui = document.getElementById(id+"_day");
+    ui.style.visibility = "visible";
+    ui.style.display = "block";  
+    ui.tabIndex = tabidx++;
+    if (nm.length>0) ui.className = nm;
+    if (lb) lb.innerHTML = Resources["dt_birth"];
+  } else {
+  	ui = document.getElementById(id);
+  	if (ui.length && ui.type!="select-one") {
+		  for (var e=0; e<ui.length; e++) {
+        ui[e].tabIndex = tabidx++;
+        if (nm.length>0) ui[e].className = nm;
+      } // next    
+		} else {
+      ui.style.visibility = "visible";
+      ui.style.display = "block";  
+      ui.tabIndex = tabidx++;
+      if (nm.length>0) ui.className = nm;
+		}
+    if (lb) lb.innerHTML = Resources[id];
+  }
   dv.style.top = tp;
   dv.style.left= lf;
   dv.style.visibility = "visible";
   dv.style.display = "block";  
-  if (nm.length>0) ui.className = nm;
-  if (lb) lb.innerHTML = Resources[id];
 } // D
 
 function B (id, tp, lf, tx) {

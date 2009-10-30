@@ -71,7 +71,9 @@ function saveRecord(frm) {
   
   var ln = getValueOf(frm.elements[ColumnNames[0]]);
 	for (var c=1; c<ColumnNames.length; c++) {
-	  ln += "|" + getValueOf(frm.elements[ColumnNames[c]]);
+		var vl = getValueOf(frm.elements[ColumnNames[c]]);
+	  if (vl=="null" || vl==null) vl = "";
+	  ln += "|" + vl;
   } // next
         
   var ok = false;
