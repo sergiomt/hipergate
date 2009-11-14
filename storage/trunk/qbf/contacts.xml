@@ -125,6 +125,11 @@
       <label_en>e-mail</label_en>
       <type>varchar</type>
     </field>    
+    <field><name>id_batch</name>
+      <label_es>Lote</label_es>
+      <label_en>Batch</label_en>
+      <type>varchar</type>
+    </field>    
   </fields>
   <columns>
     <column><name>gu_contact</name>
@@ -256,6 +261,9 @@
     <column><name>dt_modified</name>
       <label_es>Fecha Modificacion</label_es>
       <label_en>Date Modified</label_en></column>
+    <column><name>id_batch</name>
+      <label_es>Lote</label_es>
+      <label_en>Batch</label_en></column>
   </columns>
   
   <sortable>

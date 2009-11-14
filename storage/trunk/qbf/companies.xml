@@ -95,6 +95,11 @@
       <label_en>Date Modificacion</label_en>
       <type>date</type>
     </field>
+    <field><name>id_batch</name>
+      <label_es>Lote</label_es>
+      <label_en>Batch</label_en>
+      <type>varchar</type>
+    </field>
   </fields>
 
   <columns>
@@ -203,6 +208,9 @@
       <label_es>Fecha Modificacion</label_es>
       <label_en>Date Modified</label_en>
       <type>date</type></column>
+    <column><name>id_batch</name>
+      <label_es>Lote</label_es>
+      <label_en>Batch</label_en></column>
   </columns>
 
   <sortable>
