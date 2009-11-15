@@ -116,12 +116,14 @@ public class HttpDataObjsServlet extends HttpServlet {
 
     String sCmd = request.getParameter("command");
 
+	/*
     if (sCmd.equalsIgnoreCase("update")) {
       response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Command " + sCmd + " only allowed for POST method");
       return;
     }
+    */
 
-    if (!sCmd.equalsIgnoreCase("ping") && !sCmd.equalsIgnoreCase("query")) {
+    if (!sCmd.equalsIgnoreCase("ping") && !sCmd.equalsIgnoreCase("query") && !sCmd.equalsIgnoreCase("nextval") && !sCmd.equalsIgnoreCase("update")) {
       response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Command " + sCmd + " not recognized");
       return;
     }
@@ -129,7 +131,7 @@ public class HttpDataObjsServlet extends HttpServlet {
     if (sCmd.equalsIgnoreCase("ping")) {
       response.setContentType("text/plain");
       response.getOutputStream().print("HttpDataObjsServlet ping OK");
-    } else if (sCmd.equalsIgnoreCase("query")){
+    } else if (sCmd.equalsIgnoreCase("query") || sCmd.equalsIgnoreCase("nextval") || sCmd.equalsIgnoreCase("update")) {
       doPost(request, response);
     }
 
@@ -195,7 +197,7 @@ public class HttpDataObjsServlet extends HttpServlet {
        return;
      }
 
-     if (!sCmd.equalsIgnoreCase("ping") && !sCmd.equalsIgnoreCase("query") && !sCmd.equalsIgnoreCase("update")) {
+     if (!sCmd.equalsIgnoreCase("ping") && !sCmd.equalsIgnoreCase("query") && !sCmd.equalsIgnoreCase("update") && !sCmd.equalsIgnoreCase("nextval")) {
        if (DebugFile.trace) DebugFile.decIdent();
        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Command " + sCmd + " not recognized");
        return;
@@ -290,11 +292,13 @@ public class HttpDataObjsServlet extends HttpServlet {
        Enumeration oParamNames = request.getParameterNames();
        DBPersist oDbp;
        Class oCls;
+
        if (null==sCls) {
          oDbp = new DBPersist(sTbl, "DBPersist");
          try {
            oCls = Class.forName("com.knowgate.dataobjs.DBPersist");
          } catch (ClassNotFoundException neverthrown) { oCls=null; }
+
        } else {
          try {
            oCls = Class.forName(sCls);
@@ -312,8 +316,32 @@ public class HttpDataObjsServlet extends HttpServlet {
            if (DebugFile.trace) DebugFile.decIdent();
            throw new ServletException("ClassCastException "+cce.getMessage()+" "+sCls);
          }
-       }
+
+         if (sCls.equals("com.knowgate.hipergate.InvoicePayment") &&
+       	   request.getParameter("gu_invoice")!=null & request.getParameter("pg_payment")!=null) {
+           if (request.getParameter("gu_invoice").length()>0 &&
+               request.getParameter("pg_payment").length()>0) {
+             try {
+               oCon = oBnd.getConnection("HttpDataObjsServlet.InvoicePayment", true);
+               oDbp.load(oCon, new Object[]{request.getParameter("gu_invoice"), new Integer(request.getParameter("pg_payment"))});
+               oCon.close("HttpDataObjsServlet.InvoicePayment");
+               oCon=null;
+             } catch (Exception xcpt) {
+               if (DebugFile.trace) {
+               	 DebugFile.writeln(xcpt.getClass().getName()+" "+xcpt.getMessage());
+                 DebugFile.decIdent();
+               }
+               throw new ServletException(xcpt.getClass().getName()+" "+xcpt.getMessage(), xcpt);
+             }
+             finally {
+               if (oCon!=null) { try { if (!oCon.isClosed()) { oCon.close("HttpDataObjsServlet.InvoicePayment"); } } catch (Exception ignore) { } }
+             } // finally
+           } // fi (gu_invoice && pg_payment)
+         } // fi (sCls==InvoicePayment)
+       } // fi 
+
        if (DebugFile.trace) DebugFile.writeln("class "+oDbp.getClass().getName()+" instantiated");
+
        while (oParamNames.hasMoreElements()) {
          String sKey = (String) oParamNames.nextElement();
          if (DebugFile.trace) DebugFile.writeln("reading parameter "+sKey);
@@ -332,9 +360,9 @@ public class HttpDataObjsServlet extends HttpServlet {
                  if (iSpc > 0) {
                    sDtFmt = sSQLType.substring(++iSpc);
                    if (DebugFile.trace) DebugFile.writeln("date format is "+sDtFmt);
-                   oDbp.put(sKeyName, request.getParameter(sKey), new SimpleDateFormat(sDtFmt));
+                   oDbp.replace(sKeyName, request.getParameter(sKey), new SimpleDateFormat(sDtFmt));
                  } else {
-                   oDbp.put(sKeyName, request.getParameter(sKey), DBColumn.getSQLType(sSQLType));
+                   oDbp.replace(sKeyName, request.getParameter(sKey), DBColumn.getSQLType(sSQLType));
                  }
                } catch (ParseException pe) {
                  if (DebugFile.trace) DebugFile.decIdent();
@@ -345,17 +373,17 @@ public class HttpDataObjsServlet extends HttpServlet {
                }
              } else {
                try {
-                 oDbp.put(sKeyName, request.getParameter(sKey), DBColumn.getSQLType(sSQLType));
+                 oDbp.replace(sKeyName, request.getParameter(sKey), DBColumn.getSQLType(sSQLType));
                } catch (NumberFormatException nfe) {
                  if (DebugFile.trace) DebugFile.decIdent();
                  throw new ServletException("ERROR NumberFormatException "+sKey+" "+" "+request.getParameter(sKey)+" "+nfe.getMessage());
                }
              }
            } else {
-             oDbp.put(sKeyName, request.getParameter(sKey));
+             oDbp.replace(sKeyName, request.getParameter(sKey));
            }
          } else {
-           oDbp.put(sKey, request.getParameter(sKey));
+           oDbp.replace(sKey, request.getParameter(sKey));
          }
        } // wend
        try {
@@ -430,6 +458,60 @@ public class HttpDataObjsServlet extends HttpServlet {
          if (DebugFile.trace) DebugFile.decIdent();
          throw new ServletException(xcpt.getClass().getName()+" "+xcpt.getMessage()+"\n"+StackTraceUtil.getStackTrace(xcpt));
        }
+     }
+     else if (sCmd.equalsIgnoreCase("nextval")) {
+
+       try {
+         oCon = oBnd.getConnection("HttpDataObjsServlet");
+         if (null==oCon) {
+           if (DebugFile.trace) DebugFile.decIdent();
+           throw new ServletException("ERROR Unable to get database connection from pool "+sDbb);
+         }
+         if (oBnd.exists(oCon, DB.k_users, "U")) {
+           if (Gadgets.checkEMail(sUsr)) {
+             sUsr = ACLUser.getIdFromEmail(oCon, sUsr);
+             if (null==sUsr)
+               iAuth = ACL.USER_NOT_FOUND;
+             else
+               iAuth = ACL.autenticate(oCon, sUsr, sPwd, ACL.PWD_CLEAR_TEXT);
+           } else {
+             iAuth = ACL.autenticate(oCon, sUsr, sPwd, ACL.PWD_CLEAR_TEXT);
+           }
+         } else {
+           iAuth = 0;
+         } // fi (exists k_users)
+         switch (iAuth) {
+             case ACL.ACCOUNT_CANCELLED:
+               response.sendError(HttpServletResponse.SC_FORBIDDEN, "Account cancelled");
+               break;
+             case ACL.ACCOUNT_DEACTIVATED:
+               response.sendError(HttpServletResponse.SC_FORBIDDEN, "Account deactivated");
+               break;
+             case ACL.INVALID_PASSWORD:
+               response.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid password");
+               break;
+             case ACL.PASSWORD_EXPIRED:
+               response.sendError(HttpServletResponse.SC_FORBIDDEN, "Password expired");
+               break;
+             case ACL.USER_NOT_FOUND:
+               response.sendError(HttpServletResponse.SC_FORBIDDEN, "User not found");
+               break;
+             default:
+               String sNextVal = String.valueOf(oBnd.nextVal(oCon, sTbl));
+               response.setContentType("text/plain");
+               response.setCharacterEncoding("ISO-8859-1");
+               response.getOutputStream().write(sNextVal.getBytes("ISO8859_1"));
+         } // end switch
+         oCon.close("HttpDataObjsServlet");
+         oCon = null;
+       } catch (SQLException sqle) {
+         if (null!=oCon) {
+           try { oCon.close("HttpDataObjsServlet"); } catch (Exception ignore) {}
+           oCon = null;
+         }
+         if (DebugFile.trace) DebugFile.decIdent();
+         throw new ServletException("SQLException "+sqle.getMessage());
+       }       
      } // fi
      if (DebugFile.trace) {
        DebugFile.decIdent();
