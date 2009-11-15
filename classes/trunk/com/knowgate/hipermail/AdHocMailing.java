@@ -1,6 +1,40 @@
+/*
+  Copyright (C) 2009  Know Gate S.L. All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. The end-user documentation included with the redistribution,
+     if any, must include the following acknowledgment:
+     "This product includes software parts from hipergate
+     (http://www.hipergate.org/)."
+     Alternately, this acknowledgment may appear in the software itself,
+     if and wherever such third-party acknowledgments normally appear.
+
+  3. The name hipergate must not be used to endorse or promote products
+     derived from this software without prior written permission.
+     Products derived from this software may not be called hipergate,
+     nor may hipergate appear in their name, without prior written
+     permission.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+  You should have received a copy of hipergate License with this code;
+  if not, visit http://www.hipergate.org or mail to info@hipergate.org
+*/
+
 package com.knowgate.hipermail;
 
 import java.sql.SQLException;
+
+import java.io.File;
+import java.io.IOException;
 
 import java.util.Date;
 import java.util.Arrays;
@@ -13,7 +47,9 @@ import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBBind;
 import com.knowgate.dataobjs.DBPersist;
 import com.knowgate.dataobjs.DBCommand;
+import com.knowgate.debug.DebugFile;
 import com.knowgate.misc.Gadgets;
+import com.knowgate.dfs.FileSystem;
 
 public class AdHocMailing extends DBPersist {
 
@@ -25,6 +61,14 @@ public class AdHocMailing extends DBPersist {
   	super(DB.k_adhoc_mailings, "AdHocMailing");
   	aBlackList = null;
   	aRecipients = null;
+  }
+
+  public AdHocMailing(JDCConnection oConn, String sGuAdHocMailing)
+  	throws SQLException {
+  	super(DB.k_adhoc_mailings, "AdHocMailing");
+  	aBlackList = null;
+  	aRecipients = null;
+	load(oConn, new Object[]{sGuAdHocMailing});
   }
   
   public boolean load(JDCConnection oConn, int iPgMailing, String sGuWorkArea)
@@ -64,16 +108,36 @@ public class AdHocMailing extends DBPersist {
     }
   } // addBlackList
 
+  public void clearRecipients() {
+    aRecipients = null;
+  }
+
   public String[] getRecipients() {
     return aRecipients;
   }
-  	  
+
+  public String getAllowPattern() {
+  	return getStringNull(DB.tx_allow_regexp, "");
+  }
+
+  public void setAllowPattern(String sAllowPattern) {
+  	replace(DB.tx_allow_regexp, sAllowPattern);
+  }
+
+  public String getDenyPattern() {
+  	return getStringNull(DB.tx_deny_regexp, "");
+  }
+
+  public void setDenyPattern(String sDenyPattern) {
+  	replace(DB.tx_deny_regexp, sDenyPattern);
+  }
+
   public void addRecipients(String[] aEMails)
   	throws MalformedPatternException {
 	String sAllowPattern, sDenyPattern;
     ArrayList<String> oRecipientsWithoutDuplicates;
     boolean bAllowed;
-    
+
     if (aEMails!=null) {
       if (aEMails.length>0) {
       	if (aRecipients==null) {
@@ -86,8 +150,8 @@ public class AdHocMailing extends DBPersist {
 		
 		oRecipientsWithoutDuplicates = new ArrayList<String>(nRecipients);
 
-	  	if (isNull(DB.tx_allow_regexp)) sAllowPattern = ""; else sAllowPattern = getString(DB.tx_allow_regexp);
-	  	if (isNull(DB.tx_deny_regexp))  sDenyPattern  = ""; else sDenyPattern  = getString(DB.tx_deny_regexp);
+	  	sAllowPattern = getAllowPattern();
+	  	sDenyPattern = getDenyPattern();
 	  	  	  
 	    for (int r=0; r<nRecipients-1; r++) {
 		  bAllowed = true;
@@ -144,7 +208,59 @@ public class AdHocMailing extends DBPersist {
 
     return super.store(oConn);
   }
-  
+
+  public void clone(JDCConnection oConn, String sProtocol, String sWorkAreasPut, AdHocMailing oSource)
+  	throws IOException, SQLException {
+	
+	if (DebugFile.trace) {
+	  DebugFile.writeln("Begin AdHocMailing.clone([JDCConnection], "+sProtocol+","+sWorkAreasPut+","+String.valueOf(oSource.getInt(DB.pg_mailing))+")");
+	  DebugFile.incIdent();
+	}
+
+	Date dtNow = new Date();	
+
+  	clone(oSource);
+  	remove(DB.id_status);
+  	remove(DB.dt_execution);
+  	replace(DB.dt_modified, dtNow);
+  	replace(DB.gu_mailing, Gadgets.generateUUID());
+  	try {
+  	  if (Gadgets.matches(oSource.getString(DB.nm_mailing),".+\\x20\\x28\\d+\\x29")) {
+	    int iLPar = oSource.getString(DB.nm_mailing).lastIndexOf('(')+1;
+	    int iRPar = oSource.getString(DB.nm_mailing).lastIndexOf(')');
+	    int nCopy = Integer.parseInt(oSource.getString(DB.nm_mailing).substring(iLPar,iRPar));
+  	    int iSpace = oSource.getString(DB.nm_mailing).lastIndexOf(' ');
+  	    replace(DB.nm_mailing, oSource.getString(DB.nm_mailing).substring(0, iSpace)+" ("+String.valueOf(++nCopy)+")");
+  	  } else {
+  	    replace(DB.nm_mailing, oSource.getString(DB.nm_mailing)+" (2)");  	
+  	  }
+  	} catch (org.apache.oro.text.regex.MalformedPatternException neverthrown) { }
+  	replace(DB.pg_mailing, DBBind.nextVal(oConn, "seq_k_adhoc_mailings"));
+  	store(oConn);
+  	setCreationDate(oConn, dtNow);
+
+	final String sSep = sProtocol.startsWith("file:") ? File.separator : "/";
+	
+    String sSourceDir =  sWorkAreasPut + oSource.getString(DB.gu_workarea) + sSep + "apps" + sSep + "Hipermail" + sSep + "html" + sSep + Gadgets.leftPad(String.valueOf(oSource.getInt(DB.pg_mailing)), '0', 5);
+    String sTargetDir =  sWorkAreasPut + getString(DB.gu_workarea) + sSep + "apps" + sSep + "Hipermail" + sSep + "html" + sSep + Gadgets.leftPad(String.valueOf(getInt(DB.pg_mailing)), '0', 5);
+
+	try {
+	  FileSystem oFs = new FileSystem();
+	  oFs.mkdirs(sProtocol+sTargetDir);
+	  oFs.copy(sProtocol+sSourceDir, sProtocol+sTargetDir);
+	} catch (Exception xcpt) {
+	  if (DebugFile.trace) {
+	    DebugFile.decIdent();
+	    DebugFile.writeln(xcpt.getClass().getName()+" "+xcpt.getMessage());
+	  }
+	  throw new IOException(xcpt.getMessage(), xcpt);
+	}
+	if (DebugFile.trace) {
+	  DebugFile.decIdent();
+	  DebugFile.writeln("End AdHocMailing.clone() : "+String.valueOf(getInt(DB.pg_mailing)));
+	}
+  } // clone  
+
   public static final short ClassId = 811;
 
 }

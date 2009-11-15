@@ -42,6 +42,7 @@ import java.io.IOException;
 
 import java.util.Properties;
 
+import com.knowgate.debug.DebugFile;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBPersist;
@@ -123,19 +124,42 @@ public class MailAccount extends DBPersist {
   // ----------------------------------------------------------
 
   public Properties getProperties() {
+
     Properties oProps = new Properties();
+
+	oProps.put("mail.account", getStringNull(DB.incoming_account,getStringNull(DB.outgoing_account,"")));
+	oProps.put("mail.user", getStringNull(DB.incoming_account,getStringNull(DB.outgoing_account,"")));
+    oProps.put("mail.password", getStringNull(DB.incoming_password,getStringNull(DB.outgoing_password,"")));
     oProps.put("mail.store.protocol", getStringNull(DB.incoming_protocol,"pop3"));
     oProps.put("mail.transport.protocol", getStringNull(DB.outgoing_protocol,"smtp"));
     oProps.put("mail.incoming", getStringNull(DB.incoming_server,"localhost"));
     oProps.put("mail.outgoing", getStringNull(DB.outgoing_server,"localhost"));
+    oProps.put("mail."+getStringNull(DB.incoming_protocol,"pop3")+".host", getStringNull(DB.incoming_server,"localhost"));
+    oProps.put("mail."+getStringNull(DB.outgoing_protocol,"smtp")+".host", getStringNull(DB.outgoing_server,"localhost"));
+
     if (isNull(DB.incoming_port))
-      oProps.put("mail.pop3.port", "110");
+      oProps.put("mail."+getStringNull(DB.incoming_protocol,"pop3")+".port", "110");
     else
       oProps.put("mail."+getString(DB.incoming_protocol)+".port", String.valueOf(getShort(DB.incoming_port)));
     if (isNull(DB.outgoing_port))
-      oProps.put("mail.smtp.port", "25");
+      oProps.put("mail."+getStringNull(DB.outgoing_protocol,"smtp")+".port", "25");
     else
       oProps.put("mail."+getString(DB.outgoing_protocol)+".port", String.valueOf(getShort(DB.outgoing_port)));
+
+	if (!isNull(DB.incoming_ssl)) {
+	  if (getShort(DB.incoming_ssl)!=(short) 0) {
+        oProps.put(getString(DB.incoming_protocol)+".socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        oProps.put(getString(DB.incoming_protocol)+".socketFactory.port", String.valueOf(getShort(DB.incoming_port)));
+	  }
+	}
+
+	if (!isNull(DB.outgoing_ssl)) {
+	  if (getShort(DB.outgoing_ssl)!=(short) 0) {
+        oProps.put(getString(DB.outgoing_protocol)+".socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        oProps.put(getString(DB.outgoing_protocol)+".socketFactory.port", String.valueOf(getShort(DB.outgoing_port)));	  
+	  }
+	}
+
     return oProps;
   }
 
@@ -169,6 +193,12 @@ public class MailAccount extends DBPersist {
     PreparedStatement oStmt;
     ResultSet oRSet;
     MailAccount oRetVal;
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin MailAccount.forUser(JDCConnection, "+sGuUser+")");
+      DebugFile.incIdent();
+    }
+
     oStmt = oConn.prepareStatement("SELECT "+DB.gu_account+" FROM "+DB.k_user_mail+ " WHERE "+DB.gu_user+"=? AND "+DB.bo_default+"=?");
     oStmt.setString(1, sGuUser);
     oStmt.setShort (2, (short)1);
@@ -194,6 +224,15 @@ public class MailAccount extends DBPersist {
       oRetVal = new MailAccount();
       oRetVal.load(oConn, new Object[]{sGuAccount});
     }
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      if (null==oRetVal)
+        DebugFile.writeln("End MailAccount.forUser() : null");
+      else
+        DebugFile.writeln("End MailAccount.forUser() : "+sGuAccount);
+    }
+
     return oRetVal;
   } // forUser
 
@@ -211,6 +250,15 @@ public class MailAccount extends DBPersist {
    */
   public static MailAccount forUser(JDCConnection oConn, String sGuUser, Properties oProps)
     throws SQLException {
+
+    if (DebugFile.trace) {
+      if (null==oProps)
+        DebugFile.writeln("Begin MailAccount.forUser(JDCConnection, "+sGuUser+",null)");
+      else
+        DebugFile.writeln("Begin MailAccount.forUser(JDCConnection, "+sGuUser+","+oProps.toString()+")");
+      DebugFile.incIdent();
+    }
+
     MailAccount oRetVal = MailAccount.forUser(oConn, sGuUser);
     if (null==oRetVal) {
       ACLUser oUser = new ACLUser();
@@ -227,6 +275,15 @@ public class MailAccount extends DBPersist {
         oRetVal.put(DB.outgoing_password, oUser.getString(DB.tx_pwd));
       }
     }
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      if (null==oRetVal)
+        DebugFile.writeln("End MailAccount.forUser() : null");
+      else
+        DebugFile.writeln("End MailAccount.forUser() : "+oRetVal.getString(DB.gu_account));
+    }
+
     return oRetVal;
   } // forUser
 

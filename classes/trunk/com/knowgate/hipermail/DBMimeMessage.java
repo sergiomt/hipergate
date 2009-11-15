@@ -90,6 +90,9 @@ import com.sun.mail.dsn.MultipartReport;
 import org.htmlparser.Parser;
 import org.htmlparser.util.ParserException;
 import org.htmlparser.beans.StringBean;
+
+import com.knowgate.misc.Hosts;
+
 /**
  * MIME messages stored at database BLOB columns or MBOX files
  * @author Sergio Montoro Ten
@@ -1618,7 +1621,7 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
             sSrc = "http://" + sSrc;
 
           if (sSrc.startsWith("http://") || sSrc.startsWith("https://")) {
-            oImgBodyPart.setDataHandler(new DataHandler(new URL(sSrc)));
+            oImgBodyPart.setDataHandler(new DataHandler(new URL(Hosts.resolve(sSrc))));
           }
           else {
             oImgBodyPart.setDataHandler(new DataHandler(new FileDataSource(sSrc)));
