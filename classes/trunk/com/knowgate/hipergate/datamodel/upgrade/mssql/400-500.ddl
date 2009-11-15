@@ -722,3 +722,95 @@ CREATE PROCEDURE k_sp_del_bug @BugId CHAR(32) AS
   DELETE FROM k_bugs_attach WHERE gu_bug=@BugId
   DELETE FROM k_bugs WHERE gu_bug=@BugId
 GO;
+
+INSERT INTO k_sequences (nm_table,nu_initial,nu_maxval,nu_increase,nu_current) VALUES ('seq_k_adhoc_mailings', 1, 2147483647, 1, 1)
+GO;
+
+CREATE TABLE k_adhoc_mailings (
+  gu_mailing     CHAR(32) NOT NULL,
+  gu_workarea    CHAR(32) NOT NULL,
+  gu_writer      CHAR(32) NOT NULL,
+  pg_mailing     INTEGER  NOT NULL,
+  dt_created     DATETIME DEFAULT GETDATE(),  
+  nm_mailing     NVARCHAR(30) NOT NULL,
+  bo_html_part   SMALLINT NOT NULL,
+  bo_plain_part  SMALLINT NOT NULL,
+  bo_attachments SMALLINT NOT NULL,
+  id_status      VARCHAR(30) NULL,
+  dt_modified    DATETIME NULL,
+  dt_execution   DATETIME NULL,
+  tx_email_from  VARCHAR(254) NULL,
+  tx_email_reply VARCHAR(254) NULL,  
+  nm_from        NVARCHAR(254)  NULL,
+  tx_subject     NVARCHAR(254)  NULL,
+  tx_allow_regexp NVARCHAR(254) NULL,
+  tx_deny_regexp NVARCHAR(254)  NULL,
+  tx_parameters  NVARCHAR(2000) NULL,
+  CONSTRAINT pk_adhoc_mailings PRIMARY KEY (gu_mailing),
+  CONSTRAINT u1_adhoc_mailings UNIQUE (pg_mailing),
+  CONSTRAINT u2_adhoc_mailings UNIQUE (nm_mailing)
+)
+GO;
+
+CREATE TABLE k_adhoc_mailings_lookup
+(
+gu_owner   CHAR(32)     NOT NULL,
+id_section VARCHAR(30)  NOT NULL,
+pg_lookup  INTEGER      NOT NULL,
+vl_lookup  NVARCHAR(255)     NULL,
+tr_es      NVARCHAR(50)      NULL,
+tr_en      NVARCHAR(50)      NULL,
+tr_de      NVARCHAR(50)      NULL,
+tr_it      NVARCHAR(50)      NULL,
+tr_fr      NVARCHAR(50)      NULL,
+tr_pt      NVARCHAR(50)      NULL,
+tr_ca      NVARCHAR(50)      NULL,
+tr_gl      NVARCHAR(50)      NULL,
+tr_eu      NVARCHAR(50)      NULL,
+tr_ja      NVARCHAR(50)      NULL,
+tr_cn      NVARCHAR(50)      NULL,
+tr_tw      NVARCHAR(50)      NULL,
+tr_fi      NVARCHAR(50)      NULL,
+tr_ru      NVARCHAR(50)      NULL,
+tr_nl      NVARCHAR(50)      NULL,
+tr_th      NVARCHAR(50)      NULL,
+tr_cs      NVARCHAR(50)      NULL,
+tr_uk      NVARCHAR(50)      NULL,
+tr_no      NVARCHAR(50)      NULL,
+tr_ko      NVARCHAR(50)      NULL,
+tr_sk      NVARCHAR(50)      NULL,
+tr_pl      NVARCHAR(50)      NULL,
+tr_vn      NVARCHAR(50)      NULL,
+
+CONSTRAINT pk_adhoc_mailings_lookup PRIMARY KEY (gu_owner,id_section,pg_lookup),
+CONSTRAINT u1_adhoc_mailings_lookup UNIQUE (gu_owner,id_section,vl_lookup)
+)
+GO;
+
+CREATE VIEW v_pagesets_mailings AS
+SELECT
+p.gu_pageset,p.gu_workarea,p.nm_pageset,p.tx_comments,p.path_data,p.dt_created,m.nm_microsite,p.id_status,p.id_language,m.id_app
+FROM k_pagesets p,k_microsites m WHERE p.gu_microsite=m.gu_microsite OR p.gu_microsite IS NULL
+UNION
+SELECT
+a.gu_mailing AS gu_pageset,a.gu_workarea,a.nm_mailing AS nm_pageset,a.tx_parameters AS tx_comments ,'Hipermail' AS path_data,a.dt_created,'AdHoc' AS nm_microsite,a.id_status,'' AS id_language,21 AS id_app
+FROM k_adhoc_mailings a
+GO;
+
+ALTER TABLE k_jobs DROP CONSTRAINT f7_jobs
+GO;
+
+CREATE TABLE k_global_black_list
+(
+id_domain   INTEGER   NOT NULL,
+gu_workarea CHAR(32)  NOT NULL,
+tx_email    VARCHAR(100) NOT NULL,
+dt_created  DATETIME  DEFAULT GETDATE(),
+tx_name     NVARCHAR(100) NULL,
+tx_surname  NVARCHAR(100) NULL,
+gu_contact  CHAR(32) NULL,
+gu_address  CHAR(32) NULL,
+
+CONSTRAINT pk_global_black_list PRIMARY KEY (id_domain,gu_workarea,tx_email)
+)
+GO;
