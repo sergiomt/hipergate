@@ -715,3 +715,95 @@ BEGIN
   DELETE FROM k_bugs WHERE gu_bug=BugId;
 END
 GO;
+
+INSERT INTO k_sequences (nm_table,nu_initial,nu_maxval,nu_increase,nu_current) VALUES ('seq_k_adhoc_mailings', 1, 2147483647, 1, 1)
+GO;
+
+CREATE TABLE k_adhoc_mailings (
+  gu_mailing     CHAR(32) NOT NULL,
+  gu_workarea    CHAR(32) NOT NULL,
+  gu_writer      CHAR(32) NOT NULL,
+  pg_mailing     INTEGER  NOT NULL,
+  dt_created     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  
+  nm_mailing     VARCHAR(30) NOT NULL,
+  bo_html_part   SMALLINT NOT NULL,
+  bo_plain_part  SMALLINT NOT NULL,
+  bo_attachments SMALLINT NOT NULL,
+  id_status      CHARACTER VARYING(30) NULL,
+  dt_modified    TIMESTAMP NULL,
+  dt_execution   TIMESTAMP NULL,
+  tx_email_from  VARCHAR(254) NULL,
+  tx_email_reply VARCHAR(254) NULL,  
+  nm_from        VARCHAR(254)  NULL,
+  tx_subject     VARCHAR(254)  NULL,
+  tx_allow_regexp VARCHAR(254) NULL,
+  tx_deny_regexp VARCHAR(254)  NULL,
+  tx_parameters  VARCHAR(2000) NULL,
+  CONSTRAINT pk_adhoc_mailings PRIMARY KEY (gu_mailing),
+  CONSTRAINT u1_adhoc_mailings UNIQUE (pg_mailing),
+  CONSTRAINT u2_adhoc_mailings UNIQUE (nm_mailing)
+)
+GO;
+
+CREATE TABLE k_adhoc_mailings_lookup
+(
+gu_owner   CHAR(32)     NOT NULL,
+id_section VARCHAR(30)  NOT NULL,
+pg_lookup  INTEGER      NOT NULL,
+vl_lookup  VARCHAR(255)     NULL,
+tr_es      VARCHAR(50)      NULL,
+tr_en      VARCHAR(50)      NULL,
+tr_de      VARCHAR(50)      NULL,
+tr_it      VARCHAR(50)      NULL,
+tr_fr      VARCHAR(50)      NULL,
+tr_pt      VARCHAR(50)      NULL,
+tr_ca      VARCHAR(50)      NULL,
+tr_gl      VARCHAR(50)      NULL,
+tr_eu      VARCHAR(50)      NULL,
+tr_ja      VARCHAR(50)      NULL,
+tr_cn      VARCHAR(50)      NULL,
+tr_tw      VARCHAR(50)      NULL,
+tr_fi      VARCHAR(50)      NULL,
+tr_ru      VARCHAR(50)      NULL,
+tr_nl      VARCHAR(50)      NULL,
+tr_th      VARCHAR(50)      NULL,
+tr_cs      VARCHAR(50)      NULL,
+tr_uk      VARCHAR(50)      NULL,
+tr_no      VARCHAR(50)      NULL,
+tr_ko      VARCHAR(50)      NULL,
+tr_sk      VARCHAR(50)      NULL,
+tr_pl      VARCHAR(50)      NULL,
+tr_vn      VARCHAR(50)      NULL,
+
+CONSTRAINT pk_adhoc_mailings_lookup PRIMARY KEY (gu_owner,id_section,pg_lookup),
+CONSTRAINT u1_adhoc_mailings_lookup UNIQUE (gu_owner,id_section,vl_lookup)
+)
+GO;
+
+CREATE VIEW v_pagesets_mailings AS
+(SELECT
+p.gu_pageset,p.gu_workarea,p.nm_pageset,p.tx_comments,p.path_data,p.dt_created,m.nm_microsite,p.id_status,p.id_language,m.id_app
+FROM k_pagesets p,k_microsites m WHERE p.gu_microsite=m.gu_microsite OR p.gu_microsite IS NULL)
+UNION
+(SELECT
+a.gu_mailing AS gu_pageset,a.gu_workarea,a.nm_mailing AS nm_pageset,a.tx_parameters AS tx_comments ,'Hipermail' AS path_data,a.dt_created,'AdHoc' AS nm_microsite,a.id_status,'' AS id_language,21 AS id_app
+FROM k_adhoc_mailings a)
+GO;
+
+ALTER TABLE k_jobs DROP CONSTRAINT f7_jobs
+GO;
+
+CREATE TABLE k_global_black_list
+(
+id_domain   INTEGER   NOT NULL,
+gu_workarea CHAR(32)  NOT NULL,
+tx_email    VARCHAR(100) NOT NULL,
+dt_created  TIMESTAMP  DEFAULT CURRENT_TIMESTAMP,
+tx_name     VARCHAR(100) NULL,
+tx_surname  VARCHAR(100) NULL,
+gu_contact  CHAR(32) NULL,
+gu_address  CHAR(32) NULL,
+
+CONSTRAINT pk_global_black_list PRIMARY KEY (id_domain,gu_workarea,tx_email)
+)
+GO;
