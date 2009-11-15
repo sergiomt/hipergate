@@ -210,9 +210,7 @@ public class MimeSender extends Job {
       	bPersonalized = getParameter("personalized").equals("true") ? true : false;
       if (DebugFile.trace) DebugFile.writeln("personalized="+getParameter("personalized"));
       JDCConnection oConn = null;
-      PreparedStatement oStmt = null;
       PreparedStatement oUpdt = null;
-      ResultSet oRSet = null;
       ACLUser oUser = new ACLUser();
       MailAccount oMacc = new MailAccount();
       if (DebugFile.trace) DebugFile.writeln("workarea="+getStringNull(DB.gu_workarea,"null"));
@@ -226,17 +224,18 @@ public class MimeSender extends Job {
         if (!oUser.load(oConn, new Object[]{getStringNull(DB.gu_writer,null)})) oUser=null;
         if (!oMacc.load(oConn, new Object[]{getParameter("account")})) oMacc=null;
         // If message is personalized then fill data for each mail address
+        oConn.setAutoCommit(true);
         if (bPersonalized) resolveAtomsEMails(oConn);
         oConn.close("MimeSender.init.1");
         oConn=null;
       } catch (SQLException sqle) {
         if (DebugFile.trace) DebugFile.writeln("MimeSender.init("+getStringNull(DB.gu_job,"null")+") " + sqle.getClass().getName() + " " + sqle.getMessage());
-        if (oConn!=null) { try { oConn.close("MimeSender.init.1"); } catch (Exception ignore) {} }
+        if (oConn!=null) { try { if (!oConn.isClosed()) oConn.close("MimeSender.init.1"); } catch (Exception ignore) {} }
         throw sqle;
       }
         catch (NullPointerException npe) {
         if (DebugFile.trace) DebugFile.writeln("MimeSender.init("+getStringNull(DB.gu_job,"null")+") " + npe.getClass().getName());
-        if (oConn!=null) { try { oConn.close("MimeSender.init.1"); } catch (Exception ignore) {} }
+        if (oConn!=null) { try { if (!oConn.isClosed()) oConn.close("MimeSender.init.1"); } catch (Exception ignore) {} }
         throw npe;
       }
       if (null==oUser) {
@@ -278,14 +277,10 @@ public class MimeSender extends Job {
           aFrom = new InternetAddress[]{new InternetAddress(oHeaders.getProperty(DB.tx_email_from),
                                                             oHeaders.getProperty(DB.nm_from))};
 
-		/*
         if (null==oHeaders.get(DB.tx_reply_email))
           aReply = aFrom;
         else
           aReply = new InternetAddress[]{new InternetAddress(oHeaders.getProperty(DB.tx_reply_email))};
-        */
-
-        aReply = new InternetAddress[]{new InternetAddress("barbaratenaguillo@eoi.es")};
         	
         sBody = oDraft.getText();
         if (DebugFile.trace) {
@@ -296,6 +291,7 @@ public class MimeSender extends Job {
         }
 
         oConn = getDataBaseBind().getConnection("MimeSender.init.2");
+        oConn.setAutoCommit(true);
         oUpdt = oConn.prepareStatement("UPDATE "+DB.k_mime_msgs+" SET "+DB.dt_sent+"=? WHERE "+DB.gu_mimemsg+"=?");
         oUpdt.setTimestamp(1, new Timestamp(new Date().getTime()));
     	oUpdt.setString(2, sMsgId);
@@ -311,6 +307,8 @@ public class MimeSender extends Job {
           DebugFile.decIdent();
           DebugFile.writeln("End MimeSender.init(" + oAtm.getString(DB.gu_job) + ":" + String.valueOf(oAtm.getInt(DB.pg_atom)) + ") : abnormal process termination");
         }
+        try { if (oUpdt!=null) oUpdt.close(); } catch (Exception ignore) {}
+        try { if (oConn!=null) if (!oConn.isClosed()) oConn.close("MimeSender.init.2"); } catch (Exception ignore) {}
         if (null!=oOutBox) { try { oOutBox.close(false); oOutBox=null; } catch (Exception ignore) {} }
         if (null!=oStor) { try { oStor.close(); oStor=null; } catch (Exception ignore) {} }
         if (null!=oHndlr) { try { oHndlr.close(); oHndlr=null; } catch (Exception ignore) {} }
@@ -382,6 +380,7 @@ public class MimeSender extends Job {
   public Object process(Atom oAtm) throws SQLException, MessagingException, NullPointerException {
     final String Activated = "true";
     final String Yes = "1";
+    final String No = "0";
 
     if (DebugFile.trace) {
       DebugFile.writeln("Begin MimeSender.process("+oAtm.getString(DB.gu_job)+":"+String.valueOf(oAtm.getInt(DB.pg_atom))+")");
@@ -436,15 +435,28 @@ public class MimeSender extends Job {
 
 	  String sEncoding = getParameter("encoding");
 	  if (sEncoding==null) sEncoding = "UTF-8";
-	  
-      if (bPersonalized)
-        oSentMsg = oDraft.composeFinalMessage(oHndlr.getSession(), oDraft.getSubject(),
-                                              personalizeBody(oAtm), getParameter("id"),
-                                              sFormat, sEncoding, bAttachInlineImages);
-      else
-        oSentMsg = oDraft.composeFinalMessage(oHndlr.getSession(), oDraft.getSubject(),
-                                              sBody, getParameter("id"),
-                                              sFormat, sEncoding, bAttachInlineImages);
+	  String sPBody;
+      	  	  
+      if (bPersonalized) {
+        sPBody = personalizeBody(oAtm);
+      }
+      else {
+      	sPBody = sBody;      	
+      }
+
+	  // Insert Web Beacon just before </BODY> tag
+	  String sWebBeacon = getParameter("webbeacon");
+	  if (sWebBeacon==null) sWebBeacon= No;
+	  if (Yes.equals(sWebBeacon) || Activated.equals(sWebBeacon)) {
+	    int iEndBody = Gadgets.indexOfIgnoreCase(sPBody, "</body>", 0);
+	  	if (iEndBody>0) {
+	  	  sPBody = sPBody.substring(0, iEndBody)+"<!--WEBBEACON SRC=\""+Gadgets.chomp(getParameter("webserver"),'/')+"hipermail/web_beacon.jsp?gu_job="+getString(DB.gu_job)+"&pg_atom="+String.valueOf(oAtm.getInt(DB.pg_atom))+"&gu_company="+oAtm.getStringNull(DB.gu_company,"")+"&gu_contact="+oAtm.getStringNull(DB.gu_contact,"")+"&tx_email="+oAtm.getStringNull(DB.tx_email,"")+"\"-->"+sPBody.substring(iEndBody);
+	  	} // fi </body>
+	  } // fi (bo_webbeacon)
+
+      oSentMsg = oDraft.composeFinalMessage(oHndlr.getSession(), oDraft.getSubject(),
+                                            sPBody, getParameter("id"),
+                                            sFormat, sEncoding, bAttachInlineImages);
 
       // If there is no mail address at the atom then send message to recipients
       // that are already set into message object itself.
@@ -491,6 +503,14 @@ public class MimeSender extends Job {
       }
       throw new MessagingException(e.getMessage(),e);
     } finally {
+      try {
+      	JDCConnection oScnn = oStor.getConnection();
+      	if (null!=oScnn)
+      	  if (!oScnn.isClosed())
+      	  	oScnn.commit();
+      } catch (Exception x) {
+        if (DebugFile.trace) DebugFile.writeln(x.getClass().getName()+" "+x.getMessage());
+      }      
       // Decrement de count of atoms pending of processing at this job
       if (DebugFile.trace) DebugFile.writeln("decrementing pending atoms to "+String.valueOf(iPendingAtoms-1));
       if (0==--iPendingAtoms) {
