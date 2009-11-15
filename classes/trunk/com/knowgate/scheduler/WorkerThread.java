@@ -216,7 +216,7 @@ public class WorkerThread extends Thread {
    */
   public void run() {
     String sJob = ""; // Current Job Unique Id.
-    JDCConnection oConsumerConnection = null;
+    JDCConnection oCsrConn = null;
 
     if (DebugFile.trace) {
        DebugFile.writeln("Begin WorkerThread.run()");
@@ -250,10 +250,6 @@ public class WorkerThread extends Thread {
 
         if (iCallbacks>0) callBack (WorkerThreadCallback.WT_ATOM_GET, "Thread " + getName() + " got Atom " + String.valueOf(oAtm.getInt(DB.pg_atom)), null, oAtm);
 
-        oConsumerConnection = oConsumer.getConnection();
-
-        if (DebugFile.trace) DebugFile.writeln(getName() + " AtomConsumer.getConnection() : " + (oConsumerConnection!=null ? "[Conenction]" : "null"));
-
         // ***********************************
         // Instantiate the proper Job subclass
 
@@ -266,7 +262,11 @@ public class WorkerThread extends Thread {
 
           try {
             // Dynamically instantiate the job subclass specified at k_lu_job_commands table
-            oJob = Job.instantiate(oConsumerConnection, sJob, oPool.getProperties());
+
+            oCsrConn = oConsumer.getDatabaseBind().getConnection("WorkerThread."+String.valueOf(getId()), true);
+            oJob = Job.instantiate(oCsrConn, sJob, oPool.getProperties());
+			oCsrConn.close("WorkerThread."+String.valueOf(getId()));
+			oCsrConn = null;
 
             if (iCallbacks>0) callBack(WorkerThreadCallback.WT_JOB_INSTANTIATE, "instantiate job " + sJob + " command " + oJob.getString(DB.id_command), null, oJob);
           }
@@ -313,6 +313,8 @@ public class WorkerThread extends Thread {
             if (iCallbacks>0) callBack(-1, sLastError, e, null);
 
             bContinue = false;
+          } finally {
+          	if (null!=oCsrConn) { try { oCsrConn.close("WorkerThread."+String.valueOf(getId())); } catch (Exception ignore) { } }
           }
         } // fi(Previous_Job == CurrentAtom->Job)
 
@@ -322,12 +324,25 @@ public class WorkerThread extends Thread {
 
           // -------------------------------------------------------------------
           // Actual Atom processing call here!
-
+		  
 		  try {
+            oCsrConn = oConsumer.getDatabaseBind().getConnection("WorkerThread."+String.valueOf(getId()));
+		    oCsrConn.setAutoCommit(true);
+
             oJob.process(oAtm);
-            oAtm.archive(oConsumerConnection);          	
+
+            oAtm.archive(oCsrConn);          	
+			
             if (DebugFile.trace)
               DebugFile.writeln("Thread " + getName() + " consumed Atom " + String.valueOf(oAtm.getInt(DB.pg_atom)));
+
+            if (DebugFile.trace) DebugFile.writeln("job " + oJob.getString(DB.gu_job) + " pending " + String.valueOf(oJob.pending()));
+
+            if (oJob.pending()==0) {
+              oJob.setStatus(oCsrConn, Job.STATUS_FINISHED);
+
+              if (iCallbacks>0) callBack(WorkerThreadCallback.WT_JOB_FINISH, "finish", null, oJob);
+            }
 		  }
           catch (Exception e) {
             if (DebugFile.trace) {
@@ -339,26 +354,21 @@ public class WorkerThread extends Thread {
             sLastError = "atom " + String.valueOf(oAtm.getInt(DB.pg_atom)) + " ";
             sLastError += e.getMessage() + "\n" + StackTraceUtil.getStackTrace(e) + "\n";
             try {
-              oAtm.setStatus(oConsumerConnection, Atom.STATUS_INTERRUPTED, e.getClass().getName() + " " + e.getMessage());
+              if (null!=oCsrConn) oAtm.setStatus(oCsrConn, Atom.STATUS_INTERRUPTED, e.getClass().getName() + " " + e.getMessage());
             } catch (SQLException sqle) {
               if (DebugFile.trace) DebugFile.writeln("Atom.setStatus() SQLException " + sqle.getMessage());
             }
             oJob.log(sLastError);
 
             if (iCallbacks>0) callBack(WorkerThreadCallback.WT_ATOM_CONSUME, "Thread " + getName() + " " + sLastError, e, oJob);
+          } finally {
+          	if (null!=oCsrConn) oCsrConn.close("WorkerThread."+String.valueOf(getId()));
+			oCsrConn = null;
           }
           
           if (iCallbacks>0) callBack(WorkerThreadCallback.WT_ATOM_CONSUME, "Thread " + getName() + " consumed Atom " + String.valueOf(oAtm.getInt(DB.pg_atom)), null, oAtm);
 
           oAtm = null;
-
-          if (DebugFile.trace) DebugFile.writeln("job " + oJob.getString(DB.gu_job) + " pending " + String.valueOf(oJob.pending()));
-
-          if (oJob.pending()==0) {
-            oJob.setStatus(oConsumerConnection, Job.STATUS_FINISHED);
-
-            if (iCallbacks>0) callBack(WorkerThreadCallback.WT_JOB_FINISH, "finish", null, oJob);
-          }
 
           // -------------------------------------------------------------------
 
@@ -372,7 +382,6 @@ public class WorkerThread extends Thread {
 
           bContinue = false;
         }
-        oConsumerConnection = null;
         lRunningTime += new Date().getTime()-lStartRun;
       }
       catch (Exception e) {
@@ -384,14 +393,18 @@ public class WorkerThread extends Thread {
           sLastError = e.getClass().getName() + ", job " + oJob.getString(DB.gu_job) + " ";
           if (null!=oAtm) {
             sLastError = "atom " + String.valueOf(oAtm.getInt(DB.pg_atom)) + " ";
-            if (null!=oConsumerConnection) {
-              try {
-                oAtm.setStatus(oConsumerConnection, Atom.STATUS_INTERRUPTED, e.getClass().getName() + " " + e.getMessage());
-              } catch (SQLException sqle) {
-                if (DebugFile.trace) DebugFile.writeln("Atom.setStatus() SQLException " + sqle.getMessage());
+            try {
+              if (null==oCsrConn) {
+                oCsrConn = oConsumer.getDatabaseBind().getConnection("WorkerThread.Exception."+String.valueOf(getId()));
+                oCsrConn.setAutoCommit(true);
               }
+              oAtm.setStatus(oCsrConn, Atom.STATUS_INTERRUPTED, e.getClass().getName() + " " + e.getMessage());
+            } catch (Exception sqle) {
+              if (DebugFile.trace) DebugFile.writeln("Atom.setStatus() " + sqle.getClass().getName() + " " + sqle.getMessage());
             }
-          }
+            if (null!=oCsrConn) try { oCsrConn.close("WorkerThread.Exception."+String.valueOf(getId())); } catch (Exception ignore) { }
+            oCsrConn=null;
+          } // fi
           sLastError += e.getMessage();
 
 		  try {

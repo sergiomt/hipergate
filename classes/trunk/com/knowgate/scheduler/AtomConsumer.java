@@ -33,6 +33,8 @@
 package com.knowgate.scheduler;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
@@ -40,6 +42,8 @@ import java.sql.Timestamp;
 
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
+import com.knowgate.dataobjs.DBBind;
+import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.debug.DebugFile;
 
 /**
@@ -50,7 +54,7 @@ import com.knowgate.debug.DebugFile;
 public class AtomConsumer {
 
   private AtomQueue oQueue;
-  private JDCConnection oConn;
+  private DBBind oDbb;
   private PreparedStatement oStmt;
 
   // ----------------------------------------------------------
@@ -61,41 +65,47 @@ public class AtomConsumer {
    * @param oAtomQueue
    * @throws SQLException
    */
-  public AtomConsumer(JDCConnection oConnection, AtomQueue oAtomQueue) throws SQLException {
+  public AtomConsumer(DBBind oDbBnd, AtomQueue oAtomQueue) throws SQLException {
     oQueue = oAtomQueue;
-    open(oConnection);
+    oDbb = oDbBnd;
   }
 
   // ----------------------------------------------------------
 
-  private void open(JDCConnection oConnection) throws SQLException {
+  public DBBind getDatabaseBind() {
+    return oDbb;
+  }
 
-    oConn = oConnection;
-
+  public void close() throws SQLException {
     if (DebugFile.trace) {
-      DebugFile.writeln("Connection.prepareStatement (UPDATE " + DB.k_job_atoms + " SET " + DB.id_status + "=" + String.valueOf(Atom.STATUS_RUNNING) + ", " + DB.dt_execution + "=? WHERE " + DB.gu_job + "=? AND " + DB.pg_atom + "=?)");
+      DebugFile.writeln("Begin AtomConsumer.close()");
+      DebugFile.incIdent();
     }
 
-    oStmt = oConn.prepareStatement("UPDATE " + DB.k_job_atoms + " SET " + DB.id_status + "=" + String.valueOf(Atom.STATUS_RUNNING) + ", " + DB.dt_execution + "=? WHERE " + DB.gu_job + "=? AND " + DB.pg_atom + "=?");
+	HashMap<String,String> oJobs = new HashMap<String,String>();
 
-    try { if (oConnection.getDataBaseProduct()!=JDCConnection.DBMS_POSTGRESQL) oStmt.setQueryTimeout(20); } catch (SQLException sqle) { }
-  } // open
-  
-  // ----------------------------------------------------------
+    for (Atom oAtm=oQueue.pop(); oAtm!=null; oAtm=oQueue.pop()) {
+      if (!oJobs.containsKey(oAtm.getString(DB.gu_job))) {
+      	oJobs.put(oAtm.getString(DB.gu_job), oAtm.getString(DB.gu_job));
+      }
+    } // next    
 
-  public void setConnection(JDCConnection oConnection) throws SQLException {
-    close();
-    open(oConnection);
-  }
+	if (oJobs.size()>0) {
+      JDCConnection oConn = oDbb.getConnection("AtomConsumer.close");
+      oConn.setAutoCommit(true);
+      Iterator<String> oIter = oJobs.keySet().iterator();
+      while (oIter.hasNext()) {
+        DBCommand.executeUpdate(oConn, "UPDATE "+DB.k_jobs+" SET "+DB.id_status+"="+String.valueOf(Job.STATUS_PENDING)+" WHERE "+DB.gu_job+"='"+oIter.next()+"'");
+      } // wend
+      oConn.close("AtomConsumer.close");
+	} // fi
 
-  // ----------------------------------------------------------
-
-  public void close() {
-    if (null!=oStmt)
-      try { oStmt.close(); } catch (SQLException sqle) { }
-    oStmt = null;
-  }
-
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End AtomConsumer.close()");
+    }
+  } // close
+  	
   // ----------------------------------------------------------
 
   /**
@@ -111,27 +121,56 @@ public class AtomConsumer {
       DebugFile.incIdent();
     }
 
+    JDCConnection oConn = null;
+	PreparedStatement oStmt = null;
+	
     Atom oAtm = (Atom) oQueue.pop();
 
     if (oAtm!=null) {
 
-      if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setTimestamp(1, new Timestamp(new Date().getTime()))");
+      if (DebugFile.trace) {
+        DebugFile.writeln("Connection.prepareStatement (UPDATE " + DB.k_job_atoms + " SET " + DB.id_status + "=" + String.valueOf(Atom.STATUS_RUNNING) + ", " + DB.dt_execution + "=? WHERE " + DB.gu_job + "=? AND " + DB.pg_atom + "=?)");
+      }
+	  
+	  try {
+        oConn = oDbb.getConnection("AtomConsumer");
+        oConn.setAutoCommit(true);
 
-      oStmt.setTimestamp(1, new Timestamp(new Date().getTime()));
+        oStmt = oConn.prepareStatement("UPDATE " + DB.k_job_atoms + " SET " + DB.id_status + "=" + String.valueOf(Atom.STATUS_RUNNING) + ", " + DB.dt_execution + "=? WHERE " + DB.gu_job + "=? AND " + DB.pg_atom + "=?");
 
-      if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setString(2, " + oAtm.getStringNull(DB.gu_job,"null") + ")");
+        try { if (oConn.getDataBaseProduct()!=JDCConnection.DBMS_POSTGRESQL) oStmt.setQueryTimeout(20); } catch (SQLException sqle) { }
 
-      // Actualizar el estado en la base de datos a Finished
-      oStmt.setString(2, oAtm.getString(DB.gu_job));
+        if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setTimestamp(1, new Timestamp(new Date().getTime()))");
 
-      if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setInt(3, " + String.valueOf(oAtm.getInt(DB.pg_atom)) + ")");
+        oStmt.setTimestamp(1, new Timestamp(new Date().getTime()));
 
-      oStmt.setInt(3, oAtm.getInt(DB.pg_atom));
+        if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setString(2, " + oAtm.getStringNull(DB.gu_job,"null") + ")");
 
-      if (DebugFile.trace) DebugFile.writeln("PreparedStatement.executeUpdate()");
+        // Actualizar el estado en la base de datos a Finished
+        oStmt.setString(2, oAtm.getString(DB.gu_job));
 
-      oStmt.executeUpdate();
-    }
+        if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setInt(3, " + String.valueOf(oAtm.getInt(DB.pg_atom)) + ")");
+
+        oStmt.setInt(3, oAtm.getInt(DB.pg_atom));
+
+        if (DebugFile.trace) DebugFile.writeln("PreparedStatement.executeUpdate()");
+
+        oStmt.executeUpdate();
+
+        if (null!=oStmt)
+          try { oStmt.close(); } catch (SQLException sqle) { }
+        oStmt = null;
+
+        if (oConn!=null) oConn.close("AtomConsumer");
+		oConn = null;
+      } catch (SQLException sqle) {
+        if (null!=oStmt)
+          try { oStmt.close(); } catch (SQLException ignore) { }
+        if (oConn!=null) oConn.close("AtomConsumer");
+          try { oConn.close(); } catch (SQLException ignore) { }
+      }
+      	
+	} // fi
 
     if (DebugFile.trace) {
       DebugFile.decIdent();
@@ -140,11 +179,5 @@ public class AtomConsumer {
 
     return oAtm;
   } // next()
-
-  // ----------------------------------------------------------
-
-  public JDCConnection getConnection() {
-    return oConn;
-  }
 
 } // AtomConsumer

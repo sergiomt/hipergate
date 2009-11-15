@@ -199,23 +199,26 @@ public class SchedulerDaemon extends Thread {
     Statement oStmt;
     ResultSet oRSet;
     int iJobCount;
+    int nThreads;
     String sSQL;
     AtomConsumer oCsr = null;
-    JDCConnection oCon = null;
-
+    JDCConnection oJcn = null;
+    
     if (DebugFile.trace) DebugFile.writeln("Begin SchedulerDaemon.run()");
 
+	try  {
+	  nThreads = Integer.parseInt(oEnvProps.getProperty("maxschedulerthreads","1"));
+	} catch (Exception xcpt) { nThreads = 1; }
+	
     try {
 
     if (null==oDbb) oDbb = new DBBind(sProfile);
     // Disable connection reaper to avoid connections being closed in the middle of job execution
     oDbb.connectionPool().setReaperDaemonDelay(0l);
-
-    oCon = oDbb.getConnection("SchedulerDaemon");
-
-    if (DebugFile.trace) DebugFile.writeln("JDCConnection.setAutoCommit(true)");
-
-    oCon.setAutoCommit(true);
+    // Allocate four connections per thread
+	oDbb.connectionPool().setPoolSize(4*nThreads);
+	// No more that ten times the number of threads allowed for connections
+	oDbb.connectionPool().setMaxPoolSize(10*nThreads);
 
     // Create Atom queue.
     if (DebugFile.trace) DebugFile.writeln("new AtomQueue()");
@@ -233,7 +236,7 @@ public class SchedulerDaemon extends Thread {
     // poped from the queue at a time.
     if (DebugFile.trace) DebugFile.writeln("new AtomConsumer([JDCconnection], [AtomQueue])");
 
-    oCsr = new AtomConsumer(oCon, oQue);
+    oCsr = new AtomConsumer(oDbb, oQue);
 
     // Create WorkerThreadPool
 
@@ -252,18 +255,13 @@ public class SchedulerDaemon extends Thread {
     do {
       try {
 
-        while(bContinue) {
+        while (bContinue) {
 
-          if (oCon.isClosed()) {
-          	oCon = oDbb.getConnection("SchedulerDaemon");
-            oCon.setAutoCommit(true);
-            oCsr.setConnection(oCon);
-          }
+          oJcn = oDbb.getConnection("SchedulerDaemon");
+          oJcn.setAutoCommit(true);
           
           // Count how many atoms are pending of processing at the database
-          oStmt = oCon.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-
-          try { if (oCon.getDataBaseProduct()!=JDCConnection.DBMS_POSTGRESQL) oStmt.setQueryTimeout(20); } catch (SQLException sqle) { }
+          oStmt = oJcn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
           // ***************************************************
           // Finish all the jobs that have no more pending atoms
@@ -290,7 +288,7 @@ public class SchedulerDaemon extends Thread {
           if (oFinished.size()>0) {
             sSQL = "UPDATE k_jobs SET id_status="+String.valueOf(Job.STATUS_FINISHED)+",dt_finished="+DBBind.Functions.GETDATE+" WHERE gu_job=?";
             if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement("+sSQL+")");
-            PreparedStatement oUpdt = oCon.prepareStatement(sSQL);
+            PreparedStatement oUpdt = oJcn.prepareStatement(sSQL);
             oIter = oFinished.listIterator();
             while (oIter.hasNext()) {
               oUpdt.setObject(1, oIter.next(), java.sql.Types.CHAR);
@@ -310,6 +308,8 @@ public class SchedulerDaemon extends Thread {
           oRSet.close();
           oStmt.close();
 
+		  oJcn.close("SchedulerDaemon");
+
           if (DebugFile.trace) DebugFile.writeln(String.valueOf(iJobCount) + " pending jobs");
 
           if (0==iJobCount) {
@@ -322,15 +322,13 @@ public class SchedulerDaemon extends Thread {
         } // wend
 
         if (bContinue) {
-          if (oCon.isClosed()) {
-          	oCon = oDbb.getConnection("SchedulerDaemon");
-            oCon.setAutoCommit(true);
-            oCsr.setConnection(oCon);
-          }
-          oFdr.loadAtoms(oCon, oThreadPool.size());
 
-          oFdr.feedQueue(oCon, oQue);
-
+		  oJcn = oDbb.getConnection("SchedulerDaemon.AtomFeeder");
+          oJcn.setAutoCommit(true);
+          oFdr.loadAtoms(oJcn, oThreadPool.size());
+          oFdr.feedQueue(oJcn, oQue);
+		  oJcn.close("SchedulerDaemon.AtomFeeder");
+		  
           if (oQue.size()>0) {
             oThreadPool.launchAll();
           }
@@ -357,7 +355,7 @@ public class SchedulerDaemon extends Thread {
     oThreadPool.haltAll();
     oThreadPool = null;
 
-    oCsr.close();
+	oCsr.close();
     oCsr = null;
 
     oFdr = null;
@@ -365,23 +363,20 @@ public class SchedulerDaemon extends Thread {
 
     if (DebugFile.trace) DebugFile.writeln("JDConnection.close()");
 
-	if (!oCon.isClosed())
-      oCon.close("SchedulerDaemon");
-    oCon = null;
+	if (oJcn!=null) { if (!oJcn.isClosed()) { oJcn.close("SchedulerDaemon"); } oJcn = null; }
 
     oDbb.close();
     oDbb=null;
     }
     catch (Exception e) {
       try { oThreadPool.haltAll(); oThreadPool=null; } catch (Exception ignore) {}
-      try { oCsr.close(); oCsr=null; } catch (Exception ignore) {}
       try {
-        if (oCon!=null) if (!oCon.isClosed()) oCon.close("SchedulerDaemon");
+        if (oJcn!=null) if (!oJcn.isClosed()) oJcn.close("SchedulerDaemon");
       } catch (SQLException sqle) {
         if (DebugFile.trace) DebugFile.writeln("SchedulerDaemon SQLException on close() " + sqle.getMessage());
       }
       if (null!=oDbb) { try { oDbb.close(); } catch (Exception ignore) {} }
-      oCon = null;
+      oJcn = null;
 
       dtStartDate = null;
       dtStopDate = new Date();
@@ -523,6 +518,8 @@ public class SchedulerDaemon extends Thread {
       } catch (SQLException sqle) {
         throw new IllegalStateException("SchedulerDaemon.haltAll() SQLException "+sqle.getMessage());
       }
+      oDbb.close();
+      oDbb=null;
     }
   }
   // ---------------------------------------------------------------------------
@@ -554,6 +551,8 @@ public class SchedulerDaemon extends Thread {
       oThreadPool.stopAll(oCon);
       interruptJobs(oCon, oThreadPool.runningJobs());
       oCon.close("SchedulerDaemonStopAll");
+      oDbb.close();
+      oDbb=null;
     } else {
       oThreadPool.stopAll();
     }

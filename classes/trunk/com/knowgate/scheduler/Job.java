@@ -62,6 +62,7 @@ import com.knowgate.dataobjs.DBPersist;
 import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.crm.MemberAddress;
 import com.knowgate.hipergate.Address;
+import com.knowgate.crm.GlobalBlackList;
 import com.knowgate.misc.Gadgets;
 
 import com.oreilly.servlet.MailMessage;
@@ -835,7 +836,10 @@ public abstract class Job extends DBPersist {
 	String[] aAddrVals = new String[nCols];
     String sSQL;
     String sMailAddr;
-    
+
+	String[] aBlackList = GlobalBlackList.forWorkArea(oConn, getString(DB.gu_workarea));
+	if (null!=aBlackList) Arrays.sort(aBlackList, String.CASE_INSENSITIVE_ORDER);
+	
 	sSQL = "SELECT "+Gadgets.join(aAddrCols,",")+" FROM "+DB.k_member_address+" WHERE "+DB.gu_workarea+"='"+getString(DB.gu_workarea)+"' AND "+DB.tx_email+"=?";
 	if (DebugFile.trace) DebugFile.writeln("PreparedStatement.prepareStatement("+sSQL+")");
 	PreparedStatement oAddr = oConn.prepareStatement(sSQL,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -900,7 +904,11 @@ public abstract class Job extends DBPersist {
 	    oRSet.close();	    
 	  } // fi (!bAlreadyExists)
 	  
-	  if (!bAlreadyExists) {
+	  // Avoid any blacklisted e-mail from being added to the recipients
+	  boolean bBlackListed = false;
+	  if (null!=aBlackList) bBlackListed = Arrays.binarySearch(aBlackList, aAddrVals[2].toLowerCase())>=0;
+
+	  if (!bAlreadyExists && !bBlackListed) {
       	if (Gadgets.checkEMail(aAddrVals[2])) {
 	      for (int i=1; i<=nCols; i++)
 	        oAtom.setString(i,aAddrVals[i-1]);
@@ -908,7 +916,7 @@ public abstract class Job extends DBPersist {
 	      if (DebugFile.trace) DebugFile.writeln("PreparedStatement.executeUpdate("+aAddrVals[2]+")");
       	
 	      oAtom.executeUpdate();
-      	} else {
+      	} else if (!bBlackListed) {
 	      for (int i=1; i<=nCols; i++)
 	        oArchived.setString(i,aAddrVals[i-1]);
 	    
@@ -916,7 +924,9 @@ public abstract class Job extends DBPersist {
       	
       	  oArchived.setInt(nCols+1, DBBind.nextVal(oConn, "seq_k_job_atoms"));
 	      oArchived.executeUpdate();      	
-      	}// fi
+      	} else {
+	      if (DebugFile.trace) DebugFile.writeln("Skip "+aAddrVals[2]+" because is blacklisted");
+      	}
 	  } else {
 	    if (DebugFile.trace) DebugFile.writeln("Skip "+aAddrVals[2]+" because is already a recipient");
 	  }// fi (!bAlreadyExists)
