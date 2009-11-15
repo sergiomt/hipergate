@@ -61,6 +61,7 @@ import java.sql.Types;
 import com.knowgate.dfs.FileSystem;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.misc.CSVParser;
+import com.knowgate.debug.DebugFile;
 
 import com.enterprisedt.net.ftp.FTPException;
 
@@ -299,8 +300,15 @@ public class Translate {
       aTags = new ArrayList(nLin);
       aWords = new ArrayList(nLin);
       for (int l=0; l<nLin; l++) {
-        aTags.add (oPrs.getField(0,l));
-        aWords.add(oPrs.getField(1,l));
+      	try {
+          aTags.add (oPrs.getField(0,l));
+          aWords.add(oPrs.getField(1,l));
+      	} catch (ArrayIndexOutOfBoundsException aiob) {
+      	  System.out.println("ArrayIndexOutOfBoundsException at file "+sFle+" line "+String.valueOf(l+1)+" "+oPrs.getLine(l));
+      	  System.out.println(aTagWords);
+      	  DebugFile.writeln(new String(aTagWords));
+      	  throw new ArrayIndexOutOfBoundsException(aiob.getMessage());
+      	}
       } // next
     } else {
       Class.forName(sDrv);
@@ -356,8 +364,8 @@ public class Translate {
     if (oEncodings.containsKey(sSourcePath)) {
       sSource = oHttpFs.readfilestr(sSourcePath, (String) oEncodings.get(sSourcePath));
     } else {
-      sSource = oHttpFs.readfilestr(sSourcePath, null);
-      oEncodings.put(sSourcePath, oHttpFs.detectEncoding(sSourcePath,"ISO-8859-1"));
+      sSource = oHttpFs.readfilestr(sSourcePath, oHttpFs.detectEncoding(sSourcePath,"UTF-8"));
+      oEncodings.put(sSourcePath, oHttpFs.detectEncoding(sSourcePath,"UTF-8"));
     }
 
     final int iLen = sSource.length();
@@ -608,8 +616,8 @@ public class Translate {
     if (oEncodings.containsKey(sSourcePath)) {
       sSource = oHttpFs.readfilestr(sSourcePath, (String) oEncodings.get(sSourcePath));
     } else {
-      sSource = oHttpFs.readfilestr(sSourcePath, null);
-      oEncodings.put(sSourcePath, oHttpFs.detectEncoding(sSourcePath,"ISO-8859-1"));
+      sSource = oHttpFs.readfilestr(sSourcePath, oHttpFs.detectEncoding(sSourcePath,"UTF-8"));
+      oEncodings.put(sSourcePath, oHttpFs.detectEncoding(sSourcePath,"UTF-8"));
     }
     loadTranslationsForFile(sDrv, sUrl, sUsr, sPwd, sLng, sDir, sFle, sCnf);
     final int nTags = aTags.size();
