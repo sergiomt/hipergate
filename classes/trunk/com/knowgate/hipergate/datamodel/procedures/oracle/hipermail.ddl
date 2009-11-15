@@ -1,3 +1,6 @@
+CREATE SEQUENCE seq_k_adhoc_mailings INCREMENT BY 1 START WITH 1
+GO;
+
 CREATE OR REPLACE PROCEDURE k_sp_del_mime_msg (MimeMsgId CHAR) IS
 ParentId CHAR(32);
 BEGIN
