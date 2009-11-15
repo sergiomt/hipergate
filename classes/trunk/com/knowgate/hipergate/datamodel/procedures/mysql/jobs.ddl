@@ -1,5 +1,4 @@
 
-
 CREATE PROCEDURE k_sp_del_job (IdJob CHAR(32))
 BEGIN
   DELETE FROM k_job_atoms_tracking WHERE gu_job=IdJob;
