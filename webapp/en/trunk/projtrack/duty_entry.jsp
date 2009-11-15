@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.projtrack.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.projtrack.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/projtrack.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%
 
@@ -171,13 +171,13 @@
 						      return false;                  
 						  }
 						  if (frm.elements["pr_cost"+s].value.length>0 && !isFloatValue(frm.elements["pr_cost"+s].value)) {
-						      alert ("[~El coste/horas no es una cantidad numérica válida~]");
+						      alert ("The cost/hours is not a valid figure");
 						      frm.elements["dt_end"+s].focus();
 						      return false;                  						  	
 						  }
             } else if (frm.elements["dt_start"+s].value.length>0  || frm.elements["dt_end"+s].value.length>0 ||
             					 frm.elements["sel_type"+s].selectedIndex>0 || frm.elements["sel_status"+s].selectedIndex>0) {
-						  alert ("[~La descripción de la tarea es obligatoria~]");
+						  alert ("Duty description is required");
 						  frm.elements["nm_duty"+s].focus();
 						  return false;
             }

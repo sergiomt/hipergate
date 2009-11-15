@@ -87,7 +87,7 @@
   oConn.close("attachedit");  
 %>
   <!-- +------------------------------------------------+ -->
-  <!-- | [~Edición de documentos asociados a un individuo~] | -->
+  <!-- | Edit documents associated with an Individual | -->
   <!-- | © KnowGate 2003                                | -->
   <!-- +------------------------------------------------+ -->
 

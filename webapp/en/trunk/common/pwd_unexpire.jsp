@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/dbbind.jsp" %><%
 
 
@@ -61,17 +61,17 @@
         var frm = window.document.forms[0];
         
         if (rtrim(frm.pwd_new_text1.value).length==0) {
-          alert ("[~La contraseña no puede estar vacía~]");
+          alert ("Password may not be empty");
           return false;
         }
 
         if (rtrim(frm.pwd_new_text1.value)!=rtrim(frm.pwd_new_text2.value)) {
-          alert ("[~La verificación de contraseña no coincide~]");
+          alert ("The password verification does not match the previous one");
           return false;
         }
 
         if (rtrim(frm.pwd_new_text.value).toUpperCase()==rtrim(frm.pwd_new_text1.value).toUpperCase()) {
-          alert ("[~La nueva contraseña no puede ser igual que la anterior~]");
+          alert ("The new password cannot be the same as the previous one");
           return false;
         }
 

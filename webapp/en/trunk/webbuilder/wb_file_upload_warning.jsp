@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/cookies.jspf" %><%
 /*
   Copyright (C) 2009  Know Gate S.L. All rights reserved.
@@ -90,7 +90,7 @@
 </td>
 </tr>
 </table>  
-<div class="formplain">[~A continuación se mostrará una pantalla como esta. Para evitar futuras advertencias, seleccione la casilla Confiar siempre en el contenido de... y haga click en Si.~]</div>
+<div class="formplain">To avoid further warnings, click on Always Trust checkbox and click on YesYou will see a window like this. </div>
 <br>
 <center><img src="../images/images/appletfile-warning.jpg" width="400" height="321" border="0"></center>
 <br>

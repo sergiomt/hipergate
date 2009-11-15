@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.hipergate.QueryByForm,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.hipergate.QueryByForm,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <% 
@@ -172,7 +172,7 @@
               while (frm.elements[offset].type!="text" || frm.elements[offset].name!="pos_"+jsProducts[i]) offset++;
     	      
     	      if (!isIntValue(frm.elements[offset].value)) {
-    	        alert("[~La posición para el producto ~]" + String(i+1) + "[~ no es un entero válido~]");
+    	        alert("Position for Product&nbsp;" + String(i+1) + " is not a valid integer");
     	        return false;
     	      }
     	          	    
@@ -192,7 +192,7 @@
 	  
 	  var frm = document.forms[0];
 	  	  
-	  if (window.confirm("[~¿Está seguro de que desea eliminar los productos seleccionados?~]")) {
+	  if (window.confirm("Are you sure you want to delete selected products?")) {
 	  	  	    
 	    composeSelectedList();
 	    
@@ -213,11 +213,11 @@
 	  var frm = document.forms[0];
 	  
 	  if (getCombo(frm.sel_target).length==0) {
-	    alert ("[~Debe seleccionar una categoría destino~]");
+	    alert ("Must select a target Category");
 	    return false;
 	  }
 	  	  
-	  if (window.confirm("[~¿Está seguro de que desea mover los productos seleccionados?~]")) {
+	  if (window.confirm("Are you sure you want to delete selected products?")) {
 	    
 	    frm.gu_category.value = getCombo(frm.sel_target);
 	    	    
@@ -379,9 +379,9 @@
           <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>">
 	        &nbsp;<A HREF="javascript:findProduct();" CLASS="linkplain" TITLE="Search">Search</A>	  
         </TD>
-        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="[~Descartar búsqueda~]"></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard Find Filter"></TD>
         <TD VALIGN="bottom" NOWRAP>
-          <A HREF="javascript:discardSearch();" CLASS="linkplain" TITLE="[~Descartar búsqueda~]">Discard</A>
+          <A HREF="javascript:discardSearch();" CLASS="linkplain" TITLE="Discard Find Filter">Discard</A>
           <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;Show&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT>
         </TD>
       </TR>
@@ -405,7 +405,7 @@
         <TD VALIGN="middle" NOWRAP>
           <SELECT NAME="sel_searched" CLASS="combomini">
             <OPTION VALUE=""></OPTION>
-            <OPTGROUP LABEL="[~Datos Básicos~]">
+            <OPTGROUP LABEL="Basic Data">
             <OPTION VALUE="nm_product">Name</OPTION>
             <OPTION VALUE="de_product">Description</OPTION>
             <OPTION VALUE="id_ref">Reference</OPTION>
@@ -423,7 +423,7 @@
             <OPTION VALUE="product_group">Product Group</OPTION>
             <OPTION VALUE="isbn">ISBN</OPTION>
             <OPTION VALUE="brand">Brand</OPTION>
-            <OPTION VALUE="doc_no">[~Nº documento~]</OPTION>
+            <OPTION VALUE="doc_no">Doc. Number</OPTION>
             <OPTION VALUE="organization">Organization</OPTION>
             <OPTION VALUE="country">Country</OPTION>
             <OPTION VALUE="power">Power</OPTION>
@@ -434,24 +434,24 @@
           <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>">
 	  &nbsp;<A HREF="javascript:findProduct();" CLASS="linkplain" TITLE="Search">Search</A>	  
         </TD>
-        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="[~Descartar búsqueda~]"></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard Find Filter"></TD>
         <TD VALIGN="bottom" NOWRAP>
-          <A HREF="javascript:discardSearch();" CLASS="linkplain" TITLE="[~Descartar búsqueda~]">Discard</A>
+          <A HREF="javascript:discardSearch();" CLASS="linkplain" TITLE="Discard Find Filter">Discard</A>
           <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;Show&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT>
         </TD>
       </TR>
       <TR>
-        <TD ALIGN="center"><IMG SRC="../images/images/movefiles.gif" WIDTH="24" HEIGHT="16" BORDER="0" ALT="[~Mover Productos a otra categoría~]"></TD>
+        <TD ALIGN="center"><IMG SRC="../images/images/movefiles.gif" WIDTH="24" HEIGHT="16" BORDER="0" ALT="M Products to another Category"></TD>
         <TD VALIGN="middle">
-          <A HREF="#" onclick="moveProducts()" CLASS="linkplain" TITLE="[~Mover Productos a otra categoría~]">Move</A>
+          <A HREF="#" onclick="moveProducts()" CLASS="linkplain" TITLE="M Products to another Category">Move</A>
         </TD>
         <!-- no copies by now
         <TD ALIGN="center"><IMG SRC="../images/images/copyfiles.gif" WIDTH="24" HEIGHT="16" BORDER="0" ALT="Copy Products"></TD>
         <TD><A HREF="#" onclick="copyProducts()" CLASS="linkplain">Copy</A></TD>
 	      -->
         <TD COLSPAN="4"><FONT CLASS="textplain">&nbsp;to category&nbsp;</FONT><SELECT CLASS="combomini" onclick="if (!jsCategoriesLoaded) { jsCategoriesLoaded=true; this.options[0] = new Option('Cargando...', ''); parent.msgsexec.document.location='cat_select.jsp?top_parent=' + getURLParam('top_parent_cat'); }" STYLE="width:260px"NAME="sel_target"></SELECT></TD> 
-        <TD ALIGN="right"><IMG SRC="../images/images/resort.gif" WIDTH="22" HEIGHT="16" BORDER="0" ALT="[~Reordenar Productos por Posición Manual~]"></TD>
-        <TD><A HREF="#" onclick="reorderProducts();" CLASS="linkplain" TITLE="[~Reordenar Productos por Posición Manual~]">Reorder</A></TD>
+        <TD ALIGN="right"><IMG SRC="../images/images/resort.gif" WIDTH="22" HEIGHT="16" BORDER="0" ALT="Reorder Manually"></TD>
+        <TD><A HREF="#" onclick="reorderProducts();" CLASS="linkplain" TITLE="Reorder Manually">Reorder</A></TD>
       </TR>
       <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       </TABLE>
@@ -473,12 +473,12 @@
           </TD>
         </TR>
         <TR>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(10);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==10 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por posición~]"></A></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(10);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==10 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by position"></A></TD>
           <TD CLASS="tableheader" WIDTH="<%=String.valueOf(floor(150f*fScreenRatio))%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(2);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by name"></A>&nbsp;<B>Name</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(5);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by priceSortuj wed?ug"></A>&nbsp;<B>Price&nbsp;</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(5);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by priceSortuj według"></A>&nbsp;<B>Price&nbsp;</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(8);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==8 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by quantity in stock"></A>&nbsp;<B>Stock&nbsp;</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by status"></A>&nbsp;<B>Status&nbsp;</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(4);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==4 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por fecha de actualización~]"></A>&nbsp;<B>Date Upd.&nbsp;</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(4);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==4 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by last updated"></A>&nbsp;<B>Date Upd.&nbsp;</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Seleccionar todos"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select all"></A></TD></TR>
 <%
 	  String sProdId,sProdNm,sProdDt,sPrice,sCurren,sStock,sStrip,sPos;

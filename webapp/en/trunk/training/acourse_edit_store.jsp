@@ -1,4 +1,4 @@
-﻿<%@ page import="java.math.BigDecimal,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.Address,com.knowgate.hipergate.Category,com.knowgate.hipergate.Product,com.knowgate.training.AcademicCourse" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.math.BigDecimal,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.Address,com.knowgate.hipergate.Category,com.knowgate.hipergate.Product,com.knowgate.training.AcademicCourse" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*  
   Copyright (C) 2003  Know Gate S.L. All rights reserved.

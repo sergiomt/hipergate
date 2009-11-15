@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.io.IOException,java.io.FileNotFoundException,java.io.File,com.knowgate.acl.*,com.knowgate.misc.*,com.knowgate.crm.DirectList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.io.IOException,java.io.FileNotFoundException,java.io.File,com.knowgate.acl.*,com.knowgate.misc.*,com.knowgate.crm.DirectList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
@@ -58,13 +58,14 @@
   String tp_list = request.getParameter("tp_list");
   String gu_query = request.getParameter("gu_query");
   String desc_file = request.getParameter("desc_file");
+  String id_encoding = request.getParameter("sel_encoding");
   
   // URL para volver al paso 2 si se produce un error
   String sRedirect2URL = Gadgets.URLEncode("../crm/list_wizard_d2.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&gu_workarea=" + gu_workarea + "&tp_list=" + tp_list + "&gu_query=" + gu_query);
   
   File oTmpFile;
   int Checks[] = null;
-  DirectList oList = new DirectList();
+  DirectList oList = new DirectList(id_encoding);
 
   try {
     Checks = oList.parseFile(sTempDir + request.getParameter("gu_query") + ".tmp", request.getParameter("desc_file"));
@@ -185,7 +186,7 @@
 	          out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=green>OK</FONT></FONT>");
 		  break;
 	        case DirectList.CHECK_INVALID_EMAIL:
-		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>[~e-mail no válido~]</FONT></FONT>");
+		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>invalid e-mail</FONT></FONT>");
 		  break;
 	        case DirectList.CHECK_NAME_TOO_LONG:
 		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>Name is too long</FONT></FONT>");
@@ -200,13 +201,13 @@
 		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>Salutation is too long</FONT></FONT>");
 		  break;	        	        
 	        case DirectList.CHECK_INVALID_NAME:
-		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>[~El nombre contiene caracteres no válidos~]</FONT></FONT>");
+		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>The name contains invalid characters</FONT></FONT>");
 		  break;
 	        case DirectList.CHECK_INVALID_SURNAME:
-		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>[~Los apellidos contienen caracteres no válidos~]</FONT></FONT>");
+		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>Surname contains invalid characters</FONT></FONT>");
 		  break;
 	        case DirectList.CHECK_INVALID_SALUTATION:
-		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>[~El saludo contiene caracteres no válidos~]</FONT></FONT>");
+		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>Salutation contains invaid characters</FONT></FONT>");
 		  break;
 		default:
 		  out.write("&nbsp;<FONT CLASS=\"textsmall\"><FONT COLOR=red>Unknown format error</FONT></FONT>");

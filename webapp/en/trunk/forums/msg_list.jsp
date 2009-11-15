@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.ArrayList,java.util.Date,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,java.sql.Timestamp,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBCommand,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.*,com.knowgate.hipergate.Category,com.knowgate.hipergate.QueryByForm,com.knowgate.forums.Forums,com.knowgate.forums.NewsGroup,com.knowgate.forums.NewsMessage,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.ArrayList,java.util.Date,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,java.sql.Timestamp,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBCommand,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.*,com.knowgate.hipergate.Category,com.knowgate.hipergate.QueryByForm,com.knowgate.forums.Forums,com.knowgate.forums.NewsGroup,com.knowgate.forums.NewsMessage,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -80,7 +80,7 @@
   }
 
   final String aStatusIcons[] = { "validated.gif", "pending.gif", "discarded.gif", "expired.gif" };
-  final String aStatusAlt[] = { "[~Validado~]", "[~Pendiente~]", "[~Rechazado~]", "[~Caducado~]" };
+  final String aStatusAlt[] = { "Validated", "Pending", "Not approved", "Outdated" };
   
   if (screen_width==null)
     iScreenWidth = 800;
@@ -285,21 +285,23 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/dynapi.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript">
-    DynAPI.setLibraryPath('../javascript/dynapi/lib/');
-    DynAPI.include('dynapi.api.*');
+    dynapi.library.setPath('../javascript/dynapi3/');
+    dynapi.library.include('dynapi.api.DynLayer');
   </SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     var menuLayer;
-    DynAPI.onLoad = function() { 
+    dynapi.onLoad(init);
+    function init() {
+ 
       setCombos();
       menuLayer = new DynLayer();
       menuLayer.setWidth(160);
       menuLayer.setHTML(rightMenuHTML);
     }
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/rightmenu.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
         
@@ -335,7 +337,7 @@
 	      function replyMessage(id) {	  
 
 <% if (bIsGuest) { %>	  
-	  alert ("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+	  alert ("Your credential level as Guest does not allow you to perform this action");
 <% } else { %>
 	  window.open ("msg_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>&gu_newsgrp="+ getURLParam("gu_newsgrp") + "&nm_newsgrp=" + getURLParam("nm_newsgrp") + "&gu_parent_msg=" + id + "&screen_width=" + String(screen.width), "editmessage", "directories=no,toolbar=no,menubar=no,width=<% out.write(String.valueOf(floor(760f*fScreenRatio))); %>,height=<% out.write(String.valueOf(floor(520f*fScreenRatio))); %>; %>");	  
 <% } %>
@@ -350,7 +352,7 @@
 	  var frm = document.forms[0];
 	  var chi = frm.checkeditems;
 	  	  
-	  if (window.confirm("[~¿Está seguro de que desea eliminar los mensajes seleccionados?~]")) {
+	  if (window.confirm("Are you sure you want to delete selected messages?")) {
 	  	  
 	    chi.value = "";	  	  
 	    frm.action = "msg_edit_delete.jsp";
@@ -379,12 +381,12 @@
 	  var chi = frm.checkeditems;
 	  
 	  if (frm.sel_move.selectedIndex<=0) {
-	    alert ("[~Debe seleccionar previamente el foro de destino~]");
+	    alert ("A target forum must be selected first");
 	    frm.sel_move.focus();
 	    return false;
 	  }	  
 
-	  if (window.confirm("[~¿Está seguro de que desea mover los hilos de conversación seleccionados?~]")) {
+	  if (window.confirm("Arre you sure that you want to move the selected threads?")) {
 	  	  
 	    chi.value = "";	  	  
 	    frm.action = "msg_edit_move.jsp";
@@ -557,7 +559,7 @@
         <TD ALIGN="right" VALIGN="middle">&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Write"></TD>
         <TD VALIGN="middle" ALIGN="left">        	
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">Write</A>
+          <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">Write</A>
 <% } else { %>
           <A HREF="#" onclick="createMessage()" CLASS="linkplain">Write</A>
 <% } %>
@@ -568,8 +570,8 @@
           <A HREF="#" onclick="deleteMessages()" CLASS="linkplain">Delete</A>
         </TD>
 <% if (bo_parent) { %>
-        <TD ALIGN="right" VALIGN="middle"><IMG SRC="../images/images/movefiles.gif" WIDTH="24" HEIGHT="16" HEIGHT="16" BORDER="0" ALT="[~Mover~]"></TD>
-        <TD VALIGN="middle" CLASS="textplain"><SELECT CLASS="combomini" NAME="sel_move"><OPTION VALUE="" SELECTED></OPTION><%=oBuffer.toString()%></SELECT>&nbsp;<A HREF="#" onclick="moveMessages()" CLASS="linkplain" TITLE="Mover">[~Mover~]</A></TD>
+        <TD ALIGN="right" VALIGN="middle"><IMG SRC="../images/images/movefiles.gif" WIDTH="24" HEIGHT="16" HEIGHT="16" BORDER="0" ALT="Move"></TD>
+        <TD VALIGN="middle" CLASS="textplain"><SELECT CLASS="combomini" NAME="sel_move"><OPTION VALUE="" SELECTED></OPTION><%=oBuffer.toString()%></SELECT>&nbsp;<A HREF="#" onclick="moveMessages()" CLASS="linkplain" TITLE="Mover">Move</A></TD>
 <% } else { %>
         <TD COLSPAN="2"></TD>
 <% } } else { %>
@@ -583,20 +585,20 @@
 <% if ((bIsAdmin || bIsModerator) && bIsModerated) { %>
         <TD ALIGN="right"><IMG SRC="../images/images/megaphone22x16.gif" WIDTH="22" HEIGHT="16" BORDER="0" ALT="Filter"></TD>
         <TD><SELECT NAME="sel_status" onChange="filterBy()" CLASS="combomini"><OPTION VALUE="" SELECTED>All<OPTION VALUE="0">Validated<OPTION VALUE="1">Pending<OPTION VALUE="2">Refused<OPTION VALUE="3">Outdated</SELECT></TD>
-        <TD COLSPAN="3"><FONT CLASS="textplain"><INPUT TYPE="radio" NAME="aproval">&nbsp;Validate&nbsp;&nbsp;<INPUT TYPE="radio" NAME="aproval">&nbsp;Refuse&nbsp;&nbsp;<INPUT TYPE="radio" NAME="aproval">&nbsp;[~Pendiente~]</FONT></TD>
+        <TD COLSPAN="3"><FONT CLASS="textplain"><INPUT TYPE="radio" NAME="aproval">&nbsp;Validate&nbsp;&nbsp;<INPUT TYPE="radio" NAME="aproval">&nbsp;Refuse&nbsp;&nbsp;<INPUT TYPE="radio" NAME="aproval">&nbsp;Pending</FONT></TD>
         <TD COLSPAN="3"><A CLASS="linkplain" HREF="#" onClick="moderateMessages()">Change status</A></TD>
 <% } else out.write("<TD COLSPAN=\"8\"></TD>"); %>
       </TR>
       <TR>
         <TD ALIGN="center" VALIGN="middle"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Search"></TD>
-        <TD VALIGN="middle" CLASS="textplain"><SELECT CLASS="combomini" NAME="sel_searched"><OPTION VALUE="" SELECTED></OPTION><OPTION VALUE="<%=DB.nm_author%>">Author</OPTION><OPTION VALUE="<%=DB.tx_subject%>">Subject</OPTION><OPTION VALUE="<%=DB.tx_msg%>">[~Cuerpo~]</OPTION></SELECT></TD>
+        <TD VALIGN="middle" CLASS="textplain"><SELECT CLASS="combomini" NAME="sel_searched"><OPTION VALUE="" SELECTED></OPTION><OPTION VALUE="<%=DB.nm_author%>">Author</OPTION><OPTION VALUE="<%=DB.tx_subject%>">Subject</OPTION><OPTION VALUE="<%=DB.tx_msg%>">Body</OPTION></SELECT></TD>
         <TD COLSPAN="3"><INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="100" SIZE="50" VALUE="<%=sFind%>"></TD>
 	      <TD><A HREF="javascript:findMessage(0,-1,0);" CLASS="linkplain" TITLE="Buscar">Search</A></TD>
-        <TD ALIGN="right" VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="[~Descartar búsqueda~]"></TD>
-        <TD ALIGN="left" VALIGN="bottom"><A HREF="javascript:window.parent.document.location.reload(true);" CLASS="linkplain" TITLE="[~Descartar búsqueda~]">Discard</A></TD>
+        <TD ALIGN="right" VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard Find Filter"></TD>
+        <TD ALIGN="left" VALIGN="bottom"><A HREF="javascript:window.parent.document.location.reload(true);" CLASS="linkplain" TITLE="Discard Find Filter">Discard</A></TD>
 	    </TR>
       <TR>
-      	<TD COLSPAN="2" CLASS="textplain">[~Etiquetas~]</TD>
+      	<TD COLSPAN="2" CLASS="textplain">Tags</TD>
       	<TD COLSPAN="6" CLASS="textplain">
       	  <SELECT NAME="sel_tag" CLASS="combomini" onchange="if (this.selectedIndex>0) findMessages(this.options[this.selectedIndex].value); else window.parent.document.location.reload(true);"><OPTION VALUE=""></OPTION><%
             for (int t=0; t<nTags; t++) {
@@ -609,7 +611,7 @@
      </TR>
 <% if (dtFirstMsg!=null) { %>
       <TR>
-      	<TD COLSPAN="2" CLASS="textplain">[~Archivo mensual~]</TD>
+      	<TD COLSPAN="2" CLASS="textplain">Monthly archive</TD>
       	<TD COLSPAN="6" CLASS="textplain">
       	  <SELECT NAME="sel_month" CLASS="combomini" onchange="findMessage(0,Number(this.options[this.selectedIndex].value.split('-')[1]),Number(this.options[this.selectedIndex].value.split('-')[0]))"><OPTION VALUE="0-0"></OPTION><%
       	    Date dtMonth = new Date(dtFirstMsg.getYear(),dtFirstMsg.getMonth(),dtFirstMsg.getDate());
@@ -627,7 +629,7 @@
      </TR>
 <% } %>
       <TR>
-      	<TD COLSPAN="2" CLASS="textplain">[~Archivo diario~]</TD>
+      	<TD COLSPAN="2" CLASS="textplain">Daily archive</TD>
       	<TD COLSPAN="6" CLASS="textplain">
 <%		    try {
 				    out.write(Calendar.MonthName(Integer.parseInt(dt_month), sLanguage));
@@ -644,7 +646,7 @@
       <TR>
         <TD ALIGN="center" VALIGN="middle"></TD>
         <TD COLSPAN="5" VALIGN="middle" CLASS="textplain">
-          <INPUT TYPE="radio" NAME="bo_parent" VALUE="0" onclick="findMessage(-1,<%=dt_month%>,<%=dt_year%>)" <%=(bo_parent ? "" : "CHECKED")%>>&nbsp;[~Mostrar todos los mensajes~]&nbsp;&nbsp;&nbsp;&nbsp;<INPUT TYPE="radio" NAME="bo_parent" onclick="findMessage(-1,<%=dt_month%>,<%=dt_year%>)" VALUE="1" <%=(bo_parent ? "CHECKED" : "")%>>&nbsp;[~Mostrar s&oacute;lo el primer mensaje de cada hilo~]
+          <INPUT TYPE="radio" NAME="bo_parent" VALUE="0" onclick="findMessage(-1,<%=dt_month%>,<%=dt_year%>)" <%=(bo_parent ? "" : "CHECKED")%>>&nbsp;Show all messages&nbsp;&nbsp;&nbsp;&nbsp;<INPUT TYPE="radio" NAME="bo_parent" onclick="findMessage(-1,<%=dt_month%>,<%=dt_year%>)" VALUE="1" <%=(bo_parent ? "CHECKED" : "")%>>&nbsp;Show only the first message of each thread
         </TD>
         <TD COLSPAN="2"><FONT CLASS="textplain">Show</FONT>&nbsp;<SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT><FONT CLASS="textplain">&nbsp;<FONT CLASS="textplain">Messages</FONT></TD>
       </TR>
@@ -668,8 +670,8 @@
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"></TD>
           <TD CLASS="tableheader" WIDTH="<%=floor(160f*fScreenRatio)%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by Author"></A>&nbsp;<B>Author</B></TD>
           <TD CLASS="tableheader" WIDTH="<%=floor(220f*fScreenRatio)%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(4);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==4 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by Subject"></A>&nbsp;<B>Subject</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Respuestas~]</B></TD>
-          <TD CLASS="tableheader" WIDTH="128px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(5);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por Fecha de Publicación~]"></A>&nbsp;<B>Date</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Answers</B></TD>
+          <TD CLASS="tableheader" WIDTH="128px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(5);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by publishing date"></A>&nbsp;<B>Date</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Seleccionar todos"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select all"></A></TD></TR>
 <%
 	  String sStripN;
@@ -705,7 +707,7 @@
       addMenuOption("Read Thread","readThread(jsMessageId)",0);
       addMenuSeparator();
 <% if (bIsAdmin) { %>
-      addMenuOption("[~Editar Mensaje~]","editMessage(jsMessageId)",0);
+      addMenuOption("Edit Message","editMessage(jsMessageId)",0);
       addMenuSeparator();
 <% } %>
       addMenuOption("Reply to All","replyMessage(jsMessageId)",0);

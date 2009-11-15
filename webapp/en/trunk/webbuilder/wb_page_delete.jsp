@@ -1,4 +1,4 @@
-﻿<%@ page import="com.knowgate.dataxslt.*,java.util.*,java.io.*,java.math.*,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.dataxslt.db.*,com.knowgate.dfs.FileSystem,com.knowgate.misc.*" language="java" session="false" %>
+<%@ page import="com.knowgate.dataxslt.*,java.util.*,java.io.*,java.math.*,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.dataxslt.db.*,com.knowgate.dfs.FileSystem,com.knowgate.misc.*" language="java" session="false" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -58,7 +58,7 @@
 <HTML><HEAD><TITLE>Wait...</TITLE>
 <%  
   if (!bIsAdmin && !bIsPowerUser)
-    out.write("<script type=\"text/javascript\">alert('[~Su nivel de privilegios no le permite eliminar páginas.~]');</script>");
+    out.write("<script type=\"text/javascript\">alert('Your security access level does not allow you to delete pages');</script>");
   else if (sPageName.equals("Home"))
     out.write("<script type=\"text/javascript\">alert('It is not permitted to remove Home Page, as it is the start navigation point of the website.');</script>");
   else
@@ -66,7 +66,7 @@
      out.write("<script type=\"text/javascript\">alert('It is not permitted to remove Resources Page.');</script>");
   else
    if (sPageName.equals("Index"))
-     out.write("<script type=\"text/javascript\">alert('[~No esta permitido eliminar la pagina Inicial, ya que es el punto de entrada para la navegacion de la web.~]');</script>");
+     out.write("<script type=\"text/javascript\">alert('The WebSite Home page cannot be deleted.');</script>");
    else
      oPageSet.removePage(file_pageset,gu_page);
   

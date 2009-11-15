@@ -1,4 +1,4 @@
-﻿<table border="0" cellpadding="2" cellspacing="0">
+<table border="0" cellpadding="2" cellspacing="0">
   <tr>
     <td valign="top"><img src="../../../../../../skins/xp/hglogopeq.jpg" border="0"></td>
     <td valign="top"><a style="color:#0066cc" href="javascript:mostrarInt()"><font face="Verdana" size="1" color="#0066cc"><b>Control Panel</b></font></a>&nbsp;|&nbsp;
@@ -73,7 +73,7 @@ function deleteCheckedBlocks(){
   if (fnd==0)
     alert("There are not selected blocks");
   else {
-    if (window.confirm("[~¿Desea eliminar los bloques marcados?~]")) {
+    if (window.confirm("Do you want to remove selected blocks?")) {
       sBlockList=sBlockList.substr(0,sBlockList.length-1);var w=window.open(sPage+sBlockList,"wRemoveBlock","top=20,left=20,height=120,width=240,menubar=no");
     }
   }

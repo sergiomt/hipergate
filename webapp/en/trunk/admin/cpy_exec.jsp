@@ -1,4 +1,4 @@
-﻿<%@ page import="com.knowgate.misc.Environment,com.knowgate.datacopy.FullTableCopy" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.knowgate.misc.Environment,com.knowgate.datacopy.FullTableCopy" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <% 
 
   String sOrigin = request.getParameter("con_origin");

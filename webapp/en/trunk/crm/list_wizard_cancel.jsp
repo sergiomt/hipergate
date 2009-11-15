@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.io.FileNotFoundException,java.io.File,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.io.FileNotFoundException,java.io.File,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.

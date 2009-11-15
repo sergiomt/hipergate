@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.GregorianCalendar,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Calendar" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.GregorianCalendar,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Calendar" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*
@@ -101,13 +101,13 @@
 	var scp = getCheckedValue(frm.wcal_scope);
 
 	if (!isDate(frm.dt_from.value, "d") && frm.dt_from.value.length>0) {
-	  alert ("[~La fecha Desde no es válida~]");
+	  alert ("From date is not valid");
 	  frm.dt_from.focus();
 	  return false;
 	}
 
 	if (!isDate(frm.dt_to.value, "d") && frm.dt_to.value.length>0) {
-	  alert ("[~La fecha Hasta no es válida~]");
+	  alert ("To date is not valid");
 	  frm.dt_to.focus();
 	  return false;	  
 	}

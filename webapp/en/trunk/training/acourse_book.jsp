@@ -1,4 +1,4 @@
-﻿<%@ page import="java.text.DecimalFormat,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.training.AcademicCourse,com.knowgate.training.AcademicCourseBooking" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.text.DecimalFormat,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.training.AcademicCourse,com.knowgate.training.AcademicCourseBooking" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
 <%!
@@ -112,7 +112,7 @@
 
       var jsPaymentsGrid;
 
-      var jsTableHeader = "<TABLE WIDTH=200><TR><TD CLASS=formplain>Amount</TD><TD CLASS=formplain>[~Fecha~]</TD></TR>";
+      var jsTableHeader = "<TABLE WIDTH=200><TR><TD CLASS=formplain>Amount</TD><TD CLASS=formplain>Date</TD></TR>";
       var jsTableFooter = "</TABLE>";
       var jsTableName = "paymentlines";
       
@@ -202,17 +202,17 @@
 				}
 
         if (frm.dt_paid.value.length>0 && !isDate(frm.frm.dt_paid.value, "d")) {
-	        alert ("[~La fecha de pago no es válida~]");
+	        alert ("Payment date is not valid");
 	        return false;	
         }
 
 				if (frm.bo_invoice.checked) {
 			    if (getCheckedValue(frm.invoice_for)==null) {
-	      		alert ("[~Se debe especificar si la factura ha de emitirse al individuo o a su compañía~]");
+	      		alert ("Please set whether the invoice must be sent to the company or to the individual");
 	      		return false;
 			    } // fi
 			    if (frm.gu_shop.selectedIndex<=0) {
-	      		alert ("[~Se debe especificar el catálogo en el cual se generará la factura~]");
+	      		alert ("The catalog for the invoice is required");
 	      		frm.gu_shop.focus();
 	      		return false;
 			    }
@@ -225,7 +225,7 @@
 	  		    if (null!=cvl) {
 	  		    	cvl = cvl.replace(",",".");
 	    		    if (!isFloatValue(cvl)) {
-	      		    alert ("[~El importe para el pago~] " + String(r+1) + " [~no es válido~]");
+	      		    alert ("Amount paid " + String(r+1) + " is not valid");
 	      		    return false;
 	            } else {
 	              GridSetCellValue(jsPaymentsGrid,0,r,cvl);
@@ -237,16 +237,16 @@
 	  		    if (null!=cdt) {
 	    		    if (cdt.length>0) {
 	    		    	if (!isDate(cdt,"d")) {
-	      		      alert ("[~La fecha~] " + cdt + " [~para el pago~] " + String(r+1) + " [~no es válida~]");
+	      		      alert ("Date " + cdt + " for payment " + String(r+1) + " is not valid");
 	      		      return false;
 	              } else if (r>0 && isDate(GridGetCellValue(jsPaymentsGrid, 1, r-1))) {
 	              	if (parseDate(cdt, "d")<parseDate(GridGetCellValue(jsPaymentsGrid, 1, r-1), "d")) {
-	      		        alert ("[~La fecha del pago~] " + String(r+1) + " [~debe ser posterior a la del pago~] "+String(r));
+	      		        alert ("Payment date " + String(r+1) + " must be after the payment one "+String(r));
 	      		        return false;
 	              	}
 	              }
 	              if (!isFloatValue(cvl)) {
-	      		      alert ("[~Deben especificarse los importes para todas las fechas de pago~]");
+	      		      alert ("The amounts for all payments must be specified");
 	      		      return false;	                
 	              }
 	            } // fi (cdt!="")
@@ -282,7 +282,7 @@
   </TABLE>  
   <FORM METHOD="post" ACTION="acourse_book_store.jsp" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="gu_acourse" VALUE="<%=gu_acourse%>">
-    <INPUT TYPE="hidden" NAME="chekeditems" VALUE="<%=chckditems%>">
+    <INPUT TYPE="hidden" NAME="checkeditems" VALUE="<%=chckditems%>">
     <INPUT TYPE="hidden" NAME="payments" VALUE="">
     <INPUT TYPE="hidden" NAME="gu_discard" VALUE="<% if (aBook!=null) for (int d=0; d<aBook.length; d++) out.write((0==d ? "" : ",")+aBook[d].getString(DB.gu_contact)); %>">
     <TABLE CLASS="formback">
@@ -306,7 +306,7 @@
           </TR>
           <TR><TD COLSPAN="2"><HR></TD></TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90" CLASS="formstrong">[~Reserva~]</TD>
+            <TD ALIGN="right" WIDTH="90" CLASS="formstrong">Booking</TD>
             <TD ALIGN="left" WIDTH="470"></TD>
           </TR>
           <TR>
@@ -315,29 +315,29 @@
             <TD ALIGN="left" WIDTH="470" CLASS="formplain">
             	<INPUT TYPE="text" NAME="im_paid" MAXLENGTH="14" SIZE="10" VALUE="<% if (!oAcrs.isNull(DB.im_paid)) { out.write(oFmt2.format(oAcrs.getDecimal(DB.im_paid).doubleValue())); } else if (!oAcrs.isNull(DB.pr_booking)) { out.write(oFmt2.format(oAcrs.getDecimal(DB.pr_booking).doubleValue())); } %>">&nbsp;&nbsp;&nbsp;
             	Paid&nbsp;<INPUT TYPE="checkbox" NAME="bo_paid" VALUE="1" onclick="if (this.checked) { if (document.forms[0].im_paid.value.length==0) document.forms[0].im_paid.value=pr_acourse; if (document.forms[0].dt_paid.value.length==0) document.forms[0].dt_paid.value=dateToString(new Date(),'d'); } else { document.forms[0].im_paid.value=''; document.forms[0].dt_paid.value=''; }">&nbsp;&nbsp;&nbsp;
-            	[~Fecha~]&nbsp;<INPUT TYPE="text" NAME="dt_paid" MAXLENGTH="10" SIZE="10" VALUE="<% if (!oAcrs.isNull(DB.dt_paid)) out.write(oAcrs.getDateShort(DB.dt_paid)); %>">
+            	Date&nbsp;<INPUT TYPE="text" NAME="dt_paid" MAXLENGTH="10" SIZE="10" VALUE="<% if (!oAcrs.isNull(DB.dt_paid)) out.write(oAcrs.getDateShort(DB.dt_paid)); %>">
             </TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90" ALIGN="right"></TD>
-            <TD ALIGN="left" WIDTH="470" CLASS="formplain">[~Forma de pago~]&nbsp;<SELECT NAME="tp_billing"><OPTION VALUE=""></OPTION><OPTION VALUE="T">[~Transferencia~]</OPTION><OPTION VALUE="C">[~Cheque~]</OPTION><OPTION VALUE="M">[~Efectivo~]</OPTION><OPTION VALUE="A">[~Tarjeta de Crédito~]</OPTION></SELECT></TD>
+            <TD ALIGN="left" WIDTH="470" CLASS="formplain">Payment means&nbsp;<SELECT NAME="tp_billing"><OPTION VALUE=""></OPTION><OPTION VALUE="T">Wire Transfer</OPTION><OPTION VALUE="C">Check</OPTION><OPTION VALUE="M">Cash</OPTION><OPTION VALUE="A">Credit Card</OPTION></SELECT></TD>
           </TR>
 <% if (bCanCreateInvoice) { %>
           <TR>
             <TD ALIGN="right" WIDTH="90"><INPUT TYPE="checkbox" NAME="bo_invoice" VALUE="1" onclick="switchInvoicing(this.checked)"></TD>
             <TD ALIGN="left" WIDTH="470">
-            <TABLE BORDER="0"><TR><TD CLASS="formplain">[~Generar Factura~]</TD><TD><DIV ID="forwhat" STYLE="visibility:hidden" CLASS="formplain"><INPUT TYPE="radio" NAME="invoice_for" VALUE="90" CHECKED="checked">&nbsp;[~Para el individuo~]&nbsp;&nbsp;<INPUT TYPE="radio" NAME="invoice_for" VALUE="91">&nbsp;[~Para la compa&ntilde;&iacute;a~]</DIV></TD></TR></TABLE>
+            <TABLE BORDER="0"><TR><TD CLASS="formplain">Generate Invoice</TD><TD><DIV ID="forwhat" STYLE="visibility:hidden" CLASS="formplain"><INPUT TYPE="radio" NAME="invoice_for" VALUE="90" CHECKED="checked">&nbsp;For Individual&nbsp;&nbsp;<INPUT TYPE="radio" NAME="invoice_for" VALUE="91">&nbsp;For Company</DIV></TD></TR></TABLE>
             </TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90"></TD>
             <TD ALIGN="left" WIDTH="470">
-              <DIV ID="shop" STYLE="display:none" CLASS="formplain">[~En el catálogo~]&nbsp;<SELECT NAME="gu_shop" CLASS="combomini" STYLE="display:hidden"><OPTION VALUE=""></OPTION><% for (int s=0; s<nShop; s++) out.write("<OPTION VALUE=\""+oShop.getString(0,s)+"\" "+(s==0 ? "SELECTED=\"selected\"" : "")+">"+oShop.getString(1,s)+"</OPTION>"); %></SELECT></DIV>
+              <DIV ID="shop" STYLE="display:none" CLASS="formplain">At Catalog&nbsp;<SELECT NAME="gu_shop" CLASS="combomini" STYLE="display:hidden"><OPTION VALUE=""></OPTION><% for (int s=0; s<nShop; s++) out.write("<OPTION VALUE=\""+oShop.getString(0,s)+"\" "+(s==0 ? "SELECTED=\"selected\"" : "")+">"+oShop.getString(1,s)+"</OPTION>"); %></SELECT></DIV>
             </TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90"><DIV ID="paymentsyesno" STYLE="display:none"><INPUT TYPE="checkbox" NAME="bo_payments" VALUE="1" onclick="switchPayments(this.checked)"></DIV></TD>
-            <TD ALIGN="left" WIDTH="470" CLASS="formplain"><DIV ID="paymentslabel" STYLE="display:none">[~Generar cobros periódicos adicionales (además de la reserva)~]</DIV></TD>
+            <TD ALIGN="left" WIDTH="470" CLASS="formplain"><DIV ID="paymentslabel" STYLE="display:none">Create additional payments</DIV></TD>
           </TR>
           <TR>
             <TD ALIGN="right" VALIGN="top" WIDTH="90"><DIV ID="paymentscount" STYLE="display:none"><SELECT NAME="sel_payments" STYLE="display:hidden" CLASS="combomini" onchange="showPaymentLines()"><OPTION VALUE="0" SELECTED="selected">0</OPTION><OPTION VALUE="1">1</OPTION><OPTION VALUE="2">2</OPTION><OPTION VALUE="3">3</OPTION><OPTION VALUE="4">4</OPTION><OPTION VALUE="5">5</OPTION><OPTION VALUE="6">6</OPTION><OPTION VALUE="7">7</OPTION><OPTION VALUE="8">8</OPTION><OPTION VALUE="9">9</OPTION><OPTION VALUE="10">10</OPTION><OPTION VALUE="11">11</OPTION><OPTION VALUE="12">12</OPTION></SELECT></DIV></TD>

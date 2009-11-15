@@ -1,4 +1,4 @@
-﻿<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <% response.addHeader ("Pragma", "no-cache"); response.addHeader ("cache-control", "no-store"); response.setIntHeader("Expires", 0); %>
 <HTML>
 <HEAD>
@@ -12,7 +12,7 @@
         var frm = window.document.forms[0];
 
 			  if (frm.captcha_text.value.length!=6) {
-          alert ("[~El texto de verificación debe tener 6 caracteres~]");
+          alert ("The verification text must have six characters");
 					frm.captcha_text.focus();
 					return false;
 			  }
@@ -25,13 +25,13 @@
 
 			  if (frm.nickname.value.indexOf("@")>=0) {
 			  	if (!check_email(frm.nickname.value)) {
-			  	  alert ("[~El e-mail no es válido~]");
+			  	  alert ("The e-mail is not valid");
 					  frm.nickname.focus();
 					  return false;
 			  	}
 			  } else {
 			  	if (!check_nick(frm.nickname.value)) {
-			  	  alert ("[~El nombre de usuario no es válido~]");
+			  	  alert ("The user name is not valid");
 					  frm.nickname.focus();
 					  return false;
 			  	}			  	

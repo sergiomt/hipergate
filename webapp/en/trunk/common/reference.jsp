@@ -141,12 +141,12 @@
 			  var col;
 			  
 			  if (frm.sought.value.length==0) {
-			    alert ("[~Debe especificar las primeras letras de palabra buscada~]");
+			    alert ("Please enter the first letter of the sought word");
 			    frm.sought.focus();
 			    return false;
 			  }
 			  if (hasForbiddenChars(frm.sought.value)) {
-			    alert ("[~La palabra contiene caracteres no permitidos en la búsqueda~]");
+			    alert ("Invalid characters in search string");
 			    frm.sought.focus();
 			    return false;
 			  }
@@ -167,12 +167,12 @@
 			  var col;
 			  
 			  if (frm.sought.value.length==0) {
-			    alert ("[~Debe especificar las primeras letras de palabra buscada~]");
+			    alert ("Please enter the first letter of the sought word");
 			    frm.sought.focus();
 			    return false;
 			  }
 			  if (hasForbiddenChars(frm.sought.value)) {
-			    alert ("[~La palabra contiene caracteres no permitidos en la búsqueda~]");
+			    alert ("Invalid characters in search string");
 			    frm.sought.focus();
 			    return false;
 			  }

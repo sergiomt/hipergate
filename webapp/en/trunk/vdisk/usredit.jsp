@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.sql.Connection,java.sql.Statement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.sql.Connection,java.sql.Statement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -309,7 +309,7 @@
 
 <%  if (0==gu_user.length()) { %>
       if (lookup_nickname(<%=id_domain%>,txt,"../common/nickname_lookup.jsp")) {
-        alert ("[~El alias especificado ya está asignado a otro usuario del mismo dominio~]");
+        alert ("The alias is alredy assigned to another user of the same Domain");
         return false;
       }
 <% } %>
@@ -320,7 +320,7 @@
       }
 
       if (frm.tx_pwd.value!=frm.tx_pwd2.value) {
-        alert ("[~El texto de verificación de la clave no coincide con la clave original~]");
+        alert ("Original and verified password do not coincide");
         return false;
       }
 
@@ -336,20 +336,20 @@
 
       txt = rtrim(ltrim(frm.tx_main_email.value));
       if (txt.length==0) {
-        alert ("[~La dirección de email es obligatoria~]");
+        alert ("e-mail address is mandatory");
         return false;      
       }
       
       if (txt.length>0) {
         if (!check_email(txt)) {
-          alert ("[~La dirección de email no es válida~]");
+          alert ("e-mail address is not valid");
           return false;
         }
       }
 
 <%  if (0==gu_user.length()) { %>
       if (lookup_email(txt,"../common/email_lookup.jsp")) {
-        alert ("[~La dirección de email especificada ya está asignada a otro usuario~]");
+        alert ("The given e-mail address is already assigned to another user");
         return false;
       }
 <% } %>
@@ -361,7 +361,7 @@
 		  } else if (frm.rad_pwd_expires[1].checked) {
 		  	frm.dt_pwd_expires.value = "1972-01-01";
 		  } else if (!isDate(frm.dt_pwd_expires.value, "d")) {
-	      alert ("[~La fecha de caducidad de la clave no es válida~]");
+	      alert ("The key expiration date is not valid");
 	      return false;	  
 	    }
 <% } %>
@@ -369,11 +369,11 @@
 <%    if (gu_user.length()==0 && (iAppMask & (1<<CollaborativeTools))!=0) { %>
 
 		  if (frm.chk_fellow.checked && frm.nm_user.value.length==0) {
-        alert ("[~El nombre del usuario es obligatorio~]");
+        alert ("User name is required");
         return false;			  		  	
 		  }
 		  if (frm.chk_fellow.checked && frm.tx_surname1.value.length==0) {
-        alert ("[~El apellido del usuario es obligatorio~]");
+        alert ("User surname is required");
         return false;			  		  	
 		  }
 <% } %>
@@ -420,7 +420,7 @@
         if (opt1[g].selected && (-1==findValue(opt2,opt1[g].value))) {
 <%   if (0!=gu_user.length()) { %>
           if ("<%=oDom.getString(DB.gu_owner)%>"=="<%=gu_user%>" && "<%=oDom.getString(DB.gu_admins)%>"!=opt1[g].value) {
-            alert ("[~No está permitido agregar el usuario administrador a ningún otro grupo que no sea el de administradores del dominio~]");
+            alert ("The administrator user may not be added to any group other than administrators");
           } else {
             opt = new Option(opt1[g].text, opt1[g].value);
             opt2[sel2.length] = opt;
@@ -442,7 +442,7 @@
         if (opt2[g].selected){
 <%   if (0!=gu_user.length()) { %>
           if ("<%=oDom.getString(DB.gu_owner)%>"=="<%=gu_user%>" && "<%=oDom.getString(DB.gu_admins)%>"==opt2[g].value) {
-            alert ("[~No está permitido eliminar el usuario administrador del grupo de administradores del dominio~]");
+            alert ("The administrator user may not be removed from administrators group for the domain");
           } else {
             opt2[g--] = null;
           }
@@ -497,7 +497,7 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
 	        <TR>
-            <TD ALIGN="right" WIDTH="90"><INPUT TYPE="checkbox" NAME="chk_active" VALUE="1" <% if (!oUser.isNull(DB.bo_active)) { if (oUser.getShort(DB.bo_active)==(short)1 || bDomAdm) out.write("CHECKED"); } else out.write("CHECKED"); %> <% if (bDomAdm) out.write("onclick=\"alert('[~No está permitido desactivar la cuenta de administrador del dominio~]'); return false;\""); %>></TD>          
+            <TD ALIGN="right" WIDTH="90"><INPUT TYPE="checkbox" NAME="chk_active" VALUE="1" <% if (!oUser.isNull(DB.bo_active)) { if (oUser.getShort(DB.bo_active)==(short)1 || bDomAdm) out.write("CHECKED"); } else out.write("CHECKED"); %> <% if (bDomAdm) out.write("onclick=\"alert('Domain Administrator Account cannot be deactivated'); return false;\""); %>></TD>          
             <TD ALIGN="left" WIDTH="470"><FONT CLASS="formstrong">Active</FONT></TD>
 				  </TR>
 <%  if (gu_user.length()==0) { %>

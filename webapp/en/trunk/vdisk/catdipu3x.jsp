@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,java.sql.ResultSet,java.sql.PreparedStatement,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.misc.Gadgets,com.knowgate.debug.DebugFile" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.sql.SQLException,java.sql.ResultSet,java.sql.PreparedStatement,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.misc.Gadgets,com.knowgate.debug.DebugFile" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <%
 /*
@@ -43,7 +43,7 @@
   String sDomainShared;
   
   if (sUserId.length()==0 || sDomainId.length()==0) {
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=Domain or User Cookies not set&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=[~Domain or User Cookies not set~]&resume=_back"));
   }
   boolean bIsGuest = isDomainGuest (GlobalDBBind, request, response);
 
@@ -245,20 +245,20 @@
 <BODY ID="pagebody"  LEFTMARGIN="4" RIGHTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="4" MARGINHEIGHT="0" SCROLL="no" onload="loadChilds(treeMenu,getChildsCollection('<%=sUri%>'));treeMenuDisplay();">
   <TABLE CELLSPACING="2" CELLPADDING="0" BORDER="0">
     <TR VALIGN="middle">
-      <TD ALIGN="center" VALIGN="middle"><IMG SRC="../images/images/newfolder16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Category"><BR><A HREF="#" onclick="createCategory()" CLASS="linkplain">New</A></TD>
+      <TD ALIGN="center" VALIGN="middle"><IMG SRC="../images/images/newfolder16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nueva Categor&iacute;a~]"><BR><A HREF="#" onclick="createCategory()" CLASS="linkplain">[~Nueva~]</A></TD>
       <TD WIDTH="8"></TD>
       <TD ALIGN="center" VALIGN="middle">
-        <IMG SRC="../images/images/deletefolder.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete Category"><BR>
+        <IMG SRC="../images/images/deletefolder.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar Categor&iacute;a~]"><BR>
 <% if (bIsGuest) { %>
-        <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">Delete</A>
+        <A HREF="#" onclick="alert('Your current priviledges level as Guest does not allow you to perform this action')" CLASS="linkplain">[~Eliminar~]</A>
 <% } else { %>
-        <A HREF="#" onclick="deleteCategory()" CLASS="linkplain">Delete</A>
+        <A HREF="#" onclick="deleteCategory()" CLASS="linkplain">[~Eliminar~]</A>
 <% } %>
       </TD>
       <TD WIDTH="8"></TD>
-      <TD ALIGN="center" VALIGN="middle"><IMG SRC="../images/images/folderoptions.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Edit Category"><BR><A HREF="#" onclick="modifyCategory()" CLASS="linkplain">Edit</A></TD>
+      <TD ALIGN="center" VALIGN="middle"><IMG SRC="../images/images/folderoptions.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Editar Categor&iacute;a~]"><BR><A HREF="#" onclick="modifyCategory()" CLASS="linkplain">[~Editar~]</A></TD>
       <TD WIDTH="8"></TD>
-      <TD ALIGN="center" VALIGN="middle"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Find Category"><BR><A HREF="#" onclick="searchFile()" CLASS="linkplain">Search</A></TD>
+      <TD ALIGN="center" VALIGN="middle"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Buscar Categor&iacute;~]"><BR><A HREF="#" onclick="searchFile()" CLASS="linkplain">[~Buscar~]</A></TD>
     </TR>
   </TABLE>  
 </BODY>

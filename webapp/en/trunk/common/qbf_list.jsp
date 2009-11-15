@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -294,14 +294,14 @@
     <TABLE SUMMARY="Call-Center Performance">
       <TR>
         <TD ROWSPAN="3"><IMG SRC="../images/images/spacer.gif" WIDTH="8" HEIGHT="1"></TD>
-        <TD><A CLASS="linksmall" HREF="#" onclick="callCenterPerformance()">[~Efectividad del telemarketing~]</A></TD>
+        <TD><A CLASS="linksmall" HREF="#" onclick="callCenterPerformance()">Telemarketing effectiveness</A></TD>
       </TR>
       <TR>
         <TD><FONT CLASS="textsmall">from</A>&nbsp;<INPUT TYPE="text" NAME="dt_day1" CLASS="combomini" SIZE="12" MAXLENGTH="10">&nbsp;&nbsp;&nbsp;until&nbsp;<INPUT TYPE="text" NAME="dt_dayn" CLASS="combomini" SIZE="12" MAXLENGTH="10" VALUE="<%=sToday%>">&nbsp;<A HREF="javascript:showCalendar('dt_dayn')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A></TD>
       </TR>
 <% if ((iAppMask & (1<<MarketingTools))!=0 && iCampaigns>0) { %>
       <TR>
-        <TD><FONT CLASS="textsmall">[~campa&ntilde;a~]</A>&nbsp;<SELECT NAME="sel_campaign" CLASS="combomini" onchange="document.forms[0].gu_campaign.value=this.options[this.selectedIndex].value"><OPTION VALUE=""></OPTION><% for (int c=0; c<iCampaigns; c++) { out.write("<OPTION VALUE=\""+oCampaigns.getString(0,c)+"\">"+oCampaigns.getString(1,c)+"</OPTION>"); } %></SELECT></TD>
+        <TD><FONT CLASS="textsmall">campaign</A>&nbsp;<SELECT NAME="sel_campaign" CLASS="combomini" onchange="document.forms[0].gu_campaign.value=this.options[this.selectedIndex].value"><OPTION VALUE=""></OPTION><% for (int c=0; c<iCampaigns; c++) { out.write("<OPTION VALUE=\""+oCampaigns.getString(0,c)+"\">"+oCampaigns.getString(1,c)+"</OPTION>"); } %></SELECT></TD>
       </TR>
 <% } %>
     </TABLE>

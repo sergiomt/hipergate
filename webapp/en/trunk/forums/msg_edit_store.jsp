@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.Date,com.oreilly.servlet.MultipartRequest,java.util.Enumeration,java.io.IOException,java.net.URLDecoder,java.sql.Timestamp,java.sql.SQLException,com.knowgate.debug.DebugFile,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.dfs.FileSystem,com.knowgate.hipermail.SendMail,com.knowgate.hipermail.MailAccount,com.knowgate.misc.*,com.knowgate.hipergate.*,com.knowgate.forums.*,com.knowgate.lucene.NewsMessageIndexer" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Date,com.oreilly.servlet.MultipartRequest,java.util.Enumeration,java.io.IOException,java.net.URLDecoder,java.sql.Timestamp,java.sql.SQLException,com.knowgate.debug.DebugFile,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.dfs.FileSystem,com.knowgate.hipermail.SendMail,com.knowgate.hipermail.MailAccount,com.knowgate.misc.*,com.knowgate.hipergate.*,com.knowgate.forums.*,com.knowgate.lucene.NewsMessageIndexer" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/multipartreqload.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -222,20 +222,12 @@
 		}    
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("msg_edit_store");      
-      }
+    disposeConnection(oConn,"msg_edit_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }
   catch (IOException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("msg_edit_store");      
-      }
+    disposeConnection(oConn,"msg_edit_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getMessage() + "&resume=_back"));
   }

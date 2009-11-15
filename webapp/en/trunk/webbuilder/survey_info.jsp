@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%
@@ -251,7 +251,7 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="200"><FONT CLASS="formplain">State:</FONT></TD>
+            <TD ALIGN="right" WIDTH="200"><FONT CLASS="formplain">[~Provincia:~]</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver provincias~]"></A>&nbsp;<SELECT CLASS="combomini" NAME="sel_state"></SELECT>
               <INPUT TYPE="hidden" NAME="id_state" MAXLENGTH="16" VALUE="<%=oInfo.getStringNull(DB.id_state,"")%>">

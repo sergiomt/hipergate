@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,java.util.*,java.lang.*,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.misc.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.sql.SQLException,java.util.*,java.lang.*,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.misc.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %>
 <%@ include file="../methods/cookies.jspf"  %>
 <%@ include file="../methods/authusrs.jspf" %>
@@ -64,7 +64,7 @@
 %>
 <html>
 <head>
-<TITLE>hipergate :: [~Enlace a página~]</TITLE>
+<TITLE>hipergate :: Link to page</TITLE>
 <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
 <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
 <SCRIPT LANGUAGE="JavaScript">
@@ -72,9 +72,9 @@ function setOpenerItem(value){window.opener.setItem('<%=sItemId%>',value);window
 </SCRIPT>
 </head>
 <body  TOPMARGIN="0" MARGINHEIGHT="0">
-<table cellspacing="0" cellpadding="0" border="0" width="99%"><tr><td valign="top" align="center" width="100%" >&nbsp;<img src="<%=sURLRoot%>/skins/xp/hglogopeq.jpg" border="0"></td></tr><tr><td valign="center" align="center"  width="100%"><span class="title1">&nbsp;[~Enlace a página~]</span></td></tr>
+<table cellspacing="0" cellpadding="0" border="0" width="99%"><tr><td valign="top" align="center" width="100%" >&nbsp;<img src="<%=sURLRoot%>/skins/xp/hglogopeq.jpg" border="0"></td></tr><tr><td valign="center" align="center"  width="100%"><span class="title1">&nbsp;Link to page</span></td></tr>
 <tr><td>&nbsp;</td></tr>
-<tr><td class="formplain">[~Seleccione una página del site para insertar un enlace desde el item actual.~]</td></tr>
+<tr><td class="formplain">Select a website page as a target forcurrent link.</td></tr>
 <tr><td>&nbsp;</td></tr>
 <%
   java.util.Vector vPages = oPageSet.pages();

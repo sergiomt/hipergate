@@ -88,7 +88,7 @@
       case 10:
         return 30;
       case 1:
-	return ( (MyYear%400==0) || ((MyYear%4==0) && (MyYear%100!=0)) ) ? 29 : 28;
+	      return ( (MyYear%400==0) || ((MyYear%4==0) && (MyYear%100!=0)) ) ? 29 : 28;
     } // end switch()
     return 0;
   } // LastDay()
@@ -197,17 +197,17 @@
       	    <%
               out.write("            <tr>\n");	      
       	      if (sLanguage.equalsIgnoreCase("es")) {
-		String WeekDays[] = { "L","M","X","J","V","S","D"} ;
-	        for (int w=0;w<7; w++)
-	          out.write("              <td bgcolor=\"#0066CC\" align=\"center\"><font face=\"Verdana,Arial\" size=\"1\" color=\"white\">" + WeekDays[w] + "</font></td>\n");
+		            String WeekDays[] = { "L","M","X","J","V","S","D"} ;
+	              for (int w=0;w<7; w++)
+	                out.write("              <td bgcolor=\"#0066CC\" align=\"center\"><font face=\"Verdana,Arial\" size=\"1\" color=\"white\">" + WeekDays[w] + "</font></td>\n");
                 FirstDay = (new Date(MyYear, MyMonth, 0).getDay()+6)%7;
-	      }
-	      else {
-		String WeekDays[] = { "S","M","T","W","T","F","S"} ;
-	        for (int w=0;w<7; w++)
-	          out.write("              <td bgcolor=\"#0066CC\" align=\"center\"><font face=\"Verdana,Arial\" size=\"1\" color=\"white\">" + WeekDays[w] + "</font></td>\n");
+	              }
+	            else {
+		            String WeekDays[] = { "S","M","T","W","T","F","S"} ;
+	              for (int w=0;w<7; w++)
+	                out.write("              <td bgcolor=\"#0066CC\" align=\"center\"><font face=\"Verdana,Arial\" size=\"1\" color=\"white\">" + WeekDays[w] + "</font></td>\n");
                 FirstDay = new Date(MyYear, MyMonth, 0).getDay();
-	      }	      
+	            }
               out.write("            </tr>\n");
 
               CurrentDay = 1;
@@ -221,7 +221,7 @@
             	  else if (CurrentDay > LastDay(MyMonth, MyYear))
                     out.write ("              <td bgcolor=\"white\" align=\"center\"><font class=\"calendarday\">-</font></td>\n");
                   else {
-                    out.write ("              <td bgcolor=\"white\" align=\"center\"><a HREF=\"javascript:choose(" + CurrentDay + ")\" class=\"calendarday\">" + CurrentDay + "</a></td>\n");
+                    out.write ("              <td bgcolor=\"white\" align=\"center\"><a href=\"javascript:choose(" + CurrentDay + ")\" class=\"calendarday\">" + CurrentDay + "</a></td>\n");
                     CurrentDay++;
                   }
                 } // next (col)            

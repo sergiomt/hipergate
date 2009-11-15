@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.Date,com.knowgate.addrbook.Meeting,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" %>
+<%@ page import="java.util.Date,com.knowgate.addrbook.Meeting,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.

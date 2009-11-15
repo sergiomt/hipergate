@@ -1,4 +1,4 @@
-﻿<%@ page import="java.rmi.RemoteException,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.cache.*,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.rmi.RemoteException,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.cache.*,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <%
@@ -182,7 +182,7 @@
       if ((iAppMask & (1<<Sales))!=0 && oContacts.contains(sGu)) {
 			  out.write ("<A HREF=# onclick=\"viewContact('"+sGu+"')\"><IMG SRC=\"../images/images/viewtxt.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"View Contact\"></A>");
       } else if ((iAppMask & (1<<Sales))!=0 && oCompanies.contains(sGu)) {
-			  out.write ("<A HREF=# onclick=\"viewCompany('"+sGu+"','"+sTr.replace((char)39,'´')+"')\"><IMG SRC=\"../images/images/viewtxt.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"[~Ver Compañía~]\"></A>");
+			  out.write ("<A HREF=# onclick=\"viewCompany('"+sGu+"','"+sTr.replace((char)39,'´')+"')\"><IMG SRC=\"../images/images/viewtxt.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"View Company\"></A>");
       } else if ((iAppMask & (1<<CollaborativeTools))!=0 && oFellows.contains(sGu)) {
 			  out.write ("<A HREF=# onclick=\"viewFellow('"+sGu+"')\"><IMG SRC=\"../images/images/viewtxt.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"View Employee\"></A>");
       } else if (bIsAdmin && oUsers.contains(sGu)) {

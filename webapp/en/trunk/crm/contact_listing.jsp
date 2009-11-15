@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.util.Date,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.hipergate.QueryByForm,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.util.Date,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.hipergate.QueryByForm,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -410,7 +410,7 @@
         	
 	function createOportunity (contact_id,company_id) {	  
 <% if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your credential level as Guest does not allow you to perform this action");
 <% } else { %>
 	  self.open ("oportunity_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>&gu_contact=" + contact_id + "&gu_company=" + company_id, "createoportunity", "directories=no,toolbar=no,menubar=no,width=640,height=600");	  
 <% } %>
@@ -421,7 +421,7 @@
       function viewOportunities (contact_id, contact_nm) {
         var frm = window.document.forms["fixedAttrs"];
 <% if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your credential level as Guest does not allow you to perform this action");
 <% } else { %>
 	window.location = "oportunity_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_contact=" + contact_id + "&where=" + escape(" AND gu_contact='" + contact_id + "'") + "&field=" + escape("<%=DB.tx_contact%>") + "&find=" + escape(contact_nm) + "&show=oportunities&skip=0&selected=2&subselected=2";
 <% } %>
@@ -431,7 +431,7 @@
         	
 	function createContact() {	  
 <% if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your credential level as Guest does not allow you to perform this action");
 <% } else { %>
 	  self.open ("contact_new_f.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>", "createcontact", "directories=no,toolbar=no,scrollbars=yes,menubar=no,width=660,height=660");	  
 <% } %>
@@ -444,7 +444,7 @@
 	  var frm = document.forms[0];
 	  var chi = frm.checkeditems;
 	  	  
-	  if (window.confirm("[~¿Está seguro de que desea eliminar los individuos seleccionados?~]")) {
+	  if (window.confirm("Are you sure you want to delete selected individuals?")) {
 	    chi.value = "";
 
 	    frm.action = "contact_edit_delete.jsp?face=<%=sFace%>selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
@@ -535,7 +535,7 @@
 
       function addNote(gu) {
 <% if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your credential level as Guest does not allow you to perform this action");
 <% } else { %>
         self.open ("note_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_contact=" + gu, "addnote", "directories=no,toolbar=no,menubar=no,width=610,height=400");
 <% } %>
@@ -552,7 +552,7 @@
 
       function addAttachment(gu) {
 <% if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your credential level as Guest does not allow you to perform this action");
 <% } else { %>
         window.open("attach_edit.jsp?gu_contact=" + gu, "addattachment", "directories=no,toolbar=no,menubar=no,width=480,height=360");          
 <% } %>        
@@ -562,7 +562,7 @@
 
       function addPhoneCall(gu) {
 <% if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your credential level as Guest does not allow you to perform this action");
 <% } else { %>
         window.open("../addrbook/phonecall_edit_f.jsp?gu_workarea=<%=gu_workarea%>&gu_contact=" + gu, "addphonecall", "directories=no,toolbar=no,menubar=no,width=500,height=400");       
 <% } %>        
@@ -572,7 +572,7 @@
 
       function addActivity(gu) {
 <% if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your credential level as Guest does not allow you to perform this action");
 <% } else { %>
         var activity_edition_page = "<% out.write(sFace.equalsIgnoreCase("healthcare") ? "appointment_edit_f.htm" : "meeting_edit_f.htm"); %>";
         window.open("../addrbook/"+activity_edition_page+"?id_domain=" + getCookie("domainid") + "&n_domain=" + escape(getCookie("domainnm")) + "&gu_workarea=" + getCookie("workarea") + "&gu_fellow=" + getCookie("userid") + "&gu_contact=" + gu + "&date=<%=sToday%>", "", "toolbar=no,directories=no,menubar=no,resizable=no,width=500,height=580");
@@ -583,7 +583,7 @@
 
       function addProject(gu,cm) {
 <% if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your credential level as Guest does not allow you to perform this action");
 <% } else { %>
         window.open("prj_create.jsp?gu_workarea=<%=gu_workarea%>&gu_contact=" + gu + "&gu_company=" + cm, "addproject", "directories=no,toolbar=no,menubar=no,width=540,height=280");       
 <% } %>
@@ -591,7 +591,7 @@
 
       function addToCourse() {
 <% if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your credential level as Guest does not allow you to perform this action");
 <% } else { %>
 	var offset = 0;
 	var frm = document.forms[0];
@@ -616,7 +616,7 @@
 	  self.open ("../training/acourse_book.jsp?gu_acourse="+getCombo(frm.sel_acourse)+"&checkeditems="+chi.value, null, "directories=no,toolbar=no,scrollbars=yes,menubar=no,width=600,height=520");
 
         } else {
-	        alert ("[~Debe seleccionar al menos un alumno a quien inscribir~]");
+	        alert ("At least one student must be selected");
 	        return false;        
         }
 <% } %>      
@@ -683,7 +683,7 @@
       
       function clone() {
 <% if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your credential level as Guest does not allow you to perform this action");
 <% } else { %>
         winclone = window.open ("../common/clone.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&datastruct=contact_clon&gu_instance=" + jsContactId +"&opcode=CCON&classid=92", null, "directories=no,toolbar=no,menubar=no,width=320,height=200");                
         intervalId = setInterval ("findCloned()", 100);
@@ -729,7 +729,7 @@
         <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
         <TD VALIGN="middle">
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">New</A>
+          <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New</A>
 <% } else { %>
           <A HREF="#" onclick="createContact()" CLASS="linkplain">New</A>
 <% } %>
@@ -737,7 +737,7 @@
         <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
         <TD>
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">Delete</A>
+          <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">Delete</A>
 <% } else { %>
           <A HREF="#" onclick="deleteContacts();return false;" CLASS="linkplain">Delete</A>
 <% } %>
@@ -748,15 +748,15 @@
           <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>">
 	  &nbsp;<A HREF="#" onclick="findContact();return false;" CLASS="linkplain" TITLE="Find Individual">Search</A>	  
         </TD>
-        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="[~Descartar búsqueda~]"></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard Find Filter"></TD>
         <TD VALIGN="bottom">
-          <A HREF="#" onclick="document.forms[0].salesman.selectedIndex=0;document.forms[0].find.value='';findContact();return false;" CLASS="linkplain" TITLE="[~Descartar búsqueda~]">Discard</A>
+          <A HREF="#" onclick="document.forms[0].salesman.selectedIndex=0;document.forms[0].find.value='';findContact();return false;" CLASS="linkplain" TITLE="Discard Find Filter">Discard</A>
           <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;Show&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;results&nbsp;</FONT>
         </TD>
         </TR>
 	<TR>
           <TD>&nbsp;&nbsp;<IMG SRC="../images/images/fastedit.gif" WIDTH="20" HEIGHT="16" BORDER="0" ALT="Fast Edit"></TD>
-          <TD COLSPAN="4"><A HREF="contact_fastedit_f.jsp" TARGET="_top" CLASS="linkplain">[~Edición R&aacute;pida~]</A></TD>
+          <TD COLSPAN="4"><A HREF="contact_fastedit_f.jsp" TARGET="_top" CLASS="linkplain">Fast Edit</A></TD>
 	        <TD COLSPAN="3" ALIGN="left" CLASS="textplain">
 <% if (bIsAdmin) { %>
 					  <SELECT NAME="salesman" CLASS="combomini"><OPTION VALUE="">All individuals</OPTION><OPTGROUP LABEL="Only individuals assigned to salesman"><% for (int s=0; s<iSalesMen; s++) out.write ("<OPTION VALUE=\""+oSalesMen.getString(0,s)+"\">"+oSalesMen.getStringNull(1,s,"")+" "+oSalesMen.getStringNull(2,s,"")+" "+oSalesMen.getStringNull(3,s,"")+"</OPTION>"); %></SELECT>

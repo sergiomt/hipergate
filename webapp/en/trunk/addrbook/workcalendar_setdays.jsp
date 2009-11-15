@@ -1,4 +1,4 @@
-﻿<i></i><%@ page import="java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Calendar,com.knowgate.misc.Gadgets,com.knowgate.addrbook.WorkingCalendar" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<i></i><%@ page import="java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Calendar,com.knowgate.misc.Gadgets,com.knowgate.addrbook.WorkingCalendar" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><% 
 /*
   Copyright (C) 2008  Know Gate S.L. All rights reserved.
@@ -145,12 +145,12 @@
 			  	frm.workdays.value = wcaldays.join(",");
 			  	
 			  	if (frm.hh_start1.selectedIndex>0 && frm.mi_start1.selectedIndex<=0) {
-			  	  alert ("[~El minuto de inicio en el horario de mañana es obligatorio~]");
+			  	  alert ("Ending minute for morning timetable is required");
 			  	  frm.mi_start1.focus();
 			  	  return false;
 			  	}
 			  	if (frm.mi_start1.selectedIndex>0 && frm.hh_start1.selectedIndex<=0) {
-			  	  alert ("[~La hora de inicio en el horario de mañana es obligatoria~]");
+			  	  alert ("Starting hour for morning timetable is required");
 			  	  frm.hh_start1.focus();
 			  	  return false;
 			  	}
@@ -165,12 +165,12 @@
 			  	  return false;
 			  	}
 			  	if (frm.hh_end1.selectedIndex>0 && frm.mi_end1.selectedIndex<=0) {
-			  	  alert ("[~El minuto de fin en el horario de mañana es obligatorio~]");
+			  	  alert ("Ending minute for morning timetable is required");
 			  	  frm.mi_end1.focus();
 			  	  return false;
 			  	}
 			  	if (frm.mi_end1.selectedIndex>0 && frm.hh_end1.selectedIndex<=0) {
-			  	  alert ("[~La hora de fin en el horario de mañana es obligatoria~]");
+			  	  alert ("Ending hour for morning timetable is required");
 			  	  frm.hh_end1.focus();
 			  	  return false;
 			  	}
@@ -185,7 +185,7 @@
 			  	  return false;
 			  	}
 			  	if (frm.hh_start1.selectedIndex>0 && frm.hh_end1.selectedIndex<=0) {
-			  	  alert ("[~La hora de fin en el horario de mañana es obligatoria~]");			  	
+			  	  alert ("Ending hour for morning timetable is required");			  	
 			  	  frm.hh_end1.focus();
 			  	  return false;
 			  	}
@@ -195,7 +195,7 @@
 			  	  return false;
 			  	}
 			  	if (frm.hh_end1.selectedIndex>0 && frm.hh_start1.selectedIndex<=0) {
-			  	  alert ("[~La hora de inicio en el horario de mañana es obligatoria~]");			  	
+			  	  alert ("Starting hour for morning timetable is required");			  	
 			  	  frm.hh_start1.focus();
 			  	  return false;
 			  	}
@@ -205,7 +205,7 @@
 			  	  return false;
 			  	}
 			  	if (Number(getCombo(frm.hh_start1))*100+Number(getCombo(frm.mi_start1))<Number(getCombo(frm.hh_end1))*100+Number(getCombo(frm.mi_end1))) {
-			  	  alert ("[~La hora de fin en el horario de mañana debe ser posterior a la de inicio~]");
+			  	  alert ("Ending hour for morning timetable is required");
 			  	  frm.hh_end1.focus();
 			  	  return false;
 			  	}

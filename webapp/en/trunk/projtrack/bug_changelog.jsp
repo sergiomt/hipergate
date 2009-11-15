@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <% 
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
@@ -67,7 +67,7 @@
       <TD CLASS="textplain"><%=oLog.getDateTime(1,i)%></TD>
       <TD CLASS="textplain"><%=oLog.getStringNull(2,i,"null")%></TD>
 <%   if (oLog.isNull(3,i)) { %>
-      <TD CLASS="textplain"><I>[~anónimo~]</I></TD>
+      <TD CLASS="textplain"><I>anonymous</I></TD>
 <% } else { %>
       <TD CLASS="textplain"><%=oUsr.get(oLog.getString(3,i))%></TD>
 <% } %>  

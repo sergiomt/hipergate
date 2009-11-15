@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.Properties,java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.Timestamp,java.sql.Types,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.sms.SMSMessage,com.knowgate.sms.SMSResponse,com.knowgate.sms.SMSPush,com.knowgate.sms.SMSPushFactory" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Properties,java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.Timestamp,java.sql.Types,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.sms.SMSMessage,com.knowgate.sms.SMSResponse,com.knowgate.sms.SMSPush,com.knowgate.sms.SMSPushFactory" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003-2009  Know Gate S.L. All rights reserved.
@@ -52,15 +52,15 @@
   String gu_company = nullif(request.getParameter("gu_company"));
       
   if (GlobalDBBind.getProperty("smsprovider","").length()==0) {
-    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Error SMS Provider not found~]&desc=[~No SMS provider class found at property smsprovider of hipergate.cnf~]&resume=_close"));
+    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Error SMS Provider not found&desc=No SMS provider class found at property smsprovider of hipergate.cnf&resume=_close"));
     return;
   } // fi
   if (GlobalDBBind.getProperty("smsaccount","").length()==0) {
-    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Error SMS Account not found~]&desc=[~No SMS account class found at property smsaccount of hipergate.cnf~]&resume=_close"));
+    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Error SMS Account not found&desc=No SMS account class found at property smsaccount of hipergate.cnf&resume=_close"));
     return;
   } // fi
   if (GlobalDBBind.getProperty("smspassword","").length()==0) {
-    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Error SMS Password not found~]&desc=[~No SMS password class found at property smsaccount of hipergate.cnf~]&resume=_close"));
+    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Error SMS Password not foundE&desc=No SMS password class found at property smsaccount of hipergate.cnf&resume=_close"));
     return;
   } // fi
 

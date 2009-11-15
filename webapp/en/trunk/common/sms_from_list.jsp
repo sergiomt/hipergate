@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.example.Example" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.example.Example" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*
@@ -79,7 +79,7 @@
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: [~Remitentes~]</TITLE>
+  <TITLE>hipergate :: Senders</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
@@ -114,7 +114,7 @@
 	        var frm = document.forms[0];
 	        var chi = frm.checkeditems;
 	  	  
-	        if (window.confirm("[~¿Está seguro de que desea eliminar los números seleccionados?~]")) {
+	        if (window.confirm("Are you sure that you want to delete the selected numbers?")) {
 	  	  
 	          chi.value = "";	  	  
 	          frm.action = "sms_from_delete.jsp";
@@ -139,26 +139,26 @@
 </HEAD>
 <BODY TOPMARGIN="8" MARGINHEIGHT="8">
   <DIV class="cxMnu1" style="width:100px"><DIV class="cxMnu2">
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
   </DIV></DIV>
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Listado de Remitentes~]</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Senders List</FONT></TD></TR>
   </TABLE>
   <FORM METHOD="post" ACTION="sms_from_delete.jsp">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
     <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
     <INPUT TYPE="hidden" NAME="checkeditems" VALUE="">
 <% if (!bIsGuest) { %>
-    <IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nuevo~]">&nbsp;<A HREF="sms_from_new.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>" CLASS="linkplain">[~Nuevo~]</A>
-    &nbsp;&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar~]">&nbsp;<A HREF="#" onclick="deleteMsisdns()" CLASS="linkplain">[~Eliminar~]</A>
+    <IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New">&nbsp;<A HREF="sms_from_new.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>" CLASS="linkplain">New</A>
+    &nbsp;&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete">&nbsp;<A HREF="#" onclick="deleteMsisdns()" CLASS="linkplain">Delete</A>
     <BR/>
 <% } %>
     <TABLE SUMMARY="MSISDN List" CELLSPACING="1" CELLPADDING="0">
       <TR>
         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>MSISDN</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Validado~]</B></TD>
-        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" ALIGN="center"><A HREF="#" onclick="selectAll()" TITLE="[~Seleccionar Todos~]"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="[~Seleccionar Todos~]"></A></TD></TR>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Validated</B></TD>
+        <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" ALIGN="center"><A HREF="#" onclick="selectAll()" TITLE="Select All"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select All"></A></TD></TR>
     	</TR>
 <% for (int f=0; f<nFrom; f++) {
      String sStrip = String.valueOf((f%2)+1); %>

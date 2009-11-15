@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %>
 <%
 /*
@@ -80,7 +80,7 @@
 
       function editQuery() {
       	if (document.forms[0].gu_query.selectedIndex<0) {
-      	  alert ("[~Debe seleccionar previamente la consulta a editar~]");
+      	  alert ("A query to be edited must be selected first");
           return false;
         } else {
         	window.open("../common/qbf.jsp?queryid="+getCombo(document.forms[0].gu_query)+"&queryspec=listmember&caller=list_wizard_02.jsp","qbf","height=460,width=560");
@@ -138,7 +138,7 @@
 	        out.write("	        <OPTION VALUE=\"" + oQueries.getString(0,q) + "\">" + oQueries.getString(1,q) + "</OPTION>\n");
 	      } // next ()
 %>
-	    </SELECT>&nbsp;&nbsp;<A HREF="#" onclick="editQuery()" TITLE="[~Editar consulta~]"><IMG SRC="../images/images/edit16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Editar consulta~]"></A>
+	    </SELECT>&nbsp;&nbsp;<A HREF="#" onclick="editQuery()" TITLE="Edit Query"><IMG SRC="../images/images/edit16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Edit Query"></A>
             </TD>
           </TR>
         </TABLE>

@@ -1,4 +1,4 @@
-﻿<%@ page import="com.knowgate.dataxslt.db.*,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.knowgate.dataxslt.db.*,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
@@ -210,14 +210,14 @@
           </TR>
 <% if (oMSite.getShort(DB.tp_microsite)==MicrositeDB.TYPE_XSL) { %>
           <TR>
-            <TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">[~Publicar en:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">Publish to:</FONT></TD>
             <TD ALIGN="left" WIDTH="400">
               <INPUT TYPE="text" NAME="path_publish" SIZE="50" MAXLENGTH="254" VALUE="<%=sPathPublish%>">
             </TD>
           </TR>
 <% } else if (oMSite.getShort(DB.tp_microsite)==MicrositeDB.TYPE_HTML && aPages!=null) { %>
           <TR>
-            <TD ALIGN="right" WIDTH="150" CLASS="formstrong">[~Publicar:~]</TD>
+            <TD ALIGN="right" WIDTH="150" CLASS="formstrong">Publish:</TD>
             <TD ALIGN="left" WIDTH="400"></TD>
           </TR>
 <% for (int p=0; p<aPages.length; p++) { %>
@@ -239,7 +239,7 @@
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('Your credential level as Guest does not allow you to perform this action')">
 <% } else { %>
               <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">
 <% } %>

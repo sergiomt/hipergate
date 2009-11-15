@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/projtrack.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -149,7 +149,7 @@
 	  return false;
 	}
 	else if (npj>1) {
-	  alert ("[~Debe seleccionar un único proyecto~]");
+	  alert ("Must select only one Project");
 	  return false;
 	}	
 	else (npj==1)
@@ -172,21 +172,21 @@
 	frm.pct_complete.value = getCombo(frm.sel_pct_complete);
 	
 	if (!isIntValue(frm.pr_cost.value)) {
-	  alert ("[~El coste debe ser una cantidad numérica entera~]");
+	  alert ("Cost must be an integer quantity");
 	  return false;
 	}
 	
 	str = frm.dt_start.value;
 	
 	if (str.length>0 && !isDate(str, "d")) {
-	  alert ("[~La fecha de inicio no es válida~]");
+	  alert ("Start date is not valid");
 	  return false;
 	}
 	
 	str = frm.dt_end.value;
 
 	if (str.length>0 && !isDate(str, "d")) {
-	  alert ("[~La fecha de fin no es válida~]");
+	  alert ("End date is not valid");
 	  return false;
 	}
 
@@ -309,7 +309,7 @@
 				  </select>
 				  &nbsp;&nbsp;
 		  &nbsp;&nbsp;&nbsp;&nbsp;
-		  <FONT CLASS="formplain">[~Coste ( <b>¤</b> )~]</FONT>
+		  <FONT CLASS="formplain">Cost (¤)</FONT>
 		  &nbsp;
                  <INPUT TYPE="text" MAXLENGTH="10" SIZE="9" NAME="pr_cost" onkeypress="return acceptOnlyNumbers();" VALUE="0">&nbsp;&nbsp;
                   

@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.Date,java.util.HashMap,java.text.SimpleDateFormat,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,org.apache.poi.hssf.usermodel.HSSFWorkbook,org.apache.poi.hssf.usermodel.HSSFSheet,org.apache.poi.hssf.usermodel.HSSFRow,org.apache.poi.hssf.usermodel.HSSFCell,org.apache.poi.hssf.usermodel.HSSFCellStyle,org.apache.poi.hssf.usermodel.HSSFFont,org.apache.poi.hssf.usermodel.HSSFDataFormat,org.apache.poi.hssf.usermodel.HSSFPrintSetup" language="java" session="false" contentType="application/x-excel;charset=UTF-8" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><% 
+<%@ page import="java.util.Date,java.util.HashMap,java.text.SimpleDateFormat,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,org.apache.poi.hssf.usermodel.HSSFWorkbook,org.apache.poi.hssf.usermodel.HSSFSheet,org.apache.poi.hssf.usermodel.HSSFRow,org.apache.poi.hssf.usermodel.HSSFCell,org.apache.poi.hssf.usermodel.HSSFCellStyle,org.apache.poi.hssf.usermodel.HSSFFont,org.apache.poi.hssf.usermodel.HSSFDataFormat,org.apache.poi.hssf.usermodel.HSSFPrintSetup" language="java" session="false" contentType="application/x-excel;charset=UTF-8" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><% 
 
 	SimpleDateFormat oDtFtm = new SimpleDateFormat("yyyyMMdd");
 
@@ -66,7 +66,7 @@
 
     HSSFWorkbook oWrkb = new HSSFWorkbook();
     HSSFSheet oSheet = oWrkb.createSheet();
-    oWrkb.setSheetName(0, "Tareas");
+    oWrkb.setSheetName(0, "Duties");
     oSheet.getPrintSetup().setLandscape(true);
     HSSFRow oRow;
     HSSFCell oCell;
@@ -86,7 +86,7 @@
     HSSFCellStyle oDateFmt = oWrkb.createCellStyle();
     oDateFmt.setDataFormat((short)15);
 
-		String[] aHeader = new String[]{"[~Proyecto~]","[~Tipo Tarea~]","[~Nombre~]","[~Estado~]","[~Prioridad~]","[~Inicio Prev.~]","[~Inicio Real~]","[~Fin~]","[~Pct~]","[~Recursos~]","[~Descripción~]","[~Comentarios~]"};
+		String[] aHeader = new String[]{"Project","Duty Type","Name","Status","Priority","Estimated","Actual start-up","End","Pct","Resources","Description","Comments"};
 	  final short nCols = (short) aHeader.length;
 	  
 	  oRow = oSheet.createRow(0);

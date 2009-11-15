@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <%
 /*
@@ -127,7 +127,7 @@
             break;
           case 3:
             if (frm.gu_company.value=="")
-              alert ("[~Para asignar un contacto primero debe seleccionar una compañía~]");
+              alert ("To assign a Contact select a Company First");
             else
               window.open("../common/reference.jsp?nm_table=k_contacts&tp_control=1&nm_control=" + "tx_name%2B%27%20%27%2Btx_surname%20AS%20tx_contact" + "&nm_coding=gu_contact&where=" + escape("gu_company='" + frm.gu_company.value + "'"), "", "scrollbars=yes,toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
             break;
@@ -169,7 +169,7 @@
           if (prj[n].selected) npj++;
 	
 	if (npj>1) {
-	  alert ("[~Debe seleccionar un único proyecto padre~]");
+	  alert ("Must select a unique parent Project");
 	  return false;
 	}
 	else if (npj==1)
@@ -180,14 +180,14 @@
 	str = frm.dt_start.value;
 	
 	if (str.length>0 && !isDate(str, "d")) {
-	  alert ("[~La fecha de inicio no es válida~]");
+	  alert ("Start date is not valid");
 	  return false;
 	}
 	
 	str = frm.dt_end.value;
 
 	if (str.length>0 && !isDate(str, "d")) {
-	  alert ("[~La fecha de fin no es válida~]");
+	  alert ("End date is not valid");
 	  return false;
 	}
 

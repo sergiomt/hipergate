@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*
@@ -195,7 +195,7 @@
 	          document.getElementById("contactdata").style.visibility = "visible";
           }
         } else {
-	        alert ("[~Debe introducir la dirección de email para continuar~]");
+	        alert ("e-mail address is required for continuing");
 	        return false;        
         }
       } // loadContactData
@@ -217,7 +217,7 @@
         switch(parseInt(odctrl)) {
           case 1:
             if (frm.nm_legal.value.indexOf("'")>=0)
-              alert("[~El nombre de la compañía contiene caracteres no permitidos~]");
+              alert("The company name contains forbidden characters");
             else {
               window.open("../common/reference.jsp?ix_form=0&nm_table=k_companies&tp_control=1&nm_control=nm_legal&nm_coding=gu_company"+(frm.nm_legal.value.length==0 ? "" : "&where=" + escape(" <%=DB.nm_legal%> LIKE '"+frm.nm_legal.value+"%' ")), "", "scrollbars=yes,toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
             }
@@ -260,12 +260,12 @@
       	var txt = ltrim(frm.tl_oportunity.value);
       	
       	if (txt.length==0) {
-      	  alert ("[~El título de la oportunidad es obligatorio~]");
+      	  alert ("Opportunity title is mandtory");
       	  return false;	  
       	}
       
       	if (hasForbiddenChars(txt)) {
-      	  alert ("[~El título de la oportunidad contiene caracteres no válidos~]");
+      	  alert ("Opportunity title contains invalid characters");
       	  return false;	  
       	}
       
@@ -292,7 +292,7 @@
       	}
       	
       	if (!isDate(frm.dt_next_action.value, "d") && frm.dt_next_action.value.length>0) {
-      	  alert ("[~La fecha para la siguiente acción no es válida~]");
+      	  alert ("Date for next action is not valid");
       	  return false;	  
       	}
 

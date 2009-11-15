@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.marketing.*,com.knowgate.workareas.WorkArea" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.marketing.*,com.knowgate.workareas.WorkArea" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%
 /*  
@@ -169,25 +169,25 @@
         }
 
 			  if (frm.nu_planned.value.length==0) {
-          alert ("[~El objetivo previsto es obligatorio~]");
+          alert ("Estimated  target is required");
           frm.nu_planned.focus();
           return false;
 			  }        
 
 			  if (!isFloatValue(frm.nu_planned.value)) {
-          alert ("[~El objetivo previsto no es válido~]");
+          alert ("Forseen target is not valid");
           frm.nu_planned.focus();
           return false;
 			  }        
 
 			  if (frm.nu_achieved.value.length==0) {
-          alert ("[~El objetivo alcanzado es obligatorio~]");
+          alert ("Reached target is required");
           frm.nu_achieved.focus();
           return false;
 			  }        
 
 			  if (!isFloatValue(frm.nu_achieved.value)) {
-          alert ("[~El objetivo alcanzado no es válido~]");
+          alert ("The reached target is not valid");
           frm.nu_achieved.focus();
           return false;
 			  }        

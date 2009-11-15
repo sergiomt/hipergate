@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.acl.ACLUser,com.knowgate.hipergate.Address,com.knowgate.crm.MemberAddress" language="java" session="false" contentType="text/xml;charset=UTF-8" %><%@ include file="../methods/dbbind.jsp" %><%   
+<%@ page import="java.io.IOException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.acl.ACLUser,com.knowgate.hipergate.Address,com.knowgate.crm.MemberAddress" language="java" session="false" contentType="text/xml;charset=UTF-8" %><%@ include file="../methods/dbbind.jsp" %><%   
 
   String sTxEmail = request.getParameter("email");
   String sGuWorkA = request.getParameter("workarea");

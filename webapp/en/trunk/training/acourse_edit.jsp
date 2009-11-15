@@ -1,4 +1,4 @@
-﻿<%@ page import="java.text.DecimalFormat,java.util.Vector,java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.Address,com.knowgate.misc.Gadgets,com.knowgate.hipergate.*,com.knowgate.training.AcademicCourse,com.knowgate.workareas.ApplicationModule" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.text.DecimalFormat,java.util.Vector,java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.Address,com.knowgate.misc.Gadgets,com.knowgate.hipergate.*,com.knowgate.training.AcademicCourse,com.knowgate.workareas.ApplicationModule" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/listchilds.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
 /*  
@@ -58,7 +58,7 @@
   AcademicCourse oCur = new AcademicCourse();
   Address oAdr = new Address();
   
-  StringBuffer oSelParents = new StringBuffer("<OPTION VALUE=\"\">[~Ninguna. Este producto no está disponible en tienda~]</OPTION>");    
+  StringBuffer oSelParents = new StringBuffer("<OPTION VALUE=\"\">None. This product will not be available at the shop.</OPTION>");    
   JDCConnection oConn = null;
   DBSubset oCourses = new DBSubset(DB.k_courses, DB.gu_course+","+DB.nm_course, DB.gu_workarea+"=? AND "+DB.bo_active+"<>0 ORDER BY 2", 100);
   int iCourses = 0;
@@ -112,7 +112,7 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: [~Editar Convocatoria~]</TITLE>
+  <TITLE>hipergate :: Edit Call</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -149,7 +149,7 @@
           clearInterval(intrid);
           var adrtx = httpRequestText("../common/address_line.jsp?address=<%=oAdr.getStringNull(DB.gu_address,"")%>&workarea=<%=gu_workarea%>");
           if (adrtx=="notfound")
-					  document.getElementById("address_line").innerHTML="<A HREF=\"#\" CLASS=\"linkplain\" onclick=\"editAddress()\">[~Agregar dirección~]</A>";
+					  document.getElementById("address_line").innerHTML="<A HREF=\"#\" CLASS=\"linkplain\" onclick=\"editAddress()\">Add Address</A>";
           else
 					  document.getElementById("address_line").innerHTML="<A HREF=\"#\" CLASS=\"linkplain\" onclick=\"editAddress()\">"+adrtx+"</A>";
         }
@@ -201,21 +201,21 @@
 	}
 
   if (frm.pr_acourse.value.length>0 && !isFloatValue(frm.pr_acourse.value.replace(",","."))) {
-	  alert ("[~El precio del curso no es válido~]");
+	  alert ("Course price is not valid");
 	  return false;
   } else {
     frm.pr_acourse.value = frm.pr_acourse.value.replace(",",".");
   }
 
   if (frm.pr_booking.value.length>0 && !isFloatValue(frm.pr_booking.value.replace(",","."))) {
-	  alert ("[~El precio de la reserva no es válido~]");
+	  alert ("Booking price is not valid");
 	  return false;
   } else {
     frm.pr_booking.value = frm.pr_booking.value.replace(",",".");
   }
 
   if (frm.pr_payment.value.length>0 && !isFloatValue(frm.pr_payment.value.replace(",","."))) {
-	  alert ("[~El precio de la mensualidad no es válido~]");
+	  alert ("Monthly Payment amount is not valid");
 	  return false;
   } else {
     frm.pr_payment.value = frm.pr_payment.value.replace(",",".");
@@ -255,7 +255,7 @@
   </DIV></DIV>
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Editar Convocatoria~]</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Edit Call</FONT></TD></TR>
   </TABLE>  
   <FORM NAME="" METHOD="post" ACTION="acourse_edit_store.jsp" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=String.valueOf(id_domain)%>">
@@ -299,15 +299,15 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">[~Precio~]:</FONT></TD>
+            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">Price:</FONT></TD>
             <TD ALIGN="left" WIDTH="500"><INPUT TYPE="text" NAME="pr_acourse" MAXLENGTH="10" SIZE="12" VALUE="<% if (!oCur.isNull(DB.pr_acourse)) { DecimalFormat oFmt2 = new DecimalFormat(); oFmt2.setMaximumFractionDigits(2); out.write(oFmt2.format(oCur.getDecimal(DB.pr_acourse).doubleValue())); } %>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">[~Reserva~]:</FONT></TD>
+            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">Booking:</FONT></TD>
             <TD ALIGN="left" WIDTH="500"><INPUT TYPE="text" NAME="pr_booking" MAXLENGTH="10" SIZE="12" VALUE="<% if (!oCur.isNull(DB.pr_booking)) { DecimalFormat oFmt2 = new DecimalFormat(); oFmt2.setMaximumFractionDigits(2); out.write(oFmt2.format(oCur.getDecimal(DB.pr_booking).doubleValue())); } %>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">[~Mensualidades~]:</FONT></TD>
+            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">Monthly Payment:</FONT></TD>
             <TD ALIGN="left" WIDTH="500">
             	<SELECT NAME="nu_payments"><OPTION VALUE="0">0</OPTION><OPTION VALUE="1">1</OPTION><OPTION VALUE="2">2</OPTION><OPTION VALUE="3">3</OPTION><OPTION VALUE="4">4</OPTION><OPTION VALUE="5">5</OPTION><OPTION VALUE="6">6</OPTION><OPTION VALUE="7">7</OPTION><OPTION VALUE="8">8</OPTION><OPTION VALUE="9">9</OPTION><OPTION VALUE="10">10</OPTION><OPTION VALUE="11">11</OPTION><OPTION VALUE="12">12</OPTION></SELECT>
             	&nbsp;&nbsp;&nbsp;
@@ -316,14 +316,14 @@
           </TR>
 <% if (bShopActivated) { %>
           <TR>
-            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">[~Categoría~]:</FONT></TD>
+            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">Category:</FONT></TD>
             <TD ALIGN="left" WIDTH="500">
 						  <SELECT NAME="gu_category" CLASS="combomini"><%=oSelParents.toString()%></SELECT>
             </TD>
           </TR>
 <% } %>
           <TR>
-            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">[~Dirección~]:</FONT></TD>
+            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">Address:</FONT></TD>
             <TD ALIGN="left" WIDTH="500"><INPUT TYPE="hidden" NAME="gu_address" VALUE="<%=oAdr.getStringNull(DB.gu_address,"")%>">
 <% if (oCur.isNull(DB.gu_address)) { %>
 						  <DIV ID="address_line"><A HREF="#" CLASS="linkplain" onclick="editAddress()">Agregar dirección</A></DIV>

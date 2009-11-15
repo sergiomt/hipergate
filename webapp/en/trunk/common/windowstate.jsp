@@ -1,4 +1,4 @@
-﻿<%@ page import="java.sql.SQLException,java.sql.PreparedStatement,com.knowgate.jdc.JDCConnection" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.sql.SQLException,java.sql.PreparedStatement,com.knowgate.jdc.JDCConnection" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%

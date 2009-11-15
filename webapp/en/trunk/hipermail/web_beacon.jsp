@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.File,java.io.IOException,java.io.OutputStream,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.SQLException,java.sql.Types,com.knowgate.jdc.JDCConnection,com.knowgate.misc.Gadgets,com.knowgate.dfs.FileSystem" language="java" session="false" contentType="image/gif" %>
+<%@ page import="java.io.File,java.io.IOException,java.io.OutputStream,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.SQLException,java.sql.Types,com.knowgate.jdc.JDCConnection,com.knowgate.misc.Gadgets,com.knowgate.dfs.FileSystem" language="java" session="false" contentType="image/gif" %>
 <%@ include file="../methods/dbbind.jsp" %><% 
 
   JDCConnection oConn = null;

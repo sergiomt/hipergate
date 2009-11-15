@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.LinkedList,java.util.ListIterator,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.*,com.knowgate.hipergate.DBLanguages,com.knowgate.hipergate.Term,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.LinkedList,java.util.ListIterator,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.*,com.knowgate.hipergate.DBLanguages,com.knowgate.hipergate.Term,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/customattrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
 <%@ include file="contact_edit.jspf" %>
@@ -32,7 +32,7 @@
     </TR>
     <TR>
       <TD VALIGN="middle"><IMG SRC="../images/images/training/diploma16.gif" WIDTH="16" HEIGHT="16" BORDER="0"></TD>
-      <TD VALIGN="middle"><A HREF="contact_education_listing.jsp?gu_contact=<%=oCont.getString(DB.gu_contact)%>&fullname=<%=Gadgets.URLEncode(oCont.getStringNull(DB.tx_name,"") + " " + oCont.getStringNull(DB.tx_surname,""))%>" CLASS="linkplain">[~Titulaciones~]</A></TD>
+      <TD VALIGN="middle"><A HREF="contact_education_listing.jsp?gu_contact=<%=oCont.getString(DB.gu_contact)%>&fullname=<%=Gadgets.URLEncode(oCont.getStringNull(DB.tx_name,"") + " " + oCont.getStringNull(DB.tx_surname,""))%>" CLASS="linkplain">Qualifications</A></TD>
       <TD COLSPAN="8"></TD>
     </TR>
     <TR><TD COLSPAN="10" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
@@ -136,7 +136,7 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">[~Nacionalidad:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Nationality:</FONT></TD>
             <TD ALIGN="left" WIDTH="420">
               <SELECT CLASS="combomini" NAME="id_nationality"><OPTION VALUE=""></OPTION><%=sCountriesLookUp%></SELECT>
             </TD>
@@ -179,7 +179,7 @@
       <TR>
     	<TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>
-          <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acciÃ³n~]')">&nbsp;&nbsp;&nbsp;
+          <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('Your current priviledges level as Guest does not allow you to perform this action')">&nbsp;&nbsp;&nbsp;
 <% } else { %>
           <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
 <% } %>

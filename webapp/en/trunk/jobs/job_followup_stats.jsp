@@ -1,6 +1,45 @@
-﻿<%@ page import="java.text.NumberFormat,java.util.Arrays,java.util.HashMap,java.util.Iterator,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.scheduler.Atom" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.text.NumberFormat,java.util.Arrays,java.util.TreeMap,java.util.Iterator,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.scheduler.Atom" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
-<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
+<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%!
+
+  public static String indentifyUserAgent(String sUserAgent) {
+    if (sUserAgent==null) {
+      return "Unknown";
+    } else if (sUserAgent.length()==0) {
+      return "Unknown";    
+    } else if (sUserAgent.startsWith("Mozilla/4.0 (compatible; MSIE 6.0;")) {
+		  return "Internet Explorer 6.0";    
+    } else if (sUserAgent.startsWith("Mozilla/4.0 (compatible; MSIE 7.0;")) {
+		  return "Internet Explorer 7.0";    
+    } else if (sUserAgent.startsWith("Mozilla/4.0 (compatible; MSIE 8.0;")) {
+		  return "Internet Explorer 8.0";    
+    } else if (sUserAgent.indexOf("Firefox/2.0")>0) {
+		  return "Firefox 2.0";    
+    } else if (sUserAgent.indexOf("Firefox/3.0")>0) {
+		  return "Firefox 3.0";    
+    } else if (sUserAgent.indexOf("Firefox/3.5")>0) {
+		  return "Firefox 3.5";    
+    } else if (sUserAgent.indexOf("iPhone")>0) {
+		  return "iPhone";    
+    } else if (sUserAgent.indexOf("Lotus-Notes")>0) {
+		  return "Lotus Notes";    
+    } else if (sUserAgent.indexOf("Thunderbird")>0) {
+		  return "Thunderbird";    
+    } else if (sUserAgent.indexOf("Safari")>0) {
+		  return "Safari";    
+    } else if (sUserAgent.indexOf("Chrome")>0) {
+		  return "Google Chrome"; 
+    } else if (sUserAgent.indexOf("OutlookConnector")>0) {
+		  return "Outlook";    
+    } else if (sUserAgent.indexOf("Evolution")>0) {
+		  return "Evolution";
+    } else if (sUserAgent.indexOf("Gecko")>0) {
+		  return "Other Gecko";
+    } else {
+		  return "Other";
+    }    
+  }
+%><% 
 /*
   Copyright (C) 2003-2009  Know Gate S.L. All rights reserved.
                            C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -43,7 +82,7 @@
   
   String sSkin = getCookie(request, "skin", "xp");
   String sLanguage = getNavigatorLanguage(request);
-  HashMap<String,Float> oAgents = new HashMap<String,Float>(151);
+  TreeMap<String,Float> oAgents = new TreeMap<String,Float>();
 
   String gu_job = request.getParameter("gu_job");
   String gu_workarea = getCookie(request,"workarea","");
@@ -128,7 +167,7 @@
 	  aPgAtoms[iIxAtom] = ++nReads;
 	  if (!oWebBeacons.isNull(2,b)) {
       nAgents++;
-      sUserAgent = oWebBeacons.getString(2,b);
+      sUserAgent = indentifyUserAgent(oWebBeacons.getString(2,b));
       if (oAgents.containsKey(sUserAgent)) {
         Float oCount = oAgents.get(sUserAgent);
         oAgents.remove(sUserAgent);
@@ -141,7 +180,7 @@
 
 %><HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: [~Estadísticas de seguimiento de una newsletter~]</TITLE>
+  <TITLE>hipergate :: Newsletter follow-up statistics</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
 
@@ -158,12 +197,12 @@
 
       function showWebBeacons() {
 			  document.getElementById('webbeacons').style.display='block';
-			  document.getElementById('webbeacons_ctrl').innerHTML = "<A HREF=# onclick=\"hideWebBeacons()\" CLASS=\"linkplain\">[~Ocultar listado de aperturas~]</A>";
+			  document.getElementById('webbeacons_ctrl').innerHTML = "<A HREF=# onclick=\"hideWebBeacons()\" CLASS=\"linkplain\">Hide readed confirmations list</A>";
       }
 
       function hideWebBeacons() {
 			  document.getElementById('webbeacons').style.display='none';
-			  document.getElementById('webbeacons_ctrl').innerHTML = "<A HREF=# onclick=\"showWebBeacons()\" CLASS=\"linkplain\">[~Mostrar listado de aperturas~]</A>";
+			  document.getElementById('webbeacons_ctrl').innerHTML = "<A HREF=# onclick=\"showWebBeacons()\" CLASS=\"linkplain\">Show readed confirmations list</A>";
       }
     //-->
   </SCRIPT>
@@ -171,13 +210,13 @@
 </HEAD>
 <BODY TOPMARGIN="8" MARGINHEIGHT="8">
   <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Actualizar~]"> [~Actualizar~]</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="[~Imprimir~]"> [~Imprimir~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
   </DIV></DIV>
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Estadísticas de seguimiento de newsletter~]</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Newsletter follow-up statistics</FONT></TD></TR>
   </TABLE>  
 
     <TABLE CLASS="formback">
@@ -188,18 +227,19 @@
             <TD ALIGN="left" CLASS="formstrong"><%=sTxSubject%></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" CLASS="formplain" NOWRAP="nowrap">[~Total Destinatarios~]</TD>
+            <TD ALIGN="right" CLASS="formplain" NOWRAP="nowrap">Total Recipients</TD>
             <TD ALIGN="left" CLASS="formplain"><%=String.valueOf(iAtoms)%></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" CLASS="formplain">[~Abiertos~]</TD>
-            <TD ALIGN="left" CLASS="formplain"><% if (iWebBeaconsUnique>0) { %> <DIV ID="webbeacons_ctrl"><%=String.valueOf(iWebBeaconsUnique)%>&nbsp;&nbsp;<A HREF="#" onclick="showWebBeacons()" CLASS="linkplain">[~Mostrar listado de aperturas~]</A></DIV><% } else { out.write("?"); } %></TD>
+            <TD ALIGN="right" CLASS="formplain">Opened</TD>
+            <TD ALIGN="left" CLASS="formplain"><% if (iWebBeaconsUnique>0) { %> <DIV ID="webbeacons_ctrl"><%=String.valueOf(iWebBeaconsUnique)%>&nbsp;&nbsp;<A HREF="#" onclick="showWebBeacons()" CLASS="linkplain">Show readed confirmations list</A></DIV><% } else { out.write("?"); } %></TD>
           </TR>
           <TR>
             <TD ALIGN="right" COLSPAN="2">
             	<DIV ID="webbeacons" STYLE="display:none">
             	<TABLE SUMMARY="Web Beacons List" BORDER="1">
 <%            if (nPgAtoms>0) {
+							  int nTotalOpened = 0;
 								for (int p=0; p<nPgAtoms; p++) {
 								  if (aPgAtoms[p]>0) {
 								    int iPgAtm = iMinAtom+p;
@@ -223,23 +263,26 @@
 							        if (++iIxAtm==iWebBeacons) break;
 							      } //wend
 							      out.write("<TR><TD CLASS=\"textsmall\">"+sDisplayName+"</TD><TD CLASS=\"formplain\">"+String.valueOf(nTimes)+"</TD><TD CLASS=\"textsmall\">"+oDates.toString()+"</TD></TR>");
+							      nTotalOpened++;
 							    } // fi
 							  } // next
+							      out.write("<TR><TD CLASS=\"textplain\" COLSPAN=\"2\" ALIGN=\"right\"><B>Total</B></TD><TD CLASS=\"textplain\"><B>"+String.valueOf(nTotalOpened)+"</B></TD></TR>");
               }
 %>            </TABLE>  
               </DIV></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" CLASS="formplain" NOWRAP="nowrap">[~Clientes de Correo~]</TD>
+            <TD ALIGN="right" CLASS="formplain" NOWRAP="nowrap">E-Mail User Agents</TD>
             <TD ALIGN="left">
               <TABLE SUMMARY="User Agents">
 <%              Iterator<String> oIter = oAgents.keySet().iterator();
 								NumberFormat oPctFmt = NumberFormat.getPercentInstance();
+
                 while (oIter.hasNext()) {
                   sUserAgent = oIter.next();
                   float fAgentCount = oAgents.get(sUserAgent).floatValue();
                   out.write("<TR><TD CLASS=\"formplain\">"+oPctFmt.format(fAgentCount/nAgents)+"</TD><TD CLASS=\"textsmall\">"+sUserAgent+"</TD></TR>");
-                } // wend
+                } // wend			
 %>
               </TABLE>
             </TD>
@@ -249,7 +292,7 @@
           </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-    	      <INPUT TYPE="button" ACCESSKEY="o" VALUE="[~OK~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+o" onclick="close()">
+    	      <INPUT TYPE="button" ACCESSKEY="o" VALUE="OK" CLASS="closebutton" STYLE="width:80" TITLE="ALT+o" onclick="close()">
     	      <BR><BR>
     	    </TD>
     	  </TR>            

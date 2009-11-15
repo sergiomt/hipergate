@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.ACL,com.knowgate.acl.ACLUser,com.knowgate.dataobjs.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.ACL,com.knowgate.acl.ACLUser,com.knowgate.dataobjs.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
 
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
@@ -13,7 +13,7 @@
     String sCurrentPwd = DBCommand.queryStr(oConn, "SELECT "+DB.tx_pwd+" FROM "+DB.k_users+" WHERE "+DB.gu_user+"='"+id_user+"'");
 
 		if (!sCurrentPwd.equals(request.getParameter("tx_pwd_old"))) {
-		  throw new SecurityException("[~La nueva clave actual del usuario no coincide con la introducida~]");
+		  throw new SecurityException("The new password does not match the previous one");
 		}
 
     oConn.setAutoCommit(true);

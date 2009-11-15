@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%!
   public static int findLanguage(DBSubset oRowset, String sLang) {
@@ -340,13 +340,13 @@
       
       for (var n=0; n<aName.length; n++) {
         if (ltrim(aName[n][1]).length==0) {
-          alert ("Label for language&nbsp;" + getComboText(frm.sel_language) + "[~ no puede estar vacía~]");
+          alert ("Label for language&nbsp;" + getComboText(frm.sel_language) + " cannot be empty");
           return false;
         }
       } // next
 
       if (frm.id_parent_cat.value=="<%=id_category%>") {
-          alert ("[~La categoría no puede ser padre de sí misma~]");
+          alert ("Category may not be parent of itself");
           return false;        
       }
 
@@ -577,7 +577,7 @@
     	    <TD WIDTH="150">&nbsp;</TD>
     	    <TD WIDTH="290">
 <% if (bIsGuest) { %>
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('Your credential level as Guest does not allow you to perform this action')">
 <% } else { %>
               <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">
 <% } %>

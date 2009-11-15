@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.projtrack.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.projtrack.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/projtrack.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%
 
@@ -150,7 +150,7 @@
       
       function deleteDuties() {
         var frm = document.forms[0];
-        if (confirm("[~¿Está seguro de que desea eliminar las tareas seleccionadas?~]")) {
+        if (confirm("Are you sure that you want  to delete the selected duties?")) {
           frm.action = "dutyedit_delete.jsp";
           frm.submit();
         } // fi(confirm)
@@ -216,13 +216,13 @@
 
     <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">List of duties by resource</FONT></TD></TR></TABLE>
     <TABLE SUMMARY="Create and Delete Options" CELLSPACING="0" CELLPADDING="2">
-      <TR><TD CLASS="textplain">Projects Filter&nbsp;<SELECT NAME="projectfilter" onchange="document.forms[0].submit()"><OPTION VALUE="">All Projects</OPTION><OPTION VALUE="p.id_status='ABIERTO'" SELECTED>[~Sólo los proyectos abiertos~]</OPTION><OPTGROUP LABEL="[~Sólo el proyecto~]"><% for (int p=0; p<iProjects; p++) out.write("<OPTION VALUE=\"p.gu_project='"+oProjects.getString(0,p)+"'\">"+oProjects.getString(1,p)+"</OPTION>"); %></OPTGROUP></SELECT></TD></TR>
+      <TR><TD CLASS="textplain">Projects Filter&nbsp;<SELECT NAME="projectfilter" onchange="document.forms[0].submit()"><OPTION VALUE="">All Projects</OPTION><OPTION VALUE="p.id_status='ABIERTO'" SELECTED>Open projects only</OPTION><OPTGROUP LABEL="Only the Project "><% for (int p=0; p<iProjects; p++) out.write("<OPTION VALUE=\"p.gu_project='"+oProjects.getString(0,p)+"'\">"+oProjects.getString(1,p)+"</OPTION>"); %></OPTGROUP></SELECT></TD></TR>
       <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       <TR>
         <TD COLSPAN="8" ALIGN="left">
           <IMG SRC="../images/images/new16x16.gif" BORDER="0">&nbsp;
 <% if (bIsGuest) { %>
-          <A HREF="#" onClick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">Create Duty</A>
+          <A HREF="#" onClick="alert ('Your proviledge level as guest does not allow you to perform this action')" CLASS="linkplain">Create Duty</A>
 <% } else { %>
           <A HREF="#" onClick="window.open('duty_new.jsp', 'newduty', 'menubar=no,toolbar=no,width=780,height=' + (screen.height<=600 ? '520' : '640'))" CLASS="linkplain">Create Duty</A>
 <% } %>
@@ -231,7 +231,7 @@
 	  &nbsp;&nbsp;&nbsp;&nbsp;
           <IMG SRC="../images/images/papelera.gif" BORDER="0">&nbsp;
 <% if (bIsGuest) { %>
-          <A HREF="#" onClick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">Delete selected duties</A>
+          <A HREF="#" onClick="alert ('Your proviledge level as guest does not allow you to perform this action')" CLASS="linkplain">Delete selected duties</A>
 <% } else { %>
           <A HREF="javascript:deleteDuties()" CLASS="linkplain">Delete selected duties</A>
 <% } %>

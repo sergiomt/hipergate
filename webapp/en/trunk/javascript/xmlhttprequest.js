@@ -7,7 +7,7 @@ function createXMLHttpRequest() {
     } catch(e) {
       alert("new XMLHttpRequest() failed"); req = false;
     }
-  } else if(window.ActiveXObject) {
+  } else if (window.ActiveXObject) {
     try {
       req = new ActiveXObject("Msxml2.XMLHTTP");
     } catch(e) {
@@ -29,19 +29,30 @@ function getElementAttribute(parent, name, attr) {
   }
 } // getElementAttribute
 
-function getElementText(parent, name){      
-  var node = parent.getElementsByTagName(name)[0];
-  if (node) {
+function getElementValue(node) {
+  if (node.childNodes) {
     if (node.childNodes.length > 1)
       if (node.childNodes[1])
         return node.childNodes[1].nodeValue;
       else
         return null;
     else
-      if (node.firstChild)
-        return node.firstChild.nodeValue;
+      if (node.childNodes[0])
+        return node.childNodes[0].nodeValue;
       else
-        return null;
+        return null;    	
+  } else {
+    if (node.firstChild)
+      return node.firstChild.nodeValue;
+    else
+      return null;
+  }
+}
+
+function getElementText(parent, name) {      
+  var node = parent.getElementsByTagName(name)[0];
+  if (node) {
+    return getElementValue(node);
   } else
     return null;
 } // getElementText
@@ -84,3 +95,44 @@ function httpRequestText(fromurl) {
   return PrivateTextRequest.responseText;
 }
 
+function httpRequestXML(fromurl) {
+  var PrivateTextRequest = createXMLHttpRequest();
+  PrivateTextRequest.open("GET",fromurl,false);
+  PrivateTextRequest.send(null);
+  return PrivateTextRequest.responseXML;
+}
+
+function httpPostForm(tourl,frm) {
+  var params = "";
+  var le = frm.elements.length;
+
+  for (var e=0; e<le; e++) {
+
+	  var tp = frm.elements[e].type;
+	  var vl = null;
+	  if (tp=="text" || tp=="hidden")
+	    vl = frm.elements[e].value;
+	  else if (tp=="select-one")
+	    if (frm.elements[e].selectedIndex<0)
+	      vl = "";
+	    else
+	    	vl = frm.elements[e].options[frm.elements[e].selectedIndex];
+	  else if (frm.elements[e].length)
+      for (var r=0; r<frm.elements[e].length && vl==null; r++)
+        if (frm.elements[e].checked) vl = frm.elements[e].value;
+	  else {
+	  	alert ("Unknown type "+tp+" for form element "+frm.elements[e].name);
+	  	// vl = (frm.elements[e].checked ? frm.elements[e].value : "");
+	  }
+  	
+    params += (params.length==0 ? "" : "&") + frm[e].name+"="+frm[e].value;
+  } // next
+
+  var PrivateFormPost = createXMLHttpRequest();
+  PrivateFormPost.open("POST",tourl,false);
+  PrivateFormPost.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  PrivateFormPost.setRequestHeader("Content-length", params.length);
+  PrivateFormPost.setRequestHeader("Connection", "close");
+  PrivateFormPost.send(params);
+  return PrivateFormPost.responseText;
+}

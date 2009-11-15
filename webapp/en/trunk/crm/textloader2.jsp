@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.io.File,java.io.FileInputStream,java.io.InputStreamReader,java.sql.SQLException,com.oreilly.servlet.MultipartRequest,org.apache.oro.text.regex.MalformedPatternException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.datamodel.ImportLoader,com.knowgate.crm.ContactLoader,com.knowgate.debug.DebugFile" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.io.File,java.io.FileInputStream,java.io.InputStreamReader,java.sql.SQLException,com.oreilly.servlet.MultipartRequest,org.apache.oro.text.regex.MalformedPatternException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.datamodel.ImportLoader,com.knowgate.crm.ContactLoader,com.knowgate.debug.DebugFile" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%!
 
   final static int TYPE_TEXT = 0;
@@ -77,6 +77,9 @@
   boolean bo_colnames = nullif(oReq.getParameter("colnames")).equals("1");
   String is_loadlookups = nullif(oReq.getParameter("loadlookups")).equals("INSERTLOOKUPS") ? "INSERTLOOKUPS" : "";
   String is_recoverable = nullif(oReq.getParameter("recoverable")).equals("RECOVERABLE") ? "RECOVERABLE" : "UNRECOVERABLE";
+  String bo_allcaps = nullif(oReq.getParameter("allcaps")).equals("ALLCAPS") ? "ALLCAPS" : "";
+  String gu_list = oReq.getParameter("sel_list");
+  String de_list = oReq.getParameter("de_list");
 
   File oTxtFile = oReq.getFile(0);
   int iFLen = (int) oTxtFile.length();
@@ -147,7 +150,7 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
       function validate() {
-	return window.confirm("[~Está a punto de importar el fichero seleccionado. ¿Está seguro de que desea continuar?~]");
+	return window.confirm("You are about to import the selected file. Are you sure that you want to proceed?");
       } // validate;
     //-->
   </SCRIPT>
@@ -167,6 +170,9 @@
   <INPUT TYPE="hidden" NAME="nu_maxerrors" VALUE="<%=nu_maxerrors%>">
   <INPUT TYPE="hidden" NAME="is_recoverable" VALUE="<%=is_recoverable%>">
   <INPUT TYPE="hidden" NAME="is_loadlookups" VALUE="<%=is_loadlookups%>">
+  <INPUT TYPE="hidden" NAME="bo_allcaps" VALUE="<%=bo_allcaps%>">
+  <INPUT TYPE="hidden" NAME="gu_list" VALUE="<%=gu_list%>">
+  <INPUT TYPE="hidden" NAME="de_list" VALUE="<%=de_list%>">
   
   <TABLE SUMMARY="Form Title" WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>

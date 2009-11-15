@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*
@@ -50,7 +50,7 @@
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: [~Carga de Contactos~]</TITLE>
+  <TITLE>hipergate :: Contatcs Loader</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
@@ -62,7 +62,7 @@
         var frm = window.document.forms[0];
 
 	      if (frm.textfile.value.length==0) {
-	        alert ("[~Seleccione el archivo a cargar~]");
+	        alert ("Select a file to be loaded");
 	        return false;
 	      }
 
@@ -74,7 +74,7 @@
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8">
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Carga de Contactos~]</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Contatcs Loader</FONT></TD></TR>
   </TABLE>  
   <FORM ENCTYPE="multipart/form-data" METHOD="post" ACTION="vcardloader2.jsp" onSubmit="return validate()">
 
@@ -82,11 +82,11 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right"><FONT CLASS="formstrong">[~Acci&oacute;n~]</FONT></TD>
-            <TD ALIGN="left"><SELECT NAME="sel_action"><OPTION VALUE="APPEND">[~Insertar~]</OPTION><OPTION VALUE="UPDATE">[~Actualizar~]</OPTION><OPTION VALUE="APPENDUPDATE" SELECTED="selected">[~Insertar y Actualizar~]</OPTION></SELECT></TD>
+            <TD ALIGN="right"><FONT CLASS="formstrong">Action</FONT></TD>
+            <TD ALIGN="left"><SELECT NAME="sel_action"><OPTION VALUE="APPEND">Insert Only</OPTION><OPTION VALUE="UPDATE">Update</OPTION><OPTION VALUE="APPENDUPDATE" SELECTED="selected">Insert and Update</OPTION></SELECT></TD>
           </TR>
           <TR>
-            <TD ALIGN="right"><FONT CLASS="formstrong">[~Juego de Caracteres~]</FONT></TD>
+            <TD ALIGN="right"><FONT CLASS="formstrong">Character Set</FONT></TD>
             <TD ALIGN="left">
               <SELECT NAME="sel_encoding">
                 <OPTION VALUE="UTF8">UTF-8</OPTION>
@@ -118,7 +118,7 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right"><FONT CLASS="formstrong">[~Archivo~]</FONT></TD>
+            <TD ALIGN="right"><FONT CLASS="formstrong">File</FONT></TD>
             <TD ALIGN="left"><INPUT TYPE="FILE" NAME="textfile" SIZE="30"></TD>
           </TR>
           <TR>
@@ -129,11 +129,11 @@
             <TD></TD>
             <TD>
               <DIV ID="advanced" STYLE="display:none">
-                <INPUT TYPE="TEXT" NAME="maxerrors" SIZE="4" VALUE="100" onkeypress="acceptOnlyNumbers(this)">&nbsp;<FONT CLASS="formplain">[~M&aacute;x. Errores~]</FONT>
+                <INPUT TYPE="TEXT" NAME="maxerrors" SIZE="4" VALUE="100" onkeypress="acceptOnlyNumbers(this)">&nbsp;<FONT CLASS="formplain">Max. Errors</FONT>
                 <BR>
-                <INPUT TYPE="CHECKBOX" NAME="loadlookups" VALUE="INSERTLOOKUPS" CHECKED>&nbsp;<FONT CLASS="formplain">[~Auto-Cargar tablas de Valores~]</FONT>
+                <INPUT TYPE="CHECKBOX" NAME="loadlookups" VALUE="INSERTLOOKUPS" CHECKED>&nbsp;<FONT CLASS="formplain">Auto-load lookup tables</FONT>
                 <BR>
-                <INPUT TYPE="CHECKBOX" NAME="recoverable" VALUE="RECOVERABLE">&nbsp;<FONT CLASS="formplain">[~Ejecutar en una única transacción~]</FONT>
+                <INPUT TYPE="CHECKBOX" NAME="recoverable" VALUE="RECOVERABLE">&nbsp;<FONT CLASS="formplain">Execute in a single transaction</FONT>
               </DIV>
             </TD>
           </TR>
@@ -142,8 +142,8 @@
           </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Siguiente~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Next" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>
     	    </TD>
     	  </TR>            

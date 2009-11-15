@@ -1,4 +1,4 @@
-﻿<%@ page import="java.text.SimpleDateFormat,java.net.URLDecoder,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets,com.knowgate.forums.NewsMessage" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.text.SimpleDateFormat,java.net.URLDecoder,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets,com.knowgate.forums.NewsMessage" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <HTML>
 <HEAD>
@@ -75,7 +75,7 @@
     out.write("    <TR><TD><FONT CLASS=\"textplain\">There are&nbsp;" + String.valueOf(oMsg.getInt(DB.nu_thread_msgs)) + (oMsg.getInt(DB.nu_thread_msgs)==1 ? " message" : " messages") + " on this thread&nbsp;&nbsp;&nbsp;<A CLASS=\"linkplain\" HREF=\"msg_thread.jsp?gu_thread_msg=" + oMsg.getStringNull(DB.gu_thread_msg,"") + "\">View complete thread</A></TD></TR>\n");
     
     if (bIsGuest)
-      out.write("    <TR><TD><IMG SRC=\"../images/images/forums/replytoall.gif\" ALT=\"Reply to All\">&nbsp;<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')\">Reply to All</A></TD></TR>\n");
+      out.write("    <TR><TD><IMG SRC=\"../images/images/forums/replytoall.gif\" ALT=\"Reply to All\">&nbsp;<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"alert('Your credential level as Guest does not allow you to perform this action')\">Reply to All</A></TD></TR>\n");
     else
       out.write("    <TR><TD><IMG SRC=\"../images/images/forums/replytoall.gif\" ALT=\"Reply to All\">&nbsp;<A CLASS=\"linkplain\" HREF=\"msg_edit.jsp?id_domain=" + id_domain + "&gu_workarea=" + gu_workarea + "&gu_newsgrp=" + gu_newsgrp + "&nm_newsgrp=" + nm_newsgrp + "&gu_parent_msg=" + gu_msg + "\">Reply to All</A></TD></TR>\n");
         

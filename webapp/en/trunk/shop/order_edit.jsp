@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
@@ -256,7 +256,7 @@
         var sProdNm = getComboText(frm.sel_product);
                 
         if (-1!=GridFindRow(oProductGrid,sProdId)) {
-          alert ("[~El producto que está intentando agregar ya existe en el pedido~]");
+          alert ("The product that you are trying to add is already present at this order");
           return false;
         }
         
@@ -367,7 +367,7 @@
         var frm = document.forms[0];
 
 	      if (frm.gu_company.value.length==0 && frm.gu_contact.value.length==0) {
-	        alert ("[~Debe seleccionar primero una comapñía o un individuo sobre los que crear direcciones~]");
+	        alert ("Must first select a Company or Individual for assigning addresses to it");
 	        return false;
 	      }
 	
@@ -384,7 +384,7 @@
         var frm = document.forms[0];
 
 	      if (frm.gu_company.value.length==0 && frm.gu_contact.value.length==0) {
-	        alert ("[~Debe seleccionar primero una compañía o un individuo para los que ver direcciones~]");
+	        alert ("Pleas echose a company or inividual first");
 	        return false;
 	      }
 	
@@ -417,7 +417,7 @@
 	  qnt = GridGetCellValue(oProductGrid, 2, r);
 
           if (isNaN(qnt)) {
-            alert ("[~La cantidad no es un número válido~]");
+            alert ("Quantity is not a valid number");
             return;
           }
           	  	  
@@ -425,7 +425,7 @@
 	    qnt = dotFloat(qnt);
 	    	    
 	    if (!isFloatValue(qnt)) {
-	      alert ("Quantity for product&nbsp;" + GridGetCellValue(oProductGrid, 1, r) + "[~ no es válida~]");
+	      alert ("Quantity for product&nbsp;" + GridGetCellValue(oProductGrid, 1, r) + " is not valid");
 	      return false;
 	    }
 	    else {
@@ -443,7 +443,7 @@
 	    tot += parseFloat(dotFloat(frm.im_shipping.value));
 	  }
 	  else {
-	    alert ("[~El importe de los gastos de envío no es válido~]");
+	    alert ("Shiping costs amount is not valid");
 	    return false;
 	  }
 	} // fi (im_shipping)
@@ -456,7 +456,7 @@
 	      tot -= (tot*parseFloat(dotFloat(dis)))/100;
 	    }
 	    else {
-	      alert ("[~El porcentaje del descuento no es válido~]");
+	      alert ("Discount percentage is not valid");
 	      return false;
 	    }	    	    
 	  }
@@ -464,18 +464,18 @@
 	    tot -= parseFloat(dotFloat(frm.im_discount.value));
 	  }
 	  else {
-	    alert ("[~El importe del descuento no es válido~]");
+	    alert ("Discount is not a valid amount");
 	    return false;
 	  }
 	} // fi (im_discount)
 	
 	if (frm.im_taxes.value.length>0) {
 	  if (!isFloatValue(frm.im_taxes.value)) {
-	    alert ("[~Los impuestos no es una cantidad válida~]");
+	    alert ("Tax is not a valid amount");
 	    return false;
 	  }
 	  else if (tax==parseFloat(dotFloat(frm.im_taxes.value))) {
-	    alert ("[~Está sumando los impuestos dos veces, una de forma automática en la cesta y otra de forma manual~]");
+	    alert ("Taxes are been computed twice, once automatically from basket and again manually");
 	    return false;
 	  }
 	  else
@@ -495,7 +495,7 @@
 	var dis;
 	
 	if (ltrim(frm.de_order.value)=="") {
-	  alert ("[~La descripción del pedido es obligatoria~]");
+	  alert ("Order description is mandatory");
 	  return false;
 	}
 
@@ -510,7 +510,7 @@
 	}
 	
 	if (!isDate(frm.dt_payment.value, "d") && frm.dt_payment.value.length>0) {
-	  alert ("[~La fecha de vencimiento no es válida~]");
+	  alert ("Due date not valid");
 	  return false;	  
 	}
 
@@ -520,12 +520,12 @@
 	}
 
 	if (frm.nu_card.value.length>0 && frm.nu_bank.value.length>0) {
-	  alert ("[~Introduzca sólo un número de cuenta bancaria o un número de tarjeta, pero no ambos~]");
+	  alert ("Type bank account or credit card, but not both.");
 	  return false;	  
 	}
 
 	if (frm.nu_card.value.length>0 && (getCombo(frm.sel_month)=="" || getCombo(frm.sel_year)=="")) {
-	  alert ("[~Debe introducir una fecha de expiración para la tarjeta~]");
+	  alert ("Card expire date is mandatory");
 	  return false;	  
 	}
 
@@ -554,13 +554,13 @@
 	  	  
 	  if (null!=qnt)
 	    if (!isFloatValue(qnt)) {
-	      alert ("Quantity for product&nbsp;" + GridGetCellValue(oProductGrid, 1, r) + "[~ no es válida~]");
+	      alert ("Quantity for product&nbsp;" + GridGetCellValue(oProductGrid, 1, r) + " is not valid");
 	      return false;
 	    }
 	} // next
 
 	if (frm.im_shipping.value.length>0 && !isFloatValue(frm.im_shipping.value)) {
-	  alert ("[~Los gastos de envio no son una cantidad válida~]");
+	  alert ("Shiping cost is not a valid amount");
 	  return false;
 	}
 
@@ -570,25 +570,25 @@
 	  if (pct>0) {
 	    dis = frm.im_discount.value.substring(0,pct);
 	    if (!isFloatValue(dis)) {
-	      alert ("[~El porcentaje de descuento no es una cantidad válida~]");
+	      alert ("Discount percentage is not a valid quantity");
 	      return false;
 	    }
 	  }
 	  else {
 	    if (!isFloatValue(frm.im_discount.value)) {	  	  
-	      alert ("[~El descuento no es una cantidad válida~]");
+	      alert ("Discount is not a valid quantity");
 	      return false;
 	    }
 	  } // fi (pct)
 	} // fi (im_discount)
 
 	if (frm.im_taxes.value.length>0 && !isFloatValue(frm.im_taxes.value)) {
-	  alert ("[~Los impuestos no es una cantidad válida~]");
+	  alert ("Tax is not a valid amount");
 	  return false;
 	}
 
 	if (frm.im_total.value.length>0 && !isFloatValue(frm.im_total.value)) {
-	  alert ("[~El total no es una cantidad válida~]");
+	  alert ("Total is not a valid amount");
 	  return false;
 	}
 
@@ -630,7 +630,7 @@
     <!--
       var oProductGrid = GridCreate(0,7);
       var iProductCount = 0;
-      var jsTableHeader = "<TABLE WIDTH=100%><TR><TD></TD><TD><FONT CLASS=textsmall><B>[~Producto~]</B></FONT></TD><TD><FONT CLASS=textsmall><B>[~Cantidad~]</B></FONT></TD><TD><FONT CLASS=textsmall><B>[~Precio~]</B></FONT></TD><TD><FONT CLASS=textsmall><B>[~% Tasa~]</B></FONT></TD><TD></TD><TD></TD></TR>";
+      var jsTableHeader = "<TABLE WIDTH=100%><TR><TD></TD><TD><FONT CLASS=textsmall><B>Product</B></FONT></TD><TD><FONT CLASS=textsmall><B>Quantity</B></FONT></TD><TD><FONT CLASS=textsmall><B>Price</B></FONT></TD><TD><FONT CLASS=textsmall><B>Tax %</B></FONT></TD><TD></TD><TD></TD></TR>";
       var jsTableFooter = "</TABLE>";
       var jsTableName = "orderlines";
       var jsRootCats = new Array(<% for (int c=0; c<iShops; c++) { if (c!=0) out.write(","); out.write("\"" + oShops.getString(2,c) + "\""); }%>);
@@ -715,7 +715,7 @@
   <DIV class="cxMnu1" style="width:340px"><DIV class="cxMnu2">
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="top.location='if (document.forms[0].gu_company.value.length==0 && document.forms[0].gu_contact.value.length==0) alert('[~El cliente el obligatorio para la vista previa del pedido~]'); else order_preview.jsp?gu_order=<%=gu_order%>'"><IMG src="../images/images/viewtxt.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Preview"> Preview</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="top.location='if (document.forms[0].gu_company.value.length==0 && document.forms[0].gu_contact.value.length==0) alert('The client is required for order preview'); else order_preview.jsp?gu_order=<%=gu_order%>'"><IMG src="../images/images/viewtxt.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Preview"> Preview</SPAN>
   </DIV></DIV>
 <% } %>
   <TABLE WIDTH="100%">
@@ -760,7 +760,7 @@
           <TR>
             <TD ALIGN="right" WIDTH="120"><FONT CLASS="formstrong">Client:</FONT></TD>
             <TD ALIGN="left" WIDTH="560">
-              <INPUT TYPE="text" NAME="nm_client" MAXLENGTH="200" SIZE="40" VALUE="<% out.write(oOrdr.getStringNull("nm_client","")); %>" onchange="completeClient(this.value)" onkeypress="document.forms[0].gu_company.value='';document.forms[0].gu_contact.value='';document.images['clientwarning'].src = '../images/images/warn16.gif'"><SPAN onmouseover="if (document.forms[0].gu_company.value.length==0 && document.forms[0].gu_contact.value.length==0) popover('[~Debe especificar un nombre de compañía o individuo válido~]'); else popover('View customer data');" onmouseout="popout()"><A HREF="#" onclick="viewClient()"><IMG NAME="clientwarning" ID="clientwarning" HSPACE="2" SRC="../images/images/spacer.gif" WIDTH="16" HEIGHT="16" BORDER="0"></A></SPAN>&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="reference(7)" ACCESSKEY="p" TITLE="ALT+p">View Companies</A>&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="reference(8)" ACCESSKEY="i" TITLE="ALT+i">View Individuals</A>
+              <INPUT TYPE="text" NAME="nm_client" MAXLENGTH="200" SIZE="40" VALUE="<% out.write(oOrdr.getStringNull("nm_client","")); %>" onchange="completeClient(this.value)" onkeypress="document.forms[0].gu_company.value='';document.forms[0].gu_contact.value='';document.images['clientwarning'].src = '../images/images/warn16.gif'"><SPAN onmouseover="if (document.forms[0].gu_company.value.length==0 && document.forms[0].gu_contact.value.length==0) popover('Must specify a valid name of Company or Individual'); else popover('View customer data');" onmouseout="popout()"><A HREF="#" onclick="viewClient()"><IMG NAME="clientwarning" ID="clientwarning" HSPACE="2" SRC="../images/images/spacer.gif" WIDTH="16" HEIGHT="16" BORDER="0"></A></SPAN>&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="reference(7)" ACCESSKEY="p" TITLE="ALT+p">View Companies</A>&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="reference(8)" ACCESSKEY="i" TITLE="ALT+i">View Individuals</A>
               <INPUT TYPE="hidden" NAME="gu_company" VALUE="<% out.write(oOrdr.getStringNull(DB.gu_company,gu_company)); %>">
               <INPUT TYPE="hidden" NAME="gu_contact" VALUE="<% out.write(oOrdr.getStringNull(DB.gu_contact,gu_contact)); %>">
             </TD>
@@ -828,7 +828,7 @@
                     <FONT CLASS="formplain">Shipment Method:</FONT>
               	    <INPUT TYPE="hidden" NAME="id_ship_method">
               	    <SELECT NAME="sel_ship_method"><OPTION VALUE=""></OPTION><% out.write(sShipingLookUp); %></SELECT>&nbsp;
-              	    <A HREF="javascript:lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Editar Métodos de Envío~]"></A>
+              	    <A HREF="javascript:lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Edit Shiping Methods"></A>
                   </TD>
                 </TR>
               </TABLE>
@@ -840,7 +840,7 @@
               <INPUT TYPE="hidden" NAME="gu_ship_addr">
               <SELECT NAME="sel_ship_addr"><% out.write (sAddrs); %></SELECT>
               &nbsp;<A HREF="#" onclick="createAddress()" TITLE="New Address" ACCESSKEY="d"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Address"></A>
-              &nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="viewAddresses()" TITLE="[~Ver Direcciones~]">[~Ver Direcciones~]</A>
+              &nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="viewAddresses()" TITLE="Show Addresses">Show Addresses</A>
 	    </TD>
 	  </TR>
           <TR>
@@ -849,7 +849,7 @@
               <INPUT TYPE="hidden" NAME="gu_bill_addr">
               <SELECT NAME="sel_bill_addr"><% out.write (sAddrs); %></SELECT>
               &nbsp;<A HREF="#" onclick="createAddress()" TITLE="New Address" ACCESSKEY="i"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Address"></A>
-              &nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="viewAddresses()" TITLE="[~Ver Direcciones~]">[~Ver Direcciones~]</A>
+              &nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="viewAddresses()" TITLE="Show Addresses">Show Addresses</A>
 	    </TD>
 	  </TR>
           <TR>
@@ -902,7 +902,7 @@
               <SELECT NAME="sel_card"><OPTION VALUE=""></OPTION><% out.write(sCardsLookUp); %></SELECT>&nbsp;
               <A HREF="javascript:lookup(6)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Edit payment methods"></A>
               &nbsp;&nbsp;&nbsp;
-              <FONT CLASS="formplain">[~Nº~]</FONT>&nbsp;<INPUT TYPE="text" NAME="nu_card" MAXLENGTH="16" SIZE="17" onkeypress="return acceptOnlyNumbers();" VALUE="<% out.write(oOrdr.getStringNull(DB.nu_card,"")); %>">
+              <FONT CLASS="formplain">Num</FONT>&nbsp;<INPUT TYPE="text" NAME="nu_card" MAXLENGTH="16" SIZE="17" onkeypress="return acceptOnlyNumbers();" VALUE="<% out.write(oOrdr.getStringNull(DB.nu_card,"")); %>">
               &nbsp;&nbsp;
               <FONT CLASS="formplain">Expires:</FONT>
               <INPUT TYPE="hidden" NAME="tx_expire" VALUE="<% out.write(oOrdr.getStringNull(DB.tx_expire,"")); %>">
@@ -922,7 +922,7 @@
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('Your credential level as Guest does not allow you to perform this action')">
 <% } else { %>
               <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">
 <% } %>

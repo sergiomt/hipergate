@@ -60,7 +60,7 @@
         var str;
         
         if (frm.tr_<%=id_language%>.value.length==0) {
-          alert ("[~El campo Descripción es obligatorio~]");
+          alert ("Description is mandatory");
           return false;
         }
 

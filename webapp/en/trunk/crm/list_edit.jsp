@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.Statement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.misc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.Statement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.misc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><% 
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -109,13 +109,13 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Edit Distribution List</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/email.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
       function showCalendar(ctrl) {       
         var dtnw = new Date();
@@ -176,7 +176,7 @@
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8">
   <FORM NAME="" METHOD="post" ACTION="list_wizard_store.jsp" onSubmit="return validate()">
-  <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
+  <DIV class="cxMnu1" style="width:300px"><DIV class="cxMnu2">
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
@@ -197,7 +197,7 @@
     <TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="80%" BORDER="0" ALIGN="center">
       <TR>
       	<TD ALIGN="LEFT"><IMG SRC="../images/images/crm/subscriptions16.gif" BORDER="0" ALT="Click for editing members" ALIGN="center">&nbsp;<FONT FACE="Arial" SIZE="-1" COLOR="black"><A HREF="#" onclick="javascript:window.open('member_listing.jsp?gu_list=<%=oList.getStringNull(DB.gu_list,"")%>&de_list=<%=oList.getStringNull(DB.de_list,"")%>','wMemeberListing','height=' + (screen.height>600 ? '600' : '520') + ',width= ' + (screen.width>800 ? '800' : '760') + ',scrollbars=yes,toolbar=no,menubar=no');window.close();" CLASS="linkplain">Edit Members</A>&nbsp;&nbsp;</FONT></TD>
-      	<TD ALIGN="LEFT"><IMG SRC="../images/images/excel16.gif" BORDER="0" ALT="[~Click para exportar miembros~]" ALIGN="center">&nbsp;<FONT FACE="Arial" SIZE="-1" COLOR="black"><A HREF="#" onclick="javascript:window.open('list_members_csv.jsp?gu_list=<%=oList.getStringNull(DB.gu_list,"")%>')" CLASS="linkplain">[~Exportar miembros~]</A>&nbsp;&nbsp;</FONT></TD>
+      	<TD ALIGN="LEFT"><IMG SRC="../images/images/excel16.gif" BORDER="0" ALT="Click for exporting members" ALIGN="center">&nbsp;<FONT FACE="Arial" SIZE="-1" COLOR="black"><A HREF="#" onclick="javascript:window.open('list_members_csv.jsp?gu_list=<%=oList.getStringNull(DB.gu_list,"")%>')" CLASS="linkplain">Export members</A>&nbsp;&nbsp;</FONT></TD>
       </TR>
     </TABLE>
     <% } %>
@@ -251,7 +251,7 @@
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">&nbsp;&nbsp;&nbsp;
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert ('Your credential level as Guest does not allow you to perform this action')">&nbsp;&nbsp;&nbsp;
 <% } else { %>
               <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
 <% } %>

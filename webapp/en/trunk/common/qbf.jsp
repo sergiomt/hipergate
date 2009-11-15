@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.HashMap,java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.util.Vector,java.text.SimpleDateFormat,org.w3c.dom.*,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.hipergate.QueryByForm,dom.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.HashMap,java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.util.Vector,java.text.SimpleDateFormat,org.w3c.dom.*,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.hipergate.QueryByForm,dom.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -136,7 +136,7 @@
         if (frm.sel_queries.selectedIndex<=0) {
           alert ("Select the query to be deleted");
           return false;
-        } else if (window.confirm("[~¿Está seguro de que desea eliminar la consulta?~] "+getComboText(frm.sel_queries) + " [~Al eliminar la consulta se eliminarán también automáticamente las listas dinámicas que la estén utilizando~]")) {
+        } else if (window.confirm("Are you sure that you want to delete this query? "+getComboText(frm.sel_queries) + " If the query is deleted, the list that are using it will be also deleted")) {
           frm.gu_query.value = getCombo(frm.sel_queries);
           frm.method = "POST";
           frm.action = "qbf_delete.jsp";
@@ -257,25 +257,25 @@
         cod = frm.code1.value;
 
         if (cmb.length==0 ) {
-            alert ("[~Debe especificar un campo de búsqueda al menos para la primera condición~]");
+            alert ("You must specify at least one search field for the first condition");
             return false;
         }
 
         if (val.length==0 && opr!="M" && opr!="N") {
-            alert ("[~Debe especificar un valor de búsqueda al menos para la primera condición~]");
+            alert ("You must specify at least one search field for the first condition");
             return false;
         }
 
 	typ = getType(cmb);
                 
         if ((typ=="integer" && !isIntValue(cod)) || (typ=="float" && !isFloatValue(cod))) {
-          alert ("[~El valor del campo 1 no es un número valido~]");
+          alert ("Value for field 1 is not a valid number");
           return false;
         }
                                     
         // Asignación de literales de fecha
         if (typ=="date" && !isDate(val,"d")) {
-          alert ("[~La fecha del campo 1 no es válida, use el formato yyyy-mm-dd~]");
+          alert ("Date of field 1 is not valid. Use format yyyy-mm-dd.");
           return false;
         }
         else if (typ=="date")
@@ -300,7 +300,7 @@
 	    typ = getType(cmb);
 
             if ((typ=="integer" && !isIntValue(cod)) || (typ=="float" && !isFloatValue(cod))) {
-              alert ("[~El valor del campo 2 no es un número valido~]");
+              alert ("Value for field 2 is not a valid number");
               return false;
             }
               else
@@ -308,7 +308,7 @@
 
             // Asignación de literales de fecha
             if (typ=="date" && !isDate(val,"d")) {
-                alert ("[~La fecha del campo 2 no es válida, use el formato yyyy-mm-dd~]");
+                alert ("Date of field 2 is not valid. Use format yyyy-mm-dd.");
                 return false;
             }
             else if (typ=="date")
@@ -327,7 +327,7 @@
 	      typ = getType(cmb);
 
               if ((typ=="integer" && !isIntValue(cod)) || (typ=="float" && !isFloatValue(cod))) {
-                alert ("[~El valor del campo 3 no es un número valido~]");
+                alert ("Value for field 3 is not a valid number");
                 return false;
               }
               else
@@ -335,7 +335,7 @@
                   
               // Asignación de literales de fecha
               if (typ=="date" && !isDate(val,"d")) {
-                alert ("[~La fecha del campo 3 no es válida, use el formato yyyy-mm-dd~]");
+                alert ("Date of field 3is not valid. Use format yyyy-mm-dd.");
                 return false;
               }
               else if (typ=="date")
@@ -828,7 +828,7 @@
         <TR>
           <TD COLSPAN="4" ALIGN="center">
 <% if (bIsGuest) { %>
-            <INPUT TYPE="button" ACCESSKEY="s" TITLE="ALT+s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
+            <INPUT TYPE="button" ACCESSKEY="s" TITLE="ALT+s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" onclick="alert ('Your credential level as Guest does not allow you to perform this action')">
 <% } else { %>
             <INPUT TYPE="button" ACCESSKEY="s" TITLE="ALT+s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" onclick="saveQuery()">
 <% } %>

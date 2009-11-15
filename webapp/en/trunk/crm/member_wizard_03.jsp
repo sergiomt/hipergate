@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.HashMap,java.net.URLDecoder,java.sql.*,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.HashMap,java.net.URLDecoder,java.sql.*,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %>
 <jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
 <%
@@ -61,11 +61,11 @@
   for (int i=0; i<aContacts.length; i++)
   {  
     String aMember[] = Gadgets.split(aContacts[i], '-');
-    String sQuery = new String("INSERT INTO k_x_list_members (gu_list,tx_email,tx_name,tx_surname,dt_created,");
+    String sQuery = new String("INSERT INTO k_x_list_members (gu_list,tx_email,mov_phone,tx_name,tx_surname,dt_created,");
     
     if (aMember[0].length()<32) // Company does not exist
     {
-	sQuery = sQuery + "gu_company,gu_contact) SELECT '" + request.getParameter("gu_list") + "',tx_email,tx_name,tx_surname,dt_created,gu_company,gu_contact FROM "+DB.k_member_address+" WHERE gu_contact='" + aMember[1] + " AND gu_company IS NULL ";
+	    sQuery = sQuery + "gu_company,gu_contact) SELECT '" + request.getParameter("gu_list") + "',tx_email,mov_phone,tx_name,tx_surname,dt_created,gu_company,gu_contact FROM "+DB.k_member_address+" WHERE gu_contact='" + aMember[1] + " AND gu_company IS NULL ";
     }
     else
       if (aMember[1].length()<32) // Contact does not exist

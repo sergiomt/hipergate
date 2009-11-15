@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.ResultSet,java.sql.Timestamp,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.ResultSet,java.sql.Timestamp,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 
@@ -149,7 +149,7 @@
                   <TD></TD>
                   <TD>
       <% if (bIsGuest) { %>
-                    <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">New Project</A>
+                    <A HREF="#" onclick="alert ('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New Project</A>
       <% } else { %>            
                     <A HREF="#" onclick="newProject()" CLASS="linkplain">New Project</A>
       <% } %>
@@ -218,7 +218,7 @@
                   <TD></TD>
                   <TD>
       <% if (bIsGuest) { %>
-                    <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">New Duty</A>
+                    <A HREF="#" onclick="alert ('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New Duty</A>
       <% } else { %>
                     <A HREF="#" onclick="newDuty()" CLASS="linkplain">New Duty</A>
       <% } %>
@@ -282,7 +282,7 @@
                   <TD></TD>
                   <TD>
       <% if (bIsGuest) { %>
-                    <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">New Incident</A>
+                    <A HREF="#" onclick="alert ('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New Incident</A>
       <% } else { %>            
                     <A HREF="#" onclick="reportBug()" CLASS="linkplain">New Incident</A>
       <% } %>

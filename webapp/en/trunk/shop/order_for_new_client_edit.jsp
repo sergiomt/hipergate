@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*  
@@ -143,7 +143,7 @@
         switch(parseInt(odctrl)) {
           case 1:
             if (frm.nm_company.value.indexOf("'")>=0)
-              alert("[~El nombre de la compañía contiene caracteres no permitidos~]");
+              alert("Company name contains invalid characters");
             else
               window.open("../common/reference.jsp?nm_table=k_companies&tp_control=1&nm_control=nm_legal AS nm_company&nm_coding=gu_company" + 
                           (frm.nm_company.value.length==0 || document.gu_company.value.length==32 ? "" : "&where=" + escape(" <%=DB.nm_legal%> LIKE '"+frm.nm_company.value+"%' ")),
@@ -223,7 +223,7 @@
         if (document.forms[0].sn_passport.value.length>0) {
         	var fnd = httpRequestText("../common/passport_lookup.jsp?gu_workarea=<%=gu_workarea%>&sn_passport="+document.forms[0].sn_passport.value);
           if ("found"==fnd.substr(0,5)) {
-            if (window.confirm("Another customer with the same identifier already exists "+document.forms[0].sn_passport.value+" [~¿Desea reutilizar los datos de ese cliente para un nuevo pedido?~]"))
+            if (window.confirm("Another customer with the same identifier already exists "+document.forms[0].sn_passport.value+" Would you like to reuse the current customer information for a new order?"))
               document.location = "order_edit.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_contact="+fnd.split(" ")[1];
           }				  
 				}
@@ -235,7 +235,7 @@
         if (document.forms[0].id_legal.value.length>0) {
         	var fnd = httpRequestText("../common/legalid_lookup.jsp?gu_workarea=<%=gu_workarea%>&id_legal="+document.forms[0].id_legal.value);
           if ("found"==fnd.substr(0,5)) {
-            if (window.confirm("Another customer with the same identifier already exists "+document.forms[0].id_legal.value+" [~¿Desea reutilizar los datos de ese cliente para un nuevo pedido?~]"))
+            if (window.confirm("Another customer with the same identifier already exists "+document.forms[0].id_legal.value+" Would you like to reuse the current customer information for a new order?"))
               document.location = "order_edit.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_company="+fnd.split(" ")[1];
           }				  
 				}
@@ -250,7 +250,7 @@
 
         if (null==getCheckedValue(frm.tp_client)) {
 
-          alert ("[~Debe seleccionar el tipo de cliente: Compañía o Individuo~]");
+          alert ("A customer type (Company or Individual) must be selected");
           return false;
 
         } else {
@@ -262,7 +262,7 @@
           }
 
           if (frm.de_order.length==0) {
-            alert ("[~La descripción del pedido es obligatoria~]");
+            alert ("Order description is required");
             frm.de_order.focus();
             return false;
           }
@@ -293,7 +293,7 @@
 
           } else {
             if (frm.nm_legal.value.length==0) {
-              alert ("[~La razón social es obligatoria~]");
+              alert ("Corporate Name is required");
               frm.nm_legal.focus();
               return false;
             }
@@ -335,7 +335,7 @@
 	          frm.elements[s+"mn_city"].value = frm.elements[s+"mn_city"].value.toUpperCase();
 	
 	          if (frm.elements[s+"id_country"].value=="es" && frm.elements[s+"zipcode"].value.length!=0 && frm.elements[s+"zipcode"].value.length!=5) {
-	            alert("[~El código postal debe tener 5 cifras~]");
+	            alert("The zipcode must contain five digits");
 	            frm.elements[s+"zipcode"].focus();
 	            return false;
 	          }
@@ -353,13 +353,13 @@
           sameAddress (frm.chk_same_addr[0].checked);
 
           if (frm.a1_nm_state.value.length==0) {
-            alert ("[~La provincia de envío es obligatoria~]");
+            alert ("The delivery state is required");
             frm.a1_sel_state.focus();
             return false;
           }
 
           if (frm.a2_nm_state.value.length==0) {
-            alert ("[~La provincia de facturación es obligatoria~]");
+            alert ("Invoincing state is required");
             frm.a2_sel_state.focus();
             return false;
           }
@@ -449,7 +449,7 @@
           	  <DIV id="company_data" STYLE="display:none">
 							  <TABLE SUMMARY="Company Data" ALIGN="left">
 							    <TR>
-							      <TD ALIGN="right" WIDTH="180" CLASS="formstrong">[~Razón Social~]</TD>
+							      <TD ALIGN="right" WIDTH="180" CLASS="formstrong">Corporate Name</TD>
 							      <TD ALIGN="left"><INPUT TYPE="text" NAME="nm_legal" MAXLENGTH="70" SIZE="50"></TD>
 							    </TR>
 							    <TR>
@@ -573,11 +573,11 @@
                   </TR>
                   <TR>
                     <TD ALIGN="right" WIDTH="180"><INPUT TYPE="radio" NAME="chk_same_addr" VALUE="true" onclick="sameAddress(true)" CHECKED></TD>
-                    <TD ALIGN="left" CLASS="formplain">[~La dirección de facturaci&oacute;n es la misma que la de env&iacute;o~]</TD>
+                    <TD ALIGN="left" CLASS="formplain">Invoicing address is the same as delivery address</TD>
                   </TR>
                   <TR>
                     <TD ALIGN="right" WIDTH="180"><INPUT TYPE="radio" NAME="chk_same_addr" VALUE="false" onclick="sameAddress(false)"></TD>
-                    <TD ALIGN="left" CLASS="formplain">[~La dirección de facturaci&oacute;n es diferente que la de env&iacute;o~]</TD>
+                    <TD ALIGN="left" CLASS="formplain">Invoing address is different from delivery address</TD>
                   </TR>
 								</TABLE>
               </DIV>

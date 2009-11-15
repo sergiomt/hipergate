@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <%
 /*
@@ -181,7 +181,7 @@
 	  var frm = document.forms[0];
 	  var chi = frm.checkeditems;
 
-	  if (confirm("[~¿Está seguro de que desea eliminar los usuarios seleccionados?~]")) {
+	  if (confirm("Are you sure you want to delete selected users?")) {
 	  	  	  
 	    chi.value = "";
 
@@ -213,7 +213,7 @@
 	  var grp = document.forms[0].group.value;
 	  
 	  if (hasForbiddenChars(fnd))
-	    alert ("[~El nombre del usuario a buscar contiene caracteres no válidos~]");
+	    alert ("User name contains invalid characters");
 	  else	
             window.location = "domusrs.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&maxrows=10&show=users&skip=0&find=" + escape(fnd) + "&group=" + grp;
 	}

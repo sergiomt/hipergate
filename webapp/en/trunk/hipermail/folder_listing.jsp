@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.Properties,java.math.BigDecimal,java.net.URLDecoder,java.io.File,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.acl.ACLUser,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.misc.Environment,com.knowgate.debug.DebugFile,com.knowgate.hipergate.Category,com.knowgate.hipermail.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Properties,java.math.BigDecimal,java.net.URLDecoder,java.io.File,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.acl.ACLUser,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.misc.Environment,com.knowgate.debug.DebugFile,com.knowgate.hipergate.Category,com.knowgate.hipermail.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="mail_env.jspf" %><%
 /*
   Copyright (C) 2004  Know Gate S.L. All rights reserved.
@@ -75,6 +75,8 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Account not found&desc=There is no mail account configured for current user&resume=../hipermail/account_list.jsp"));
     return;
   }
+
+  if (autenticateSession(GlobalDBBind, request, response)<0) return;
   
   response.addHeader ("cache-control", "private");
   
@@ -172,13 +174,15 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/layer.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/dynapi.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
-    DynAPI.setLibraryPath("../javascript/dynapi/lib/");
-    DynAPI.include("dynapi.api.*");
+    dynapi.library.setPath('../javascript/dynapi3/');
+    dynapi.library.include('dynapi.api.DynLayer');
     var menuLayer;
-    DynAPI.onLoad = function() { 
+    dynapi.onLoad(init);
+    function init() {
+ 
       menuLayer = new DynLayer();
       menuLayer.setWidth(160);
       menuLayer.setHTML(rightMenuHTML);
@@ -186,8 +190,8 @@
     }
     //-->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/rightmenu.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/floatdiv.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/floatdiv.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/activewidgets/lib/grid.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
@@ -546,7 +550,7 @@
 	function deleteSingleMessage(num, id, guid) {
 	  hideRightMenu();
 
-	  if (window.confirm("[~Está seguro de que desea eliminar el mensaje?~]")) {
+	  if (window.confirm("Are you sure that you want to delete message?")) {
 
 	    var frm1 = document.forms[1];
 	    frm1.ids.value = id;
@@ -564,7 +568,7 @@
 	
 	function deleteMessages() {	  	  
 	  hideRightMenu();
-	  if (window.confirm("[~Está seguro de que desea eliminar los mensajes seleccionados?~]")) {
+	  if (window.confirm("Are you sure that you want to delete messages:")) {
 	    var frm1 = document.forms[1];
 	    var ids = frm1.ids;
 	    var nms = frm1.nums;
@@ -625,9 +629,9 @@
 	  }
 	  	  
 	  if (action=="move")
-	    msg = "[~Está seguro de que desea mover los mensajes seleccionados?~]";
+	    msg = "Are you sure that you want to move selected messages?";
 	  else
-	    msg = "[~Está seguro de que desea copiar los mensajes seleccionados?~]";
+	    msg = "Are you sure that you want to copy selected messages?";
 	  
 	  if (window.confirm(msg)) {
 
@@ -667,6 +671,12 @@
 	  frm1.action="msg_move_exec.jsp";
 	  frm1.submit();
 	}
+
+        // ----------------------------------------------------
+
+	function forwardToList(num, id, guid) {
+	  document.location = "msg_forward.jsp?num"+String(num)+"&id="+id+"&guid="+guid;
+  }
 
         // ----------------------------------------------------
 
@@ -823,6 +833,7 @@
       addMenuSeparator();
       addMenuOption("Delete","deleteSingleMessage(jsMsgNum, jsMsgId, jsMsgGuid)",0);
       addMenuOption("Move to Spam","moveMessagesToSpam(jsMsgNum, jsMsgId, jsMsgGuid)",0);
+      // addMenuOption("Re-send to a list","forwardToList(jsMsgNum, jsMsgId, jsMsgGuid)",0);
       addMenuSeparator();
       addMenuOption("View Source","viewSourceInbox(jsMsgNum,jsMsgId)",0);
     //-->
@@ -863,7 +874,7 @@
     catch (Exception e) {
       if (null!=oConn)
          if (!oConn.isClosed()) {
-           if (oConn.getAutoCommit()) oConn.rollback();
+           if (!oConn.getAutoCommit()) oConn.rollback();
            oConn.close("msg_clear_cache");
          }
       oConn = null;    

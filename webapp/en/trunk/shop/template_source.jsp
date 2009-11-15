@@ -1,4 +1,4 @@
-﻿<%@ page import="com.knowgate.misc.Environment,com.knowgate.dfs.FileSystem" language="java" session="false" contentType="text/plain;charset=UTF-8" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="templates.jspf" %><%
+<%@ page import="com.knowgate.misc.Environment,com.knowgate.dfs.FileSystem" language="java" session="false" contentType="text/plain;charset=UTF-8" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="templates.jspf" %><%
   String sStorage = Environment.getProfilePath(GlobalDBBind.getProfileName(), "storage");
   String sIdDomain = getCookie(request,"domainid","");
   String sGuWorkArea = getCookie(request,"workarea","");

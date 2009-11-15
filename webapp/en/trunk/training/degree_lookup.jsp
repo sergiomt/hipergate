@@ -119,7 +119,7 @@
 	        var frm = document.forms[0];
 	        var chi = frm.checkeditems;
 	  	  
-	        if (window.confirm("[~¿Está seguro de que desea eliminar las titulaciones seleccionadas?~]")) {
+	        if (window.confirm("Are you sure that you want to delete the selected qualifications?")) {
 	  	  
 	          chi.value = "";	  	  
 	  	  
@@ -141,35 +141,35 @@
 
     //-->
   </SCRIPT>
-  <TITLE>hipergate :: [~Listado de Titulaciones~]</TITLE>
+  <TITLE>hipergate :: Qualifications List</TITLE>
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8">
   <DIV class="cxMnu1" style="width:320px"><DIV class="cxMnu2">
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Actualizar~]"> [~Actualizar~]</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="[~Imprimir~]"> [~Imprimir~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
   </DIV></DIV>
     <FORM METHOD="post" ACTION="degree_delete.jsp" onsubmit="return validate()">
-      <TABLE><TR><TD WIDTH="98%" CLASS="striptitle"><FONT CLASS="title1">[~Listado de Titulaciones~]</FONT></TD></TR></TABLE>
+      <TABLE><TR><TD WIDTH="98%" CLASS="striptitle"><FONT CLASS="title1">Qualifications List</FONT></TD></TR></TABLE>
       <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
       <INPUT TYPE="hidden" NAME="checkeditems" VALUE="">
 <% if (!bIsGuest) { %>      
       <TABLE SUMMARY="Top controls and filters" CELLSPACING="2" CELLPADDING="2">
         <TR><TD COLSPAN="4" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
         <TR>
-          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nueva~]"></TD>
-          <TD VALIGN="middle"><A HREF="degree_edit.jsp?gu_workarea=<%=gu_workarea%>" CLASS="linkplain">[~Nueva~]</A></TD>
-          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar~]"></TD>
-          <TD><A HREF="#" onclick="deleteDegrees()" CLASS="linkplain">[~Eliminar~]</A></TD>
+          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
+          <TD VALIGN="middle"><A HREF="degree_edit.jsp?gu_workarea=<%=gu_workarea%>" CLASS="linkplain">New</A></TD>
+          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
+          <TD><A HREF="#" onclick="deleteDegrees()" CLASS="linkplain">Delete</A></TD>
         </TR>
         <TR><TD COLSPAN="4" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       </TABLE>   
 <% } %>
       <TABLE SUMMARY="Degrees" CELLSPACING="1" CELLPADDING="0">
         <TR>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>[~Id.~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>[~Tipo~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>[~T&iacute;tulo~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>Id.</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>Type</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>Title</B></TD>
 <% if (!bIsGuest) { %>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Select All"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select All"></A></TD>
 <% } %>
@@ -191,7 +191,7 @@
 <%        } // next %>
       </TABLE>
       <HR>
-      <CENTER><INPUT TYPE="submit" VALUE="[~Guardar~]" ACCESSKEY="s" CLASS="pushbutton">&nbsp;&nbsp;<INPUT TYPE="button" VALUE="[~Cerrar~]" ACCESSKEY="c" CLASS="closebutton" onclick="window.close()"></CENTER>
+      <CENTER><INPUT TYPE="submit" VALUE="Save" ACCESSKEY="s" CLASS="pushbutton">&nbsp;&nbsp;<INPUT TYPE="button" VALUE="Close" ACCESSKEY="c" CLASS="closebutton" onclick="window.close()"></CENTER>
     </FORM>
 </BODY>
 </HTML>

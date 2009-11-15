@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 
@@ -197,12 +197,12 @@
       var nmc = frm.nm_company.value.toUpperCase();      
 
       if (nmc.length==0) {
-        alert ("[~Introduzca la razón social de la Compañía a buscar~]");
+        alert ("Type legal name of Company to find");
         return false;
       }  
      
       if (hasForbiddenChars(nmc)) {
-	      alert ("[~El nombre de la compañía contiene caracteres no válidos~]");
+	      alert ("Company name contains invalid characters");
 	      return false;
       } else {
         document.location = "company_listing_f.jsp?selected=2&subselected=0&field=nm_legal&find=" + escape(nmc);        
@@ -222,7 +222,7 @@
       }  
       
       if (hasForbiddenChars(nmc)) {
-	      alert ("[~El nombre del Individuo contiene caracteres no válidos~]");
+	      alert ("Contact name contains invalid characters");
 	      return false;
       }
       window.location = "contact_listing_f.jsp?selected=2&subselected=1&field=tx_name&find=" + escape(nmc);
@@ -233,7 +233,7 @@
     function importWAB() {
     
       if (navigator.appName!="Microsoft Internet Explorer") {
-        alert ("[~La importación de contactos solo funciona desde Microsoft Internet Explorer~]");
+        alert ("Windows Address Book import only works from Internet Explorer");
         return false;
       }
       
@@ -245,7 +245,7 @@
     
     function importTXT() {
           
-      var w = window.open("textloader1.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>","textloader","menubar=no,toolbar=no,resizable=yes,scrollbars=yes,status=yes,height=460,width=490");
+      var w = window.open("textloader1.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>","textloader","menubar=no,toolbar=no,resizable=yes,scrollbars=yes,status=yes,height=500,width=500");
       w.focus();
     }
 
@@ -330,7 +330,7 @@
       	        <TR>
                   <TD>
       <% if (bIsGuest) { %>
-                    <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">New Company</A>
+                    <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New Company</A>
       <% } else { %>
                     <A HREF="#" onclick="createCompany();return false" CLASS="linkplain">New Company</A>
       <% } %>
@@ -389,11 +389,11 @@
       	        <TR>
                   <TD>
       <% if (bIsGuest) { %>
-                    <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">New Individual</A>
+                    <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New Individual</A>
       <% } else { %>
                     <A HREF="#" onclick="createContact()" CLASS="linkplain">New Individual</A>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <A HREF="contact_fastedit_f.jsp" CLASS="linkplain">[~Edición R&aacute;pida~]</A>
+                    <A HREF="contact_fastedit_f.jsp" CLASS="linkplain">Fast Edit</A>
       <% } %>
                   </TD>
                   <TD></TD>
@@ -405,7 +405,7 @@
                         <TD><IMG style="display:block" SRC="../images/images/crm/outlookexpress2.gif" WIDTH="20" HEIGHT="20" BORDER="0"></TD>
                         <TD>
       <% if (bIsGuest) { %>
-                          <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">Import Address Book Entries from outllok Express</A>
+                          <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">Import Address Book Entries from outllok Express</A>
       <% } else { %>
                           <A HREF="#" onclick="importWAB()" CLASS="linkplain">Import Address Book Entries from outllok Express</A>
       <% } %>
@@ -415,7 +415,7 @@
                         <TD><IMG style="display:block" SRC="../images/images/crm/textload.gif" WIDTH="19" HEIGHT="18" BORDER="0"></TD>
                         <TD>
       <% if (bIsGuest) { %>
-                          <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">Import contacts from text file</A>
+                          <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">Import contacts from text file</A>
       <% } else { %>
                           <A HREF="#" onclick="importTXT()" CLASS="linkplain">Import contacts from text file</A>
       <% } %>
@@ -425,9 +425,9 @@
                         <TD><IMG style="display:block" SRC="../images/images/crm/vcard.gif" WIDTH="23" HEIGHT="19" BORDER="0"></TD>
                         <TD>
       <% if (bIsGuest) { %>
-                          <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Importar Contactos desde VCard~]</A>
+                          <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">Import contacts from VCard</A>
       <% } else { %>
-                          <A HREF="#" onclick="importVCard()" CLASS="linkplain">[~Importar Contactos desde VCard~]</A>
+                          <A HREF="#" onclick="importVCard()" CLASS="linkplain">Import contacts from VCard</A>
       <% } %>
                         </TD>
                       </TR>
@@ -483,13 +483,13 @@
                     </SELECT>
                   </TD>
                   <TD>
-                    <A HREF="#" onclick="alert('[~La funcionalidad de envío directo está deshabilitada en la versión demostrativa~]')" CLASS="linkplain">Send Mailing</A>
+                    <A HREF="#" onclick="alert('Direct Send is disabled at demostrative version')" CLASS="linkplain">Send Mailing</A>
                   </TD>
       	        </TR>	  
       	        <TR>
                   <TD>
       <% if (bIsGuest) { %>            
-                    <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">New List</A>
+                    <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New List</A>
       <% } else { %>
                     <A HREF="#" onclick="createList();return false" CLASS="linkplain">New List</A>
       <% } %>

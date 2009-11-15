@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataxslt.db.*,com.knowgate.dataobjs.*,com.knowgate.misc.Gadgets,com.knowgate.scheduler.Job" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataxslt.db.*,com.knowgate.dataobjs.*,com.knowgate.misc.Gadgets,com.knowgate.scheduler.Job" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -133,10 +133,10 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
@@ -144,11 +144,13 @@
         var jsInstanceNm;
             
         <%
-          
+          boolean bFirst = true;
           out.write("var jsInstances = new Array(");
             for (int i=0; i<iInstanceCount; i++) {
-              if (oInstances.getShort(8,i)==Job.STATUS_PENDING || oInstances.getShort(8,i)==Job.STATUS_RUNNING) {
-                if (i>0) out.write(","); 
+              if ((iShow==0 && (oInstances.getShort(8,i)==Job.STATUS_PENDING || oInstances.getShort(8,i)==Job.STATUS_RUNNING)) ||
+                  (iShow==1 && (oInstances.getShort(8,i)==Job.STATUS_ABORTED || oInstances.getShort(8,i)==Job.STATUS_FINISHED || oInstances.getShort(8,i)==Job.STATUS_INTERRUPTED)))
+              {
+                if (bFirst) bFirst=false; else out.write(",");
                 out.write("\"" + oInstances.getString(0,i) + "\"");
               }
             }
@@ -196,7 +198,7 @@
 	  var frm = document.forms[0];
 	  var chi = frm.checkeditems;
 	  	  
-	  if (window.confirm("[~Sólo se cancelarán las tareas seleccionadas con estado Pendiente. ¿Está seguro?~]")) {
+	  if (window.confirm("Pending task will be cancelled. Are you sure?")) {
 	  	  
       cac = createXMLHttpRequest();
       if (cac) {
@@ -250,16 +252,49 @@
 	    }
 	    
    	    if (counter>1) {
-	     alert("[~Debe seleccionar sólo una tarea~]");
+	     alert("Must check only one task");
 	     return(false);
 	    }
             window.open("job_delay.jsp?gu_job="+chi.value+"&id_domain=<%=id_domain%>","delay","top=100,left=100,width=320,height=280,menubar=no,toolbar=no,directories=no");
 	}
 
+  // ----------------------------------------------------
+
+	function deleteJobs()
+	{
+	  
+	  var offset = 0;
+	  var counter = 0;
+	  var frm = document.forms[0];
+	  var chi = frm.checkeditems;
+	  
+	  	  	  
+	    for (var i=0;i<jsInstances.length; i++) {
+              while (frm.elements[offset].type!="checkbox") offset++;
+    	      if (frm.elements[offset].checked) {
+    	        counter++;
+                chi.value += (chi.value.length==0 ? "" : ",") + jsInstances[i];
+              }
+              offset++;
+	    } // next()
+	    
+	    
+	    if (counter==0) {
+	     alert("Must select a task");
+	     return(false);
+	    }
+	    
+   	    if (counter>1) {
+	     alert("Must check only one task");
+	     return(false);
+	    }
+	    document.location = "job_delete.jsp?id_command="+getURLParam("id_command")+"&checkeditems="+chi.value+"&selected="+getURLParam("selected")+"&subselected="+getURLParam("subselected");
+	}
+
         // ----------------------------------------------------
         
         function viewJob(id) {
-          window.open("job_modify_f.jsp?gu_job=" + id, "modifyjob_"+ id, "width=600,height=350,menubar=no,toolbar=no,directories=no");          
+          window.open("job_modify_f.jsp?gu_job=" + id, "modifyjob_"+ id, "width=700,height=500,menubar=no,toolbar=no,directories=no,scrollbars=yes");          
         }
 
         // ----------------------------------------------------
@@ -281,7 +316,7 @@
                 scheduler_status = getElementText(sch[0],"status");
                 if (scheduler_status=="running" || scheduler_status=="started" || scheduler_status=="start") {
                   frm.switcher.value = "Stop";
-                  frm.status.value = "[~En ejecución~]";
+                  frm.status.value = "Executing";
                 } else if (scheduler_status=="stop" || scheduler_status=="stopped") {
                   frm.switcher.value = "Start";
                   frm.status.value = "Stopped";
@@ -373,8 +408,15 @@
         <TD VALIGN="middle"></TD>
         <TD><IMG SRC="../images/images/jobs/cancel.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Cancel"></TD>
         <TD><A HREF="javascript:cancelJobs()" CLASS="linkplain">Cancel</A></TD>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/jobs/sandclock.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Retrasar ejecución~]"></TD>
+<% if (iShow==0) { %>        
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/jobs/sandclock.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delay execution"></TD>
         <TD><A HREF="javascript:void(0)" onclick="delayJobs()" CLASS="linkplain">Chage execution date</A></TD>
+<% } else if (iShow==1) { %>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
+        <TD><A HREF="javascript:void(0)" onclick="deleteJobs()" CLASS="linkplain">Delete</A></TD>
+<% } else { %>
+        <TD COLSPAN="2"></TD>
+<% } %>
         <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/refresh.gif" HEIGHT="16" BORDER="0" ALT="Refresh"></TD>
         <TD><A HREF="#" onclick="window.document.location.reload()" CLASS="linkplain">Refresh</A></TD>
       </TR>
@@ -390,18 +432,18 @@
           <TD COLSPAN="5" ALIGN="left">
 <%    
           if (iSkip>0)
-            out.write("            <A HREF=\"job_list.jsp?list_title=:[~Envios~]&id_domain=" + id_domain + (id_command!=null ? "&id_command="+id_command : "") + "&viewonly="+String.valueOf(iShow)+"&skip=" + String.valueOf(iSkip-iMaxRows) + "&orderby=" + sOrderBy + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
+            out.write("            <A HREF=\"job_list.jsp?list_title=:Batches&id_domain=" + id_domain + (id_command!=null ? "&id_command="+id_command : "") + "&viewonly="+String.valueOf(iShow)+"&skip=" + String.valueOf(iSkip-iMaxRows) + "&orderby=" + sOrderBy + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
     
           if (!oInstances.eof())
-            out.write("            <A HREF=\"job_list.jsp?list_title=:[~Envios~]&id_domain=" + id_domain + (id_command!=null ? "&id_command="+id_command : "") + "&viewonly="+String.valueOf(iShow)+"&skip=" + String.valueOf(iSkip+iMaxRows) + "&orderby=" + sOrderBy + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
+            out.write("            <A HREF=\"job_list.jsp?list_title=:Batches&id_domain=" + id_domain + (id_command!=null ? "&id_command="+id_command : "") + "&viewonly="+String.valueOf(iShow)+"&skip=" + String.valueOf(iSkip+iMaxRows) + "&orderby=" + sOrderBy + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
 %>
           </TD>
         </TR>
         <TR>
           <TD CLASS="tableheader"  BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;&nbsp;<B>Task</B></TD>
           <TD CLASS="tableheader" WIDTH="90px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>Status</B></TD>
-          <TD CLASS="tableheader" WIDTH="110px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(6);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==6 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>[~Creación~]</B></TD>
-          <TD CLASS="tableheader" WIDTH="160px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(5);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>[~Ejecución~]</B></TD>
+          <TD CLASS="tableheader" WIDTH="110px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(6);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==6 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>New</B></TD>
+          <TD CLASS="tableheader" WIDTH="160px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(5);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>Execution</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;</TD>
 <%
 	  String sStrip;
@@ -416,8 +458,10 @@
               <TD ALIGN="center" VALIGN="CENTER" CLASS="strip<% out.write(sStrip); %>">&nbsp;<%=Gadgets.split(oInstances.getStringNull(5,i,"")," ")[0]%></TD>
               <TD VALIGN="CENTER" CLASS="strip<% out.write(sStrip); %>">&nbsp;<%=oInstances.getStringNull(4,i,"").equals("")?"As soon as possible":Gadgets.split(oInstances.getString(4,i)," ")[0]%></TD>
               <TD VALIGN="CENTER" CLASS="strip<% out.write(sStrip); %>">
-<% if (oInstances.getShort(8,i)==Job.STATUS_PENDING || oInstances.getShort(8,i)==Job.STATUS_RUNNING) {
+<% if (iShow==0 && (oInstances.getShort(8,i)==Job.STATUS_PENDING || oInstances.getShort(8,i)==Job.STATUS_RUNNING)) {
      out.write("                <INPUT TYPE=\"checkbox\" NAME=\"chk-" + oInstances.getStringNull(0,i,"") +"\" ID=\"chk-" + oInstances.getStringNull(0,i,"") + "\">");
+   } else if (iShow==1 && (oInstances.getShort(8,i)==Job.STATUS_FINISHED || oInstances.getShort(8,i)==Job.STATUS_ABORTED || oInstances.getShort(8,i)==Job.STATUS_INTERRUPTED)) {
+     out.write("                <INPUT TYPE=\"checkbox\" NAME=\"chk-" + oInstances.getStringNull(0,i,"") +"\" ID=\"chk-" + oInstances.getStringNull(0,i,"") + "\">");   
    }
 %>
               </TD>

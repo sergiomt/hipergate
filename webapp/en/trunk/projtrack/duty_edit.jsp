@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
 <%  response.setHeader("Cache-Control","no-cache");response.setHeader("Pragma","no-cache"); response.setIntHeader("Expires", 0); %>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%
@@ -149,8 +149,8 @@
       // ------------------------------------------------------
       
       function deleteDuty() {
-        if (confirm("[~¿Está seguro de que desea eliminar esta tarea?~]"))
-          window.location.href = "../common/dutyedit_delete.jsp?chkbox0=<%=oDuty.get(DB.gu_duty)%>&nu_duties=1";
+        if (confirm("Are you sure you want to delete this duty?"))
+          window.location.href = "dutyedit_delete.jsp?chkbox0=<%=oDuty.get(DB.gu_duty)%>&nu_duties=1";
       }
                  
       // ------------------------------------------------------
@@ -180,7 +180,7 @@
 	  return false;
 	}
 	else if (npj>1) {
-	  alert ("[~Debe seleccionar un único proyecto~]");
+	  alert ("Must select only one Project");
 	  return false;
 	}	
 	else (npj==1)
@@ -202,21 +202,21 @@
 	  frm.tx_status.value = 'FINISHED';
 
 	if (!isIntValue(frm.pr_cost.value)) {
-	  alert ("[~El coste debe ser una cantidad numérica entera~]");
+	  alert ("Cost must be an integer quantity");
 	  return false;
 	}
 			
 	str = frm.dt_start.value;
 	
 	if (str.length>0 && !isDate(str, "d")) {
-	  alert ("[~La fecha de inicio no es válida~]");
+	  alert ("Start date is not valid");
 	  return false;
 	}		
 	
 	str = frm.dt_end.value;
 
 	if (str.length>0 && !isDate(str, "d")) {
-	  alert ("[~La fecha de fin no es válida~]");
+	  alert ("End date is not valid");
 	  return false;
 	}
 
@@ -354,7 +354,7 @@
 				  </select>
 				  &nbsp;&nbsp;
 		  &nbsp;&nbsp;&nbsp;&nbsp;
-		  <FONT CLASS="formplain">[~Coste ( <b>¤</b> )~]</FONT>
+		  <FONT CLASS="formplain">Cost (¤)</FONT>
 		  &nbsp;
                  <INPUT TYPE="text" MAXLENGTH="10" SIZE="9" NAME="pr_cost" onkeypress="return acceptOnlyNumbers();" VALUE="<% if (null!=oDuty.get(DB.pr_cost)) out.write(floor(oDuty.getFloat(DB.pr_cost))); %>">&nbsp;&nbsp;
                 </TD>
@@ -424,13 +424,13 @@
                 <TD>
                   <BR>
 <% if (bIsGuest) { %>
-                  <INPUT TYPE="button" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="Save" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
+                  <INPUT TYPE="button" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="Save" onclick="alert ('Your credential level as Guest does not allow you to perform this action')">
 <% } else { %>
                   <INPUT TYPE="submit" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="Save">
 <% } %>
                   &nbsp;&nbsp;&nbsp;
 <% if (bIsGuest) { %>
-                  <INPUT TYPE="button" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="Delete" onClick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
+                  <INPUT TYPE="button" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="Delete" onClick="alert ('Your credential level as Guest does not allow you to perform this action')">
 <% } else { %>
                   <INPUT TYPE="button" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="Delete" onClick="javascript:deleteDuty()">
 <% } %>

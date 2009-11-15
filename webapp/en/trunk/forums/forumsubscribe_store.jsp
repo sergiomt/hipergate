@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.forums.Subscription" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.forums.Subscription" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%
 /*
   Copyright (C) 2003-2008  Know Gate S.L. All rights reserved.
@@ -55,18 +55,14 @@
     oConn.close("forumsubscribe_store");
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("forumsubscribe_store");
-      }
+    disposeConnection(oConn,"forumsubscribe_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }
   catch (NumberFormatException e) {
     if (oConn!=null)
       if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
+        if (!oConn.getAutoCommit()) oConn.rollback();
         oConn.close("...");      
       }
     oConn = null;

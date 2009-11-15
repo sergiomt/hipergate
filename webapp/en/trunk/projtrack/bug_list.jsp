@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.workareas.WorkArea,com.knowgate.dataobjs.*,com.knowgate.projtrack.*,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.workareas.WorkArea,com.knowgate.dataobjs.*,com.knowgate.projtrack.*,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%  response.setHeader("Cache-Control","no-cache");response.setHeader("Pragma","no-cache"); response.setIntHeader("Expires", 0); %>
@@ -307,7 +307,7 @@
       // ------------------------------------------------------
       
       function editBug(guBug) {
-        window.open("bug_edit.jsp?gu_bug=" + guBug, guBug, "width=780,height=480");
+        window.open("bug_edit.jsp?gu_bug=" + guBug, guBug, "width=790,height=580");
       }
 
       // ------------------------------------------------------
@@ -707,7 +707,7 @@
       <TR>
         <TD COLSPAN="3">
           <FONT CLASS="textplain">Sort by&nbsp;&nbsp;&nbsp;</FONT>
-          <INPUT TYPE="radio" NAME="orderby" VALUE="2" <%=(sOrderBy.equals("2") ? "CHECKED" : "")%>>&nbsp;<FONT CLASS="textplain">[~Nº Incidencia~]</FONT>
+          <INPUT TYPE="radio" NAME="orderby" VALUE="2" <%=(sOrderBy.equals("2") ? "CHECKED" : "")%>>&nbsp;<FONT CLASS="textplain">Incident Num</FONT>
           &nbsp;&nbsp;&nbsp;
           <INPUT TYPE="radio" NAME="orderby" VALUE="3" <%=(sOrderBy.equals("3") ? "CHECKED" : "")%>>&nbsp;<FONT CLASS="textplain">Priority</FONT>
           &nbsp;&nbsp;&nbsp;

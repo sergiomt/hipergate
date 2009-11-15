@@ -1,4 +1,4 @@
-﻿<%@ page import="java.math.BigDecimal,java.net.URLDecoder,javax.mail.internet.MimeUtility,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.Category,com.knowgate.hipermail.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.math.BigDecimal,java.net.URLDecoder,javax.mail.internet.MimeUtility,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.Category,com.knowgate.hipermail.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="fldr_combo.jspf" %><%@ include file="mail_env.jspf" %><%
 /*
   Copyright (C) 2004  Know Gate S.L. All rights reserved.
@@ -131,7 +131,7 @@
           sFolderLabel = "Bulk Mail";
 					nm_folder = "spam";
         } else if (gu_folder.equals(sReceipts)) {
-        	sFolderLabel = "[~Acuses de recibo~]";
+        	sFolderLabel = "Read receipts";
 					nm_folder = "receipts";
 				} else {
 					nm_folder = oFolder.getStringNull(DB.nm_category, "unnamed");
@@ -171,13 +171,15 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/layer.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/findit.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/dynapi.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
-    DynAPI.setLibraryPath("../javascript/dynapi/lib/");
-    DynAPI.include("dynapi.api.*");
+    dynapi.library.setPath('../javascript/dynapi3/');
+    dynapi.library.include('dynapi.api.DynLayer');
     var menuLayer;
-    DynAPI.onLoad = function() { 
+    dynapi.onLoad(init);
+    function init() {
+ 
       menuLayer = new DynLayer();
       menuLayer.setWidth(160);
       menuLayer.setHTML(rightMenuHTML);
@@ -185,8 +187,8 @@
     }
     //-->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/rightmenu.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/floatdiv.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/floatdiv.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/activewidgets/lib/grid.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
@@ -289,7 +291,7 @@
 	
 	function deleteSingleMessage(num, id, guid) {
 	  	  
-	  if (window.confirm("[~Está seguro de que desea eliminar el mensaje?~]")) {
+	  if (window.confirm("Are you sure that you want to delete message?")) {
 
 	    var frm = document.forms[0];
 	    frm.guids.value = (guid==null ? "null" : guid);
@@ -317,7 +319,7 @@
 	
 	function deleteMessages() {
 	  	  
-	  if (window.confirm("[~Está seguro de que desea eliminar los mensajes seleccionados~]")) {
+	  if (window.confirm("Are you sure that you want to delete messages:")) {
 
 	    var frm = document.forms[0];
 	    var uid = frm.guids;
@@ -389,9 +391,9 @@
 	  }
 	  	  
 	  if (action=="move")
-	    msg = "[~Está seguro de que desea mover los mensajes seleccionados?~]";
+	    msg = "Are you sure that you want to move selected messages?";
 	  else
-	    msg = "[~Está seguro de que desea copiar los mensajes seleccionados?~]";
+	    msg = "Are you sure that you want to copy selected messages?";
 	  
 	  if (window.confirm(msg)) {
 
@@ -524,7 +526,7 @@
 <% if (gu_folder!=null) {
      if (gu_folder.equals(sSent)) { %>
         addMenuSeparator();
-        addMenuOption("[~Seguimiento~]","viewFollowUpStats(jsMsgGuid)",0);
+        addMenuOption("Followup","viewFollowUpStats(jsMsgGuid)",0);
 <% } } %>
       //-->
     </SCRIPT>

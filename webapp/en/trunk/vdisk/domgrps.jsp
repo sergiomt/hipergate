@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <%
 /*
@@ -93,7 +93,9 @@
   }
   catch (SQLException e) {  
     oGrps = null;
-    oConn.close("domgrps");
+    if (oConn!=null)
+      if (!oConn.isClosed())
+        oConn.close("domgrps");
     oConn = null;  
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getMessage() + "&resume=../blank.htm"));  
   }  
@@ -165,7 +167,7 @@
 	  var frm = document.forms[0];
 	  var chi = frm.checkeditems;
 
-	  if (confirm("[~¿Está seguro de que desea eliminar los grupos seleccionados?~]")) {
+	  if (confirm("Are you sure you want to delete selected groups?")) {
 	  	  
 	    chi.value = "";
 	  	  
@@ -190,7 +192,7 @@
 	  var fnd = document.forms[0].find.value;
 	  
 	  if (hasForbiddenChars(fnd))
-	    alert ("[~El nombre del grupo a buscar contiene caracteres no válidos~]");
+	    alert ("Group name contains invalid characters");
 	  else	
             window.location = "domgrps.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&maxrows=10&show=groups&skip=0&find=" + escape(fnd);
 	}

@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.projtrack.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.projtrack.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/projtrack.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%
 
@@ -214,7 +214,7 @@
       
       function deleteDuties() {
         var frm = document.forms[0];
-        if (confirm("[~¿Está seguro de que desea eliminar las tareas seleccionadas?~]")) {
+        if (confirm("Are you sure you want to delete selected duties?")) {
           frm.action = "dutyedit_delete.jsp";
           frm.submit();
         } // fi(confirm)
@@ -480,7 +480,7 @@
         <TD COLSPAN="<%=nCols%>" ALIGN="left">
           <IMG SRC="../images/images/new16x16.gif" BORDER="0">&nbsp;
 <% if (bIsGuest) { %>
-          <A HREF="#" onClick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">New Duty</A>
+          <A HREF="#" onClick="alert ('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New Duty</A>
 <% } else { %>
           <A HREF="#" onClick="window.open('duty_new.jsp', 'newduty', 'menubar=no,toolbar=no,width=780,height=' + (screen.height<=600 ? '520' : '640'))" CLASS="linkplain">New Duty</A>
 <% } %>
@@ -489,7 +489,7 @@
 	  &nbsp;&nbsp;&nbsp;&nbsp;
           <IMG SRC="../images/images/papelera.gif" BORDER="0">&nbsp;
 <% if (bIsGuest) { %>
-          <A HREF="#" onClick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">Delete selected duties</A>
+          <A HREF="#" onClick="alert ('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">Delete selected duties</A>
 <% } else { %>
           <A HREF="javascript:deleteDuties()" CLASS="linkplain">Delete selected duties</A>
 <% } %>
@@ -499,7 +499,7 @@
       <TR>
         <TD COLSPAN="<%=nCols%>" ALIGN="left">
           <IMG SRC="../images/images/excel16.gif" BORDER="0">&nbsp;
-          <A HREF="prj_todo_xls.jsp" TARGET="_blank" CLASS="linkplain">[~Listado de tareas abiertas~]</A>
+          <A HREF="prj_todo_xls.jsp" TARGET="_blank" CLASS="linkplain">List of open duties</A>
         </TD>
       </TR>
 <% } %>

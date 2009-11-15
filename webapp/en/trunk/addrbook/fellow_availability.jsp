@@ -1,4 +1,4 @@
-﻿<%@ page import="java.text.SimpleDateFormat,java.io.IOException,java.net.URLDecoder,com.knowgate.jdc.JDCConnection,com.knowgate.addrbook.Fellow" language="java" session="false" contentType="text/plain;charset=UTF-8" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%
+<%@ page import="java.text.SimpleDateFormat,java.io.IOException,java.net.URLDecoder,com.knowgate.jdc.JDCConnection,com.knowgate.addrbook.Fellow" language="java" session="false" contentType="text/plain;charset=UTF-8" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%
 
   JDCConnection oConn = null;  
   SimpleDateFormat oDateHourMin = new SimpleDateFormat("yyyy-MM-dd HH:mm");

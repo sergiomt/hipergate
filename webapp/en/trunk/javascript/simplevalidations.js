@@ -5,7 +5,7 @@
 //---------------------------------------------------------
 
 function hasForbiddenChars(str) {
-  return (str.indexOf("'")>=0 || str.indexOf('"')>=0 || str.indexOf("*")>=0 || str.indexOf("?")>=0 || str.indexOf("&")>=0 || str.indexOf("?")>=0 || str.indexOf(";")>=0 || str.indexOf("`")>=0 || str.indexOf("/")>=0 || str.indexOf("\\")>=0)
+  return (str.indexOf("'")>=0 || str.indexOf('"')>=0 || str.indexOf("|")>=0 || str.indexOf("*")>=0 || str.indexOf("?")>=0 || str.indexOf("&")>=0 || str.indexOf("?")>=0 || str.indexOf(";")>=0 || str.indexOf("`")>=0 || str.indexOf("/")>=0 || str.indexOf("\\")>=0)
 } // hasForbiddenChars
 
 //---------------------------------------------------------
@@ -335,11 +335,11 @@ function calcStrength(p) {
 	}
 
 	// SPECIAL CHAR
-	if (p.match(/[!,@,#,$,%,^,&,*,?,_,~]/)) {           // [verified] at least one special character
+	if (p.match(/[!,@,#,$,%,^,&,_]/)) {           // [verified] at least one special character
 		intScore += 5;
 	}
 	// [verified] at least two special characters
-	if (p.match(/.*[!,@,#,$,%,^,&,*,?,_,~].*[!,@,#,$,%,^,&,*,?,_,~]/)) {
+	if (p.match(/.*[!,@,#,$,%,^,&,_].*[!,@,#,$,%,^,&,_]/)) {
 		intScore += 5;
 	}
 
@@ -351,7 +351,7 @@ function calcStrength(p) {
 		intScore += 2;
 	}
 	// [verified] letters, numbers, and special characters
-	if (p.match(/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!,@,#,$,%,^,&,*,?,_,~])/)) {
+	if (p.match(/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!,@,#,$,%,^,&,_])/)) {
 		intScore += 2;
 	}
 

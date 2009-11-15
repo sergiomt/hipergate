@@ -1,4 +1,4 @@
-﻿<%@ page import="java.math.BigDecimal,java.text.SimpleDateFormat,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBCommand,com.knowgate.misc.Gadgets,com.knowgate.acl.*,com.knowgate.crm.Contact,com.knowgate.crm.Company,com.knowgate.training.AcademicCourseBooking,com.knowgate.hipergate.Invoice,com.knowgate.hipergate.InvoicePayment,com.knowgate.hipermail.SendMail" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.math.BigDecimal,java.text.SimpleDateFormat,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBCommand,com.knowgate.misc.Gadgets,com.knowgate.acl.*,com.knowgate.crm.Contact,com.knowgate.crm.Company,com.knowgate.training.AcademicCourseBooking,com.knowgate.hipergate.Invoice,com.knowgate.hipergate.InvoicePayment,com.knowgate.hipermail.SendMail" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003-2006  Know Gate S.L. All rights reserved.
@@ -152,7 +152,7 @@
               } // fi (bCreatePayments)
             } else {
             	Contact oCntc = new Contact(oConn, aInsertList[c]);
-              throw new SQLException("[~Ya existe otra factura previamente generada para~] "+oCntc.getStringNull(DB.tx_name,"")+" "+oCntc.getStringNull(DB.tx_surname,"")+" [~número de factura~] "+String.valueOf(oInvc.getInt(DB.pg_invoice)));
+              throw new SQLException("Another previous invoice already exists "+oCntc.getStringNull(DB.tx_name,"")+" "+oCntc.getStringNull(DB.tx_surname,"")+" Invoice Number "+String.valueOf(oInvc.getInt(DB.pg_invoice)));
             }
           }
         }

@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.LinkedList,java.util.ListIterator,java.net.URLDecoder,java.lang.StringBuffer,java.sql.SQLException,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.LinkedList,java.util.ListIterator,java.net.URLDecoder,java.lang.StringBuffer,java.sql.SQLException,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 
 /*
@@ -121,7 +121,7 @@
   <!-- +-----------------------+ -->
 <HTML LANG="<% out.write(sLanguage); %>">
   <HEAD>
-    <TITLE>hipergate :: [~Resultados de la búsqueda~]</TITLE>
+    <TITLE>hipergate :: Search Results</TITLE>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
   </HEAD>

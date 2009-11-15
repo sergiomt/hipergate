@@ -1,4 +1,4 @@
-﻿<%@ page language="java" import="com.knowgate.misc.Gadgets" session="false" contentType="text/html;charset=UTF-8" %><% response.addHeader ("cache-control", "private"); %>
+<%@ page language="java" import="com.knowgate.misc.Gadgets" session="false" contentType="text/html;charset=UTF-8" %><% response.addHeader ("cache-control", "private"); %>
 <%
   String nm_action = request.getParameter("nm_action");
   String gu_folder = request.getParameter("gu_folder");
@@ -6,11 +6,11 @@
   String sBackUrl = "../hipermail/fldr_opts.jsp?gu_folder="+gu_folder+"&nm_folder="+Gadgets.URLEncode(nm_folder);
   String sConfirm;
   if (nm_action.equals("mbox_compact.jsp"))
-    sConfirm = "[~¿Esta seguro de que desea compactar la carpeta?~]";
+    sConfirm = "Are you sure that you want to compact folder?";
   else if (nm_action.equals("mbox_wipe.jsp"))
-    sConfirm = "[~¿Esta seguro de que desea vaciar completamente la carpeta?~]";
+    sConfirm = "Are you sure that you want to empty folder?";
   else
-    sConfirm = "[~¿Esta seguro de que desea re-indexar la carpeta?~]";
+    sConfirm = "Are you sure that you want to re-index folder?";
 %>
 <HTML>
 <HEAD>

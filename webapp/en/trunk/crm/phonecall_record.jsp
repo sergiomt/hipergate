@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.Date,java.util.HashMap,java.util.ListIterator,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.DBLanguages,com.knowgate.crm.Contact,com.knowgate.misc.Gadgets,com.knowgate.crm.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Date,java.util.HashMap,java.util.ListIterator,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.DBLanguages,com.knowgate.crm.Contact,com.knowgate.misc.Gadgets,com.knowgate.crm.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
 /*
@@ -92,7 +92,7 @@
 	    } else {
         oConn.close("phonecall_record");
         if (com.knowgate.debug.DebugFile.trace) com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "", "");
-        response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Sin datos encontrados~]&desc=[~No existe ninguna llamada pendiente de realizar~]&resume=_close"));
+        response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=No data found&desc=There are no pending calls&resume=_close"));
 	    	return;
 	    }
 	    nm_campaign = nullif(DBCommand.queryStr(oConn, "SELECT "+DB.nm_campaign+" FROM "+DB.k_campaigns+" WHERE "+DB.gu_campaign+"='"+gu_campaign+"'"));
@@ -237,7 +237,7 @@
 	      }
 	        
 			  if (!isDate(frm.tx_start.value,"d")) {
-	  	    alert ("[~La fecha de la llamada no es válida~]");
+	  	    alert ("The date for the call is not valid");
 	        frm.tx_start.focus();
 	        return false;
 			  }	
@@ -261,7 +261,7 @@
         }
 
         if (frm.tx_phone.value.length==0) {
-	  	    alert ("[~Debe indicar el número al que se realizó la llamada~]");
+	  	    alert ("The number that was called is required");
 	        return false;
 	      }
         
@@ -305,12 +305,12 @@
         <TABLE WIDTH="100%" CLASS="formfront">
 <% if (nm_campaign.length()>0) { %>
           <TR>
-            <TD ALIGN="right" WIDTH="90" CLASS="formplain">[~Campaña:~]</TD>
+            <TD ALIGN="right" WIDTH="90" CLASS="formplain">Campaign</TD>
             <TD ALIGN="left" WIDTH="470" CLASS="formplain"><%=nm_campaign%></TD>
 	        </TR>
 <% } %>
           <TR>
-            <TD ALIGN="right" WIDTH="90" CLASS="formplain">[~Objetivo:~]</TD>
+            <TD ALIGN="right" WIDTH="90" CLASS="formplain">Objective</TD>
             <TD ALIGN="left" WIDTH="470" CLASS="formplain"><%=oOprt.getStringNull(DB.tl_oportunity,"")%></TD>
 	        </TR>
           <TR>

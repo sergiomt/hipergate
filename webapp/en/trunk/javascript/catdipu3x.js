@@ -1,203 +1,437 @@
+/******************************************************************************
+* treeMenuCode.js                                                             *
+*                                                                             *
+* Copyright 1999 by Mike Hall.                                                *
+* Web address: http://www.brainjar.com                                        *
+* Last update: February 23, 2000                                              *
+*                                                                             *
+* Creates an expanding and collapsing menu with files and folders in a child  *
+* frame.                                                                      *
+******************************************************************************/
 
-    var g_cdoc = parent.catadmin;
-    var g_cexe = parent.catexec;
-  
-    // event
-    var g_event;
-    var g_sourceURI;
-    var g_source;
-    var g_destination;
-    var g_parent;
-    var g_defaultparent;
-    var g_text;
-    var g_location;
+//----------------------------------------------------------------------------
+// Define the TreeMenuItem object.
+//----------------------------------------------------------------------------
 
-    var id_category = "";
-    var id_parent_category = "";    
-    var tr_category = "";
+// Global index variable.
 
-    // ----------------------------------------------------------------
-    
-    function expandDipuTree(dipuapplet, base, category) {
-      var xptr = "#xpointer(has/*/haslink/link/hasdestination/target/s)";
-      var ptrs = diputree.lookupAll(base, xptr, ",").split(",");
-      var catn;
-      var catg;
-      var prnt;
-      var stat;
-      
-      for (var p=0; p<ptrs.length; p++) {
-        catg = dipuapplet.getValue(ptrs[p]);
-        if ((category==catg) || (("#"+category)==catg)) {          
-          prnt = dipuapplet.lookup(base,"#xpointer(has/*[" + (p+1) + "])");	                  
+var treeMenuIndex = 0;
 
-          dipuapplet.unbindAll(prnt,"#xpointer(has/*)");
-	  
-            window.status = "Cargando categorías...";
-            dipuapplet.loadFromURI (prnt, "pickchilds.jsp?Skin=" + getCookie("skin") + "&Lang=" + getUserLanguage() + "&Parent=" + catg + "&Label=" + escape("cerdito"));
-            window.status = "";
-            
-          
-        } // fi()
-      } // next            
-    } // expandDipuTree()
+// Constructor.
 
-    // ----------------------------------------------------------------
-    
-    function handleDipuEvent(dipuapplet) {    
-      
-      // event
-      g_event = dipuapplet.lookup ("#/1", "#xpointer(hasevent/*)");
-    
-      // source
-      g_sourceURI = dipuapplet.lookup(g_event,"#xpointer(hassource/uri/s)");
-      g_source = diputree.lookup("#/1", dipuapplet.getValue(g_sourceURI));
-      
-      // destination category identifier
-      g_destination = dipuapplet.lookup(g_source,"#xpointer(haslink/link/hasdestination/target/s)");
-      
-      if (g_source.length>7)
-        g_parent = dipuapplet.lookup(g_source.substr(0,g_source.length-4),"#xpointer(haslink/link/hasdestination/target/s)");
-      else
-        g_parent = dipuapplet.lookup(g_source.substr(0,g_source.length),"#xpointer(haslink/link/hasdestination/target/s)");
-        
-      // category text
-      g_text = dipuapplet.lookup(g_source,"#xpointer(lt)");
+function TreeMenuItem(text, url, clck, icon) {
 
-      g_location = dipuapplet.lookup(g_event,"#xpointer(haslocation/*)");      
-	
-      id_category = diputree.getValue(g_destination);       
-      if (id_category.charCodeAt(0)==35) id_category = id_category.substr(1);
+  this.text = text;
 
-      tr_category = diputree.getValue(g_text);
-      
-      if (g_parent.length>0) {
-        id_parent_category = diputree.getValue(g_parent);
-        if (id_parent_category.charCodeAt(0)==35) id_parent_category = id_parent_category.substr(1);
-      }
-      else
-        id_parent_category = "";
-        
-    } // handleDipuEvent()
+  if (url)
+    this.url = url;
+  else
+    this.url = "";
+  if (clck)
+    this.clck = clck;
+  else
+    this.clck = "";
+  if (icon)
+    this.icon = icon;
+  else
+    this.icon = "";
 
-    // ----------------------------------------------------------------
-    
-    function dipuClick() {
-       var diputree = window.document.diputree;
-       
-       if (navigator.appName=="Microsoft Internet Explorer")
-         window.document.body.style.cursor = "wait";
-       
-       handleDipuEvent(diputree);
-                         
-       // solo cargar los hijos cuando se pincha en el handle 
+  this.submenu = null;
+  this.index = treeMenuIndex++;
+  this.makeSubmenu = TreeMenuMakeSubmenu;
+}
 
-       if ("handle"==diputree.getName(g_location)) {      
+// Methods.
 
-	 // handle state
-         var state = diputree.lookup(g_source,"#xpointer(hasstate)");
-	 	 
-	 if ("closed"==diputree.getName(state+"/1")) {
-           
-           // si el id de la categoria empieza por una almohadilla
-           // entonces es que sus hijos ya han sido cargados
-           
-           if (35!=id_category.charCodeAt(0)) {
-             window.status = "Cargando categorías...";
-             diputree.loadFromURI (g_source, "pickchilds.jsp?Skin=" + getCookie("skin") + "&Lang=" + getUserLanguage() + "&Parent=" + id_category + "&Label=" + escape(tr_category));
-             window.status = "";
-             
-             g_destination = diputree.lookup(g_source,"#xpointer(haslink/link/hasdestination/target/s)");
-             diputree.setValue(g_destination,"#"+id_category); 
-           } // endif (loaded)
-           
-         } // endif (closed)
-       }      
-       else // Mostrar la categoría seleccionada actualmente en la textbox bajo el menu
-         document.forms[0].catname.value = tr_category;
-       // endif (handle) 
+function TreeMenuMakeSubmenu(menu) {
 
-       if (navigator.appName=="Microsoft Internet Explorer")
-         window.document.body.style.cursor = "auto";
+  this.submenu = menu;
+}
 
-       // g_cdoc.document.location = "catprods.jsp?id_category=" + (35!=id_category.charCodeAt(0) ? id_category : id_category.substr(1)) + "&tr_category=" + escape(tr_category);             
-    } // dipuClick()         
+//----------------------------------------------------------------------------
+// Define the TreeMenu object.
+//----------------------------------------------------------------------------
 
-    // ----------------------------------------------------------------
-        
-    function createCategory() {
-      var diputree = window.document.diputree;
-                    
-      if (diputree.getValue(g_destination).length==0 && g_defaultparent.length==0)
-	alert ("[~Debe seleccionar primero una categoria padre para poder crear otra nueva categoria.~]");        
-      else {
-        if (id_parent_category.length==0 && g_defaultparent.length==0) {
-          alert ("[~No esta permitido crear categorias raiz~]");
-      	  return false;
-      	}
-      	
-      	if (id_parent_category.length==0) {
-          self.open ("catedit.jsp?id_domain=" + getCookie("domainid") + "&id_parent_cat=" + g_defaultparent, "newcategory", "directories=no,toolbar=no,menubar=no,width=480,height=420");
-      	} else {
-          if (id_category.charCodeAt(0)==35)
-            self.open ("catedit.jsp?id_domain=" + getCookie("domainid") + "&id_parent_cat=" + id_category.substr(1), "newcategory", "directories=no,toolbar=no,menubar=no,width=480,height=420");
-          else
-            self.open ("catedit.jsp?id_domain=" + getCookie("domainid") + "&id_parent_cat=" + id_category, "newcategory", "directories=no,toolbar=no,menubar=no,width=480,height=420");
-        }
-      }
-    } // createCategory()
+// Constructor.
 
-    // ----------------------------------------------------------------
+function TreeMenu() {
 
-    function modifyCategory() {
-      var diputree = window.document.diputree;
-            	
-      if (id_category.length==0) {
-        alert ("[~Debe seleccionar una categoría en el árbol antes de poder editarla~]");
-      } else {
-        var id_cat = (id_category.charCodeAt(0)==35 ? id_category.substr(1) : id_category);
-        var id_par = (id_parent_category.charCodeAt(0)==35 ? id_parent_category.substr(1) : id_parent_category);
-          self.open ("catedit.jsp?id_domain=" + getCookie("domainid") + "&id_category=" + id_cat + "&id_parent_cat=" + id_par, "", "directories=no,toolbar=no,menubar=no,width=480,height=460");
-      }
-    } // modifyCategory()
+  this.items = new Array();
+  this.addItem = treeMenuAddItem;
+}
 
-    // ----------------------------------------------------------------
+// Methods.
 
-    function deleteCategory() {
-      var diputree = window.document.diputree;
+function treeMenuAddItem(item) {
 
-      if (id_category.length==0) {
-        alert ("[~Para eliminar una Categoria debe seleccionarla primero en el arbol de navegacion~]");
-      } else {                   
-        if (id_parent_category.length==0 && g_defaultparent.length==0) {
-	  alert ("No esta permitido eliminar categorias raiz");	  
-        } else if (window.confirm("[~Esta seguro de que desea eliminar la categoria seleccionada?~]")) {
-          if (id_category.charCodeAt(0)==35)
-            self.open ("catedit_del.jsp?checkeditems=" + id_category.substr(1), "", "directories=no,toolbar=no,menubar=no,width=400,height=300");
-          else
-            self.open ("catedit_del.jsp?checkeditems=" + id_category, "", "directories=no,toolbar=no,menubar=no,width=400,height=300");
-        }
-      }
-    } // deleteCategory()
-      
-    // ----------------------------------------------------------------
-    
-    function showFiles () {
-      var frm = document.forms[0];
-      var cad = window.parent.parent.catadmin;
-      
-      if (frm.catname.value.length>0)     
-        cad.location = "catprods.jsp?id_category=" + id_category + "&tr_category=" + escape(frm.catname.value);
-      } // showFiles()
+  this.items[this.items.length] = item;
+}
 
-    // --------------------------------------------------------
-    
-    function searchFile () {
-      var cad = window.parent.parent.catadmin;
-      var sought = window.prompt("[~Introduzca el nombre de archivo, enlace o categoría a buscar~]","");
-      
-      if (null!=sought)
-        if (sought.length>0)
-          cad.location = "catfind.jsp?tx_sought=" + escape(sought);
+//----------------------------------------------------------------------------
+// Global variables used in drawing the menu.
+//----------------------------------------------------------------------------
+
+var treeMenuDocument;       // Handle to the menu frame document.
+var treeMenuWidth;          // Menu width in pixels.
+var treeMenuExpand;         // Array created from first cookie.
+var treeMenuSelected;       // Index of selected menu item from other cookie.
+var treeMenuSelectedFound;  // Indicates if we've displayed the selected item.
+var treeMenuScrollX;        // Amount to scroll the window right, if needed.
+var treeMenuScrollY;        // Amount to scroll the window down, if needed.
+var treeMenuLastItem;       // Flag indicating if we are on a menu's last item.
+var treeMenuDepth;          // Keeps track the current menu level.
+var treeMenuBars;           // Keeps track of image placement from row to row.
+
+//----------------------------------------------------------------------------
+// This function rewrites the menu document to display the menu.
+//----------------------------------------------------------------------------
+
+function treeMenuDisplay() {
+
+  var i, cookie;
+
+  // Check for cookies with the menu state data. If not found, or if the menu
+  // state has not been set, initialize it.
+
+  cookie = getCookie(treeMenuName);
+  if (!cookie) {
+    if (!treeMenuExpand) {
+      treeMenuExpand = new Array();
+      for (i = 0; i < treeMenuIndex; i++)
+        treeMenuExpand[i] = 0;
+      treeMenuSelected = -1;
     }
+  }
+  else {
+    treeMenuExpand = cookie.split(",");
+    cookie = getCookie(treeMenuName + "-selected");
     
+    /* Selección por defecto al entrar deshabilitada
+    if (!cookie)
+      treeMenuSelected = -1;
+    else
+      treeMenuSelected = cookie;
+    */
+  }
+
+  // Set up reference to the menu document.
+
+  
+  if (treeMenuFrame.document)
+    treeMenuDocument = treeMenuFrame.document;
+  else
+    treeMenuDocument = treeMenuFrame.contentDocument;
+
+  // Set global variables used to draw the menu.
+
+  treeMenuDepth = 0;
+  treeMenuBars = new Array();
+
+  // Intialize scrolling data.
+
+  treeMenuSelectedFound = false;
+  treeMenuScrollX = 36;
+  treeMenuScrollY = 18;
+
+  // Draw the menu.
+
+  if (document.images)
+    treeMenuDocument.open("text/html", "replace");
+  else
+    treeMenuDocument.open("text/html");
+  treeMenuDocument.writeln('<head>');
+  treeMenuDocument.writeln('<title>' + treeMenuRoot + '</title>');
+  treeMenuDocument.writeln('<style type="text/css">a {text-decoration:none;}</style>');
+  treeMenuDocument.writeln('</head>');
+  treeMenuDocument.writeln('<body background="' + treeMenuBackground + '" bgcolor="' + treeMenuBgColor + '" text="' + treeMenuFgColor + '" link="' + treeMenuFgColor + '" alink="' + treeMenuFgColor + '" vlink="' + treeMenuFgColor + '" onLoad="if (parent.catdipu) parent.catdipu.treeMenuScroll()"><table border=0 cellpadding=0 cellspacing=0>');
+  treeMenuDocument.write('<tr valign=top><td>');
+  treeMenuDocument.write('<img src="../skins/' + getCookie('skin') + '/nav/root_16x16.gif" align=left border=0 vspace=0 hspace=0>');
+  treeMenuDocument.write('<font face="' + treeMenuFont + '" size=' + treeMenuFontSize + ' color="black">&nbsp;<b>' + treeMenuRoot + '</b>&nbsp;</font>');
+  treeMenuDocument.writeln('</td></tr>');
+  treeMenuListItems(treeMenu);
+  treeMenuDocument.writeln('</table>');
+  treeMenuDocument.writeln('</body>');
+  treeMenuDocument.close();
+}
+
+//----------------------------------------------------------------------------
+// This function displays each item in the given menu or submenu.
+//----------------------------------------------------------------------------
+
+function treeMenuListItems(menu) {
+
+  var i;
+
+  for (i = 0; i < menu.items.length; i++) {
+    if (i == menu.items.length - 1)
+      treeMenuLastItem = true;
+    else
+      treeMenuLastItem = false;
+    treeMenuDisplayItem(menu.items[i]);
+  }
+}
+
+//----------------------------------------------------------------------------
+// This displays a single menu or submenu item.
+//----------------------------------------------------------------------------
+
+function treeMenuDisplayItem(item) {
+
+  var bars, cmd, expanded, i, img, alt, link, more, submenu;
+
+  // Update vertical scrolling amount until we find the selected item.
+
+  if (item.index == treeMenuSelected)
+    treeMenuSelectedFound = true;
+  if (!treeMenuSelectedFound)
+    treeMenuScrollY += 18;
+
+  // If this item is a submenu, determine if should be expanded. For older
+  // browsers, always expand.
+
+  if (treeMenuExpand[item.index] == 1)
+    expanded = true;
+  else
+    expanded = false;
+
+  // Define the command used when an item is clicked. For older browsers, just
+  // return true or false so links will be followed.
+
+  if (item.submenu)
+    submenu = true;
+  else
+    submenu = false;
+        
+  if (item.url != "")
+    link = true;
+  else
+    link = false;
+
+  cmd = "return parent.catdipu.treeMenuClick(" + item.index + ", " + link + ", " + submenu + ");";
+
+  // Start the table row.
+
+  treeMenuDocument.write('<tr valign=top><td nowrap>');
+
+  // Draw descending bars from upper levels, also set horizontal scrolling
+  // amount if this is the selected item.
+
+  bars = new Array();
+  for (i = 0; i < treeMenuDepth; i++) {
+    if (treeMenuBars[i]) {
+      treeMenuDocument.write('<img src="' + treeMenuImgDir + 'menu_bar.gif" align=left border=0 vspace=0 hspace=0>');
+      bars[i] = true;
+    }
+    else {
+      treeMenuDocument.write('<img src="' + treeMenuImgDir + 'menu_spacer.gif" align=left border=0 vspace=0 hspace=0>');
+      bars[i] = false;
+    }
+    if (item.index == treeMenuSelected)
+      treeMenuScrollX += 18;
+  }
+
+  // Determine if this is a submenu item that contains other submenus.
+
+  more = false;
+  if (item.submenu && treeMenuFolders >= 0)
+    for (i = 0; i < item.submenu.items.length; i++)
+      if (item.submenu.items[i].submenu != null || treeMenuFolders == 1)
+        more = true;
+
+  // Draw tee bar or corner if this item is not a submenu or if it is a
+  // submenu but doesn't contain other submenus.
+
+  if (!more) {
+    if (treeMenuLastItem) {
+      img = "menu_corner.gif";
+      bars[bars.length] = false;
+    }
+    else {
+      img = "menu_tee.gif";
+      bars[bars.length] = true;
+    }
+    treeMenuDocument.write('<img src="' + treeMenuImgDir + img + '" align=left border=0 vspace=0 hspace=0>');
+  }
+
+  // Write the start of the link tag so all of the following images and text
+  // will be clickable.
+
+  if (item.url != "")
+    treeMenuDocument.write("<a href='" + item.url + "' target='catadmin' onClick='" + item.clck + ";" + cmd + "'>");    
+  else
+    treeMenuDocument.write("<a href='#' onClick='" + cmd + "'>");    
+
+  // For a submenu item that contains other submenus, draw a tee bar or corner
+  // with a plus or minus sign.
+
+  if (more) {
+    if (expanded) {
+      if (treeMenuLastItem) {
+        img = "menu_corner_minus.gif";
+        bars[bars.length] = false;
+      }
+      else {
+        img = "menu_tee_minus.gif";
+        bars[bars.length] = true;
+      }
+    }
+    else {
+      if (treeMenuLastItem) {
+        img = "menu_corner_plus.gif";
+        bars[bars.length] = false;
+      }
+      else {
+        img = "menu_tee_plus.gif";
+        bars[bars.length] = true;
+      }
+    }
+    treeMenuDocument.write('<img src="' + treeMenuImgDir + img + '" align=left border=0 vspace=0 hspace=0>');
+  }
+
+  // If the item is a submenu, draw an open or closed folder icon. Otherwise
+  // draw a link icon.
+
+  if (item.submenu) {
+    if (expanded)
+      img = treeMenuImgDir + "folderopen_16x16.gif";
+    else
+      img = treeMenuImgDir + "folderclosed_16x16.gif";
+  }
+  else {
+    if (item.icon != "")
+      img = item.icon;
+    else if (item.url.indexOf("http://") == 0)
+      img = "menu_link_external.gif";
+    else
+      img = "menu_link_local.gif";
+  }
+  if (treeMenuAltText)
+    alt = ' alt="' + item.text + '"';
+  else
+    alt = '';
+  treeMenuDocument.write('<img src="' + img + '"' + alt + ' align=left border=0 vspace=0 hspace=0>');
+
+  // Write the link text and finish the link and table row.
+
+  if (item.index == treeMenuSelected)
+    treeMenuDocument.write('<font face="' + treeMenuFont + '" size=' + treeMenuFontSize + '>&nbsp;<span style="background-color:' + treeMenuHiBg + ';color:' + treeMenuHiFg + ';">' + item.text + '</span></font>');
+  else
+    treeMenuDocument.write('<font face="' + treeMenuFont + '" size=' + treeMenuFontSize + '>&nbsp;' + item.text + '</font>');
+  treeMenuDocument.write('</a>');
+  treeMenuDocument.writeln('</td></tr>');
+
+  // Set the placement of vertical bars needed for the next row.
+
+  treeMenuBars = bars;
+
+  // If the item is a submenu and it is expanded, make a recursive call to
+  // draw its item list.
+
+  if (item.submenu && expanded) {
+    treeMenuDepth++;
+    treeMenuListItems(item.submenu);
+    treeMenuDepth--;
+  }
+}
+
+//----------------------------------------------------------------------------
+// This function handles a click on a menu item.
+//----------------------------------------------------------------------------
+
+function treeMenuClick(n, link, submenu) {
+
+  var date, cookie;
+
+  // Fix bug that occurs when the top-level page is reloaded.
+
+  if (!treeMenuExpand)
+    treeMenuDisplay();
+
+  // If this is a submenu, toggle the expansion flag.
+
+  if (submenu) {
+    if (isNaN(treeMenuExpand[n])) treeMenuExpand[n] = 0;
+    treeMenuExpand[n] = 1 - treeMenuExpand[n];
+  }
+  
+  // Save the selected item index and update the cookies.
+
+  treeMenuSelected = n;
+  var date = new Date ();
+  date.setTime (date.getTime() + (86400 * 1000 * treeMenuDays));
+  cookie = treeMenuExpand.toString();
+  setCookie(treeMenuName, cookie, date);
+  setCookie(treeMenuName + "-selected", treeMenuSelected, date);
+
+  // Set up redraw the menu frame.
+
+  setTimeout("treeMenuDisplay()", 10);
+
+  // Return the link flag.
+  
+  return link;
+}
+
+//----------------------------------------------------------------------------
+// This function handles a click on the menu root.
+//----------------------------------------------------------------------------
+
+function treeMenuClickRoot() {
+
+  // Clear the menu state.
+
+  treeMenuExpand = null;
+  treeMenuSelected = null;
+
+  // Delete cookies.
+
+  deleteCookie(treeMenuName);
+  deleteCookie(treeMenuName + "-selected");
+
+  // Set up redraw the menu frame.
+
+  setTimeout("treeMenuDisplay()", 10);
+
+  return false;
+}
+
+//----------------------------------------------------------------------------
+// This function scrolls the window to ensure the selected item is in view.
+// It should only be called after the page has loaded.
+//
+// Note: This code is browser-dependent. Scrolling may be ignored for older
+// browsers.
+//----------------------------------------------------------------------------
+
+function treeMenuScroll() {
+
+  var win, height, width;
+
+  // Get a handle to the menu frame.
+
+  win = treeMenuFrame;
+
+  // Find the dimensions of the frame.
+
+  if (document.layers) {
+    height = win.innerHeight;
+    width = win.innerWidth;
+  }
+  else if (document.all) {
+    height = win.document.body.clientHeight;
+    width = win.document.body.clientWidth;
+  }
+  else if (document.images) {
+    win.scroll(0, treeMenuScrollY);
+    return;
+  }
+  else
+    return;
+
+  // Scroll the frame if necessary.
+
+  if (treeMenuScrollY > height)
+    win.scrollBy(0, treeMenuScrollY);
+  if (treeMenuScrollX > width)
+    win.scrollBy(treeMenuScrollX, 0);
+}

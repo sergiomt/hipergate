@@ -1,4 +1,4 @@
-﻿<%@ page import="com.knowgate.forums.NewsMessage,java.util.*,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.knowgate.forums.NewsMessage,java.util.*,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -56,11 +56,7 @@
     oCon.close("newsmsg_delete");
   } 
   catch(SQLException e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("newsmsg_delete");      
-        }
+      disposeConnection(oCon,"newsmsg_delete");
       response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_back"));
     }
     

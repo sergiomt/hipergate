@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.Arrays,com.knowgate.debug.DebugFile,com.knowgate.misc.*,java.io.*,java.lang.*,java.util.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.workareas.FileSystemWorkArea,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8"  %>
+<%@ page import="java.util.Arrays,com.knowgate.debug.DebugFile,com.knowgate.misc.*,java.io.*,java.lang.*,java.util.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.workareas.FileSystemWorkArea,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8"  %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%!
 
@@ -226,7 +226,7 @@
       }      
     //-->    
   </SCRIPT> 
-  <TITLE>hipergate :: [~Imágenes disponibles~]</TITLE>
+  <TITLE>hipergate :: Available Images</TITLE>
 </head>
 <body  TOPMARGIN="0" MARGINHEIGHT="0" onLoad="paintThumbs()">
 <%@ include file="../common/tabmenu.jspf" %>
@@ -239,18 +239,18 @@
 <TR><TD COLSPAN="6" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
 <TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Image"></TD>
 <TD ALIGN="LEFT" VALIGN="middle"><A HREF="#" onclick="uploadImage()" CLASS="linkplain">New Image</A></TD>
-<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar imágenes~]"></TD>
-<TD  ALIGN="LEFT"VALIGN="middle"><A HREF="javascript:if (window.confirm('[~Cuando elimina imagenes, estas dejaran de aparecer en las newsletter que las utilicen. ¿Esta seguro?~]')) deleteImages()" CLASS="linkplain">[~Eliminar imágenes~]</A></TD>
+<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Remove images"></TD>
+<TD  ALIGN="LEFT"VALIGN="middle"><A HREF="javascript:if (window.confirm('When images are removed, they will stop appearing at documents that use them. Are you sure?')) deleteImages()" CLASS="linkplain">Remove images</A></TD>
 <TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/selall16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Select all"></TD>
 <TD  ALIGN="LEFT"VALIGN="middle"><A HREF="#" onclick="selectAll()" CLASS="linkplain">Select all</A></TD>
 </TR>
 <TR>
-<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/resort.gif" WIDTH="22" HEIGHT="16" BORDER="0" ALT="[~Ordenar~]"></TD>
-<TD ALIGN="LEFT" VALIGN="middle"><SELECT NAME="sort_by" CLASS="combomini" onchange="sortBy(this.options[this.selectedIndex].value)"><OPTION VALUE="date_desc">[~Fecha Descendente~]</OPTION><OPTION VALUE="date_asc">[~Fecha Ascendente~]</OPTION><OPTION VALUE="name_asc">[~Nombre Ascendente~]</OPTION><OPTION VALUE="name_desc">[~Nombre Descendente~]</OPTION></SELECT></TD>
-<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/find16.gif" WIDTH="22" HEIGHT="16" BORDER="0" ALT="[~Buscar~]"></TD>
+<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/resort.gif" WIDTH="22" HEIGHT="16" BORDER="0" ALT="Sort"></TD>
+<TD ALIGN="LEFT" VALIGN="middle"><SELECT NAME="sort_by" CLASS="combomini" onchange="sortBy(this.options[this.selectedIndex].value)"><OPTION VALUE="date_desc">Date Descending</OPTION><OPTION VALUE="date_asc">Date Ascending</OPTION><OPTION VALUE="name_asc">Name A-Z</OPTION><OPTION VALUE="name_desc">Name Z-A</OPTION></SELECT></TD>
+<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/find16.gif" WIDTH="22" HEIGHT="16" BORDER="0" ALT="Search"></TD>
 <TD  ALIGN="LEFT"VALIGN="middle"><INPUT TYPE="text" NAME="find" CLASS="combomini" SIZE="14">&nbsp;<A HREF="#" CLASS="linkplain" onclick="sortBy(getCombo(document.forms[0].sort_by))">Buscar</A></TD>
 <TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../images/images/findundo16.gif" WIDTH="22" HEIGHT="16" BORDER="0" ALT="Select all"></TD>
-<TD  ALIGN="LEFT"VALIGN="middle"><A HREF="#" onclick="document.forms[0].find.value=''; sortBy(getCombo(document.forms[0].sort_by))" CLASS="linkplain">[~Descartar búsqueda~]</A></TD>
+<TD  ALIGN="LEFT"VALIGN="middle"><A HREF="#" onclick="document.forms[0].find.value=''; sortBy(getCombo(document.forms[0].sort_by))" CLASS="linkplain">Discard search</A></TD>
 <TR><TD COLSPAN="6" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
 </TR>
 </TABLE>

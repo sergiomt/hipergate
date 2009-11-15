@@ -1,6 +1,5 @@
-﻿<%@ page import="java.util.*,java.math.*,java.io.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.debug.DebugFile,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*,com.knowgate.misc.*,com.knowgate.workareas.FileSystemWorkArea" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %>
-<%
+<%@ page import="java.util.*,java.math.*,java.text.SimpleDateFormat,java.io.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.debug.DebugFile,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*,com.knowgate.misc.*,com.knowgate.workareas.FileSystemWorkArea,com.knowgate.hipermail.AdHocMailing" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -35,6 +34,9 @@
  
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
  
+  Date dtNow = new Date();
+  SimpleDateFormat oFmt = new SimpleDateFormat("yyyyMMddhhmm");
+
   final String sSep = System.getProperty("file.separator");
   
   String id_domain = getCookie(request,"domainid","");
@@ -42,6 +44,7 @@
   String gu_microsite = request.getParameter("gu_microsite");
   String sStorage = Environment.getProfilePath(GlobalDBBind.getProfileName(), "storage");
   String gu_pageset = request.getParameter("gu_pageset");
+  String nm_pageset = request.getParameter("nm_pageset");
   String sDocType = request.getParameter("doctype");
   String sTitle = request.getParameter("title");
   String sDataFile = request.getParameter("path_data");
@@ -52,7 +55,10 @@
   String sAppDir;
   
   if (sDocType.equals("newsletter")) {
-    sAppDir = "Mailwire";
+    if (gu_microsite.equals("adhoc"))
+      sAppDir = "Hipermail";
+    else
+      sAppDir = "Mailwire";
   } else if (sDocType.equals("website")) {
     sAppDir = "WebBuilder";
   } else if (sDocType.equals("survey")) {
@@ -72,60 +78,84 @@
   String sUrl = "pageset_listing.jsp?selected=5&subselected=0&doctype=" + sDocType;  
 
   PageSetDB oPgSt = new PageSetDB();
-   
+  AdHocMailing oAdHoc = new AdHocMailing();
+  String sPaddedNuMailing = "";
+  
   JDCConnection oConn = null;  
   
   try {
 
     oConn = GlobalDBBind.getConnection("pageset_edit_store");  
 
-    if (gu_pageset.length()>0) oPgSt.put("gu_pageset", gu_pageset);
+		if (gu_microsite.equals("adhoc")) {
+		  String sGuMailing = Gadgets.generateUUID();
+				
+      oAdHoc.put(DB.gu_mailing, Gadgets.generateUUID());
+      oAdHoc.put(DB.pg_mailing, GlobalDBBind.nextVal(oConn, "seq_k_adhoc_mailings"));
+      oAdHoc.put(DB.gu_workarea, gu_workarea);
+      oAdHoc.put(DB.gu_writer, getCookie(request, "userid", ""));
+      if (nm_pageset==null)
+        oAdHoc.put(DB.nm_mailing, "AdHoc_"+oFmt.format(dtNow));
+      else
+        oAdHoc.put(DB.nm_mailing, nm_pageset.length()==0 ? "AdHoc_"+oFmt.format(dtNow) : nm_pageset);
+			oAdHoc.put(DB.bo_html_part , (short) 1);
+			oAdHoc.put(DB.bo_plain_part, (short) 0);
+			oAdHoc.put(DB.bo_attachments,(short) 0);
+			oAdHoc.store(oConn);
+			
+			sPaddedNuMailing = Gadgets.leftPad(String.valueOf(oAdHoc.getInt(DB.pg_mailing)),'0',5);
+      oFS.mkworkpath(gu_workarea, "apps"+File.separator+"Hipermail"+File.separator+"html"+File.separator+sPaddedNuMailing);
 
-    loadRequest(oConn, request, oPgSt);
+	  } else {
 
-    oConn.setAutoCommit (false);
+      if (gu_pageset.length()>0) oPgSt.put("gu_pageset", gu_pageset);
 
-    oPgSt.store(oConn);
+      loadRequest(oConn, request, oPgSt);
 
-    // Guardar XML preparado
+      oConn.setAutoCommit (false);
+
+      oPgSt.store(oConn);
+
+      // Guardar XML preparado
   
-    oFS.mkstorpath (Integer.parseInt(id_domain), gu_workarea, "apps" + sSep + sAppDir + sSep + "data");
+      oFS.mkstorpath (Integer.parseInt(id_domain), gu_workarea, "apps" + sSep + sAppDir + sSep + "data");
     
-    // Almacenar Home/Index
+      // Almacenar Home/Index
       
-    Microsite msite = MicrositeFactory.getInstance(sMetaFile);
+      Microsite msite = MicrositeFactory.getInstance(sMetaFile);
   
-    Container oContainer = msite.container(0);
+      Container oContainer = msite.container(0);
 
-    if (oContainer==null)
-     throw new NullPointerException("Cannot find container(0) on microsite metadata");
+      if (oContainer==null)
+        throw new NullPointerException("Cannot find container(0) on microsite metadata");
      
-    if (sDocType.equals("newsletter"))
-      sDataTemplateFile = Gadgets.replace(sMetaFile,".xml", ".datatemplate.xml");
-    else
-      sDataTemplateFile = Gadgets.replace(sMetaFile,".xml", "_" + oContainer.name() + ".datatemplate.xml");
+      if (sDocType.equals("newsletter"))
+        sDataTemplateFile = Gadgets.replace(sMetaFile,".xml", ".datatemplate.xml");
+      else
+        sDataTemplateFile = Gadgets.replace(sMetaFile,".xml", "_" + oContainer.name() + ".datatemplate.xml");
   
-    if (!oFS.exists("file://"+sDataTemplateFile))
-      throw new FileNotFoundException ("Required file not found "+sDataTemplateFile);
+      if (!oFS.exists("file://"+sDataTemplateFile))
+        throw new FileNotFoundException ("Required file not found "+sDataTemplateFile);
       
-    sTemplateData = oFS.readfilestr(sDataTemplateFile, "UTF-8");
+      sTemplateData = oFS.readfilestr(sDataTemplateFile, "UTF-8");
   
-    sTemplateData = Gadgets.replace (sTemplateData, ":gu_pageset", oPgSt.getString(DB.gu_pageset));
-    sTemplateData = Gadgets.replace (sTemplateData, ":gu_microsite", gu_microsite);
-    sTemplateData = Gadgets.replace (sTemplateData, ":gu_pagex", Gadgets.generateUUID());
-    sTemplateData = Gadgets.replace (sTemplateData, ":page_title", sDocType.equals("newsletter") ? request.getParameter("nm_pageset") : "Index");
-    sTemplateData = Gadgets.replace (sTemplateData, ":gu_container", oContainer.guid());
+      sTemplateData = Gadgets.replace (sTemplateData, ":gu_pageset", oPgSt.getString(DB.gu_pageset));
+      sTemplateData = Gadgets.replace (sTemplateData, ":gu_microsite", gu_microsite);
+      sTemplateData = Gadgets.replace (sTemplateData, ":gu_pagex", Gadgets.generateUUID());
+      sTemplateData = Gadgets.replace (sTemplateData, ":page_title", sDocType.equals("newsletter") ? nm_pageset : "Index");
+      sTemplateData = Gadgets.replace (sTemplateData, ":gu_container", oContainer.guid());
   
-    if (sDocType.equals("website"))
-      sTemplateData = Gadgets.replace (sTemplateData, ":gu_pageres", Gadgets.generateUUID());
+      if (sDocType.equals("website"))
+        sTemplateData = Gadgets.replace (sTemplateData, ":gu_pageres", Gadgets.generateUUID());
       
-    oFS.writefilestr (sStorage + sDataFile, sTemplateData, "UTF-8");
+      oFS.writefilestr (sStorage + sDataFile, sTemplateData, "UTF-8");
     
-    File oDataFile = new File(sStorage + sDataFile);
-    if (!oDataFile.exists()) {
-      throw new IOException("File Creation Failed "+sStorage + sDataFile+"Check the valueof workareasput at hipergate.cnf and to permissions on the directory to which it points");
+      File oDataFile = new File(sStorage + sDataFile);
+      if (!oDataFile.exists()) {
+        throw new IOException("File Creation Failed "+sStorage + sDataFile+"Check the valueof workareasput at hipergate.cnf and to permissions on the directory to which it points");
+      }
     }
-    
+
     oConn.commit();
     oConn.close("pageset_edit_store");
   }
@@ -197,11 +227,11 @@
 %>
 <html>
 <head>
-  <TITLE>[~Espere~]...</TITLE>
+  <TITLE>Wait...</TITLE>
   <script>
     <!--
       window.top.opener.location = "<%=sUrl%>";
-      window.top.location="wb_file_upload.jsp?caller=newdocument&gu_pageset=<%=oPgSt.getString(DB.gu_pageset)%>&doctype=<%=sDocType%>&title=" + escape("<%=sTitle%>") + "&dir=";
+      window.top.location="wb_file_upload.jsp?caller=newdocument&gu_microsite=<%=gu_microsite%>&gu_pageset=<%=(gu_microsite.equals("adhoc") ? sPaddedNuMailing : oPgSt.getString(DB.gu_pageset))%>&doctype=<%=sDocType%>&title=" + escape("<%=sTitle%>") + "&dir=";
     //-->
   </script>
 </head>

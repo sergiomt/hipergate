@@ -1,4 +1,4 @@
-﻿<%@ page import="java.text.SimpleDateFormat,java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.hipergate.DBLanguages,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.WelcomePack,com.knowgate.crm.WelcomePackChangeLog,com.knowgate.crm.Company,com.knowgate.crm.Contact" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.text.SimpleDateFormat,java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.hipergate.DBLanguages,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.WelcomePack,com.knowgate.crm.WelcomePackChangeLog,com.knowgate.crm.Company,com.knowgate.crm.Contact" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%
 /*
@@ -287,7 +287,7 @@
   } // fi
 %>
               </SELECT>
-              <A HREF="#" onclick="createAddress()" TITLE="[~Crear Dirección~]"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Address List"></A>
+              <A HREF="#" onclick="createAddress()" TITLE="New Address"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Address List"></A>
             </TD>
           </TR>
           <TR>

@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.crm.Contact" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.crm.Contact" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><% 
 
 /*
@@ -186,7 +186,7 @@
 	  var frm = document.forms[1];
 	  var chi = document.forms[0].checkeditems;
 	  	  
-	  if (window.confirm("[~¿Está seguro de que desea eliminar las notas seleccionadas?~]")) {
+	  if (window.confirm("Are you sure you want to delete selected notes?")) {
 	  	  
 	    chi.value = "";	  	  
 	    document.forms[0].action = "note_edit_delete.jsp";
@@ -278,7 +278,7 @@
        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" HEIGHT="16" BORDER="0" ALT="New"></TD>
        <TD VALIGN="middle">
 <% if (bIsGuest) { %>
-         <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">New</A>
+         <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New</A>
 <% } else { %>
          <A HREF="#" onclick="addNote()" CLASS="linkplain">New</A>
 <% } %>
@@ -286,7 +286,7 @@
        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
        <TD>
 <% if (bIsGuest) { %>
-         <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">Delete</A>
+         <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">Delete</A>
 <% } else { %>
          <A HREF="#" onclick="deleteInstances()" CLASS="linkplain">Delete</A>
 <% } %>

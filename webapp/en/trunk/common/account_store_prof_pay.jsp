@@ -1,4 +1,4 @@
-﻿<%@ page import="com.knowgate.debug.DebugFile, com.knowgate.jdc.*,  java.sql.SQLException, java.sql.PreparedStatement, java.util.Properties,java.util.Enumeration,java.io.File,java.io.FileInputStream,java.io.IOException,java.net.URLDecoder,com.knowgate.misc.Environment,com.knowgate.misc.*, com.knowgate.acl.*, com.knowgate.beanservices.JInterpreterFactory,com.knowgate.beanservices.JInterpreterLocal,com.knowgate.beanservices.JInterpreterException, com.knowgate.dataobjs.*, com.knowgate.billing.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.knowgate.debug.DebugFile, com.knowgate.jdc.*,  java.sql.SQLException, java.sql.PreparedStatement, java.util.Properties,java.util.Enumeration,java.io.File,java.io.FileInputStream,java.io.IOException,java.net.URLDecoder,com.knowgate.misc.Environment,com.knowgate.misc.*, com.knowgate.acl.*, com.knowgate.beanservices.JInterpreterFactory,com.knowgate.beanservices.JInterpreterLocal,com.knowgate.beanservices.JInterpreterException, com.knowgate.dataobjs.*, com.knowgate.billing.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %>
 <%@ include file="../methods/cookies.jspf" %>
 <%@ include file="../methods/authusrs.jspf" %>
@@ -101,7 +101,7 @@
  
       case 1:
       	DebugFile.writeln("usuario creado pero error1");
-        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Contraseña No Válida~]&desc=[~La contraseña especificada para el usuario no es valida~]&resume=_back"));  
+        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Invalid Password&desc=Password for user is not valid&resume=_back"));  
         return;
       
     }

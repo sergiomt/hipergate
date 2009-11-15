@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 
 <HTML>
 <HEAD>
@@ -52,7 +52,7 @@
     <CENTER>
     <TABLE><TR><TD WIDTH="310px" CLASS="striptitle"><FONT CLASS="title1">Create List - Step 1 of 4</FONT></TD></TR></TABLE>
     <TABLE WIDTH="310px" CLASS="formback">
-      <TR><TD ALIGN="left" CLASS="formstrong">[~¿Qu&eacute; tipo de lista desea crear?~]</TD></TR>
+      <TR><TD ALIGN="left" CLASS="formstrong">What type of list do you want to create?</TD></TR>
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>

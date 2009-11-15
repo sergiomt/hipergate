@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.util.HashMap,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Gadgets,com.knowgate.hipergate.Address,com.knowgate.hipergate.RecentlyUsed" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.util.HashMap,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Gadgets,com.knowgate.hipergate.Address,com.knowgate.hipergate.RecentlyUsed" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/cookies.jspf" %>
 <jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%
 /*
@@ -181,7 +181,7 @@
 			sResult += Gadgets.HTMLEncode(oAddr.toLocaleString()) + "<BR>";
 
       if (!oAddresses.isNull(3,i) && GlobalDBBind.getProperty("googlemapskey","").length()>0) {
-			  sResult += "<A HREF=\"#\" onclick=\"addrIFrame.showGoogleMap("+String.valueOf(i)+")\">[~Ver Mapa~]</A>&nbsp;";
+			  sResult += "<A HREF=\"#\" onclick=\"addrIFrame.showGoogleMap("+String.valueOf(i)+")\">Show Map</A>&nbsp;";
       }
 
       sResult += sAddrEm+"<BR>";

@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%
@@ -198,7 +198,7 @@
 	  var frm = document.forms[0];
 	  var chi = frm.checkeditems;
 	  	  
-	  if (window.confirm("[~¿Está seguro de que desea eliminar las listas seleccionadas?~]")) {
+	  if (window.confirm("Are you sure you want to delete selected lists?á certo de")) {
 	  	  
 	    chi.value = "";	  	  
 	    
@@ -221,7 +221,7 @@
         // ----------------------------------------------------
 
 	function modifyList(id,nm) {	  
-	  self.open ("list_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_list=" + id + "&n_list=" + escape(nm), "editlist", "directories=no,toolbar=no,menubar=no,top=" + (screen.height-420)/2 + ",left=" + (screen.width-600)/2 + ",width=600,height=420");
+	  self.open ("list_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_list=" + id + "&n_list=" + escape(nm), "editlist", "directories=no,toolbar=no,menubar=no,top=" + (screen.height-420)/2 + ",left=" + (screen.width-600)/2 + ",width=600,height=480");
 	}	
 
         // ----------------------------------------------------
@@ -288,7 +288,7 @@
         	
 	function createOportunity (id,de) {	  
 <% if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your credential level as Guest does not allow you to perform this action");
 <% } else { %>
 	  self.open ("oportunity_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>&gu_list=" + id + "&de_list=" + escape(de), "createoportunity", "directories=no,toolbar=no,menubar=no,width=640,height=560");	  
 <% } %>
@@ -298,7 +298,7 @@
 
       function createProject(gu,de) {
 <% if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your credential level as Guest does not allow you to perform this action");
 <% } else { %>
         window.open("prj_create.jsp?gu_workarea=<%=gu_workarea%>&gu_list=" + gu + "&de_list=" + escape(de), "addproject", "directories=no,toolbar=no,menubar=no,width=540,height=280");       
 <% } %>
@@ -309,7 +309,7 @@
 <% if (bHasAccounts) { %>
       function sendEmail(gu,de) {
 <% if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your credential level as Guest does not allow you to perform this action");
 <% } else { %>
         window.open("../hipermail/msg_new_f.jsp?folder=drafts&to={"+escape(de)+"}", "sendmailtolist");       
 <% } %>
@@ -321,7 +321,7 @@
 <% if (!bHasAccounts) { %>
       function configEmail() {
 <% if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your credential level as Guest does not allow you to perform this action");
 <% } else { %>
 	alert ("Mail server is not properly configured to send e-mails");
 	top.document.location.href="../hipermail/mail_config_f.htm?selected=1&subselected=0"
@@ -360,7 +360,7 @@
       function clone() {        
         // [~//Abrir una ventana de clonado y poner un temporizador para recargar la página cuando se termine el clonado~]
 <% if (bIsGuest) { %>
-        alert ("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert ("Your credential level as Guest does not allow you to perform this action");
 <% } else { %>
         winclone = window.open ("list_clone.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_instance=" + jsListId + "&opcode=CLST&classid=96", "clonelist", "directories=no,toolbar=no,menubar=no,top=" + (screen.height-200)/2 + ",left=" + (screen.width-320)/2 + ",width=320,height=200");                
         intervalId = setInterval ("findCloned()", 100);
@@ -377,7 +377,7 @@
 	} // setCombos()  
     //-->    
   </SCRIPT>  
-  <TITLE>hipergate :: [~Listas de distribución~]</TITLE>
+  <TITLE>hipergate :: Distribution Lists</TITLE>
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onClick="hideRightMenu()">
     <%@ include file="../common/tabmenu.jspf" %>
@@ -397,7 +397,7 @@
         <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
         <TD VALIGN="middle">
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">New</A>
+          <A HREF="#" onclick="alert ('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New</A>
 <% } else { %>
           <A HREF="#" onclick="createList();return false;" CLASS="linkplain">New</A>
 <% } %>
@@ -405,7 +405,7 @@
         <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
         <TD>
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">Delete</A>
+          <A HREF="#" onclick="alert ('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">Delete</A>
 <% } else { %>
           <A HREF="#" onclick="deleteLists();return false;" CLASS="linkplain">Delete</A>
 <% } %>
@@ -415,9 +415,9 @@
           <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>">
 	  &nbsp;<A HREF="javascript:findList()" CLASS="linkplain" TITLE="Search">Search</A>	  
         </TD>
-        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="[~Descartar búsqueda~]"></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard Find Filter"></TD>
         <TD VALIGN="bottom">
-          <A HREF="javascript:document.forms[0].find.value='';findList();" CLASS="linkplain" TITLE="[~Descartar búsqueda~]">Discard</A>
+          <A HREF="javascript:document.forms[0].find.value='';findList();" CLASS="linkplain" TITLE="Discard Find Filter">Discard</A>
           <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;Show&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;results&nbsp;</FONT>
         </TD>
         </TR>
@@ -466,7 +466,7 @@
       addMenuSeparator();
       addMenuOption("Edit Members","editMembers(jsListId,jsListDe)",0);
       addMenuOption("Edit Query","editQuery(jsListId,jsListDe)",2);
-      addMenuOption("[~Exportar Miembros~]","exportMembers(jsListId)",0);
+      addMenuOption("Export members","exportMembers(jsListId)",0);
       addMenuSeparator();
       addMenuOption("New Oportunity","createOportunity(jsListId,jsListDe)",0);
 <% if (((iAppMask & (1<<ProjectManager))!=0)) { %>

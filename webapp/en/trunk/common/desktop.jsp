@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.Properties,java.io.IOException,java.io.File,javax.portlet.GenericPortlet,javax.portlet.PortletException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.ResultSet,java.sql.CallableStatement,java.sql.Types,org.jibx.runtime.JiBXException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.debug.StackTraceUtil,com.knowgate.debug.DebugFile,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipermail.MailAccount,com.knowgate.dataxslt.StylesheetCache,com.knowgate.acl.*,com.knowgate.http.portlets.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Properties,java.io.IOException,java.io.File,javax.portlet.GenericPortlet,javax.portlet.PortletException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.ResultSet,java.sql.CallableStatement,java.sql.Types,org.jibx.runtime.JiBXException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.debug.StackTraceUtil,com.knowgate.debug.DebugFile,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipermail.MailAccount,com.knowgate.dataxslt.StylesheetCache,com.knowgate.acl.*,com.knowgate.http.portlets.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -223,7 +223,7 @@
 
     function createContact() {
 <%    if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your credential level as Guest does not allow you to perform this action");
 <%    } else { %>
       self.open ("../crm/contact_new_f.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>", null, "directories=no,scrollbars=yes,toolbar=no,menubar=no,width=640,height=" + (screen.height<=600 ? "520" : "600"));
 <%    } %>
@@ -233,7 +233,7 @@
 
     function newOportunity() {
 <%    if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your credential level as Guest does not allow you to perform this action");
 <%    } else { %>
 	  self.open ("oportunity_new.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>", "newoportunity", "directories=no,toolbar=no,scrollbars=yes,menubar=no,width=660,height=" + (screen.height<=600 ? "520" : "660"));	  
 <%    } %>
@@ -251,7 +251,7 @@
       }  
       
       if (nmc.indexOf("'")>0 || nmc.indexOf('"')>0 || nmc.indexOf("?")>0 || nmc.indexOf("%")>0 || nmc.indexOf("*")>0 || nmc.indexOf("&")>0 || nmc.indexOf("/")>0) {
-	alert ("[~El nombre del Individuo contiene caracteres no válidos~]");
+	alert ("Name contains invalid characters");
 	return false;
       }
       window.location = "../crm/contact_listing_f.jsp?selected=2&subselected=1&field=tx_name&find=" + escape(nmc);
@@ -261,7 +261,7 @@
 
     function reportBug() {
 <%    if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your credential level as Guest does not allow you to perform this action");
 <%    } else { %>
         self.open("../projtrack/bug_new.jsp",null,"menubar=no,toolbar=no,width=700,height=520");
 <%    } %>

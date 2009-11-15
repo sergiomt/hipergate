@@ -1,4 +1,4 @@
-﻿<%@ page import="com.knowgate.misc.Environment,java.util.Properties,java.util.Enumeration,java.io.File" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.knowgate.misc.Environment,java.util.Properties,java.util.Enumeration,java.io.File" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@include file="../methods/dbbind.jsp"%>
 <%
   String sKey;

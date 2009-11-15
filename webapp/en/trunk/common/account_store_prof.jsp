@@ -1,4 +1,4 @@
-﻿<%@ page import="com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.dfs.FileSystem,java.sql.SQLException, java.sql.PreparedStatement, java.util.Properties,java.util.Enumeration,java.io.File,java.io.FileInputStream,java.io.IOException,java.net.URLDecoder,com.knowgate.misc.Environment,com.knowgate.misc.*, com.knowgate.acl.*, com.knowgate.beanservices.JInterpreterFactory,com.knowgate.beanservices.JInterpreterLocal,com.knowgate.beanservices.JInterpreterException, com.knowgate.dataobjs.*, com.knowgate.billing.*" contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.dfs.FileSystem,java.sql.SQLException, java.sql.PreparedStatement, java.util.Properties,java.util.Enumeration,java.io.File,java.io.FileInputStream,java.io.IOException,java.net.URLDecoder,com.knowgate.misc.Environment,com.knowgate.misc.*, com.knowgate.acl.*, com.knowgate.beanservices.JInterpreterFactory,com.knowgate.beanservices.JInterpreterLocal,com.knowgate.beanservices.JInterpreterException, com.knowgate.dataobjs.*, com.knowgate.billing.*" contentType="text/html;charset=UTF-8" %>
 <%
 
  

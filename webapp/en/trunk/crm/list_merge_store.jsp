@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.Statement,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.acl.*,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.Statement,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.acl.*,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 
 /*
@@ -66,7 +66,7 @@
       oBaseList.store(oConn);
       
       oStmt = oConn.createStatement();
-      oStmt.execute("INSERT INTO " + DB.k_x_list_members + "(gu_list,tx_email,tx_name,tx_surname,tx_salutation,bo_active,tp_member,gu_company,gu_contact,id_format) SELECT '" + oBaseList.getString(DB.gu_list) + "',tx_email,tx_name,tx_surname,tx_salutation,bo_active,tp_member,gu_company,gu_contact,id_format FROM " + DB.k_x_list_members + " WHERE " + DB.gu_list + "='" + gu_base_list + "'");
+      oStmt.execute("INSERT INTO " + DB.k_x_list_members + "(gu_list,tx_email,tx_name,tx_surname,mov_phone,tx_salutation,bo_active,tp_member,gu_company,gu_contact,id_format) SELECT '" + oBaseList.getString(DB.gu_list) + "',tx_email,tx_name,tx_surname,mov_phone,tx_salutation,bo_active,tp_member,gu_company,gu_contact,id_format FROM " + DB.k_x_list_members + " WHERE " + DB.gu_list + "='" + gu_base_list + "'");
       oStmt.close();
       
     }
@@ -101,6 +101,6 @@
   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
   <TITLE>Wait...</TITLE>
 </HEAD>
-<BODY onLoad="alert('[~Operación de combinación de listas finalizada con éxito~]');window.close();">
+<BODY onLoad="alert('List combination terminated successfully');window.close();">
 </BODY>
 </HTML>

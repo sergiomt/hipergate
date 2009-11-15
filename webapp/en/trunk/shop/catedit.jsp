@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.util.Vector,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.util.Vector,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/listchilds.jspf" %>
 <jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%
 
@@ -288,7 +288,7 @@
       
       for (var n=0; n<aName.length; n++) {
         if (ltrim(aName[n][1]).length==0) {
-          alert ("Label for language&nbsp;" + getComboText(frm.sel_language) + "[~ no puede estar vacía~]");
+          alert ("Label for language&nbsp;" + getComboText(frm.sel_language) + " cannot be empty");
           return false;
         }    
       } // next
@@ -296,7 +296,7 @@
       frm.id_parent_cat.value = getCombo(frm.sel_parent_cat);
 
       if (frm.id_parent_cat.value=="<%=id_category%>") {
-          alert ("[~La categoría no puede ser padre de sí misma~]");
+          alert ("Category may not be parent of itself");
           return false;        
       }
 

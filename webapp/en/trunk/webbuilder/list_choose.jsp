@@ -1,7 +1,5 @@
 <%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/dbbind.jsp" %>
-<%@ include file="../methods/cookies.jspf" %>
-<%
+<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -54,9 +52,8 @@
   DBSubset oLists;        
   int iListCount = 0;
 
-  // Obtener una conexión del pool a bb.dd. (el nombre de la conexión es arbitrario)
-  JDCConnection oConn = GlobalDBBind.getConnection("listlisting");  
-    
+  JDCConnection oConn = GlobalDBBind.getConnection("listlisting",true);  
+
   try {
       oLists = new DBSubset(DB.k_lists, DB.gu_list +"," + DB.tp_list + "," + DB.gu_query + "," + DB.tx_subject + "," + DB.de_list,
       			    DB.gu_workarea + "='" + gu_workarea + "'", 100 );
@@ -73,41 +70,35 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
         function programJob() {
-          var cmd = "MAIL";
           var frm = document.forms[0];
           var ele = frm.elements.length;
           var chk = 0;
-	  var par;
-	  var lst;
+	        var par;
+	        var lst = "";
 	            
           for (var idx=0; idx<ele; idx++) {
-	    if (frm.elements[idx].type=="checkbox")
-	      if (frm.elements[idx].checked) {
-	        lst = frm.elements[idx].value;
-	        chk++;
-	      } // fi (checked)
+	          if (frm.elements[idx].type=="checkbox")
+	            if (frm.elements[idx].checked) {
+	              lst += (lst.length==0 ? "" : ";") + frm.elements[idx].value;
+	              chk++;
+	            } // fi (checked)
           } // next
           
           if (0==chk) {
-            alert ("[~Debe seleccionar una lista a la cual realizar el envío~]");
-            return false;
-          }
-
-          if (chk>1) {
-            alert ("[~Debe seleccionar una única lista a la cual realizar el envío~]");
+            alert ("Must select a List to witch send documents");
             return false;
           }
           
           par = "gu_pageset:" + getURLParam("gu_pageset") + ",gu_list:" + lst;
           
-          document.location = "../jobs/job_edit.jsp?gu_pageset=" + getURLParam("gu_pageset") + "&id_command=" + cmd + "&parameters=" + par;
+          document.location = "../jobs/job_edit.jsp?gu_pageset=" + getURLParam("gu_pageset") + "&id_command=" + getURLParam("id_command") + "&parameters=" + par;
         }
 
         // ----------------------------------------------------
@@ -133,7 +124,7 @@
     <TR><TD CLASS="striptitle"><FONT CLASS="title1">Schedule Task: Select Distribution List</FONT></TD><TD CLASS="striptitle" align="right"><FONT CLASS="title1">(1 of 2)</FONT></TD></TR>
   </TABLE>  
   <BR>
-  <FONT CLASS="textplain">[~Seleccione una lista de distribución como destino del envío.~]</FONT>
+  <FONT CLASS="textplain">Select a Distribution List as a target for e-mailing.</FONT>
   <FORM>  
       <TABLE WIDTH="100%" CELLSPACING="2" CELLPADDING="2">
         <TR><TD COLSPAN="2" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>

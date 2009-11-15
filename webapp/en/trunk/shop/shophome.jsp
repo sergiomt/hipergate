@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.workareas.WorkArea" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.workareas.WorkArea" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
 
@@ -96,7 +96,7 @@
       if (document.forms[0].sel_shop.selectedIndex>=0)
         self.open ("shop_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>" + "&gu_shop=" + getCombo(document.forms[0].sel_shop), "editshop", "directories=no,scrollbars=yes,toolbar=no,menubar=no,width=600,height=400");	  
       else
-        alert("[~Debe seleccionar primero un catálogo a editar~]");
+        alert("A catalog to be edited must be selected");
     } // modifyShop()
 
     function deleteShop() {	  
@@ -104,7 +104,7 @@
         alert ("You must first choose a catalog to be deleted");
       }
       else {
-        if (confirm("[~Está seguro de que desea eliminar el catálogo~] " + getComboText(document.forms[0].sel_shop)))
+        if (confirm("Are you sure that you want to delete catalog " + getComboText(document.forms[0].sel_shop)))
           window.document.location = "shop_delete.jsp?gu_shop=" + getCombo(document.forms[0].sel_shop) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
       }
     } // deleteShop()
@@ -113,7 +113,7 @@
 
     function openShop() {
       if (document.forms[0].sel_shop.selectedIndex==-1) {
-        alert ("[~Debe seleccionar un catálogo a visualizar~]");
+        alert ("You must select a catalog to be displayed");
         window.document.location.href.href = window.document.location.href;
       }
       else {
@@ -129,12 +129,12 @@
       var whr = frm.tx_order.value;      
 
       if (whr.length==0) {
-        alert ("[~Introduzca el número o texto del pedido a buscar~]");
+        alert ("Enter number or text of order to be searched");
         return false;
       }  
      
       if (whr.indexOf("'")>0 || whr.indexOf('"')>0 || whr.indexOf("?")>0 || whr.indexOf("%")>0 || whr.indexOf("*")>0 || whr.indexOf("&")>0 || whr.indexOf("/")>0) {
-	alert ("[~El texto del pedido contiene caracteres no válidos~]");
+	alert ("Order text contains forbidden characters");
 	return false;
       } else {
         if (isIntValue(whr))
@@ -154,12 +154,12 @@
       var whr = frm.tx_invoice.value;      
 
       if (whr.length==0) {
-        alert ("[~Introduzca el número o texto de la factura a buscar~]");
+        alert ("Enter number or text of invoice to be searched");
         return false;
       }  
      
       if (whr.indexOf("'")>0 || whr.indexOf('"')>0 || whr.indexOf("?")>0 || whr.indexOf("%")>0 || whr.indexOf("*")>0 || whr.indexOf("&")>0 || whr.indexOf("/")>0) {
-	alert ("[~El texto de la factura contiene caracteres no válidos~]");
+	alert ("Invoice text contains forbidden characters");
 	return false;
       } else {
         if (isIntValue(whr))

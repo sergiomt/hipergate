@@ -1,4 +1,4 @@
-﻿<%@ page import="java.text.DecimalFormat,java.util.Arrays,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.crm.Contact,com.knowgate.training.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.text.DecimalFormat,java.util.Arrays,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.crm.Contact,com.knowgate.training.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*
@@ -124,7 +124,7 @@
         var sta = frm.elements["alumni_"+String(ix)];
         if (sta.value=="0") {
           if (frm.elements[gu+"_canceled"].checked) {
-            alert ("[~No es posible aceptar alumnos cuya inscripción haya sido cancelada~]");
+            alert ("It is not possible to admit students whose registration has been cancelled");
           } else {
             sta.value = "1";
             btn.src = "../images/images/corrected.gif";
@@ -183,7 +183,7 @@
       function convertToAlumni() {
         var frm = window.document.forms[0];
         var lst = "";
-        if (window.confirm("[~¿Está seguro de que desea convertir todas las inscripciones confirmadas y no canceladas en alumnos aceptados del curso?~]")) {
+        if (window.confirm("Are you sure that you want to promote all registrations to actual course students?")) {
 	  for (var c=0; c<<%=String.valueOf(iBooks)%>; c++) {
 	    if (frm.elements[cnt[c]+"_confirmed"].checked) {
 	      lst += (lst.length==0 ? "" : ",") + cnt[c];
@@ -208,7 +208,7 @@
 	        }
 	        frm.elements[cnt[c]+"_amount"].value = frm.elements[cnt[c]+"_amount"].value.replace(",",".");
 	        if (frm.elements[cnt[c]+"_date"].value.length>0 && !isDate(frm.elements[cnt[c]+"_date"].value,"d")) {
-	          alert ("[~La fecha de pago no es valida~]");
+	          alert ("Payment date is not valid");
 	          frm.elements[cnt[c]+"_date"].focus();
 	          return false;
 	        }
@@ -238,16 +238,16 @@
   </TABLE>
   <IMG SRC="../images/images/training/student16.gif" WIDTH="15" HEIGHT="18" BORDER="0"><A HREF="#" CLASS="linkplain" onclick="convertToAlumni()">Convert Registrations into Actual Course Students</A>
   <FORM NAME="" METHOD="post" ACTION="bookings_edit_store.jsp" onSubmit="return validate()">
-      <FONT CLASS="textplain">[~Filtro~]</FONT>&nbsp;
+      <FONT CLASS="textplain">Filter</FONT>&nbsp;
       <SELECT CLASS="combomini" NAME="sel_filter" onchange="applyFilter(this.options[this.selectedIndex].value)">
-      <OPTION VALUE="1">[~Listar inscripciones activas~]</OPTION>
-      <OPTION VALUE="2">[~Listar alumnos confirmados~]</OPTION>
-      <OPTION VALUE="3">[~Listar alumnos no confirmados~]</OPTION>  
-      <OPTION VALUE="4">[~Listar sólo alumnos en lista de espera~]</OPTION>
-      <OPTION VALUE="5">[~Listar alumnos que han pagado~]</OPTION>
-      <OPTION VALUE="6">[~Listar alumnos que no han pagado~]</OPTION>
-      <OPTION VALUE="7">[~Listar sólo inscripciones canceladas~]</OPTION>
-      <OPTION VALUE="0" SELECTED="selected">[~Listar todos~]</OPTION>
+      <OPTION VALUE="1">List active bookings</OPTION>
+      <OPTION VALUE="2">List confirmed students</OPTION>
+      <OPTION VALUE="3">List not confirmed students</OPTION>  
+      <OPTION VALUE="4">List students at waiting list</OPTION>
+      <OPTION VALUE="5">List students who have already paid</OPTION>
+      <OPTION VALUE="6">List students who still have not paid</OPTION>
+      <OPTION VALUE="7">List only cancelled bookings</OPTION>
+      <OPTION VALUE="0" SELECTED="selected">List All</OPTION>
       </SELECT>
       <BR/>
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
@@ -260,7 +260,7 @@
         <TD CLASS="tableheader"><B>Confirmed</B></TD>
         <TD CLASS="tableheader"><B>Paid</B></TD>
         <TD CLASS="tableheader"><B>Amount</B></TD>
-        <TD CLASS="tableheader"><B>[~Fecha~]</B></TD>
+        <TD CLASS="tableheader"><B>Date</B></TD>
         <TD CLASS="tableheader"><B>Cancelled</B></TD>
         <TD CLASS="tableheader"><B>Accepted</B></TD>
       </TR>

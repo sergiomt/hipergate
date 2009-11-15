@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.Vector,dom.DOMDocument,com.knowgate.debug.DebugFile,java.lang.System,java.io.UnsupportedEncodingException,java.io.FileNotFoundException,java.io.IOException,java.io.File,java.util.Properties,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.acl.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*,javax.xml.transform.TransformerException,javax.xml.transform.TransformerConfigurationException" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Vector,dom.DOMDocument,com.knowgate.debug.DebugFile,java.lang.System,java.io.UnsupportedEncodingException,java.io.FileNotFoundException,java.io.IOException,java.io.File,java.util.Properties,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.acl.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*,javax.xml.transform.TransformerException,javax.xml.transform.TransformerConfigurationException" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <%
 /*
@@ -193,6 +193,7 @@
     <INPUT TYPE="hidden" NAME="id_status" VALUE="<%=nullif(request.getParameter("id_status"))%>">
     <INPUT TYPE="hidden" NAME="tx_job" VALUE="<%=nullif(request.getParameter("tx_job"))%>">
     <INPUT TYPE="hidden" NAME="tl_job" VALUE="<%=nullif(request.getParameter("tl_job"))%>">
+    <INPUT TYPE="hidden" NAME="attachimages" VALUE="<%=nullif(request.getParameter("attachimages"),"0")%>">
     <INPUT TYPE="hidden" NAME="dt_execution" VALUE="<%=nullif(request.getParameter("dt_execution"))%>">
   </FORM>
 </BODY>

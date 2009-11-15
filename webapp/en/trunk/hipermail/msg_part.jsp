@@ -261,7 +261,7 @@
     if (oStmt!=null) { try {oStmt.close();} catch (Exception ignore) {}}
     try { if (oConn!=null)
       if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
+        if (!oConn.getAutoCommit()) oConn.rollback();
         oConn.close();
       } } catch (Exception ignore) {}
 

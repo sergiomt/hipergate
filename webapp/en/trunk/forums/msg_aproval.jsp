@@ -1,4 +1,4 @@
-﻿<%@ page import="com.knowgate.forums.NewsMessage,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets" language="java" session="false" %>
+<%@ page import="com.knowgate.forums.NewsMessage,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets" language="java" session="false" %>
 <%@ include file="../methods/dbbind.jsp" %>
 <%@ include file="../methods/cookies.jspf" %>
 <%@ include file="../methods/authusrs.jspf" %>
@@ -69,11 +69,7 @@
     oCon.close("msg_aproval");
   } 
   catch(SQLException e) {
-      if (oCon!=null)
-        if (!oCon.isClosed()) {
-          if (oCon.getAutoCommit()) oCon.rollback();
-          oCon.close("msg_aproval");      
-        }
+      disposeConnection(oCon,"msg_aproval");
       response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_back"));
     }
     

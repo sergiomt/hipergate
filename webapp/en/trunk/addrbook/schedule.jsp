@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.HashMap,java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.addrbook.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Calendar,com.knowgate.crm.SalesMan,com.knowgate.billing.Account" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.HashMap,java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.addrbook.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Calendar,com.knowgate.crm.SalesMan,com.knowgate.billing.Account" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
 /*
@@ -225,10 +225,10 @@
       
       function deleteMeeting(gu,tx) {
         if (tx) {
-          if (confirm("[~¿Está seguro de que desea eliminar la actividad ~] " + tx + "?"))
+          if (confirm("Are you sure you want to delete activity&nbsp; " + tx + "?"))
             window.location = "meeting_edit_delete.jsp?id_domain=" + getCookie("domainid") + "&gu_workarea=" + getCookie("workarea") + "&gu_meeting=" + gu + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&year=<%=year%>&month=<%=month%>&day=<%=day%>&referer=schedule";
 	      } else {
-          if (confirm("[~¿Está seguro de que desea eliminar la actividad ~]?"))
+          if (confirm("Are you sure you want to delete activity&nbsp;?"))
             window.location = "meeting_edit_delete.jsp?id_domain=" + getCookie("domainid") + "&gu_workarea=" + getCookie("workarea") + "&gu_meeting=" + gu + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&year=<%=year%>&month=<%=month%>&day=<%=day%>&referer=schedule";
 	      }
       }
@@ -350,7 +350,7 @@
       <TD nowrap>
         <IMG SRC="../images/images/new16x16.gif" BORDER="0">&nbsp;
 <% if (bIsGuest)        
-     out.write("        <A HREF=\"#\" onClick=\"alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')\" CLASS=\"linkplain\" TITLE=\"New Activity\">New</A>");
+     out.write("        <A HREF=\"#\" onClick=\"alert('Your credential level as Guest does not allow you to perform this action')\" CLASS=\"linkplain\" TITLE=\"New Activity\">New</A>");
    else
      out.write("        <A HREF=\"#\" onClick=\"createMeeting('');\" CLASS=\"linkplain\" TITLE=\"New Activity\">New</A>");
 %>
@@ -359,7 +359,7 @@
       <TD nowrap>
         <IMG SRC="../images/images/new16x16.gif" BORDER="0">&nbsp;
 <% if (bIsGuest)        
-     out.write("        <A HREF=\"#\" onClick=\"alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')\" CLASS=\"linkplain\" TITLE=\"New Activity\">New</A>");
+     out.write("        <A HREF=\"#\" onClick=\"alert('Your credential level as Guest does not allow you to perform this action')\" CLASS=\"linkplain\" TITLE=\"New Activity\">New</A>");
    else
      out.write("        <A HREF=\"#\" onClick=\"createVisit();\" CLASS=\"linkplain\" TITLE=\"Arrange meeting\">Arrange meeting</A>");
 %>
@@ -473,7 +473,7 @@
              
                if (bItsMe)
                  if (bIsGuest && !bIsAdmin)
-                   out.write("<FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"#\" onClick=\"alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')\" TITLE=\"Delete\">x</A>]</FONT></TD>\n");
+                   out.write("<FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"#\" onClick=\"alert('Your credential level as Guest does not allow you to perform this action')\" TITLE=\"Delete\">x</A>]</FONT></TD>\n");
                  else if (!bIsAdmin && !oMeeting.getString(DB.gu_fellow).equals(getCookie(request, "userid", "")))
                    out.write("<FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"#\" onClick=\"alert('It is not allowed to delete activities not created by you')\" TITLE=\"Delete\">x</A>]</FONT></TD>\n");
                  else
@@ -515,8 +515,8 @@
     addMenuSeparator();
 <%  if (bItsMe) {
       if (bIsGuest && !bIsAdmin) {
-        out.write("addMenuOption(\"Delete\",\"alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')\",0);\n    addMenuSeparator();\n");
-        out.write("addMenuOption(\"Repeat\",\"alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')\",0);\n    addMenuSeparator();\n");
+        out.write("addMenuOption(\"Delete\",\"alert('Your credential level as Guest does not allow you to perform this action')\",0);\n    addMenuSeparator();\n");
+        out.write("addMenuOption(\"Repeat\",\"alert('Your credential level as Guest does not allow you to perform this action')\",0);\n    addMenuSeparator();\n");
       } else if (!bIsAdmin && !sFellow.equals(getCookie(request, "userid", ""))) {
         out.write("addMenuOption(\"Delete\",\"alert('It is not allowed to delete activities not created by you')\",0);\n    addMenuSeparator();\n");
         out.write("addMenuOption(\"Repeat\",\"alert('It is not allowed to repeat activities not created by you')\",0);\n    addMenuSeparator();\n");

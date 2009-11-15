@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
  
@@ -85,7 +85,7 @@
     }
   //-->
   </SCRIPT>
-  <TITLE>hipergate :: [~Gestión de Contenidos~]</TITLE>
+  <TITLE>hipergate :: Content Management</TITLE>
 </HEAD>
 <BODY  TOPMARGIN="0" MARGINHEIGHT="0">
 <%@ include file="../common/tabmenu.jspf" %>
@@ -192,11 +192,11 @@
         <TABLE CELLSPACING="8" BORDER="0">
           <TR>
             <TD VALIGN="top">
-              <IMG SRC="../images/images/webbuilder/uploadimages.gif" BORDER="0" ALT="[~Imágenes y Archivos~]">
+              <IMG SRC="../images/images/webbuilder/uploadimages.gif" BORDER="0" ALT="Images and Files">
             </TD>
             <TD>
 <% if (bIsGuest) { %>
-              <A CLASS="linkplain" HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">Pre-load images</A>
+              <A CLASS="linkplain" HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')">Pre-load images</A>
 <% } else { %>
               <A CLASS="linkplain" HREF="javascript:uploadImage()">Pre-load images</A>
 <% } %>

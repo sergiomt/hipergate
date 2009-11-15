@@ -1,4 +1,4 @@
-﻿<%@ page import="com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %><%
+<%@ page import="com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %><%
   String guid = request.getParameter("gu_mimemsg");
   String msgid = request.getParameter("msgid");
   String action = request.getParameter("action");

@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.ResultSet,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.ResultSet,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/cookies.jspf" %>
@@ -88,7 +88,7 @@
       var frm = document.forms[0];
     
       if (frm.sel_year.options.selectedIndex != -1) {
-        if (window.confirm("[~Está seguro de que desea eliminar el año~] " + getCombo(frm.sel_year)))
+        if (window.confirm("Are you sure that you want to delete year " + getCombo(frm.sel_year)))
           // top.frames['yearobjectives'].document.location = "salesman_year_delete.jsp?gu_sales_man=<%=gu_sales_man%>&tx_year=" + getCombo(frm.sel_year) + "&n_sales_man=" + escape("<%=n_sales_man%>");
           var u = "salesman_year_delete.jsp?gu_sales_man=<%=gu_sales_man%>&n_sales_man=<%=(com.knowgate.misc.Gadgets.URLEncode(n_sales_man))%>&tx_year=" + getCombo(frm.sel_year);
           top.frames['yearobjectives'].document.location = u;
@@ -105,12 +105,12 @@
       var frm = document.forms[0];
     
       if (hasForbiddenChars(frm.tx_year.value)) {
-        alert ("[~El año contiene caracteres no válidos~]");
+        alert ("Year contains invalid characters");
 	return;
       }
       
       if (comboIndexOf (frm.sel_year, frm.tx_year.value) != -1) {
-        alert ("[~Ya existe el año especificado~]");
+        alert ("Year already exists");
       }
       else {
   	frm.sel_year.options[frm.sel_year.options.length] = new Option(frm.tx_year.value, frm.tx_year.value, true, true);
@@ -139,10 +139,10 @@
       <TABLE WIDTH="100%">
         <TR>
           <TD>
-            <FONT CLASS="formstrong">[~Año~]&nbsp;</FONT><SELECT NAME="sel_year" onchange="showYear(getCombo(this))"><% out.write(oStrBuff.toString()); %></SELECT><INPUT TYPE="button" CLASS="closebutton" VALUE="Delete" STYLE="width:80px" onclick="deleteYear()">
+            <FONT CLASS="formstrong">Year&nbsp;</FONT><SELECT NAME="sel_year" onchange="showYear(getCombo(this))"><% out.write(oStrBuff.toString()); %></SELECT><INPUT TYPE="button" CLASS="closebutton" VALUE="Delete" STYLE="width:80px" onclick="deleteYear()">
           </TD>
           <TD ALIGN="right">
-            <FONT CLASS="formstrong">[~Nuevo Año~]&nbsp;</FONT><INPUT TYPE="text" MAXLENGTH="10" SIZE="6" NAME="tx_year">
+            <FONT CLASS="formstrong">Create New Year&nbsp;</FONT><INPUT TYPE="text" MAXLENGTH="10" SIZE="6" NAME="tx_year">
             <INPUT TYPE="button" CLASS="pushbutton" VALUE="New" STYLE="width:80px" onclick="newYear()">
           </TD>
         </TR>

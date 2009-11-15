@@ -1,4 +1,4 @@
-﻿<%@ page import="org.w3c.dom.*,com.knowgate.misc.*,java.io.File,java.lang.*,java.util.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.misc.Environment,com.knowgate.dataxslt.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.db.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="org.w3c.dom.*,com.knowgate.misc.*,java.io.File,java.lang.*,java.util.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.misc.Environment,com.knowgate.dataxslt.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.db.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%!
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -461,12 +461,12 @@
       <hr size="1">
       <img src="../images/images/floppy.gif" border="0" align="middle">&nbsp;
 <% if (bIsGuest) { %>
-      <a class="linkplain" href="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">Save</a>
+      <a class="linkplain" href="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')">Save</a>
 <% } else { %>
       <a class="linkplain" href="javascript:document.forms[0].submit()">Save</a>
 <% } %>
-      &nbsp;&nbsp;<img src="../images/images/back.gif" border="0" align="middle">&nbsp;<a class="linkplain" href="#" onclick="if (window.confirm('[~Los cambios se perderán y se recuperarán los datos iniciales. ¿Esta seguro?~]')) document.location.reload();">Restore</a>
-      &nbsp;&nbsp;<img src="../images/images/closewindow.gif" border="0" align="middle">&nbsp;<a class="linkplain" href="#" onclick="if (window.confirm('[~Si no pulsa Guardar se perderán los cambios realizados. ¿Está seguro?~]')) window.close();">Close</a>
+      &nbsp;&nbsp;<img src="../images/images/back.gif" border="0" align="middle">&nbsp;<a class="linkplain" href="#" onclick="if (window.confirm('Are you sure?Changes will be lost and original data wil be restored. ')) document.location.reload();">Restore</a>
+      &nbsp;&nbsp;<img src="../images/images/closewindow.gif" border="0" align="middle">&nbsp;<a class="linkplain" href="#" onclick="if (window.confirm('If you do not click Save, changes will be lost. Do you want to continue?')) window.close();">Close</a>
       &nbsp;&nbsp;<img src="../images/images/resort.gif" border="0" align="middle">&nbsp;<a class="linkplain" href="javascript:reSort()">Reorder</a>
 
       <hr size="1">

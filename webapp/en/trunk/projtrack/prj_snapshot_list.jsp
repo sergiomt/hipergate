@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.projtrack.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.projtrack.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/projtrack.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%
 
@@ -78,7 +78,7 @@
 %>
 <HTML LANG="<%=sLanguage%>">
   <HEAD>
-    <TITLE>hipergate :: [~Instantáneas de Proyecto~]</TITLE>
+    <TITLE>hipergate :: Project Snapshots</TITLE>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   </HEAD>
@@ -86,7 +86,7 @@
     <DIV class="cxMnu1" style="width:120px"><DIV class="cxMnu2">
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="document.location='prj_edit.jsp?gu_project=<%=gu_project%>&standalone=<%=(request.getParameter("standalone")!=null ? "1" : "0")%>'"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
     </DIV></DIV>
-    <TABLE><TR><TD WIDTH="400" CLASS="striptitle"><FONT CLASS="title1">[~Instantáneas de Proyecto~]&nbsp;<%=nm_project%></FONT></TD></TR></TABLE>
+    <TABLE><TR><TD WIDTH="400" CLASS="striptitle"><FONT CLASS="title1">Project Snapshots&nbsp;<%=nm_project%></FONT></TD></TR></TABLE>
     <BR>
     <IMG SRC="../images/images/new16x16.gif" BORDER="0">&nbsp;
 	  <A HREF="#" onclick="document.forms[0].submit()" CLASS="linkplain">New Snapshot</A>

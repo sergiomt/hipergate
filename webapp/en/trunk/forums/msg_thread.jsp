@@ -1,4 +1,4 @@
-﻿<%@ page import="java.text.SimpleDateFormat,java.net.URLDecoder,java.io.Reader,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.text.SimpleDateFormat,java.net.URLDecoder,java.io.Reader,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <HTML>
 <HEAD>
@@ -70,7 +70,7 @@
     oConn = GlobalDBBind.getConnection("messagethread");
     
     sThreadId = request.getParameter("gu_thread_msg");
-    sSubject = "[~Ver conversación~]";
+    sSubject = "View thread";
      
     if (null==sThreadId) {
       oStmt = oConn.prepareStatement("SELECT " + DB.gu_thread_msg + "," + DB.tx_subject + " FROM " + DB.k_newsmsgs + " WHERE " + DB.gu_msg + "=?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);

@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%  response.setHeader("Cache-Control","no-cache");response.setHeader("Pragma","no-cache"); response.setIntHeader("Expires", 0); %>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%
@@ -51,14 +51,19 @@
   SimpleDateFormat oSimpleDate = new SimpleDateFormat("yyyy-MM-dd");
   DBSubset oBug = new DBSubset(DB.k_bugs + " b," + DB.k_projects + " p",
                                "b.tl_bug,p.gu_project,b.od_severity,b.od_priority,b.nm_reporter,b.tx_rep_mail,b.tx_bug_brief,b.dt_created,b.dt_closed," + DBBind.Functions.ISNULL + "(b.tx_status,''),b.nm_assigned,b.tx_comments,b.pg_bug,b.gu_writer,b.tp_bug,b.vs_found,b.vs_closed",
-  			       "p.gu_project=b.gu_project AND b.gu_bug='" + request.getParameter("gu_bug") + "'", 1);
-  DBSubset oAttachs = new DBSubset(DB.k_bugs_attach, DB.tx_file, DB.gu_bug + "='" + request.getParameter("gu_bug") + "'", 1);
+  			                       "p.gu_project=b.gu_project AND b.gu_bug=?", 1);
+  DBSubset oTrk = new DBSubset(DB.k_bugs_track,
+                               DB.gu_bug+","+DB.pg_bug_track+","+DB.dt_created+","+DB.nm_reporter+","+DB.tx_rep_mail+","+DB.gu_writer+","+DB.tx_bug_track,
+                               DB.gu_bug+"=? ORDER BY 2 DESC", 20);
+  DBSubset oAttachs = new DBSubset(DB.k_bugs_attach, DB.tx_file, DB.gu_bug + "=? AND " + DB.pg_bug_track + " IS NULL", 1);
   DBSubset oPrjRoots = null;
   DBSubset oPrjChlds = null;
+  BugTrack[] aTrack = null;
   int iAttachs = 0;
   int iPrjChlds = 0;
   int iPrjRoot = 0;
-    
+  int iTrack = 0;
+      
   String sSeverityLookUp = null;
   String sPriorityLookUp = null;
   String sAssignedLookUp = null;
@@ -83,9 +88,10 @@
 
     oCon1 = GlobalDBBind.getConnection("bug_edit");
     
-    iRowCount = oBug.load(oCon1);
-    iAttachs = oAttachs.load(oCon1);
-         
+    iRowCount = oBug.load(oCon1, new Object[]{request.getParameter("gu_bug")});
+    iAttachs = oAttachs.load(oCon1, new Object[]{request.getParameter("gu_bug")});
+    iTrack = oTrk.load(oCon1, new Object[]{request.getParameter("gu_bug")});
+
     sSeverityLookUp = DBLanguages.getHTMLSelectLookUp (oCon1, DB.k_bugs_lookup, sWorkArea, DB.od_severity, sLanguage);
     sPriorityLookUp = DBLanguages.getHTMLSelectLookUp (oCon1, DB.k_bugs_lookup, sWorkArea, DB.od_priority, sLanguage);
     sAssignedLookUp = DBLanguages.getHTMLSelectLookUp (oCon1, DB.k_bugs_lookup, sWorkArea, DB.nm_assigned, sLanguage);
@@ -98,11 +104,12 @@
 <HTML LANG="<%=sLanguage%>">
   <HEAD>
     <TITLE>hipergate :: Incident Maintenance</TITLE>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/datefuncs.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>       
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>       
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
       <!--
       var skin = getCookie("skin");
@@ -117,6 +124,28 @@
 
         window.open("../common/calendar.jsp?a=" + (dtnw.getFullYear()) + "&m=" + dtnw.getMonth() + "&c=" + ctrl, "", "toolbar=no,directories=no,menubar=no,resizable=no,width=171,height=195");
       } // showCalendar()
+
+<% if (!bIsGuest) { %>
+
+      // ------------------------------------------------------
+
+      function addTrackRecord() {
+      	var frm = document.forms[0];
+      	if (frm.tx_bug_track.value.length==0) {
+      	  alert ("Follow-up message may not be empty");
+      	  frm.tx_bug_track.focus();
+      	  return false;
+      	}
+      	if (frm.tx_bug_track.value.length>2000) {
+      	  alert ("Follow-up message may not be longer the 2,000 characters");
+      	  frm.tx_bug_track.focus();
+      	  return false;
+      	}
+	      httpPostForm("bug_track_store.jsp",frm);	      
+        document.location.reload();
+      } // addTrackRecord()
+
+<% } %>
       
       // ------------------------------------------------------
 
@@ -201,7 +230,7 @@
 	}
 	
 	if (!isDate(frm.dt_closed.value, "d") && frm.dt_closed.value.length>0) {
-	  alert ("[~La fecha de cierre no es válida~]");
+	  alert ("Close date is not valid");
 	  return false;	  
 	}
 	
@@ -241,6 +270,7 @@
     &nbsp;&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/printer16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0">&nbsp;<A HREF="bug_report.jsp?pg_bug=<% out.write(String.valueOf(oBug.getInt(DB.pg_bug,0))); %>" CLASS="linkplain">Print</A>
     <FORM NAME="frmReportBug" ENCTYPE="multipart/form-data" METHOD="post" ACTION="bugedit_store.jsp" onSubmit="return validate()">
       <INPUT TYPE="hidden" NAME="is_new" VALUE="0">
+      <INPUT TYPE="hidden" NAME="pg_bug" VALUE="<%=String.valueOf(oBug.getInt(DB.pg_bug,0))%>">      
       <INPUT TYPE="hidden" NAME="gu_bug" VALUE="<%=request.getParameter("gu_bug")%>">
       <INPUT TYPE="hidden" NAME="gu_writer" VALUE="<% out.write(oBug.getStringNull(13,0,"")); %>">
       <INPUT TYPE="hidden" NAME="tp_bug" VALUE="<% out.write(oBug.getStringNull(14,0,""));%>" >
@@ -340,7 +370,7 @@
               </TR>
               <TR>
                 <TD ALIGN="right"><FONT CLASS="formstrong">Description:</FONT></TD>
-                <TD><TEXTAREA NAME="tx_bug_brief" ROWS="9" COLS="40" CLASS="textsmall"><%=oBug.getString(6,0)%></TEXTAREA></TD>
+                <TD><TEXTAREA NAME="tx_bug_brief" ROWS="6" COLS="40" CLASS="textsmall"><%=oBug.getString(6,0)%></TEXTAREA></TD>
               </TR>
             </TABLE> <!-- Fin Datos de Alta -->            
           </TD> <!-- Fin Columna Izquierda -->
@@ -403,7 +433,7 @@
                 <TD>
                   <BR>
 <% if (bIsGuest) { %>
-                  <INPUT TYPE="submit" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="Save" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
+                  <INPUT TYPE="submit" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="Save" onclick="alert ('Your credential level as Guest does not allow you to perform this action')">
 <% } else { %>
                   <INPUT TYPE="submit" CLASS="pushbutton" STYLE="WIDTH:80" VALUE="Save">
 <% } %>
@@ -414,6 +444,26 @@
             </TABLE>
           </TD> <!-- Fin Columna Derecha -->
         </TR>
+        <TR>
+        	<!-- Track record -->
+          <TD COLSPAN="2" CLASS="formplain" ALIGN="right">
+<% if (!bIsGuest) { %>
+          	<A HREF="#" onclick="document.getElementById('trackmsg').style.display='block'">New follow-up message</A>
+<% } %>
+          </TD>
+        </TR>
+        <TR>
+          <TD CLASS="formfront" COLSPAN="2">
+          	<DIV id="trackmsg" STYLE="display:none"><TEXTAREA NAME="tx_bug_track" ROWS="4" COLS="80"></TEXTAREA><BR/>
+          	<IMG SRC="../images/images/spacer.gif" WIDTH="564" HEIGHT="1" ALT="" BORDER="0"><INPUT TYPE="button" CLASS="pushbutton" onclick="addTrackRecord()" VALUE="Add"></DIV>
+<% if (iTrack>0) { %>        	
+<%   for (int t=0; t<iTrack; t++) {
+       out.write("<FONT CLASS=\"formstrong\">"+oTrk.getDateTime24(2, t)+"&nbsp;"+oTrk.getStringNull(DB.nm_reporter,t,"")+"</FONT><BR/>\n");
+       out.write("<FONT CLASS=\"formplain\">"+oTrk.getStringNull(DB.tx_bug_track,t,"")+"</FONT><HR/>\n");
+     } %>
+          </TD>
+        </TR>
+<% } %>
       </TABLE> 
     </FORM>
   </BODY>

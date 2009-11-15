@@ -1,4 +1,4 @@
-﻿<%@ page import="com.knowgate.debug.DebugFile,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Gadgets,com.knowgate.hipergate.*,com.knowgate.forums.*,com.knowgate.workareas.WorkArea" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.knowgate.debug.DebugFile,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Gadgets,com.knowgate.hipergate.*,com.knowgate.forums.*,com.knowgate.workareas.WorkArea" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <%
 /*
@@ -91,7 +91,7 @@
 	       oBuffer.append ("treeMenu.addItem(new TreeMenuItem('Deleted Messages', 'parent.parent.frames[3].location.href = \"folder_listing_local.jsp?gu_folder="+sDeleted+"&screen_width=\" + String(screen.width);return false;','recycledempty_16x16.gif'));\n");
 	       oBuffer.append ("treeMenu.addItem(new TreeMenuItem('Sent Messsages', 'parent.parent.frames[3].location.href = \"folder_listing_local.jsp?gu_folder="+sSent+"&screen_width=\" + String(screen.width);return false;','folderclosed_16x16.gif'));\n");
 	       oBuffer.append ("treeMenu.addItem(new TreeMenuItem('Bulk Mail', 'parent.parent.frames[3].location.href = \"folder_listing_local.jsp?gu_folder="+sSpam+"&screen_width=\" + String(screen.width);return false;','folderred_16x16.gif'));\n");
-	       oBuffer.append ("treeMenu.addItem(new TreeMenuItem('[~Acuses de recibo~]', 'parent.parent.frames[3].location.href = \"folder_listing_local.jsp?gu_folder="+sReceipts+"&screen_width=\" + String(screen.width);return false;','folder_receipts16.gif'));\n");
+	       oBuffer.append ("treeMenu.addItem(new TreeMenuItem('Read receipts', 'parent.parent.frames[3].location.href = \"folder_listing_local.jsp?gu_folder="+sReceipts+"&screen_width=\" + String(screen.width);return false;','folder_receipts16.gif'));\n");
          
          String sSQL;
                                             	 
@@ -157,7 +157,7 @@
          sMailRoot = sQryStr = null;
          if (null!=oConn)
            if (!oConn.isClosed()) {
-             try { if (oConn.getAutoCommit()) oConn.rollback(); } catch (Exception ignore) {}
+             try { if (!oConn.getAutoCommit()) oConn.rollback(); } catch (Exception ignore) {}
              oConn.close("folders_tree_f");
              oConn = null;
            }        

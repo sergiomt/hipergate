@@ -121,7 +121,7 @@
 	}
 	
 	if (frm.target[0].checked && jsTypes[frm.sel_base_list.options.selectedIndex]==<%=DistributionList.TYPE_DYNAMIC%>) {
-	  alert ("It is not possible to put results in the base list because&nbsp;" + getComboText(frm.sel_base_list) + "[~ es una lista de tipo dinámico~]");
+	  alert ("It is not possible to put results in the base list because&nbsp;" + getComboText(frm.sel_base_list) + " is a dynamic list");
 	  return false;
 	}
 	
@@ -132,7 +132,7 @@
 	
 	if (frm.target[1].checked) {	
 	  if (ltrim(frm.tx_subject.value)=="") {
-	    alert ("[~Debe especificar un Asunto para la nueva lista resultado de la combinación~]");
+	    alert ("Must specify a subject for new list containing combined data");
 	    return false;	  
 	  }
 	  
@@ -148,23 +148,23 @@
 	if (frm.action[0].checked) {
 	  frm.tp_action.value = "add";
 	  if (frm.target[0].checked)
-	    msg = "You are about to add members from list&nbsp;" + getComboText(frm.sel_added_list) + " to list&nbsp;" + getComboText(frm.sel_base_list) + " overwritting those that already exist. [~¿Está seguro de que desea continuar?~]";
+	    msg = "You are about to add members from list&nbsp;" + getComboText(frm.sel_added_list) + " to list&nbsp;" + getComboText(frm.sel_base_list) + " overwritting those that already exist. Are you sure you want to continue?";
           else
-	    msg = "You are about to add members from list&nbsp;" + getComboText(frm.sel_base_list) + " and the list&nbsp;" + getComboText(frm.sel_added_list) + " putting results in a new list" + frm.tx_subject.value + " [~¿Está seguro de que desea continuar?~]";
+	    msg = "You are about to add members from list&nbsp;" + getComboText(frm.sel_base_list) + " and the list&nbsp;" + getComboText(frm.sel_added_list) + " putting results in a new list" + frm.tx_subject.value + " Are you sure you want to continue?";
         }
         else if (frm.action[1].checked) {
 	  frm.tp_action.value = "append";
 	  if (frm.target[0].checked)
-	    msg = "You are about to add members from list&nbsp;" + getComboText(frm.sel_added_list) + " to list&nbsp;" + getComboText(frm.sel_base_list) + " without altering those already existing at base list. [~¿Está seguro de que desea continuar?~]";
+	    msg = "You are about to add members from list&nbsp;" + getComboText(frm.sel_added_list) + " to list&nbsp;" + getComboText(frm.sel_base_list) + " without altering those already existing at base list. Are you sure you want to continue?";
           else
-	    msg = "You are about to add members from list&nbsp;" + getComboText(frm.sel_added_list) + " and the list&nbsp;" + getComboText(frm.sel_base_list) + " putting results in a new list" + frm.tx_subject.value + " [~¿Está seguro de que desea continuar?~]";
+	    msg = "You are about to add members from list&nbsp;" + getComboText(frm.sel_added_list) + " and the list&nbsp;" + getComboText(frm.sel_base_list) + " putting results in a new list" + frm.tx_subject.value + " Are you sure you want to continue?";
         }
         else {
 	  frm.tp_action.value = "substract";
 	  if (frm.target[0].checked)
-	    msg = "You are about to remove from list" + getComboText(frm.sel_base_list) + " members from list&nbsp;" + getComboText(frm.sel_added_list) + " [~¿Está seguro de que desea continuar?~]";
+	    msg = "You are about to remove from list" + getComboText(frm.sel_base_list) + " members from list&nbsp;" + getComboText(frm.sel_added_list) + " Are you sure you want to continue?";
           else
-	    msg = "You are about to create list t&nbsp;" + frm.tx_subject.value + " removing members of&nbsp;" + getComboText(frm.sel_added_list) + " from list&nbsp;" + getComboText(frm.sel_base_list) + " [~¿Está seguro de que desea continuar?~]";
+	    msg = "You are about to create list t&nbsp;" + frm.tx_subject.value + " removing members of&nbsp;" + getComboText(frm.sel_added_list) + " from list&nbsp;" + getComboText(frm.sel_base_list) + " Are you sure you want to continue?";
         }
                 
         if (frm.target[0].checked)
@@ -286,7 +286,7 @@
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">&nbsp;&nbsp;&nbsp;
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert ('Your credential level as Guest does not allow you to perform this action')">&nbsp;&nbsp;&nbsp;
 <% } else { %>
               <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
 <% } %>

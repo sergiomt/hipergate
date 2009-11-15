@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.Date,java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.text.DecimalFormat,java.text.SimpleDateFormat,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.hipergate.DBLanguages,com.knowgate.projtrack.Project" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Date,java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.text.DecimalFormat,java.text.SimpleDateFormat,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.hipergate.DBLanguages,com.knowgate.projtrack.Project" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%!
   public Date bestDate(Date dt1, Date dt2, Date dt3) {
@@ -108,11 +108,11 @@
       function filterByDate() {
         var frm = document.forms[0];
         if (!isDate(frm.dt_from.value,"d") && frm.dt_from.value.length>0) {
-          alert ("[~La fecha de inicio no es válida~]");
+          alert ("Invalid Start Date");
 	  return;
         }
         if (!isDate(frm.dt_to.value,"d") && frm.dt_to.value.length>0) {
-          alert ("[~La fecha de fin no es válida~]");
+          alert ("Invalid End Date");
 	  return;
         }
         document.location.href = "prj_costs.jsp?gu_project=<%=gu_project%>" + (frm.dt_from.value.length>0 ? "&dt_from="+frm.dt_from.value : "") + (frm.dt_to.value.length>0 ? "&dt_to="+frm.dt_to.value : "");
@@ -126,7 +126,7 @@
         var len = frm0.elements.length;
         var sub;
         
-        if (window.confirm("[~¿Está seguro de que desea eliminar las tareas y costes seleccionados?~]")) {
+        if (window.confirm("Are you sure that you want to delete selected duties and costs?")) {
           frm1.duties.value = "";
           frm1.costs.value = "";        
           for (var e=0; e<len; e++) {
@@ -162,11 +162,11 @@
         var len = frm.elements.length;
         var sub;
         if (!isDate(frm.dt_from.value,"d") && frm.dt_from.value.length>0) {
-          alert ("[~La fecha de inicio no es válida~]");
+          alert ("Invalid Start Date");
 	  return false;
         }
         if (!isDate(frm.dt_to.value,"d") && frm.dt_to.value.length>0) {
-          alert ("[~La fecha de fin no es válida~]");
+          alert ("Invalid End Date");
 	  return false;
         }
         for (var e=0; e<len; e++) {
@@ -174,7 +174,7 @@
           if (sub=="duty_" || sub=="cost_") {
             if (frm.elements[e].value.length==0) frm.elements[e].value = "0";
             if (isNaN(Number(frm.elements[e].value))) {
-              alert ("[~El coste no es válido~]");
+              alert ("Cost is not valid");
               frm.elements[e].focus();
               return false;
             } // fi

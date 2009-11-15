@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.io.File,java.io.FileInputStream,java.net.URLDecoder,java.util.Enumeration,java.sql.SQLException,java.sql.Timestamp,java.sql.PreparedStatement,java.sql.ResultSet,java.text.SimpleDateFormat,com.oreilly.servlet.MailMessage,com.oreilly.servlet.MultipartRequest,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.io.File,java.io.FileInputStream,java.net.URLDecoder,java.util.Enumeration,java.sql.SQLException,java.sql.Timestamp,java.sql.PreparedStatement,java.sql.ResultSet,java.text.SimpleDateFormat,com.oreilly.servlet.MailMessage,com.oreilly.servlet.MultipartRequest,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -296,7 +296,7 @@
     out.write ("<HTML><HEAD><TITLE>Wait...</TITLE><META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\"><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>");
   
     if (sOpCode.equals("NBUG"))
-      out.write ("alert('Thanks for using the incident reporting system. Your report has been assigned number&nbsp;" + String.valueOf(iPgBug) + ". [~A partir de ahora puede consultar el estado de su incidencia desde las opciones de búsqueda y listado~]');");
+      out.write ("alert('Thanks for using the incident reporting system. Your report has been assigned number&nbsp;" + String.valueOf(iPgBug) + ". From now on, you may consult the status of your incident from find and listing pages');");
   
     out.write ("window.opener.location.reload();");
   

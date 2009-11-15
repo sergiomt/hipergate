@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URL,javax.mail.Session,javax.mail.Message,javax.mail.Folder,javax.mail.MessagingException,javax.mail.URLName,javax.mail.Address,javax.mail.internet.*,java.util.Properties,java.net.URLDecoder,java.io.IOException,java.sql.ResultSet,java.sql.SQLException,java.sql.PreparedStatement,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.ProductLocation,com.knowgate.dfs.FileSystem,com.knowgate.hipermail.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URL,javax.mail.Session,javax.mail.Message,javax.mail.Folder,javax.mail.MessagingException,javax.mail.URLName,javax.mail.Address,javax.mail.internet.*,java.util.Properties,java.net.URLDecoder,java.io.IOException,java.sql.ResultSet,java.sql.SQLException,java.sql.PreparedStatement,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.ProductLocation,com.knowgate.dfs.FileSystem,com.knowgate.hipermail.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="msg_txt_util.jspf" %><%@ include file="mail_env.jspf" %><%@ include file="../methods/page_prolog.jspf" %><%
 
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
@@ -246,7 +246,7 @@
         
         if (edt.GetHTML().indexOf("{#")>=0) {
           if (frm.TO.value.indexOf("{")<0 && frm.CC.value.indexOf("{")<0 && frm.BCC.value.indexOf("{")<0) {
-            alert ("[~El cuerpo del mensaje contiene campos personalizados, pero no está siendo enviado a ninguna lista de distribución~]");
+            alert ("The body of the message contains personalized fields, but it is not being sent to any distribution list");
             return false;
           }
         }
@@ -277,7 +277,7 @@
             return false;
           }
 	        else if (frm.SUBJECT.value.length==0 || frm.SUBJECT.value=="no subject") {
-	          if (window.confirm("[~El mensaje no tiene asunto. ¿Está seguro de que desea enviarlo de todas formas?~]")) {
+	          if (window.confirm("Message has no subject. Are you sure that you want to send it anyway?")) {
               frm.action = "msg_send.jsp";
 	            frm.submit();
 	          }
@@ -402,24 +402,24 @@
 	    <TD VALIGN="middle">
 	      <TABLE SUMMARY="Custom Tags" BORDER="0" CELLSPACING="0" CELLPADDING="0">
 	        <TR>
-	          <TD CLASS="formplain">[~Campos personalizados~]</TD>
+	          <TD CLASS="formplain">Change</TD>
 	        </TR>
 	        <TR>
 	          <TD>
-						  <SELECT NAME="sel_custom" CLASS="combomini"><OPTION VALUE=""></OPTION><OPTION VALUE="{#Data.Name}">[~Nombre~]</OPTION><OPTION VALUE="{#Data.Surname}">[~Apellidos~]</OPTION><OPTION VALUE="{#Data.Legal_Name}">[~Razón Social~]</OPTION><OPTION VALUE="{#Address.EMail}">[~e-mail~]</OPTION><OPTION VALUE="{#Address.Street_Type}">[~Tipo de Vía~]</OPTION><OPTION VALUE="{#Address.Street_Name}">[~Nombre de Vía~]</OPTION><OPTION VALUE="{#Address.Street_Num}">[~Número en la Vía~]</OPTION><OPTION VALUE="{#Address.Line1}">[~Dirección Línea 1~]</OPTION><OPTION VALUE="{#Address.Line2}">[~Dirección Línea 2~]</OPTION><OPTION VALUE="{#Address.Country}">[~Pais~]</OPTION><OPTION VALUE="{#Address.State}">[~Estado/Provincia~]</OPTION><OPTION VALUE="{#Address.City}">[~Ciudad~]</OPTION><OPTION VALUE="{#Address.Zipcode}">[~Código Postal~]</OPTION><OPTION VALUE="{#Address.Proffesional_Phone}">[~Teléfono~]</OPTION></SELECT>&nbsp;<INPUT TYPE="button" CLASS="minibutton" VALUE="[~Insertar~]" onclick="insertCustomField()">
+						  <SELECT NAME="sel_custom" CLASS="combomini"><OPTION VALUE=""></OPTION><OPTION VALUE="{#Data.Name}">Name</OPTION><OPTION VALUE="{#Data.Surname}">Surname</OPTION><OPTION VALUE="{#Data.Legal_Name}">Legal Name</OPTION><OPTION VALUE="{#Address.EMail}">e-mail</OPTION><OPTION VALUE="{#Address.Street_Type}">Street Type</OPTION><OPTION VALUE="{#Address.Street_Name}">Street Name</OPTION><OPTION VALUE="{#Address.Street_Num}">Street Number</OPTION><OPTION VALUE="{#Address.Line1}">Address Line 1</OPTION><OPTION VALUE="{#Address.Line2}">Address Line 2</OPTION><OPTION VALUE="{#Address.Country}">Country</OPTION><OPTION VALUE="{#Address.State}">State/Province</OPTION><OPTION VALUE="{#Address.City}">City</OPTION><OPTION VALUE="{#Address.Zipcode}">Zipcode</OPTION><OPTION VALUE="{#Address.Proffesional_Phone}">Telephone</OPTION></SELECT>&nbsp;<INPUT TYPE="button" CLASS="minibutton" VALUE="Insert" onclick="insertCustomField()">
 	          </TD>
 	        </TR>
 	      </TABLE>
       </TD>
 <% if (contenttype.equals("html")) { %>
 	    <TD VALIGN="middle" CLASS="formplain">
-	    	<INPUT TYPE="checkbox" NAME="chk_notification" VALUE="1">&nbsp;[~Solicitar acuse de recibo~]
+	    	<INPUT TYPE="checkbox" NAME="chk_notification" VALUE="1">&nbsp;Request read confirmation receipt
 	    	<BR/>
-	    	<INPUT TYPE="checkbox" NAME="chk_webbeacon" VALUE="1">&nbsp;[~Insertar Web Beacon~]
+	    	<INPUT TYPE="checkbox" NAME="chk_webbeacon" VALUE="1">&nbsp;Insert Web Beacon
       </TD>
 <% } else { %>
 	    <TD VALIGN="top" CLASS="formplain">
-	    	<INPUT TYPE="checkbox" NAME="chk_notification" VALUE="1">&nbsp;[~Solicitar acuse de recibo~]
+	    	<INPUT TYPE="checkbox" NAME="chk_notification" VALUE="1">&nbsp;Request read confirmation receipt
       </TD>
 <% } %>
     </TR>

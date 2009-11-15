@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.io.File,java.sql.SQLException,com.oreilly.servlet.MultipartRequest,org.apache.oro.text.regex.MalformedPatternException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.misc.VCardParser,com.knowgate.debug.DebugFile" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.io.File,java.sql.SQLException,com.oreilly.servlet.MultipartRequest,org.apache.oro.text.regex.MalformedPatternException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.misc.VCardParser,com.knowgate.debug.DebugFile" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><% 
 
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
@@ -25,7 +25,7 @@
 
   File oTmp = new File(sTmpDir);
   if (!oTmp.canWrite()) {
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SecurityException&desc=[~No es posible escribir en el directorio~] "+sTmpDir+"&resume=_back"));  
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SecurityException&desc=It is not possible to write into directory "+sTmpDir+"&resume=_back"));  
     return;
   }
 
@@ -47,7 +47,7 @@
   int iFLen = (int) oVcfFile.length();
   
   if (iFLen==0) {
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=IOException&desc=[~El archivo a cargar esta vacio~]&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=IOException&desc=The file to be loaded is empty&resume=_back"));
     return;
   }
 
@@ -57,13 +57,13 @@
 %>
 <HTML>
 <HEAD>
-  <TITLE>hipergate :: [~Carga de Contactos desde VCard~]</TITLE>
+  <TITLE>hipergate :: Load Contacts from VCard</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
       function validate() {
-	      return window.confirm("[~Está a punto de importar el fichero seleccionado. ¿Está seguro de que desea continuar?~]");
+	      return window.confirm("You are about to import the selected file");
       } // validate;
     //-->
   </SCRIPT>
@@ -82,13 +82,13 @@
   
   <TABLE SUMMARY="Form Title" WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Carga de Contactos desde VCard~]</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Load Contacts from VCard</FONT></TD></TR>
   </TABLE>  
   <TABLE SUMMARY="Preview">
     <TR>
-      <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Nombre~]</B></TD>
-      <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Compa&ntilde;&iacute;a~]</B></TD>
-      <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~e-mail~]</B></TD>
+      <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Name</B></TD>
+      <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Company</B></TD>
+      <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>e-mail</B></TD>
     </TR>
 <%
   int nCards = oPrsr.getVCardsCount();
@@ -104,11 +104,11 @@
   
 %>
   </TABLE>
-  <INPUT TYPE="button" class="pushbutton" VALUE="[~Anterior~]" TITLE="ALT+b" ACCESSKEY="b" onclick="document.location='textloader2undo.jsp?action=_back&workarea=<%=gu_workarea%>&filename=<%=oVcfFile.getName()%>'">
+  <INPUT TYPE="button" class="pushbutton" VALUE="Previous" TITLE="ALT+b" ACCESSKEY="b" onclick="document.location='textloader2undo.jsp?action=_back&workarea=<%=gu_workarea%>&filename=<%=oVcfFile.getName()%>'">
   &nbsp;&nbsp;&nbsp;
-  <INPUT TYPE="submit" class="pushbutton" VALUE="[~Importar~]" TITLE="ALT+i" ACCESSKEY="i">
+  <INPUT TYPE="submit" class="pushbutton" VALUE="Import" TITLE="ALT+i" ACCESSKEY="i">
   &nbsp;&nbsp;&nbsp;
-  <INPUT TYPE="button" class="closebutton" VALUE="[~Cancelar~]" TITLE="ALT+c" ACCESSKEY="c" onclick="document.location='textloader2undo.jsp?action=_close&workarea=<%=gu_workarea%>&filename=<%=oVcfFile.getName()%>'">
+  <INPUT TYPE="button" class="closebutton" VALUE="Cancel" TITLE="ALT+c" ACCESSKEY="c" onclick="document.location='textloader2undo.jsp?action=_close&workarea=<%=gu_workarea%>&filename=<%=oVcfFile.getName()%>'">
   </FORM>
 </BODY>
 </HTML>

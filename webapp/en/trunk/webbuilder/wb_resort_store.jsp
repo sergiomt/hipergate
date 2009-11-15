@@ -1,4 +1,4 @@
-﻿<%@ page import="org.w3c.dom.DOMException,java.util.Vector,java.util.HashMap,java.io.FileNotFoundException,java.io.IOException,java.net.URLDecoder,com.knowgate.debug.DebugFile,com.knowgate.dataxslt.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="org.w3c.dom.DOMException,java.util.Vector,java.util.HashMap,java.io.FileNotFoundException,java.io.IOException,java.net.URLDecoder,com.knowgate.debug.DebugFile,com.knowgate.dataxslt.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <% 
 /*

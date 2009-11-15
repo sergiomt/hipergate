@@ -8,7 +8,7 @@ function GridCreate(iRows,iCols) {
   oGrid = new Object;
   
   if (iRows>0)
-    oGrid.rows = new Array(iRows);
+    oGrid.rows = new Array();
   else
     oGrid.rows = null;
     
@@ -33,7 +33,7 @@ function GridCreateRow(oGrid,sId) {
           
     var oRows = oGrid.rows;
          
-    oRows[oRows.length] = oGridRow;
+    oRows.push(oGridRow);
   }
   else {
 
@@ -182,7 +182,7 @@ function GridGetCellValue(oGrid,iCol,iRow) {
 
 //-----------------------------------------------------------------------------
 
-function GridSetCellValue(oGrid,iCol,iRow,sValue) {
+function GridSetCellValue(oGrid,iCol,iRow,sValue) {	
   var oRow = (oGrid.rows)[iRow];
   var oCel;
   
@@ -207,9 +207,9 @@ function GridToString(oGrid,sColDelimiter,sRowDelimiter) {
         oGridCell = (oGridRow.cols)[c];  
         if (c>0) sRetVal += sColDelimiter;
         if ("hidden"==oGridCell.type || "text"==oGridCell.type)
-	  sRetVal += oGridCell.value;
-	else if ("html"==oGridCell.type)
-	  sRetVal += RemoveHTMLTags(oGridCell.value);
+	        sRetVal += oGridCell.value;
+	      else if ("html"==oGridCell.type)
+	        sRetVal += RemoveHTMLTags(oGridCell.value);
       } // next (c)
     } // fi (oGridRow)
   } // next (r)

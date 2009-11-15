@@ -1,4 +1,4 @@
-﻿<%@ page import="java.text.NumberFormat,java.util.Arrays,java.util.HashMap,java.util.Iterator,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.scheduler.Atom" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.text.NumberFormat,java.util.Arrays,java.util.HashMap,java.util.Iterator,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.scheduler.Atom" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*
@@ -169,7 +169,7 @@
 
 %><HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: [~Estadísticas de seguimiento de un e-mail~]</TITLE>
+  <TITLE>hipergate :: E-Mail follow-up statistics</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
 
@@ -186,22 +186,22 @@
 
       function showReceipts() {
 			  document.getElementById('receipts').style.display='block';
-			  document.getElementById('receipts_ctrl').innerHTML = "<A HREF=# onclick=\"hideReceipts()\" CLASS=\"linkplain\">[~Ocultar listado de acuses de recibo~]</A>";
+			  document.getElementById('receipts_ctrl').innerHTML = "<A HREF=# onclick=\"hideReceipts()\" CLASS=\"linkplain\">Hide read receipts list</A>";
       }
 
       function hideReceipts() {
 			  document.getElementById('receipts').style.display='none';
-			  document.getElementById('receipts_ctrl').innerHTML = "<A HREF=# onclick=\"showReceipts()\" CLASS=\"linkplain\">[~Mostrar listado de acuses de recibo~]</A>";
+			  document.getElementById('receipts_ctrl').innerHTML = "<A HREF=# onclick=\"showReceipts()\" CLASS=\"linkplain\">Show read receipts list</A>";
       }
 
       function showWebBeacons() {
 			  document.getElementById('webbeacons').style.display='block';
-			  document.getElementById('webbeacons_ctrl').innerHTML = "<A HREF=# onclick=\"hideWebBeacons()\" CLASS=\"linkplain\">[~Ocultar listado de aperturas~]</A>";
+			  document.getElementById('webbeacons_ctrl').innerHTML = "<A HREF=# onclick=\"hideWebBeacons()\" CLASS=\"linkplain\">Hide readed confirmations list</A>";
       }
 
       function hideWebBeacons() {
 			  document.getElementById('webbeacons').style.display='none';
-			  document.getElementById('webbeacons_ctrl').innerHTML = "<A HREF=# onclick=\"showWebBeacons()\" CLASS=\"linkplain\">[~Mostrar listado de aperturas~]</A>";
+			  document.getElementById('webbeacons_ctrl').innerHTML = "<A HREF=# onclick=\"showWebBeacons()\" CLASS=\"linkplain\">Show readed confirmations list</A>";
       }
     //-->
   </SCRIPT>
@@ -209,25 +209,25 @@
 </HEAD>
 <BODY TOPMARGIN="8" MARGINHEIGHT="8">
   <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Actualizar~]"> [~Actualizar~]</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="[~Imprimir~]"> [~Imprimir~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
   </DIV></DIV>
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Estadísticas de seguimiento del e-mail~]&nbsp;<%=sTxSubject%></FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Follow-up statistics&nbsp;<%=sTxSubject%></FONT></TD></TR>
   </TABLE>  
 
     <TABLE CLASS="formback">
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right" CLASS="formplain">[~Total Destinatarios~]</TD>
+            <TD ALIGN="right" CLASS="formplain">Total recipients</TD>
             <TD ALIGN="left" CLASS="formplain"><%=String.valueOf(nRecipients)%></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" CLASS="formplain">[~Acuses de recibo~]</TD>
-            <TD ALIGN="left" CLASS="formplain"><% if (iReceipts>0) { %> <DIV ID="receipts_ctrl"><%=String.valueOf(iReceipts)%>&nbsp;&nbsp;<A HREF="#" onclick="showReceipts()" CLASS="linkplain">[~Mostrar listado de acuses de recibo~]</A></DIV><% } else { out.write("0"); } %></TD>
+            <TD ALIGN="right" CLASS="formplain">Read receipts</TD>
+            <TD ALIGN="left" CLASS="formplain"><% if (iReceipts>0) { %> <DIV ID="receipts_ctrl"><%=String.valueOf(iReceipts)%>&nbsp;&nbsp;<A HREF="#" onclick="showReceipts()" CLASS="linkplain">Show read receipts list</A></DIV><% } else { out.write("0"); } %></TD>
           </TR>
           <TR>
             <TD ALIGN="right"></TD>
@@ -252,8 +252,8 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" CLASS="formplain">[~Abiertos~]</TD>
-            <TD ALIGN="left" CLASS="formplain"><% if (iWebBeaconsUnique>0) { %> <DIV ID="webbeacons_ctrl"><%=String.valueOf(iWebBeaconsUnique)%>&nbsp;&nbsp;<A HREF="#" onclick="showWebBeacons()" CLASS="linkplain">[~Mostrar listado de aperturas~]</A></DIV><% } else { out.write("?"); } %></TD>
+            <TD ALIGN="right" CLASS="formplain">Opened</TD>
+            <TD ALIGN="left" CLASS="formplain"><% if (iWebBeaconsUnique>0) { %> <DIV ID="webbeacons_ctrl"><%=String.valueOf(iWebBeaconsUnique)%>&nbsp;&nbsp;<A HREF="#" onclick="showWebBeacons()" CLASS="linkplain">Show readed confirmations list</A></DIV><% } else { out.write("?"); } %></TD>
           </TR>
           <TR>
             <TD ALIGN="right"></TD>
@@ -291,7 +291,7 @@
               </DIV></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" CLASS="formplain">[~Clientes de Correo~]</TD>
+            <TD ALIGN="right" CLASS="formplain">E-Mail User Agents</TD>
             <TD ALIGN="left">
               <TABLE SUMMARY="User Agents">
 <%              Iterator<String> oIter = oAgents.keySet().iterator();
@@ -310,7 +310,7 @@
           </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-    	      <INPUT TYPE="button" ACCESSKEY="o" VALUE="[~OK~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+o" onclick="window.history.back()">
+    	      <INPUT TYPE="button" ACCESSKEY="o" VALUE="OK" CLASS="closebutton" STYLE="width:80" TITLE="ALT+o" onclick="window.history.back()">
     	      <BR><BR>
     	    </TD>
     	  </TR>            

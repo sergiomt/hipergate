@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.Statement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.scheduler.Job" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.Statement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.scheduler.Job" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><% 
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -47,6 +47,7 @@
   String id_command = request.getParameter("id_command");
   String gu_pageset = request.getParameter("gu_pageset");
   String tl_job = null;
+  boolean bo_attachments = true;
   
   DBSubset oJobs = null;
   int iJobCount = 0;
@@ -60,17 +61,26 @@
   try {
     bIsGuest = isDomainGuest (GlobalDBBind, request, response);
     
-    // [~//Código de acceso a datos~]
     oJobs = new DBSubset (DB.k_lu_job_commands, DB.tx_command, DB.id_command + "='" + id_command + "'", 10);      				 
     iJobCount = oJobs.load (oConn);
     
-    oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-    oRSet = oStmt.executeQuery("SELECT " + DB.nm_pageset + " FROM " + DB.k_pagesets + " WHERE " + DB.gu_pageset + "='" + gu_pageset + "'");
-    oRSet.next();
-    tl_job = oRSet.getString(1);
-    oRSet.close();
-    oStmt.close();
-    
+    if (id_command.equals("MAIL")) {
+      oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+      oRSet = oStmt.executeQuery("SELECT " + DB.nm_pageset + " FROM " + DB.k_pagesets + " WHERE " + DB.gu_pageset + "='" + gu_pageset + "'");
+      oRSet.next();
+      tl_job = oRSet.getString(1);
+      oRSet.close();
+      oStmt.close();
+    } else if (id_command.equals("SEND")) {
+      oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+      oRSet = oStmt.executeQuery("SELECT " + DB.nm_mailing + "," + DB.bo_attachments + " FROM " + DB.k_adhoc_mailings + " WHERE " + DB.gu_mailing + "='" + gu_pageset + "'");
+      oRSet.next();
+      tl_job = oRSet.getString(1);
+      bo_attachments = (oRSet.getShort(2)!=(short) 0);
+      oRSet.close();
+      oStmt.close();    
+    }
+
     oConn.close("jobedit");
 
   }
@@ -118,7 +128,7 @@
 	var cmd = getURLParam("id_command");
 	
 	if (!isDate(frm.dt_execution.value, "d") && frm.dt_execution.value.length>0 && frm.dt_execution.value!="As soon as possible") {
-	  alert ("[~La fecha de ejecución no es válida~]");
+	  alert ("Execution date is not valid");
 	  return false;	  
 	}
 	else if (frm.dt_execution.value=="As soon as possible") {
@@ -126,12 +136,12 @@
 	}
 
 	if (frm.tl_job.value.length==0) {
-	  alert ("[~La Descripción de la Tarea es Obligatoria~]");
+	  alert ("Task description is mandatory");
 	  return false;
 	}
 	
 	if (hasForbiddenChars(frm.tl_job.value)) {
-	  alert ("[~La Descripción de la Tarea contiene caracteres no permitidos~]");
+	  alert ("Task description contains invalid characters");
 	  return false;
 	}
 	                
@@ -140,10 +150,10 @@
         else
           frm.action = "job_store.jsp";
     
-    	frm.tx_parameters.value += ",bo_attachimages:" + (frm.attachimages[0].checked ? "1" : "0");
+    	  frm.tx_parameters.value += ",bo_attachimages:" + (frm.attachimages[0].checked ? "1" : "0");
 
-    	frm.tx_parameters.value += ",bo_webbeacon:" + (frm.webbeacon.checked ? "1" : "0");
-    	
+    	  frm.tx_parameters.value += ",bo_webbeacon:" + (frm.webbeacon.checked ? "1" : "0");
+
         return true;
       } // validate;
     //-->
@@ -155,7 +165,7 @@
     <TR><TD CLASS="striptitle"><FONT CLASS="title1">Schedule Task</FONT></TD><TD CLASS="striptitle" align="right"><FONT CLASS="title1">(2 / 2)</FONT></TD></TR>
   </TABLE>  
   <CENTER>
-  <FORM NAME="frmJobEdit" METHOD="post" ACTION="../webbuilder/wb_document_build_f.jsp" onSubmit="return validate()">
+  <FORM NAME="frmJobEdit" METHOD="post" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<% out.write(id_domain); %>">
     <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<% out.write(gu_workarea); %>">
     <INPUT TYPE="hidden" NAME="gu_pageset" VALUE="<% out.write(gu_pageset); %>">
@@ -189,19 +199,25 @@
           <TR>
             <TD VALIGN="top" ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Images</FONT></TD>
             <TD ALIGN="left" WIDTH="480">
-              <INPUT TYPE="radio" NAME="attachimages" CHECKED><FONT CLASS="formplain">&nbsp;images will be attached with message.</FONT>
+              <INPUT TYPE="radio" NAME="attachimages" VALUE="1" <%=(bo_attachments ? "CHECKED" : "")%>><FONT CLASS="formplain">&nbsp;images will be attached with message.</FONT>
               <BR>
               <FONT CLASS="textsmall"><I>with this option messages will take more time and bandwith to be send but will display faster on the recipient</I></FONT>
               <BR>
-              <INPUT TYPE="radio" NAME="attachimages"><FONT CLASS="formplain">&nbsp;images will be links to the web server.</FONT>              
+              <INPUT TYPE="radio" NAME="attachimages" VALUE="0" <%=(bo_attachments ? "" : "CHECKED")%>><FONT CLASS="formplain">&nbsp;images will be links to the web server.</FONT>              
               <BR>
               <FONT CLASS="textsmall"><I>with this option, messages will be sent faster but they will take longer to display at recipient</I></FONT>
+<% if (id_command.equals("SEND")) { %>
+              <BR>
+              <INPUT TYPE="radio" NAME="attachimages" VALUE="2"><FONT CLASS="formplain">&nbsp;attached files for thick e-mail clients and server online for common WebMails</FONT>              
+              <BR>
+              <FONT CLASS="textsmall"><I>this option is a mixture of the two previous ones optimizing the e-mail format for each user-agent</I></FONT>
+<% } %>
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="110" CLASS="formplain">[~Web Beacon:~]</TD>
+            <TD ALIGN="right" WIDTH="110" CLASS="formplain">Web Beacon:</TD>
             <TD ALIGN="left" WIDTH="480" CLASS="formplain">
-              <INPUT TYPE="checkbox" VALUE="1" NAME="webbeacon" CHECKED="checked">&nbsp;[~A&ntilde;adir una im&aacute;gen oculta para trazar los correos abiertos~]
+              <INPUT TYPE="checkbox" VALUE="1" NAME="webbeacon" CHECKED="checked">&nbsp;Add a hidden image for tracing readed e-mails
             </TD>
           </TR>          
           <TR>
@@ -215,7 +231,7 @@
       <INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" TITLE="ALT+c" onclick="window.close()">
       &nbsp;&nbsp;
 <% if (bIsGuest) { %>
-      <INPUT TYPE="button" ACCESSKEY="f" VALUE="Finish" CLASS="pushbutton" TITLE="ALT+f" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
+      <INPUT TYPE="button" ACCESSKEY="f" VALUE="Finish" CLASS="pushbutton" TITLE="ALT+f" onclick="alert('Your credential level as Guest does not allow you to perform this action')">
 <% } else { %>
       <INPUT TYPE="submit" ACCESSKEY="f" VALUE="Finish" CLASS="pushbutton" TITLE="ALT+f">
 <% } %>

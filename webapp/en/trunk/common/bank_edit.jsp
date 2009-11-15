@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %>
@@ -126,12 +126,12 @@
 	
 	if (frm.validateAccount.checked) {
  	  if (frm.entity.value.length!=4) {
- 	    alert("[~El código de entidad bancaria no es valido~]");
+ 	    alert("Bank Entity Code is not valid");
 	    return false;
 	  }
 
 	  if (frm.office.value.length!=4) {
-	    alert("[~El código de oficina bancaria no es valido~]");
+	    alert("Bank office code is not valid");
 	    return false;
 	  }
 
@@ -240,7 +240,7 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right" VALIGN="top" WIDTH="140"><FONT CLASS="formstrong">[~Nº Cuenta~]</FONT></TD>
+            <TD ALIGN="right" VALIGN="top" WIDTH="140"><FONT CLASS="formstrong">Account Number</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <DIV NAME="ac20" ID="ac20">
               <INPUT NAME="entity" TYPE="text" MAXLENGTH="4" SIZE="4" onChange="acceptOnlyNumbers(this)">
@@ -278,7 +278,7 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Nº Tarjeta~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Card Number</FONT></TD>
             <TD ALIGN="left" WIDTH="460"><INPUT TYPE="text" NAME="nu_card" MAXLENGTH="16" SIZE="20" VALUE="<%=oBank.getStringNull(DB.nu_card,"")%>"  onChange="acceptOnlyNumbers(this)"></TD>
           </TR>          
           <TR>
@@ -304,7 +304,7 @@
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">&nbsp;&nbsp;&nbsp;
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('Your credential level as Guest does not allow you to perform this action')">&nbsp;&nbsp;&nbsp;
 <% } else { %>
               <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
 <% } %>

@@ -34,7 +34,7 @@ function check_email(email) {
   
   if (document.images) {
     re_one = /(@.*@)|(\.\.)|(^\.)|(^@)|(@$)|(\.$)|(@\.)/;
-    re_two = /^.+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+    re_two = /^.+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2}|[0-9]{1,3}|aero|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel)(\]?)$/;
       
     if (!email.match(re_one) && email.match(re_two))
       return (true);		

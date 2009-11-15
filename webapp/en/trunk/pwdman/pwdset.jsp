@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.SQLException,java.sql.Timestamp,java.sql.Types,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.DBLanguages,com.knowgate.hipergate.Category" language="java" session="true" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.SQLException,java.sql.Timestamp,java.sql.Types,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.DBLanguages,com.knowgate.hipergate.Category" language="java" session="true" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%
 /*
   Copyright (C) 2003-2008  Know Gate S.L. All rights reserved.
@@ -52,7 +52,7 @@
   String sCatName = "";
   
   try {
-		if (sPwd1.length()<8) throw new SQLException("[~La longuitud de la clave debe ser de al menos ocho caracteres~]");
+		if (sPwd1.length()<8) throw new SQLException("The length of the password must be of at least 8 characters");
 
     oConn = GlobalDBBind.getConnection(PAGE_NAME); 
   
@@ -105,13 +105,13 @@
       	  Category oMySites = new Category(Category.create(oConn, new Object[] { oPwdsCat.getString(DB.gu_category), id_user, sCatName + "_mywebs", new Short((short)1), new Integer(1), "folderpwds_16x16.gif", "folderpwds_16x16.gif" }));
     			oMySites.setUserPermissions (oConn, oDom.getString(DB.gu_owner), ACL.PERMISSION_FULL_CONTROL, (short)0, (short)0);
       		oMySites.setUserPermissions ( oConn, id_user, ACL.PERMISSION_LIST|ACL.PERMISSION_READ|ACL.PERMISSION_ADD|ACL.PERMISSION_DELETE|ACL.PERMISSION_MODIFY|ACL.PERMISSION_GRANT, (short) 1, (short) 0);
-					oMySites.setLabel(oConn, "[~Mis sitios web~]");
+					oMySites.setLabel(oConn, "My WebSites");
 				} // fi
 
 		    session.setAttribute("validated", new Boolean(true));
 
 	    } else {
-	      throw new SQLException("[~La clave anterior no es correcta~]");
+	      throw new SQLException("The previous password is not correct");
 	    }
 	  } // fi
 

@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.io.File,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.workareas.WorkArea,com.knowgate.scheduler.Atom" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.io.File,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.workareas.WorkArea,com.knowgate.scheduler.Atom" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 
   response.addHeader ("Pragma", "no-cache");
@@ -84,7 +84,7 @@
         
     bIsAdmin = WorkArea.isAdmin (oConn, gu_workarea, id_user);
     
-    if (!bIsAdmin) throw new SQLException("[~Debe tener permisos de administrador en el área de trabajo para poder editar los átomos~]");
+    if (!bIsAdmin) throw new SQLException("WorkArea Administrator rol is required for editing atoms");
 
     iStatus = oStatus.load(oConn);
     aStatusId = new short [iStatus];
@@ -187,7 +187,7 @@
             } // fi
 					} // next  
 					if (chi.length==0) {
-					  alert ("[~Debe seleccionar previamente algún átomo a re-ejecutar~]");
+					  alert ("At least one atom to be re-executed must be selected first");
 					  return false;
 					} else {
 					  frm.checkeditems.value = chi;
@@ -207,7 +207,7 @@
             } // fi
 					} // next  
 					if (chi.length==0) {
-					  alert ("[~Debe seleccionar previamente algún átomo a re-ejecutar~]");
+					  alert ("At least one atom to be re-executed must be selected first");
 					  return false;
 					} else {
 					  frm.checkeditems.value = chi;
@@ -226,7 +226,7 @@
             } // fi
 					} // next  
 					if (chi.length==0) {
-					  alert ("[~Debe seleccionar previamente algún átomo a suspender~]");
+					  alert ("An atom to be suspended must be selected first");
 					  return false;
 					} else {
 					  frm.checkeditems.value = chi;
@@ -271,7 +271,7 @@
 	    } // setCombos()
     //-->    
   </SCRIPT>
-  <TITLE>hipergate :: [~Listado de átomos de una tarea~]</TITLE>
+  <TITLE>hipergate :: List of atoms of a job</TITLE>
 </HEAD>
 <BODY TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()">
     <DIV class="cxMnu1" style="width:220px"><DIV class="cxMnu2">
@@ -303,7 +303,7 @@
       <TR>
         <TD></TD>
         <TD VALIGN="middle" COLSPAN="2">
-          <A HREF="#" CLASS="linkplain" onclick="retrySelectedAtoms()">[~Re-intentar ejecuci&oacute;n de los &aacute;tomos seleccionados~]</A>
+          <A HREF="#" CLASS="linkplain" onclick="retrySelectedAtoms()">Re-try execution of selected atoms</A>
         </TD>
       </TR>
 <% } %>
@@ -311,7 +311,7 @@
       <TR>
         <TD></TD>
         <TD VALIGN="middle" COLSPAN="2">
-          <A HREF="#" CLASS="linkplain" onclick="suspendSelectedAtoms()">[~Suspender ejecuci&oacute;n de los &aacute;tomos seleccionados~]</A>
+          <A HREF="#" CLASS="linkplain" onclick="suspendSelectedAtoms()">Suspend execution of selected atoms</A>
         </TD>
       </TR>
 <% } %>
@@ -336,7 +336,7 @@
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Ordenar por este campo"></A>&nbsp;<B>Status</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(2);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Ordenar por este campo"></A>&nbsp;<B>Date</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(4);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==4 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Ordenar por este campo"></A>&nbsp;<B>e-mail</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Comentarios~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Comments</B></TD>
 <% if (iStatusFilterLen>0) { %>
 	  <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Select all"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select all"></A></TD></TR>
 <% }

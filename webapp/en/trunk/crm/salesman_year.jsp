@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.SalesObjectives,java.math.BigDecimal" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.SalesObjectives,java.math.BigDecimal" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/cookies.jspf" %>
@@ -207,119 +207,119 @@
         var frm = window.document.forms[0];
 
         if (frm.im_jan_planed.value.length>0 && !isFloatValue(frm.im_jan_planed.value)) {
-          alert ("[~El valor previsto para enero no es una cantidad numérica válida~]");
+          alert ("Forseen value for January is not valid");
           return false;
         }
         if (frm.im_jan_achieved.value.length>0 && !isFloatValue(frm.im_jan_achieved.value)) {
-          alert ("[~El valor alcanzado para enero no es una cantidad numérica válida~]");
+          alert ("Achieved value for January is not valid");
           return false;
         }
 
         if (frm.im_feb_planed.value.length>0 && !isFloatValue(frm.im_feb_planed.value)) {
-          alert ("[~El valor previsto para febrero no es una cantidad numérica válida~]");
+          alert ("Forseen value for February is not valid");
           return false;
         }
         if (frm.im_feb_achieved.value.length>0 && !isFloatValue(frm.im_feb_achieved.value)) {
-          alert ("[~El valor alcanzado para febrero no es una cantidad numérica válida~]");
+          alert ("Achieved value for February is not valid");
           return false;
         }
 
         if (frm.im_mar_planed.value.length>0 && !isFloatValue(frm.im_mar_planed.value)) {
-          alert ("[~El valor previsto para marzo no es una cantidad numérica válida~]");
+          alert ("Forseen value for March is not valid");
           return false;
         }
         if (frm.im_mar_achieved.value.length>0 && !isFloatValue(frm.im_mar_achieved.value)) {
-          alert ("[~El valor alcanzado para marzo no es una cantidad numérica válida~]");
+          alert ("Achieved value for March is not valid");
           return false;
         }
 
         if (frm.im_apr_planed.value.length>0 && !isFloatValue(frm.im_apr_planed.value)) {
-          alert ("[~El valor previsto para abril no es una cantidad numérica válida~]");
+          alert ("Forseen value for April is not valid");
           return false;
         }
         if (frm.im_apr_achieved.value.length>0 && !isFloatValue(frm.im_apr_achieved.value)) {
-          alert ("[~El valor alcanzado para abril no es una cantidad numérica válida~]");
+          alert ("Achieved value for April is not valid");
           return false;
         }
 
         if (frm.im_may_planed.value.length>0 && !isFloatValue(frm.im_may_planed.value)) {
-          alert ("[~El valor previsto para mayo no es una cantidad numérica válida~]");
+          alert ("Forseen value for May is not valid");
           return false;
         }
         if (frm.im_may_achieved.value.length>0 && !isFloatValue(frm.im_may_achieved.value)) {
-          alert ("[~El valor alcanzado para mayo no es una cantidad numérica válida~]");
+          alert ("Achieved value for May is not valid");
           return false;
         }
 
         if (frm.im_jun_planed.value.length>0 && !isFloatValue(frm.im_jun_planed.value)) {
-          alert ("[~El valor previsto para junio no es una cantidad numérica válida~]");
+          alert ("Forseen value for June is not valid");
           return false;
         }
         if (frm.im_jun_achieved.value.length>0 && !isFloatValue(frm.im_jun_achieved.value)) {
-          alert ("[~El valor alcanzado para junio no es una cantidad numérica válida~]");
+          alert ("Achieved value for June is not valid");
           return false;
         }
 
         if (frm.im_jul_planed.value.length>0 && !isFloatValue(frm.im_jul_planed.value)) {
-          alert ("[~El valor previsto para julio no es una cantidad numérica válida~]");
+          alert ("Forseen value for July is not valid");
           return false;
         }
         if (frm.im_jul_achieved.value.length>0 && !isFloatValue(frm.im_jul_achieved.value)) {
-          alert ("[~El valor alcanzado para julio no es una cantidad numérica válida~]");
+          alert ("Achieved value for July is not valid");
           return false;
         }
 
         if (frm.im_aug_planed.value.length>0 && !isFloatValue(frm.im_aug_planed.value)) {
-          alert ("[~El valor previsto para agosto no es una cantidad numérica válida~]");
+          alert ("Forseen value for August is not valid");
           return false;
         }
         if (frm.im_aug_achieved.value.length>0 && !isFloatValue(frm.im_aug_achieved.value)) {
-          alert ("[~El valor alcanzado para agosto no es una cantidad numérica válida~]");
+          alert ("Achieved value for August is not valid");
           return false;
         }
 
         if (frm.im_sep_planed.value.length>0 && !isFloatValue(frm.im_sep_planed.value)) {
-          alert ("[~El valor previsto para septiembre no es una cantidad numérica válida~]");
+          alert ("Forseen value for September is not valid");
           return false;
         }
         if (frm.im_sep_achieved.value.length>0 && !isFloatValue(frm.im_sep_achieved.value)) {
-          alert ("[~El valor alcanzado para septiembre no es una cantidad numérica válida~]");
+          alert ("Achieved value for September is not valid");
           return false;
         }
 
         if (frm.im_oct_planed.value.length>0 && !isFloatValue(frm.im_oct_planed.value)) {
-          alert ("[~El valor previsto para octubre no es una cantidad numérica válida~]");
+          alert ("Forseen value for October is not valid");
           return false;
         }
         if (frm.im_oct_achieved.value.length>0 && !isFloatValue(frm.im_oct_achieved.value)) {
-          alert ("[~El valor alcanzado para octubre no es una cantidad numérica válida~]");
+          alert ("Achieved value for October is not valid");
           return false;
         }
 
         if (frm.im_nov_planed.value.length>0 && !isFloatValue(frm.im_nov_planed.value)) {
-          alert ("[~El valor previsto para noviembre no es una cantidad numérica válida~]");
+          alert ("Forseen value for November is not valid");
           return false;
         }
         if (frm.im_nov_achieved.value.length>0 && !isFloatValue(frm.im_nov_achieved.value)) {
-          alert ("[~El valor alcanzado para noviembre no es una cantidad numérica válida~]");
+          alert ("Achieved value for November is not valid");
           return false;
         }
 
         if (frm.im_dec_planed.value.length>0 && !isFloatValue(frm.im_dec_planed.value)) {
-          alert ("[~El valor previsto para diciembre no es una cantidad numérica válida~]");
+          alert ("Forseen value for December is not valid");
           return false;
         }
         if (frm.im_dec_achieved.value.length>0 && !isFloatValue(frm.im_dec_achieved.value)) {
-          alert ("[~El valor alcanzado para diciembre no es una cantidad numérica válida~]");
+          alert ("Achieved value for December is not valid");
           return false;
         }
 
         if (frm.im_tot_planed.value.length>0 && !isFloatValue(frm.im_tot_planed.value)) {
-          alert ("[~El valor total previsto no es una cantidad numérica válida~]");
+          alert ("Forseen total is not valid");
           return false;
         }
         if (frm.im_tot_achieved.value.length>0 && !isFloatValue(frm.im_tot_achieved.value)) {
-          alert ("[~El valor total alcanzado no es una cantidad numérica válida~]");
+          alert ("Achieved total is not valid");
           return false;
         }
         

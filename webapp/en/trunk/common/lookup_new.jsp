@@ -1,4 +1,4 @@
-﻿<%@ page import="com.knowgate.dataobjs.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.knowgate.dataobjs.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -72,7 +72,7 @@
         var str;
         
         if (frm.tr_<%=id_language%>.value.length==0) {
-          alert ("[~El campo Descripción es obligatorio~]");
+          alert ("Description is mandatory");
           return false;
         }
 
@@ -97,7 +97,7 @@
       
       //-->
     </SCRIPT>  
-    <TITLE>hipergate :: [~Añadir valor~]</TITLE>
+    <TITLE>hipergate :: Add Value</TITLE>
   </HEAD>
   
   <BODY  LEFTMARGIN="4" TOPMARGIN="4" SCROLL="no">

@@ -1,4 +1,4 @@
-﻿<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/nullif.jspf" %><%
   String id_domain = nullif(request.getParameter("id_domain"));
   String gu_workarea = nullif(request.getParameter("gu_workarea"));

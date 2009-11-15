@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.Date,java.util.Properties,java.io.IOException,java.net.URLDecoder,java.sql.Connection,java.sql.SQLException,java.sql.Statement,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.JDCConnection,com.knowgate.misc.Environment,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.addrbook.Fellow,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Date,java.util.Properties,java.io.IOException,java.net.URLDecoder,java.sql.Connection,java.sql.SQLException,java.sql.Statement,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.JDCConnection,com.knowgate.misc.Environment,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.addrbook.Fellow,com.knowgate.misc.Gadgets,com.knowgate.debug.DebugFile" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -57,6 +57,7 @@
   PreparedStatement oPrep;
   Statement oStmt;
   ResultSet oRSet;
+  String sSQL;
   
   ACLUser oUser = null;
   ACLDomain oDomain = null;
@@ -82,17 +83,20 @@
 
   try {
     
-    oCon1 = GlobalDBBind.getConnection("usernew_store");
-    
-    oCon1.setAutoCommit (true);
+    oCon1 = GlobalDBBind.getConnection("usernew_store", true);
 
     // Verificar que no exista otro usuario con el mismo nick o e-mail
-    oPrep = oCon1.prepareStatement("SELECT " + DB.tx_nickname + "," + DB.tx_main_email + " FROM " + DB.k_users + " WHERE (" + DB.tx_nickname + "=? AND " + DB.id_domain + "=?) OR " + DB.tx_main_email + "=?",
-    				   ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+    sSQL = "SELECT " + DB.tx_nickname + "," + DB.tx_main_email + " FROM " + DB.k_users + " WHERE (" + DB.tx_nickname + "=? AND " + DB.id_domain + "=?) OR " + DB.tx_main_email + "=?";
+
+    if (DebugFile.trace) DebugFile.writeln("<JSP:JDCConnection.prepareStatement("+sSQL+")");
+
+    oPrep = oCon1.prepareStatement(sSQL, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
     
     oPrep.setString(1, request.getParameter("tx_nickname"));
     oPrep.setInt   (2, id_domain);
     oPrep.setString(3, request.getParameter("tx_main_email"));
+
+    if (DebugFile.trace) DebugFile.writeln("<JSP:JDCConnection.executeQuery("+request.getParameter("tx_nickname")+","+String.valueOf(id_domain)+","+request.getParameter("tx_main_email")+")");
 
     oRSet = oPrep.executeQuery();
 
@@ -121,10 +125,18 @@
           // Si existe un empleado con el mismo e-mail en el mismo dominio y área de trabajo
           // asignar al usuario el mismo guid que al empleado.
 
-  	      PreparedStatement oFlw = oCon1.prepareStatement("SELECT " + DB.gu_fellow + " FROM " + DB.k_fellows + " WHERE " + DB.id_domain + "=? AND " + DB.gu_workarea + "=? AND " + DB.tx_email + "=?");
+					sSQL = "SELECT " + DB.gu_fellow + " FROM " + DB.k_fellows + " WHERE " + DB.id_domain + "=? AND " + DB.gu_workarea + "=? AND " + DB.tx_email + "=?";
+
+          if (DebugFile.trace) DebugFile.writeln("<JSP:JDCConnection.prepareStatement("+sSQL+")");
+
+  	      PreparedStatement oFlw = oCon1.prepareStatement(sSQL);
+
 	        oFlw.setInt(1, id_domain);
 	        oFlw.setString(2, gu_workarea);
 	        oFlw.setString(3, request.getParameter("tx_main_email"));	  
+
+          if (DebugFile.trace) DebugFile.writeln("<JSP:JDCConnection.executeQuery("+String.valueOf(id_domain)+","+gu_workarea+","+request.getParameter("tx_main_email")+")");
+
   	      ResultSet rFlw = oFlw.executeQuery();
 
 	        if (rFlw.next())
@@ -137,6 +149,9 @@
 	      } // fi (CollaborativeTools)
 	    } // fi (gu_workarea)
       
+      // Close read-only connection and re-open in read-write mode
+      oCon1.close("usernew_store");
+      oCon1 = GlobalDBBind.getConnection("usernew_store");
       oCon1.setAutoCommit (false);
 
       // ******************************************
@@ -171,18 +186,18 @@
         if ((iAppMask & (1<<CollaborativeTools))!=0) {
   	  
   	      if (null!=sFlwId) {
-  	        Statement oUpdf = oCon1.createStatement();
-  	        oUpdf.executeUpdate("UPDATE " + DB.k_users + " SET " + DB.gu_user + "='" + sFlwId + "' WHERE " + DB.gu_user + "='" + sUserId + "'");
-  	        oUpdf.close();
-  	        oUpdf = null;
+
+  	        DBCommand.executeUpdate(oCon1,"UPDATE " + DB.k_users + " SET " + DB.gu_user + "='" + sFlwId + "' WHERE " + DB.gu_user + "='" + sUserId + "'");
 	          sUserId = sFlwId;
 
   	      } else if (nullif(request.getParameter("chk_fellow")).equals("1")) {  	      	
-    			  Fellow oFllw = new Fellow(sUserId);
-    			  oCon2 = GlobalDBBind.getConnection("usernew_store_exists_fellow");
-					  boolean bExistsFellow = oFllw.exists(oCon2);
+
+    			  oCon2 = GlobalDBBind.getConnection("usernew_store_exists_fellow", true);
+					  boolean bExistsFellow = DBCommand.queryExists(oCon2, DB.k_fellows, DB.gu_fellow+"='"+sUserId+"'");
 					  oCon2.close("usernew_store_exists_fellow");
-    			  if (!bExistsFellow) {    			  
+
+    			  if (!bExistsFellow) {
+    			    Fellow oFllw = new Fellow(sUserId);
       				oFllw.put(DB.id_domain, id_domain);      
       				oFllw.put(DB.gu_workarea, gu_workarea);
       				oFllw.put(DB.tx_company, request.getParameter("nm_company"));
@@ -210,10 +225,17 @@
 	
         if ((iAppMask & (1<<BugTracker))!=0) {
 
-    			oCon2 = GlobalDBBind.getConnection("usernew_store_max_bug_assigned");
-         
-          oStmMax = oCon2.prepareStatement("SELECT MAX(" + DB.pg_lookup + ")+1 FROM " + DB.k_bugs_lookup + " WHERE " + DB.gu_owner + "=? AND " + DB.id_section + "='nm_assigned'");
+    			oCon2 = GlobalDBBind.getConnection("usernew_store_max_bug_assigned", true);
+
+					sSQL = "SELECT MAX(" + DB.pg_lookup + ")+1 FROM " + DB.k_bugs_lookup + " WHERE " + DB.gu_owner + "=? AND " + DB.id_section + "='nm_assigned'";
+
+          if (DebugFile.trace) DebugFile.writeln("<JSP:JDCConnection.prepareStatement("+sSQL+")");
+
+          oStmMax = oCon2.prepareStatement(sSQL);
           oStmMax.setString(1, gu_workarea);
+
+          if (DebugFile.trace) DebugFile.writeln("<JSP:JDCConnection.executeQuery("+gu_workarea+")");
+
           oRstMax = oStmMax.executeQuery();
           if (oRstMax.next()) {
             oMaxPg = oRstMax.getObject(1);
@@ -247,10 +269,17 @@
       
         if ((iAppMask & (1<<DutyManager))!=0) {
         	            
-    			oCon2 = GlobalDBBind.getConnection("usernew_store_max_duty_assigned");
+    			oCon2 = GlobalDBBind.getConnection("usernew_store_max_duty_assigned", true);
 
-          oStmMax = oCon2.prepareStatement("SELECT MAX(" + DB.pg_lookup + ")+1 FROM " + DB.k_duties_lookup + " WHERE " + DB.gu_owner + "=? AND " + DB.id_section + "='nm_resource'");
+					sSQL = "SELECT MAX(" + DB.pg_lookup + ")+1 FROM " + DB.k_duties_lookup + " WHERE " + DB.gu_owner + "=? AND " + DB.id_section + "='nm_resource'";
+
+          if (DebugFile.trace) DebugFile.writeln("<JSP:JDCConnection.prepareStatement("+sSQL+")");
+
+          oStmMax = oCon2.prepareStatement(sSQL);
           oStmMax.setString(1, gu_workarea);
+
+          if (DebugFile.trace) DebugFile.writeln("<JSP:JDCConnection.executeQuery("+gu_workarea+")");
+
           oRstMax = oStmMax.executeQuery();
           if (oRstMax.next()) {
             oMaxPg = oRstMax.getObject(1);
@@ -339,13 +368,14 @@
       oCon1.close("usernew_store");
 
       switch (iAlreadyExists) {
-        case 1: response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Impossible to create new user&desc=Another user with same nickname already exists&resume=_back"));
+        case 1: response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Imposible crear nuevo usuario&desc=Ya existe otro usuario con dicho nick en la base de datos&resume=_back"));
  	        break;
-        case 2: response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Impossible to create new user&desc=Another user with same e-mail already exists&resume=_back"));
+        case 2: response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Imposible crear nuevo usuario&desc=Ya existe otro usuario con dicho e-mail en la base de datos&resume=_back"));
  	        break;
       }
     }
-  }    
+  }
+  /*
   catch (SQLException e) {
     if (null!=oCon1)
       if (!oCon1.isClosed()) {
@@ -355,6 +385,7 @@
       } // fi (oCon1.isClosed)
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getMessage() + "&resume=_back"));    
   }
+  */
   catch (com.knowgate.ldap.LDAPException e) {
     if (null!=oCon1)
       if (!oCon1.isClosed()) {

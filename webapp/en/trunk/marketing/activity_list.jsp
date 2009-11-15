@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.io.File,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.QueryByForm" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.io.File,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.QueryByForm" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 
@@ -33,6 +33,8 @@
   You should have received a copy of hipergate License with this code;
   if not, visit http://www.hipergate.org or mail to info@hipergate.org
 */ 
+
+  if (autenticateSession(GlobalDBBind, request, response)<0) return;
   
   response.addHeader ("Pragma", "no-cache");
   response.addHeader ("cache-control", "no-store");
@@ -116,16 +118,9 @@
 
     bIsGuest = isDomainGuest (GlobalCacheClient, GlobalDBBind, request, response);
     
-    // 08. Get a connection from pool
-
     oConn = GlobalDBBind.getConnection("activity_list");  
-    
-    // Results are stored in a DBSubset object and connection is closed.
-    // Later the DBSubset is iterated and each row is send to HTML output.
-    
+        
     if (sWhere.length()>0) {
-
-      // 09. QBF Filtered Listing
       
       oQBF = new QueryByForm("file://" + sStorage + "qbf" + File.separator + request.getParameter("queryspec") + ".xml");
     
@@ -258,10 +253,8 @@
 <% } %>	
         // ----------------------------------------------------
 
-        // 14. Modify Activity
-
 	      function modifyActivity(id) {
-	        open ("activity_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>" + "&gu_activity=" + id, "editactivity", "directories=no,toolbar=no,menubar=no,width=500,height=460");
+	        open ("activity_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>" + "&gu_activity=" + id, "editactivity", "scrollbars=yes,directories=no,toolbar=no,menubar=no,width=520,height=480");
 	      } // modifyActivity
 
         // ----------------------------------------------------
@@ -277,7 +270,7 @@
 
         // ----------------------------------------------------
 
-        // 16. Select All Activitys
+        // 16. Select All Activities
 
         function selectAll() {
           
@@ -338,12 +331,12 @@
 	    } // setCombos()
     //-->    
   </SCRIPT>
-  <TITLE>hipergate :: [~Listado de Actividades~]</TITLE>
+  <TITLE>hipergate :: Activity List</TITLE>
 </HEAD>
 <BODY TOPMARGIN="8" MARGINHEIGHT="8" onClick="hideRightMenu()">
     <%@ include file="../common/tabmenu.jspf" %>
     <FORM METHOD="post">
-      <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Listado de Actividades~]</FONT></TD></TR></TABLE>  
+      <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">Activity List</FONT></TD></TR></TABLE>  
       <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
       <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
       <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
@@ -358,20 +351,20 @@
 <% if (bIsGuest) { %>      
         <TD COLSPAN="4"></TD>
 <% } else { %>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nueva~]"></TD>
-        <TD VALIGN="middle"><A HREF="#" onclick="createActivity()" CLASS="linkplain">[~Nueva~]</A></TD>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar~]"></TD>
-        <TD><A HREF="#" onclick="deleteActivities()" CLASS="linkplain">[~Eliminar~]</A></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
+        <TD VALIGN="middle"><A HREF="#" onclick="createActivity()" CLASS="linkplain">New</A></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
+        <TD><A HREF="#" onclick="deleteActivities()" CLASS="linkplain">Delete</A></TD>
 <% } %>
-        <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Buscar~]"></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Search"></TD>
         <TD VALIGN="middle">
           <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>">
-	        &nbsp;<A HREF="javascript:findActivity();" CLASS="linkplain" TITLE="[~Buscar~]">[~Buscar~]</A>	  
+	        &nbsp;<A HREF="javascript:findActivity();" CLASS="linkplain" TITLE="Search">Search</A>	  
         </TD>
-        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="[~Descartar b&uacute;squeda~]"></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard search"></TD>
         <TD VALIGN="bottom">
-          <A HREF="javascript:document.forms[0].find.value='';findActivity();" CLASS="linkplain" TITLE="[~Descartar b&uacute;squeda~]">[~Descartar b&uacute;squeda~]</A>
-          <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;[~Mostrar~]&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;[~resultados~]&nbsp;</FONT>
+          <A HREF="javascript:document.forms[0].find.value='';findActivity();" CLASS="linkplain" TITLE="Discard search">Discard search</A>
+          <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;Show&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;results&nbsp;</FONT>
         </TD>
       </TR>
       <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
@@ -383,17 +376,17 @@
 <%    
     	  if (iActivitiesCount>0) {
             if (iSkip>0)
-              out.write("            <A HREF=\"activity_list.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&queryspec=activities&skip=" + String.valueOf(iSkip-iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;[~Anteriores~]" + "</A>&nbsp;&nbsp;&nbsp;");
+              out.write("            <A HREF=\"activity_list.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&queryspec=activities&skip=" + String.valueOf(iSkip-iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
     
             if (!oActivities.eof())
-              out.write("            <A HREF=\"activity_list.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&queryspec=activities&skip=" + String.valueOf(iSkip+iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">[~Siguientes~]&nbsp;&gt;&gt;</A>");
+              out.write("            <A HREF=\"activity_list.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&queryspec=activities&skip=" + String.valueOf(iSkip+iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
 	  } // fi (iActivitiesCount)
 %>
           </TD>
         </TR>
         <TR>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(4);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este campo~]"></A>&nbsp;<B>[~T&iacute;tulo~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(10);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==10 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este campo~]"></A>&nbsp;<B>[~Fecha Inicio~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(4);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;<B>Title</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(10);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==10 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;<B>Start date</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Select All"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select All"></A></TD></TR>
 <%
 	        String sActivityId, sActivityTl, sActivityDtStart, sStrip;
@@ -409,18 +402,19 @@
             sStrip = String.valueOf((i%2)+1);
 %>            
             <TR HEIGHT="14">
-              <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<A HREF="#" oncontextmenu="jsActivityId='<%=sActivityId%>'; jsActivityNm='<%=sActivityTl.replace((char)39,'´')%>'; return showRightMenu(event);" onclick="modifyActivity('<%=sActivityId%>')" TITLE="[~Bot&oacute;n Derecho para Ver Men&uacute; Contextual~]"><%=sActivityTl%></A></TD>
+              <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<A HREF="#" oncontextmenu="jsActivityId='<%=sActivityId%>'; jsActivityNm='<%=sActivityTl.replace((char)39,'´')%>'; return showRightMenu(event);" onclick="modifyActivity('<%=sActivityId%>')" TITLE="Click right mouse button to show context menu"><%=sActivityTl%></A></TD>
               <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<%=sActivityDtStart%></TD>
               <TD CLASS="strip<% out.write (sStrip); %>" ALIGN="center"><INPUT VALUE="1" TYPE="checkbox" NAME="<% out.write (sActivityId); %>"></TD>
             </TR>
 <%        } // next(i) %>          	  
       </TABLE>
     </FORM>
-    <!-- 22. DynFloat Right-click context menu -->
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
       <!--
-      addMenuOption("[~Abrir~]","modifyActivity(jsActivityId)",1);
-      addMenuOption("[~Duplicar~]","clone()",0);
+      addMenuOption("Open","modifyActivity(jsActivityId)",1);
+      addMenuOption("Clone","clone()",0);
+      addMenuSeparator();
+      addMenuOption("Show audience","modifyActivity(jsActivityId)",1);	      
       //-->
     </SCRIPT>
     <!-- /RightMenuBody -->    

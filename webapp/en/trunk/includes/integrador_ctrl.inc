@@ -1,4 +1,4 @@
-﻿<table border="0" cellpadding="2" cellspacing="0">
+<table border="0" cellpadding="2" cellspacing="0">
   <tr>
     <td><img src="../../../../../../skins/xp/hglogopeq.jpg" border="0" align="middle"></img></td>
     <td align="middle" valign="middle"><a style="color:#0066cc" href="javascript:mostrarInt()"><font face="Verdana,Arial,Helvetica,sans-serif" size="1" color="#0066cc" bgcolor="#ffffff"><b>Edit Panel</b></font></a></td>

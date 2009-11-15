@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.io.FileNotFoundException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.Category,com.knowgate.forums.NewsGroup,com.knowgate.forums.NewsGroupJournal,com.knowgate.lucene.Indexer" language="java" session="false" %>
+<%@ page import="java.io.IOException,java.io.FileNotFoundException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.Category,com.knowgate.forums.NewsGroup,com.knowgate.forums.NewsGroupJournal,com.knowgate.lucene.Indexer" language="java" session="false" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -133,7 +133,7 @@
   catch (SQLException d) {
     if (null!=oCon1)
       if (!oCon1.isClosed()) {
-        if (oCon1.getAutoCommit()) oCon1.rollback();
+        if (!oCon1.getAutoCommit()) oCon1.rollback();
         oCon1.close("forumedit_store");
         oCon1 = null;
       }

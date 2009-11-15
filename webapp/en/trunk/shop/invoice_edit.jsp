@@ -1,4 +1,4 @@
-﻿<%@ page import="java.text.DecimalFormat,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.text.DecimalFormat,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><% 
 
@@ -319,7 +319,7 @@
         var frm = document.forms[0];
 
 	if (frm.gu_company.value.length==0 && frm.gu_contact.value.length==0) {
-	  alert ("[~Debe seleccionar primero una compañía o un individuo sobre los que crear direcciones~]");
+	  alert ("A Company or Individual must be selected before adding an address");
 	  return false;
 	}
 	
@@ -338,7 +338,7 @@
         var frm = document.forms[0];
 
 	      if (frm.gu_company.value.length==0 && frm.gu_contact.value.length==0) {
-	        alert ("[~Debe seleccionar primero una compañía o un individuo para los que ver direcciones~]");
+	        alert ("Please chose a company or individual first");
 	        return false;
 	      }
 	
@@ -372,7 +372,7 @@
 	  qnt = GridGetCellValue(oProductGrid, 2, r);
 
           if (isNaN(qnt)) {
-            alert ("Amount "+qnt+" [~no es un número válido~]");
+            alert ("Amount "+qnt+" is not a valid number");
             return;
           }
           	  	  
@@ -380,7 +380,7 @@
 	    qnt = dotFloat(qnt);
 	    	    
 	    if (!isFloatValue(qnt)) {
-	      alert ("Amount for product " + GridGetCellValue(oProductGrid, 1, r) + " [~no es válida~]");
+	      alert ("Amount for product " + GridGetCellValue(oProductGrid, 1, r) + " is not valid");
 	      return false;
 	    }
 	    else {	      
@@ -400,7 +400,7 @@
 	    tot += parseFloat(dotFloat(frm.im_shipping.value));
 	  }
 	  else {
-	    alert ("[~El importe de los gastos de envío no es válido~]");
+	    alert ("Shiping costs amount is not valid");
 	    return false;
 	  }
 	} // fi (im_shipping)
@@ -413,7 +413,7 @@
 	      tot -= (tot*parseFloat(dotFloat(dis)))/100;
 	    }
 	    else {
-	      alert ("[~El porcentaje del descuento no es válido~]");
+	      alert ("Discount percentage is not valid");
 	      return false;
 	    }	    	    
 	  }
@@ -421,14 +421,14 @@
 	    tot -= parseFloat(dotFloat(frm.im_discount.value));
 	  }
 	  else {
-	    alert ("[~El importe del descuento no es válido~]");
+	    alert ("Discount is not a valid amount");
 	    return false;
 	  }
 	} // fi (im_discount)
 	
 	if (frm.im_taxes.value.length>0) {
 	  if (!isFloatValue(frm.im_taxes.value)) {
-	    alert ("[~Los impuestos no es una cantidad válida~]");
+	    alert ("Tax is not a valid amount");
 	    return false;
 	  }
 	} // fi (im_taxes)
@@ -445,7 +445,7 @@
 	var dis;
 	
 	if (frm.sel_bill_addr.selectedIndex<0) {
-	  alert ("[~La dirección de facturación es obligatoria~]");
+	  alert ("Invoicing address is required");
 	  return false;
 	}
 
@@ -455,7 +455,7 @@
 	}
 
 	if (ltrim(frm.de_order.value)=="") {
-	  alert ("[~La descripción de la factura es obligatoria~]");
+	  alert ("Invoice description is required");
 	  return false;
 	}
 
@@ -470,7 +470,7 @@
 	}
 	
 	if (!isDate(frm.dt_payment.value, "d") && frm.dt_payment.value.length>0) {
-	  alert ("[~La fecha de vencimiento no es válida~]");
+	  alert ("Due date not valid");
 	  return false;	  
 	}
 
@@ -480,12 +480,12 @@
 	}
 
 	if (frm.nu_card.value.length>0 && frm.nu_bank.value.length>0) {
-	  alert ("[~Introduzca sólo un número de cuenta bancaria o un número de tarjeta, pero no ambos~]");
+	  alert ("Type bank account or credit card, but not both.");
 	  return false;	  
 	}
 
 	if (frm.nu_card.value.length>0 && (getCombo(frm.sel_month)=="" || getCombo(frm.sel_year)=="")) {
-	  alert ("[~Debe introducir una fecha de expiración para la tarjeta~]");
+	  alert ("Card expire date is mandatory");
 	  return false;	  
 	}
 	
@@ -500,7 +500,7 @@
 	}
 
   if (0==oProductGrid.rowcount) {
-    alert ("[~La factura debe contener al menos una línea de pedido~]");
+    alert ("Invoice must contain at least one order line");
     return false;	      	
   }
 	
@@ -509,13 +509,13 @@
 	  	  
 	  if (null!=qnt)
 	    if (!isFloatValue(qnt)) {
-	      alert ("Amount for product " + GridGetCellValue(oProductGrid, 1, r) + " [~no es válida~]");
+	      alert ("Amount for product " + GridGetCellValue(oProductGrid, 1, r) + " is not valid");
 	      return false;
 	    }
 	} // next
 
 	if (frm.im_shipping.value.length>0 && !isFloatValue(frm.im_shipping.value)) {
-	  alert ("[~Los gastos de envio no son una cantidad válida~]");
+	  alert ("Shiping cost is not a valid amount");
 	  return false;
 	}
 
@@ -525,25 +525,25 @@
 	  if (pct>0) {
 	    dis = frm.im_discount.value.substring(0,pct);
 	    if (!isFloatValue(dis)) {
-	      alert ("[~El porcentaje de descuento no es una cantidad válida~]");
+	      alert ("Discount percentage is not a valid quantity");
 	      return false;
 	    }
 	  }
 	  else {
 	    if (!isFloatValue(frm.im_discount.value)) {	  	  
-	      alert ("[~El descuento no es una cantidad válida~]");
+	      alert ("Discount is not a valid quantity");
 	      return false;
 	    }
 	  } // fi (pct)
 	} // fi (im_discount)
 
 	if (frm.im_taxes.value.length>0 && !isFloatValue(frm.im_taxes.value)) {
-	  alert ("[~Los impuestos no es una cantidad válida~]");
+	  alert ("Tax is not a valid amount");
 	  return false;
 	}
 
 	if (frm.im_total.value.length>0 && !isFloatValue(frm.im_total.value)) {
-	  alert ("[~El total no es una cantidad válida~]");
+	  alert ("Total is not a valid amount");
 	  return false;
 	}
 
@@ -648,7 +648,7 @@
   <DIV class="cxMnu1" style="width:340px"><DIV class="cxMnu2">
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Refresh"> Refresh</SPAN>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="if (document.forms[0].gu_company.value.length==0 && document.forms[0].gu_contact.value.length==0) alert('[~El cliente el obligatorio para la vista previa de la factura~]') ; else top.location='invoice_preview.jsp?gu_invoice='+document.forms[0].gu_invoice.value"><IMG src="../images/images/viewtxt.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Preview"> Preview</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="if (document.forms[0].gu_company.value.length==0 && document.forms[0].gu_contact.value.length==0) alert('A client is required for invoice preview') ; else top.location='invoice_preview.jsp?gu_invoice='+document.forms[0].gu_invoice.value"><IMG src="../images/images/viewtxt.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Preview"> Preview</SPAN>
   </DIV></DIV>
 <% } %>
   <TABLE WIDTH="100%">
@@ -745,7 +745,7 @@
                     <FONT CLASS="formplain">Shipment Method:</FONT>
               	    <INPUT TYPE="hidden" NAME="id_ship_method">
               	    <SELECT CLASS="combomini" NAME="sel_ship_method"><OPTION VALUE=""></OPTION><% out.write(sShipingLookUp); %></SELECT>&nbsp;
-              	    <A HREF="javascript:lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Editar Métodos de Envío~]"></A>
+              	    <A HREF="javascript:lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Edit Shiping Methods"></A>
                   </TD>
                 </TR>
               </TABLE>
@@ -756,7 +756,7 @@
             <TD ALIGN="left" WIDTH="560">
               <INPUT TYPE="hidden" NAME="gu_ship_addr">
               <SELECT CLASS="combomini" NAME="sel_ship_addr"><% out.write (sAddrs); %></SELECT>&nbsp;<A HREF="#" onclick="createAddress()" TITLE="New Address" ACCESSKEY="d"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Address"></A>
-	    				&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="viewAddresses()" TITLE="[~Ver Direcciones~]">[~Ver Direcciones~]</A>
+	    				&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="viewAddresses()" TITLE="Show Addresses">Show Addresses</A>
 	    </TD>
 	  </TR>
           <TR>
@@ -764,7 +764,7 @@
             <TD ALIGN="left" WIDTH="560">
               <INPUT TYPE="hidden" NAME="gu_bill_addr">
               <SELECT CLASS="combomini" NAME="sel_bill_addr"><% out.write (sAddrs); %></SELECT>&nbsp;<A HREF="#" onclick="createAddress()" TITLE="New Address"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Address"></A>
-	    				&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="viewAddresses()" TITLE="[~Ver Direcciones~]">[~Ver Direcciones~]</A>
+	    				&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="viewAddresses()" TITLE="Show Addresses">Show Addresses</A>
 	    </TD>
 	  </TR>
           <TR>
@@ -817,7 +817,7 @@
               <SELECT CLASS="combomini" NAME="sel_card"><OPTION VALUE=""></OPTION><% out.write(sCardsLookUp); %></SELECT>&nbsp;
               <A HREF="javascript:lookup(6)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Edit payment methods"></A>
               &nbsp;&nbsp;&nbsp;
-              <FONT CLASS="formplain">[~Nº~]</FONT>&nbsp;<INPUT CLASS="combomini" TYPE="text" NAME="nu_card" MAXLENGTH="16" SIZE="17" onkeypress="return acceptOnlyNumbers();">
+              <FONT CLASS="formplain">Num</FONT>&nbsp;<INPUT CLASS="combomini" TYPE="text" NAME="nu_card" MAXLENGTH="16" SIZE="17" onkeypress="return acceptOnlyNumbers();">
               &nbsp;&nbsp;
               <FONT CLASS="formplain">Expires:</FONT>
               <INPUT TYPE="hidden" NAME="tx_expire">

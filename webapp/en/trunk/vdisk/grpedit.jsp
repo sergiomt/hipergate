@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.sql.Connection,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.sql.Connection,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %>
 <%  response.setHeader("Cache-Control","no-cache");response.setHeader("Pragma","no-cache"); response.setIntHeader("Expires", 0); %><%
 /*
@@ -200,7 +200,7 @@
         if (opt1[g].selected && (-1==comboIndexOf(sel2,opt1[g].value))) {
 <%  if (0!=gu_acl_group.length()) { %>
 				  if ("<%=gu_acl_group%>"!="<%=oDomn.getString(DB.gu_admins)%>" && opt1[g].value=="<%=oDomn.getString(DB.gu_owner)%>") {
-            alert ("[~No está permitido agregar el usuario administrador a ningún otro grupo que no sea el de administradores del dominio~]");
+            alert ("It is not allowed to add administrator user to any other group which is not the one of administrators for the domain");
           } else {
             opt = new Option(opt1[g].text, opt1[g].value);
             opt2[sel2.length] = opt;
@@ -221,7 +221,7 @@
         if (opt2[g].selected) {
 <%  if (0!=gu_acl_group.length()) { %>
 				  if ("<%=gu_acl_group%>"=="<%=oDomn.getString(DB.gu_admins)%>" && opt2[g].value=="<%=oDomn.getString(DB.gu_owner)%>") {
-            alert ("[~No está permitido eliminar el usuario administrador del grupo de administradores del dominio~]");
+            alert ("Is is not allowed to delete the administrator user");
           } else {
             if (-1==comboIndexOf(sel1, opt2[g].value)) {
               comboPush (sel1, opt2[g].text, opt2[g].value, false, false);

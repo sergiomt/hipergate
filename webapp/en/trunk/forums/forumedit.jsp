@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.forums.NewsGroup" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.forums.NewsGroup" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%!
 
@@ -316,7 +316,7 @@
       
       for (var n=0; n<aName.length; n++) {
         if (ltrim(aName[n][1]).length==0) {
-          alert ("Label for language&nbsp;" + getComboText(frm.sel_language) + "[~ no puede estar vacía~]");
+          alert ("Label for language&nbsp;" + getComboText(frm.sel_language) + " cannot be empty");
           return false;
         }
       }
@@ -483,7 +483,7 @@
               <SPAN onmouseover="popover('Set whether links and files<BR>must be approved before becoming visible.')" onmouseout="popout()"><FONT CLASS="formstrong">Moderated:</FONT></SPAN>&nbsp;              
               <INPUT TYPE="checkbox" NAME="id_doc_status" VALUE="1" <% if (id_doc_status.intValue()!=0) out.write(" CHECKED "); %>>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <SPAN onmouseover="popover('[~Establece si el foro admite archivos adjuntos binarios.~]')" onmouseout="popout()"><FONT CLASS="formstrong">[~Admite Binarios:~]</FONT></SPAN>&nbsp;
+              <SPAN onmouseover="popover('Set if forum allows attached binary files')" onmouseout="popout()"><FONT CLASS="formstrong">Allows Binaries</FONT></SPAN>&nbsp;
               <INPUT TYPE="checkbox" NAME="bo_binaries" VALUE="1" <% if (bo_binaries) out.write(" CHECKED "); %>>
             </TD>
           </TR>
@@ -516,12 +516,12 @@
 		        					<TD>&nbsp;&nbsp;&nbsp;<INPUT TYPE="text" NAME="tr_category" MAXLENGTH="30" SIZE="33" VALUE="" onblur="changeName()" onchange="changeName()" onkeypress="changeName()"></TD>
 		      					</TR>
             	      <TR>
-            	        <TD CLASS="formplain" COLSPAN="2">[~Descripci&oacute;n:~]<BR/>
+            	        <TD CLASS="formplain" COLSPAN="2">Description<BR/>
             	        	<INPUT TYPE="text" NAME="de_newsgrp" MAXLENGTH="254" SIZE="58" VALUE="<%=de_newsgrp%>">
             	        </TD>
             	      </TR>
             	      <TR>
-            	        <TD CLASS="formplain" COLSPAN="2">[~Definición del archivo estático:~]<BR/>
+            	        <TD CLASS="formplain" COLSPAN="2">Static file definition<BR/>
             	        	<TEXTAREA NAME="tx_journal" ROWS="6" COLS="44" VALUE=""><%=tx_journal%></TEXTAREA>
             	        </TD>
             	      </TR>
@@ -537,13 +537,13 @@
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:100" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:100" TITLE="ALT+s" onclick="alert('Your credential level as Guest does not allow you to perform this action')">
 							&nbsp;&nbsp;&nbsp;
-              <INPUT TYPE="button" ACCESSKEY="r" VALUE="[~Reconstruir~]" CLASS="pushbutton" STYLE="width:100" TITLE="ALT+r" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">
+              <INPUT TYPE="button" ACCESSKEY="r" VALUE="Rebuild" CLASS="pushbutton" STYLE="width:100" TITLE="ALT+r" onclick="alert('Your credential level as Guest does not allow you to perform this action')">
 <% } else { %>
               <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:100" TITLE="ALT+s">
 							&nbsp;&nbsp;&nbsp;
-              <INPUT TYPE="button" ACCESSKEY="r" VALUE="[~Reconstruir~]" CLASS="pushbutton" STYLE="width:100" TITLE="ALT+r" onclick="if (validate()) { document.forms[0].bo_rebuild.value='1'; document.forms[0].submit(); } ">
+              <INPUT TYPE="button" ACCESSKEY="r" VALUE="Rebuild" CLASS="pushbutton" STYLE="width:100" TITLE="ALT+r" onclick="if (validate()) { document.forms[0].bo_rebuild.value='1'; document.forms[0].submit(); } ">
 <% } %>
     	      &nbsp;&nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:100" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>

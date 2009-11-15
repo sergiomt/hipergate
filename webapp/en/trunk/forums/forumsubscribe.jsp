@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.forums.NewsGroup,com.knowgate.forums.Subscription" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.forums.NewsGroup,com.knowgate.forums.Subscription" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
 /*
@@ -110,7 +110,7 @@
 
 				frm.tx_email.value = frm.tx_email.value.toLowerCase();
 				if (!check_email(frm.tx_email.value)) {
-				  alert ("[~La dirección de correo no es válida~]");
+				  alert ("e-mail address is not valid");
 				  frm.tx_email.focus();
 				  return false;
 				}

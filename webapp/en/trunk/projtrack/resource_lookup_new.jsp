@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   
@@ -86,7 +86,7 @@
         var frm = window.document.forms[0];
 
 			  if (frm.vl_lookup.value.length==0) {
-			    alert ("[~No se ha especificado ningún recurso válido~]");
+			    alert ("No valid resource has been specified");
 			    return false;	
 			  }
 
@@ -120,7 +120,7 @@
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
             <TD ALIGN="right" WIDTH="90"></TD>
-            <TD ALIGN="left" WIDTH="370" CLASS="formstrong">[~&iquest;Qu&eacute; tipo de recurso desea añadir?~]</TD>
+            <TD ALIGN="left" WIDTH="370" CLASS="formstrong">What kind of resource must be added?</TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90"><INPUT TYPE="radio" NAME="tp_resource" VALUE="0" CHECKED></TD>

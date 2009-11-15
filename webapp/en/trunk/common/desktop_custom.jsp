@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %>
@@ -119,8 +119,8 @@
 	      												"Oportunities",
 	      												"Contacts",
 	      												"Forums",
-	      												"[~Correo~]",
-	      												"[~Favoritos~]");
+	      												"E-Mail",
+	      												"Favourites");
 	      var enabled =  new Array(<%=(((iAppMask & (1<<CollaborativeTools))==0) ? "false" : "true")%>,
 	      												 <%=(((iAppMask & (1<<CollaborativeTools))==0) ? "false" : "true")%>,
 	      												 <%=(((iAppMask & (1<<IncidentsManager))==0) ? "false" : "true")%>,

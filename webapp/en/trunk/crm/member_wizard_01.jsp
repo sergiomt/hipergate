@@ -92,7 +92,7 @@
       }
     //-->
   </SCRIPT>
-  <TITLE>hipergate :: [~Añadir miembros a Lista de Distribuci&oacute;n - Paso 1/3~]</TITLE>
+  <TITLE>hipergate :: Add members to a Distribution List - Step 1/3</TITLE>
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setInputs()">
   <DIV ID="dek" STYLE="width:200;height:20;z-index:200;visibility:hidden;position:absolute"></DIV>  

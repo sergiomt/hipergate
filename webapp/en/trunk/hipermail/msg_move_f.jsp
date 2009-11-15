@@ -1,4 +1,4 @@
-﻿<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %><%@ include file="../methods/nullif.jspf" %><%
+<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %><%@ include file="../methods/nullif.jspf" %><%
   String sFolder = nullif(request.getParameter("folder"));
   String sTarget = nullif(request.getParameter("destination"));
   String sAction = nullif(request.getParameter("perform"));

@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.Date,java.util.Iterator,java.text.SimpleDateFormat,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.forums.NewsMessage,com.knowgate.forums.NewsMessageTag,com.knowgate.hipergate.Product,com.knowgate.hipergate.ProductLocation" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Date,java.util.Iterator,java.text.SimpleDateFormat,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.forums.NewsMessage,com.knowgate.forums.NewsMessageTag,com.knowgate.hipergate.Product,com.knowgate.hipergate.ProductLocation" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
 
@@ -147,12 +147,12 @@
         var txt;
 
 	      if (!isDate(frm.dt_published.value, "d") && frm.dt_published.value.length>0) {
-      	  alert ("[~La fecha de publicación no es válida~]");
+      	  alert ("Publish date is not valid");
       	  return false;	  
       	}
         
 	      if (!isDate(frm.dt_expire.value, "d") && frm.dt_expire.value.length>0) {
-      	  alert ("End date is not vald??????");
+      	  alert ("End date is not vald結束日期無效");
       	  return false;	  
       	}
        
@@ -182,7 +182,7 @@
       	}
       
       	if (txt.indexOf("'")>=0) {
-      	  alert ("[~El campo Asunto contiene caracteres no válidos~]");
+      	  alert ("Subject contains forbidden characters");
       	  return false;	  
       	}
 
@@ -200,12 +200,12 @@
 
       function addTag() {
         var frm = window.document.forms[0];
-        var ttl = window.prompt("[~Introduzca el nombre de la nueva etiqueta~]","");
+        var ttl = window.prompt("Type the name for the new tag","");
         var tgs = frm.sel_tags.options;
         var len = tgs.length;
         for (var t=0; t<len; t++) {
           if (tgs[t].value.toUpperCase()==ttl.toUpperCase()) {
-            alert ("[~Ya existe otra etiqueta con el mismo nombre~]");
+            alert ("Another tag with the same name already exists");
             tgs[t].selected=true;
             return false;
           } // fi
@@ -303,7 +303,7 @@
           <TR>
             <TD ALIGN="left" WIDTH="160px"><FONT CLASS="formstrong">From:</FONT></TD>
             <TD ALIGN="left" CLASS="textplain"><%=(oUsr.getStringNull(DB.nm_user,"")+" "+oUsr.getStringNull(DB.tx_surname1,"")+" "+oUsr.getStringNull(DB.tx_surname2,"")).trim()%></TD>
-            <TD ALIGN="left"><FONT CLASS="formplain">[~Etiquetas:~]</FONT></TD>
+            <TD ALIGN="left"><FONT CLASS="formplain">Tags:</FONT></TD>
           </TR>
           <TR>
             <TD ALIGN="left" WIDTH="160px"><FONT CLASS="formplain">Group</FONT></TD>
@@ -317,7 +317,7 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="left" WIDTH="160px"><FONT CLASS="formplain">[~Fecha de Publicación:~]</FONT></TD>
+            <TD ALIGN="left" WIDTH="160px"><FONT CLASS="formplain">Date when Published</FONT></TD>
             <TD ALIGN="left">
               <INPUT TYPE="text" NAME="dt_published" MAXLENGTH="10" SIZE="10" VALUE="<% if (oMsg.isNull(DB.dt_published)) out.write(oFmt.format(new Date())); else out.write(oFmt.format(oMsg.getDate(DB.dt_published))); %>">
               <A HREF="javascript:showCalendar('dt_published')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
@@ -340,9 +340,9 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="left" WIDTH="160px"><FONT CLASS="formplain">[~Estado:~]</FONT></TD>
+            <TD ALIGN="left" WIDTH="160px"><FONT CLASS="formplain">Status:</FONT></TD>
             <TD ALIGN="left">
-            	<SELECT NAME="id_status"><OPTION VALUE="0" SELECTED="selected">[~Publicado~]</OPTION><OPTION VALUE="1">[~Pendiente~]</OPTION><OPTION VALUE="2">[~Rechazado~]</OPTION><OPTION VALUE="3">[~Expirado~]</OPTION></SELECT>
+            	<SELECT NAME="id_status"><OPTION VALUE="0" SELECTED="selected">Published</OPTION><OPTION VALUE="1">Pending</OPTION><OPTION VALUE="2">Not approved</OPTION><OPTION VALUE="3">Expired</OPTION></SELECT>
             </TD>
           </TR>
           <TR>
@@ -352,15 +352,15 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="left"><FONT CLASS="formplain">[~Formato:~]</FONT></TD>
+            <TD ALIGN="left"><FONT CLASS="formplain">Format:</FONT></TD>
             <TD ALIGN="left">
             	<SELECT NAME="id_msg_type"><OPTION VALUE="HTM" SELECTED="selected">HTML</OPTION><OPTION VALUE="TXT">Texto</OPTION></SELECT>
               &nbsp;&nbsp;<A CLASS="linkplain" HREF="#" onclick="window.open('file_listing.jsp', 'file_listing', 'directories=no,toolbar=no,menubar=no,width=760,height=580')">Ver galer&iacute;a de im&aacute;genes y archivos</A>
             </TD>
             <TD ALIGN="left">
-            	<A HREF="#" onclick="addTag()" CLASS="linkplain">[~Agregar Etiqueta~]</A>
+            	<A HREF="#" onclick="addTag()" CLASS="linkplain">Add tag</A>
             	&nbsp;&nbsp;&nbsp;
-            	<A HREF="#" CLASS="linkplain">[~Editar Etiquetas~]</A>
+            	<A HREF="#" CLASS="linkplain">Edit tags</A>
             </TD>
           </TR>
         </TABLE>
@@ -385,7 +385,7 @@
           </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" TITLE="ALT+s">&nbsp;
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" TITLE="ALT+s">&nbsp;
     	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton"  TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>
     	    </TD>	            

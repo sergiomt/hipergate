@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.hipermail.MailAccount" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.hipermail.MailAccount" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
 /*
@@ -70,7 +70,7 @@
   if (null==oConn) return;  
   oConn = null;  
 
-  if (!id_user.equals(oObj.getStringNull(DB.gu_user,null)) && !bIsAdmin) {
+  if (!id_user.equals(oObj.getStringNull(DB.gu_user,null)) && !bIsAdmin && gu_account!=null) {
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Security Exception&desc=It is not allowed to modify this mail account settings&resume=_back"));
     return;
   }  
@@ -122,25 +122,25 @@
       	}
       
       	if (frm.tx_main_email.value.length>0 && !check_email(frm.tx_main_email.value)) {
-      	  alert ("[~La direccion de correo principal no es válida~]");
+      	  alert ("Main mail address is not valid");
       	  frm.tx_main_email.focus();
       	  return false;
       	}
       
       	if (frm.tx_reply_email.value.length>0 && !check_email(frm.tx_reply_email.value)) {
-      	  alert ("[~La direccion de correo de respuesta no es válida~]");
+      	  alert ("Reply-To mail address is not valid");
       	  frm.tx_reply_email.focus();
       	  return false;
       	}
       	
         if (!isIntValue(frm.incoming_port.value)) {
-      	  alert ("[~El puerto de entrada no es válido~]");
+      	  alert ("In Port is not valid");
       	  frm.incoming_port.focus();
       	  return false;
         }
       
         if (!isIntValue(frm.outgoing_port.value)) {
-      	  alert ("[~El puerto de salida no es válido~]");
+      	  alert ("Out Port is not valid");
       	  frm.outgoing_port.focus();
       	  return false;
         }
@@ -153,7 +153,7 @@
       	    return false;
 					}
 					if (ltrim(rtrim(frm.tx_main_email.value.toLowerCase()))==emails[t].toLowerCase()) {
-      	    alert ("[~Ya existe otra cuenta asociada a la misma dirección de e-mail~] "+titles[t]);
+      	    alert ("There is already another account associated to the same e-mail "+titles[t]);
       	    frm.tx_main_email.focus();
       	    return false;
 					}
@@ -165,7 +165,7 @@
   </SCRIPT>
 </HEAD>
 <BODY  MARGINWIDTH="8">
-  <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
+  <DIV class="cxMnu1" style="width:320px"><DIV class="cxMnu2">
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Refresh"> Refresh</SPAN>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>

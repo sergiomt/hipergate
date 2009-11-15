@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.misc.Environment,com.knowgate.scheduler.Job,com.knowgate.dataxslt.db.PageSetDB,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.misc.Environment,com.knowgate.scheduler.Job,com.knowgate.dataxslt.db.PageSetDB,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -57,9 +57,12 @@
   DistributionList oLst = null;
   String s1StPage = null;
   String sTxCmmd = null;
+  int nInterrupted=0, nArchived=0;
 
   JDCConnection oConn = GlobalDBBind.getConnection("jobmodify");  
-      
+  DBSubset oCounts = new DBSubset(DB.k_job_atoms, "COUNT(*) AS nu_atoms,"+DB.id_status, DB.gu_job+"=? GROUP BY "+DB.id_status, 10);
+  int nCounts = 0;
+  
   try {
     oJob = Job.instantiate(oConn, gu_job, Environment.getProfile(GlobalDBBind.getProfileName()));
     
@@ -75,10 +78,14 @@
     if (oJob.getString(DB.id_command).equals("MAIL")) {      
       oPag = new PageSetDB (oConn, oJob.getParameter("gu_pageset"));
       oLst = new DistributionList(oConn, oJob.getParameter("gu_list"));
-            
+
       s1StPage = DBCommand.queryStr(oConn, "SELECT " + DB.path_page + "," + DB.pg_page + " FROM " + DB.k_pageset_pages + " WHERE " + DB.gu_pageset + "='" + oJob.getParameter("gu_pageset") + "' ORDER BY 2");
     }
-    
+
+		nCounts = oCounts.load(oConn, new Object[]{gu_job});
+
+    nArchived = DBCommand.queryCount(oConn, "*", DB.k_job_atoms_archived, DB.gu_job+"='"+gu_job+"'");
+
     oConn.close("jobmodify");
     
   }
@@ -140,9 +147,8 @@
   if (null==oConn) return;
   
   oConn = null;  
-%>
 
-<HTML LANG="<% out.write(sLanguage); %>">
+%><HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Edit Task</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
@@ -151,12 +157,22 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
-      function showCalendar(ctrl) {       
-        var dtnw = new Date();
 
+      function showCalendar(ctrl) {
+        var dtnw = new Date();
         window.open("../common/calendar.jsp?a=" + (dtnw.getFullYear()) + "&m=" + dtnw.getMonth() + "&c=" + ctrl, "", "toolbar=no,directories=no,menubar=no,resizable=no,width=171,height=195");
-      } // showCalendar()            
-      
+      } // showCalendar()
+
+      function validate() {
+        var frm = document.forms[0];
+        if (frm.tl_job.value.length==0) {
+          alert ("The name of the job may not be empty");
+          frm.tl_job.focus();
+          return false;
+        }
+        return true;
+      } // validate
+
     //-->
   </SCRIPT>
 </HEAD>
@@ -167,12 +183,16 @@
     <TR><TD CLASS="striptitle"><FONT CLASS="title1">Edit Task</FONT></TD></TR>
   </TABLE>
   <BR/>
-  <% out.flush(); %>
   <CENTER>
-  <FORM METHOD="post">
+  <FORM METHOD="post" ACTION="job_modify_store.jsp" onSubmit="return validate()">
+  	<INPUT TYPE="hidden" NAME="gu_job" VALUE="<%=oJob.getString(DB.gu_job)%>">
     <TABLE CLASS="formback">
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
+          <TR>
+            <TD ALIGN="right" WIDTH="160"><FONT CLASS="formstrong">Name:</FONT></TD>
+            <TD ALIGN="left" WIDTH="390"><INPUT TYPE="text" NAME="tl_job" MAXLENGTH="100" SIZE="30" VALUE="<%=oJob.getStringNull(DB.tl_job,"")%>">&nbsp;<INPUT TYPE="submit" CLASS="pushbutton" VALUE="Modify"></TD>
+          </TR>
           <TR>
             <TD ALIGN="right" WIDTH="160"><FONT CLASS="formstrong">Task:</FONT></TD>
             <TD ALIGN="left" WIDTH="390"><FONT CLASS="textplain">(<% out.write(sTxCmmd); %></FONT></TD>
@@ -215,13 +235,41 @@
    if (oJob.getString(DB.id_command).equals("SEND") || oJob.getString(DB.id_command).equals("MAIL")) { %>
           <TR>
             <TD ALIGN="right" WIDTH="160"><IMG SRC="../images/images/jobs/statistics16.gif" WIDTH="24" HEIGHT="16" BORDER="0" ALT="Statistics"></TD>
-            <TD ALIGN="left" WIDTH="390"><A HREF="job_followup_stats.jsp?gu_job=<%=gu_job%>" TARGET="_top" CLASS="linkplain">[~Ver estadísticas~]</A></TD>
+            <TD ALIGN="left" WIDTH="390"><A HREF="job_followup_stats.jsp?gu_job=<%=gu_job%>" TARGET="_top" CLASS="linkplain">Show statistics</A></TD>
           </TR>
 <% } %>
           <TR>
             <TD ALIGN="right" WIDTH="160"><IMG SRC="../images/images/jobs/atoms16.gif" WIDTH="24" HEIGHT="16" BORDER="0" ALT="Atoms"></TD>
-            <TD ALIGN="left" WIDTH="390"><A HREF="job_viewatoms.jsp?gu_job=<%=gu_job%>" TARGET="_top" CLASS="linkplain">[~Ver átomos~]</A></TD>
+            <TD ALIGN="left" WIDTH="390"><A HREF="job_viewatoms.jsp?gu_job=<%=gu_job%>" TARGET="_top" CLASS="linkplain">View atoms</A></TD>
           </TR>
+          <TR>
+            <TD ALIGN="right" WIDTH="160"></TD>
+            <TD ALIGN="left" WIDTH="390" CLASS="textsmall"><TABLE><%
+              for (int c=0; c<nCounts; c++) {
+                switch (oCounts.getShort(1,c)) {
+                  case Job.STATUS_ABORTED:
+                    out.write("<TR><TD CLASS=\"textsmall\">Aborted</TD><TD>"+String.valueOf(oCounts.getInt(0,c))+"</TD></TR>\n");
+                    break;
+                  case Job.STATUS_PENDING:
+                    out.write("<TR><TD CLASS=\"textsmall\">Pending</TD><TD>"+String.valueOf(oCounts.getInt(0,c))+"</TD></TR>\n");
+                    break;
+                  case Job.STATUS_SUSPENDED:
+                    out.write("<TR><TD CLASS=\"textsmall\">Suspended</TD><TD>"+String.valueOf(oCounts.getInt(0,c))+"</TD></TR>\n");
+                    break;
+                  case Job.STATUS_INTERRUPTED:
+                    out.write("<TR><TD CLASS=\"textsmall\">Failed/Interrupted</TD><TD>"+String.valueOf(oCounts.getInt(0,c))+"</TD></TR>\n");
+                    break;
+                }
+              } // next
+              out.write("<TR><TD CLASS=\"textsmall\">Completed&nbsp;"+String.valueOf(nArchived)+"</TD></TR></TABLE>");
+            %></TD>
+          </TR>
+<% if (nInterrupted>0 || true) { %>
+          <TR>
+            <TD ALIGN="right" WIDTH="160"><IMG SRC="../images/images/jobs/recycleatoms16.gif" WIDTH="24" HEIGHT="16" BORDER="0" ALT="Recycle Atoms"></TD>
+            <TD ALIGN="left" WIDTH="390"><A HREF="job_recycle.jsp?gu_job=<%=gu_job%>" CLASS="linkplain">Retry failed atoms</A></TD>
+          </TR>
+<% } %>
 <% if (oJobLog.exists()) { %>
           <TR>
             <TD ALIGN="right" WIDTH="160"><IMG SRC="../images/images/jobs/logfile16.gif" WIDTH="16" HEIGHT="16" HSPACE="4" BORDER="0" ALT="Log File"></TD>

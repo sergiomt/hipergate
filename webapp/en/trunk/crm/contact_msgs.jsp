@@ -1,4 +1,4 @@
-﻿<%@ page import="java.text.SimpleDateFormat,java.util.Vector,java.math.BigDecimal,java.net.URLDecoder,javax.mail.internet.MimeUtility,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.Category,com.knowgate.hipermail.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.text.SimpleDateFormat,java.util.Vector,java.math.BigDecimal,java.net.URLDecoder,javax.mail.internet.MimeUtility,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.Category,com.knowgate.hipermail.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2004  Know Gate S.L. All rights reserved.
@@ -291,12 +291,12 @@
 	  var frm = document.forms[0];
 
 	  if (!isDate(frm.dt_before.value, "d") && frm.dt_before.value.length>0) {
-	    alert ("[~La fecha de inicio no es válida~]");
+	    alert ("Start date is not valid");
 	    return false;
 	  }
 
 	  if (!isDate(frm.dt_after.value, "d") && frm.dt_after.value.length>0) {
-	    alert ("[~La fecha de fin no es válida~]");
+	    alert ("End date is not valid");
 	    return false;
 	  }
 	
@@ -363,7 +363,7 @@
       </TR>
       <TR>
         <TD></TD>
-        <TD COLSPAN="2" CLASS="formplain"><INPUT TYPE="checkbox" NAME="chk_withattachments" VALUE="1" onclick="document.forms[0].submit()" <% if (bWithAttachmentsOnly) out.write("CHECKED=\"checked\""); %>>&nbsp;[~Mostrar s&oacute;lo mensajes con archivos adjuntos~]</TD>
+        <TD COLSPAN="2" CLASS="formplain"><INPUT TYPE="checkbox" NAME="chk_withattachments" VALUE="1" onclick="document.forms[0].submit()" <% if (bWithAttachmentsOnly) out.write("CHECKED=\"checked\""); %>>&nbsp;Show only messages with attached files</TD>
       </TR>
       <TR><TD COLSPAN="3" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       </TABLE>
@@ -383,10 +383,10 @@
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (sOrderBy.equals("3") ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by priority"></A></TD>
           <TD CLASS="tableheader" WIDTH="128px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="javascript:sortBy(4);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (sOrderBy.equals("4") ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by sender"></A>&nbsp;<B>De</B></TD>
           <TD CLASS="tableheader" WIDTH="256px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="javascript:sortBy(6);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (sOrderBy.equals("6") ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by subject"></A>&nbsp;<B>Asunto</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="javascript:sortBy(<%=tp_recipient.equals("from") ? "7" : "8"%>);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (sOrderBy.equals("7") ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por fecha~]"></A>&nbsp;<B>Date</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="javascript:sortBy(<%=tp_recipient.equals("from") ? "7" : "8"%>);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (sOrderBy.equals("7") ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by date"></A>&nbsp;<B>Date</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="javascript:sortBy(9);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (sOrderBy.equals("9") ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by size"></A>&nbsp;<B>Kb</B></TD>
           <% if (iParts>0) { %> <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"></TD> <% } %>
-          <% if (iRecps>0 || iTrack>0) { %> <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Le&iacute;do~]</B></TD> <% } %>
+          <% if (iRecps>0 || iTrack>0) { %> <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Readed</B></TD> <% } %>
         </TR>
 <%
 
@@ -448,7 +448,7 @@
              if (iPart<0)
                out.write("<TD CLASS=\"strip"+sStrip+"\"></TD>");
              else
-               out.write("<TD CLASS=\"strip"+sStrip+"\" ALIGN=\"center\"><IMG SRC=\"../images/images/attachedfile16x16.gif\" WIDTH=\"21\" HEIGHT=\"17\" BORDER=\"0\" ALT=\"[~Tiene adjuntos~]\"></TD>");             	
+               out.write("<TD CLASS=\"strip"+sStrip+"\" ALIGN=\"center\"><IMG SRC=\"../images/images/attachedfile16x16.gif\" WIDTH=\"21\" HEIGHT=\"17\" BORDER=\"0\" ALT=\"Has attachments\"></TD>");             	
            }
          }
 

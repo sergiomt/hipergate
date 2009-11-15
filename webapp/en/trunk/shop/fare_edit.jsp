@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*
@@ -144,12 +144,12 @@
         var frm = window.document.forms[0];
 
 	      if (!isDate(frm.dt_start.value, "d") && frm.dt_start.value.length>0) {
-	        alert ("[~La fecha de inicio no es válida~]");
+	        alert ("Start date is not valid");
 	        return false;
 	      }
 
 	      if (!isDate(frm.dt_end.value, "d") && frm.dt_end.value.length>0) {
-	        alert ("[~La fecha de fin no es válida~]");
+	        alert ("End date is not valid");
 	        return false;
 	      }
 
@@ -176,17 +176,17 @@
 		    }
 		    
       	if (!isFloatValue(frm.pr_sale.value)) {
-      	  alert ("[~El precio de tarifa no es válido~]");
+      	  alert ("Fare price is not valid ");
       	  return false;
       	}
 
       	if (frm.pct_tax_rate.value.length>0) {
       	  if (!isFloatValue(frm.pct_tax_rate.value)) {
-      	    alert ("[~El porcentaje de tasas no es válido~]");
+      	    alert ("Tax rate percentage is not valid");
       	    return false;
       	  }
       	  if (parseFloat(frm.pct_tax_rate.value.replace(new RegExp(","), "."))>100) {
-      	    alert ("[~El porcentaje de tasas no es válido~]");
+      	    alert ("Tax rate percentage is not valid");
       	    return false;
       	  }
       	}

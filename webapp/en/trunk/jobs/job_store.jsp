@@ -1,5 +1,5 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.Statement,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.scheduler.Job,com.knowgate.crm.DistributionList,com.knowgate.debug.DebugFile" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%
+<%@ page import="java.util.Properties,java.io.File,java.io.IOException,java.net.URL,java.net.URLDecoder,java.sql.Statement,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.dfs.FileSystem,com.knowgate.dfs.chardet.CharacterSetDetector,com.knowgate.misc.Gadgets,com.knowgate.scheduler.Job,com.knowgate.crm.DistributionList,com.knowgate.hipermail.AdHocMailing,com.knowgate.hipermail.HtmlMimeBodyPart,com.knowgate.hipermail.MailAccount,com.knowgate.hipermail.SendMail,com.knowgate.crm.GlobalBlackList,com.knowgate.debug.DebugFile" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -33,11 +33,14 @@
 */
  
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
-      
+  
+  final String WEBMAILS_REGEXP = "[\\w\\x2E_-]+@((?:yahoo)|(?:terra)|(?:hotmail)|(?:gmail))(?:\\x2E\\D{2,4}){1,2}";
+
   String id_domain = request.getParameter("id_domain");
   String n_domain = request.getParameter("n_domain");
   String gu_workarea = request.getParameter("gu_workarea");
   String id_user = getCookie (request, "userid", null);
+  String gu_pageset = request.getParameter("gu_pageset");
   String gu_job = request.getParameter("gu_job");
   String tl_job = request.getParameter("tl_job");  
   String gu_job_group = request.getParameter("gu_job_group");
@@ -45,52 +48,227 @@
   String tx_parameters = request.getParameter("tx_parameters");
   String id_status = request.getParameter("id_status");
   String sSQL = "";
+  String sGuJob;
   final boolean bAsap = request.getParameter("dt_execution").equals("ASAP");
-  
+  final int iAttachImages = Integer.parseInt(request.getParameter("attachimages"));
+  DistributionList oRecipients = null;
+  String[] aRecipients = null;
+  int nBatch;
+
+  String[] aLists = null;
+  int iGuList = tx_parameters.indexOf("gu_list:");
+  if (iGuList>0) {
+    int iComma = tx_parameters.indexOf(",", iGuList+8);
+    if (iComma>0)
+      aLists = Gadgets.split(tx_parameters.substring(iGuList+8,iComma),';');
+    else
+  	  aLists = Gadgets.split(tx_parameters.substring(iGuList+8),';');
+  }
+
+  URL oWebSrv = new URL(GlobalDBBind.getProperty("webserver"));
+
+  String sDefWrkArPut = request.getRealPath(request.getServletPath());
+  sDefWrkArPut = sDefWrkArPut.substring(0,sDefWrkArPut.lastIndexOf(File.separator));
+  sDefWrkArPut = sDefWrkArPut.substring(0,sDefWrkArPut.lastIndexOf(File.separator));
+  sDefWrkArPut = sDefWrkArPut + File.separator + "workareas/";
+  String sWrkAPut = GlobalDBBind.getPropertyPath("workareasput");
+	if (null==sWrkAPut) sWrkAPut = sDefWrkArPut;
+
   JDCConnection oConn = null;  
   
   try {
     oConn = GlobalDBBind.getConnection("jobstore");  
     
-    sSQL = "INSERT INTO k_jobs ";
-    sSQL += "(gu_workarea,gu_writer,gu_job,tl_job,gu_job_group,id_command,tx_parameters,id_status,dt_execution) VALUES (";
-    sSQL += "'"+gu_workarea+"',";
-    sSQL += "'"+id_user+"',";
-    sSQL += "'"+gu_job+"',";
-    sSQL += "'"+tl_job+"',";    
-    sSQL += "'"+gu_job_group+"',";
-    sSQL += "'"+id_command+"',";
-    sSQL += "'"+tx_parameters+"',";
-    sSQL += id_status+",";
-    if (bAsap)
-      sSQL += "NULL";
-    else if (oConn.getDataBaseProduct()==JDCConnection.DBMS_POSTGRESQL)
-      sSQL += "timestamp '" + request.getParameter("dt_execution") + " 00:00:00' ";
-    else if (oConn.getDataBaseProduct()==JDCConnection.DBMS_MYSQL)
-      sSQL += "TIMESTAMP ('" + request.getParameter("dt_execution") + " 00:00:00') ";
-    else if (oConn.getDataBaseProduct()==JDCConnection.DBMS_ORACLE)
-      sSQL += "TO_DATE('" + request.getParameter("dt_execution") + " 00:00','YYYY-MM-DD HH24:MI') ";
-    else
-      sSQL += "{ d '" + request.getParameter("dt_execution") + "'} ";
-    sSQL += ")";
+    if (id_command.equals("MAIL")) {
+      sSQL = "INSERT INTO k_jobs ";
+      sSQL += "(gu_workarea,gu_writer,gu_job,tl_job,gu_job_group,id_command,tx_parameters,id_status,dt_execution) VALUES (";
+      sSQL += "'"+gu_workarea+"',";
+      sSQL += "'"+id_user+"',";
+      sSQL += "'"+gu_job+"',";
+      sSQL += "'"+tl_job+"',";    
+      sSQL += "'"+gu_job_group+"',";
+      sSQL += "'"+id_command+"',";
+      sSQL += "'"+tx_parameters+"',";
+      sSQL += id_status+",";
+      if (bAsap)
+        sSQL += "NULL";
+      else if (oConn.getDataBaseProduct()==JDCConnection.DBMS_POSTGRESQL)
+        sSQL += "timestamp '" + request.getParameter("dt_execution") + " 00:00:00' ";
+      else if (oConn.getDataBaseProduct()==JDCConnection.DBMS_MYSQL)
+        sSQL += "TIMESTAMP ('" + request.getParameter("dt_execution") + " 00:00:00') ";
+      else if (oConn.getDataBaseProduct()==JDCConnection.DBMS_ORACLE)
+        sSQL += "TO_DATE('" + request.getParameter("dt_execution") + " 00:00','YYYY-MM-DD HH24:MI') ";
+      else
+        sSQL += "{ d '" + request.getParameter("dt_execution") + "'} ";
+      sSQL += ")";
     
-    oConn.setAutoCommit (false);
+      oConn.setAutoCommit (false);
 
-    Statement oStmt = oConn.createStatement();
+      Statement oStmt = oConn.createStatement();
     
-    if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(" + sSQL + ")");
+      if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(" + sSQL + ")");
       
-    oStmt.executeUpdate(sSQL);
-    oStmt.close();
+      oStmt.executeUpdate(sSQL);
+      oStmt.close();
     
-    int iGuList = tx_parameters.indexOf("gu_list:");
-    if (iGuList>0) {
-      String sGuList = tx_parameters.substring(iGuList+8,iGuList+40);
-      DistributionList oRecipients = new DistributionList (oConn, sGuList);
-      String[] aRecipients = Gadgets.split(oRecipients.activeMembers(oConn),',');
-      Job oEmailSender = Job.instantiate(oConn, gu_job, GlobalDBBind.getProperties());
-      oEmailSender.insertRecipients(oConn, aRecipients, "to", "html", Job.STATUS_PENDING);
-    } // fi
+      if (iGuList>0) {
+        Job oEmailSender = Job.instantiate(oConn, gu_job, GlobalDBBind.getProperties());
+        for (int l=0; l<aLists.length; l++) {
+          oRecipients = new DistributionList (oConn, aLists[l]);
+          aRecipients = Gadgets.split(oRecipients.activeMembers(oConn),',');
+          oEmailSender.insertRecipients(oConn, aRecipients, "to", "html", Job.STATUS_PENDING);
+        }
+      } // fi
+
+    } else if (id_command.equals("SEND")) {
+
+      AdHocMailing oAdhm = new AdHocMailing();
+
+      if (!oAdhm.load(oConn, gu_pageset)) {
+        throw new SQLException("Could not find AdHocMailing "+gu_pageset);
+      } else {
+
+				oAdhm.addBlackList(GlobalBlackList.forDomain(oConn, Integer.parseInt(id_domain)));
+				
+        String sTargetDir = sWrkAPut + gu_workarea + File.separator + "apps" + File.separator + "Hipermail" + File.separator + "html" + File.separator + Gadgets.leftPad(String.valueOf(oAdhm.getInt(DB.pg_mailing)), '0', 5);
+        String sWrkGetDir = oWebSrv.getProtocol()+"://"+oWebSrv.getHost()+(oWebSrv.getPort()==-1 ? "" : ":"+String.valueOf(oWebSrv.getPort()))+Gadgets.chomp(GlobalDBBind.getProperty("workareasget"),"/")+gu_workarea+"/apps/Hipermail/html/"+Gadgets.leftPad(String.valueOf(oAdhm.getInt(DB.pg_mailing)),'0',5)+"/";
+      	
+      	String[] aFiles = new File(sTargetDir).list();
+        String sHtmlFile = null, sPlainFile = null;
+        if (aFiles!=null) {
+          for (int f=0; f<aFiles.length; f++) {
+            if (aFiles[f].endsWith(".htm") || aFiles[f].endsWith(".html") || aFiles[f].endsWith(".HTM") || aFiles[f].endsWith(".HTML"))
+              sHtmlFile = aFiles[f];
+            if (aFiles[f].endsWith(".txt") || aFiles[f].endsWith(".TXT"))
+              sPlainFile = aFiles[f];   
+          } // next
+        } // fi
+        
+        if (null==sHtmlFile && null==sPlainFile) {
+          throw new SQLException("Could not find any valid file for e-mail body");
+        } else {
+
+          MailAccount oMacc = MailAccount.forUser(oConn, id_user);
+
+          if (oMacc==null) {
+
+            throw new SQLException("Could not find default mail account for current user");
+
+          } else {
+
+				    Properties oProps = oMacc.getProperties();
+				    oProps.put("webbeacon", nullif(request.getParameter("webbeacon"),"0").equals("1") ? "1" : "0");
+				    oProps.put("webserver", GlobalDBBind.getProperty("webserver"));		    	
+
+						FileSystem oFs = new FileSystem();
+
+            String sHtmlText = null, sPlainText = null, sEncoding = "ISO8859_1";
+            CharacterSetDetector oCDet = new CharacterSetDetector();
+
+            if (null!=sPlainFile) {
+              sEncoding = oCDet.detect(sTargetDir+File.separator+sPlainFile, sEncoding);
+              sPlainText = oFs.readfilestr(sTargetDir+File.separator+sPlainFile, sEncoding);
+            }
+
+            if (null!=sHtmlFile) {
+              sEncoding = oCDet.detect(sTargetDir+File.separator+sHtmlFile, sEncoding);
+              sHtmlText = oFs.readfilestr(sTargetDir+File.separator+sHtmlFile, sEncoding);
+              int iBodyStart = Gadgets.indexOfIgnoreCase(sHtmlText,"<body>", 0);
+              if (iBodyStart>=0) {
+                int iBodyEnd = Gadgets.indexOfIgnoreCase(sHtmlText,"</body>", iBodyStart+6);
+                if (iBodyEnd!=-1) {
+                  sHtmlText = sHtmlText.substring(0, iBodyStart+6) + Gadgets.XHTMLEncode(sHtmlText.substring(iBodyStart+6, iBodyEnd)) + sHtmlText.substring(iBodyEnd);
+                } // fi
+              } // fi
+            } // fi
+
+            nBatch = DBCommand.queryCount(oConn, "*", DB.k_jobs, DB.gu_workarea+"='"+gu_workarea+"' AND "+DB.tl_job+" LIKE '"+oAdhm.getString(DB.nm_mailing)+"%'");
+
+						switch (iAttachImages) {
+
+						  case 0:
+						  	oProps.put("attachimages", "0");
+            	  if (iGuList>0) {
+                  for (int l=0; l<aLists.length; l++)
+						        oAdhm.addRecipients(Gadgets.split(new DistributionList (oConn, aLists[l]).activeMembers(oConn),','));
+						    }
+				        sGuJob = Gadgets.generateUUID();
+				        SendMail.send(oMacc, oProps, sTargetDir, sHtmlText, sPlainText, sEncoding, null,
+				                      oAdhm.getStringNull(DB.tx_subject,""), oAdhm.getString(DB.tx_email_from),
+				                      oAdhm.getStringNull(DB.nm_from, oAdhm.getString(DB.tx_email_from)),
+				                      oAdhm.getStringNull(DB.tx_email_reply, oAdhm.getString(DB.tx_email_from)),
+				                      oAdhm.getRecipients(), "to", sGuJob, 
+				                      GlobalDBBind.getProfileName(), oAdhm.getString(DB.nm_mailing)+" ("+String.valueOf(++nBatch)+")",
+				                      false, GlobalDBBind);
+						  	DBCommand.executeUpdate(oConn, "UPDATE "+DB.k_jobs+" SET "+DB.gu_job_group+"='"+gu_pageset+"' WHERE "+DB.gu_job+"='"+sGuJob+"'");
+						  	break;
+						  
+						  case 1:
+						  	oProps.put("attachimages", "1");
+            	  if (iGuList>0) {
+                  for (int l=0; l<aLists.length; l++)
+						      oAdhm.addRecipients(Gadgets.split(new DistributionList (oConn, aLists[l]).activeMembers(oConn),','));
+						    }
+				        sGuJob = Gadgets.generateUUID();
+				        SendMail.send(oMacc, oProps, sTargetDir,
+				        							new HtmlMimeBodyPart(sHtmlText, sEncoding).replacePreffixFromImgSrcs(sWrkGetDir, sTargetDir+File.separator),
+				        							sPlainText, sEncoding, null,
+				                      oAdhm.getStringNull(DB.tx_subject,""), oAdhm.getString(DB.tx_email_from),
+				                      oAdhm.getStringNull(DB.nm_from, oAdhm.getString(DB.tx_email_from)),
+				                      oAdhm.getStringNull(DB.tx_email_reply, oAdhm.getString(DB.tx_email_from)),
+				                      oAdhm.getRecipients(), "to", sGuJob, 
+				                      GlobalDBBind.getProfileName(), oAdhm.getString(DB.nm_mailing)+" ("+String.valueOf(++nBatch)+")",
+				                      false, GlobalDBBind);
+						  	DBCommand.executeUpdate(oConn, "UPDATE "+DB.k_jobs+" SET "+DB.gu_job_group+"='"+gu_pageset+"' WHERE "+DB.gu_job+"='"+sGuJob+"'");
+						  	break;
+
+              case 2:
+
+						  	oProps.put("attachimages", "0");
+                oAdhm.setAllowPattern(WEBMAILS_REGEXP);
+                oAdhm.setDenyPattern("");
+            	  if (iGuList>0) {
+                  for (int l=0; l<aLists.length; l++)
+						        oAdhm.addRecipients(Gadgets.split(new DistributionList (oConn, aLists[l]).activeMembers(oConn),','));
+						    }
+				        sGuJob = Gadgets.generateUUID();
+				        SendMail.send(oMacc, oProps, sTargetDir, sHtmlText, sPlainText, sEncoding, null,
+				                      oAdhm.getStringNull(DB.tx_subject,""), oAdhm.getString(DB.tx_email_from),
+				                      oAdhm.getStringNull(DB.nm_from, oAdhm.getString(DB.tx_email_from)),
+				                      oAdhm.getStringNull(DB.tx_email_reply, oAdhm.getString(DB.tx_email_from)),
+				                      oAdhm.getRecipients(), "to", sGuJob,
+				                      GlobalDBBind.getProfileName(), oAdhm.getString(DB.nm_mailing)+" ("+String.valueOf(++nBatch)+")",
+				                      false, GlobalDBBind);
+						  	DBCommand.executeUpdate(oConn, "UPDATE "+DB.k_jobs+" SET "+DB.gu_job_group+"='"+gu_pageset+"' WHERE "+DB.gu_job+"='"+sGuJob+"'");
+
+								oAdhm.clearRecipients();
+
+						  	oProps.put("attachimages", "1");
+                oAdhm.setAllowPattern("");
+                oAdhm.setDenyPattern(WEBMAILS_REGEXP);
+            	  if (iGuList>0) {
+                  for (int l=0; l<aLists.length; l++)
+						        oAdhm.addRecipients(Gadgets.split(new DistributionList (oConn, aLists[l]).activeMembers(oConn),','));
+						    }
+				        sGuJob = Gadgets.generateUUID();
+				        SendMail.send(oMacc, oProps, sTargetDir,
+				        							new HtmlMimeBodyPart(sHtmlText, sEncoding).replacePreffixFromImgSrcs(sWrkGetDir, sTargetDir+File.separator),
+				        							sPlainText, sEncoding, null,
+				                      oAdhm.getStringNull(DB.tx_subject,""), oAdhm.getString(DB.tx_email_from),
+				                      oAdhm.getStringNull(DB.nm_from, oAdhm.getString(DB.tx_email_from)),
+				                      oAdhm.getStringNull(DB.tx_email_reply, oAdhm.getString(DB.tx_email_from)),
+				                      oAdhm.getRecipients(), "to", sGuJob,
+				                      GlobalDBBind.getProfileName(), oAdhm.getString(DB.nm_mailing)+" ("+String.valueOf(++nBatch)+")",
+				                      false, GlobalDBBind);
+						  	DBCommand.executeUpdate(oConn, "UPDATE "+DB.k_jobs+" SET "+DB.gu_job_group+"='"+gu_pageset+"' WHERE "+DB.gu_job+"='"+sGuJob+"'");
+						  	break;
+              
+            } // end switch
+          } // fi (oMacc!=null)        
+        } // fi (sHtmlFile=!null || sPlainFile!=null)
+      } // fi (AdHocMailing.exists)
+    
+    } // fi (id_command==SEND)
     
     oConn.commit();
     oConn.close("jobstore");
@@ -111,6 +289,6 @@
     out.write ("var sched_info = httpRequestXML('../servlet/HttpSchedulerServlet?action=info'); var sched_stat = getElementText(sched_info.getElementsByTagName('scheduler')[0],'status'); ");
     out.write ("if (sched_stat=='stop' || sched_stat=='stopped') httpRequestXML('../servlet/HttpSchedulerServlet?action=start'); ");
   }
-  out.write ("window.opener.location='../jobs/job_list.jsp?orderby=5&selected=5&subselected=2&id_command=" + id_command + "&list_title=:%20[~Envios~]'; self.close();<" + "/SCRIPT" +"></HEAD></HTML>");
+  out.write ("window.opener.location='../jobs/job_list.jsp?orderby=5&selected=5&subselected=2&id_command=" + id_command + "&list_title=:%20Batches'; self.close();<" + "/SCRIPT" +"></HEAD></HTML>");
 
 %><%@ include file="../methods/page_epilog.jspf" %>

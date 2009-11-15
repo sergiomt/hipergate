@@ -1,4 +1,4 @@
-﻿<%@ page import="java.lang.StringBuffer,java.util.Vector,com.knowgate.misc.*,java.io.File,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.debug.DebugFile,com.knowgate.misc.*,com.knowgate.dataxslt.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.db.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.lang.StringBuffer,java.util.Vector,com.knowgate.misc.*,java.io.File,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.debug.DebugFile,com.knowgate.misc.*,com.knowgate.dataxslt.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.db.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%!
 
   static String esc (String sPath) {

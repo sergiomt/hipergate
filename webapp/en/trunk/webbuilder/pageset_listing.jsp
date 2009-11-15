@@ -1,7 +1,5 @@
-﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
-<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
-<%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%
+<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -40,6 +38,7 @@
 
   final int MailwireApp=13;
   final int WebBuilderApp=14;
+  final int HipermailApp=21;
   final int SurveysApp=23;
 
   String sLanguage = getNavigatorLanguage(request);
@@ -53,24 +52,24 @@
   
   String sDocTypeFilter;
   if (sDocType.equals("newsletter"))
-     sDocTypeFilter = "m." + DB.id_app + "=" + String.valueOf(MailwireApp) + " AND ";
+     sDocTypeFilter = "(p." + DB.id_app + "=" + String.valueOf(MailwireApp) + " OR " + DB.id_app + "=" + String.valueOf(HipermailApp) + ") AND ";
   else if (sDocType.equals("survey"))
-     sDocTypeFilter = "m." + DB.id_app + "=" + String.valueOf(SurveysApp) + " AND ";
+     sDocTypeFilter = "p." + DB.id_app + "=" + String.valueOf(SurveysApp) + " AND ";
   else
-     sDocTypeFilter = "m." + DB.id_app + "=" + String.valueOf(WebBuilderApp) + " AND ";
+     sDocTypeFilter = "p." + DB.id_app + "=" + String.valueOf(WebBuilderApp) + " AND ";
 
-  String sLangFilter = nullif(request.getParameter("id_language")).length()==0 ? "" : "p."+DB.id_language+"='"+request.getParameter("id_language")+"' AND ";
+  String sLangFilter = nullif(request.getParameter("id_language")).length()==0 ? "" : "(p."+DB.id_language+"='"+request.getParameter("id_language")+"' OR p.id_app="+String.valueOf(HipermailApp)+") AND ";
     
   String sFind = "";
     
   if (nullif(request.getParameter("find")).length()>0)
-    sFind += " AND (" + DB.nm_pageset + " " + DBBind.Functions.ILIKE + " '%" + request.getParameter("find") + "%' OR " + DB.tx_comments + " " + DBBind.Functions.ILIKE + " '%" + request.getParameter("find") + "%')";
+    sFind += " AND (p." + DB.nm_pageset + " " + DBBind.Functions.ILIKE + " '%" + request.getParameter("find") + "%' OR p." + DB.tx_comments + " " + DBBind.Functions.ILIKE + " '%" + request.getParameter("find") + "%')";
 
   if (nullif(request.getParameter("dt_start")).length()>0)
-    sFind += " AND " + DB.dt_created + "<={ d '" + request.getParameter("dt_start") + "'} ";
+    sFind += " AND p." + DB.dt_created + "<={ d '" + request.getParameter("dt_start") + "'} ";
   
   if (nullif(request.getParameter("dt_end")).length()>0)
-    sFind += " AND " + DB.dt_created + ">={ d '" + request.getParameter("dt_end") + "'} ";
+    sFind += " AND p." + DB.dt_created + ">={ d '" + request.getParameter("dt_end") + "'} ";
 
   String sStorageRoot = Environment.getProfilePath(GlobalDBBind.getProfileName(),"storage");
   
@@ -89,17 +88,17 @@
   if (request.getParameter("orderby")!=null)
     sOrderBy = request.getParameter("orderby");
   else
-    sOrderBy = "2 DESC";
+    sOrderBy = "5 DESC";
   
   if ((sOrderBy.length()>0) && (sOrderBy.length()<3))
     iOrderBy = Integer.parseInt(sOrderBy);
   else
-    iOrderBy = 2;
+    iOrderBy = 5;
     
   if (request.getParameter("maxrows")!=null)
     iMaxRows = Integer.parseInt(request.getParameter("maxrows"));
   else
-    iMaxRows = 1000;
+    iMaxRows = 100;
 
   if (request.getParameter("skip")!=null)
     iSkip = Integer.parseInt(request.getParameter("skip"));      
@@ -116,27 +115,30 @@
     iLangsCount = oLanguages.load(oConn, new Object[]{gu_workarea});
     
     if (sFind.length()==0) {
-      oPageSets = new DBSubset (DB.k_pagesets + " p," + DB.k_microsites + " m ", 
-      				"p." + DB.gu_pageset + ",p." + DB.nm_pageset + ",p." + DB.tx_comments + ",p." + DB.path_data + ",p." + DB.dt_created + ",m." + DB.nm_microsite + ",p." + DB.id_status,
-      				"(p." + DB.gu_microsite + "=m." + DB.gu_microsite + " OR p." + DB.gu_microsite + " IS NULL) AND " + sDocTypeFilter + sLangFilter + "p.gu_workarea='" + gu_workarea + "' ORDER BY " + sOrderBy, iMaxRows);
+      oPageSets = new DBSubset ("v_pagesets_mailings p ", 
+      				"p." + DB.gu_pageset + ",p." + DB.nm_pageset + ",p." + DB.tx_comments + ",p." + DB.path_data + ",p." + DB.dt_created + ",p." + DB.nm_microsite + ",p." + DB.id_status + ",p." + DB.id_app,
+      				sDocTypeFilter + sLangFilter + "p.gu_workarea='" + gu_workarea + "' ORDER BY " + sOrderBy, iMaxRows);
       oPageSets.setMaxRows(iMaxRows);
       iPageSetCount = oPageSets.load (oConn, iSkip);
     }
     else {
-      oPageSets = new DBSubset (DB.k_pagesets + " p," + DB.k_microsites + " m", 
-      				"p." + DB.gu_pageset + ",p." + DB.nm_pageset + ",p." + DB.tx_comments + ",p." + DB.path_data + ",p." + DB.dt_created + ",m." + DB.nm_microsite + ",p." + DB.id_status,
-      				"(p." + DB.gu_microsite + "=m." + DB.gu_microsite + " OR p." + DB.gu_microsite + " IS NULL) AND " + sDocTypeFilter + sLangFilter + "p.gu_workarea='" + gu_workarea + "' " + sFind + " ORDER BY " + sOrderBy, iMaxRows);
+      oPageSets = new DBSubset ("v_pagesets_mailings p", 
+      				"p." + DB.gu_pageset + ",p." + DB.nm_pageset + ",p." + DB.tx_comments + ",p." + DB.path_data + ",p." + DB.dt_created + ",p." + DB.nm_microsite + ",p." + DB.id_status + ",p." + DB.id_app,
+      				sDocTypeFilter + sLangFilter + "p.gu_workarea='" + gu_workarea + "' " + sFind + " ORDER BY " + sOrderBy, iMaxRows);
       oPageSets.setMaxRows(iMaxRows);
       iPageSetCount = oPageSets.load (oConn, iSkip);    
     }
     
     aStatus = new String[iPageSetCount];
     
-    for (int ps=0; ps<iPageSetCount; ps++)
+    for (int ps=0; ps<iPageSetCount; ps++) {
       if (oPageSets.isNull(6,ps))
         aStatus[ps] = "";
+      else if (oPageSets.getInt(7,ps)==HipermailApp)
+        aStatus[ps] = DBLanguages.getLookUpTranslation((java.sql.Connection) oConn, DB.k_adhoc_mailings_lookup, gu_workarea , "id_status", sLanguage, oPageSets.getString(6,ps));
       else
         aStatus[ps] = DBLanguages.getLookUpTranslation((java.sql.Connection) oConn, DB.k_pagesets_lookup, gu_workarea , "id_status", sLanguage, oPageSets.getString(6,ps));
+    } // next
     
     oConn.close("pageset_listing"); 
   }
@@ -187,10 +189,11 @@
     <!--
     	var jsPageSetId;
     	var jsPageSetName;
+    	var jsType;
     	
         <%
           // Escribir los nombres de PageSets en Arrays JavaScript
-          // Estos arrays se usan en las llamadas de borrado mÃºltiple.
+          // Estos arrays se usan en las llamadas de borrado multiple.
           
           out.write("var jsPageSets = new Array(");
             for (int i=0; i<iPageSetCount; i++) {
@@ -198,6 +201,14 @@
               out.write("\"" + oPageSets.getString(0,i) + "\"");
             }
           out.write(");\n        ");
+
+          out.write("var jsTypes = new Array(");
+            for (int i=0; i<iPageSetCount; i++) {
+              if (i>0) out.write(","); 
+              out.write(String.valueOf(oPageSets.getInt(7,i)));
+            }
+          out.write(");\n        ");
+
         %>
 	// ----------------------------------------------------
 
@@ -216,7 +227,7 @@
 	  
 	  txt = rtrim(frm.find.value);
 	  if (txt.indexOf("'")>=0 || txt.indexOf("%")>=0  || txt.indexOf(",")>=0  || txt.indexOf("&")>=0  || txt.indexOf("?")>=0 ) {
-	    alert ("[~El texto a buscar contiene caracteres no válidos~]");
+	    alert ("Search string contains invalid characters");
 	    document.location = "pageset_listing.jsp?doctype="+ getURLParam("doctype") + "&id_language=" + getCombo(frm.id_language) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
 	    return false;
 	  }
@@ -225,7 +236,7 @@
 	    qry += "&find=" + escape(txt);
 	    
 	  if (txt.length==0 && frm.dt_start.value.length==0 && frm.dt_end.value.length==0 && frm.id_language.selectedIndex<=0) {
-	    alert ("[~Debe especificar al menos un criterio de búsqueda~]");
+	    alert ("Must specify a search criteria");
 	    document.location = "pageset_listing.jsp?doctype="+ getURLParam("doctype") + "&id_language=" + getCombo(frm.id_language) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
 	    return false;
 	  }
@@ -235,7 +246,7 @@
 	    if (isDate(txt,"d"))
 	      qry += "&dt_start=" + txt;
 	    else {
-	      alert ("[~La fecha de inicio no es válida~]");
+	      alert ("Invalid Start Date");
 	      document.location = "pageset_listing.jsp?doctype="+ getURLParam("doctype") + "&id_language=" + getCombo(frm.id_language) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
 	      return false;
 	    }
@@ -245,7 +256,7 @@
 	    if (isDate(txt,"d"))
 	      qry += "&dt_end=" + txt;
 	    else {
-	      alert ("[~La fecha de fin no es válida~]");
+	      alert ("Invalid End Date");
 	      document.location = "pageset_listing.jsp?doctype="+ getURLParam("doctype") + "&id_language=" + getCombo(frm.id_language) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
 	      return false;
 	    }
@@ -255,8 +266,8 @@
 
 	// ----------------------------------------------------
 	
-	function clonePageSet(id) {
-	  document.location = "pageset_clone.jsp?gu_pageset=" + id + "&doctype=<%=sDocType%>&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
+	function clonePageSet(id,tp) {
+	  document.location = "pageset_clone.jsp?id_app=" + tp + "&gu_pageset=" + id + "&doctype=<%=sDocType%>&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
 	}
 	
 	// ----------------------------------------------------
@@ -273,19 +284,59 @@
 
         // ----------------------------------------------------
         	
-	function changePageSet(jsPageSetId) {
+	function changePageSet(jsPageSetId,jsPageSetType) {
+		if (jsPageSetType==<% out.write(String.valueOf(HipermailApp)); %>)
+	    self.open ("adhoc_mailing_edit.jsp?gu_mailing=" + jsPageSetId + "&gu_workarea=<%=gu_workarea%>&id_domain=<%=id_domain%>", "editpagesetproperties", "scrollbars=yes,directories=no,toolbar=no,menubar=no,top=" + (screen.height-500)/2 + ",left=" + (screen.width-720)/2 + ",width=720,height=500");	  
+	  else
 	    self.open("pageset_change.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>&doctype=<%=sDocType%>&gu_pageset=" + jsPageSetId, "changepageset", "toolbar=no,directories=no,menubar=no,scrollbars=yes,resizable=yes,top=" + (screen.height-520)/2 + ",left=" + (screen.width-540)/2 + ",width=600,height=520");	  
 	} // createPageSet()
 
         // ----------------------------------------------------
 
-	function editProperties(jsPageSetId) {	  
-	  self.open ("pageset_edit.jsp?gu_pageset=" + jsPageSetId + "&gu_workarea=<%=gu_workarea%>&id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>"), "editpagesetproperties", "directories=no,toolbar=no,menubar=no,top=" + (screen.height-320)/2 + ",left=" + (screen.width-400)/2 + ",width=400,height=320");	  
+	function editProperties(jsPageSetId,jsPageSetType) {
+	    self.open ("pageset_edit.jsp?gu_pageset=" + jsPageSetId + "&gu_workarea=<%=gu_workarea%>&id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>"), "editpagesetproperties", "directories=no,toolbar=no,menubar=no,top=" + (screen.height-320)/2 + ",left=" + (screen.width-400)/2 + ",width=400,height=320");	  
 	} // editProperties()
 
         // ----------------------------------------------------
 
-	function modifyPageSet(id,nm) {
+	function modifyPageSet(id,nm,tp) {
+	  var w,h;
+	  
+	  switch (screen.width) {
+	    case 640:
+	      w="620";
+	      h="460";
+	      break;
+	    case 800:
+	      w="740";
+	      h="560";
+	      break;
+	    case 1024:
+	      w="960";
+	      h="700";
+	      break;
+	    case 1152:
+	      w="1024";
+	      h="768";
+	      break;
+	    case 1280:
+	      w="1152";
+	      h="960";
+	      break;
+	    default:
+	      w="740";
+	      h="560";
+	  }
+    	  
+		if (tp==<% out.write(String.valueOf(HipermailApp)); %>)
+	    window.open ("wb_file_upload.jsp?gu_microsite=adhoc&gu_pageset="+id+"&doctype=<%=sDocType%>", "editPageSet", "directories=no,toolbar=no,menubar=no,status=yes,resizable=yes,width=500,height=400");
+	  else
+	    window.open ("wb_document.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_pageset=" + id + "&doctype=<%=sDocType%>", "editPageSet", "top=" + (screen.height-parseInt(h))/2 + ",left=" + (screen.width-parseInt(w))/2 + ",scrollbars=yes,directories=no,toolbar=no,menubar=no,status=yes,resizable=yes,width=" + w + ",height=" + h);
+	} // modifyPageSet
+
+        // ----------------------------------------------------
+
+	function previewPageSet(id,nm,tp) {
 	  var w,h;
 	  
 	  switch (screen.width) {
@@ -314,47 +365,16 @@
 	      h="560";
 	  }
 	  	    	      	    	  
-	  window.open ("wb_document.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_pageset=" + id + "&doctype=<%=sDocType%>", "editPageSet", "top=" + (screen.height-parseInt(h))/2 + ",left=" + (screen.width-parseInt(w))/2 + ",scrollbars=yes,directories=no,toolbar=no,menubar=no,status=yes,resizable=yes,width=" + w + ",height=" + h);
+		if (tp==<% out.write(String.valueOf(HipermailApp)); %>)
+	    window.open ("adhoc_mailing_preview.jsp?gu_mailing="+id+"&gu_workarea=<%=gu_workarea%>", "previewPageSet", "top=" + (screen.height-parseInt(h))/2 + ",left=" + (screen.width-parseInt(w))/2 + ",scrollbars=yes,directories=no,toolbar=no,menubar=yes,width=" + w + ",height=" + h);
+	  else
+	    window.open ("wb_preview.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_pageset=" + id + "&doctype=<%=sDocType%>", "previewPageSet", "top=" + (screen.height-parseInt(h))/2 + ",left=" + (screen.width-parseInt(w))/2 + ",scrollbars=yes,directories=no,toolbar=no,menubar=yes,width=" + w + ",height=" + h);
 	} // modifyPageSet
 
         // ----------------------------------------------------
 
-	function previewPageSet(id,nm) {
-	  var w,h;
-	  
-	  switch (screen.width) {
-	    case 640:
-	      w="620";
-	      h="460";
-	      break;
-	    case 800:
-	      w="740";
-	      h="560";
-	      break;
-	    case 1024:
-	      w="960";
-	      h="700";
-	      break;
-	    case 1152:
-	      w="1024";
-	      h="768";
-	      break;
-	    case 1280:
-	      w="1152";
-	      h="960";
-	      break;
-	    default:
-	      w="740";
-	      h="560";
-	  }
-	  	    	      	    	  
-	  window.open ("wb_preview.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_pageset=" + id + "&doctype=<%=sDocType%>", "editPageSet", "top=" + (screen.height-parseInt(h))/2 + ",left=" + (screen.width-parseInt(w))/2 + ",scrollbars=yes,directories=no,toolbar=no,menubar=yes,width=" + w + ",height=" + h);
-	} // modifyPageSet
-
-        // ----------------------------------------------------
-
-	function selectList(gu_pageset) {
-	  var wEnvio = window.open("list_choose.jsp?gu_pageset=" +gu_pageset,"wEnvio","top=" + (screen.height-500)/2 + ",left=" + (screen.width-640)/2 + ",height=500,width=640,scrollbars=yes");
+	function selectList(gu_pageset,tp_doc) {
+	  var wEnvio = window.open("list_choose.jsp?gu_pageset=" +gu_pageset+"&id_command="+(tp_doc==<%=String.valueOf(HipermailApp)%> ? "SEND" : "MAIL"),"wEnvio","top=" + (screen.height-500)/2 + ",left=" + (screen.width-640)/2 + ",height=500,width=640,scrollbars=yes");
 	} // selectList
 
         // ----------------------------------------------------
@@ -365,14 +385,16 @@
 	  var counter=0;
 	  var frm = document.forms[0];
 	  var chi = frm.checkeditems;
-	
+	  var tp;
+	  
 	  var offset = 0;
           while (frm.elements[offset].type!="checkbox") offset++;
 	  
-	  for (i=0;i<jsPageSets.length; i++){
-            if (frm.elements[offset].checked) {
+	        for (i=0;i<jsPageSets.length; i++){
+            if (frm.elements[offset].checked) {              
               counter++;
               chi.value = frm.elements[offset].name;
+              tp = jsTypes[i];
             }
             offset++;
           } // next (i)
@@ -383,11 +405,11 @@
           }
           
           if (counter>1){
-           alert("[~Debe seleccionar sólo un documento~]");
+           alert("You must select only one document");
            return (false);
           }
 	  	  
-	  var wEnvio = window.open("list_choose.jsp?gu_pageset=" + chi.value,"wEnvio","top=" + (screen.height-500)/2 + ",left=" + (screen.width-640)/2 + ",height=500,width=640,scrollbars=yes");
+	  var wEnvio = window.open("list_choose.jsp?gu_pageset="+chi.value+"&id_command="+(tp==<%=String.valueOf(HipermailApp)%> ? "SEND" : "MAIL"),"wEnvio","top=" + (screen.height-500)/2 + ",left=" + (screen.width-640)/2 + ",height=500,width=640,scrollbars=yes");
 	} // schedule
 	
         // ----------------------------------------------------
@@ -414,7 +436,7 @@
           } // next
 	  
 	  if (chi.value.length>0) {
-	    if (window.confirm("[~Está a punto de eliminar ~] " + String(c) + " [~ documentos ¿Está seguro de que desea continuar?~]")) {	    
+	    if (window.confirm("You are about to delete " + String(c) + "  documents. Are you sure you wish to continue?")) {	    
 	      chi.value = chi.value.substr(0,chi.value.length-1);
               frm.action = "pageset_edit_delete.jsp";
               frm.submit();
@@ -450,7 +472,7 @@
           } // next
 	  
 	  if (chi.value.length>0) {
-	    if (window.confirm("[~Está a punto de publicar ~] " + String(c) + " [~ documentos ¿Está seguro de que desea continuar?~]")) {	    
+	    if (window.confirm("You are about to publish " + String(c) + "  documents. Are you sure you wish to continue?")) {	    
 	      chi.value = chi.value.substr(0,chi.value.length-1);
               frm.action = "pageset_edit_publish.jsp";
               frm.submit();
@@ -512,8 +534,8 @@
         <TD ALIGN="left" VALIGN="middle"><A HREF="javascript:void(0)" onclick="createPageSet()" CLASS="linkplain">New</A></TD>
         <TD ALIGN="right">&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
         <TD ALIGN="left" HEIGHT="16"><A HREF="javascript:deletePageSets()" CLASS="linkplain">Delete</A></TD>
-        <TD ALIGN="right">&nbsp;&nbsp;<IMG SRC="../images/images/copyfiles.gif" WIDTH="24" HEIGHT="16" BORDER="0" ALT="[~Publicar~]"></TD>
-        <TD ALIGN="left" HEIGHT="16"><A HREF="javascript:void(0)" onclick="publish();return false;" CLASS="linkplain">[~Publicar~]</A></TD>
+        <TD ALIGN="right">&nbsp;&nbsp;<IMG SRC="../images/images/copyfiles.gif" WIDTH="24" HEIGHT="16" BORDER="0" ALT="Publish"></TD>
+        <TD ALIGN="left" HEIGHT="16"><A HREF="javascript:void(0)" onclick="publish();return false;" CLASS="linkplain">Publish</A></TD>
 <% if (sDocType.equals("newsletter")) { %>
         <TD ALIGN="right">&nbsp;&nbsp;<IMG SRC="../images/images/jobs/sandclock.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Schedule"></TD>
         <TD ALIGN="left" HEIGHT="16"><A HREF="javascript:void(0)" onclick="schedule();return false;" CLASS="linkplain">Schedule</A></TD>
@@ -523,7 +545,7 @@
       <TR>
         <TD COLSPAN="<% if (sDocType.equals("newsletter")) out.write("8"); else out.write("6");%>">
 	        <IMG SRC="../images/images/find16.gif" BORDER="0" ALT="Search">&nbsp;<FONT CLASS="textplain"><INPUT CLASS="combomini" TYPE="text" MAXLENGTH="30" NAME="find">&nbsp;&nbsp;between&nbsp;<INPUT TYPE="text" CLASS="combomini" MAXLENGTH="10" SIZE="10" NAME="dt_start">&nbsp;<A HREF="javascript:showCalendar('dt_start')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>&nbsp;&nbsp;and&nbsp;&nbsp;<INPUT CLASS="combomini" TYPE="text" MAXLENGTH="10" SIZE="10" NAME="dt_end">&nbsp;<A HREF="javascript:showCalendar('dt_end')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>&nbsp;</FONT>
-	        &nbsp;&nbsp;<FONT CLASS="textplain">[~Idioma~]</FONT>&nbsp;<SELECT NAME="id_language" CLASS="combomini"><OPTION VALUE=""></OPTION><% for (int l=0; l<iLangsCount; l++) out.write("<OPTION VALUE=\""+oLanguages.getString(0,l)+"\">"+oLanguages.getString(1,l)+"</OPTION>"); %></SELECT>
+	        &nbsp;&nbsp;<FONT CLASS="textplain">Language</FONT>&nbsp;<SELECT NAME="id_language" CLASS="combomini"><OPTION VALUE=""></OPTION><% for (int l=0; l<iLangsCount; l++) out.write("<OPTION VALUE=\""+oLanguages.getString(0,l)+"\">"+oLanguages.getString(1,l)+"</OPTION>"); %></SELECT>
 	        &nbsp;&nbsp;<A HREF="javascript:findRecords()" CLASS="linkplain">Search</A>
         </TD>
       <TR>
@@ -561,7 +583,7 @@
             // Si estoy listando monopagina
             if (sDocType.equals("newsletter"))
               // Si en la ruta aparece Mailwire es Newsletter
-              matchdoctype = sPathData.indexOf("Mailwire");
+              matchdoctype = (sPathData.indexOf("Mailwire")>=0 || sPathData.indexOf("Hipermail")>=0 ? 0 : -1);
             else // Si estoy listando multipagina
               // Si en la ruta aparece WebBuilder es multipagina
               matchdoctype = sPathData.indexOf("WebBuilder");
@@ -573,7 +595,7 @@
              sCompId = oPageSets.getString(0,i);
              out.write ("<TR HEIGHT=\"14\">");
              out.write ("<TD CLASS=\"strip" + counter + "\">");
-             out.write ("&nbsp;<A HREF=\"#\" oncontextmenu=\"jsPageSetId='" + sCompId + "'; jsPageSetName = '" + oPageSets.getString(1,i) + "'; return showRightMenu(event);\" onclick=\"modifyPageSet('" + sCompId + "','" + oPageSets.getString(1,i) + "')\" TITLE=\"Right click to see context menu\">");
+             out.write ("&nbsp;<A HREF=\"#\" oncontextmenu=\"jsPageSetId='" + sCompId + "'; jsPageSetName = '" + oPageSets.getString(1,i) + "'; jsType = " + String.valueOf(oPageSets.getInt(7,i)) + "; return showRightMenu(event);\" onclick=\""+ (oPageSets.getInt(7,i)==HipermailApp ? "changePageSet('"+sCompId+"','"+String.valueOf(HipermailApp)+"')" : "modifyPageSet('"+sCompId+"','"+oPageSets.getString(1,i)+"', "+String.valueOf(oPageSets.getInt(7,i))+")") + "\" TITLE=\"Right click to see context menu\">");
              out.write (oPageSets.getString(1,i));
              out.write ("</A>");
              out.write ("</TD>");
@@ -602,13 +624,13 @@
     </FORM>
 
     <SCRIPT language="JavaScript" type="text/javascript">
-      addMenuOption("Edit","modifyPageSet(jsPageSetId,jsPageSetName)",1);
-      addMenuOption("Preview","previewPageSet(jsPageSetId,jsPageSetName)",0);
-      addMenuOption("Properties","changePageSet(jsPageSetId)",0);
-      addMenuOption("[~Duplicar~]","clonePageSet(jsPageSetId)",0);
+      addMenuOption("Edit","modifyPageSet(jsPageSetId,jsPageSetName,jsType)",1);
+      addMenuOption("Preview","previewPageSet(jsPageSetId,jsPageSetName,jsType)",0);
+      addMenuOption("Properties","changePageSet(jsPageSetId,jsType)",0);
+      addMenuOption("Clone","clonePageSet(jsPageSetId,jsType)",0);
       <% if (sDocType.equals("newsletter")) { %>
       addMenuSeparator();
-      addMenuOption("Schedule","selectList(jsPageSetId)",0);
+      addMenuOption("Schedule","selectList(jsPageSetId,jsType)",0);
       <% } %>
     </SCRIPT>
 </BODY>

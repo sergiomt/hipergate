@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.Date,java.text.SimpleDateFormat,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Date,java.text.SimpleDateFormat,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/customattrs.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%
@@ -236,12 +236,12 @@
       	txt = ltrim(frm.tl_oportunity.value);
       	
       	if (txt.length==0) {
-      	  alert ("[~El título de la oportunidad es obligatorio~]");
+      	  alert ("Opportunity title is mandtory");
       	  return false;	  
       	}
       
       	if (hasForbiddenChars(txt)) {
-      	  alert ("[~El título de la oportunidad contiene caracteres no válidos~]");
+      	  alert ("Opportunity title contains invalid characters");
       	  return false;	  
       	}
       	
@@ -260,7 +260,7 @@
       	dt_next = frm.dt_next_action.value;
       
               if (!isDate(dt_next, "d") && dt_next.length>0) {
-      	  alert ("[~La fecha de siguiente acción no es válida~]");
+      	  alert ("Next action date is not valid");
       	  return false;
       	}
       
@@ -271,7 +271,7 @@
       	  dtn = new Date(parseFloat(dtn[0]), parseFloat(dtn[1])-1, parseFloat(dtn[2]));
       	  
       	  if (dtn<dtc) {
-      	    alert ("[~La fecha de siguiente acción no puede ser anterior a la fecha de creación de la oportunidad ~]" + dt_created);
+      	    alert ("Next action date may not be before opportunity creation date" + dt_created);
       	    return false;	  
       	  }
       	}
@@ -283,7 +283,7 @@
       	  dtn = new Date(parseFloat(dtn[0]), parseFloat(dtn[1])-1, parseFloat(dtn[2]));
       	  
       	  if (dtn<dtm) {
-      	    alert ("[~La fecha de siguiente acción no puede ser anterior a la fecha de última modificación de la oportunidad ~]" + dt_modified);
+      	    alert ("Next action date may not be before opportunity last modification date" + dt_modified);
       	    return false;	  
       	  }
       	}
@@ -547,7 +547,7 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="175"><FONT CLASS="formplain">[~Last Call:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="175"><FONT CLASS="formplain">Last Call:</FONT></TD>
             <TD ALIGN="left" WIDTH="420"><FONT CLASS="formplain"><% if (!oOprt.isNull("dt_last_call")) out.write(oOprt.getDateFormated("dt_last_call", "yyyy-MM-dd HH:mm")); else out.write("No llamado nunca"); %></FONT></TD>
           </TR>
           <TR>
@@ -573,7 +573,7 @@
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">&nbsp;&nbsp;&nbsp;
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('Your credential level as Guest does not allow you to perform this action')">&nbsp;&nbsp;&nbsp;
 <% } else { %>
               <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
 <% } %>

@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.ListMember,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.ListMember,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <% 
@@ -145,7 +145,7 @@
         var frm = window.document.forms[0];
 	
 	if (!check_email(frm.tx_email.value)) {
-	  alert ("[~La dirección de e-mail no es válida~]");
+	  alert ("e-mail address is not valid");
 	  return false;
 	}
 	
@@ -185,14 +185,14 @@
           <TR>
             <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Active:</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
-              <INPUT TYPE="checkbox" NAME="chk_active" VALUE="1" <% if (bo_active.equals("1")) out.write("CHECKED"); %> TITLE="[~Seleccione esta casilla para desactivar la dirección de correo de este miembro.~]">
+              <INPUT TYPE="checkbox" NAME="chk_active" VALUE="1" <% if (bo_active.equals("1")) out.write("CHECKED"); %> TITLE="Check here for deactivating a member e-mail address.">
               <FONT CLASS="textsmall"><I>Mail address is valid</I></FONT>
             </TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Blocked:</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
-              <INPUT TYPE="checkbox" NAME="chk_bloqued" VALUE="1" <% if (bBlocked) out.write("CHECKED"); %> TITLE="[~Seleccione esta casilla para impedir que este miembro reciba ningún e-mail.~]">
+              <INPUT TYPE="checkbox" NAME="chk_bloqued" VALUE="1" <% if (bBlocked) out.write("CHECKED"); %> TITLE="Check here for stopping this member from receiving any e-mail.">
               <FONT CLASS="textsmall"><I>This member must not receive any e-mail</I></FONT>
             </TD>
           </TR>

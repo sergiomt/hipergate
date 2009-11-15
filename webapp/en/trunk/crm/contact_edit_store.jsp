@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.util.*,java.math.*,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.crm.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.hipergate.RecentlyUsed" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.util.*,java.math.*,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.crm.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.hipergate.RecentlyUsed" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="../methods/customattrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 
@@ -113,13 +113,8 @@
     oConn.close("contact_edit_store");
   }
   catch (SQLException e) {  
-    if (oConn!=null) {
-      if (oStmt!=null) { try {oStmt.close(); } catch (Exception ignore) {} }
-      if (!oConn.isClosed()) {
-        if (!oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("contact_edit_store");             
-      }
-    }
+    if (oStmt!=null) { try {oStmt.close(); } catch (Exception ignore) {} }
+    disposeConnection(oConn,"contact_edit_store");		
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + oContact.getStringNull(DB.gu_geozone,"NULL") + " " + e.getLocalizedMessage() + "&resume=_back"));
   }  

@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
@@ -129,11 +129,17 @@
                 </TD>
               </TR>
               <TR>
+                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Nationality:</FONT></TD>
+                <TD ALIGN="left" WIDTH="420">
+                  <SELECT CLASS="combomini" NAME="id_nationality"><OPTION VALUE=""></OPTION><%=sCountriesLookUp%></SELECT>
+                </TD>
+              </TR>
+              <TR>
                 <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Zone:</FONT></TD>
                 <TD ALIGN="left" WIDTH="370">
                   <INPUT TYPE="hidden" NAME="gu_geozone" VALUE="">
                   <INPUT TYPE="hidden" NAME="nm_geozone" SIZE="40" VALUE="">
-                  <SELECT NAME="sel_geozone" onchange="setCombo(document.forms[0].sel_salesman,zone_salesman[this.options[this.selectedIndex].value])"><% out.write (sTerms); %></SELECT>&nbsp;<A HREF="#" onclick="lookupZone()"><IMG SRC="../images/images/find16.gif" BORDER="0"></A>
+                  <SELECT NAME="sel_geozone" CLASS="combomini" onchange="setCombo(document.forms[0].sel_salesman,zone_salesman[this.options[this.selectedIndex].value])"><% out.write (sTerms); %></SELECT>&nbsp;<A HREF="#" onclick="lookupZone()"><IMG SRC="../images/images/find16.gif" BORDER="0"></A>
                 </TD>
               </TR>
               <TR>
@@ -376,7 +382,7 @@
               <TR>
         	    <TD COLSPAN="2" ALIGN="center">
     <% if (bIsGuest) { %>
-                  <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">&nbsp;&nbsp;&nbsp;
+                  <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('Your priviledge level as Guest does not allow you to perform this action')">&nbsp;&nbsp;&nbsp;
     <% } else { %>
                   <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="if (validate()) window.document.forms[0].submit();">&nbsp;&nbsp;&nbsp;
     <% } %>

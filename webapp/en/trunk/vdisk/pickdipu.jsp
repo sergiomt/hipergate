@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,java.sql.ResultSet,java.sql.PreparedStatement,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.sql.SQLException,java.sql.ResultSet,java.sql.PreparedStatement,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -165,7 +165,7 @@
               <INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onClick="window.close()">
             </TD>
           </TR>
-        </TABLE></TD></TR></TABLE><A HREF="../common/nojava.html" TARGET="_blank" CLASS="linksmall" TITLE="[~Pulse aquí si tiene problemas para visulizar el applet Java~]">[~¿problemas para visualizar esta página?~]</A></FORM>
+        </TABLE></TD></TR></TABLE><A HREF="../common/nojava.html" TARGET="_blank" CLASS="linksmall" TITLE="Click here if you have problems for displaying the Java applet">Problems displaying this page?</A></FORM>
 </BODY>
 
 </HTML>

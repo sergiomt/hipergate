@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,com.knowgate.acl.ACL,com.knowgate.acl.PasswordRecord,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.misc.Gadgets" language="java" session="true" contentType="text/xml;charset=UTF-8" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><% 
+<%@ page import="java.io.IOException,java.net.URLDecoder,com.knowgate.acl.ACL,com.knowgate.acl.PasswordRecord,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.misc.Gadgets" language="java" session="true" contentType="text/xml;charset=UTF-8" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><% 
 
   out.write("<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n");
 

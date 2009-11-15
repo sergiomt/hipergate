@@ -44,7 +44,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//EN" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">  
 <HTML>
   <HEAD>
-    <TITLE>hipergate :: [~Regeneración de Documentos~]</TITLE>
+    <TITLE>hipergate :: Regenerate Documents</TITLE>
   </HEAD>
   <FRAMESET NAME="wb_build_top" ROWS="90,*" BORDER="0" FRAMEBORDER="0">
     <FRAME NAME="wb_build_orb" FRAMEBORDER="no" MARGINWIDTH="0" MARGINHEIGHT="0" NORESIZE SRC="wb_document_orb.html">

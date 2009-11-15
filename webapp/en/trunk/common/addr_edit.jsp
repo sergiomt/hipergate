@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %><%
 
@@ -259,7 +259,7 @@
       	frm.mn_city.value = frm.mn_city.value.toUpperCase();
       	
       	if (frm.id_country.value=="es" && frm.zipcode.value.length!=0 && frm.zipcode.value.length!=5) {
-      	    alert("[~El código postal debe tener 5 cifras~]");
+      	    alert("Zipcode must have 5 characters");
       	    return false;
       	}
       	
@@ -342,7 +342,7 @@
               &nbsp;&nbsp;
               <FONT CLASS="formplain">Num.</FONT>&nbsp;<INPUT TYPE="text" NAME="nu_street" MAXLENGTH="16" SIZE="4" VALUE="<%=oAddr.getStringNull(DB.nu_street,"")%>">
 <% if (!oAddr.isNull(DB.nm_street) && !oAddr.isNull(DB.mn_city)) { %>
-							&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="showGoogleMap()">[~Mapa~]</A>
+							&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="showGoogleMap()">Map</A>
             </TD>
           </TR>
 <% } %>
@@ -360,7 +360,7 @@
               <SELECT CLASS="combomini" NAME="sel_street"><OPTION VALUE=""></OPTION><%=sStreetLookUp%></SELECT>
               <INPUT TYPE="text" NAME="nm_street" MAXLENGTH="100" SIZE="40" VALUE="<%=oAddr.getStringNull(DB.nm_street,"")%>">
 <% if (!oAddr.isNull(DB.nm_street) && !oAddr.isNull(DB.mn_city)) { %>
-							&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="showGoogleMap()">[~Mapa~]</A>
+							&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="showGoogleMap()">Map</A>
             </TD>
           </TR>
 <% } %>
@@ -376,7 +376,7 @@
               <SELECT CLASS="combomini" NAME="sel_street"><OPTION VALUE=""></OPTION><%=sStreetLookUp%></SELECT>
               <A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View street types"></A>              
 <% if (!oAddr.isNull(DB.nm_street) && !oAddr.isNull(DB.mn_city)) { %>
-							&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="showGoogleMap()">[~Mapa~]</A>
+							&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="showGoogleMap()">Map</A>
             </TD>
           </TR>
 <% } %>
@@ -439,7 +439,7 @@
                   <TD>
                   	<INPUT TYPE="text" NAME="mov_phone" MAXLENGTH="16" SIZE="12" VALUE="<%=oAddr.getStringNull(DB.mov_phone,"")%>">
 <%                  if (gu_address.length()>0 && GlobalDBBind.getProperty("smsprovider","").length()>0) { %>
-										  &nbsp;<A HREF="sms_edit.jsp?gu_address=<%=gu_address%>&nu_msisdn=<%=Gadgets.URLEncode(oAddr.getStringNull(DB.mov_phone,""))%>&<%=sLinkField%>=<%=sLinkValue%>" TITLE="[~Enviar SMS~]"><IMG SRC="../images/images/mobilephone16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Enviar SMS~]" /></A>
+										  &nbsp;<A HREF="sms_edit.jsp?gu_address=<%=gu_address%>&nu_msisdn=<%=Gadgets.URLEncode(oAddr.getStringNull(DB.mov_phone,""))%>&<%=sLinkField%>=<%=sLinkValue%>" TITLE="Send SMS"><IMG SRC="../images/images/mobilephone16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Send SMS" /></A>
 <%                  } %>
                   </TD>
                   <TD>&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -501,7 +501,7 @@
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">&nbsp;&nbsp;&nbsp;
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('Your credential level as Guest does not allow you to perform this action')">&nbsp;&nbsp;&nbsp;
 <% } else { %>
               <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
 <% } %>

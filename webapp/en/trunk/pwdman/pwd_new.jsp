@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.acl.PasswordRecordTemplate,com.knowgate.acl.PasswordRecordLine" language="java" session="true" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.acl.PasswordRecordTemplate,com.knowgate.acl.PasswordRecordLine" language="java" session="true" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="pwdtemplates.jspf" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*  
   Copyright (C) 2003-2009  Know Gate S.L. All rights reserved.
@@ -33,10 +33,10 @@
 */
 
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
-	boolean bSession = (session.getAttribute("validated")!=null);
+	boolean bSession = (session.getAttribute("validated")!=null) && (session.getAttribute("signature")!=null);
 
 	if (!bSession) {
-	  response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Session Expired~]&desc=[~Session has expired. Please log in again~]&resume=_close"));
+	  response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Session Expired&desc=Session has expired. Please log in again&resume=_close"));
     return;
   }
 
@@ -62,7 +62,7 @@
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: [~Nuevo~] <%=oRec.getName()%></TITLE>
+  <TITLE>hipergate :: New <%=oRec.getName()%></TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
@@ -93,7 +93,7 @@
         var frm = window.document.forms[0];
         
         if (ltrim(frm.tl_pwd.value).length==0) {
-          alert ("[~El título de la contraseña es obligatorio~]");
+          alert ("The title of the password is required");
           frm.tl_pwd.focus();
           return false;
         }
@@ -105,13 +105,13 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
       function addNewField() {
-      	var lbl = window.prompt("[~Introduzca el nombre del nuevo campo~]");
+      	var lbl = window.prompt("Please set the name for the new field");
       	
       	if (lbl!=null) {
       	  if (lbl.length>0) {
 
 					  if (hasForbiddenChars(lbl)) {
-					    alert ("[~El nombre introducido para el nuevo campo contiene caracteres no validos~]");
+					    alert ("The name of the new field contains invalid characters");
 					  } else {
 				      GridRemoveRow(oPwdsGrid,oGrid.rowcount-1);
 
@@ -120,12 +120,12 @@
 				      oRow = GridCreateRow(oPwdsGrid, "line_"+rc);
               GridCreateCell(oRow, 0, "lbl_line_"+rc, "lbl_line_"+rc, "html", "<FONT CLASS=textsmall>"+lbl+"</FONT>");
               GridCreateInputCell(oRow, 1, "line_"+rc, "line_"+rc, "text", "", 50, 100, "");
-              GridCreateCell(oRow, 2, "x_line_"+rc, "x_line_"+rc, "html", "<A HREF=# TITLE='[~Remove Field~]' onclick='GridRemoveRow(oPwdsGrid,GridFindRow(oPwdsGrid,\"line_" + String(oGrid.rowcount) + "\")); GridDraw (oPwdsGrid, jsTableName, jsTableHeader, jsTableFooter);'><IMG SRC='../images/images/delete.gif' BORDER='0' ALT='[~Eliminar~]'></A>");
+              GridCreateCell(oRow, 2, "x_line_"+rc, "x_line_"+rc, "html", "<A HREF=# TITLE='Remove field' onclick='GridRemoveRow(oPwdsGrid,GridFindRow(oPwdsGrid,\"line_" + String(oGrid.rowcount) + "\")); GridDraw (oPwdsGrid, jsTableName, jsTableHeader, jsTableFooter);'><IMG SRC='../images/images/delete.gif' BORDER='0' ALT='Delete'></A>");
 
 				      oRow = GridCreateRow(oPwdsGrid, "newline");
               GridCreateCell(oRow, 0, "void_newline1", "void_newline1", "html", "");
               GridCreateCell(oRow, 1, "void_newline2", "void_newline2", "html", "");
-              GridCreateCell(oRow, 2, "void_newline3", "void_newline3", "html", "<A HREF=# onclick='addNewField()' TITLE='[~Add New Field~]'><IMG SRC='../images/images/new16x16.gif' BORDER='0' ALT='[~Nueva~]'></A>");
+              GridCreateCell(oRow, 2, "void_newline3", "void_newline3", "html", "<A HREF=# onclick='addNewField()' TITLE='Add New Field'><IMG SRC='../images/images/new16x16.gif' BORDER='0' ALT='New'></A>");
 		          GridDraw (oPwdsGrid, jsTableName, jsTableHeader, jsTableFooter);
 		          
 		          var hd = document.createElement("input");
@@ -142,7 +142,7 @@
       function paintFields() {
         var oRow;
         oRow = GridCreateRow(oPwdsGrid, "tl_pwd");
-        GridCreateCell(oRow, 0, "lbl_tl_pwd", "lbl_tl_pwd", "html", "<FONT CLASS=textsmall><B>[~T&iacute;tulo~]</B></FONT>");
+        GridCreateCell(oRow, 0, "lbl_tl_pwd", "lbl_tl_pwd", "html", "<FONT CLASS=textsmall><B>Title</B></FONT>");
         GridCreateInputCell(oRow, 1, "tl_pwd", "tl_pwd", "text", "", 50, 100, "onchange=''");
         GridCreateCell(oRow, 2, "lbl_void", "lbl_void", "html", "");
         
@@ -150,13 +150,13 @@
 				  out.write("        oRow = GridCreateRow(oPwdsGrid, \""+rcl.getId()+"\");\n");
   	      out.write("        GridCreateCell(oRow, 0, \"lbl_"+rcl.getId()+"\", \"lbl_"+rcl.getId()+"\", \"html\", \"<FONT CLASS=textsmall>" + rcl.getLabel() + "</FONT>\");\n");
   	      out.write("        GridCreateInputCell(oRow, 1, \""+rcl.getId()+"\", \""+rcl.getId()+"\", \"text\", \"\", 50, 100, \"onchange=''\");\n");
-  	      out.write("        GridCreateCell(oRow, 2, \"x_"+rcl.getId()+"\", \"x_"+rcl.getId()+"\", \"html\", \"<A HREF=# TITLE='[~Remove Field~]' onclick='GridRemoveRow(oPwdsGrid,GridFindRow(oPwdsGrid,\\\"" + rcl.getId() + "\\\")); GridDraw (oPwdsGrid, jsTableName, jsTableHeader, jsTableFooter);'><IMG SRC='../images/images/delete.gif' BORDER='0' ALT='[~Eliminar~]'></A>\");\n");	
+  	      out.write("        GridCreateCell(oRow, 2, \"x_"+rcl.getId()+"\", \"x_"+rcl.getId()+"\", \"html\", \"<A HREF=# TITLE='Remove field' onclick='GridRemoveRow(oPwdsGrid,GridFindRow(oPwdsGrid,\\\"" + rcl.getId() + "\\\")); GridDraw (oPwdsGrid, jsTableName, jsTableHeader, jsTableFooter);'><IMG SRC='../images/images/delete.gif' BORDER='0' ALT='Delete'></A>\");\n");	
         } // next
 %>
 				oRow = GridCreateRow(oPwdsGrid, "newline");
         GridCreateCell(oRow, 0, "void_newline1", "void_newline1", "html", "");
         GridCreateCell(oRow, 1, "void_newline2", "void_newline2", "html", "");
-        GridCreateCell(oRow, 2, "void_newline3", "void_newline3", "html", "<A HREF=# onclick='addNewField()' TITLE='[~Add New Field~]'><IMG SRC='../images/images/new16x16.gif' BORDER='0' ALT='[~Nueva~]'></A>");
+        GridCreateCell(oRow, 2, "void_newline3", "void_newline3", "html", "<A HREF=# onclick='addNewField()' TITLE='Add New Field'><IMG SRC='../images/images/new16x16.gif' BORDER='0' ALT='New'></A>");
 		    GridDraw (oPwdsGrid, jsTableName, jsTableHeader, jsTableFooter);
       } // paintFields;
     //-->
@@ -165,7 +165,7 @@
 <BODY TOPMARGIN="8" MARGINHEIGHT="8" onLoad="paintFields()">
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Nuevo~]&nbsp;<%=oRec.getName()%></FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">New&nbsp;<%=oRec.getName()%></FONT></TD></TR>
   </TABLE>  
   <FORM METHOD="post" ACTION="pwd_store.jsp" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="gu_pwd" VALUE="">
@@ -192,8 +192,8 @@
           </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>
     	    </TD>
     	  </TR>            

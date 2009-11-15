@@ -101,7 +101,7 @@
   
 %><HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: [~Gestor de Contraseñas~]</TITLE> 
+  <TITLE>hipergate :: Passwords Manager</TITLE> 
   <STYLE TYPE="text/css">
     .columnleft {
       width:340px;float:left;clear:left;text-align:left;background:#e7e3e7;
@@ -144,7 +144,7 @@
 	        htm += ctn[c];
 	      htm += "</A></TD></TR>";
 	    } // next
-	    htm += "<TABLE SUMMARY=\"Close Session\" BORDER=\"0\"><TR><TD>&nbsp;&nbsp;<IMG SRC=\"../images/images/padlock.gif\" WIDTH=19 HEIGHT=22 BORDER=0 ALT=\"Padlock\" /></TD><TD><A HREF=\"pwdlogout.jsp<%=sSelParams%>\" CLASS=\"linkplain\">[~Cerrar Gestor de Contraseñas~]</A></TD></TR></TABLE>";
+	    htm += "<TABLE SUMMARY=\"Close Session\" BORDER=\"0\"><TR><TD>&nbsp;&nbsp;<IMG SRC=\"../images/images/padlock.gif\" WIDTH=19 HEIGHT=22 BORDER=0 ALT=\"Padlock\" /></TD><TD><A HREF=\"pwdlogout.jsp<%=sSelParams%>\" CLASS=\"linkplain\">Close Passwords Manager</A></TD></TR></TABLE>";
 	    document.getElementById("catlist").innerHTML = htm;
 		} // writeCategoriesList
 
@@ -164,10 +164,10 @@
       var frm = document.forms["pwdsfrm"];
       
       if (null==cur) {
-    	  alert ("[~Debe elegir una categoría a la cual añadir la contraseña~]");
+    	  alert ("Pleas echose a category for the new password");
         return false;
       } else if (frm.sel_templates.selectedIndex<=0) {
-    	  alert ("[~Debe elegir una plantilla para la contraseña~]");        
+    	  alert ("Please choose a template for the password");        
         return false;
       } else {
 	      open ("pwd_new.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&nm_template="+getCombo(frm.sel_templates)+"&gu_category="+cur,
@@ -203,13 +203,13 @@
     	var par;
     	var sCatName;
 		  if (!req) {
-    	  sCatName = window.prompt("[~Nombre de la nueva categoría~]","");
+    	  sCatName = window.prompt("Name of the category","");
     	  if (hasForbiddenChars(sCatName)) {
-    	    alert ("[~El nombre introducido contiene caracteres no válidos~]");
+    	    alert ("The name contains invalid characters");
     	  } else if (sCatName.length==0) {
-    	    alert ("[~El nombre introducido no puede ser vacío~]");    
+    	    alert ("The name may not be empty");    
         } else if (sCatName.length>30) {
-    	    alert ("[~El nombre introducido no puede superar los 30 caracteres~]");    
+    	    alert ("The name may not be longer than 30 characters");    
         } else {
       	  par = "id_parent_cat=<%=sPwdsCat%>&tr1st="+encodeURIComponent(sCatName);
 			    req = createXMLHttpRequest();
@@ -247,9 +247,9 @@
     	  } // next
     	  
     	  if (par.length==0) {
-    	    alert ("[~Debe seleccionar al menos una categoría a eliminar~]");
+    	    alert ("At least one category to be deleted must be specified");
         } else {
-	        if (window.confirm("[~¿Está seguro de que desea eliminar las categorías seleccionadas?~]")) {
+	        if (window.confirm("Are you sure that you want to delete the selected categories?")) {
         	  cts = c2s;
         	  ctn = c2n;
 		  			hideLayer("pwdlist");
@@ -278,7 +278,7 @@
 	        var frm = document.forms["pwdsfrm"];
 	        var chi = frm.checkeditems;
 	  	  
-	        if (window.confirm("[~¿Está seguro de que desea eliminar las contraseñas seleccionadas?~]")) {
+	        if (window.confirm("Are you sure that you want to delete the selected passwords?")) {
 
 	          chi.value = "";	  	  
 	          frm.action = "pwd_delete.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&gu_category=" + cur;
@@ -319,17 +319,17 @@
           	  } else {
 						    var lins = req.responseText.split("\n");
 						    var nlin = lins.length;
-						    pwdlinkshtml = "<IMG SRC=\"../images/images/spacer.gif\" WIDTH=\"12\" HEIGHT=\"1\" BORDER=\"0\" ALT=\"\"><IMG SRC=\"../images/images/papelera.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"[~Eliminar~]\">&nbsp;<A HREF=\"#\" onclick=\"deletePasswords()\" CLASS=\"linkplain\">[~Eliminar Contrase&ntilde;as Seleccionadas~]</A><BR/><TABLE SUMMARY=\"Passwords List\"><TR><TD CLASS=tableheader BACKGROUND=\"../skins/<%=sSkin%>/tablehead.gif\"><TD CLASS=tableheader BACKGROUND=\"../skins/<%=sSkin%>/tablehead.gif\"><TD CLASS=tableheader BACKGROUND=\"../skins/<%=sSkin%>/tablehead.gif\"></TD><TD CLASS=tableheader BACKGROUND=\"../skins/<%=sSkin%>/tablehead.gif\"><A HREF=\"#\" onclick=\"selectAll()\" TITLE=\"[~Seleccionar Todo~]\"><IMG SRC=\"../images/images/selall16.gif\" BORDER=\"0\" ALT=\"Select all\"></A></TD></TR>";
+						    pwdlinkshtml = "<IMG SRC=\"../images/images/spacer.gif\" WIDTH=\"12\" HEIGHT=\"1\" BORDER=\"0\" ALT=\"\"><IMG SRC=\"../images/images/papelera.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"Delete\">&nbsp;<A HREF=\"#\" onclick=\"deletePasswords()\" CLASS=\"linkplain\">Delete selected passwords</A><BR/><TABLE SUMMARY=\"Passwords List\"><TR><TD CLASS=tableheader BACKGROUND=\"../skins/<%=sSkin%>/tablehead.gif\"><TD CLASS=tableheader BACKGROUND=\"../skins/<%=sSkin%>/tablehead.gif\"><TD CLASS=tableheader BACKGROUND=\"../skins/<%=sSkin%>/tablehead.gif\"></TD><TD CLASS=tableheader BACKGROUND=\"../skins/<%=sSkin%>/tablehead.gif\"><A HREF=\"#\" onclick=\"selectAll()\" TITLE=\"Select All\"><IMG SRC=\"../images/images/selall16.gif\" BORDER=\"0\" ALT=\"Select all\"></A></TD></TR>";
 						    
 						    pws = new Array();
 						    for (var l=0; l<nlin; l++) {
 						  	  var lin = lins[l].split("|");
 						  	  pws.push(lin[0]);
-						      pwdlinkshtml += "<TR><TD CLASS=\"textplain\">"+lin[1]+"</TD><TD><A HREF=\"#\" CLASS=\"linkplain\" onclick=\"viewPassword('"+lin[0]+"')\">[~Mostrar Contraseña~]</A></TD>";
+						      pwdlinkshtml += "<TR><TD CLASS=\"textplain\">"+lin[1]+"</TD><TD><A HREF=\"#\" CLASS=\"linkplain\" onclick=\"viewPassword('"+lin[0]+"')\">Show Password</A></TD>";
 						      if (lin[2].length==0)
 						        pwdlinkshtml += "<TD></TD>";
 						      else
-						        pwdlinkshtml += "<TD><A CLASS=\"linkplain\" TARGET=\"_blank\" HREF=\"loginforms/"+lin[2]+".jsp?gu_pwd="+lin[0]+"\">[~Abrir sitio web~]</A></TD>";
+						        pwdlinkshtml += "<TD><A CLASS=\"linkplain\" TARGET=\"_blank\" HREF=\"loginforms/"+lin[2]+".jsp?gu_pwd="+lin[0]+"\">Go To WebSite</A></TD>";
 						      pwdlinkshtml += "<TD><INPUT TYPE=\"checkbox\" NAME=\"chk_"+lin[0]+"\" VALUE=\""+lin[0]+"\" /></TD></TR>";
 						    }
 						    pwdlinkshtml += "</TABLE>";
@@ -364,7 +364,7 @@
 		  var pwdhtm = "";
 		  if (getElementAttribute(pwdrec, "error", "status")=="0") {
 				var pwdlins = pwdxml.getElementsByTagName("tx_lines")[0].childNodes[0].data.split("\n");				 
-				pwdhtm = "<DIV class=cxMnu1 style=\"width:100px\"><DIV class=cxMnu2><SPAN class=hmMnuOff onMouseOver=\"this.className='hmMnuOn'\" onMouseOut=\"this.className='hmMnuOff'\" onClick=\"document.getElementById('pwdlinks').innerHTML=pwdlinkshtml;\"><IMG src=\"../images/images/toolmenu/historyback.gif\" width=16 style=\"vertical-align:middle\" height=16 border=0 alt=\"[~Atras~]\"> [~Atras~]</SPAN></DIV></DIV><BR/><TABLE><TR><TD CLASS=striptitle><FONT CLASS=title1>"+getElementText(pwdxml, "tl_pwd")+"</FONT></TD></TR></TABLE><TABLE CLASS=\"formback\"><TR><TD><TABLE WIDTH=\"100%\" CLASS=\"formfront\">";
+				pwdhtm = "<DIV class=cxMnu1 style=\"width:100px\"><DIV class=cxMnu2><SPAN class=hmMnuOff onMouseOver=\"this.className='hmMnuOn'\" onMouseOut=\"this.className='hmMnuOff'\" onClick=\"document.getElementById('pwdlinks').innerHTML=pwdlinkshtml;\"><IMG src=\"../images/images/toolmenu/historyback.gif\" width=16 style=\"vertical-align:middle\" height=16 border=0 alt=\"Back\"> Back</SPAN></DIV></DIV><BR/><TABLE><TR><TD CLASS=striptitle><FONT CLASS=title1>"+getElementText(pwdxml, "tl_pwd")+"</FONT></TD></TR></TABLE><TABLE CLASS=\"formback\"><TR><TD><TABLE WIDTH=\"100%\" CLASS=\"formfront\">";
 				for (var l=0; l<pwdlins.length; l++) {
 					var lin = pwdlins[l].split("|");
 					if (lin[3].length>0 && lin[2]!="null") {
@@ -393,13 +393,13 @@
     function checkNewAuthStr() {
       frm = document.forms["newauthstr"];
       if (frm.tx_pwd_new1.value.length<4) {
-        alert ("[~La clave debe ser de al menos cuatro caracteres~]");
+        alert ("The password must be of at least 4 characters");
         frm.tx_pwd_new1.value=frm.tx_pwd_new2.value="";
         frm.tx_pwd_new1.focus();
         return false;
       }
       if (frm.tx_pwd_new1.value!=frm.tx_pwd_new2.value) {
-        alert ("[~La nueva clave no coincide con su verificación~]");
+        alert ("The new password does not match its verification");
         frm.tx_pwd_new1.value=frm.tx_pwd_new2.value="";
         frm.tx_pwd_new1.focus();
         return false;
@@ -410,7 +410,7 @@
     // ----------------------------------------------------------------
 
     function forceNewSignaturePassword() {
-      if (window.confirm("[~Si establece una nueva clave de acceso PERDERÁ todas las contraseñas previamente almacenadas. ¿Está seguro de que desea continuar y borrar todas las contraseñas?~]")) {
+      if (window.confirm("If a new signature password is set then all the previously stored data under the passwords manager will be lost. Are you sure that you want to continue?")) {
         window.location = "pwd_reset.jsp<%=sSelParams%>";
       }
     }
@@ -427,7 +427,7 @@
 
     // ----------------------------------------------------------------
     
-    var stre = new Array("[~Insuficiente~]", "[~Insuficiente~]", "[~Insuficiente~]", "[~Insuficiente~]", "[~Insuficiente~]",  "[~Moderada~]", "[~Moderada~]", "[~Moderada~]", "[~Fuerte~]", "[~Fuerte~]", "[~Muy fuerte~]");
+    var stre = new Array("Not enought", "Not enought", "Not enought", "Not enought", "Not enought",  "Medium", "Medium", "Medium", "Strong", "Strong", "Very Strong");
 
     var streCSS = 	new Array("#FF3300", "#FF3300", "#FFA400", "#FFB700", "#FCE200",  "#CBF400", "#8DFC00", "#78FE00", "#5BFF00", "#4CFF00", "#1CFF00");
 
@@ -471,7 +471,7 @@
     	var endWidth= scoreWidth;
     	doWidthChangeMem(elem, elem.offsetWidth, scoreWidth,  10, 10, 0.5 );
     	
-    	document.getElementById("fuerza").innerHTML = "[~Fortaleza~]&nbsp;" + stre[Math.round(nRound/10)];
+    	document.getElementById("fuerza").innerHTML = "Strength&nbsp;" + stre[Math.round(nRound/10)];
     	//document.getElementById("fuerza").style.color=streCSS[Math.round(nRound/10)];
     	//document.getElementById("fuerza").style.fontSize='90%';
     }
@@ -479,18 +479,18 @@
     function validateNewPassword() {
       var frm = document.forms[0];
       if (frm.pwd1.value.length<8) {
-        alert ("[~La clave de firma debe ser de al menos 8 caracteres de longuitud~]");
+        alert ("The signature password must be of at least 8 characters length");
         frm.pwd1.focus();
         return false;
       }
       if (frm.pwd1.value!=frm.pwd2.value) {
-        alert ("[~La clave de firma no coincide con su verificación~]");
+        alert ("The signature password does not match its verification");
         frm.pwd1.value = frm.pwd2.value = "";
         frm.pwd1.focus();
         return false;
       }
       if (calcStrength(frm.pwd1.value)<23) {
-        alert ("[~La fortaleza de la clave de firma es insuficiente~]");
+        alert ("The strength of the signature password is not enought");
         frm.pwd1.focus();
         return false;
       }
@@ -504,25 +504,25 @@
 <BODY  TOPMARGIN="0" MARGINHEIGHT="0" onload="setCombos()">
 <%@ include file="../common/tabmenu.jspf" %>
 <BR>
-<TABLE SUMMARY="Page Header"><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Gestor de Contraseñas~]</FONT></TD></TR></TABLE>
+<TABLE SUMMARY="Page Header"><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">Passwords Manager</FONT></TD></TR></TABLE>
 <% if (null==aStr[0]) { %>
   <FORM METHOD="post" ACTION="pwdset.jsp" AUTOCOMPLETE="off" onSubmit="return validateNewPassword()">
   	<INPUT TYPE="hidden" NAME="selected" VALUE="<%=request.getParameter("selected")%>">
   	<INPUT TYPE="hidden" NAME="subselected" VALUE="<%=request.getParameter("subselected")%>">
-    <FONT CLASS="textplain">[~Debe establecer una clave de firma adicional para el gestor de contraseñas~]</FONT>
+    <FONT CLASS="textplain">An additional signature password must be set for the passwords manager</FONT>
     <BR/>
-    <FONT CLASS="textplain">[~Esta clave debe contener al menos ocho caracteres y ser diferente de la clave ordinaria de acceso~]</FONT>
+    <FONT CLASS="textplain">The signature password must be of at least 8 characters length and must be different from the ordinary application entry password</FONT>
     <BR/>
-    <FONT CLASS="textplain">[~hipergate no almacena la clave de firma, y no puede ser recuperada de ninguna manera tras ser establecida~]</FONT>    <BR/>
+    <FONT CLASS="textplain">hipergate does not store the signature password and it may not be recovered after it is set</FONT>    <BR/>
     <BR/>
-    <FONT CLASS="textplain">[~Clave de firma~]</FONT>&nbsp;<INPUT CLASS="combomini" TYPE="password" NAME="pwd1" MAXLENGTH="20" onKeyUp="updateMeter(this.value)">&nbsp;&nbsp;<FONT CLASS="textplain">[~repetir clave~]</FONT>&nbsp;<INPUT CLASS="combomini" TYPE="password" NAME="pwd2" MAXLENGTH="20">
+    <FONT CLASS="textplain">Signature password</FONT>&nbsp;<INPUT CLASS="combomini" TYPE="password" NAME="pwd1" MAXLENGTH="20" onKeyUp="updateMeter(this.value)">&nbsp;&nbsp;<FONT CLASS="textplain">repeat password</FONT>&nbsp;<INPUT CLASS="combomini" TYPE="password" NAME="pwd2" MAXLENGTH="20">
 		<BR/>
 		<SPAN ID="fuerza" class="textsmall"></SPAN><DIV ID='strengthMeter' CLASS="strengthMeter" STYLE='width:160;height:12;'><DIV id='scoreBar' class="scoreBar"></DIV></DIV>
-    <FONT CLASS="textplain">[~Introduzca una frase que le ayude a recordar su clave de firma en caso de olvidarla~] [~(Opcional)~]</FONT>
+    <FONT CLASS="textplain">Enter a phrase which helps you to remind your signature password in case that you forget it (Optional)</FONT>
     <BR/>
     <INPUT TYPE="text" CLASS="combomini" NAME="tx_challenge" MAXLENGTH="100" SIZE="70" VALUE="">
     <BR/><BR/>
-    <INPUT TYPE="submit" VALUE="[~Establecer~]">
+    <INPUT TYPE="submit" VALUE="Set">
   </FORM>
 <% } else {
      if (bSession) {
@@ -532,9 +532,9 @@
   <TABLE SUMMARY="Actions">
     <TR>
     	<TD>&nbsp;&nbsp;<IMG SRC="../images/images/newfolder16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
-      <TD VALIGN="middle"><A HREF="#" onclick="createCategory()" CLASS="linkplain">[~Nueva Categoría~]</A></TD>
+      <TD VALIGN="middle"><A HREF="#" onclick="createCategory()" CLASS="linkplain">New Category</A></TD>
     	<TD>&nbsp;&nbsp;<IMG SRC="../images/images/deletefolder.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
-      <TD VALIGN="middle"><A HREF="#" onclick="deleteCategories()" CLASS="linkplain">[~Eliminar Categorías~]</A></TD>
+      <TD VALIGN="middle"><A HREF="#" onclick="deleteCategories()" CLASS="linkplain">Delete Categories</A></TD>
     </TR>
   </TABLE>
   <DIV id="catlist">
@@ -544,7 +544,7 @@
     if ((aPermissions[c]&P)!=0) 
       out.write("<TR><TD WIDTH=\"28px\" ALIGN=\"center\" CLASS=\"strip1\">&nbsp;&nbsp;<INPUT TYPE=\"checkbox\" NAME=\"c_"+oCatgs.getString(0,c)+"\" VALUE=\""+oCatgs.getString(0,c)+"\"></TD><TD CLASS=\"strip1\"><A CLASS=\"linkplain\" HREF=\"#\" onclick=\"listPasswords('"+oCatgs.getString(0,c)+"')\">"+oCatgs.getStringNull(2,c,oCatgs.getString(1,c))+"</A></TD></TR>");
   } // next
-%></TABLE><TABLE SUMMARY="Close Session" BORDER="0"><TR><TD>&nbsp;&nbsp;<IMG SRC="../images/images/padlock.gif" WIDTH=19 HEIGHT=22 BORDER=0 ALT="Padlock" /></TD><TD><A HREF="pwdlogout.jsp<%=sSelParams%>" CLASS="linkplain">[~Cerrar Gestor de Contraseñas~]</A></TD></TR></TABLE></DIV>
+%></TABLE><TABLE SUMMARY="Close Session" BORDER="0"><TR><TD>&nbsp;&nbsp;<IMG SRC="../images/images/padlock.gif" WIDTH=19 HEIGHT=22 BORDER=0 ALT="Padlock" /></TD><TD><A HREF="pwdlogout.jsp<%=sSelParams%>" CLASS="linkplain">Close Passwords Manager</A></TD></TR></TABLE></DIV>
   </DIV>
   </FORM>
   <DIV id="pwdlist" CLASS="columnright">
@@ -558,7 +558,7 @@
      File[] aTemplates = new File(getTemplatesPath(sStorage, id_domain, gu_workarea, gu_user)).listFiles();
      File[] aBrands = new File(getTemplatesPath(sStorage, id_domain, gu_workarea, gu_user)+File.separator+"brands").listFiles();
 		 if (null!=aBrands) {
-		   sTemplates += "<OPTGROUP LABEL=\"[~Servicios Predefinidos~]\">";
+		   sTemplates += "<OPTGROUP LABEL=\"Predefined Services\">";
 		   final int nBrands = aBrands.length;
 		   for (int b=0; b<nBrands; b++) {
 		     oRec.load(aBrands[b].getPath());
@@ -568,7 +568,7 @@
 		 } // fi
 
 		 if (null!=aTemplates) {
-		   sTemplates += "<OPTGROUP LABEL=\"[~Servicios Genéricos~]\">";       
+		   sTemplates += "<OPTGROUP LABEL=\"Generic Services\">";       
 		   final int nTemplates = aTemplates.length;
 		   for (int p=0; p<nTemplates; p++) {
 		     if (!aTemplates[p].isDirectory()) {
@@ -584,7 +584,7 @@
   <TABLE SUMMARY="Pwd Controls">
     <TR>
       <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
-      <TD VALIGN="middle" CLASS="textplain">[~Nueva~]</TD>
+      <TD VALIGN="middle" CLASS="textplain">new</TD>
   	  <TD><SELECT NAME="sel_templates" onchange="if (this.selectedIndex>0) createPassword()"><%=sTemplates%></SELECT></TD>
   	</TR>
   </TABLE>
@@ -601,27 +601,27 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront" SUMMARY="Form Background">
           <TR>
-            <TD ALIGN="right" WIDTH="160" CLASS="formplain">[~Clave de firma~]</TD>
-            <TD ALIGN="left" WIDTH="340"><INPUT TYPE="password" NAME="pwd1" MAXLENGTH="20">&nbsp;&nbsp;<INPUT TYPE="submit" VALUE="[~Entrar~]"></TD>
+            <TD ALIGN="right" WIDTH="160" CLASS="formplain">Signature password</TD>
+            <TD ALIGN="left" WIDTH="340"><INPUT TYPE="password" NAME="pwd1" MAXLENGTH="20">&nbsp;&nbsp;<INPUT TYPE="submit" VALUE="Enter"></TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="160"></TD>
             <TD ALIGN="left" WIDTH="340">
   					  <DIV id="reminderlink" STYLE="display:block">
-  						  <A HREF="#" CLASS="linkplain" onclick="document.getElementById('reminderlink').style.display='none'; document.getElementById('reminder').style.display='block';"><IMG SRC="../images/images/forgotpwd.gif" WIDTH="17" HEIGHT="16" BORDER="0" ALT="Forgot password?">&nbsp;[~&iquest;Olvid&oacute; la clave de firma?~]</A>
+  						  <A HREF="#" CLASS="linkplain" onclick="document.getElementById('reminderlink').style.display='none'; document.getElementById('reminder').style.display='block';"><IMG SRC="../images/images/forgotpwd.gif" WIDTH="17" HEIGHT="16" BORDER="0" ALT="Forgot password?">&nbsp;Forgot your signature password?</A>
   						</DIV>
             </TD>
           </TR>
           <TR>
             <TD COLSPAN="2">
               <DIV id="reminder" STYLE="display:none">
-                <FONT CLASS="textplain">[~Por motivos de seguridad, la clave de firma no puede ser recuperada ni re-enviada~]</FONT>
+                <FONT CLASS="textplain">For security reasons the signature password may not be retrieved nor re-send to you in the future</FONT>
 				        <% if (aStr[1]!=null) { %>
                 <BR/>
-                <FONT CLASS="textplain">[~La frase que introdujo como recordatorio de su clave es~]&nbsp;"<%=aStr[1]%>"</FONT>
+                <FONT CLASS="textplain">The phrase that you entered as reminder of your signature password is&nbsp;"<%=aStr[1]%>"</FONT>
                 <% } %>
                 <BR/>
-                <A HREF="#" CLASS="linkplain" onclick="forceNewSignaturePassword()">[~Establecer una nueva clave de firma~]</A>
+                <A HREF="#" CLASS="linkplain" onclick="forceNewSignaturePassword()">Change signature password</A>
               </DIV>
             </TD>
           </TR>
@@ -636,23 +636,23 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront" SUMMARY="Form Background">
           <TR>
-            <TD ALIGN="left" WIDTH="500" COLSPAN="2"><A HREF="\#\" CLASS="linkplain" onclick="for (var c=1; c<=8; c++) document.getElementById('c'+String(c)).style.display='block';">[~Cambiar clave ordinaria de entrada a la aplicaci&oacute;n~]</A></TD>
+            <TD ALIGN="left" WIDTH="500" COLSPAN="2"><A HREF="\#\" CLASS="linkplain" onclick="for (var c=1; c<=8; c++) document.getElementById('c'+String(c)).style.display='block';">Change ordinary application entry password</A></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="160" CLASS="formplain"><DIV id="c1" style="display:none">[~Clave actual~]</DIV></TD>            
+            <TD ALIGN="right" WIDTH="160" CLASS="formplain"><DIV id="c1" style="display:none">Current password</DIV></TD>            
             <TD WIDTH="340"><DIV id="c2" style="display:none"><INPUT TYPE="password" NAME="tx_pwd_old"></DIV></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="160" CLASS="formplain"><DIV id="c3" style="display:none">[~Nueva clave~]</DIV></TD>            
+            <TD ALIGN="right" WIDTH="160" CLASS="formplain"><DIV id="c3" style="display:none">New password</DIV></TD>            
             <TD WIDTH="340"><DIV id="c4" style="display:none"><INPUT TYPE="password" NAME="tx_pwd_new1"></DIV></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="160" CLASS="formplain"><DIV id="c5" style="display:none">[~Repetir clave~]</DIV></TD>            
+            <TD ALIGN="right" WIDTH="160" CLASS="formplain"><DIV id="c5" style="display:none">Repeat password</DIV></TD>            
             <TD WIDTH="340"><DIV id="c6" style="display:none"><INPUT TYPE="password" NAME="tx_pwd_new2"></DIV></TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="160"><DIV id="c7" style="display:none"></DIV></TD>            
-            <TD WIDTH="340"><DIV id="c8" style="display:none"><INPUT TYPE="submit" CLASS="pushbutton" VALUE="[~Cambiar~]"></DIV></TD>
+            <TD WIDTH="340"><DIV id="c8" style="display:none"><INPUT TYPE="submit" CLASS="pushbutton" VALUE="Change"></DIV></TD>
           </TR>
         </TABLE>
       </TD><TR>

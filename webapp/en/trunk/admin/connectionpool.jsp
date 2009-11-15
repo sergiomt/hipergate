@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.Date,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.misc.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Date,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.misc.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %>
 <%
   response.addHeader ("Pragma", "no-cache");

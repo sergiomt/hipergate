@@ -1,4 +1,4 @@
-﻿<%@ page import="com.oreilly.servlet.MultipartRequest,java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.oreilly.servlet.MultipartRequest,java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %>
 <%
 /*
@@ -127,14 +127,14 @@
 	
 	if (frm.tx_from.value.length>0) {
 	  if (!check_email(frm.tx_from.value)) {
-	    alert ("[~La dirección de e-mail del remitente no es válida~]");
+	    alert ("sender e-mail address is not valid");
 	    return false;
 	  }
 	}
 
 	if (frm.tx_reply.value.length>0) {
 	  if (!check_email(frm.tx_reply.value)) {
-	    alert ("[~La dirección de e-mail de retorno no es válida~]");
+	    alert ("return e-mail address is not valid");
 	    return false;
 	  }
 	}
@@ -159,7 +159,7 @@
     <INPUT TYPE="hidden" NAME="gu_workarea">
     <INPUT TYPE="hidden" NAME="tp_list">
     <INPUT TYPE="hidden" NAME="gu_query" VALUE="<% out.write(sFileId); %>">
-    <INPUT TYPE="hidden" NAME="sel_encoding" VALUE="<% out.write(oReq.getParameter("sel_encoding")); %>"">
+    <INPUT TYPE="hidden" NAME="sel_encoding" VALUE="<% out.write(oReq.getParameter("sel_encoding")); %>">
     <INPUT TYPE="hidden" NAME="desc_file" VALUE="<% out.write(oReq.getParameter("desc_file")); %>"">
     <CENTER>
     <TABLE>

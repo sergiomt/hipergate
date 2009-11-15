@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/cookies.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -40,9 +40,10 @@
 
   String id_domain = getCookie(request,"domainid","");
   String n_domain = getCookie(request,"domainnm",""); 
-  String gu_workarea = getCookie(request,"workarea",null); 
-  
-  // Rutas y parámetros
+  String gu_workarea = getCookie(request,"workarea",null);
+  String gu_microsite = nullif(request.getParameter("gu_microsite"));
+  String gu_pageset = nullif(request.getParameter("gu_pageset"),"null");
+
   String sRefreshItem = request.getParameter("refreshitem");
   
   String sAuth = new String("");
@@ -195,28 +196,28 @@
 <% if (request.getParameter("caller")!=null) { %>
     <TABLE width="100%"BORDER="0" CELLSPACING="0" CELLPADDING="2">
       <TR width="100%" VALIGN="middle"><TD align="left" CLASS="striptitle"><FONT CLASS="title1">New&nbsp;<%=sTitle%></FONT></TD><TD ALIGN="right" CLASS="striptitle"><FONT CLASS="title1">Step 2 of 2</font></TD></TR>
-      <TR><TD colspan="2" class="formplain"><p ALIGN="justify">[~Esta pantalla le permite subir imagenes al servidor. Para seleccionarlas pulse sobre Añadir. Cuando no quiera subir más pulse Terminar. Si no desea cargar imagenes en el servidor pulse directamente Terminar.~]</p></TD></TR>
+      <TR><TD colspan="2" class="formplain"><p ALIGN="justify">This window allows you to upload files to the server. Click on the Add button to select the files to upload and click on the Finish button to send them</p></TD></TR>
     </TABLE>
+    <BR/>
 <% }
    else 
    { 
 %>
-<br>
-<table cellspacing="0" cellpadding="0" border="0" width="99%">
+<table cellspacing="4" cellpadding="4" border="0" width="99%">
 <tr>
 <td class="striptitle">
-<span class="title1">Upload images to server</span>
+  <span class="title1">Upload images to server</span>
 </td>
 </tr>
-</table>  
+</table>
 <% } %>
 <!-- The form tag must contain correct action and onsubmit attributes -->
-<form action="wb_file_upload_store.jsp" method="post" name="form1" id="form1" onsubmit="return processUpload(this)">
-  <input type="hidden" name="gu_pageset" value="<%=request.getParameter("gu_pageset")%>">
+<form action="<%=gu_microsite.equals("adhoc") ? "adhoc_file_upload_store.jsp?gu_pageset="+gu_pageset+(request.getParameter("caller")==null ? "" : "&caller="+request.getParameter("caller")) : "wb_file_upload_store.jsp" %>" method="post" name="form1" id="form1" onsubmit="return processUpload(this)">
+  <input type="hidden" name="gu_microsite" value="<%=gu_microsite%>">
   <input type="hidden" name="doctype" value="<%=request.getParameter("doctype")%>">
   <SELECT name="f_list" class="sBox" size="8" multiple="multiple"></SELECT>
   <BR>
-  <SPAN class="cmdDiv"><A class="actLink" href="javascript:;" onClick="fu_add()">[~Añadir~]</A></SPAN>
+  <SPAN class="cmdDiv"><A class="actLink" href="javascript:;" onClick="fu_add()">Add</A></SPAN>
   <SPAN class="cmdDiv"><A class="actLink" href="javascript:;" onClick="fu_rem()">Remove</A></SPAN>
   <SPAN class="cmdDiv"><A class="actLink" href="javascript:;" onClick="fu_remAll()">Delete all</A></SPAN>
 <p>
@@ -238,7 +239,7 @@
   <PARAM name="bgColor"	  	  value="#FF0000">
   <PARAM name="browseTitle"	  value="Select files">
   <PARAM name="cabbase" 	  value="../applets/FileUpload.cab">
-  <PARAM name="fileMask"          value="*.gif,*.png,*.jpg,*.jpeg">
+  <PARAM name="fileMask"          value="<%=gu_microsite.equals("adhoc") ? "*.htm,*.html,*.txt,*.css,*.gif,*.png,*.jpg,*.jpeg" : "*.gif,*.png,*.jpg,*.jpeg"%>">
   <PARAM name="errorLimit"	  value="0">
   <PARAM name="maxFiles" 	  value="100">
   <PARAM name="noAdd"	  	  value="true">

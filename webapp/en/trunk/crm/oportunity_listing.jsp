@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.HashMap,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.HashMap,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="oportunity_listing.jspf" %>
@@ -48,7 +48,7 @@
 
 	function newOportunity() {	  
 <% if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your credential level as Guest does not allow you to perform this action");
 <% } else { %>
 	  self.open ("oportunity_new.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>", "newoportunity", "directories=no,toolbar=no,scrollbars=yes,menubar=no,width=660,height=" + (screen.height<=600 ? "520" : "660"));	  
 <% } %>
@@ -91,7 +91,7 @@
 	  var frm = document.forms[0];
 	  
 	  if (getCombo(frm.sel_searched)=="<%=DB.dt_next_action%>" && !isDate(frm.find.value, "d")) {
-	  	alert ("[~La fecha para la siguiente acción no es válida~]");
+	  	alert ("Date for next action is not valid");
 	  	frm.find.focus();
 	  	return false;
 	  }
@@ -103,7 +103,7 @@
 	function sortBy(fld) {
 	  var frm = document.forms[0];
 	  if ("<%=sField%>"=="<%=DB.dt_next_action%>" && !isDate("<%=sFind%>", "d")) {
-	  	alert ("[~La fecha para la siguiente acción no es válida~]");
+	  	alert ("Date for next action is not valid");
 	  	frm.find.focus();
 	  	return false;
 	  }
@@ -120,7 +120,7 @@
 
       function addPhoneCall(op,cn,cp) {
 <% if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your credential level as Guest does not allow you to perform this action");
 <% } else { %>
         window.open("phonecall_record.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>&gu_user=" + getCookie("userid") + "&gu_oportunity=" + op + "&gu_contact=" + cn + "&gu_campaign=" + cp, "recordphonecall", "directories=no,toolbar=no,menubar=no,width=660,height=660");
 <% } %>        
@@ -240,7 +240,7 @@
           <TD WIDTH="18"><IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete Opportunity"></TD>
           <TD ALIGN="left">
 <% if (bIsGuest) { %>
-            <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">Delete</A>
+            <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">Delete</A>
 <% } else { %>
             <A HREF="#" onclick="deleteOportunities();return false;" CLASS="linkplain">Delete</A>
 <% } %>
@@ -264,31 +264,31 @@
 <% if (bIsAdmin && sSalesMenLookUp.length()>0) { %>
         <TR>
           <TD></TD>
-          <TD><FONT CLASS="textplain">[~Vendedor~]</FONT></TD>
+          <TD><FONT CLASS="textplain">Salesman</FONT></TD>
           <TD COLSPAN="4"><SELECT NAME="sel_salesman" CLASS="combomini"><OPTION VALUE=""></OPTION><%=sSalesMenLookUp%></SELECT>
         </TR>
 <% } %>
         <TR>
           <TD>&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Search"></TD>
 	        <TD><A HREF="#" onclick="findOportunity();return false;" CLASS="linkplain" TITLE="Find Opportunity">Search</A></TD>
-          <TD VALIGN="bottom"><IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="[~Descartar búsqueda~]"></TD>
-          <TD><A HREF="#" onclick="document.forms[0].sel_status.selectedIndex=0;document.forms[0].sel_searched.selectedIndex=0;document.forms[0].find.value='';<% if (bIsAdmin && sSalesMenLookUp.length()>0) { %>document.forms[0].sel_salesman.selectedIndex=0;<% } %>findOportunity();return false;" CLASS="linkplain" TITLE="[~Descartar búsqueda~]">Discard</A></TD>
+          <TD VALIGN="bottom"><IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard Find Filter"></TD>
+          <TD><A HREF="#" onclick="document.forms[0].sel_status.selectedIndex=0;document.forms[0].sel_searched.selectedIndex=0;document.forms[0].find.value='';<% if (bIsAdmin && sSalesMenLookUp.length()>0) { %>document.forms[0].sel_salesman.selectedIndex=0;<% } %>findOportunity();return false;" CLASS="linkplain" TITLE="Discard Find Filter">Discard</A></TD>
           <TD ALIGN="right" CLASS="textplain">Show&nbsp;</TD>
           <TD><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;results&nbsp;</FONT></TD>        
         </TR>
         <TR>
           <TD>&nbsp;&nbsp;<IMG SRC="../images/images/excel16.gif" HEIGHT="16" BORDER="0" ALT="Excel"></TD>
-	        <TD COLSPAN="5"><A HREF="oportunity_listing_xls.jsp?<%=request.getQueryString()%>&maxrows=65000" TARGET="_blank" CLASS="linkplain" TITLE="[~Listado Excel~]">[~Listado Excel~]</A></TD>
+	        <TD COLSPAN="5"><A HREF="oportunity_listing_xls.jsp?<%=request.getQueryString()%>&maxrows=65000" TARGET="_blank" CLASS="linkplain" TITLE="Excel Listing">Excel Listing</A></TD>
         </TR>
         <TR><TD COLSPAN="6" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
         <TR>
           <TD ALIGN="right"><INPUT TYPE="radio" NAME="private" <% if (iPrivate!=0) out.write("CHECKED"); else out.write("onClick=\"reloadPrivate(1);\""); %>></TD>
           <TD COLSPAN="3" CLASS="textplain">View private opportunities only</TD>          
-          <TD ALIGN="left" COLSPAN="2" CLASS="textplain"><INPUT TYPE="radio" NAME="private" <% if (iPrivate==0) out.write("CHECKED"); else out.write("onClick=\"reloadPrivate(0);\""); %>>&nbsp;<% if (bIsAdmin) out.write("[~Ver todas~]"); else out.write("View Public & Private Opportunities"); %></TD>
+          <TD ALIGN="left" COLSPAN="2" CLASS="textplain"><INPUT TYPE="radio" NAME="private" <% if (iPrivate==0) out.write("CHECKED"); else out.write("onClick=\"reloadPrivate(0);\""); %>>&nbsp;<% if (bIsAdmin) out.write("Show All"); else out.write("View Public & Private Opportunities"); %></TD>
         </TR>
         <TR><TD COLSPAN="6" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
-          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/addrbook/telephone16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Llamada~]"></TD>
-          <TD COLSPAN="5"><A HREF="#" oncontextmenu="return false;" onclick="if (document.forms[0].sel_campaign.selectedIndex<=0) { alert('[~Debe seleccionar previamente la campaña sobre la cual generar la llamada~]'); document.forms[0].sel_campaign.focus(); } else { addPhoneCall('','',getCombo(document.forms[0].sel_campaign)); } return false;" CLASS="linkplain">[~Generar llamada para un contacto elegido automáticamente~]</A></TD>
+          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/addrbook/telephone16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Call"></TD>
+          <TD COLSPAN="5"><A HREF="#" oncontextmenu="return false;" onclick="if (document.forms[0].sel_campaign.selectedIndex<=0) { alert('A campaign for the call must be chosen first'); document.forms[0].sel_campaign.focus(); } else { addPhoneCall('','',getCombo(document.forms[0].sel_campaign)); } return false;" CLASS="linkplain">Make call for an automatically selected contact</A></TD>
 			  </TR>
         <TR><TD COLSPAN="6" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       </TABLE>
@@ -310,8 +310,8 @@
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(4);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;&nbsp;<B>Client</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(8);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==8 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;&nbsp;<B>Amount</B>&nbsp;</TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP="nowrap">&nbsp;<A HREF="javascript:sortBy(9);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==9 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>Next Action</B>&nbsp;</TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP="nowrap">&nbsp;<A HREF="javascript:sortBy(12);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==12 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>[~&Uacute;lt. Llamada~]</B>&nbsp;</TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(11);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==11 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>[~Objetivo~]</B>&nbsp;</TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" NOWRAP="nowrap">&nbsp;<A HREF="javascript:sortBy(12);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==12 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>Last Call</B>&nbsp;</TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(11);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==11 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>Objective</B>&nbsp;</TD>
           <TD CLASS="tableheader" WIDTH="20" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" ALIGN="center"><A HREF="#" onclick="selectAll()" TITLE="Seleccionar todos"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select all"></A></TD>
         </TR>
 <%
@@ -353,7 +353,7 @@
 	<TR HEIGHT="14">
 		<TD CLASS="striplv<%=sOpLv%>">&nbsp;<%
 			if (oOportunities.getStringNull(1,i,"").equals("ENCURSO")) { %>
-			  <IMG SRC="../images/images/addrbook/callongoing.gif" WIDTH="22" HEIGHT="14" BORDER="0" ALT="[~Ongoing Call~]"></A>
+			  <IMG SRC="../images/images/addrbook/callongoing.gif" WIDTH="22" HEIGHT="14" BORDER="0" ALT="Ongoing Call"></A>
 <%	  } else if (sOpCn.length()>0) { %>
 			  <A HREF="#" onclick="addPhoneCall('<%=sOpId%>', '<%=sOpCn%>','')" TITLE="Call"><IMG SRC="../images/images/addrbook/telephone16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Call"></A>
 <%    } %>
@@ -372,21 +372,21 @@
         <TR><TD COLSPAN="10" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
         <TR>
         	<TD></TD>
-          <TD ALIGN="right" VALIGN="top" CLASS="textstrong">[~Sumario~]</TD>
+          <TD ALIGN="right" VALIGN="top" CLASS="textstrong">Summary</TD>
           <TD ALIGN="left" CLASS="textplain">
 <% for (int s=0; s<oStatusSummary.getRowCount(); s++ ) {
      if (oStatusSummary.isNull(1,s))
-       out.write("[~Sin estado:~]&nbsp;"+String.valueOf(oStatusSummary.getLong(0,s)+"<BR/>\n"));
+       out.write("Without status:&nbsp;"+String.valueOf(oStatusSummary.getLong(0,s)+"<BR/>\n"));
 		 else
        out.write(oStatusLookUp.get(oStatusSummary.getString(1,s))+":&nbsp;"+String.valueOf(oStatusSummary.getLong(0,s)+"<BR/>\n"));
    } %>
-            [~Total:~]&nbsp;<% try { out.write(String.valueOf(oStatusSummary.sum(0))); } catch (Exception e) { out.write(e.getClass().getName()+" "+e.getMessage()); } %>
+            Total:&nbsp;<% try { out.write(String.valueOf(oStatusSummary.sum(0))); } catch (Exception e) { out.write(e.getClass().getName()+" "+e.getMessage()); } %>
           </TD>
-          <TD ALIGN="right" VALIGN="top" CLASS="textstrong">[~Causas de cierre~]</TD>
+          <TD ALIGN="right" VALIGN="top" CLASS="textstrong">Close Reason</TD>
           <TD ALIGN="left" VALIGN="top" CLASS="textplain">
 <% for (int s=0; s<oCausesSummary.getRowCount(); s++ ) {
      if (oStatusSummary.isNull(1,s))
-       out.write("[~Sin causa:~]&nbsp;"+String.valueOf(oCausesSummary.getLong(0,s)+"<BR/>\n"));
+       out.write("Without reason:&nbsp;"+String.valueOf(oCausesSummary.getLong(0,s)+"<BR/>\n"));
 		 else
        out.write(oCausesLookUp.get(oCausesSummary.getString(1,s))+":&nbsp;"+String.valueOf(oCausesSummary.getLong(0,s)+"<BR/>\n"));
    } %>

@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.Enumeration,java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.acl.PasswordRecord,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="true" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Enumeration,java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.acl.PasswordRecord,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="true" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="pwdtemplates.jspf" %><%
 /*
   Copyright (C) 2003-2009  Know Gate S.L. All rights reserved.
@@ -43,10 +43,10 @@
 	boolean bSession = (session.getAttribute("validated")!=null);
 
 	if (!bSession) {
-	  response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Session Expired~]&desc=[~Session has expired. Please log in again~]&resume=_close"));
+	  response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Session Expired&desc=Session has expired. Please log in again&resume=_close"));
     return;
-  } else if (!((Boolean) session.getAttribute("validated")).booleanValue()) {
-	  response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Session Expired~]&desc=[~Session has expired. Please log in again~]&resume=_close"));
+  } else if (!((Boolean) session.getAttribute("validated")).booleanValue() || session.getAttribute("signature")==null) {
+	  response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Session Expired&desc=Session has expired. Please log in again&resume=_close"));
     return;
   }
 

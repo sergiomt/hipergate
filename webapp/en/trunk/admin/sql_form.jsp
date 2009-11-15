@@ -1,4 +1,4 @@
-﻿<%@ page import="com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <% String sProfile = request.getParameter("profile");
    if (null==sProfile) sProfile="hipergate";
 
@@ -6,11 +6,11 @@
 <HTML>
 <HEAD>
   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/simplevalidations.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
 </HEAD>
-<BODY>
+<BODY onload="setCombo(document.forms[0].sel_profile,'<%=sProfile%>')">
   <table width="100%" cellspacing="0" cellpadding="0" border="0">
     <tr>
       <td align="left" class="striptitle">
@@ -70,7 +70,7 @@
     <TABLE>
       <TR>
         <TD ALIGN="right">
-          <FONT CLASS="textplain">Environment</FONT>&nbsp;<SELECT NAME="sel_profile"><OPTION VALUE="hipergate">hipergate</OPTION><OPTION VALUE="test">test</OPTION><OPTION VALUE="devel">devel</OPTION><OPTION VALUE="real">real</OPTION><OPTION VALUE="demo">demo</OPTION><OPTION VALUE="crm">crm</OPTION><OPTION VALUE="portal">portal</OPTION><OPTION VALUE="intranet">intranet</OPTION><OPTION VALUE="extranet">extranet</OPTION><OPTION VALUE="shop">shop</OPTION><OPTION VALUE="site">site</OPTION><OPTION VALUE="web">web</OPTION><OPTION VALUE="work">work</OPTION></SELECT>
+          <FONT CLASS="textplain">Environment</FONT>&nbsp;<SELECT NAME="sel_profile" onchange="document.location='sql_forms.jsp?profile='+this.options[this.selectedIndex].value"><OPTION VALUE="hipergate">hipergate</OPTION><OPTION VALUE="test">test</OPTION><OPTION VALUE="devel">devel</OPTION><OPTION VALUE="real">real</OPTION><OPTION VALUE="demo">demo</OPTION><OPTION VALUE="crm">crm</OPTION><OPTION VALUE="portal">portal</OPTION><OPTION VALUE="intranet">intranet</OPTION><OPTION VALUE="extranet">extranet</OPTION><OPTION VALUE="shop">shop</OPTION><OPTION VALUE="site">site</OPTION><OPTION VALUE="web">web</OPTION><OPTION VALUE="work">work</OPTION></SELECT>
         </TD>
 	<TD>
           <FONT CLASS="textplain">Connected to &nbsp;<B><%=Environment.getProfileVar(sProfile, "dburl")%></B></FONT>

@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*
@@ -54,15 +54,15 @@
   String gu_company = nullif(request.getParameter("gu_company"));
 
   if (GlobalDBBind.getProperty("smsprovider","").length()==0) {
-    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Error SMS Provider not found~]&desc=[~No SMS provider class found at property smsprovider of hipergate.cnf~]&resume=_close"));
+    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Error SMS Provider not found&desc=No SMS provider class found at property smsprovider of hipergate.cnf&resume=_close"));
     return;
   } // fi
   if (GlobalDBBind.getProperty("smsaccount","").length()==0) {
-    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Error SMS Account not found~]&desc=[~No SMS account class found at property smsaccount of hipergate.cnf~]&resume=_close"));
+    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Error SMS Account not found&desc=No SMS account class found at property smsaccount of hipergate.cnf&resume=_close"));
     return;
   } // fi
   if (GlobalDBBind.getProperty("smspassword","").length()==0) {
-    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Error SMS Password not found~]&desc=[~No SMS password class found at property smsaccount of hipergate.cnf~]&resume=_close"));
+    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Error SMS Password not found&desc=No SMS password class found at property smsaccount of hipergate.cnf&resume=_close"));
     return;
   } // fi
 
@@ -93,7 +93,7 @@
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: [~Enviar SMS~]</TITLE>
+  <TITLE>hipergate :: Send SMS</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
@@ -111,7 +111,7 @@
 <BODY TOPMARGIN="8" MARGINHEIGHT="8">
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Enviar SMS~]</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Send SMS</FONT></TD></TR>
   </TABLE>  
   <FORM NAME="" METHOD="post" ACTION="sms_send.jsp" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
@@ -125,15 +125,15 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">[~Remitente~]</FONT></TD>
-            <TD ALIGN="left" WIDTH="270"><SELECT NAME="nu_from"><%=sFrom%></SELECT>&nbsp;<A HREF="sms_from_list.jsp" TITLE="[~Editar Remitentes~]"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Editar Remitentes~]"></A></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Sender</FONT></TD>
+            <TD ALIGN="left" WIDTH="270"><SELECT NAME="nu_from"><%=sFrom%></SELECT>&nbsp;<A HREF="sms_from_list.jsp" TITLE="Editar Remitentes"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Editar Remitentes"></A></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">[~MSISDN~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">MSISDN</FONT></TD>
             <TD ALIGN="left" WIDTH="270"><INPUT TYPE="text" NAME="nu_msisdn" MAXLENGTH="20" SIZE="16" VALUE="<%=nu_msisdn%>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">[~Texto~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Text</FONT></TD>
             <TD ALIGN="left" WIDTH="270"><TEXTAREA NAME="tx_msg" ROWS="6"></TEXTAREA></TD>
           </TR>
           <TR>
@@ -141,8 +141,8 @@
           </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Enviar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="if (window.history.length==0) window.close(); else window.history.back()">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Send" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="if (window.history.length==0) window.close(); else window.history.back()">
     	      <BR><BR>
     	    </TD>
     	  </TR>            

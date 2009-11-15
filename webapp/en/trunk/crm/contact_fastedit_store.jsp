@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.ContactLoader,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.ContactLoader,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <%
 /*
@@ -140,7 +140,7 @@
           <TABLE BGCOLOR="#FFFFFF" BORDER="0" CELLSPACING="8" CELLPADDING="8">
             <TR VALIGN="middle">
               <TD><IMG SRC="../images/images/chequeredflag.gif" WIDTH="40" HEIGHT="38" BORDER="0" ALT="Chequered Flag"></TD>
-              <TD><FONT CLASS="textplain"><% out.write(String.valueOf(nRows)+" [~Registros grabados con éxito~]"); %></FONT></TD>
+              <TD><FONT CLASS="textplain"><% out.write(String.valueOf(nRows)+" Rows successfully saved"); %></FONT></TD>
 	    </TR>
 	  </TABLE>
         </TD></TR>

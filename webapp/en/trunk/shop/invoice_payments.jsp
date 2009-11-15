@@ -1,4 +1,4 @@
-﻿<%@ page import="java.math.BigDecimal,java.text.SimpleDateFormat,java.util.Date,java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.misc.Gadgets,com.knowgate.dataobjs.*,com.knowgate.hipergate.*,com.knowgate.math.CurrencyCode" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.math.BigDecimal,java.text.SimpleDateFormat,java.util.Date,java.util.HashMap,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.misc.Gadgets,com.knowgate.dataobjs.*,com.knowgate.hipergate.*,com.knowgate.math.CurrencyCode" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
 
@@ -61,12 +61,12 @@
         function validate () {
           var frm = document.forms[0];
           if (!isDate(frm.dt_payment.value,"d")) {
-          	alert("[~La fecha no es válida~]");
+          	alert("Date is not valid");
           	frm.dt_payment.focus();
             return false;
           } // fi
           if (!isFloatValue(removeThousandsDelimiter(frm.im_paid.value))) {
-          	alert("[~El importe es válido~]");
+          	alert("Amount is not valid");
           	frm.im_paid.focus();
             return false;
           } else {
@@ -120,7 +120,7 @@
       if (bPaid) oPaid = oPaid.add(oPays.getDecimal(4,p));
       CurrencyCode oCurCod = DBCurrencies.currencyCodeFor(Integer.parseInt(oPays.getString(3,p).trim()));
       if (oCurCod==null) throw new NullPointerException("Cannot find currency code for \""+oPays.getString(3,p).trim()+"\"");
-      out.write("<TR><TD WIDTH=\"20\" CLASS=\"strip"+sStrip+"\"><IMG SRC=\"../images/images/"+(bPaid ? "corrected.gif" : "pending.gif")+"\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"[~Cobrado~]\"></TD>");
+      out.write("<TR><TD WIDTH=\"20\" CLASS=\"strip"+sStrip+"\"><IMG SRC=\"../images/images/"+(bPaid ? "corrected.gif" : "pending.gif")+"\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"Paid\"></TD>");
       out.write("<TD WIDTH=\"80\" CLASS=\"strip"+sStrip+"\"><A HREF=\"invoice_payment_edit.jsp?gu_workarea="+gu_workarea+"&gu_invoice="+gu_invoice+"&pg_payment="+String.valueOf(oPays.getInt(1,p))+"\">"+sPayDate+"</A></TD>");      
       out.write("<TD WIDTH=\"120\" CLASS=\"strip"+sStrip+"\" ALIGN=\"left\">"+sStrk1+Gadgets.formatCurrency(oPays.getDecimal(4,p),oCurCod.alphaCode(),sLanguage,null)+sStrk2+"</TD>");
       out.write("<TD CLASS=\"strip"+sStrip+"\">"+sStrk1+oBillingLookUp.get(oPays.getString(5,p))+sStrk2+"</TD>");
@@ -130,21 +130,21 @@
    } %>
         <TR>
           <TD CLASS="strip1" COLSPAN="8">
-            <B>[~Total Factura~]</B>&nbsp;<B><%=Gadgets.formatCurrency(oInvc.getDecimal(DB.im_total),DBCurrencies.currencyCodeFor(Integer.parseInt(oInvc.getString(DB.id_currency).trim())).alphaCode(),sLanguage,null)%></B>&nbsp;&nbsp;
+            <B>Total Invoice</B>&nbsp;<B><%=Gadgets.formatCurrency(oInvc.getDecimal(DB.im_total),DBCurrencies.currencyCodeFor(Integer.parseInt(oInvc.getString(DB.id_currency).trim())).alphaCode(),sLanguage,null)%></B>&nbsp;&nbsp;
             <B>Total Paid</B>&nbsp;<B><%=Gadgets.formatCurrency(oPaid,DBCurrencies.currencyCodeFor(Integer.parseInt(oInvc.getString(DB.id_currency).trim())).alphaCode(),sLanguage,null)%></B>&nbsp;&nbsp;
-					  <B>[~Pte. de Cobro~]</B>&nbsp;<B><%=Gadgets.formatCurrency(oTotal.subtract(oPaid),DBCurrencies.currencyCodeFor(Integer.parseInt(oInvc.getString(DB.id_currency).trim())).alphaCode(),sLanguage,null)%></B>
+					  <B>Pending</B>&nbsp;<B><%=Gadgets.formatCurrency(oTotal.subtract(oPaid),DBCurrencies.currencyCodeFor(Integer.parseInt(oInvc.getString(DB.id_currency).trim())).alphaCode(),sLanguage,null)%></B>
 					</TD>
         </TR>
         <TR>
           <TD CLASS="strip1" COLSPAN="8"><HR/></TD>
         </TR>
         <TR>
-          <TD CLASS="strip1" COLSPAN="8"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nuevo Cobro~]">&nbsp;[~Nuevo Cobro~]</TD>
+          <TD CLASS="strip1" COLSPAN="8"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Payment">&nbsp;New Payment</TD>
         </TR>
         <TR>
           <TD CLASS="strip1" WIDTH="100" COLSPAN="2">Date</TD>
           <TD CLASS="strip1" WIDTH="120">Amount</TD>
-          <TD CLASS="strip1">[~Forma de pago~]</TD>
+          <TD CLASS="strip1">Payment mean</TD>
           <TD CLASS="strip1">Paid by</TD>
           <TD CLASS="strip1">Comments</TD>
           <TD CLASS="strip1"></TD>

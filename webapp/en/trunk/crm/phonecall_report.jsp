@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.Date,java.util.Arrays,java.util.HashMap,java.text.SimpleDateFormat,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.Timestamp,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Calendar" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Date,java.util.Arrays,java.util.HashMap,java.text.SimpleDateFormat,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.Timestamp,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Calendar" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><% 
 /*
   Copyright (C) 2003-2008  Know Gate S.L. All rights reserved.
@@ -241,42 +241,42 @@
 %>
 <HTML>
 <HEAD>
-  <TITLE>hipergate :: [~Efectividad del telemarketing~]</TITLE>
+  <TITLE>hipergate :: Telemarketing effectiveness</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
 </HEAD>
 <BODY>
   <DIV class="cxMnu1" style="width:190px"><DIV class="cxMnu2">
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="[~Imprimir~]"> [~Imprimir~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
   </DIV></DIV>
   <TABLE WIDTH="100%" SUMMARY="Telemarketing effectiviness">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Efectividad del telemarketing~]</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Telemarketing effectiveness</FONT></TD></TR>
   </TABLE>
   <BR/>
-  <FONT CLASS="textstrong">[~Campa&ntilde;a~]&nbsp;<%=nm_campaign%></FONT>
+  <FONT CLASS="textstrong">Campaign&nbsp;<%=nm_campaign%></FONT>
   <BR/>
-  <FONT CLASS="textplain"><% if (request.getParameter("dt_from")!=null) out.write("[~desde~]&nbsp;"+request.getParameter("dt_from")+"&nbsp;&nbsp;"); out.write("[~hasta~]&nbsp;"+request.getParameter("dt_to"));%></FONT>
+  <FONT CLASS="textplain"><% if (request.getParameter("dt_from")!=null) out.write("from&nbsp;"+request.getParameter("dt_from")+"&nbsp;&nbsp;"); out.write("to&nbsp;"+request.getParameter("dt_to"));%></FONT>
   <BR/><BR/>
   <TABLE SUMMARY="Sent & Received" BORDER="1">
-    <TR><TD CLASS="textstrong" COLSPAN="2">[~Llamadas Totales~]</TD></TR>
-    <TR><TD CLASS="textplain">[~Llamadas enviadas~]</TD><TD CLASS="textplain"><% out.write(String.valueOf(nSent)); %></TD></TR>
-    <TR><TD CLASS="textplain">[~Llamadas recibidas~]</TD><TD CLASS="textplain"><% out.write(String.valueOf(nReceived)); %></TD></TR>
-    <TR><TD CLASS="textplain">[~Media por oportunidad~]</TD><TD CLASS="textplain"><% if (nOprts==0) out.write("0"); else out.write(String.valueOf(((int)(100f*(nSent+nReceived))/(float)nOprts)/100f)); %></TD></TR>
+    <TR><TD CLASS="textstrong" COLSPAN="2">Total Calls</TD></TR>
+    <TR><TD CLASS="textplain">Sent calls</TD><TD CLASS="textplain"><% out.write(String.valueOf(nSent)); %></TD></TR>
+    <TR><TD CLASS="textplain">Received calls</TD><TD CLASS="textplain"><% out.write(String.valueOf(nReceived)); %></TD></TR>
+    <TR><TD CLASS="textplain">Mean by lead</TD><TD CLASS="textplain"><% if (nOprts==0) out.write("0"); else out.write(String.valueOf(((int)(100f*(nSent+nReceived))/(float)nOprts)/100f)); %></TD></TR>
   </TABLE>
   <BR/>
   <TABLE SUMMARY="By Status" BORDER="1">
-    <TR><TD CLASS="textstrong" COLSPAN="2">[~Estado de las oportunidades con llamadas~]</TD></TR>
+    <TR><TD CLASS="textstrong" COLSPAN="2">Status of leads with calls</TD></TR>
     <%=oByStatus.toString()%>
-    <TR><TD CLASS="textstrong">[~Total~]</TD><TD CLASS="textstrong"><% out.write(String.valueOf(nOprts)); %></TD></TR>
+    <TR><TD CLASS="textstrong">Total</TD><TD CLASS="textstrong"><% out.write(String.valueOf(nOprts)); %></TD></TR>
   </TABLE>
 <% if (gu_campaign.length()>0) { %>
   <BR/>
   <TABLE SUMMARY="By Status Whole Campaign" BORDER="1">
-    <TR><TD CLASS="textstrong" COLSPAN="2">[~Estado de todas las oportunidades de la campaña~]</TD></TR>
+    <TR><TD CLASS="textstrong" COLSPAN="2">Status of all leads of the campaign</TD></TR>
     <%=oByStatusWholeCampaign.toString()%>
-    <TR><TD CLASS="textstrong">[~Total~]</TD><TD CLASS="textstrong"><% out.write(String.valueOf(nOprtsWholeCampaign)); %></TD></TR>
+    <TR><TD CLASS="textstrong">Total</TD><TD CLASS="textstrong"><% out.write(String.valueOf(nOprtsWholeCampaign)); %></TD></TR>
   </TABLE>
 <% }
    Date dt;
@@ -288,14 +288,14 @@
 %>
   <BR/>
   <TABLE SUMMARY="Sent By Day" BORDER="1">
-    <TR><TD CLASS="textstrong" COLSPAN="2">[~Llamadas enviadas cada dia~]</TD></TR>
+    <TR><TD CLASS="textstrong" COLSPAN="2">Calls sent each day</TD></TR>
 <%  for (int e=0; e<nCallDays; e++) {
       out.write("<TD CLASS=\"textplain\">"+oFdt.format(dt)+"</TD><TD CLASS=\"textplain\">"+String.valueOf(aSentCallsByDay[e])+"</TD></TR>");
       t+= aSentCallsByDay[e];
       dt = new Date(dt.getTime()+86400000l);
     }
 %>
-    <TR><TD CLASS="textstrong">[~Total~]</TD><TD CLASS="textstrong"><% out.write(String.valueOf(t)); %></TD></TR>
+    <TR><TD CLASS="textstrong">Total</TD><TD CLASS="textstrong"><% out.write(String.valueOf(t)); %></TD></TR>
   </TABLE>
 <% }
    if (aRecvCallsByDay!=null) {
@@ -305,17 +305,17 @@
 %>
   <BR/>
   <TABLE SUMMARY="Received By Day" BORDER="1">
-    <TR><TD CLASS="textstrong" COLSPAN="2">[~Llamadas recibidas cada dia~]</TD></TR>
+    <TR><TD CLASS="textstrong" COLSPAN="2">Call received each day</TD></TR>
 <%  for (int e=0; e<nCallDays; e++) {
       out.write("<TD CLASS=\"textplain\">"+oFdt.format(dt)+"</TD><TD CLASS=\"textplain\">"+String.valueOf(aRecvCallsByDay[e])+"</TD></TR>");
       t+= aRecvCallsByDay[e];
       dt = new Date(dt.getTime()+86400000l);
     }
 %>
-    <TR><TD CLASS="textstrong">[~Total~]</TD><TD CLASS="textstrong"><% out.write(String.valueOf(t)); %></TD></TR>
+    <TR><TD CLASS="textstrong">Total</TD><TD CLASS="textstrong"><% out.write(String.valueOf(t)); %></TD></TR>
   </TABLE>
 <% } %>
   <BR/>
-  <FORM><INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cerrar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()"></FORM>
+  <FORM><INPUT TYPE="button" ACCESSKEY="c" VALUE="Close" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()"></FORM>
 </BODY>
 </HTML>

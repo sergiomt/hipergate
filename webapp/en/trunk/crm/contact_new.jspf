@@ -237,7 +237,7 @@
           if (xrq.status == 200) {
             var rs = xrq.responseXML.getElementsByTagName("rs");
             if (rs) {
-              if (window.confirm("[~Ya existe otro contacto con el mismo documento de identidad.~] "+rs[0].childNodes[0].data+" [~¿Quiere abandonar la creación del contacto actual y editar el antiguo?~]")) {
+              if (window.confirm("Another contact with the same identity document number already exists "+rs[0].childNodes[0].data+" Do you want to abandon the creation of a new contact and switch back to editing the already existing one?")) {
 							  top.location="contact_edit.jsp?id_domain=<%=id_domain%>&gu_contact=" + rs[0].attributes.item(0).value;
               }
             }
@@ -262,7 +262,7 @@
           if (xrq.status == 200) {
             var rs = xrq.responseXML.getElementsByTagName("rs");
             if (rs) {
-              if (window.confirm("[~Ya existe otro contacto con el mismo e-mail.~] "+rs[0].childNodes[0].data+" [~¿Quiere abandonar la creación del contacto actual y editar el antiguo?~]")) {
+              if (window.confirm("Another contact with the same e-mail already exists "+rs[0].childNodes[0].data+" Do you want to abandon the creation of a new contact and switch back to editing the already existing one?")) {
 							  top.location="contact_edit.jsp?id_domain=<%=id_domain%>&gu_contact=" + rs[0].attributes.item(0).value;
               }
             }

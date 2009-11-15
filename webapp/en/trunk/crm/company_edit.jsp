@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.*,com.knowgate.hipergate.Category,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.*,com.knowgate.hipergate.Category,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/customattrs.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -286,12 +286,12 @@
 
 	
 	if (ltrim(frm.nm_legal.value)=="") {
-	  alert ("[~La Razón Social es obligatoria~]");
+	  alert ("Legal Name is required");
 	  return false;
 	}
 
 	if (frm.nm_legal.value.indexOf("'")>0 || frm.nm_legal.value.indexOf("¡")>0 || frm.nm_legal.value.indexOf("?")>0 || frm.nm_legal.value.indexOf('"')>0 || frm.nm_legal.value.indexOf("\\")>0 || frm.nm_legal.value.indexOf("/")>0 || frm.nm_legal.value.indexOf("*")>0 || frm.nm_legal.value.indexOf("`")>0 || frm.nm_legal.value.indexOf("´")>0 || frm.nm_legal.value.indexOf("¨")>0 || frm.nm_legal.value.indexOf('^')>0) {
-	  alert ("[~La Razón Social contiene caracteres no permitidos~]");
+	  alert ("Legal name contains forbidden characters");
 	  return false;	  
 	}
 	
@@ -306,17 +306,17 @@
 	
 	txt = frm.im_revenue.value;
 	if (txt.length>0 && isNaN(txt)) {
-	    alert ("[~La facturación no es valida~]");
+	    alert ("Billing is not valid");
 	    return false;	
 	}
 
         if (!isDate(frm.dt_founded.value, "d") && frm.dt_founded.value.length>0) {
-	  alert ("[~La fecha de constitucion no es válida~]");
+	  alert ("Date founded is not valid");
 	  return false;
 	}
 	
 	if (frm.de_company.value.length>254) {
-	  alert ("[~La descripción de la compañía no puede superar los 254 caracteres~]");
+	  alert ("Company description must not be longer than 254 characters");
 	  return false;
 	}
 
@@ -479,7 +479,7 @@
           </TR>          
           <TR>
             <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Company Type:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="hidden" NAME="tp_company" MAXLENGTH="30" SIZE="20" VALUE="<%=oComp.getStringNull(DB.tp_company,"")%>"><SELECT NAME="sel_typecompany"><OPTION VALUE=""></OPTION><%=sTypeLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Tipos de Compañía~]"></A>
+            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="hidden" NAME="tp_company" MAXLENGTH="30" SIZE="20" VALUE="<%=oComp.getStringNull(DB.tp_company,"")%>"><SELECT NAME="sel_typecompany"><OPTION VALUE=""></OPTION><%=sTypeLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Company Types"></A>
             &nbsp;&nbsp;&nbsp;<FONT CLASS="formplain">Status:</FONT>&nbsp;<SELECT NAME="sel_status"><OPTION VALUE=""></OPTION><%=sStatusLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Status List"></A>
             <INPUT TYPE="hidden" NAME="id_status" VALUE="<%=oComp.getStringNull(DB.id_status,"")%>">
             </TD>
@@ -505,7 +505,7 @@
             <TD ALIGN="left" WIDTH="370">
               <INPUT TYPE="hidden" NAME="id_category" VALUE="<%=sIdCategory%>">
               <INPUT TYPE="text" NAME="tr_category" MAXLENGTH="30" SIZE="34" onfocus="document.forms[0].de_company.focus();" TABINDEX="-1" VALUE="<%=sTrCategory%>">&nbsp;
-              <A HREF="#" onclick="selectCategory()" CLASS="formplain"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Cambiar Categoría~]"></A>
+              <A HREF="#" onclick="selectCategory()" CLASS="formplain"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Change Category"></A>
             </TD>
           </TR>
 <% } %>
@@ -558,7 +558,7 @@
       <TR>
     	<TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>
-          <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">&nbsp;&nbsp;&nbsp;
+          <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('Your credential level as Guest does not allow you to perform this action')">&nbsp;&nbsp;&nbsp;
 <% } else { %>
           <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
 <% } %>

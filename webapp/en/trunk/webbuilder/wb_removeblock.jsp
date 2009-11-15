@@ -1,4 +1,4 @@
-﻿<%@ page import="org.w3c.dom.*,com.knowgate.misc.*,java.io.File,java.lang.*,java.util.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.misc.Environment,com.knowgate.dataxslt.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.db.*" language="java" session="false" %>
+<%@ page import="org.w3c.dom.*,com.knowgate.misc.*,java.io.File,java.lang.*,java.util.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.misc.Environment,com.knowgate.dataxslt.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.db.*" language="java" session="false" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
@@ -83,7 +83,7 @@
 <script language="JavaScript" type="text/javascript">
   <!--
 <% if (bIsGuest) { %>
-     alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+     alert("Your credential level as Guest does not allow you to perform this action");
 <% } %>
   window.open("wb_document.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_pageset=<%=gu_pageset%>&doctype=<%=sDocType%>" , "editPageSet");
   window.close();

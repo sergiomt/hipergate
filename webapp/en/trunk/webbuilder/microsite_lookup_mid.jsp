@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.Date,com.knowgate.misc.*,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.dfs.FileSystem" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.File,java.util.Date,com.knowgate.misc.*,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.dfs.FileSystem" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
 <%  response.setHeader("Cache-Control","no-cache");response.setHeader("Pragma","no-cache"); response.setIntHeader("Expires", 0); %>
@@ -102,6 +102,7 @@
   
   String sImageServer = Environment.getProfileVar(GlobalDBBind.getProfileName(), "imageserver", sDefImgSrv);
   String sStorage = Environment.getProfilePath(GlobalDBBind.getProfileName(), "storage");
+  String sWrkAPut = Environment.getProfilePath(GlobalDBBind.getProfileName(), "workareasput");
 
   String sSelLang = id_language;
   String sGuMicrosite, sNmMicrosite, sMetaDataPath, sSubPath, sOutputPath, sTitle;
@@ -171,14 +172,14 @@
 %>
 <!-- +-----------------------+ -->
 <!-- | Lista de Plantillas   | -->
-<!-- | © KnowGate 2003-2008  | -->
+<!-- | © KnowGate 2003-2009  | -->
 <!-- +-----------------------+ -->
 <HTML>
   <HEAD>
-    <TITLE>hipergate ::</TITLE>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
       <!--
       var counter = 0;
@@ -196,30 +197,41 @@
           if (frm.tipo_msite[i].checked) 
            myString = frm.tipo_msite[i].value;
       	 } // next
-      
-      	splitString = myString.split(",");
-      	
-      	nmstr = splitString[0];
-      	vlstr = splitString[1];
-      	hdstr = splitString[2];
-      	
-      	frm.nm_microsite.value = nmstr;
-        frm.path_metadata.value = hdstr;
-        frm.gu_microsite.value = vlstr;
-        
-        frm.nm_pageset.value = "<% out.write(sNmPageset); %>";
-        frm.path_data.value = "<% out.write(esc(sSubPath + sSep + "$" + sTextDate + ".xml")); %>";
-        
-        frm.nm_pageset.value = frm.nm_pageset.value.replace("$",frm.nm_microsite.value);
-        frm.path_data.value = frm.path_data.value.replace("$",frm.nm_microsite.value);
-      
-      	if (frm.doctype.value=="newsletter")
-      	  frm.tp_microsite.value = "1";
-      	else if (frm.doctype.value=="website")
-      	  frm.tp_microsite.value = "2";
-      	else if (frm.doctype.value=="survey")
-      	  frm.tp_microsite.value = "4";
 
+			  if (myString=="adhoc") {
+
+      	  frm.nm_microsite.value = "";
+          frm.path_metadata.value = "";
+          frm.gu_microsite.value = "adhoc";
+        
+          frm.nm_pageset.value = frm.nm_mailing.value;
+          frm.path_data.value = "<%=esc(sWrkAPut+File.separator+gu_workarea+File.separator+"apps"+File.separator+"Hipermail"+File.separator+"html")%>";
+      	  frm.tp_microsite.value = "1";
+
+			  } else { 
+      	  splitString = myString.split(",");
+      	
+      	  nmstr = splitString[0];
+      	  vlstr = splitString[1];
+      	  hdstr = splitString[2];
+      	
+      	  frm.nm_microsite.value = nmstr;
+          frm.path_metadata.value = hdstr;
+          frm.gu_microsite.value = vlstr;
+        
+          frm.nm_pageset.value = "<% out.write(sNmPageset); %>";
+          frm.path_data.value = "<% out.write(esc(sSubPath + sSep + "$" + sTextDate + ".xml")); %>";
+        
+          frm.nm_pageset.value = frm.nm_pageset.value.replace("$",frm.nm_microsite.value);
+          frm.path_data.value = frm.path_data.value.replace("$",frm.nm_microsite.value);
+      
+      	  if (frm.doctype.value=="newsletter")
+      	    frm.tp_microsite.value = "1";
+      	  else if (frm.doctype.value=="website")
+      	    frm.tp_microsite.value = "2";
+      	  else if (frm.doctype.value=="survey")
+      	    frm.tp_microsite.value = "4";
+        }
         if (validate()) frm.submit();
       }
 
@@ -266,19 +278,25 @@
 
       function showFirstThumbnail()
       {
-        var s = '<%=sImageServer%>/images/webbuilder/pixeltrans.gif';
+        var s = "<%=sImageServer%>/images/webbuilder/pixeltrans.gif";
         var q = document.forms[0].tipo_msite;
+
         if (q.length)
          r = q[0].value;
         else
          r = q.value;
-        r = r.split(",");
-        r = r[0];
-        r = r.replace(" ","");
-        s = '<%=sImageServer%>/styles/thumbnails/' +r+ '.gif';
-        document.getElementById('imgThumb').src = s;
         
+        if (r!="adhoc") {
+          r = r.split(",");
+          r = r[0];
+          r = r.replace(" ","");
+          s = "<%=sImageServer%>/styles/thumbnails/" +r+ ".gif";
+        }
+
+        document.getElementById('imgThumb').src = s;
         setCombo(document.forms[0].sel_language, "<%=id_language%>");
+
+				document.getElementById("mailing_name").style.display = (q.checked ? "block" : "none");
       }
 
       //-----------------------------------------------------------------------
@@ -316,10 +334,26 @@
           return false;
         }
 
-        frm.id_language.value = getCombo(frm.sel_language);
+				if (frm.tipo_msite.value=="adhoc") {
+				  if (frm.nm_mailing.value.length==0) {
+            alert ("e-mailing short name is required");
+            frm.nm_mailing.focus();
+            return false;				  
+				  }
+
+				  if (hasForbiddenChars(frm.nm_mailing.value) || frm.nm_mailing.value.indexOf(" ")>=0) {
+            alert ("e-mailing short name contains invalid characters");
+            frm.nm_mailing.focus();
+            return false;
+			    } else {
+			      frm.nm_mailing.value = frm.nm_mailing.value.toLowerCase();
+			    }
+				}
+			
+	      frm.id_language.value = getCombo(frm.sel_language);
 
         return true;
-      }
+      } // validate
       
       //-->
     </SCRIPT>
@@ -345,7 +379,10 @@
     <TR>
     <TD VALIGN="TOP">
     <TABLE WIDTH="100%" BORDER="0" CELLSPACING="0" CELLPADDING="0">
-<%  
+<% if (sDocType.equals("newsletter")) { %>    	
+    <TR><TD CLASS="strip1"><input type="radio" name="tipo_msite" value="adhoc" onclick="document.getElementById('mailing_name').style.display = (this.checked ? 'block' : 'none')">&nbsp;<A STYLE="text-decoration:none" CLASS="linkplain" onmouseout="javascript:cleanThumbnail()" onmouseover="javascript:document.getElementById('imgThumb').src = '../images/images/spacer.gif' ">Ad-Hoc (Sin plantilla)</A></TD></TR>
+  <TR><TD CLASS="strip1"><DIV ID="mailing_name" STYLE="display:none"><FONT CLASS="textsmall">Short Name&nbsp;</FONT><INPUT TYPE="text" CLASS="combomini" NAME="nm_mailing" MAXLENGTH="30" STYLE="text-transform:lowercase"></DIV></TD></TR>
+<% } 
   JDCConnection oConn = null;
   PreparedStatement oStmt;
   ResultSet oRSet;
@@ -411,7 +448,7 @@
 %>          
      <TR><TD ALIGN="left" WIDTH="90">&nbsp;<BR></TD></TR>
      <TR><TD ALIGN="left" WIDTH="90"><FONT CLASS="formstrong">Language:</FONT><BR></TD></TR>
-     <TR><TD><SELECT NAME="sel_language"><OPTION VALUE="es" SELECTED>[~Español~]<% out.write (sSelLang); %></SELECT></TD></TR>
+     <TR><TD><SELECT NAME="sel_language"><OPTION VALUE="es" SELECTED>Spanish<% out.write (sSelLang); %></SELECT></TD></TR>
      <TR><TD ALIGN="left" WIDTH="90"><FONT CLASS="formstrong">Company</FONT><BR></TD></TR>
      <TR><TD><INPUT TYPE="hidden" NAME="gu_company"><INPUT TYPE="text" NAME="nm_legal" SIZE="30" TABINDEX="-1">&nbsp;&nbsp;<A HREF="javascript:reference(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View list of companies"></A></TD></TR>
      <TR><TD ALIGN="left" WIDTH="90">&nbsp;<BR></TD></TR>

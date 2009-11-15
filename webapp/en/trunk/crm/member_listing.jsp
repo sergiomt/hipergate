@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.HashMap,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Gadgets,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.HashMap,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Gadgets,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%
@@ -281,7 +281,7 @@
 	  
 	  var frm = document.forms[0];
 	  	  
-	  if (window.confirm("[~¿Está seguro de que desea eliminar los miembros seleccionados?~]")) {
+	  if (window.confirm("Are you sure you want to delete selected members?")) {
 	  	  
 	    frm.checkeditems.value = listEMails();
 	    
@@ -300,7 +300,7 @@
 	  
 	  var frm = document.forms[0];
 	  	  
-	  if (window.confirm("[~¿Está seguro de que desea desactivar los miembros seleccionados?~]")) {
+	  if (window.confirm("Are you sure you want to deactivate selected members?")) {
 	  	  
 	    frm.checkeditems.value = listEMails();
 	    
@@ -319,7 +319,7 @@
 	  
 	  var frm = document.forms[0];
 	  	  
-	  if (window.confirm("[~¿Está seguro de que desea bloquear los miembros seleccionados?~]")) {
+	  if (window.confirm("Are you sure you want to block selected mebers?")) {
 	  	  
 	    frm.checkeditems.value = listEMails();
 	    
@@ -431,7 +431,7 @@
         <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
         <TD VALIGN="middle">
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">New</A>
+          <A HREF="#" onclick="alert ('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New</A>
 <% } else { %>
           <A HREF="#" onclick="createInstance()" CLASS="linkplain">New</A>
 <% } %>
@@ -439,7 +439,7 @@
         <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
         <TD>
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">Delete</A>
+          <A HREF="#" onclick="alert ('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">Delete</A>
 <% } else { %>
           <A HREF="javascript:deleteMembers()" CLASS="linkplain">Delete</A>
 <% } %>
@@ -450,7 +450,7 @@
           <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>">
 	  &nbsp;<A HREF="#" onclick="findInstance();return false;" CLASS="linkplain" TITLE="Search">Search</A>
         </TD>
-        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="[~Descartar búsqueda~]"></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard Find Filter"></TD>
         <TD VALIGN="bottom">
           <A HREF="#" onclick="document.forms[0].find.value='';findInstance();" CLASS="linkplain" TITLE="Descartar búsqueda">Discard</A>
           <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;Show&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100</SELECT><FONT CLASS="textplain"></FONT>
@@ -460,7 +460,7 @@
           <TD>&nbsp;&nbsp;<IMG SRC="../images/images/crm/inactive18.gif" BORDER="0" ALT="Deactivate"></TD>
           <TD VALIGN="middle">
 <% if (bIsGuest) { %>
-            <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">Deactivate</A>
+            <A HREF="#" onclick="alert ('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">Deactivate</A>
 <% } else { %>
             <A HREF="javascript:deactivateMembers()" CLASS="linkplain">Deactivate</A>
 <% } %>
@@ -468,7 +468,7 @@
           <TD>&nbsp;&nbsp;<IMG SRC="../images/images/crm/halt18.gif" BORDER="0" ALT="Block"></TD>
           <TD VALIGN="middle">
 <% if (bIsGuest) { %>
-            <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">Block</A>
+            <A HREF="#" onclick="alert ('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">Block</A>
 <% } else { %>
             <A HREF="javascript:blockMembers()" CLASS="linkplain">Block</A>
 <% } %>

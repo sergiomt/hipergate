@@ -1,4 +1,4 @@
-﻿<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -47,7 +47,7 @@
   <HEAD>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-    <TITLE>hipergate :: [~Creación de ~]<%=sTitle%> Step 1 of 2</TITLE>
+    <TITLE>hipergate :: New<%=sTitle%> Step 1 of 2</TITLE>
   </HEAD>
   <!-- -->
   <BODY  LEFTMARGIN="4" TOPMARGIN="4" SCROLL="no">

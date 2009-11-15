@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -75,7 +75,7 @@
       // ------------------------------------------------------
       
       function deleteSelected() {
-        if (confirm("[~¿Está seguro de que desea borrar los recursos seleccionados?~]"))
+        if (confirm("Are you sure that you want to delete the selected resources?"))
           window.parent.lookupmid.document.forms[0].submit();
       } // deleteSelected()
             

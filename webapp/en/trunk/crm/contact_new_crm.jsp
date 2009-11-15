@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
@@ -136,7 +136,7 @@
                 </TD>
               </TR>
               <TR>
-                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">[~Nacionalidad:~]</FONT></TD>
+                <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Nationality:</FONT></TD>
                 <TD ALIGN="left" WIDTH="420">
                   <SELECT CLASS="combomini" NAME="id_nationality"><OPTION VALUE=""></OPTION><%=sCountriesLookUp%></SELECT>
                 </TD>
@@ -229,7 +229,7 @@
           </TR>          
           <TR>
             <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Company Type:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370"><SELECT STYLE="visibility:hidden" NAME="sel_typecompany"><OPTION VALUE=""></OPTION><%=sTypeLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver Lista de Tipos de Compañía~]"></A></TD>
+            <TD ALIGN="left" WIDTH="370"><SELECT STYLE="visibility:hidden" NAME="sel_typecompany"><OPTION VALUE=""></OPTION><%=sTypeLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Company Types"></A></TD>
           </TR>          
           <TR>
             <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Income:</FONT></TD>
@@ -415,7 +415,7 @@
               <TR>
                 <TD COLSPAN="2" ALIGN="center">
     <% if (bIsGuest) { %>
-                  <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">&nbsp;&nbsp;&nbsp;
+                  <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('Your credential level as Guest does not allow you to perform this action')">&nbsp;&nbsp;&nbsp;
     <% } else { %>
                   <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="if (validate()) window.document.forms[0].submit();">&nbsp;&nbsp;&nbsp;
     <% } %>

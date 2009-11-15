@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.HashMap,java.net.URLDecoder,java.sql.Connection,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.hipergate.QueryByForm,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.HashMap,java.net.URLDecoder,java.sql.Connection,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.hipergate.QueryByForm,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%
 /*
@@ -245,7 +245,7 @@
 	  var frm = document.forms[0];
 	  var chi = frm.checkeditems;	 
 
-	  if (window.confirm("[~¿Está seguro de que desea eliminar las compañías seleccionadas?~]")) {
+	  if (window.confirm("Are you sure you want to delete selected companies?")) {
 	  
 	    chi.value = "";
             frm.action = "company_edit_delete.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
@@ -333,7 +333,7 @@
       
       function createProject(id,nm) {
 <% if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your credential level as Guest does not allow you to perform this action");
 <% } else { %>
         window.open("prj_create.jsp?gu_workarea=<%=gu_workarea%>&gu_company=" + id, "addproject", "directories=no,toolbar=no,menubar=no,width=540,height=280");       
 <% } %>
@@ -366,7 +366,7 @@
       
       function clone() {
 <% if (bIsGuest) { %>
-        alert ("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert ("Your credential level as Guest does not allow you to perform this action");
 <% } else { %>              
         winclone = window.open ("../common/clone.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&datastruct=company_clon&gu_instance=" + jsCompanyId +"&opcode=CCOM&classid=91", null, "directories=no,toolbar=no,menubar=no,width=320,height=200");                
         intervalId = setInterval ("findCloned()", 100);
@@ -401,31 +401,31 @@
       <TABLE CELLSPACING="2" CELLPADDING="2">
         <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>      
         <TR VALIGN="middle">
-        <TD>&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nueva Compañía~]"></TD>
+        <TD>&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Company"></TD>
         <TD VALIGN="middle">
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain" TITLE="[~Nueva Compañía~]">New</A>
+          <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain" TITLE="New Company">New</A>
 <% } else { %>
-          <A HREF="#" onclick="createCompany()" CLASS="linkplain" TITLE="[~Nueva Compañía~]">New</A>
+          <A HREF="#" onclick="createCompany()" CLASS="linkplain" TITLE="New Company">New</A>
 <% } %>
         </TD>
-        <TD VALIGN="middle">&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar Compañía~]"></TD>
+        <TD VALIGN="middle">&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete Company"></TD>
         <TD VALIGN="middle">
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain" TITLE="[~Eliminar Compañía~]">Delete</A>
+          <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain" TITLE="Delete Company">Delete</A>
 <% } else { %>
-          <A HREF="javascript:deleteCompanies()" CLASS="linkplain" TITLE="[~Eliminar Compañía~]">Delete</A>
+          <A HREF="javascript:deleteCompanies()" CLASS="linkplain" TITLE="Delete Company">Delete</A>
 <% } %>
         </TD>
-        <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Buscar Compañía~]"></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Find Company"></TD>
         <TD VALIGN="middle">
           <SELECT NAME="sel_searched" CLASS="combomini"><OPTION VALUE="<%=DB.nm_legal%>">Legal Name<OPTION VALUE="<%=DB.nm_commercial%>">Commercial Name<OPTION VALUE="<%=DB.id_sector%>">Sector<OPTION VALUE="<%=DB.id_legal%>">Legal Id<OPTION VALUE="<%=DB.id_status%>">Status<OPTION VALUE="<%=DB.id_ref%>">Reference</SELECT>
           <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>">
-	  &nbsp;<A HREF="#" onclick="findCompany();return false;" CLASS="linkplain" TITLE="[~Buscar Compañía~]">Search</A>	  
+	  &nbsp;<A HREF="#" onclick="findCompany();return false;" CLASS="linkplain" TITLE="Find Company">Search</A>	  
         </TD>
-        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="[~Descartar búsqueda~]"></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard find filter"></TD>
         <TD VALIGN="bottom">
-          <A HREF="#" onclick="document.forms[0].find.value='';findCompany();return false;" CLASS="linkplain" TITLE="[~Descartar búsqueda~]">Discard</A>
+          <A HREF="#" onclick="document.forms[0].find.value='';findCompany();return false;" CLASS="linkplain" TITLE="Discard find filter">Discard</A>
           <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;Show&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;results&nbsp;</FONT>
         </TD>
       </TR>

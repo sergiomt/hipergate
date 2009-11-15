@@ -1,4 +1,440 @@
-﻿/* ************************************************************** */
+﻿/*
+    DynAPI Distribution 3.0
+    DynObject, DynAPI Object, UserAgent, Library, Functions
+
+    The DynAPI Distribution is distributed under the terms of the GNU LGPL license.
+*/
+
+function DynObject() {
+    this.id = "DynObject"+DynObject._c++;
+    DynObject.all[this.id] = this;
+};
+var p = DynObject.prototype;
+p.getClassName = function() {return this._className};
+p.getClass = function() {return dynapi.frame[this._className]};
+p.isClass = function(n) {return DynObject.isClass(this._className,n)};
+p.addMethod = function(n,fn) {this[n] = fn};
+p.removeMethod = function(n) {this[n] = null};
+p.setID = function(id,isInline,noImports) {
+    if (this.id) delete DynObject.all[this.id];
+    this.id = id;
+    this.isInline=isInline;
+    this._noInlineValues=noImports;
+    DynObject.all[this.id] = this;
+};
+p.toString = function() {return "DynObject.all."+this.id};
+DynObject.all = [];
+DynObject._c = 0;
+DynObject.isClass = function(cn,n) {
+    if (cn == n) return true;
+    else {
+        var c = dynapi.frame[cn];
+        var p = c.prototype._pClassName;
+        if (p) return DynObject.isClass(p,n);
+        else return false;
+    }
+};
+
+function _UserAgent() {
+    var b = navigator.appName;
+    var v = this.version = navigator.appVersion;
+    var ua = navigator.userAgent.toLowerCase();
+    this.v = parseInt(v);
+    this.safari = ua.indexOf("safari")>-1;  // always check for safari & opera
+    this.opera = ua.indexOf("opera")>-1;    // before ns or ie
+    this.ns = !this.opera && !this.safari && (b=="Netscape");
+    this.ie = !this.opera && (b=="Microsoft Internet Explorer");
+    this.gecko = ua.indexOf('gecko')>-1; // check for gecko engine
+    if (this.ns) {
+        this.ns4 = (this.v==4);
+        this.ns6 = (this.v>=5);
+        this.b = "Netscape";
+    }else if (this.ie) {
+        this.ie4 = this.ie5 = this.ie55 = this.ie6 = false;
+        if (v.indexOf('MSIE 4')>0) {this.ie4 = true; this.v = 4;}
+        else if (v.indexOf('MSIE 5')>0) {this.ie5 = true; this.v = 5;}
+        else if (v.indexOf('MSIE 5.5')>0) {this.ie55 = true; this.v = 5.5;}
+        else if (v.indexOf('MSIE 6')>0) {this.ie6 = true; this.v = 6;}
+        this.b = "MSIE";
+    }else if (this.opera) {
+        this.v=parseInt(ua.substr(ua.indexOf("opera")+6,1)); // set opera version
+        this.opera6=(this.v>=6);
+        this.opera7=(this.v>=7);
+        this.b = "Opera";
+    }else if (this.safari) {
+        this.ns6 = (this.v>=5); // ns6 compatible correct?
+        this.b = "Safari";
+    }
+    this.dom = (document.createElement && document.appendChild && document.getElementsByTagName)? true : false;
+    this.def = (this.ie||this.dom);
+    this.win32 = ua.indexOf("win")>-1;
+    this.mac = ua.indexOf("mac")>-1;
+    this.other = (!this.win32 && !this.mac);
+    this.supported = (this.def||this.ns4||this.ns6||this.opera)? true:false;
+    this.broadband=false;
+    this._bws=new Date; // bandwidth timer start
+};
+
+function DynAPIObject() {
+    this.DynObject = DynObject;
+    this.DynObject();
+
+    this.version = '3.0.0-beta2';
+    this.loaded = false;
+
+    this.ua = new _UserAgent();
+
+    this._loadfn = [];
+    this._unloadfn = [];
+    var f = this.frame = window;
+
+    var url = f.document.location.href;
+    url = url.substring(0,url.lastIndexOf('/')+1);
+    this.documentPath = url;
+
+    var o = this;
+
+    this.library = {};
+    this.library.setPath = function(p) {o.library.path = p};
+
+    f.onload = function() {
+        o.loaded = true;
+        if (!o.ua.supported) return alert('Unsupported Browser. Exiting.');
+        if (o.library._create) o.library._create();  // calls dynapi._onLoad() after loading necessary files
+        else setTimeout(o+'._onLoad()',1);
+    };
+    f.onunload = function() {
+        for (var i=0;i<o._unloadfn.length;i++) o._unloadfn[i]();
+        if (o.document) {
+            o.document._destroy();
+            o.document = null;
+        }
+    };
+};
+p = DynAPIObject.prototype = new DynObject;
+
+p.onLoad = function(f) {
+    if (typeof(f)=="function") {
+        if (!this.loaded) this._loadfn[this._loadfn.length] = f;
+        else f();
+    }
+};
+p._onLoad = function(f) {
+    for (var i=0;i<this._loadfn.length;i++) this._loadfn[i]();
+};
+p.onUnload = function(f) {
+    if (typeof(f)=="function") this._unloadfn[this._unloadfn.length] = f;
+};
+p.setPrototype = function(sC,sP) {
+    var c = this.frame[sC];
+    var p = this.frame[sP];
+    if ((!c || !p) && this.ua.ns4 && this.library && this.library.elm) {
+        if (!c) c = this.library.elm[sC];
+        if (!p) p = this.library.elm[sP];
+    }
+    if (!c || !p) return alert('Prototype Error');
+    c.prototype = new p();
+    c.prototype._className = sC;
+    c.prototype._pClassName = sP;
+    c.toString = function() {return '['+sC+']'};
+    return c.prototype;
+};
+
+var dynapi = new DynAPIObject();
+
+dynapi.ximages={'__xCnTer__':0}; // eXtensible Images
+p._imageGetHTML=function(){
+    t= '<img src="'+this.src+'"'
+    +((this.width)? ' width="'+this.width+'"':'')
+    +((this.height)? ' height="'+this.height+'"':'')
+    +' border="0">';
+    return t;
+};
+
+dynapi.functions = {
+    removeFromArray : function(array, index, id) {
+        var which=(typeof(index)=="object")?index:array[index];
+        if (id) delete array[which.id];
+        else for (var i=0; i<array.length; i++) {
+            if (array[i]==which) {
+                if(array.splice) array.splice(i,1);
+                else {
+                    for(var x=i; x<array.length-1; x++) array[x]=array[x+1];
+                    array.length -= 1;
+                }
+                break;
+            }
+        }
+        return array;
+    },
+    removeFromObject : function(object, id) {
+        if(!dynapi.ua.opera) delete object[id];
+        else {
+            var o={};
+            for (var i in object) if(id!=i) o[i]=object[i];
+            object=o;
+        }
+        return object;
+    },
+    True : function() {return true},
+    False : function() {return false},
+    Null : function() {},
+    Zero : function() {return 0;},
+    Allow : function() {
+        event.cancelBubble = true;
+        return true;
+    },
+    Deny : function() {
+        event.cancelBubble = false;
+        return false;
+    },
+    getImage : function(src,w,h) {
+        img=(w!=null&&h!=null)? new Image(w,h) : new Image();
+        img.src=src;
+        img.getHTML=dynapi._imageGetHTML;
+        return img;
+    },
+    getURLArguments : function(o) {  // pass a string or frame/layer object
+        var url,l={};
+        if (typeof(o)=="string") url = o;
+        else if (dynapi.ua.ns4 && o.src) url = o.src;
+        else if (o.document) url = o.document.location.href;
+        else return l;
+        var s = url.substring(url.indexOf('?')+1);
+        var a = s.split('&');
+        for (var i=0;i<a.length;i++) {
+            var b = a[i].split('=');
+            l[b[0]] = unescape(b[1]);
+        }
+        return l;
+    },
+    getAnchorLocation : function(a,lyr){
+        var o,x=0,y=0;
+        if(lyr && !lyr.doc) lyr=null;
+        lyr=(lyr)? lyr:{doc:document,elm:document};
+        if(typeof(a)=='string') {
+            if(lyr.doc.all) a=lyr.doc.all[a];
+            else if(lyr.doc.getElementById) a=lyr.doc.getElementById(a);
+            else if(lyr.doc.layers) a=lyr.doc.anchors[a];
+        }
+        if(a) o=a;
+        else return;
+        if(lyr.doc.layers) { y+=o.y; x+=o.x;}
+        else if(lyr.doc.getElementById || lyr.doc.all){
+            while (o.offsetParent && lyr.elm!=o){
+                x+= o.offsetLeft;y+= o.offsetTop;
+                o = o.offsetParent;
+            }
+        }
+        return {x:x,y:y,anchor:a};
+    }
+};
+
+dynapi.documentArgs = dynapi.functions.getURLArguments(dynapi.frame);
+
+dynapi.debug = {};
+dynapi._debugBuffer = '';
+dPrint=function(s){var d=dynapi.debug; d.print(s)};
+dynapi.debug.print = function(s) {
+    //@IF:DEBUG[
+        if(s==null) s='';
+        dynapi._debugBuffer += s + '\n';
+    //]:DEBUG
+};
+
+// The DynAPI library system is optional, this can be removed if you want to include other scripts manually
+function DynAPILibrary() {
+    this.DynObject = DynObject;
+    this.DynObject();
+
+    // list of js files: this.scripts['../src/api/dynlayer_ie.js'] = {dep, objects, pkg, fn};
+    this.scripts = {};
+
+    // list of package names: this.packages['dynapi.api'] = dynapi.api = {_objects,_path}
+    this.packages = {};
+
+    // list of object names: this.objects['DynLayer'] = this.scripts['../src/api/dynlayer_ie.js']
+    this.objects = {};
+
+    this._c = 0;
+    this.loadList = [];
+    this.loadIndex = -1;
+    this.path = null;
+    this.busy = true;
+};
+p = dynapi.setPrototype('DynAPILibrary','DynObject');
+
+// can return a path specific to a package, eg. dynapi.library.getPath('dynapi.api') returns '/src/dynapi/api/'
+p.getPath = function(pkg) {
+    if (!pkg) pkg = 'dynapi';
+    if (this.packages[pkg]) return this.packages[pkg]._path;
+    return null;
+};
+
+// set dynapi path
+p.setPath = function(p,pkgFile) {
+    this.path = p;
+
+    // to-do: rearrange so add()'s can be done before setPath
+    //        full paths will then be determined when queued
+    //        need an extra argument on addPackage to specify whether the path is relative to this.path or not
+    // OR:    add functionality so that these package definitions can be loaded/included on the fly
+
+    // load pkgFile or 'ext/packages.js' file
+    var s='<script type="text/javascript" language="JavaScript" src="'
+    +((pkgFile)? pkgFile:p+'ext/packages.js')+'"><\/script>';
+    document.write(s);
+};
+
+// adds package(s) to the library
+p.addPackage = function(pkg, path) {
+    var ps;
+    if (pkg.indexOf('.')) ps = pkg.split('.');
+    else ps = [pkg];
+
+    var p = dynapi.frame;
+    for (var i=0;i<ps.length;i++) {  // returns the package object (eg. dynapi.api), or creates it if non-existant
+        if (!p[ps[i]]) p[ps[i]] = {};
+        p = p[ps[i]];
+    }
+    this.packages[pkg] = p;
+    p._objects = [];
+    p._path = path;
+    return p;
+};
+
+// add object(s) to the library
+p.add = function(name, src, dep, relSource) {
+    var objects = typeof(name)=="string"? [name] : name;
+    dep = (!dep)? [] : typeof(dep)=="string"? [dep] : dep;
+
+    var s,p,pkg;
+    if (objects[0].indexOf('.')) {
+        pkg = objects[0].substring(0,objects[0].lastIndexOf('.'));
+        if (pkg && this.packages[pkg]) {
+            p = this.packages[pkg];
+            if (relSource!=false) src = p._path + src;
+        }
+    }
+    if (!this.scripts[src]) s = this.scripts[src] = {};
+    else s = this.scripts[src];
+    s.objects = [];
+    s.dep = dep;
+    s.rdep = [];
+    s.src = src;
+    s.pkg = pkg;
+    s.loaded = false;
+    s.fn = null;
+
+    var n;
+    for (var i=0;i<objects.length;i++) {
+        n = objects[i];
+        if (pkg) n = n.substring(n.lastIndexOf('.')+1);
+        this.objects[n] = s;
+        s.objects[s.objects.length] = n;
+        if (p) p._objects[p._objects.length] = n;
+    }
+
+    return s;
+};
+// adds a dependency, whenever object "n" is loaded it will load object "d" beforehand
+p.addBefore = function(n, d) {
+    var s = this.objects[n];
+    if (s && this.objects[d]) s.dep[s.dep.length] = d;
+};
+// adds a reverse dependency, whenever object "n" is loaded it will load object "r" afterword
+p.addAfter = function(n, r) {
+    var s = this.objects[n];
+    if (s && this.objects[r]) s.rdep[s.rdep.length] = r;
+};
+
+// returns a list of js source filenames to load
+p._queue = function(n, list, force) {
+    var na=[], names=[],o;
+    if (list==null) list = [];
+    if (typeof(n)=="string") na = [n];
+    else na = n;
+
+    for (var i=0;i<na.length;i++) {
+        o = na[i];
+        if (typeof(o)=="string") {
+            if (this.packages[o])
+                for (var j in this.packages[o]._objects)
+                    names[names.length] = this.packages[o]._objects[j];
+            else names[names.length] = o;
+        }
+        else if (typeof(o)=="object" && o.length) {
+            list = this._queue(o, list, force);
+        }
+    }
+
+    var s;
+    for (var j=0;j<names.length;j++) {
+        s = this._queueObject(names[j], force);
+        if (s) {
+            if (s.dep)
+                for (var i=0;i<s.dep.length;i++)
+                    list = this._queue(s.dep[i], list, force);
+            list[list.length] = s.src;
+            // also include reverse deps
+            if (s.rdep.length) list = this._queue(s.rdep, list, force);
+        }
+    }
+    return list;
+};
+
+// determines whether to queue the script this object is in
+p._queueObject = function(n, f) {
+    if (n.indexOf('.')) {
+        var pkg = n.substring(0,n.lastIndexOf('.'));
+        if (this.packages[pkg]) n = n.substring(n.lastIndexOf('.')+1);
+    }
+    var s = this.objects[n];
+    if (s) {
+        if (!s.queued) {
+            if (f!=true && s.loaded) dynapi.debug.print('Library Warning: '+n+' is already loaded');
+            else {
+                s.queued = true;
+                s.loaded = false;
+                return s;
+            }
+        }
+    }
+    else dynapi.debug.print('Library Error: no library map for '+n);
+    return false;
+};
+
+// writes the <script> tag for the object
+p.include = function() {
+    var a = arguments;
+    if (a[0]==true) a=a[1]; // arguments used ONLY by packages.js
+    // buffer includes until packages(.js) are loaded
+    if (!this._pakLoaded) {
+        if(!this._buffer) this._buffer=[];
+        this._buffer[this._buffer.length]=a;
+        return;
+    }
+    if (dynapi.loaded) this.load(a);
+    else {
+        var list = this._queue(a);
+        var src;
+        for (var i=0;i<list.length;i++) {
+            src = list[i];
+            this.scripts[src].loaded = true;
+            dynapi.frame.document.write('<script type="text/javascript" language="JavaScript" src="'+src+'"><\/script>');
+        }
+    }
+};
+p.load = p.reload = p.loadScript = p.reloadScript = function(n) {
+    dynapi.debug.print('Warning: dynapi.library load extensions not included');
+};
+dynapi.library = new DynAPILibrary();
+
+// deprecated
+var DynAPI = dynapi;
+
+
+/* ************************************************************** */
 /* Esta es la parte común del integrador, no se debería tocar...  */
 /* ************************************************************** */
 
@@ -51,275 +487,44 @@ function MM_swapImage() { //v3.0
   if ((x=MM_findObj(a[i]))!=null){document.MM_sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}
 }
 
-DynObject = function() {
-	this.setID("DynObject"+(DynObject.Count++));
-	this.isChild = false;
-	this.created = false;
-	this.parent = null;
-	this.children = [];
-	//added to counter inheritance bug (#425789)
-	this.eventListeners = [];
-	this.hasEventListeners = false;
-};
-DynObject.prototype.getClass = function() { return this.constructor };
-DynObject.prototype.setID = function(id) {
-	if (this.id) delete DynObject.all[this.id];
-	this.id = id;
-	DynObject.all[this.id] = this;
-};
-DynObject.prototype.addChild = function(c) {
-	if(c.isChild) c.parent.removeChild(c);
-	c.isChild = true;
-	c.parent = this;
-	if(this.created) c.create()
-	this.children[this.children.length] = c;
-	return c;
-};
-DynObject.prototype.removeChild = function(c) {
-	var l = this.children.length;
-	for(var i=0;i<l && this.children[i]!=c;i++);
-	if(i!=l) {
-		c.invokeEvent("beforeremove");
-		c.specificRemove();
-		c.created=false;
-		c.invokeEvent("remove");
-		c.isChild = false;
-		c.parent = null;
-		this.children[i] = this.children[l-1];
-		this.children[l-1] = null;
-		this.children.length--;
-	}
-};
-DynObject.prototype.deleteFromParent = function () {
-	if(this.parent) this.parent.deleteChild(this);
-};
-DynObject.prototype.removeFromParent = function () {
-	if(this.parent) this.parent.removeChild(this);
-};
-DynObject.prototype.create = function() {
-	this.flagPrecreate();
-	this.specificCreate();
-	this.created = true;
-	var l = this.children.length;
-	for(var i=0;i<l;i++) this.children[i].create()
-	this.invokeEvent("create");
-};
-DynObject.prototype.flagPrecreate = function() {
-	if (this.precreated) return;
-	var l=this.children.length;
-	for (var i=0; i<l;  i++) this.children[i].flagPrecreate();
-	this.invokeEvent('precreate');
-	this.precreated=true;
-};
-DynObject.prototype.del = function() {
-	this.deleteAllChildren();
-	this.invokeEvent("beforeremove");
-	this.specificRemove();
-	this.precreated = this.created = false;
-	this.invokeEvent("remove");
-	};
-DynObject.prototype.deleteChild = function(c) {
-	var l = this.children.length;
-	for(var i=0;i<l && this.children[i]!=c;i++);
-	if(i!=l) {
-		this.children[i] = this.children[l-1];
-		this.children[l-1] = null;
-		this.children.length--;
-		c.del()
-		c = null;
-	}
-};
-DynObject.prototype.deleteAllChildren = function() {
-	var l = this.children.length;
-	for(var i=0;i<l;i++) {
-		this.children[i].del();
-		delete this.children[i];
-	}
-	this.children = [];
-};
-DynObject.prototype.toString = function() {
-	return "DynObject.all."+this.id
-};
-DynObject.prototype.getAll = function() {
-	var ret = [];
-	var temp;
-	var l = this.children.length;
-	for(var i=0;i<l;i++) {
-		ret[this.children[i].id] = this.children[i];
-		temp = this.children[i].getAll();
-		for(var j in temp) ret[j] = temp[j];
-	}
-	return ret
-};
-DynObject.prototype.isParentOf = function(obj,equality) {
-	if(!obj) return false
-	return (equality && this==obj) || this.getAll()[obj.id]==obj
-}
-DynObject.prototype.isChildOf = function(obj,equality) {
-	if(!obj) return false
-	return (equality && this==obj) || obj.getAll()[this.id]==this
-}
-DynObject.prototype.specificCreate	= function() {};
-DynObject.prototype.specificRemove	= function() {};
-DynObject.prototype.invokeEvent		= function() {};
-DynObject.Count = 0;
-DynObject.all = [];
-Methods = {
-	removeFromArray : function(array, index, id) {
-		var which=(typeof(index)=="object")?index:array[index];
-		if (id) delete array[which.id];
-        	else for (var i=0; i<array.length; i++)
-			if (array[i] == which) {
-				if(array.splice) array.splice(i,1);
-				else {	for(var x=i; x<array.length-1; x++) array[x]=array[x+1];
-         				array.length -= 1; }
-			break;
-			}
-		return array;
-	},
-	getContainerLayerOf : function(element) {
-		if(!element) return null
-		if(is.def&&!is.ie) while (!element.lyrobj && element.parentNode && element.parentNode!=element) element=element.parentNode;
-		else if(is.ie) while (!element.lyrobj && element.parentElement && element.parentElement!=element) element=element.parentElement;
-		return element.lyrobj
-	}
-};
-DynAPIObject = function() {
-	this.DynObject = DynObject;
-	this.DynObject();
+dynapi.library.setPath(webserver_param+'/javascript/dynapi3/');
+dynapi.library.include('dynapi.api');
+dynapi.library.include('dynapi.api.ext.DragEvent');
 
-	this.loaded = false;
-	this.librarypath = '';
-	this.packages = [];
-	this.errorHandling = true;
-	this.returnErrors = true;
-	this.onLoadCodes = [];
-	this.onUnLoadCodes = [];
-	this.onResizeCodes = [];
-}
-DynAPIObject.prototype = new DynObject();
-DynAPIObject.prototype.setLibraryPath = function(path) {
-	if (path.substring(path.length-1)!='/') path+='/';
-	this.librarypath=path;
-}
-DynAPIObject.prototype.addPackage = function(pckg) {
-	if (this.packages[pckg]) return;
-	this.packages[pckg] = { libs: [] };
-}
-DynAPIObject.prototype.addLibrary = function(path,files) {
-	var pckg = path.substring(0,path.indexOf('.'));
-	if (!pckg) {
-		alert("DynAPI Error: Incorrect DynAPI.addLibrary usage");
-		return;
-	}
-	var name = path.substring(path.indexOf('.')+1);
-	if (!this.packages[pckg]) this.addPackage(pckg);
-	if (this.packages[pckg].libs[name]) {
-		alert("DynAPI Error: Library "+name+" already exists");
-		return;
-	}
-	this.packages[pckg].libs[name] = files;
-}
-DynAPIObject.prototype.include = function(src,pth) {
-	src=src.split('.');
-	if (src[src.length-1] == 'js') src.length -= 1;
-	var path=pth||this.librarypath||'';
-	if (path.substr(path.length-1) != "/") path += "/";
-	var pckg=src[0];
-	var grp=src[1];
-	var file=src[2];
-	if (file=='*') {
-		if (this.packages[pckg]) group=this.packages[pckg].libs[grp];
-		if (group) for (var i=0;i<group.length;i++) document.write('<script language="Javascript1.2" src="'+path+pckg+'/'+grp+'/'+group[i]+'.js"><\/script>');
-		else alert('include()\n\nThe following package could not be loaded:\n'+src+'\n\nmake sure you specified the correct path.');
-	} else document.write('<script language="Javascript1.2" src="'+path+src.join('/')+'.js"><\/script>');
-}
-DynAPIObject.prototype.errorHandler = function (msg, url, lno) {
-	if (!this.loaded || !this.errorHandling) return false;
-	if (is.ie) {
-		lno-=1;
-		alert("DynAPI reported an error\n\nError in project: '" + url + "'.\nLine number: " + lno + ".\n\nMessage: " + msg);
-	} else if (is.ns) {
-		alert("DynAPI reported an error\n\nError in file: '" + url + "'.\nLine number: " + lno + ".\n\nMessage: " + msg);
-	} else return false;
-	return this.returnErrors;
-}
-DynAPIObject.prototype.addLoadFunction = function(f) {
-	this.onLoadCodes[this.onLoadCodes.length] = f;
-}
-DynAPIObject.prototype.addUnLoadFunction = function(f) {
-	this.onUnLoadCodes[this.onUnLoadCodes.length] = f;
-}
-DynAPIObject.prototype.addResizeFunction = function(f) {
-	this.onResizeCodes[this.onResizeCodes.length] = f;
-}
-DynAPIObject.prototype.loadHandler = function() {
-	this.create();
-	eval(this.onLoadCodes.join(";"));
-	if (this.onLoad) this.onLoad();
-	this.loaded=true;
-}
-DynAPIObject.prototype.unloadHandler = function() {
-	if (!is.ns4) this.deleteAllChildren();
-	eval(this.onUnLoadCodes.join(";"));
-	if (this.onUnload) this.onUnload();
-}
-DynAPIObject.prototype.resizeHandler = function() {
-	eval(this.onResizeCodes.join(";"));
-	if (this.onResize) this.onResize();
-}
+var myLayer;
+var myDragLayer;
 
-// Create base objects
-DynAPI = new DynAPIObject();
-DynLayer=DynDocument=null
+dynapi.onLoad(init);
 
-// Native events
-onload = function() { DynAPI.loadHandler(); }
-onunload = function() { DynAPI.unloadHandler(); }
-onerror = function(msg, url, lno) { DynAPI.errorHandler(msg, url, lno); }
-onresize = function() { DynAPI.resizeHandler(); }
-
-// Add base packages
-DynAPI.addPackage('dynapi');
-DynAPI.addLibrary('dynapi.api'  ,["browser","dyndocument","dynlayer"]);
-DynAPI.addLibrary('dynapi.event',["listeners","mouse","dragevent","keyboard"]);
-DynAPI.addLibrary('dynapi.ext'  ,["inline","layer","dragdrop","functions"]);
-DynAPI.addLibrary('dynapi.gui'  ,["viewport","dynimage","button","buttonimage","label","list","loadpanel","pushpanel","scrollbar","scrollpane","sprite"]);
-DynAPI.addLibrary('dynapi.util' ,["circleanim","cookies","debug","thread","hoveranim","imganim","pathanim","console"]);
-
-DynAPI.setLibraryPath(webserver_param + '/lib/')
-DynAPI.include('dynapi.api.*');
-DynAPI.include('dynapi.event.*');
-
-DynAPI.onLoad=function() {
-  
+	function init() {  
   // Layer para el botón de cerrar integrador
   myLayer = new DynLayer();
   myLayer.setSize(330,410);
   myLayer.setBgColor('');
-  myLayer.moveTo(420,120);
+  myLayer.setLocation(420,120);
   //myLayer.setHTML('<MAP NAME="fondo_integrador1"><AREA SHAPE=RECT COORDS="290,6,300,16" HREF="javascript:ocultarIntegrador()" ALT="[~Cerrar Panel de Edición~]"><AREA SHAPE=RECT COORDS="296,40,302,49" onMouseOut="pararInt()" onMouseOver="subirInt()"><AREA SHAPE=RECT COORDS="296,357,303,367" onMouseOut="pararInt()" onMouseOver="bajarInt()"></MAP><table cellspacing="0" cellpadding="0"><tr><td oncontextmenu="return false"><img src="../images/images/integrador/fondo_integrador.gif" usemap="#fondo_integrador1" width="320" height="400" border="0" galleryimg="no" oncontextmenu="return false"></td></tr></table>');
   myLayer.setHTML('<MAP NAME="fondo_integrador1"><AREA SHAPE=RECT COORDS="270,6,300,26" HREF="javascript:ocultarIntegrador()" ALT="[~Cerrar Panel de Edición~]"></MAP><table cellspacing="0" cellpadding="0"><tr><td oncontextmenu="return false"><img src="../../../../../../images/images/integrador/fondo_integrador.gif" usemap="#fondo_integrador1" width="320" height="400" border="0" galleryimg="no" oncontextmenu="return false"></td></tr></table>');
-  this.document.addChild(myLayer);
-  myLayer.css.paddingTop="1px";
-  myLayer.css.visibility="inherit";
+  dynapi.document.addChild(myLayer);
+  //myLayer.css.paddingTop="1px";
+  //myLayer.css.visibility="inherit";
 
-
-  
   // Layer para el menu de bloques
   myDragLayer = new DynLayer();
   myDragLayer.setSize(283,340);
   myDragLayer.setBgColor('');
-  myDragLayer.moveTo(20,22);
+  myDragLayer.setLocation(20,22);
   myDragLayer.setHTML(integradorHTML);  
   myLayer.addChild(myDragLayer);
-  myDragLayer.css.paddingTop="1px";
-  myDragLayer.css.visibility="inherit";
+  //myDragLayer.css.paddingTop="1px";
+  //myDragLayer.css.visibility="inherit";
 
   DragEvent.setDragBoundary(myLayer,0,screen.width-20,1000,0);
   DragEvent.enableDragEvents(myLayer);
+  /*
   myListener = new EventListener(DynAPI.document);
   myListener.onmousedown=function(e) { e.setBubble(false); }
   myDragLayer.addEventListener(myListener);
+  */
   a=0;
 }
+

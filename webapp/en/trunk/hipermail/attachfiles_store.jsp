@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.io.File,java.util.Enumeration,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.oreilly.servlet.MultipartRequest,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.io.File,java.util.Enumeration,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.oreilly.servlet.MultipartRequest,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2004  Know Gate S.L. All rights reserved.
@@ -124,11 +124,7 @@
   }
   catch (SQLException e) {
     if (null!=oStmt) { try {oStmt.close(); } catch (Exception ignore) {} }
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("attachfiles_store");      
-      }
+    disposeConnection(oConn,"attachfiles_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }

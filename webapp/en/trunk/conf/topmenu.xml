@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <menu>
   <options>
     <option name="start">
@@ -83,6 +83,9 @@
           <option name="campaigns">
             <mask/><title><![CDATA[Campaigns]]></title><href>../marketing/campaign_list.jsp?selected=3&amp;subselected=0</href><forbid/>
           </option>      
+          <option name="activities">
+            <mask/><title><![CDATA[Events]]></title><href>../marketing/activity_list.jsp?selected=3&amp;subselected=1</href><forbid/>
+          </option>      
       </suboptions>
     </option>
     <option name="projtrack">
@@ -140,7 +143,7 @@
           </option>
 					<!--
           <option name="wiki">
-            <mask/><title><![CDATA[[~Wiki~]]]></title><href>../wiki/wiki_top_f.htm?selected=6&amp;subselected=1</href><forbid/>
+            <mask/><title><![CDATA[Wiki]]></title><href>../wiki/wiki_top_f.htm?selected=6&amp;subselected=1</href><forbid/>
             <suboptions/>
           </option>
           -->
@@ -185,7 +188,7 @@
       <mask>22</mask><title><![CDATA[Training]]></title><href>../training/courses_listing.jsp?selected=8&amp;subselected=-1</href><forbid/>
       <suboptions>
           <option name="courses">
-            <mask/><title><![CDATA[[~Catálogo Formativo~]]]></title><href>../training/courses_listing.jsp?selected=8&amp;subselected=0</href><forbid/>
+            <mask/><title><![CDATA[Formative Catalog]]></title><href>../training/courses_listing.jsp?selected=8&amp;subselected=0</href><forbid/>
             <suboptions/>
           </option>
           <option name="subjects">
@@ -193,7 +196,7 @@
             <suboptions/>
           </option>
           <option name="academiccourses">
-            <mask/><title><![CDATA[[~Convocatorias~]]]></title><href>../training/acourses_listing.jsp?selected=8&amp;subselected=2</href><forbid/>
+            <mask/><title><![CDATA[Calls]]></title><href>../training/acourses_listing.jsp?selected=8&amp;subselected=2</href><forbid/>
             <suboptions/>
           </option>
           <option name="alumni">

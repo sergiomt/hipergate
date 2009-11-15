@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.LinkedList,java.util.ListIterator,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.*,com.knowgate.hipergate.DBLanguages,com.knowgate.hipergate.Term,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.LinkedList,java.util.ListIterator,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.*,com.knowgate.hipergate.DBLanguages,com.knowgate.hipergate.Term,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/customattrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
 <%@ include file="contact_edit.jspf" %>
@@ -80,7 +80,11 @@
 
     <TABLE WIDTH="100%">
       <TR><TD>
-        <TABLE ALIGN="center">
+        <TABLE ALIGN="center" SUMMARY="Contact Fields">
+          <TR>
+            <TD ALIGN="right" WIDTH="110"><FONT CLASS="textsmall">Creation Date</FONT></TD>
+            <TD ALIGN="left" WIDTH="370" CLASS="textsmall"><%=sCreationdate%></TD>
+          </TR>
           <TR>
             <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">Private:</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
@@ -108,7 +112,7 @@
             <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Company:</FONT></TD>            
             <TD ALIGN="left" WIDTH="420">
               <INPUT TYPE="hidden" NAME="gu_company" VALUE="<%=oCont.getStringNull(DB.gu_company,"")%>">
-              <INPUT TYPE="text" SIZE="34" NAME="nm_company" MAXLENGTH="70" VALUE="<% if (iCompanyCount>0) out.write(oContanies.getString(DB.nm_legal,0)); %>" onchange="document.forms['fixedAttrs'].gu_company.value='newguid';">
+              <INPUT TYPE="text" SIZE="40" NAME="nm_company" MAXLENGTH="70" VALUE="<% if (iCompanyCount>0) out.write(oContanies.getString(DB.nm_legal,0)); %>" onchange="document.forms['fixedAttrs'].gu_company.value='newguid';">
               &nbsp;&nbsp;<A HREF="javascript:reference(1)" TITLE="View Compnay Listing"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View"></A>
               &nbsp;&nbsp;<A HREF="#" onclick="document.forms[0].gu_company.value=document.forms[0].nm_company.value=''" TITLE="Remove from Company"><IMG SRC="../images/images/delete.gif" WIDTH="13" HEIGHT="13" BORDER="0" ALT="Delete"></A>
             </TD>
@@ -151,7 +155,7 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">[~Nacionalidad:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Nationality:</FONT></TD>
             <TD ALIGN="left" WIDTH="420">
               <SELECT CLASS="combomini" NAME="id_nationality"><OPTION VALUE=""></OPTION><%=sCountriesLookUp%></SELECT>
             </TD>
@@ -202,7 +206,7 @@
       <TR>
     	<TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>
-          <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acciÃ³n~]')">&nbsp;&nbsp;&nbsp;
+          <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('Your current priviledges level as Guest does not allow you to perform this action')">&nbsp;&nbsp;&nbsp;
 <% } else { %>
           <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
 <% } %>

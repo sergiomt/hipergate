@@ -19,7 +19,7 @@
     <FORM>
     <CENTER>
 <% if (bIsGuest) { %>
-      <INPUT TYPE="button" CLASS="pushbutton" VALUE="Next >>" onClick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acciÃ³n~]')">
+      <INPUT TYPE="button" CLASS="pushbutton" VALUE="Next >>" onClick="alert('Your current priviledges level as Guest does not allow you to perform this action')">
 <% } else { %>
       <INPUT TYPE="button" CLASS="pushbutton" VALUE="Next >>" onClick="window.top.frames[1].choose()">
 <% } %>

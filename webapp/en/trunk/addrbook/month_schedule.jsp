@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.Date,java.text.SimpleDateFormat,java.net.URLDecoder,java.sql.SQLException,java.sql.Timestamp,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Calendar,com.knowgate.billing.Account,com.knowgate.addrbook.WorkingCalendar" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Date,java.text.SimpleDateFormat,java.net.URLDecoder,java.sql.SQLException,java.sql.Timestamp,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Calendar,com.knowgate.billing.Account,com.knowgate.addrbook.WorkingCalendar" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
 /*
@@ -215,10 +215,10 @@
       
       function deleteMeeting(gu,tx,dt) {
         if (tx) {
-          if (confirm("[~¿Está seguro de que desea eliminar la actividad ~] " + tx + "?"))
+          if (confirm("Are you sure that you want to delete activity  " + tx + "?"))
             window.location = "meeting_edit_delete.jsp?id_domain=" + getCookie("domainid") + "&gu_workarea=" + getCookie("workarea") + "&gu_meeting=" + gu + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&year=<%=year%>&month=<%=month%>&day="+dt+"&referer=month_schedule";
 	      } else {
-          if (confirm("[~¿Está seguro de que desea eliminar la actividad ~]?"))
+          if (confirm("Are you sure that you want to delete activity ?"))
             window.location = "meeting_edit_delete.jsp?id_domain=" + getCookie("domainid") + "&gu_workarea=" + getCookie("workarea") + "&gu_meeting=" + gu + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&year=<%=year%>&month=<%=month%>&day="+dt+"&referer=month_schedule";
 	      }
       }
@@ -292,7 +292,7 @@
             <TD>
               <IMG SRC="../images/images/new16x16.gif" BORDER="0">&nbsp;
 <% if (bIsGuest)        
-     out.write("              <A HREF=\"#\" onClick=\"alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')\" CLASS=\"linkplain\" TITLE=\"New Activity\">New</A>");
+     out.write("              <A HREF=\"#\" onClick=\"alert('Your credential level as Guest does not allow you to perform this action')\" CLASS=\"linkplain\" TITLE=\"New Activity\">New</A>");
    else
      out.write("              <A HREF=\"#\" onClick=\"createMeeting();return false\" CLASS=\"linkplain\" TITLE=\"New Activity\">New</A>");
 %>
@@ -370,11 +370,11 @@
 
                		  if (bItsMe)
                       if (bIsGuest && !bIsAdmin)
-                        out.write("<FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"#\" onClick=\"alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')\" TITLE=\"Delete\">x</A>]</FONT><BR>\n");
+                        out.write("<FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"#\" onClick=\"alert('Your credential level as Guest does not allow you to perform this action')\" TITLE=\"Delete\">x</A>]</FONT><BR>\n");
                  		  else if (!bIsAdmin && !oMeetings.getString(0,iLastMeeting).equals(getCookie(request, "userid", "")))
                         out.write("<FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"#\" onClick=\"alert('It is not allowed to delete activities not created by you')\" TITLE=\"Delete\">x</A>]</FONT><BR>\n");
                  		  else
-                   		  out.write("<FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"javascript:deleteMeeting('" + oMeetings.getString(DB.gu_meeting,iLastMeeting) + "','" + oMeetings.getStringNull(DB.tx_meeting,iLastMeeting,"[~Sin titulo~]").replace((char)39,'´') + "','"+String.valueOf(oMeetings.getDate(1,iLastMeeting).getDate())+"')\" TITLE=\"Delete\">x</A>]</FONT><BR>\n");
+                   		  out.write("<FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"javascript:deleteMeeting('" + oMeetings.getString(DB.gu_meeting,iLastMeeting) + "','" + oMeetings.getStringNull(DB.tx_meeting,iLastMeeting,"Untitled").replace((char)39,'´') + "','"+String.valueOf(oMeetings.getDate(1,iLastMeeting).getDate())+"')\" TITLE=\"Delete\">x</A>]</FONT><BR>\n");
                     } else {
                       out.write ("<FONT CLASS=\"textsmall\">" + DBBind.escape(oMeetings.getDate(1,iLastMeeting),"shortTime") + "</FONT><IMG SRC=\"../images/images/addrbook/smalllock.gif\" BORDER=\"0\"><BR>");
                     }

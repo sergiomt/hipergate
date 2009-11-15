@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.Vector,java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.addrbook.FellowTitle" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Vector,java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.addrbook.FellowTitle" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%!
@@ -143,7 +143,7 @@
       // ------------------------------------------------------
 
       function deleteFellowTitle() {
-	if (window.confirm("[~¿Está seguro de que desea eliminar el Cargo ~]" + document.forms[0].de_title.value + "?"))
+	if (window.confirm("Are you sure you want to delete position:" + document.forms[0].de_title.value + "?"))
 	  window.document.location = "fellowtitle_delete.jsp?gu_workarea=" + getURLParam("gu_workarea") + "&de_title=" + escape(document.forms[0].de_title.value);
       } // deleteFellowTitle
 
@@ -181,7 +181,7 @@
         }
 
         if (!check_varname(frm.de_title.value)) {
-          alert("[~El Nombre del Cargo contiene caracteres no válidos~]");
+          alert("Position name contains invalid characters");
           return false;        
         }
 
@@ -233,8 +233,8 @@
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>    
-              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">&nbsp;&nbsp;&nbsp;
-              <INPUT TYPE="button" ACCESSKEY="d" VALUE="Delete" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+d" onclick="alert('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')">&nbsp;&nbsp;&nbsp;
+              <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('Your credential level as Guest does not allow you to perform this action')">&nbsp;&nbsp;&nbsp;
+              <INPUT TYPE="button" ACCESSKEY="d" VALUE="Delete" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+d" onclick="alert('Your credential level as Guest does not allow you to perform this action')">&nbsp;&nbsp;&nbsp;
 <% } else { %> 
               <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;&nbsp;&nbsp;
               <INPUT TYPE="button" ACCESSKEY="d" VALUE="Delete" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+d" onclick="deleteFellowTitle()">&nbsp;&nbsp;&nbsp;

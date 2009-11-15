@@ -1,4 +1,4 @@
-﻿<%@ page import="org.postgresql.Driver,javax.naming.NamingException,javax.naming.Context,javax.naming.InitialContext,javax.sql.DataSource,javax.servlet.http.HttpServletRequest,java.sql.*,com.knowgate.debug.StackTraceUtil,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="org.postgresql.Driver,javax.naming.NamingException,javax.naming.Context,javax.naming.InitialContext,javax.sql.DataSource,javax.servlet.http.HttpServletRequest,java.sql.*,com.knowgate.debug.StackTraceUtil,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%!
 
   public static String getProp(HttpServletRequest oReq, String sConf, String sName) {

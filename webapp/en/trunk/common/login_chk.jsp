@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.CallableStatement,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.workareas.WorkArea,com.knowgate.billing.Account,com.knowgate.cache.DistributedCachePeer,com.knowgate.misc.Environment,com.knowgate.misc.MD5" language="java" session="false" buffer="8kb" autoFlush="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.CallableStatement,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.workareas.WorkArea,com.knowgate.billing.Account,com.knowgate.cache.DistributedCachePeer,com.knowgate.misc.Environment,com.knowgate.misc.MD5" language="java" session="false" buffer="8kb" autoFlush="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -157,7 +157,7 @@
     
     if (DebugFile.trace) DebugFile.writeln("ERROR: login_chk.jsp -> Error leyendo cookies nickcookie=\""+sNickCookie+"\" nickname="+request.getParameter("nickname")+"\"");
     
-    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Impossible to start session&desc=[~No se puede conectar con el sistema porque su navegador tiene deshabilitadas las cookies de sesión~]<BR>authmethod="+sAuthMethod+"<BR>context="+sContext+"<BR>nickname="+request.getParameter("nickname")+"<BR>nickcookie="+sNickCookie+"&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Impossible to start session&desc=Cannot connect to system because your browser has disabled cookies<BR>authmethod="+sAuthMethod+"<BR>context="+sContext+"<BR>nickname="+request.getParameter("nickname")+"<BR>nickcookie="+sNickCookie+"&resume=_back"));
     return;
   }
   */
@@ -527,7 +527,7 @@
         if (!oConn.isClosed())
           oConn.close("login");
       oConn = null;  
-      response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=User Authentification Service Out of Order&desc=" + e.getMessage() + "  [~El sistema de autentificación de usuarios esta temporalmente fuera de servicio por favor vuelva a intentarlo mas tarde.~]" + "&resume=_back"));
+      response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=User Authentification Service Out of Order&desc=" + e.getMessage() + "  User authentification system temporaly out of order, please retry later." + "&resume=_back"));
     }
 
     catch (IllegalStateException e) {
@@ -553,7 +553,7 @@
         response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Invalid User&desc=User not found at database&resume=_back"));  
         return;
       case ACL.INVALID_PASSWORD:
-        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=[~Contraseña No Válida~]&desc=[~La contraseña especificada para el usuario no es válida~]&resume=_back"));  
+        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Invalid password&desc=User password is not valid.&resume=_back"));  
         return;
       case ACL.ACCOUNT_DEACTIVATED:
         response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Account was deactivated&desc=User account disabled&resume=_back"));

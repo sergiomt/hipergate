@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.HashMap,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.HashMap,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
 <%
@@ -217,7 +217,7 @@
                   <IMG SRC="<%=sPicture%>" WIDTH="24" HEIGHT="24" BORDER="0" ALIGN="MIDDLE">&nbsp;<%=sContact%><%=sCompany%>
               </TD>
               <TD CLASS="strip<%=(i%2)+1%>" VALIGN="MIDDLE"><%=nullif(oCompanies.getString(5,i),"")%></TD>
-              <TD CLASS="strip<%=((i%2)+1)%>" VALIGN="MIDDLE" ALIGN="center"><INPUT <%=(oCompanies.getString(5,i)==null?"disabled TITLE=\"[~No puede seleccionar esta entrada porque no tiene dirección asociada~]\"":"")%> VALUE="1" TYPE="checkbox" NAME="check-<%=i%>">
+              <TD CLASS="strip<%=((i%2)+1)%>" VALIGN="MIDDLE" ALIGN="center"><INPUT <%=(oCompanies.getString(5,i)==null?"disabled TITLE=\"This entry may not be selected because it does not have an address.\"":"")%> VALUE="1" TYPE="checkbox" NAME="check-<%=i%>">
               <INPUT TYPE="HIDDEN" NAME="guid-<%=i%>" VALUE="'<%=nullif(oCompanies.getString(0,i),"NULL")%>-<%=nullif(oCompanies.getString(1,i),"NULL")%>'">
             </TR>
 <%

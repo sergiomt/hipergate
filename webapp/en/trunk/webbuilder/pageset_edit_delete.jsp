@@ -1,6 +1,5 @@
-﻿<%@ page import="java.util.*,java.io.*,java.math.*,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.dataxslt.db.*,com.knowgate.dfs.FileSystem,com.knowgate.misc.*" language="java" session="false" %>
-<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %>
-<%
+<%@ page import="java.util.*,java.io.*,java.math.*,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.dataxslt.db.*,com.knowgate.dfs.FileSystem,com.knowgate.hipermail.AdHocMailing,com.knowgate.misc.*" language="java" session="false" %>
+<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -39,11 +38,12 @@
   String sStorage = Environment.getProfilePath(GlobalDBBind.getProfileName(),"storage");
 
   String sDefWrkArPut = request.getRealPath(request.getServletPath());
-  sDefWrkArPut = sDefWrkArPut.substring(0,sDefWrkArPut.lastIndexOf(java.io.File.separator));
-  sDefWrkArPut = sDefWrkArPut.substring(0,sDefWrkArPut.lastIndexOf(java.io.File.separator));
-  sDefWrkArPut = sDefWrkArPut + java.io.File.separator + "workareas";
+  sDefWrkArPut = sDefWrkArPut.substring(0,sDefWrkArPut.lastIndexOf(File.separator));
+  sDefWrkArPut = sDefWrkArPut.substring(0,sDefWrkArPut.lastIndexOf(File.separator));
+  sDefWrkArPut = sDefWrkArPut + File.separator + "workareas" + File.separator;
 
-  String sEnvWorkPut = Environment.getProfileVar(GlobalDBBind.getProfileName(),"workareasput", sDefWrkArPut);  
+  String sEnvWorkPut = nullif(GlobalDBBind.getPropertyPath("workareasput"),sDefWrkArPut);  
+  String sHtmlDir = sEnvWorkPut + gu_workarea + File.separator + "apps" + File.separator + "Hipermail" + File.separator + "html" + File.separator;
   String sShellDir = Environment.getProfileVar(GlobalDBBind.getProfileName(), "shelldir", sStorage + File.separator + "shell");
   
   String sDocType = request.getParameter("doctype");
@@ -55,9 +55,9 @@
   
   //Ruta a directorio de almacenamiento de archivos HTML
   if (sDocType.equals("newsletter"))
-   sHTMLPath = new String(sEnvWorkPut + File.separator + gu_workarea + File.separator + "apps" + File.separator + "Mailwire" + File.separator + "html");
+   sHTMLPath = new String(sEnvWorkPut + gu_workarea + File.separator + "apps" + File.separator + "Mailwire" + File.separator + "html");
   else
-   sHTMLPath = new String(sEnvWorkPut + File.separator + gu_workarea + File.separator + "apps" + File.separator + "WebBuilder" + File.separator + "html");
+   sHTMLPath = new String(sEnvWorkPut + gu_workarea + File.separator + "apps" + File.separator + "WebBuilder" + File.separator + "html");
   
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
   
@@ -65,6 +65,7 @@
   JDCConnection oCon = null;
   String[] aPKs = new String[1];
   PageSetDB oPageSetDB = new PageSetDB();
+  AdHocMailing oAdHocMail = new AdHocMailing();
   FileSystem oFs = new FileSystem(Environment.getProfile(GlobalDBBind.getProfileName()));
     
   //Recuperar datos de formulario
@@ -94,7 +95,12 @@
       
         oFs.delete("file://" + sXMLFilePage);
         oFs.delete("file://" + sHTMLDirPage, sShellDir + "/cleanup.txt");
-      } // fi
+
+      } else if (oAdHocMail.load(oCon,aPKs)) {
+
+        oFs.rmdir("file://" + sHtmlDir + Gadgets.leftPad(String.valueOf(oAdHocMail.getInt(DB.pg_mailing)),'0',5));
+        oAdHocMail.delete(oCon);
+      }
     } // next
   
     // Ejecutar commit y liberar conexión

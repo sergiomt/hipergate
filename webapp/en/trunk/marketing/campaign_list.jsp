@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.io.File,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.QueryByForm" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.io.File,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.QueryByForm" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
  
@@ -154,14 +154,16 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/dynapi.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
-    DynAPI.setLibraryPath('../javascript/dynapi/lib/');
-    DynAPI.include('dynapi.api.*');
+    dynapi.library.setPath('../javascript/dynapi3/');
+    dynapi.library.include('dynapi.api.DynLayer');
 
     var menuLayer,addrLayer;
-    DynAPI.onLoad = function() { 
+    dynapi.onLoad(init);
+    function init() {
+ 
       setCombos();
       menuLayer = new DynLayer();
       menuLayer.setWidth(160);
@@ -169,8 +171,8 @@
     }
     //-->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/rightmenu.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi/floatdiv.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/floatdiv.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
         // Global variables for moving the clicked row to the context menu
@@ -214,7 +216,7 @@
 	  var frm = document.forms[0];
 	  var chi = frm.checkeditems;
 	  	  
-	  if (window.confirm("[~Está seguro de que desea eliminar las campañas seleccionadas~]")) {
+	  if (window.confirm("Are you sure that you want to delete the selected campaigns?")) {
 	  	  
 	    chi.value = "";	  	  
 	    frm.action = "campaign_edit_delete.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
@@ -393,7 +395,7 @@
             sInstNm = oCampaigns.getString(1,i);
             
 %>          <TR HEIGHT="14">
-              <TD CLASS="strip2" WIDTH="400">&nbsp;<A HREF="#" oncontextmenu="jsCampaignId='<%=sInstId%>'; jsCampaignNm='<%=sInstNm%>'; return showRightMenu(event);" onclick="modifyCampaign('<%=sInstId%>','<%=oCampaigns.getString(1,i)%>')" TITLE="[~Pulse el botón derecho para ver el menú contextual~]"><%=oCampaigns.getString(1,i)%></A></TD>
+              <TD CLASS="strip2" WIDTH="400">&nbsp;<A HREF="#" oncontextmenu="jsCampaignId='<%=sInstId%>'; jsCampaignNm='<%=sInstNm%>'; return showRightMenu(event);" onclick="modifyCampaign('<%=sInstId%>','<%=oCampaigns.getString(1,i)%>')" TITLE="Click right mouse button to see the context menu"><%=oCampaigns.getString(1,i)%></A></TD>
               <TD CLASS="strip2" WIDTH="150">&nbsp;<%=oCampaigns.getDateShort(2,i)%></TD>
               <TD CLASS="strip2" ALIGN="center"><INPUT VALUE="1" TYPE="checkbox" NAME="<% out.write (sInstId); %>"></TD>
             </TR>

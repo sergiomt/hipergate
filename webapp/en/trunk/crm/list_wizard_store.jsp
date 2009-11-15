@@ -1,6 +1,5 @@
-﻿<%@ page import="com.knowgate.debug.*,java.net.URLDecoder,java.io.File,java.io.FileNotFoundException,java.io.IOException,java.sql.Connection,java.sql.SQLException,java.sql.PreparedStatement,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.*,com.knowgate.misc.Environment,com.knowgate.hipergate.QueryByForm" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="../methods/nullif.jspf" %>
-<%
+<%@ page import="com.knowgate.debug.*,java.net.URLDecoder,java.io.File,java.io.FileNotFoundException,java.io.IOException,java.sql.Connection,java.sql.SQLException,java.sql.PreparedStatement,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.*,com.knowgate.misc.Environment,com.knowgate.hipergate.QueryByForm" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -163,7 +162,7 @@
       oCon2 = GlobalDBBind.getConnection(GlobalDBBind.getProperty("dbuser"), GlobalDBBind.getProperty("dbpassword"));
       oCon2.setAutoCommit (true);
 
-      sQuery = "INSERT INTO " + DB.k_x_list_members + " (gu_list,tx_email,tx_name,tx_surname,dt_created,gu_company,gu_contact) SELECT '" + gu_list + "',tx_email,";
+      sQuery = "INSERT INTO " + DB.k_x_list_members + " (gu_list,tx_email,mov_phone,tx_name,tx_surname,dt_created,gu_company,gu_contact) SELECT '" + gu_list + "',tx_email,mov_phone,";
 
       if (DebugFile.trace)
         DebugFile.writeln("Connection.prepareStatement(" + sQuery + "nm_commercial,tx_surname,dt_created,gu_company,gu_contact FROM k_member_address WHERE gu_workarea='" + gu_workarea + "' AND gu_company=? AND gu_contact IS NULL AND gu_address=?)");

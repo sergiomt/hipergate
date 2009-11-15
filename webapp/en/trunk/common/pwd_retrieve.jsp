@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.ArrayList,java.util.Date,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.JDCConnection,com.knowgate.acl.ACL,com.knowgate.acl.ACLUser,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBAudit,com.knowgate.misc.Gadgets,com.knowgate.misc.Environment,com.knowgate.hipermail.SendMail" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.ArrayList,java.util.Date,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.JDCConnection,com.knowgate.acl.ACL,com.knowgate.acl.ACLUser,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBAudit,com.knowgate.misc.Gadgets,com.knowgate.misc.Environment,com.knowgate.hipermail.SendMail" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/clientip.jspf" %>
 <%
 
@@ -73,11 +73,11 @@
 
   try {
     oWarnings = SendMail.send(GlobalDBBind.getProperties(), Environment.getTempDir(), null,
-  					    						  "[~Su contraseña de acceso a hipergate es~] "+oUser.getStringNull(DB.tx_pwd,""),
-  					    						  "UTF-8", null, "[~Su contraseña de acceso a hipergate~]", "noreply@hipergate.com",
+  					    						  "Your password is "+oUser.getStringNull(DB.tx_pwd,""),
+  					    						  "UTF-8", null, "Your password", "noreply@hipergate.com",
   					    						  "hipergate", null, aRecipients, null, null, null);
   } catch (Exception xcpt) {
-    response.sendRedirect (response.encodeRedirectUrl ("pwd_errmsg.jsp?title=Failure whilst trying to send password&desc=[~No fue posible enviarle su contraseña de acceso~] "+xcpt.getClass().getName()+" "+xcpt.getMessage()+"&resume=pwd_request.jsp"));
+    response.sendRedirect (response.encodeRedirectUrl ("pwd_errmsg.jsp?title=Failure whilst trying to send password&desc=It was not possible to send you your password "+xcpt.getClass().getName()+" "+xcpt.getMessage()+"&resume=pwd_request.jsp"));
     return;
   }
 %>

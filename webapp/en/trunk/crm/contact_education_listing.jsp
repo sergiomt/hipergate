@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.io.File,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.io.File,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
@@ -137,7 +137,7 @@
 	        var frm = document.forms[0];
 	        var chi = frm.checkeditems;
 	  	  
-	        if (window.confirm("[~¿Está seguro de que desea eliminar las titulaciones seleccionadas?~]")) {
+	        if (window.confirm("Are you sure that you want to delete the selected qualifications?")) {
 	  	  
 	          chi.value = "";	  	  
 	          frm.action = "contact_education_delete.jsp";
@@ -160,16 +160,16 @@
 
     //-->
   </SCRIPT>
-  <TITLE>hipergate :: [~Titulaciones~]</TITLE>
+  <TITLE>hipergate :: Qualifications</TITLE>
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8">
   <DIV class="cxMnu1" style="width:320px"><DIV class="cxMnu2">
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Actualizar~]"> [~Actualizar~]</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="[~Imprimir~]"> [~Imprimir~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
   </DIV></DIV>
     <FORM METHOD="post" ACTION="degree_listing.jsp" onsubmit="return validate()">
-      <TABLE><TR><TD WIDTH="98%" CLASS="striptitle"><FONT CLASS="title1">[~Titulaciones de~]&nbsp;<%=sFullName%></FONT></TD></TR></TABLE>
+      <TABLE><TR><TD WIDTH="98%" CLASS="striptitle"><FONT CLASS="title1">Qualifications of&nbsp;<%=sFullName%></FONT></TD></TR></TABLE>
       <INPUT TYPE="hidden" NAME="gu_contact" VALUE="<%=gu_contact%>">
       <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
       <INPUT TYPE="hidden" NAME="tx_fullname" VALUE="<%=sFullName%>">
@@ -179,10 +179,10 @@
       <TABLE SUMMARY="Top controls and filters" CELLSPACING="2" CELLPADDING="2">
         <TR><TD COLSPAN="4" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
         <TR>
-          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nueva~]"></TD>
-          <TD VALIGN="middle"><A HREF="contact_education_edit.jsp?gu_workarea=<%=gu_workarea%>&gu_contact=<%=gu_contact%>&fullname=<%=Gadgets.URLEncode(sFullName)%>" CLASS="linkplain">[~Nueva~]</A></TD>
-          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar~]"></TD>
-          <TD><A HREF="#" onclick="deleteDegrees()" CLASS="linkplain">[~Eliminar~]</A></TD>
+          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
+          <TD VALIGN="middle"><A HREF="contact_education_edit.jsp?gu_workarea=<%=gu_workarea%>&gu_contact=<%=gu_contact%>&fullname=<%=Gadgets.URLEncode(sFullName)%>" CLASS="linkplain">New</A></TD>
+          <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
+          <TD><A HREF="#" onclick="deleteDegrees()" CLASS="linkplain">Delete</A></TD>
         </TR>
         <TR><TD COLSPAN="4" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       </TABLE>   
@@ -191,10 +191,10 @@
         <TR>
 
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>[~T&iacute;tulo~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>[~Instituci&oacute;n~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>[~Centro~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>[~Fechas~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>Qualification</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>Institution</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>Location</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>Dates</B></TD>
 <% if (!bIsGuest) { %>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Select All"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select All"></A></TD>
 <% } %>
@@ -206,7 +206,7 @@
       String sStrip = String.valueOf((d%2)+1);
 %>
             <TR HEIGHT="14">
-              <TD CLASS="strip<% out.write (sStrip); %>"><A HREF="#" onclick="viewAttachments()" TITLE="[~Adjuntar Archivos~]"><IMG SRC="../images/images/attachedfile16x16.gif" WIDTH="21" HEIGHT="17" BORDER="0" ALT="[~Adjuntar Archivos~]" /></A></TD>
+              <TD CLASS="strip<% out.write (sStrip); %>"><A HREF="#" onclick="viewAttachments()" TITLE="Attach Files"><IMG SRC="../images/images/attachedfile16x16.gif" WIDTH="21" HEIGHT="17" BORDER="0" ALT="Attach Files" /></A></TD>
               <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<A HREF="contact_education_edit.jsp?gu_workarea=<%=gu_workarea%>&gu_contact=<%=gu_contact%>&gu_degree=<%=oDegrees.getString(1,d)%>&fullname=<%=Gadgets.URLEncode(sFullName)%>" CLASS="linkplain"><%=oDegrees.getStringNull(4,d,"")%>&nbsp;<%=oDegrees.getStringNull(5,d,"")%></A></TD>
               <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<%=oDegrees.getStringNull(10,d,"")%></TD>
               <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<%=oDegrees.getStringNull(11,d,"")%></TD>
@@ -218,7 +218,7 @@
 <%        } // next %>
       </TABLE>
       <HR>
-      <CENTER><INPUT TYPE="submit" VALUE="[~Guardar~]" ACCESSKEY="s" CLASS="pushbutton">&nbsp;&nbsp;<INPUT TYPE="button" VALUE="[~Cerrar~]" ACCESSKEY="c" CLASS="closebutton" onclick="window.close()"></CENTER>
+      <CENTER><INPUT TYPE="submit" VALUE="Save" ACCESSKEY="s" CLASS="pushbutton">&nbsp;&nbsp;<INPUT TYPE="button" VALUE="Close" ACCESSKEY="c" CLASS="closebutton" onclick="window.close()"></CENTER>
     </FORM>
 </BODY>
 </HTML>

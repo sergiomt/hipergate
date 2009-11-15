@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,javax.mail.Session,javax.mail.Store,javax.mail.Transport,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipermail.MailAccount,com.knowgate.hipermail.SessionHandler" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,javax.mail.Session,javax.mail.Store,javax.mail.Transport,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipermail.MailAccount,com.knowgate.hipermail.SessionHandler,com.knowgate.debug.StackTraceUtil,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -54,20 +54,12 @@
     oConn.close("account_store");
   }
   catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("account_store");
-    }
+    disposeConnection(oConn,"account_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }
   catch (NumberFormatException e) {
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("account_store");      
-      }
+    disposeConnection(oConn,"account_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NumberFormatException&desc=" + e.getMessage() + "&resume=_back"));
   }
@@ -78,14 +70,26 @@
   GlobalCacheClient.expire("["+id_user+",defaultaccount]");
   
   if (request.getParameter("bo_test").equals("true")) {
-
-    SessionHandler oHndlr = new SessionHandler (oObj);
-    Session oSssn = oHndlr.getSession();
-    Store oStor = oHndlr.getStore();
-    Transport oTrprt = oHndlr.getTransport();
-    oHndlr.close();
-    out.write("TEST OK");
-  
+		SessionHandler oHndlr = null;
+		try {
+      oHndlr = new SessionHandler (oObj);
+      if (request.getParameter("incoming_server").length()>0) {
+        Session oSssn = oHndlr.getSession();
+        Store oStor = oHndlr.getStore();
+      }
+      if (request.getParameter("outgoing_server").length()>0) {
+        Transport oTrprt = oHndlr.getTransport();
+      }
+      oHndlr.close();
+      out.write("<HTML><BODY><FONT CLASS=\"textplain\">TEST OK</FONT></BODY></HTML>");
+    } catch (Exception xcpt) {
+      out.write ("<HTML><BODY><FONT CLASS=\"textplain\">");
+      if (oHndlr!=null) out.write (oHndlr.getProperties().toString());
+      out.write (xcpt.getClass().getName()+" "+xcpt.getMessage()+"<BR/><BR/>");
+      if (xcpt.getCause()!=null) out.write ("Cause: "+xcpt.getCause().getClass().getName()+" "+xcpt.getCause().getMessage()+"<BR/><BR/>");
+      out.write (Gadgets.replace(StackTraceUtil.getStackTrace(xcpt),"\n","<BR/>"));
+      out.write ("</FONT></BODY></HTML>");
+    }
   } else if (request.getParameter("bo_popup").equals("true")) {
     out.write ("<HTML><HEAD><TITLE>Wait...</TITLE><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>if (window.opener) if (!window.opener.closed) window.opener.location.reload(true); self.close();<" + "/SCRIPT" +"></HEAD></HTML>");
 

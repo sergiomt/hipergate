@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.Oportunity" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.Oportunity" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*
@@ -124,7 +124,7 @@
             return false;
           }
           if (frm.dt_start.value.length>0 && !isDate(frm.dt_start.value,"d")) {
-            alert ("[~La fecha de inicio no es válida~]");
+            alert ("Start date is not valid");
             return false;          
           }
         } // fi (bo_project.checked)
@@ -144,7 +144,7 @@
 					rcp = rcp.split(",");
 					for (var r=0; r<=rcp.length; r++) {
 					  if (!check_email(rcp[r])) {
-					    alert (rcp[r]+" "+"[~La dirección de correo electronico no es valida~]");
+					    alert (rcp[r]+" "+"The e-mail address is not valid");
 							return false;
 					  } // fi
 					} // next

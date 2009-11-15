@@ -1,4 +1,4 @@
-﻿<%@ page import="java.net.URLDecoder,java.sql.Connection,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.sql.Connection,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/dbbind.jsp" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -191,7 +191,7 @@ else
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90">&nbsp;</TD>
-            <TD ALIGN="left"><SELECT NAME="sel_mask"><OPTION VALUE="1">List<OPTION VALUE="3">Read<OPTION VALUE="7">[~Añadir y Leer~]<OPTION VALUE="15">Moderate<OPTION VALUE="31">Modify<OPTION VALUE="255">Full Control</SELECT>&nbsp;&nbsp;<INPUT TYPE="submit" VALUE="Modify" CLASS="pushbutton" TITLE="Modify permissions of selected groups" STYLE="width:90" onClick="document.forms[0].tp_action.value='modify'">&nbsp;&nbsp;<INPUT TYPE="submit" VALUE="Delete" CLASS="pushbutton" TITLE="Remove permissions of selected groups" STYLE="width:90" onClick="document.forms[0].tp_action.value='remove'"></TD>
+            <TD ALIGN="left"><SELECT NAME="sel_mask"><OPTION VALUE="1">List<OPTION VALUE="3">Read<OPTION VALUE="7">Add and Read<OPTION VALUE="15">Moderate<OPTION VALUE="31">Modify<OPTION VALUE="255">Full Control</SELECT>&nbsp;&nbsp;<INPUT TYPE="submit" VALUE="Modify" CLASS="pushbutton" TITLE="Modify permissions of selected groups" STYLE="width:90" onClick="document.forms[0].tp_action.value='modify'">&nbsp;&nbsp;<INPUT TYPE="submit" VALUE="Delete" CLASS="pushbutton" TITLE="Remove permissions of selected groups" STYLE="width:90" onClick="document.forms[0].tp_action.value='remove'"></TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90">&nbsp;</TD>

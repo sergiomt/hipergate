@@ -25,7 +25,7 @@
       case 10:
         return 30;
       case 1:
-	return ( (year%400==0) || ((year%4==0) && (year%100!=0)) ) ? 29 : 28;
+	      return ( (year%400==0) || ((year%4==0) && (year%100!=0)) ) ? 29 : 28;
     } // end switch()
     return 0;
   } // getLastDay()
@@ -51,8 +51,8 @@
       if (exp.test(dtexpr)) {
         ser = dtexpr.split("-");
         yy = parseInt(ser[0],10);
-        mm = parseInt(ser[1],10)-1;
-        dd = parseInt(ser[2],10);
+        mm = parseFloat(ser[1],10)-1;
+        dd = parseFloat(ser[2],10);
       
         if (mm<0 || mm>12) {
           ret = false;
@@ -71,8 +71,8 @@
       if (exp.test(dtexpr)) {
         ser = dtexpr.split("/");
         yy = parseInt(ser[2],10);
-        mm = parseInt(ser[1],10)-1;
-        dd = parseInt(ser[0],10);
+        mm = parseFloat(ser[1],10)-1;
+        dd = parseFloat(ser[0],10);
       
         if (mm<0 || mm>12) {
           ret = false;

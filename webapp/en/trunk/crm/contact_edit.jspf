@@ -31,6 +31,7 @@
   Contact oCont = new Contact();
   Term oTerm = new Term();
   
+  String sCreationdate = "";
   String sPrivate = "";
   String sFullName = "";
   String sStatusLookUp = "";
@@ -77,7 +78,7 @@
       Object aComp[] = { gu_contact };
 
       bOk = oCont.load(oConn, aComp);
-
+			
       if (oCont.isNull(DB.bo_private))
         sPrivate = "";
       else
@@ -88,6 +89,7 @@
       }
       
       if (bOk) {
+			  sCreationdate = oCont.getCreationDate(oConn).toString();
         sFullName = oCont.getStringNull(DB.tx_name, "") + " " + oCont.getStringNull(DB.tx_surname, "");
         sFullName = sFullName.trim();
       }    
@@ -173,7 +175,7 @@
         switch(parseInt(odctrl)) {
           case 1:
             if (frm.nm_company.value.indexOf("'")>=0)
-              alert("The company name contains forbidden characters");
+              alert("[~El nombre de la compa��a contiene caracteres no permitidos~]");
             else
               window.open("../common/reference.jsp?nm_table=k_companies&tp_control=1&nm_control=nm_legal AS nm_company&nm_coding=gu_company" + 
                           (frm.nm_company.value.length==0 || frm.gu_company.value.length==32 ? "" : "&where=" + escape(" <%=DB.nm_legal%> LIKE '"+frm.nm_company.value+"%' ")),
@@ -309,17 +311,17 @@
        	}
        
        	if (frm.ny_age.value.indexOf("+")>=0 || frm.ny_age.value.indexOf("-")>=0 || frm.ny_age.value.indexOf(".")>=0 || frm.ny_age.value.indexOf(",")>=0) {
-       	  alert ("Age is not valid");
+       	  alert ("[~La edad no es v�lida~]");
        	  return false;	  
        	}
        
        	if (isNaN(frm.ny_age.value)) {
-       	  alert ("Age is not valid");
+       	  alert ("[~La edad no es v�lida~]");
        	  return false;	  
        	}
        	
        	if (!isDate(frm.dt_birth.value, "d") && frm.dt_birth.value.length>0) {
-       	  alert ("Birth Date is not valid");
+       	  alert ("[~La fecha de nacimiento no es v�lida~]");
        	  return false;	  
        	}
        	
@@ -413,7 +415,7 @@
       }
 
       .panel {
-      font-family: sans-serif; font-size: 12px; position:absolute; border: 2px; border-color:#999999; border-style:outset; width:600px; height:446px; left:0px; top:24px; margin:0px; padding:6px;
+      font-family: sans-serif; font-size: 12px; position:absolute; border: 2px; border-color:#999999; border-style:outset; width:600px; height:500px; left:0px; top:24px; margin:0px; padding:6px;
       }
       -->
     </STYLE>                

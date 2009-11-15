@@ -1,4 +1,4 @@
-﻿<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.projtrack.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %>
 <%
 /*
@@ -202,13 +202,13 @@
         cod = frm.code1.value;
 
         if (val.length==0) {
-            alert ("[~Debe especificar un valor de búsqueda al menos para la primera condición~]");
+            alert ("Must specify a value to be searched at least for the first condition");
             return false;
           }
                   
         if (cmb=="pg_bug")
           if (isNaN(val)) {
-            alert ("[~El número de incidencia no es válido~]");
+            alert ("Incident number is not valid");
             return false;
           }
 
@@ -231,7 +231,7 @@
         
         if (cmb=="dt_created" || cmb=="dt_closed")
           if (!isDate(val,"d")) {
-            alert ("[~La fecha del campo 1 no es válida, use el formato yyyy-mm-dd~]");
+            alert ("Date for field 1 is not valid, use format yyyy-mm-dd");
             return false;
           }
           else
@@ -251,7 +251,7 @@
 
             if (cmb=="pg_bug")
               if (isNaN(val)) {
-                alert ("[~El número de incidencia no es válido~]");
+                alert ("Incident number is not valid");
                 return false;
             }
 
@@ -278,7 +278,7 @@
 
             if (cmb=="dt_created" || cmb=="dt_closed")
               if (!isDate(val,"d")) {
-                alert ("[~La fecha del campo 2 no es válida, use el formato yyyy-mm-dd~]");
+                alert ("Date for field 2 is not valid, use format yyyy-mm-dd");
                 return false;
               }
               else
@@ -297,7 +297,7 @@
 
               if (cmb=="pg_bug")
                 if (isNaN(val)) {
-                  alert ("[~El número de incidencia no es válido~]");
+                  alert ("Incident number is not valid");
                   return false;
                 }
 
@@ -324,7 +324,7 @@
 
               if (cmb=="dt_created" || cmb=="dt_closed")
                 if (!isDate(val,"d")) {
-                  alert ("[~La fecha del campo 3 no es válida, use el formato yyyy-mm-dd~]");
+                  alert ("Date for field 3 is not valid, use format yyyy-mm-dd");
                   return false;
                 }
                 else

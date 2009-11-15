@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.LinkedList,java.util.HashMap,java.util.ListIterator,java.net.URLDecoder,java.lang.StringBuffer,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.LinkedList,java.util.HashMap,java.util.ListIterator,java.net.URLDecoder,java.lang.StringBuffer,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalCategories" scope="application" class="com.knowgate.hipergate.Categories"/><%
 /*
@@ -305,7 +305,7 @@
 	
         function createLink() {
           <% if (((iACLMask&ACL.PERMISSION_ADD)==0) || bIsGuest) { %>
-	           alert ("[~No está autorizado para agregar enlaces a esta categoría~]");
+	           alert ("You are not authorized to add links to this category");
           <% } else { %>
             window.open("linkedit.jsp?id_category=" + id_category + "&tr_category=" + tr_category, "editlink", "directories=no,toolbar=no,menubar=no,width=480,height=420");
           <% } %>
@@ -315,7 +315,7 @@
 
         function createDocument() {
           <% if (((iACLMask&ACL.PERMISSION_ADD)==0) || bIsGuest) { %>
-	           alert ("[~No está autorizado para agregar documentos a esta categoría~]");
+	           alert ("You are not authorized to add documents to this category");
           <% } else { %>
             window.open("docedit.jsp?id_category=" + id_category + "&tr_category=" + tr_category, "editdocument", "directories=no,toolbar=no,menubar=no,width=480,height=420");          
           <% } %>
@@ -325,7 +325,7 @@
 
         function modifyLink(idProduct) {
           <% if (((iACLMask&ACL.PERMISSION_MODIFY)==0) || bIsGuest) { %>
-	           alert ("[~No está autorizado para modificar enlaces en esta categoría~]");
+	           alert ("You are not authorized for modifying links from this category");
           <% } else { %>
             window.open("linkedit.jsp?id_category=" + id_category + "&tr_category=" + tr_category + "&id_product=" + idProduct, idProduct, "directories=no,toolbar=no,menubar=no,width=480,height=380");
           <% } %>
@@ -335,7 +335,7 @@
 
         function modifyDoc(idProduct,idLocation) {
           <% if (((iACLMask&ACL.PERMISSION_MODIFY)==0) || bIsGuest) { %>
-	           alert ("[~No está autorizado para modificar documentos en esta categoría~]");
+	           alert ("You are not authorized for modifying documents from this category");
           <% } else { %>
             window.open("docedit.jsp?id_category=" + id_category + "&tr_category=" + tr_category + "&id_product=" + idProduct + "&id_location=" + idLocation, idProduct, "directories=no,toolbar=no,menubar=no,width=480,height=380");
           <% } %>
@@ -347,7 +347,7 @@
           var dipuwnd = window.parent.frames[1];
 
 	        if (dipuwnd.id_category.length==0)
-	          alert ("[~Debe seleccionar primero una categoría en el árbol~]");
+	          alert ("Must first select a category");
 	  		  else	                                          
             window.document.location.href = "catprods.jsp?id_category=" + dipuwnd.id_category + "&tr_category=" + escape(dipuwnd.tr_category);
         }
@@ -356,9 +356,9 @@
         
         function deleteProducts() {
           <% if (((iACLMask&ACL.PERMISSION_DELETE)==0) || bIsGuest) { %>
-	           alert ("[~No está autorizado para borrar elementos en esta categoría~]");
+	           alert ("You are not authorized to delete elements from this category");
           <% } else { %>
-            if (confirm("[~¿Está seguro de que desea eliminar los elementos seleccionados?~]"))
+            if (confirm("Are you sure you want to delete selected elements?"))
               window.document.forms[0].submit();
           <% } %>
         }
@@ -392,9 +392,9 @@
             clearInterval(intervalChoose);
             if (frm.id_target_cat.value.length>0) {
 <% if (bIsGuest) { %>
-              alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+              alert("Your credential level as Guest does not allow you to perform this action");
 <% } else { %>
-              if (window.confirm ("[~¿Está seguro de que desea ~]" + (parseInt(frm.tp_operation.value)==1 ? "copy" : "move") + "[~ los archivos seleccionados a la categoría ~]" + frm.tr_target_cat.value + "?")) {
+              if (window.confirm ("Are you sure you want to " + (parseInt(frm.tp_operation.value)==1 ? "copy" : "move") + " selected files to category " + frm.tr_target_cat.value + "?")) {
                 frm.action = "catprods_copy.jsp";
                 frm.submit();
               } // fi (confirm)
@@ -468,7 +468,7 @@
           var result;
 
           <% if (((iACLMask&ACL.PERMISSION_MODIFY)==0) || bIsGuest) { %>
-	           alert ("[~No está autorizado para desproteger documentos en esta categoría~]");
+	           alert ("You don't have enought access rights to check-out documents at this category");
           <% } else { %>
           result = httpRequestText("doccheckout.jsp?tp_item="+item_type+"&gu_item="+id_item+"&gu_category="+id_category).split("\n");
           if (result[0]=="SUCCESS") {
@@ -487,7 +487,7 @@
 				  var result;
 				  
           <% if (((iACLMask&ACL.PERMISSION_MODIFY)==0) || bIsGuest) { %>
-	           alert ("[~No está autorizado para proteger documentos en esta categoría~]");
+	           alert ("You don't have enought access rights to check-in documents at this category");
           <% } else { %>
           result = httpRequestText("docundocheckout.jsp?tp_item="+item_type+"&gu_item="+id_item+"&gu_category="+id_category).split("\n");
           if (result[0]=="SUCCESS")
@@ -501,7 +501,7 @@
 
         function checkInItem(item_type,id_item,id_location) {
           <% if (((iACLMask&ACL.PERMISSION_MODIFY)==0) || bIsGuest) { %>
-	           alert ("[~No está autorizado para proteger documentos en esta categoría~]");
+	           alert ("You don't have enought access rights to check-in documents at this category");
           <% } else { %>
             window.open("doccheckin.jsp?id_category=" + id_category + "&id_location=" + id_location + "&id_product=" + id_item, "ci"+id_item, "directories=no,toolbar=no,menubar=no,width=480,height=350");
             document.location.reload();
@@ -544,10 +544,10 @@
 	                
       //-->
     </SCRIPT>
-    <TITLE>hipergate :: [~Categorías~]</TITLE>
+    <TITLE>hipergate :: Category</TITLE>
   </HEAD>  
   <BODY  TOPMARGIN="4" MARGINHEIGHT="4" onClick="hideRightMenu()">
-  <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
+  <DIV class="cxMnu1" style="width:300px"><DIV class="cxMnu2">
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
@@ -575,7 +575,7 @@
       <TR><TD COLSPAN="6" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       <TR>
         <TD>&nbsp;&nbsp;<IMG SRC="../images/images/newfolder16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Category"></TD>
-        <TD VALIGN="middle"><A HREF="javascript:;" onclick="createCategory()" CLASS="linkplain">[~Nueva Categoría~]</A></TD>
+        <TD VALIGN="middle"><A HREF="javascript:;" onclick="createCategory()" CLASS="linkplain">New Category</A></TD>
         <TD>&nbsp;&nbsp;<IMG SRC="../images/images/newlink.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Link"></TD>
         <TD VALIGN="middle"><A HREF="javascript:;" onclick="createLink()" CLASS="linkplain">New Link</A></TD>
         <TD>&nbsp;&nbsp;<IMG SRC="../images/images/newdoc.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New File"></TD>
@@ -707,11 +707,11 @@
       addMenuOption("Edit","editItem(jsItemTp,jsItemId,jsItemLc)",0);
       addMenuOption("Check-out","checkOutItem(jsItemTp,jsItemId,jsItemLc)",0);
       addMenuOption("Check-in","checkInItem(jsItemTp,jsItemId,jsItemLc)",0);
-      addMenuOption("[~Deshacer desprotección~]","undoCheckOutItem(jsItemTp,jsItemId,jsItemLc)",0);
+      addMenuOption("Undo check-out","undoCheckOutItem(jsItemTp,jsItemId,jsItemLc)",0);
 <% }
    if ((iAppMask & (1<<Hipermail))!=0) { %>
       addMenuSeparator();
-      addMenuOption("[~Enviar por e-mail~]","sendByMail(jsItemId,jsItemLc)",0);
+      addMenuOption("Send by e-mail","sendByMail(jsItemId,jsItemLc)",0);
 <% } 
    if (((iACLMask&ACL.PERMISSION_DELETE)!=0) || ((iACLMask&ACL.PERMISSION_MODIFY)!=0)) { %>
       addMenuSeparator();

@@ -1,4 +1,4 @@
-﻿<%@ page import="java.util.*,java.math.*,java.io.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*,com.knowgate.misc.*,com.knowgate.dfs.FileSystem" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.*,java.math.*,java.io.*,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*,com.knowgate.misc.*,com.knowgate.dfs.FileSystem" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -38,7 +38,7 @@
   boolean bIsAdmin = isDomainAdmin (GlobalCacheClient, GlobalDBBind, request, response);
 
   if (!bIsAdmin && !bIsPowerUser) {
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=[~Permisos insuficientes~]&desc=[~Su nivel de privilegios no le permite agregar nuevas paginas~]&resume=_close"));       
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Not enough security credentials&desc=Your security access level does not allow you to add new pages&resume=_close"));       
     return;
   }
   
