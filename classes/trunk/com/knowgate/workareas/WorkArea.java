@@ -182,6 +182,7 @@ public class WorkArea extends DBPersist {
    * <tr><td>MicrositeDB.delete</td></tr>
    * <tr><td>PageSetDB.delete</td></tr>
    * <tr><td>DELETE k_images</td></tr>
+   * <tr><td>DELETE k_global_black_list</td></tr>
    * <tr><td>DistributionList.delete</td></tr>
    * <tr><td>Meeting.delete</td></tr>
    * <tr><td>Fellow.delete</td></tr>
@@ -401,6 +402,14 @@ public class WorkArea extends DBPersist {
 
     // -----------------------------------------------------------------------------------
     // Borrar las listas
+
+    if (DBBind.exists(oConn, DB.k_global_black_list, "U")) {
+      oStmt = oConn.createStatement();
+      if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(DELETE FROM " + DB.k_global_black_list + " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "')");
+      oStmt.executeUpdate("DELETE FROM " + DB.k_global_black_list + " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "'");
+      oStmt.close();
+    }
+
     if (DBBind.exists(oConn, DB.k_lists, "U")) {
       oItems = new DBSubset (DB.k_lists, DB.gu_list, DB.gu_workarea + "='" + sWrkAreaGUID + "'", 100);
       iItems = oItems.load(oConn);
