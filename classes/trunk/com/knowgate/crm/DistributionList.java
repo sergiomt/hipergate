@@ -861,7 +861,7 @@ public class DistributionList extends DBPersist {
     sCloneId = oClone.getString(DB.gu_list);
 
     oStmt = oConn.createStatement();
-    oStmt.setQueryTimeout(60);
+	if (oConn.getDataBaseProduct()!=JDCConnection.DBMS_POSTGRESQL) oStmt.setQueryTimeout(60);
 
     sSQL = "INSERT INTO " + DB.k_x_list_members + "(gu_list,tx_email,tx_name,tx_surname,tx_salutation,bo_active,tp_member,gu_company,gu_contact,id_format) SELECT '" + oClone.getString(DB.gu_list) + "',tx_email,tx_name,tx_surname,tx_salutation,bo_active,tp_member,gu_company,gu_contact,id_format FROM " + DB.k_x_list_members + " WHERE " + DB.gu_list + "='" + getString(DB.gu_list) + "'";
 
