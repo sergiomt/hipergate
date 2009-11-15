@@ -148,6 +148,14 @@ public final class ACLDomain extends DBPersist {
       oWrks = null;
     } // fi(exists(DB.k_workareas))
 
+	// Delete black lists from this domain
+    if (DBBind.exists(oConn, DB.k_global_black_list, "U")) {
+      oStmt = oConn.prepareStatement("DELETE FROM " + DB.k_global_black_list + " WHERE " + DB.id_domain + "=?");
+      oStmt.setInt(1, iDomainId);
+      oStmt.executeUpdate();
+      oStmt.close();
+    }
+	
     // Delete thesauri entries from this domain
     if (DBBind.exists(oConn, DB.k_thesauri, "U")) {
 

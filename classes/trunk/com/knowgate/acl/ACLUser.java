@@ -1174,12 +1174,6 @@ public final class ACLUser extends DBPersist {
     // ************
     // New for v5.0
 
-    if (DBBind.exists(oConn, DB.k_jobs, "U")) {
-      oStmt = oConn.createStatement();
-      oStmt.executeUpdate("UPDATE "+DB.k_jobs+" SET "+DB.gu_writer+"=NULL WHERE "+DB.gu_writer+"='"+sUserGUID+"'");
-	  oStmt.close();
-    }
-
     if (DBBind.exists(oConn, DB.k_activities, "U")) {
       oStmt = oConn.createStatement();
       oStmt.executeUpdate("UPDATE "+DB.k_x_activity_audience+" SET "+DB.gu_writer+"=NULL WHERE "+DB.gu_writer+"='"+sUserGUID+"'");
@@ -1623,9 +1617,13 @@ public final class ACLUser extends DBPersist {
 	  oModMan.setConnection((Connection)oConn);
 	  try {
 	    oModMan.createCategoriesForUser(sRetVal);
+	    if (oModMan.report().length()>0) throw new SQLException(oModMan.report(), "EVAL");
       } catch (IOException ioe) {
-        throw new NullPointerException("IOException "+ioe.getMessage());
-      } 
+        throw new SQLException("IOException "+ioe.getMessage());
+      } catch (SQLException sql) {
+        throw new SQLException("SQLException "+sql.getMessage(), sql.getSQLState(), sql.getErrorCode());
+      }
+      
 	  oModMan=null;
 	  // ************
 
