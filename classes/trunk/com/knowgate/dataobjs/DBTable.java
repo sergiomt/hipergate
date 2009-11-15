@@ -318,7 +318,16 @@ public class DBTable {
 
         if (DebugFile.trace) DebugFile.writeln("PreparedStatement.executeUpdate()");
 
-        iAffected = oStmt.executeUpdate();
+		try {
+          iAffected = oStmt.executeUpdate();
+		} catch (SQLException sqle) {
+          if (DebugFile.trace) {
+          	DebugFile.writeln("SQLException "+sqle.getMessage());
+            DebugFile.decIdent();
+          }
+		  oStmt.close();
+		  throw new SQLException(sqle.getMessage(), sqle.getSQLState(), sqle.getErrorCode());
+		}
 
         if (DebugFile.trace) DebugFile.writeln(String.valueOf(iAffected) +  " affected rows");
 
@@ -361,7 +370,16 @@ public class DBTable {
 
           if (DebugFile.trace) DebugFile.writeln("PreparedStatement.executeUpdate()");
 
-          iAffected = oStmt.executeUpdate();
+          try {
+            iAffected = oStmt.executeUpdate();
+		  } catch (SQLException sqle) {
+            if (DebugFile.trace) {
+          	  DebugFile.writeln("SQLException "+sqle.getMessage());
+              DebugFile.decIdent();
+            }
+		    oStmt.close();
+		    throw new SQLException(sqle.getMessage(), sqle.getSQLState(), sqle.getErrorCode());
+		  }
 
           if (DebugFile.trace) DebugFile.writeln(String.valueOf(iAffected) +  " affected rows");
 

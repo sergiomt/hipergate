@@ -52,6 +52,7 @@ import java.sql.Timestamp;
 import javax.sql.DataSource;
 
 import com.knowgate.debug.DebugFile;
+import com.knowgate.debug.StackTraceUtil;
 import com.knowgate.misc.Environment;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.jdc.JDCConnection;
@@ -1261,18 +1262,24 @@ public class DBBind extends Beans implements DataSource {
     if (DebugFile.trace) {
       DebugFile.writeln("Begin DBBind.getConnection(" + sCaller + ")");
       DebugFile.incIdent();
-
-      if (null!=oConnectXcpt) {
-        DebugFile.writeln("Previous exception " + oConnectXcpt.getMessage());
-        DebugFile.decIdent();
-      }
     }
 
     if (null!=oConnectXcpt) {
-      if (oConnectXcpt instanceof SQLException)
+
+        if (DebugFile.trace) {
+          DebugFile.writeln(oConnectXcpt.getClass().getName()+" "+oConnectXcpt.getMessage());
+          if (oConnectXcpt.getCause()!=null) {
+          	DebugFile.writeln(oConnectXcpt.getCause().getClass().getName()+" "+oConnectXcpt.getCause().getMessage());
+          } // fi
+          DebugFile.decIdent();
+        } // fi
+
+      if (oConnectXcpt instanceof SQLException) {
         throw (SQLException) oConnectXcpt;
-      else
-        throw new SQLException(oConnectXcpt.getClass().getName()+" "+oConnectXcpt.getMessage());
+
+      } else {
+        throw new SQLException(oConnectXcpt.getClass().getName()+" "+oConnectXcpt.getMessage(), oConnectXcpt.getCause());
+      }
     }
 
     if (null!=oConnPool) {

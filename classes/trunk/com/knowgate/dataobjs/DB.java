@@ -138,6 +138,7 @@ public final class DB {
   public static final String k_lists = "k_lists";
   public static final String k_list_members = "k_list_members";
   public static final String k_x_list_members = "k_x_list_members";
+  public static final String k_global_black_list = "k_global_black_list";
   public static final String k_list_jobs = "k_list_jobs";
   public static final String k_member_address = "k_member_address";
 
