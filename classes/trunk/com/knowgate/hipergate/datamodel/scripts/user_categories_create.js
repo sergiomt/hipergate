@@ -11,6 +11,7 @@ import java.util.Properties;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBAudit;  
 import com.knowgate.dataobjs.DBBind;
+import com.knowgate.dataobjs.DBCommand;
 
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.acl.*;
@@ -193,9 +194,7 @@ try {
       
       // *****************************************************************************
       // Set reference to User Home Category
-      oStmt = DefaultConnection.createStatement();
-      oStmt.executeUpdate("UPDATE " + DB.k_users + " SET " + DB.gu_category + "='" + sHomeId + "' WHERE " + DB.gu_user + "='" + UserId + "'");
-      oStmt.close();
+      DBCommand.executeUpdate(DefaultConnection, "UPDATE " + DB.k_users + " SET " + DB.gu_category + "='" + sHomeId + "' WHERE " + DB.gu_user + "='" + UserId + "'");
       
       // *******************************************
       // propagate permission from new Home Category
@@ -249,4 +248,9 @@ catch (java.sql.SQLException e) {
   ReturnValue = null;
   ErrorCode = new Integer(e.getErrorCode());
   ErrorMessage = "SQLException: " + e.getMessage();
+}
+catch (Exception e) {
+  ReturnValue = null;
+  ErrorCode = -1;
+  ErrorMessage = e.getClass().getName()+": " + e.getMessage();
 }
