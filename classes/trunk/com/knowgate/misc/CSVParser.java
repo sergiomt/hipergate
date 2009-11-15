@@ -242,19 +242,18 @@ public class CSVParser  {
       } // fi ()
     } // next
 
-    if (DebugFile.trace) {
-      if (cDelimiter == (char)0) DebugFile.writeln("error: cannot assign a valid column delimiter");
-    }
-
-    if (cDelimiter == (char)0)
-      throw new RuntimeException("Cannot assign a valid column delimiter");
+    // If no delimiter is found, then assume that file has just one column and use Tab as default
+    if (cDelimiter==(char)0) cDelimiter = '\t';
 
     // Almacenar los nombres de campo y contar el número de columnas
     ColNames = Gadgets.split(sFileDescriptor, new String(new char[]{cDelimiter}));
     iCols = ColNames.length;
 
-    if (DebugFile.trace) DebugFile.writeln("descriptor has " + String.valueOf(iCols) + " columns");
-
+    if (DebugFile.trace) {
+      DebugFile.writeln("chosen delimiter is "+(cDelimiter=='\t' ? 't' : cDelimiter));
+      DebugFile.writeln("descriptor has " + String.valueOf(iCols) + " columns");
+    }
+    
     if (bQuoted)
       for (int c=0; c<iCols; c++)
         ColNames[c] = (ColNames[c].replace('"',' ')).trim();
