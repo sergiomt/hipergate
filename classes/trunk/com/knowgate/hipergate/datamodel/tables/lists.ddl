@@ -51,3 +51,19 @@ dt_modified    DATETIME NULL,
 CONSTRAINT f1_x_list_members FOREIGN KEY (gu_list) REFERENCES k_lists(gu_list)
 )
 GO;
+
+CREATE TABLE k_global_black_list
+(
+id_domain   INTEGER   NOT NULL,
+gu_workarea CHAR(32)  NOT NULL,
+tx_email    CHARACTER VARYING(100) NOT NULL,
+dt_created  DATETIME  DEFAULT CURRENT_TIMESTAMP,
+tx_name     VARCHAR(100) NULL,
+tx_surname  VARCHAR(100) NULL,
+gu_contact  CHAR(32) NULL,
+gu_address  CHAR(32) NULL,
+
+CONSTRAINT pk_global_black_list PRIMARY KEY (id_domain,gu_workarea,tx_email)
+)
+GO;
+
