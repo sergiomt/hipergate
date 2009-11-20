@@ -126,6 +126,32 @@ public class GlobalBlackList {
   } // add
 
   /**
+   * Add an e-mail addresses to the global black list of a Work Area
+   * @param oConn JDCConnection
+   * @param nDomain int Domain Unique Identifier (from k_domains table)
+   * @param sEMail String e-mail address to be added
+   * @throws SQLException
+   */
+  public static void add(JDCConnection oConn, int nDomain, String sWrkA, String sEMail) throws SQLException {
+    PreparedStatement oStmt = oConn.prepareStatement("SELECT "+DB.tx_email+" FROM "+DB.k_global_black_list+" WHERE "+DB.id_domain+"=? AND "+
+    												 DB.tx_email+"=?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+	oStmt.setInt(1,nDomain);
+	oStmt.setString(2,sEMail);
+	ResultSet oRSet = oStmt.executeQuery();
+	boolean bAlreadyExists = oRSet.next();
+	oRSet.close();
+	oStmt.close();
+	if (!bAlreadyExists) {
+	  oStmt = oConn.prepareStatement("INSERT INTO "+DB.k_global_black_list+" ("+DB.id_domain+","+DB.gu_workarea+","+DB.tx_email+") VALUES (?,?,?)");
+	  oStmt.setInt(1,nDomain);
+	  oStmt.setString(2,sWrkA);
+	  oStmt.setString(3,sEMail.toLowerCase());
+	  oStmt.executeUpdate();
+	  oStmt.close();
+	} // fi
+  } // add
+
+  /**
    * Remove an e-mail addresses from the global black list of a Domain
    * @param oConn JDCConnection
    * @param nDomain int Domain Unique Identifier (from k_domains table)
