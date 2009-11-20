@@ -13,6 +13,9 @@ BEGIN
   DELETE FROM k_x_activity_audience WHERE gu_contact=ContactId;
 
   DELETE FROM k_contact_education WHERE gu_contact=ContactId;
+  DELETE FROM k_contact_languages WHERE gu_contact=ContactId;
+  DELETE FROM k_contact_computer_science WHERE gu_contact=ContactId;
+  DELETE FROM k_contact_experience WHERE gu_contact=ContactId;
 
   DELETE FROM k_x_duty_resource WHERE nm_resource=ContactId;
 
@@ -40,6 +43,7 @@ BEGIN
   DELETE FROM k_bank_accounts WHERE nu_bank_acc IN (SELECT nu_bank_acc FROM k_tmp_del_bank) AND gu_workarea=GuWorkArea;
   DROP TEMPORARY TABLE k_tmp_del_bank;
 
+  DELETE FROM k_oportunities_attachs WHERE gu_oportunity IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_contact=ContactId);
   DELETE FROM k_oportunities_changelog WHERE gu_oportunity IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_contact=ContactId);
   DELETE FROM k_oportunities_attrs WHERE gu_object IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_contact=ContactId);
   DELETE FROM k_oportunities WHERE gu_contact=ContactId;
@@ -83,6 +87,7 @@ BEGIN
   DELETE FROM k_bank_accounts WHERE nu_bank_acc IN (SELECT nu_bank_acc FROM k_tmp_del_bank) AND gu_workarea=GuWorkArea;
   DROP TEMPORARY TABLE k_tmp_del_bank;
 
+  DELETE FROM k_oportunities_attachs WHERE gu_oportunity IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_company=CompanyId);
   DELETE FROM k_oportunities_changelog WHERE gu_oportunityt IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_company=CompanyId);
   DELETE FROM k_oportunities_attrs WHERE gu_object IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_company=CompanyId);
   DELETE FROM k_oportunities WHERE gu_company=CompanyId;
@@ -99,6 +104,7 @@ GO;
 
 CREATE PROCEDURE k_sp_del_oportunity (OportunityId CHAR(32))
 BEGIN
+  DELETE FROM k_oportunities_attachs WHERE gu_oportunity=OportunityId;
   DELETE FROM k_oportunities_changelog WHERE gu_oportunity=OportunityId;
   DELETE FROM k_oportunities_attrs WHERE gu_object=OportunityId;
   DELETE FROM k_oportunities WHERE gu_oportunity=OportunityId;
