@@ -60,6 +60,9 @@ ALTER TABLE k_oportunities_attrs ADD CONSTRAINT f1_oportunities_attrs FOREIGN KE
 
 ALTER TABLE k_oportunities_changelog ADD CONSTRAINT f1_oportunities_changelog FOREIGN KEY (gu_oportunity) REFERENCES k_oportunities(gu_oportunity);
 
+ALTER TABLE k_contact_attachs ADD CONSTRAINT f1_oportunities_attachs FOREIGN KEY (gu_contact) REFERENCES k_oportunities(gu_oportunity);
+ALTER TABLE k_contact_attachs ADD CONSTRAINT f2_oportunities_attachs FOREIGN KEY (gu_writer) REFERENCES k_users(gu_user);
+
 ALTER TABLE k_sales_men ADD CONSTRAINT f1_sales_men FOREIGN KEY (gu_sales_man) REFERENCES k_users(gu_user);
 ALTER TABLE k_sales_men ADD CONSTRAINT f2_sales_men FOREIGN KEY (gu_geozone) REFERENCES k_thesauri(gu_term);
 
