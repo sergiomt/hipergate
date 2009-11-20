@@ -36,6 +36,9 @@ import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBPersist;
 
+import com.knowgate.misc.Gadgets;
+import com.knowgate.debug.DebugFile;
+
 import java.sql.SQLException;
 
 /**
@@ -74,6 +77,21 @@ public class CategoryLabel  extends DBPersist {
    * @throws SQLException
    */
   public static void create(JDCConnection oConn, Object[] Values) throws SQLException {
+    if (DebugFile.trace) {
+      String sValues = "";
+      if (Values!=null) {
+      	for (int v=0; v<Values.length; v++) {
+      	  sValues += (sValues.length()==0 ? "" : ",") + (Values[v]==null ? "null" : Values[v]);
+      	}
+      }
+      DebugFile.writeln("Begin CategoryLabel.create([JDCConnection], {"+sValues+"})");
+      DebugFile.incIdent();
+    }
+    
+    if (Values[1].equals("vn")) {
+      Values[1] = "vi";
+    }
+    
     CategoryLabel oLbl = new CategoryLabel();
 
     oLbl.put(DB.gu_category, Values[0]);
@@ -84,7 +102,12 @@ public class CategoryLabel  extends DBPersist {
     if (Values.length>4) oLbl.put(DB.de_category, Values[4]);
 
     oLbl.store(oConn);
-  }
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("End CategoryLabel.create()");
+      DebugFile.decIdent();
+    }
+  } // create
 
   // **********************************************************
   // Public Constants

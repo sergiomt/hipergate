@@ -116,6 +116,7 @@ public class SalePoint extends Address {
       if (!isNull(DB.nm_sale_point)) oSalePoint.put(DB.nm_sale_point, get(DB.nm_sale_point));
       if (!isNull(DB.bo_active)) oSalePoint.put(DB.bo_active, get(DB.bo_active));
       if (!isNull(DB.gu_workarea)) oSalePoint.put(DB.gu_workarea, get(DB.gu_workarea));
+      if (!isNull(DB.gu_address)) oSalePoint.put(DB.gu_address, get(DB.gu_address));
       bRetVal = oSalePoint.store(oConn);
     }
 

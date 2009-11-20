@@ -103,7 +103,7 @@ public class Address extends DBPersist {
         String sTpStreetTr = null;
         try {
       	  if (!isNull(DB.tp_street)) {
-            sTpStreetTr = DBCommand.queryStr(oConn, "SELECT "+DB.tr_+sIdCountry+" FROM "+DB.k_addresses_lookup+" WHERE "+DB.gu_owner+"='"+getString(DB.gu_workarea)+"' AND "+DB.id_section+"='tp_street' AND "+DB.vl_lookup+"'"+getString(DB.tp_street)+"'");
+            sTpStreetTr = DBCommand.queryStr(oConn, "SELECT "+DB.tr_+sIdCountry+" FROM "+DB.k_addresses_lookup+" WHERE "+DB.gu_owner+"='"+getString(DB.gu_workarea)+"' AND "+DB.id_section+"='tp_street' AND "+DB.vl_lookup+"='"+getString(DB.tp_street)+"'");
       	  }
         } catch (Exception ignore) { }
         if (sTpStreetTr!=null) put(DB.tp_street+"_"+sIdCountry.toLowerCase(), sTpStreetTr);
