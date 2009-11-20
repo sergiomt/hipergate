@@ -476,6 +476,18 @@ tx_value         VARCHAR(1000) NULL
 )
 GO;
 
+CREATE TABLE k_oportunities_attachs
+(
+gu_oportunity CHAR(32)     NOT NULL,
+pg_product    INTEGER      NOT NULL,
+gu_product    CHAR(32)     NOT NULL,
+dt_created    DATETIME     DEFAULT CURRENT_TIMESTAMP,
+gu_writer     CHAR(32)     NOT NULL,
+
+CONSTRAINT pk_oportunities_attachs PRIMARY KEY (gu_oportunity,pg_product)
+)
+GO;
+
 CREATE TABLE k_member_address
 (
 gu_address      CHAR(32) NOT NULL,

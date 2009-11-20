@@ -273,11 +273,13 @@ GO;
 CREATE TABLE k_education_degree (
   gu_degree   CHAR(32)     NOT NULL,
   gu_workarea CHAR(32)     NOT NULL,
-  nm_degree   VARCHAR(100)  NOT NULL,
+  id_country  CHAR(3)      NOT NULL,
+  nm_degree   VARCHAR(100) NOT NULL,
   tp_degree   VARCHAR(50)  NULL,
   id_degree   VARCHAR(32)  NULL,
   CONSTRAINT pk_education_degree PRIMARY KEY (gu_degree),
-  CONSTRAINT u1_education_degree UNIQUE (gu_workarea,tp_degree,nm_degree)
+  CONSTRAINT u1_education_degree UNIQUE (gu_workarea,tp_degree,nm_degree),
+  CONSTRAINT f1_education_degree FOREIGN KEY (id_country) REFERENCES k_lu_countries(id_country)  
 )
 GO;
 
@@ -327,8 +329,130 @@ CREATE TABLE k_contact_education (
   ix_degree      INTEGER      NULL,
   tx_dt_from     VARCHAR(30)  NULL,
   tx_dt_to       VARCHAR(30)  NULL,
+  pg_product     INTEGER      NULL,
+  gu_product     CHAR(32)     NULL,
+  
   CONSTRAINT pk_contact_education PRIMARY KEY (gu_contact,gu_degree),
   CONSTRAINT f1_contact_education FOREIGN KEY (gu_degree) REFERENCES k_education_degree(gu_degree)  
 )
 GO;
 
+CREATE TABLE k_contact_short_courses (
+  gu_contact     CHAR(32) NOT NULL,
+  gu_scourse     CHAR(32) NOT NULL,
+  nm_scourse     VARCHAR(100) NOT NULL,
+  dt_created     DATETIME DEFAULT CURRENT_TIMESTAMP,
+  nm_center      VARCHAR(50)  NULL,
+  lv_scourse     DECIMAL(3,2) NULL,
+  ix_scourse     INTEGER      NULL,
+  tx_dt_from     VARCHAR(30)  NULL,
+  tx_dt_to       VARCHAR(30)  NULL,
+  nu_credits     INTEGER      NULL,
+  CONSTRAINT pk_contact_short_courses PRIMARY KEY (gu_contact,gu_scourse),
+  CONSTRAINT u1_contact_short_courses UNIQUE (gu_contact,nm_scourse)
+)
+GO;
+
+CREATE TABLE k_contact_languages (
+  gu_contact   CHAR(32) NOT NULL,
+  id_language  CHAR(2) NOT NULL,
+  lv_language_degree  VARCHAR(16) NULL,
+  lv_language_spoken  SMALLINT NULL,
+  lv_language_written SMALLINT NULL,
+  CONSTRAINT pk_contact_languages PRIMARY KEY (gu_contact,id_language),
+  CONSTRAINT f1_contact_languages FOREIGN KEY (id_country) REFERENCES k_lu_languages(id_language)  
+)
+GO;
+
+CREATE TABLE k_contact_languages_lookup
+(
+gu_owner   CHAR(32)    NOT NULL,
+id_section CHARACTER VARYING(30) NOT NULL,
+pg_lookup  INTEGER     NOT NULL,
+vl_lookup  VARCHAR(50)     NULL,
+tr_es      VARCHAR(50)     NULL,
+tr_en      VARCHAR(50)     NULL,
+tr_de      VARCHAR(50)     NULL,
+tr_it      VARCHAR(50)     NULL,
+tr_fr      VARCHAR(50)     NULL,
+tr_pt      VARCHAR(50)     NULL,
+tr_ca      VARCHAR(50)     NULL,
+tr_gl      VARCHAR(50)     NULL,
+tr_eu      VARCHAR(50)     NULL,
+tr_ja      VARCHAR(50)     NULL,
+tr_cn      VARCHAR(50)     NULL,
+tr_tw      VARCHAR(50)     NULL,
+tr_fi      VARCHAR(50)     NULL,
+tr_ru      VARCHAR(50)     NULL,
+tr_nl      VARCHAR(50)     NULL,
+tr_th      VARCHAR(50)     NULL,
+tr_cs      VARCHAR(50)     NULL,
+tr_uk      VARCHAR(50)     NULL,
+tr_no      VARCHAR(50)     NULL,
+tr_sk      VARCHAR(50)     NULL,
+tr_pl      VARCHAR(50)     NULL,
+tr_vn      VARCHAR(50)     NULL,
+
+CONSTRAINT pk_contact_languages_lookup PRIMARY KEY (gu_owner,id_section,pg_lookup)
+)
+GO;
+
+CREATE TABLE k_contact_computer_science (
+  gu_ccsskill CHAR(32) NOT NULL,
+  gu_contact  CHAR(32) NOT NULL,
+  nm_skill    VARCHAR(100) NOT NULL,
+  lv_skill    VARCHAR(16)  NULL,
+  CONSTRAINT pk_contact_computer_science PRIMARY KEY (gu_ccsskill)
+  CONSTRAINT u1_contact_computer_science PRIMARY KEY (gu_contact,nm_skill)
+)
+GO;
+
+CREATE TABLE k_contact_computer_science_lookup
+(
+gu_owner   CHAR(32)    NOT NULL,
+id_section CHARACTER VARYING(30) NOT NULL,
+pg_lookup  INTEGER     NOT NULL,
+vl_lookup  VARCHAR(50)     NULL,
+tr_es      VARCHAR(50)     NULL,
+tr_en      VARCHAR(50)     NULL,
+tr_de      VARCHAR(50)     NULL,
+tr_it      VARCHAR(50)     NULL,
+tr_fr      VARCHAR(50)     NULL,
+tr_pt      VARCHAR(50)     NULL,
+tr_ca      VARCHAR(50)     NULL,
+tr_gl      VARCHAR(50)     NULL,
+tr_eu      VARCHAR(50)     NULL,
+tr_ja      VARCHAR(50)     NULL,
+tr_cn      VARCHAR(50)     NULL,
+tr_tw      VARCHAR(50)     NULL,
+tr_fi      VARCHAR(50)     NULL,
+tr_ru      VARCHAR(50)     NULL,
+tr_nl      VARCHAR(50)     NULL,
+tr_th      VARCHAR(50)     NULL,
+tr_cs      VARCHAR(50)     NULL,
+tr_uk      VARCHAR(50)     NULL,
+tr_no      VARCHAR(50)     NULL,
+tr_sk      VARCHAR(50)     NULL,
+tr_pl      VARCHAR(50)     NULL,
+tr_vn      VARCHAR(50)     NULL,
+
+CONSTRAINT pk_contact_computer_science_lookup PRIMARY KEY (gu_owner,id_section,pg_lookup)
+)
+GO;
+
+CREATE TABLE k_contact_experience
+(
+  gu_experience  CHAR(32)    NOT NULL,
+  gu_contact     CHAR(32)    NOT NULL,
+  nm_company     VARCHAR(70) NOT NULL,
+  bo_current_job SMALLINT    NOT NULL,
+  id_sector      VARCHAR(16)     NULL, /* Reuse k_companies_lookup for this column */
+  de_title       VARCHAR(70)     NULL, /* Reuse k_contacts_lookup for this column */
+  tx_dt_from     VARCHAR(30)     NULL,
+  tx_dt_to       VARCHAR(30)     NULL,
+  contact_person VARCHAR(100)    NULL,
+  tx_comments    VARCHAR(254)    NULL,
+    
+CONSTRAINT pk_contact_experience PRIMARY KEY (gu_experience)
+)
+GO;
