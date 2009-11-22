@@ -90,12 +90,13 @@ public class CalendarTab  extends GenericPortlet {
     String sDomainId = req.getProperty("domain");
     String sWorkAreaId = req.getProperty("workarea");
     String sUserId = req.getProperty("user");
-    String sZone = req.getProperty("zone");
-    String sLang = req.getProperty("language");
     String sTemplatePath = req.getProperty("template");
     String sStorage = req.getProperty("storage");
+    String sZone = req.getProperty("zone");
+    String sMaxRows = req.getProperty("maxrows");
+    if (null==sMaxRows) sMaxRows = "10";
     String sFileDir = "file://" + sStorage + "domains" + File.separator + sDomainId + File.separator + "workareas" + File.separator + sWorkAreaId + File.separator + "cache" + File.separator + sUserId;
-    String sCachedFile = "calendartab_" + req.getWindowState().toString() + ".xhtm";
+    String sCachedFile = "calendartab_" + sZone + "_" + req.getWindowState().toString() + ".xhtm";
 
     if (DebugFile.trace) {
       DebugFile.writeln ("user=" + sUserId);
@@ -109,7 +110,8 @@ public class CalendarTab  extends GenericPortlet {
 
     if (null!=oDtModified) {
       try {
-
+      if (DebugFile.trace) DebugFile.writeln ("new File("+sFileDir.substring(7)+File.separator+sCachedFile+")");
+      	
         File oCached = new File(sFileDir.substring(7)+File.separator+sCachedFile);
 
         if (!oCached.exists()) {
@@ -137,9 +139,11 @@ public class CalendarTab  extends GenericPortlet {
     int iToDo = 0, iMeetings = 0;
 
     if (req.getWindowState().equals(WindowState.MINIMIZED)) {
+      if (DebugFile.trace) DebugFile.writeln ("WindowState.MINIMIZED");
       sXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><?xml-stylesheet type=\"text/xsl\"?><calendar><todo/><today/></calendar>";
     }
     else {
+      if (DebugFile.trace) DebugFile.writeln ("WindowState.NORMAL");
 
       String sTodayXML, sToDoXML;
 
@@ -168,7 +172,7 @@ public class CalendarTab  extends GenericPortlet {
       try  {
         oCon = oDBB.getConnection("CalendarTab_today");
 
-        oToDo.setMaxRows(10);
+        oToDo.setMaxRows(Integer.parseInt(sMaxRows));
         iToDo = oToDo.load (oCon, new Object[]{sUserId});
 
         for (int a=0; a<iToDo; a++) {
@@ -234,10 +238,15 @@ public class CalendarTab  extends GenericPortlet {
        Enumeration oKeys = req.getPropertyNames();
        while (oKeys.hasMoreElements()) {
          String sKey = (String) oKeys.nextElement();
-         oProps.setProperty(sKey, req.getProperty(sKey));
+         if (null!=req.getProperty(sKey)) {
+           if (DebugFile.trace) DebugFile.writeln("setProperty("+sKey+","+req.getProperty(sKey)+")");
+           oProps.setProperty(sKey, req.getProperty(sKey));
+         }
        } // wend
 
-       if (req.getWindowState().equals(WindowState.MINIMIZED))
+	   if (req.getWindowState()==null)
+         oProps.setProperty("windowstate", "NORMAL");
+       else if (req.getWindowState().equals(WindowState.MINIMIZED))
          oProps.setProperty("windowstate", "MINIMIZED");
        else
          oProps.setProperty("windowstate", "NORMAL");
