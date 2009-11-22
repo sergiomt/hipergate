@@ -98,6 +98,7 @@ import com.oreilly.servlet.MailMessage;
 public class MimeSender extends Job {
 
   private SessionHandler oHndlr;
+  private int iDomainId;
   private DBStore oStor;
   private DBFolder oOutBox;
   private String sBody;
@@ -215,7 +216,6 @@ public class MimeSender extends Job {
       MailAccount oMacc = new MailAccount();
       if (DebugFile.trace) DebugFile.writeln("workarea="+getStringNull(DB.gu_workarea,"null"));
       String sWrkA = getString(DB.gu_workarea);
-      int iDomainId=-1;
       try {
         if (DebugFile.trace) DebugFile.writeln("DBBind="+getDataBaseBind());
         // Get User, Account and Domain objects
@@ -381,7 +381,9 @@ public class MimeSender extends Job {
     final String Activated = "true";
     final String Yes = "1";
     final String No = "0";
-
+    JDCConnection oScnn = null;
+    boolean bBlackListed = false;
+    
     if (DebugFile.trace) {
       DebugFile.writeln("Begin MimeSender.process("+oAtm.getString(DB.gu_job)+":"+String.valueOf(oAtm.getInt(DB.pg_atom))+")");
       DebugFile.incIdent();
@@ -424,6 +426,7 @@ public class MimeSender extends Job {
     SMTPMessage oSentMsg;
 
     try {
+	  
       // Personalize mail if needed by replacing {#...} tags by values taken from Atom fields
       String sFormat = oAtm.getStringNull(DB.id_format,"plain").toLowerCase();
       if (sFormat.equals("text") || sFormat.equals("txt")) sFormat = "plain";
@@ -465,6 +468,16 @@ public class MimeSender extends Job {
         if (DebugFile.trace) DebugFile.writeln("tx_email="+oAtm.getString(DB.tx_email));
         String sSanitizedEmail = MailMessage.sanitizeAddress(oAtm.getString(DB.tx_email));
         if (DebugFile.trace) DebugFile.writeln("sanitized tx_email="+sSanitizedEmail);
+
+		// No blacklisted e-mails allowed to pass through
+	    oScnn = oStor.getConnection();
+	    bBlackListed = DBCommand.queryExists(oScnn, DB.k_global_black_list,
+	  									     DBBind.Functions.LOWER+"("+DB.tx_email+") IN ('"+sSanitizedEmail.toLowerCase()+"','"+oAtm.getString(DB.tx_email).toLowerCase()+"') AND "+
+	  									     DB.id_domain+"="+String.valueOf(iDomainId)+" AND "+
+	  									     DB.gu_workarea+" IN ('"+getString(DB.gu_workarea)+"','00000000000000000000000000000000')");
+		oScnn = null;
+		if (bBlackListed) throw new SQLException("Could not sent message to "+sSanitizedEmail+" because it is blacklisted");
+
         InternetAddress oRec = DBInetAddr.parseAddress(sSanitizedEmail);
         String sRecType = oAtm.getStringNull(DB.tp_recipient,"to");
         if (sRecType.equalsIgnoreCase("to"))
@@ -504,7 +517,7 @@ public class MimeSender extends Job {
       throw new MessagingException(e.getMessage(),e);
     } finally {
       try {
-      	JDCConnection oScnn = oStor.getConnection();
+      	oScnn = oStor.getConnection();
       	if (null!=oScnn)
       	  if (!oScnn.isClosed())
       	  	oScnn.commit();
