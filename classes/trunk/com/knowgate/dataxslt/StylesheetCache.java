@@ -162,6 +162,7 @@ public class StylesheetCache {
       DebugFile.writeln("Begin StylesheetCache.setParameters(Transformer, Properties)");
       if (null==oXSL) throw new NullPointerException("StylesheetCache.setParameters() Transformer may not be null");
       if (null==oXSL) throw new NullPointerException("StylesheetCache.setParameters() Properties may not be null");
+      DebugFile.writeln(oProps.toString());
       DebugFile.incIdent();
     }
 
@@ -173,9 +174,12 @@ public class StylesheetCache {
       sKey = (String) myIterator.next();
       sVal = oProps.getProperty(sKey);
 
-      // if (DebugFile.trace) DebugFile.writeln("set param_" + sKey + " = " + sVal);
-
-      oXSL.setParameter("param_" + sKey, sVal);
+      try {
+       	oXSL.setParameter("param_" + sKey, sVal);
+      } catch (Exception xcpt) {
+      	if (DebugFile.trace)
+      	  DebugFile.writeln("Transformer.setParameter(param_"+sKey+","+sVal+") "+xcpt.getClass().getName()+" "+xcpt.getMessage());
+      }
     } // wend()
 
     if (DebugFile.trace) {
