@@ -52,7 +52,9 @@ import com.knowgate.jdc.JDCConnection;
 /**
  * <p>Abstract superclass for event handlers</p>
  * Classes implementing an event handler must derive from this one and implement the trigger method
- */
+ * @author Sergio Montoro Ten
+ * @version 4.0
+ **/
  
 public abstract class Event extends DBPersist {
 
@@ -109,19 +111,17 @@ public abstract class Event extends DBPersist {
 
 	String sEvntClss = (String) oCmmdClasses.get(sIdCmmd);
 
-	if (null==sEvntClss) throw new SQLException("No handler class found for event "+sEventId+" at "+DB.k_lu_job_commands+" table", "01S06", 200);
-
-	//synchronized  {
-	  if (null==oEventCache) oEventCache = new DistributedCachePeer();
-	  Event oEvnt = (Event) oEventCache.get(sEventId+"("+String.valueOf(iDomainId)+")");
-	  if ((null==oEvnt)) {
-	  	oEvnt = (Event) Class.forName(sEvntClss).newInstance();
-	    oEvnt.load(oConn, new Object[]{new Integer(iDomainId), sEventId});
-		oEventCache.put(sEventId+"("+String.valueOf(iDomainId)+")",oEvnt);
-	  } // fi
-	//}
+	if (null!=sEvntClss) {
+	    if (null==oEventCache) oEventCache = new DistributedCachePeer();
+	    Event oEvnt = (Event) oEventCache.get(sEventId+"("+String.valueOf(iDomainId)+")");
+	    if ((null==oEvnt)) {
+	  	  oEvnt = (Event) Class.forName(sEvntClss).newInstance();
+	      oEvnt.load(oConn, new Object[]{new Integer(iDomainId), sEventId});
+		  oEventCache.put(sEventId+"("+String.valueOf(iDomainId)+")",oEvnt);
+	    } // fi
+	  oEvnt.trigger(oConn, oParameters, oEnvironment);
+	} // fi
 	
-	oEvnt.trigger(oConn, oParameters, oEnvironment);
   } // trigger
 
 }
