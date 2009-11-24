@@ -237,7 +237,8 @@ public class MailMessage {
 
   // Make a limited attempt to extract a sanitized email address
   // Prefer text in <brackets>, ignore anything in (parentheses)
-  public static String sanitizeAddress(String s) {
+  // Remove accents
+  public static String sanitizeAddress(final String s) {
     int paramDepth = 0;
     int start = 0;
     int end = 0;
@@ -269,7 +270,19 @@ public class MailMessage {
       end = len;
     }
 
-    return s.substring(start, end);
+    String a = s.substring(start, end);
+  	a = a.replace('á','a'); a = a.replace('à','a');
+  	a = a.replace('é','e'); a = a.replace('è','è');
+  	a = a.replace('í','i'); a = a.replace('ì','i');
+  	a = a.replace('ó','o'); a = a.replace('ò','o');
+  	a = a.replace('ú','u'); a = a.replace('ù','u');
+  
+  	if (a.endsWith(".")) a = a.substring(0, a.length()-1);
+
+	int iDotDot = a.indexOf("..");
+	if (iDotDot>0) a = a.substring(0,iDotDot)+a.substring(iDotDot+1);
+
+    return a;
   }
 
   // * * * * * Raw protocol methods below here * * * * *
