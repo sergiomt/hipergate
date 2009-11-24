@@ -1,0 +1,24 @@
+<binding forwards="false">
+  <namespace uri="http://www.inktomi.com/" prefix="inktomi" />
+  <mapping class="com.knowgate.yahoo.YSearchResponse" ns="http://www.inktomi.com/" name="ysearchresponse">
+    <value format="int.default" style="attribute" name="responsecode" field="responsecode" usage="required" />
+    <value style="element" ns="http://www.inktomi.com/" name="nextpage" field="nextpage" usage="optional" />
+    <structure ns="http://www.inktomi.com/" name="resultset_web" field="resultset" usage="required" type="com.knowgate.yahoo.ResultsetWeb">
+      <value format="int.default" style="attribute" name="count" field="count" usage="required" />
+      <value format="int.default" style="attribute" name="start" field="start" usage="required" />
+      <value format="int.default" style="attribute" name="totalhits" field="totalhits" usage="required" />
+      <value format="int.default" style="attribute" name="deephits" field="deephits" usage="required" />
+      <collection ordered="true" field="results" usage="required">
+        <structure ns="http://www.inktomi.com/" name="result" usage="required" type="com.knowgate.yahoo.Result">
+          <value style="element" ns="http://www.inktomi.com/" name="abstract" field="abstrct" usage="required" />
+          <value style="element" ns="http://www.inktomi.com/" name="clickurl" field="clickurl" usage="required" />
+          <value style="element" ns="http://www.inktomi.com/" name="date" field="date" usage="required" />
+          <value style="element" ns="http://www.inktomi.com/" name="dispurl" field="dispurl" usage="required" />
+          <value format="int.default" style="element" ns="http://www.inktomi.com/" name="size" field="size" usage="required" />
+          <value style="element" ns="http://www.inktomi.com/" name="title" field="title" usage="required" />
+          <value style="element" ns="http://www.inktomi.com/" name="url" field="url" usage="required" />
+        </structure>    
+      </collection>
+    </structure>
+  </mapping>
+</binding>
