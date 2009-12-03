@@ -46,6 +46,7 @@ import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.dataobjs.DBSubset;
 import com.knowgate.dataobjs.DBPersist;
 import com.knowgate.hipergate.Address;
+import com.knowgate.hipergate.Product;
 import com.knowgate.misc.Gadgets;
 
 public class Activity extends DBPersist {
@@ -143,6 +144,18 @@ public class Activity extends DBPersist {
   } // store
 
   public boolean delete(JDCConnection oConn) throws SQLException {
+
+    DBSubset oAttachs = new DBSubset(DB.k_activity_attachs, DB.gu_product,
+                                     DB.gu_activity + "='" + getString(DB.gu_activity) + "'" , 10);
+    int iAttachs = oAttachs.load(oConn);
+    Product oProd = new Product();
+    for (int a=0;a<iAttachs; a++) {
+      oProd.replace(DB.gu_product, oAttachs.getString(0,a));
+      oProd.delete(oConn);
+    } // next (a)
+    oProd = null;
+    oAttachs = null;
+
     if (oConn.getDataBaseProduct()==JDCConnection.DBMS_POSTGRESQL) {
       Statement oStmt = oConn.createStatement();
       oStmt.executeQuery("SELECT k_sp_del_activity ('"+getString(DB.gu_activity)+"')");
