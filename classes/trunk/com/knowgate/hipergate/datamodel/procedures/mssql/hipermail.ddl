@@ -43,3 +43,8 @@ CREATE PROCEDURE k_sp_write_inet_addr @DomainId INTEGER, @WorkAreaId CHAR(32), @
   INSERT INTO k_inet_addrs (gu_mimemsg,id_message,tx_email,tp_recipient,tx_personal,gu_user,gu_contact,gu_company)
                     VALUES (@MsgGuid,  @MimeMsgId,@EMailTx,@RecipientTp,@PersonalTx,@UserId,@ContactId,@CompanyId)
 GO;
+
+CREATE PROCEDURE k_sp_del_adhoc_mailing @AdHocId CHAR(32) AS
+  DELETE k_x_adhoc_mailing_list WHERE gu_mailing=@AdHocId;
+  DELETE k_adhoc_mailings WHERE gu_mailing=@AdHocId;
+GO;
