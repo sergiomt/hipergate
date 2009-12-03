@@ -64,10 +64,11 @@ import com.knowgate.crm.DistributionList;
 
 import com.knowgate.projtrack.Project;
 
-import com.knowgate.hipergate.Image;
-
 import com.knowgate.dataxslt.db.*;
 
+import com.knowgate.hipermail.AdHocMailing;
+
+import com.knowgate.hipergate.Image;
 import com.knowgate.hipergate.QueryByForm;
 import com.knowgate.hipergate.Shop;
 
@@ -319,10 +320,14 @@ public class WorkArea extends DBPersist {
       if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(DELETE FROM " + DB.k_adhoc_mailings_lookup + " WHERE " + DB.gu_owner + "='" + sWrkAreaGUID + "')");
       oStmt.executeUpdate("DELETE FROM " + DB.k_adhoc_mailings_lookup + " WHERE  " + DB.gu_owner + "='" + sWrkAreaGUID + "'");
       oStmt.close();
-      if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(DELETE FROM " + DB.k_adhoc_mailings + " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "')");
-      oStmt.executeUpdate("DELETE FROM " + DB.k_adhoc_mailings + " WHERE  " + DB.gu_workarea + "='" + sWrkAreaGUID + "'");
-      oStmt.close();
-	}
+      DBSubset oMailings = new DBSubset(DB.k_adhoc_mailings, DB.gu_mailing, DB.gu_workarea+"=?", 1000);
+      int iMailings = oMailings.load(oConn, new Object[]{sWrkAreaGUID});
+      AdHocMailing oAdhc = new AdHocMailing();
+      for (int m=0; m<iMailings; m++) {
+      	oAdhc.load(oConn, new Object[]{oMailings.getString(DB.gu_mailing,m)});
+      	oAdhc.delete(oConn);
+      } // next
+	} // fi
 
     if (DBBind.exists(oConn, DB.k_mime_msgs, "U")) {
       oStmt = oConn.createStatement();
