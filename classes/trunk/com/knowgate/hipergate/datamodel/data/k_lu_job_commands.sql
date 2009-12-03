@@ -7,3 +7,5 @@ INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('SAVE','S
 INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('FAX' ,'SEND DOCUMENTS BY FAX','com.knowgate.scheduler.jobs.FaxSender');
 INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('FTP' ,'SAVE DOCUMENTS TO FTP','com.knowgate.scheduler.jobs.FTPPublisher');
 INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('DUMY','DUMMY TESTING JOB','com.knowgate.scheduler.jobs.DummyJob');
+INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('NOPO','NEW OPORTUNITY','com.knowgate.scheduler.events.DoNothing');
+INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('MOPO','MODIFY OPORTUNITY','com.knowgate.scheduler.events.DoNothing');
