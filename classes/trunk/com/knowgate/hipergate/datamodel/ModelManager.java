@@ -74,7 +74,7 @@ import com.knowgate.hipergate.DBLanguages;
 
 public class ModelManager {
 
-  private static final String VERSION = "4.0.0";
+  private static final String VERSION = "5.0.0";
 
   private static final int BULK_PROCEDURES = 1;
   private static final int BULK_STATEMENTS = 2;
@@ -330,7 +330,7 @@ public class ModelManager {
       throw new UnsupportedOperationException("DataBase Management System not supported");
     }
 
-    // oStrLog = new StringBuffer();
+    oStrLog = new StringBuffer();
 
     if (DebugFile.trace) {
       DebugFile.decIdent();
@@ -1338,6 +1338,8 @@ public class ModelManager {
     executeBulk("indexes/hipermail.sql", BULK_STATEMENTS);
 
     executeBulk("procedures/" + sDbms + "/hipermail.ddl", BULK_PLSQL);
+
+    executeBulk("views/hipermail.sql", BULK_STATEMENTS);
 
   } else if (sModuleName.equals("training")) {
 
