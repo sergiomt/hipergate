@@ -68,7 +68,7 @@ import com.knowgate.workareas.FileSystemWorkArea;
  * <p>Contact</p>
  * <p>Copyright: Copyright (c) KnowGate 2003</p>
  * @author Sergio Montoro Ten
- * @version 3.0
+ * @version 5.5
  */
 
 public class Contact extends DBPersist {
@@ -850,7 +850,7 @@ public class Contact extends DBPersist {
 
   /**
    * Delete Contact.
-   * The delete step by step is as follws:<br>
+   * The delete step by step is as follows:<br>
    * If k_x_meeting_contact table exists, then Contact is deleted from Meetings.<br>
    * If k_orders table exists, then Orders for this Contact are deleted.<br>
    * All Contact Attachments are deleted.<br>
