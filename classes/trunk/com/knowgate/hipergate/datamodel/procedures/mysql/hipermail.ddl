@@ -45,3 +45,10 @@ BEGIN
   INSERT INTO k_inet_addrs (gu_mimemsg,id_message,tx_email,tp_recipient,tx_personal,gu_user,gu_contact,gu_company) VALUES (MsgGuid,MimeMsgId,EMailTx,RecipientTp,PersonalTx,UserId,ContactId,CompanyId);
 END
 GO;
+
+CREATE PROCEDURE k_sp_del_adhoc_mailing (MimeMsgId CHAR(32))
+BEGIN
+  DELETE FROM k_x_adhoc_mailing_list WHERE gu_mailing=AdHocId;
+  DELETE FROM k_adhoc_mailings WHERE gu_mailing=AdHocId;
+END
+GO;
