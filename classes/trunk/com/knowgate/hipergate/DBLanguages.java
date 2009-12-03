@@ -561,6 +561,7 @@ public class DBLanguages {
    * @param sOwnerId WorkArea for filtering results
    * @param sSectionId Name of section (field) to retrieve
    * @param sLanguage 2 chracters language code for ComboBox texts (see k_lu_languages table)
+   * @param iOrderBy Column for ordering results: 0=Internal Lookup Value, 1=Displayed Label, 2=Lookup Ordinal
    * @return <OPTION VALUE="...">...</OPTION><OPTION VALUE="...">...</OPTION>...
    * @throws SQLException
    * @see com.knowgate.cache.DistributedCachePeer
@@ -568,7 +569,8 @@ public class DBLanguages {
 
   public static String getHTMLSelectLookUp(DistributedCachePeer oCache, JDCConnection oConn,
                                            String sTableName, String sOwnerId,
-                                           String sSectionId, String sLanguage)
+                                           String sSectionId, String sLanguage,
+                                           int iOrderBy)
     throws RemoteException,SQLException {
 
     StringBuffer oBuff = new StringBuffer(2048);
@@ -587,7 +589,7 @@ public class DBLanguages {
       if (oConn!=null) {
         oDBSS = new DBSubset(sTableName,
                              DB.vl_lookup + "," + DB.tr_ + sLanguage.toLowerCase() + "," + DB.pg_lookup,
-                             DB.gu_owner + "=? AND " + DB.id_section + "=? ORDER BY 2",
+                             DB.gu_owner + "=? AND " + DB.id_section + "=? ORDER BY "+String.valueOf(iOrderBy),
                              100);
         iDBSS = oDBSS.load(oConn, aFilter);
         oCache.putDBSubset(sTableName, sTableName + "." + sSectionId + "[" + sOwnerId + "]", oDBSS);
@@ -614,6 +616,32 @@ public class DBLanguages {
 
     return oBuff.toString();
   } // getHTMLSelectLookUp()
+
+  // ----------------------------------------------------------
+
+  /**
+   * <p>Get an HTML ComboBox options with translated labels for a standard
+   * hipergate lookup table.</p>
+   * This method first checks the DistributedCachePeer for a matching ResultSet,
+   * then goes to database if ResultSet is not cached. Result is placed at cache
+   * as a DBSubset object with key sTableName.sSectionId[sOwnerId].
+   * @param oCache Local cache peer
+   * @param oConn Database connection
+   * @param sTableName Lookup table name
+   * @param sOwnerId WorkArea for filtering results
+   * @param sSectionId Name of section (field) to retrieve
+   * @param sLanguage 2 chracters language code for ComboBox texts (see k_lu_languages table)
+   * @return <OPTION VALUE="...">...</OPTION><OPTION VALUE="...">...</OPTION>...
+   * @throws SQLException
+   * @see com.knowgate.cache.DistributedCachePeer
+   */
+
+  public static String getHTMLSelectLookUp(DistributedCachePeer oCache, JDCConnection oConn,
+                                           String sTableName, String sOwnerId,
+                                           String sSectionId, String sLanguage)
+    throws RemoteException,SQLException {
+    return getHTMLSelectLookUp(oCache, oConn, sTableName, sOwnerId, sSectionId, sLanguage, 2);
+  }
 
   // ----------------------------------------------------------
 

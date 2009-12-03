@@ -249,7 +249,7 @@ public class Address extends DBPersist {
 	    oAddrLine.append(getString(DB.nm_street)+" ");
 	  if (!isNull(DB.nu_street)) 
 	    oAddrLine.append(getString(DB.nu_street));
-	} else if (sCountryId.equals("us") || sCountryId.equals("gb")  || sCountryId.equals("uk")) {
+	} else if (sCountryId.equals("en") || sCountryId.equals("us") || sCountryId.equals("gb")  || sCountryId.equals("uk")) {
 	  if (!isNull(DB.nu_street)) 
 	    oAddrLine.append(getString(DB.nu_street)+" ");
 	  if (!isNull(DB.nm_street)) 
