@@ -262,6 +262,7 @@ public class MimeSender extends Job {
         // source of message to be sent
         String sProfile = getParameter("profile");
         String sMBoxDir = DBStore.MBoxDirectory(sProfile,iDomainId,sWrkA);
+        try { if (oStor!=null) oStor.close(); } catch (Exception xcpt) { } finally { oStor=null; }
         oStor = new DBStore(oHndlr.getSession(), new URLName("jdbc://", sProfile, -1, sMBoxDir, oUser.getString(DB.gu_user), oUser.getString(DB.tx_pwd)));
         oStor.connect(sProfile, oUser.getString(DB.gu_user), oUser.getString(DB.tx_pwd));
         oOutBox = (DBFolder) oStor.getFolder("outbox");
