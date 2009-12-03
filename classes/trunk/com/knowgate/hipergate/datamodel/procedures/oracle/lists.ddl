@@ -18,6 +18,8 @@ BEGIN
   DELETE k_x_list_members WHERE gu_list=bk;
   
   DELETE k_x_campaign_lists WHERE gu_list=bk;
+
+  DELETE k_x_adhoc_mailing_list WHERE gu_list=bk;
   
   DELETE k_lists WHERE gu_list=bk;
 
@@ -32,6 +34,8 @@ EXCEPTION
     DELETE k_x_list_members WHERE gu_list=ListId;
 
     DELETE k_x_campaign_lists WHERE gu_list=ListId;
+
+    DELETE k_x_adhoc_mailing_list WHERE gu_list=ListId;
 
     DELETE k_lists WHERE gu_list=ListId;
 END k_sp_del_list;

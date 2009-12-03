@@ -51,3 +51,10 @@ BEGIN
   INSERT INTO k_inet_addrs (gu_mimemsg,id_message,tx_email,tp_recipient,tx_personal,gu_user,gu_contact,gu_company) VALUES (MsgGuid,MimeMsgId,EMailTx,RecipientTp,PersonalTx,UserId,ContactId,CompanyId);
   END k_sp_write_inet_addr;
 GO;
+
+CREATE OR REPLACE PROCEDURE k_sp_del_adhoc_mailing (AdHocId CHAR) IS
+BEGIN
+  DELETE k_x_adhoc_mailing_list WHERE gu_mailing=AdHocId;
+  DELETE k_adhoc_mailings WHERE gu_mailing=AdHocId;
+END k_sp_del_adhoc_mailing;
+GO;
