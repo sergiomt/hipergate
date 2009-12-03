@@ -360,7 +360,7 @@ CREATE TABLE k_contact_languages (
   lv_language_spoken  SMALLINT NULL,
   lv_language_written SMALLINT NULL,
   CONSTRAINT pk_contact_languages PRIMARY KEY (gu_contact,id_language),
-  CONSTRAINT f1_contact_languages FOREIGN KEY (id_country) REFERENCES k_lu_languages(id_language)  
+  CONSTRAINT f1_contact_languages FOREIGN KEY (id_language) REFERENCES k_lu_languages(id_language)  
 )
 GO;
 
@@ -402,8 +402,8 @@ CREATE TABLE k_contact_computer_science (
   gu_contact  CHAR(32) NOT NULL,
   nm_skill    VARCHAR(100) NOT NULL,
   lv_skill    VARCHAR(16)  NULL,
-  CONSTRAINT pk_contact_computer_science PRIMARY KEY (gu_ccsskill)
-  CONSTRAINT u1_contact_computer_science PRIMARY KEY (gu_contact,nm_skill)
+  CONSTRAINT pk_contact_computer_science PRIMARY KEY (gu_ccsskill),
+  CONSTRAINT u1_contact_computer_science UNIQUE (gu_contact,nm_skill)
 )
 GO;
 

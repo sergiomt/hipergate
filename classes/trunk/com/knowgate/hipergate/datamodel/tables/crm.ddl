@@ -252,6 +252,8 @@ tx_division    VARCHAR(70)  NULL,  /* División */
 gu_geozone     CHAR(32)     NULL,  /* Zona Geográfica */
 gu_sales_man   CHAR(32)     NULL,  /* Vendedor */
 tx_comments    VARCHAR(254) NULL,  /* Comentarios */
+url_linkedin   CHARACTER VARYING(254) NULL,
+url_facebook   CHARACTER VARYING(254) NULL,
 
 CONSTRAINT pk_contacts PRIMARY KEY (gu_contact),
 CONSTRAINT c1_contacts CHECK (tx_name IS NULL OR LENGTH(tx_name)>0),

@@ -111,6 +111,13 @@ CREATE TABLE k_adhoc_mailings (
 )
 GO;
 
+CREATE TABLE k_x_adhoc_mailing_list (
+  gu_list CHAR(32)    NOT NULL,
+  gu_mailing CHAR(32) NOT NULL,
+  CONSTRAINT pk_x_adhoc_mailing_list PRIMARY KEY (gu_list,gu_mailing)
+)
+GO;
+
 CREATE TABLE k_adhoc_mailings_lookup
 (
 gu_owner   CHAR(32)     NOT NULL,

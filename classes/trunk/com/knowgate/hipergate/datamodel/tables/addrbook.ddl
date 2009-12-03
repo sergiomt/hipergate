@@ -190,6 +190,7 @@ tr_no      VARCHAR(50)     NULL,
 tr_pl      VARCHAR(50)     NULL,
 tr_sk      VARCHAR(50)     NULL,
 tr_vn      VARCHAR(50)     NULL,
+tr_ko      VARCHAR(50)     NULL,
 
 CONSTRAINT pk_meetings_lookup PRIMARY KEY (gu_owner,id_section,pg_lookup),
 CONSTRAINT u1_meetings_lookup UNIQUE (gu_owner,id_section,vl_lookup)

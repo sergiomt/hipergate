@@ -52,12 +52,23 @@ dt_created     DATETIME      DEFAULT CURRENT_TIMESTAMP,
 tl_activity    VARCHAR(100)  NOT NULL,
 bo_active      SMALLINT DEFAULT 1,
 dt_modified    DATETIME      NULL,
+dt_start       DATETIME      NULL,
+dt_end         DATETIME      NULL,
 gu_address     CHAR(32)      NULL,
 gu_campaign    CHAR(32)      NULL,
 gu_list        CHAR(32)      NULL,
 gu_writer      CHAR(32)      NULL,
-dt_start       DATETIME      NULL,
-dt_end         DATETIME      NULL,
+gu_meeting     CHAR(32)      NULL,
+gu_pageset     CHAR(32)      NULL,
+gu_mailing     CHAR(32)      NULL,
+dt_mailing     DATETIME      NULL,
+bo_urgent      SMALLINT      DEFAULT 0,
+bo_reminder    SMALLINT      DEFAULT 0,
+tx_subject     VARCHAR(254)  NULL,
+tx_email_from  CHARACTER VARYING(254) NULL,
+nm_from        CHARACTER VARYING(254) NULL,
+url_activity   CHARACTER VARYING(254) NULL,
+nm_author      VARCHAR(200)  NULL,
 nu_capacity    INTEGER       NULL,
 pr_sale		   DECIMAL(14,4) NULL,
 pr_discount    DECIMAL(14,4) NULL,
@@ -72,6 +83,18 @@ CONSTRAINT c1_activities CHECK ((dt_start IS NULL AND dt_end IS NULL) OR dt_end 
 CONSTRAINT c2_activities CHECK (nu_capacity>=0),
 CONSTRAINT c3_activities CHECK (pr_sale>=0),
 CONSTRAINT c4_activities CHECK (pr_discount>=0)
+)
+GO;
+
+CREATE TABLE k_activity_attachs
+(
+gu_activity  CHAR(32)     NOT NULL,
+pg_product   INTEGER      NOT NULL,
+gu_product   CHAR(32)     NOT NULL,
+dt_created   DATETIME     DEFAULT CURRENT_TIMESTAMP,
+gu_writer    CHAR(32)     NOT NULL,
+
+CONSTRAINT pk_activity_attachs PRIMARY KEY (gu_activity,pg_product)
 )
 GO;
 
