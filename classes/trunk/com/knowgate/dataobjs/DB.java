@@ -196,6 +196,7 @@ public final class DB {
   
   public static final String k_activities = "k_activities";
   public static final String k_x_activity_audience = "k_x_activity_audience";
+  public static final String k_activity_attachs = "k_activity_attachs";
 
   public static final String k_microsites = "k_microsites";
   public static final String k_pagesets = "k_pagesets";
@@ -879,6 +880,10 @@ public final class DB {
   public static final String de_activity = "de_activity";
   public static final String nu_capacity = "nu_capacity";
   public static final String bo_allows_ads = "bo_allows_ads";
+  public static final String bo_urgent = "bo_urgent";
+  public static final String bo_reminder = "bo_reminder";
+  public static final String gu_mailing = "gu_mailing";
+  public static final String dt_mailing = "dt_mailing";
   	
   // k_microsites
   public static final String gu_microsite = "gu_microsite";
@@ -1061,7 +1066,6 @@ public final class DB {
   public static final String len_part = "len_part";
   
   // k_adhoc_mailings
-  public static final String gu_mailing = "gu_mailing";
   public static final String pg_mailing = "pg_mailing";
   public static final String nm_mailing = "nm_mailing";
   public static final String bo_html_part = "bo_html_part";
