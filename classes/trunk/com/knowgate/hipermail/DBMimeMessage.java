@@ -321,6 +321,7 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
    * @return If this message is stored at the database then this method returns
    * an array of DBInetAddr objects. If this message has not been stored yet then
    * this method returns an array of javax.mail.internet.InternetAddress objects
+   * @throws SQLException
    * @throws MessagingException
    * @throws NullPointerException
    * @throws IllegalArgumentException
@@ -345,9 +346,14 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
     else {
       if (oFolder.getClass().getName().equals("com.knowgate.hipermail.DBFolder")) {
 
-        if (((DBFolder)oFolder).getConnection()==null) {
+		try {
+          if (((DBFolder)oFolder).getConnection()==null) {
+            if (DebugFile.trace) DebugFile.decIdent();
+            throw new MessagingException("DBMimeMessage.getAllRecipients() not connected to the database");
+          }
+		} catch (SQLException sqle) {
           if (DebugFile.trace) DebugFile.decIdent();
-          throw new MessagingException("DBMimeMessage.getAllRecipients() not connected to the database");
+          throw new MessagingException(sqle.getMessage(), sqle);
         }
 
         oAddrs = new DBSubset(DB.k_inet_addrs,
@@ -471,7 +477,7 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
   // ---------------------------------------------------------------------------
 
   private void cacheHeaders()
-    throws SQLException {
+    throws SQLException,MessagingException {
 
     if (DebugFile.trace) {
       DebugFile.writeln("Begin DBMimeMessage.cacheHeaders()");
@@ -1199,9 +1205,13 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
     DBFolder oDBF = (DBFolder) getFolder();
 
     if ((oDBF.getType()&DBFolder.MODE_MBOX)!=0) {
-      if (oDBF.getConnection()==null) {
-        if (DebugFile.trace) DebugFile.decIdent();
-        throw new FolderClosedException(oDBF, "Folder is closed");
+      try {
+        if (oDBF.getConnection()==null) {
+          if (DebugFile.trace) DebugFile.decIdent();
+          throw new FolderClosedException(oDBF, "Folder is closed");
+        }
+      } catch (SQLException sqle) {
+      	throw new MessagingException(sqle.getMessage(), sqle);
       }
 
       PreparedStatement oStmt = null;

@@ -124,9 +124,22 @@ public class DBStore extends javax.mail.Store {
 
   // ---------------------------------------------------------------------------
 
-  public JDCConnection getConnection() {
+  public JDCConnection getConnection()
+  	throws SQLException,MessagingException {
+    if (!isConnected()) connect();
+	else if (!oConn.isValid(10)) {
+	  try {
+	  	oConn.close();
+	    oConn=null;
+	  }
+	  catch (Exception xcpt) {
+        if (DebugFile.trace)
+      	  DebugFile.writeln("DBStore.getConnection() "+xcpt.getClass().getName()+" "+xcpt.getMessage());
+	  }
+	  connect();
+	} // isValid
     return oConn;
-  }
+  } // getConnection
 
   // ---------------------------------------------------------------------------
 

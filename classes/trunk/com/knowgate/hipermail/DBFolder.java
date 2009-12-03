@@ -126,7 +126,7 @@ public class DBFolder extends Folder {
 
   // ---------------------------------------------------------------------------
 
-  protected JDCConnection getConnection() {
+  protected JDCConnection getConnection() throws SQLException,MessagingException {
     return ((DBStore) getStore()).getConnection();
   }
 
@@ -170,7 +170,14 @@ public class DBFolder extends Folder {
     DBKeySet oKeySet = new DBKeySet(DB.k_mime_msgs,
                                     DB.id_message,
                                     DB.id_message+" IS NOT NULL AND "+DB.gu_category+"=? AND "+DB.bo_deleted+"<>1 AND "+DB.gu_parent_msg+" IS NULL",0);
-    oKeySet.load(getConnection(),new Object[]{oCatg.getString(DB.gu_category)});
+    JDCConnection oCnn = null;
+    try {
+      oCnn = this.getConnection();
+    } catch (MessagingException msge) {
+      throw new SQLException(msge.getMessage(), msge);
+    }
+    
+    oKeySet.load(oCnn,new Object[]{oCatg.getString(DB.gu_category)});
     if (DebugFile.trace) {
       DebugFile.decIdent();
       DebugFile.writeln("End DBFolder.keySet() : " + String.valueOf(oKeySet.size()));
@@ -551,8 +558,11 @@ public class DBFolder extends Folder {
         mode |= MODE_MBOX;
 
       iOpenMode = mode;
-      oConn = getConnection();
-
+      try {
+        oConn = getConnection();
+      } catch (SQLException sqle) {
+      	throw new MessagingException(sqle.getMessage(), sqle);
+      }
       if ((iOpenMode&MODE_MBOX)!=0) {
         String sFolderUrl;
         try {
@@ -593,7 +603,11 @@ public class DBFolder extends Folder {
         }
 
         // Create a ProductLocation pointing to the MBOX file if it does not exist
-        oConn = getConnection();
+        try {
+          oConn = getConnection();
+        } catch (SQLException sqle) {
+      	  throw new MessagingException(sqle.getMessage(), sqle);
+        }
         PreparedStatement oStmt = null;
         ResultSet oRSet = null;
         boolean bHasFilePointer;
@@ -1152,7 +1166,7 @@ public class DBFolder extends Folder {
         return oCatg.getPath(getConnection());
       else
         return null;
-    } catch (SQLException sqle) {
+    } catch (Exception sqle) {
       return null;
     }
   }
@@ -2633,7 +2647,7 @@ public class DBFolder extends Folder {
    * @since 4.0
    */
 
-  public String[] listMessages() throws SQLException {
+  public String[] listMessages() throws SQLException,MessagingException {
 
     if (DebugFile.trace) {
       DebugFile.writeln("Begin DBFolder.listMessages()");
@@ -2747,14 +2761,21 @@ public class DBFolder extends Folder {
 
     Properties oRetVal;
     PreparedStatement oStmt;
-
+    JDCConnection oJdcn = null;
+    
+    try {
+      oJdcn = getConnection();
+    } catch (MessagingException msge) {
+      throw new SQLException(msge.getMessage(), msge);
+    }
+    
     if (sMsgId.length()==32) {
       if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(SELECT " + DB.gu_mimemsg + "," + DB.id_message + "," + DB.pg_message + "," + DB.tx_subject + " FROM " + DB.k_mime_msgs + " WHERE " + DB.gu_mimemsg + "='"+sMsgId+"' OR " + DB.id_message + "='"+sMsgId+"') AND " + DB.gu_category + "='"+getCategoryGuid()+"' AND " + DB.bo_deleted + "<>1)");
 
-      oStmt = getConnection().prepareStatement("SELECT " + DB.gu_mimemsg + "," + DB.id_message + "," + DB.pg_message + "," + DB.tx_subject + "," + DB.tx_email_from + "," + DB.tx_email_reply + "," + DB.nm_from +
-                                               " FROM " + DB.k_mime_msgs +
-                                               " WHERE (" + DB.gu_mimemsg + "=? OR " + DB.id_message + "=?) AND " + DB.gu_category + "=? AND " + DB.bo_deleted + "<>1",
-                                               ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+      oStmt = oJdcn.prepareStatement("SELECT " + DB.gu_mimemsg + "," + DB.id_message + "," + DB.pg_message + "," + DB.tx_subject + "," + DB.tx_email_from + "," + DB.tx_email_reply + "," + DB.nm_from +
+                                     " FROM " + DB.k_mime_msgs +
+                                     " WHERE (" + DB.gu_mimemsg + "=? OR " + DB.id_message + "=?) AND " + DB.gu_category + "=? AND " + DB.bo_deleted + "<>1",
+                                     ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
       oStmt.setString(1, sMsgId);
       oStmt.setString(2, sMsgId);
       oStmt.setString(3, getCategoryGuid());
@@ -2762,8 +2783,8 @@ public class DBFolder extends Folder {
     else {
       if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(SELECT " + DB.gu_mimemsg + "," + DB.id_message + "," + DB.pg_message + "," + DB.tx_subject + "," + DB.tx_email_from + "," + DB.tx_email_reply + "," + DB.nm_from + " FROM " + DB.k_mime_msgs + " WHERE " + DB.id_message + "='"+sMsgId+"' AND " + DB.gu_category + "='"+getCategoryGuid()+"' AND " + DB.bo_deleted + "<>1)");
 
-      oStmt = getConnection().prepareStatement("SELECT " + DB.gu_mimemsg + "," + DB.id_message + "," + DB.pg_message + "," + DB.tx_subject + "," + DB.tx_email_from + "," + DB.tx_email_reply + "," + DB.nm_from + " FROM " + DB.k_mime_msgs + " WHERE " + DB.id_message + "=? AND " + DB.gu_category + "=? AND " + DB.bo_deleted + "<>1",
-                                               ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+      oStmt = oJdcn.prepareStatement("SELECT " + DB.gu_mimemsg + "," + DB.id_message + "," + DB.pg_message + "," + DB.tx_subject + "," + DB.tx_email_from + "," + DB.tx_email_reply + "," + DB.nm_from + " FROM " + DB.k_mime_msgs + " WHERE " + DB.id_message + "=? AND " + DB.gu_category + "=? AND " + DB.bo_deleted + "<>1",
+                                     ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
       oStmt.setString(1, sMsgId);
       oStmt.setString(2, getCategoryGuid());
     } // fi (sMsgId.length()==32)

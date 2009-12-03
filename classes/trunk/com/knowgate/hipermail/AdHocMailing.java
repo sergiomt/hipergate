@@ -32,6 +32,8 @@
 package com.knowgate.hipermail;
 
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.CallableStatement;
 
 import java.io.File;
 import java.io.IOException;
@@ -261,6 +263,37 @@ public class AdHocMailing extends DBPersist {
 	}
   } // clone  
 
+  public boolean delete(JDCConnection oConn) throws SQLException {
+    DBBind oDbb = (DBBind) oConn.getPool().getDatabaseBinding();
+    
+	final String sSep = oDbb.getProperty("fileprotocol","file://").startsWith("file:") ? File.separator : "/";
+    String sSourceDir =  oDbb.getPropertyPath("workareasput") + getString(DB.gu_workarea) + sSep + "apps" + sSep + "Hipermail" + sSep + "html" + sSep + Gadgets.leftPad(String.valueOf(getInt(DB.pg_mailing)), '0', 5);
+	try {
+	  FileSystem oFs = new FileSystem();
+	  oFs.rmdir(oDbb.getProperty("fileprotocol","file://")+sSourceDir);
+	} catch (Exception xcpt) {
+	  if (DebugFile.trace) {
+	    DebugFile.decIdent();
+	    DebugFile.writeln(xcpt.getClass().getName()+" "+xcpt.getMessage());
+	  }
+	  throw new SQLException(xcpt.getMessage(), xcpt);
+	}
+
+	boolean bRetVal;
+
+    if (oConn.getDataBaseProduct()==JDCConnection.DBMS_POSTGRESQL) {
+      Statement oStmt = oConn.createStatement();
+      oStmt.executeQuery("SELECT k_sp_del_adhoc_mailing ('" + getString(DB.gu_mailing) + "')");
+      oStmt.close();
+      bRetVal = true;
+    } else {
+      CallableStatement oCall = oConn.prepareCall("{ call k_sp_del_adhoc_mailing ('" + getString(DB.gu_mailing) + "') }");
+      bRetVal = oCall.execute();
+      oCall.close();
+    }
+    return bRetVal;    
+  }
+  	
   public static final short ClassId = 811;
 
 }
