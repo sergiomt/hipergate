@@ -71,3 +71,21 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';
 GO;
+
+CREATE FUNCTION k_sp_ins_atom() RETURNS OPAQUE AS '
+DECLARE
+  TxEMail VARCHAR(100);
+BEGIN
+  IF NEW.tx_email IS NOT NULL AND NEW.id_status IN (1,2,3) THEN
+	  SELECT bl.tx_email INTO TxEMail FROM k_global_black_list bl WHERE bl.tx_email=NEW.tx_email AND bl.gu_workarea IN (SELECT gu_workarea FROM k_jobs WHERE gu_job=NEW.gu_job);
+    IF FOUND THEN
+      RAISE EXCEPTION ''Could not insert e-mail: % at k_job_atoms because it is blacklisted'', TxEMail USING ERRCODE = ''23514'';
+    END IF;
+  END IF;
+RETURN NEW;
+END;
+' LANGUAGE 'plpgsql'
+GO;
+
+CREATE TRIGGER k_tr_ins_atom BEFORE INSERT ON k_job_atoms FOR EACH ROW EXECUTE PROCEDURE k_sp_ins_atom();
+GO;

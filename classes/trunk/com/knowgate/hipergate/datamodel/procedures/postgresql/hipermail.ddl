@@ -1,3 +1,6 @@
+CREATE SEQUENCE seq_k_adhoc_mailings INCREMENT 1 MINVALUE 1 START 1
+GO;
+
 CREATE FUNCTION k_sp_del_mime_msg (CHAR) RETURNS INTEGER AS '
 DECLARE
   ParentId CHAR(32);
@@ -73,6 +76,15 @@ BEGIN
   INSERT INTO k_inet_addrs (gu_mimemsg,id_message,tx_email,tp_recipient,tx_personal,gu_user,gu_contact,gu_company) VALUES ($3,$4,$5,$6,PersonalTx,UserId,ContactId,CompanyId);
 
   RETURN FoundCount;
+END;
+' LANGUAGE 'plpgsql';
+GO;
+
+CREATE FUNCTION k_sp_del_adhoc_mailing (CHAR) RETURNS INTEGER AS '
+BEGIN
+  DELETE FROM k_x_adhoc_mailing_list WHERE gu_mailing=$1;
+  DELETE FROM k_adhoc_mailings WHERE gu_mailing=$1;
+  RETURN 0;
 END;
 ' LANGUAGE 'plpgsql';
 GO;

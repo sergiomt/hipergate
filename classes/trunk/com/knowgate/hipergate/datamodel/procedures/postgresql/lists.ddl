@@ -17,6 +17,8 @@ BEGIN
 
     DELETE FROM k_x_campaign_lists WHERE gu_list=bk;
 
+    DELETE FROM k_x_adhoc_mailing_list WHERE gu_list=bk;
+
     DELETE FROM k_lists WHERE gu_list=bk;
   END IF;
 
@@ -27,6 +29,8 @@ BEGIN
   DELETE FROM k_x_list_members WHERE gu_list=$1;
 
   DELETE FROM k_x_campaign_lists WHERE gu_list=$1;
+
+    DELETE FROM k_x_adhoc_mailing_list WHERE gu_list=$1;
 
   UPDATE k_activities SET gu_list=NULL WHERE gu_list=$1;
   UPDATE k_x_activity_audience SET gu_list=NULL WHERE gu_list=$1;

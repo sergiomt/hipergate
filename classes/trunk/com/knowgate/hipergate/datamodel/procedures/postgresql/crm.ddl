@@ -20,6 +20,9 @@ BEGIN
   UPDATE k_sms_audit SET gu_contact=NULL WHERE gu_contact=$1;
   DELETE FROM k_x_activity_audience WHERE gu_contact=$1;
   DELETE FROM k_contact_education WHERE gu_contact=$1;
+  DELETE FROM k_contact_languages WHERE gu_contact=$1;
+  DELETE FROM k_contact_computer_science WHERE gu_contact=$1;
+  DELETE FROM k_contact_experience WHERE gu_contact=$1;
   DELETE FROM k_x_duty_resource WHERE nm_resource=$1;
   DELETE FROM k_welcome_packs_changelog WHERE gu_pack IN (SELECT gu_pack FROM k_welcome_packs WHERE gu_contact=$1);
   DELETE FROM k_welcome_packs WHERE gu_contact=$1;
@@ -60,6 +63,7 @@ BEGIN
     EXECUTE ''DELETE FROM '' || quote_ident(''k_bank_accounts'') || '' WHERE nu_bank_acc IN ('' || banks || '') AND gu_workarea='' || quote_literal(GuWorkArea);
   END IF;
 
+  DELETE FROM k_oportunities_attachs WHERE gu_oportunity IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_contact=$1);
   DELETE FROM k_oportunities_changelog WHERE gu_oportunity IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_contact=$1);
   DELETE FROM k_oportunities_attrs WHERE gu_object IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_contact=$1);
   DELETE FROM k_oportunities WHERE gu_contact=$1;
@@ -126,6 +130,7 @@ BEGIN
   END IF;
 
   /* Borrar las oportunidades */
+  DELETE FROM k_oportunities_attachs WHERE gu_oportunity IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_company=$1);
   DELETE FROM k_oportunities_changelog WHERE gu_oportunity IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_company=$1);
   DELETE FROM k_oportunities_attrs WHERE gu_object IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_company=$1);
   DELETE FROM k_oportunities WHERE gu_company=$1;
@@ -146,6 +151,7 @@ GO;
 
 CREATE FUNCTION k_sp_del_oportunity (CHAR) RETURNS INTEGER AS '
 BEGIN
+  DELETE FROM k_oportunities_attachs WHERE gu_oportunity=$1;
   DELETE FROM k_oportunities_changelog WHERE gu_oportunity=$1;
   DELETE FROM k_oportunities_attrs WHERE gu_object=$1;
   DELETE FROM k_oportunities WHERE gu_oportunity=$1;

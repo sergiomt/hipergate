@@ -1,6 +1,9 @@
 CREATE SEQUENCE seq_k_bugs INCREMENT 1 START 1
 GO;
 
+CREATE SEQUENCE seq_k_bugs_track INCREMENT 1 START 1
+GO;
+
 CREATE FUNCTION k_sp_prj_expand_node (CHAR, CHAR, INTEGER, INTEGER) RETURNS INTEGER AS '
 DECLARE  
   childs k_projects%ROWTYPE;
@@ -49,6 +52,7 @@ GO;
 CREATE FUNCTION k_sp_del_bug (CHAR) RETURNS INTEGER AS '
 BEGIN
   UPDATE k_bugs SET gu_bug_ref=NULL WHERE gu_bug_ref=$1;
+  DELETE FROM k_bugs_track WHERE gu_bug=$1;    
   DELETE FROM k_bugs_changelog WHERE gu_bug=$1;
   DELETE FROM k_bugs_attach WHERE gu_bug=$1;
   DELETE FROM k_bugs WHERE gu_bug=$1;
