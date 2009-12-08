@@ -241,6 +241,7 @@ public final class DB {
   public static final String k_mime_msgs = "k_mime_msgs";
   public static final String k_inet_addrs = "k_inet_addrs";
   public static final String k_adhoc_mailings = "k_adhoc_mailings";
+  public static final String k_x_adhoc_mailing_list = "k_x_adhoc_mailing_list";
   public static final String k_adhoc_mailings_lookup = "k_adhoc_mailings_lookup";
   public static final String k_mime_parts = "k_mime_parts";
 
@@ -285,6 +286,7 @@ public final class DB {
   public static final String v_sale_points = "v_sale_points";
   public static final String v_warehouses = "v_warehouses";
   public static final String v_contact_education_degree = "v_contact_education_degree";
+  public static final String v_activity_locat = "v_activity_locat";
   
   /***************/
   /* FIELD NAMES */
@@ -876,6 +878,7 @@ public final class DB {
 
   // k_activities
   public static final String gu_activity = "gu_activity";
+  public static final String pg_activity = "pg_activity";
   public static final String tl_activity = "tl_activity";
   public static final String de_activity = "de_activity";
   public static final String nu_capacity = "nu_capacity";
@@ -884,6 +887,7 @@ public final class DB {
   public static final String bo_reminder = "bo_reminder";
   public static final String gu_mailing = "gu_mailing";
   public static final String dt_mailing = "dt_mailing";
+  public static final String url_activity = "url_activity";
   	
   // k_microsites
   public static final String gu_microsite = "gu_microsite";
