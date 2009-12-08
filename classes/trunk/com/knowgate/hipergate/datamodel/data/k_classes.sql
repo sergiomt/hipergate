@@ -81,6 +81,7 @@ INSERT INTO k_classes VALUES(300,'Campaign');
 INSERT INTO k_classes VALUES(301,'CampaignTarget');
 INSERT INTO k_classes VALUES(310,'Activity');
 INSERT INTO k_classes VALUES(311,'ActivityAudience');
+INSERT INTO k_classes VALUES(312,'ActivityAttachment');
 INSERT INTO k_classes VALUES(400,'Job');
 INSERT INTO k_classes VALUES(401,'MimeSender');
 INSERT INTO k_classes VALUES(402,'EMailSender');
