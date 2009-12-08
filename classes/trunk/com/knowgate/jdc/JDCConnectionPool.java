@@ -43,6 +43,8 @@ import java.util.Enumeration;
 import java.util.Date;
 import java.util.ConcurrentModificationException;
 
+import java.text.SimpleDateFormat;
+
 import java.sql.DriverManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -995,7 +997,8 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
      Object iVal;
      int iConnOrdinal, iStaled;
      long stale = System.currentTimeMillis() - timeout;
-
+     SimpleDateFormat oFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+     
      if (DebugFile.trace) {
        DebugFile.writeln("Begin JDCConnectionPool.dumpStatistics()");
        DebugFile.incIdent();
@@ -1034,7 +1037,7 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
        while (oCallersIterator.hasNext()) {
          sKey = oCallersIterator.next();
          iVal = callers.get(sKey);
-         sDump += sKey + " , " + iVal.toString() + " named open connections\n";
+         if (!iVal.toString().equals("0")) sDump += sKey + " , " + iVal.toString() + " named open connections\n";
        }
        sDump += "\n\n";
      } // fi (DebugFile.trace)
@@ -1054,13 +1057,23 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
              sDump += " on connection "+conn.getName();
            }
            if (oPinfo[p].getQueryText().length()>0) {
-             sDump += " for query "+oPinfo[p].getQueryText();
+           	 if (oPinfo[p].getQueryText().equals("<IDLE>"))
+               sDump += " for idle query";
+             else
+               sDump += " for query "+oPinfo[p].getQueryText();
            }
            if (oPinfo[p].getQueryStart()!=null) {
-             sDump += " since "+oPinfo[p].getQueryStart().toString();
+             sDump += " since "+oFmt.format(oPinfo[p].getQueryStart());
            }
            sDump += "\n";
          } // next
+         JDCLockConflict[] oLocks = getActivityInfo().lockConflictsInfo();
+         if (oLocks!=null) {
+           sDump += "Locks information:\n";
+           for (int l=0; l<oLocks.length; l++) {
+              sDump += "PID "+String.valueOf(oLocks[l].getPID())+ " query "+oLocks[l].getQuery()+" is waiting on PID "+String.valueOf(oLocks[l].getWaitingOnPID())+" query "+oLocks[l].getWaitingOnQuery()+"\n";
+           } // next           
+         } // fi
        }
      } catch (Exception xcpt) {
        sDump += xcpt.getClass().getName()+" trying to get activity information "+xcpt.getMessage()+"\n";
