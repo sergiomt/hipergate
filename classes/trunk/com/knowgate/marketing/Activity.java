@@ -142,8 +142,10 @@ public class Activity extends DBPersist {
   	boolean bRetVal = super.load(oConn, PKVals);
   	if (bRetVal) {
   	  if (!isNull(DB.gu_address)) {  	  	
+  	  	Object oActive = get(DB.bo_active);
   	  	oAddr = new Address(oConn, getString(DB.gu_address));
   	    putAll(oAddr.getItemMap());
+  	    replace(DB.bo_active,oActive);
   	  }
   	}
 	return bRetVal;
