@@ -92,6 +92,8 @@ CREATE TABLE k_adhoc_mailings (
   pg_mailing     INTEGER  NOT NULL,
   dt_created     DATETIME DEFAULT CURRENT_TIMESTAMP,  
   nm_mailing     VARCHAR(30) NOT NULL,
+  bo_urgent      SMALLINT DEFAULT 0,
+  bo_reminder    SMALLINT DEFAULT 0,
   bo_html_part   SMALLINT NOT NULL,
   bo_plain_part  SMALLINT NOT NULL,
   bo_attachments SMALLINT NOT NULL,
