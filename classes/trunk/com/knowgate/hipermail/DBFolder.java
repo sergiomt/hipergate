@@ -76,6 +76,7 @@ import java.util.Properties;
 
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.debug.DebugFile;
+import com.knowgate.debug.StackTraceUtil;
 import com.knowgate.dfs.FileSystem;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBBind;
@@ -1244,7 +1245,7 @@ public class DBFolder extends Folder {
 
     PreparedStatement oStmt = null;
     ResultSet oRSet = null;
-    String sSQL;
+    String sSQL = "";
     Timestamp tsSent;
     String sMsgGuid, sContentId, sMsgDesc, sMsgDisposition, sMsgMD5, sMsgSubject, sMsgFrom, sReplyTo, sDisplayName;
     short iAnswered, iDeleted, iDraft, iFlagged, iRecent, iSeen;
@@ -1368,13 +1369,28 @@ public class DBFolder extends Folder {
 
       oStmt.close();
       oStmt = null;
+
     } catch (SQLException sqle) {
+
+      if (DebugFile.trace) {
+        DebugFile.writeln("SQLException "+sqle.getMessage());
+        DebugFile.writeln(sSQL);
+        try { DebugFile.writeln(StackTraceUtil.getStackTrace(sqle)); } catch (IOException ignore) { }
+        DebugFile.decIdent();
+      }
+
       try { if (oRSet!=null) oRSet.close(); } catch (SQLException ignore) { }
       try { if (oStmt!=null) oStmt.close(); } catch (SQLException ignore) { }
 
       throw new MessagingException (sqle.getMessage(), sqle);
     }
     catch (UnsupportedEncodingException uee) {
+
+      if (DebugFile.trace) {
+        DebugFile.writeln("UnsupportedEncodingException "+uee.getMessage());
+        DebugFile.decIdent();
+      }
+
       try { if (oRSet!=null) oRSet.close(); } catch (SQLException ignore) { }
       try { if (oStmt!=null) oStmt.close(); } catch (SQLException ignore) { }
 

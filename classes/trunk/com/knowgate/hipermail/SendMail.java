@@ -41,6 +41,7 @@ import java.io.PrintStream;
 
 import java.sql.SQLException;
 
+import java.util.Date;
 import java.util.Properties;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -120,7 +121,7 @@ public final class SendMail {
 
     /**
      * <p>Send an e-mail to a recipients list</p>
-     * The message may be sent inmediately by the current thread or asynchronously.
+     * The message may be sent inmediately by the current thread or asynchronously at the designated date.
      * If parameter sJobTl is <b>null</b> then the message will be send by the current thread.
      * If sJobTl is not <b>null</b> then a new job will be inserted at k_jobs table.
      * A new SingleThreadExecutor will be created if bAutoRunJob parameter is <b>true</b>
@@ -152,25 +153,28 @@ public final class SendMail {
      * @param sReplyAddr Reply-To address
      * @param aRecipients List of recipient addresses
      * @param sRecipientType Recipients Type. Must be of one {to, cc, bcc}
-     * @param sId Message Id. If <b>null</b> then an automatically generated 32 characters GUID is assigned
+     * @param sId Job or Message GUID If <b>null</b> then an automatically generated 32 characters GUID is assigned
      * @param sEnvCnfFileName Name without extension of properties file to be used for conenction to the database.
      * This parameter is optional and only required when the message must be send by the job scheduler
      * @param sJobTl Job Title. This parameter is optional and only required when the message must be send by the job scheduler
      * @param bAutoRunJob boolean, whether or not a thread must be automatically started for running the Job inmediately.
+     * @param dtExecution Date when job must be executed or <b>null</b> if job is in auto run mode or must be executed as soon as possible.
      * @param oGlobalDbb DBBind instance used for accesing the database, if <b>null</b> a new one is created if it is required
      * @return ArrayList of Strings with warnings and errors detected for each recipient.
      * If anything went wrong whilst trying to send message to a recipient, the array list entry starts with
      * the word "ERROR" followed by the recipient e-mail address, a space, and then the error message that describes what happened.
      * If the e-mail was sent sucessfully the the array list entry starts with "OK"
-     * throws FileNotFoundException
-     * throws IOException
-     * throws IllegalAccessException
-     * throws NullPointerException
-     * throws MessagingException
-     * throws FTPException
-     * throws SQLException
-     * throws ClassNotFoundException
-     * throws InstantiationException
+     * @throws FileNotFoundException
+     * @throws IOException
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     * @throws NullPointerException
+     * @throws MessagingException
+     * @throws FTPException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @since 5.5
      */
 	public static ArrayList send(MailAccount oMacc,
 								 Properties oSessionProps,
@@ -189,9 +193,10 @@ public final class SendMail {
 							     String sEnvCnfFileName,
 							     String sJobTl,
 							     boolean bAutoRunJob,
+							     Date dtExecution,
 							     DBBind oGlobalDbb
 							    )
-	 throws FileNotFoundException,IOException,
+	 throws FileNotFoundException,IOException,IllegalArgumentException,
 	 	    IllegalAccessException,NullPointerException,
 	        MessagingException,FTPException,SQLException,
 	        ClassNotFoundException,InstantiationException {
@@ -209,6 +214,17 @@ public final class SendMail {
 	    	              sRecipientType+","+sId+","+sEnvCnfFileName+","+sJobTl+",[DBbind])");
 	    DebugFile.incIdent();
 	  } // fi (trace)
+
+	  if (dtExecution!=null) {
+	    if (bAutoRunJob) {
+	      if (DebugFile.trace) DebugFile.decIdent();
+	      throw new IllegalArgumentException("SendMail.send() execution date must be null if auto run job is true");
+	    }
+	    if (dtExecution.compareTo(new Date())<0) {
+	      if (DebugFile.trace) DebugFile.decIdent();
+	      throw new IllegalArgumentException("SendMail.send() execution date must be after current date");
+	    }
+	  } // fi (dtExecution)
 
 	  boolean bTestMode = oSessionProps.getProperty("testmode","no").equalsIgnoreCase("yes") || oSessionProps.getProperty("testmode","false").equalsIgnoreCase("true") || oSessionProps.getProperty("testmode","0").equalsIgnoreCase("1");
 	  if (bTestMode) {
@@ -317,7 +333,7 @@ public final class SendMail {
                              	     sSubject, "text/"+(sTextHtml==null ? "plain" : "html")+";charset="+sEncoding,
                              	    (sTextHtml==null ? sTextPlain : sTextHtml), null, null, null);
 
-			sJobId = Gadgets.generateUUID();
+			sJobId = (sId.length()==32 ? sId : Gadgets.generateUUID());
 		  	oJob.put(DB.gu_job, sJobId);
 		    oJob.put(DB.gu_workarea, oUsr.getString(DB.gu_workarea));
 		    oJob.put(DB.gu_writer, oUsr.getString(DB.gu_user));
@@ -334,7 +350,10 @@ public final class SendMail {
 		    	                       "webbeacon:"+(bWebBeacon ? "true" : "false")+","+
 		    	                       "webserver:"+oSessionProps.getProperty("webserver")+","+
 		    	                       "encoding:"+sEncoding);
+		    if (dtExecution!=null) oJob.put(DB.dt_execution, dtExecution);
 		    oJob.store(oCon);
+
+			DBCommand.executeUpdate(oCon, "UPDATE "+DB.k_mime_msgs+" SET "+DB.gu_job+"='"+sJobId+"' WHERE "+DB.gu_mimemsg+"='"+oMsg.getMessageGuid()+"'");
 
 		    oSnd = Job.instantiate(oCon, sJobId, oDbb.getProperties());
 		    
@@ -406,6 +425,92 @@ public final class SendMail {
 
     /**
      * <p>Send an e-mail to a recipients list</p>
+     * The message may be sent inmediately by the current thread or asynchronously as soon as possible.
+     * If parameter sJobTl is <b>null</b> then the message will be send by the current thread.
+     * If sJobTl is not <b>null</b> then a new job will be inserted at k_jobs table.
+     * A new SingleThreadExecutor will be created if bAutoRunJob parameter is <b>true</b>
+     * or if bAutoRunJob is <b>false</b> then the new Job will remain in Pending status until
+     * the main Job Scheduler starts running it.
+     * 
+     * @param oMacc MailAccount used for sending the message
+     * @param oSessionProps Properties
+     * <table><tr><th>Property</th><th>Description></th><th>Default value</th></tr>
+     *        <tr><td>mail.user</td><td>Store and transport user</td><td></td></tr>
+     *        <tr><td>mail.password</td><td></td>Store and transport password<td></td></tr>
+     *        <tr><td>mail.store.protocol</td><td></td><td>pop3</td></tr>
+     *        <tr><td>mail.transport.protocol</td><td></td><td>smtp</td></tr>
+     *        <tr><td>mail.<i>storeprotocol</i>.host</td><td>For example: pop.mailserver.com</td><td></td></tr>
+     *        <tr><td>mail.<i>storeprotocol</i>.socketFactory.class</td><td>Only if using SSL set this value to javax.net.ssl.SSLSocketFactory</td><td></td></tr>
+     *        <tr><td>mail.<i>storeprotocol</i>.socketFactory.port</td><td>Only if using SSL</td><td></td></tr>
+     *        <tr><td>mail.<i>transportprotocol</i>.host</td><td>For example: smtp.mailserver.com</td><td></td></tr>
+     *        <tr><td>mail.<i>transportprotocol</i>.socketFactory.class</td><td>Only if using SSL set this value to javax.net.ssl.SSLSocketFactory</td><td></td></tr>
+     *        <tr><td>mail.<i>transportprotocol</i>.socketFactory.port</td><td>Only if using SSL</td><td></td></tr>
+     * </table>
+     * @param sUserDir Full path of base directory for mail inline and attached files
+     * @param sTextHtml HTML message part, if <b>null</b> then mail body is just plain text
+     * @param sTextPlain Plain text message part, if <b>null</b> then mail body is HTML only
+     * @param sEncoding Character encoding, see http://java.sun.com/j2se/1.3/docs/guide/intl/encoding.doc.html
+     * @param aAttachments Array of attachments file names, without path, they must be under sUserDir base directory
+     * @param sSubject Message subject
+     * @param sFromAddr Recipient From address
+     * @param sFromPersonal Recipient From Display Name
+     * @param sReplyAddr Reply-To address
+     * @param aRecipients List of recipient addresses
+     * @param sRecipientType Recipients Type. Must be of one {to, cc, bcc}
+     * @param sId Job or Message GUID If <b>null</b> then an automatically generated 32 characters GUID is assigned
+     * @param sEnvCnfFileName Name without extension of properties file to be used for conenction to the database.
+     * This parameter is optional and only required when the message must be send by the job scheduler
+     * @param sJobTl Job Title. This parameter is optional and only required when the message must be send by the job scheduler
+     * @param bAutoRunJob boolean, whether or not a thread must be automatically started for running the Job inmediately.
+     * @param oGlobalDbb DBBind instance used for accesing the database, if <b>null</b> a new one is created if it is required
+     * @return ArrayList of Strings with warnings and errors detected for each recipient.
+     * If anything went wrong whilst trying to send message to a recipient, the array list entry starts with
+     * the word "ERROR" followed by the recipient e-mail address, a space, and then the error message that describes what happened.
+     * If the e-mail was sent sucessfully the the array list entry starts with "OK"
+     * @throws FileNotFoundException
+     * @throws IOException
+     * @throws IllegalAccessException
+     * @throws NullPointerException
+     * @throws MessagingException
+     * @throws FTPException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     */
+	public static ArrayList send(MailAccount oMacc,
+								 Properties oSessionProps,
+								 String sUserDir, // Base directory for mail inline and attached files
+					   	         String sTextHtml, // Mail HTML body
+					   	         String sTextPlain, // Mail Plain Text body
+							     String sEncoding, // Character encoding for body
+							     String aAttachments[],
+							     String sSubject, // Subject,
+							     String sFromAddr,
+							     String sFromPersonal, // Mail From display name
+							     String sReplyAddr,
+							     String aRecipients[],
+							     String sRecipientType,
+						         String sId,
+							     String sEnvCnfFileName,
+							     String sJobTl,
+							     boolean bAutoRunJob,
+							     DBBind oGlobalDbb)
+
+	   throws FileNotFoundException,IOException,
+	 	      IllegalAccessException,NullPointerException,
+	          MessagingException,FTPException,SQLException,
+	          ClassNotFoundException,InstantiationException {
+
+       return send (oMacc, oSessionProps, sUserDir, sTextHtml, sTextPlain, sEncoding,
+				    aAttachments, sSubject, sFromAddr, sFromPersonal, sReplyAddr,
+				    aRecipients, sRecipientType, sId, sEnvCnfFileName,
+				    sJobTl, bAutoRunJob, null, oGlobalDbb);
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * <p>Send an e-mail to a recipients list</p>
      * The message may be sent inmediately by the current thread or
      * asynchronously by a new instance of com.knowgate.scheduler.SingleThreadExecutor
      * that will be created on the fly. If parameter sJobTl is <b>null</b> then the message
@@ -436,7 +541,7 @@ public final class SendMail {
      * @param sReplyAddr Reply-To address
      * @param aRecipients List of recipient addresses
      * @param sRecipientType Recipients Type. Must be of one {to, cc, bcc}
-     * @param sId Message Id. If <b>null</b> then an automatically generated 32 characters GUID is assigned
+     * @param sId Job or Message GUID If <b>null</b> then an automatically generated 32 characters GUID is assigned
      * @param sEnvCnfFileName Name without extension of properties file to be used for conenction to the database.
      * This parameter is optional and only required when the message must be send by the job scheduler
      * @param sJobTl Job Title. This parameter is optional and only required when the message must be send by the job scheduler
@@ -445,15 +550,15 @@ public final class SendMail {
      * If anything went wrong whilst trying to send message to a recipient, the array list entry starts with
      * the word "ERROR" followed by the recipient e-mail address, a space, and then the error message that describes what happened.
      * If the e-mail was sent sucessfully the the array list entry starts with "OK"
-     * throws FileNotFoundException
-     * throws IOException
-     * throws IllegalAccessException
-     * throws NullPointerException
-     * throws MessagingException
-     * throws FTPException
-     * throws SQLException
-     * throws ClassNotFoundException
-     * throws InstantiationException
+     * @throws FileNotFoundException
+     * @throws IOException
+     * @throws IllegalAccessException
+     * @throws NullPointerException
+     * @throws MessagingException
+     * @throws FTPException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
      */
 	public static ArrayList send(Properties oSessionProps,
 								 String sUserDir, // Base directory for mail inline and attached files
