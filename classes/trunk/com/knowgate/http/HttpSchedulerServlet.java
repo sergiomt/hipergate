@@ -42,6 +42,8 @@ import java.sql.SQLException;
 import com.knowgate.dataobjs.DBBind;
 import com.knowgate.debug.DebugFile;
 import com.knowgate.jdc.JDCConnection;
+import com.knowgate.jdc.JDCActivityInfo;
+import com.knowgate.jdc.JDCProcessInfo;
 import com.knowgate.scheduler.Job;
 import com.knowgate.misc.Environment;
 import com.knowgate.misc.Gadgets;
@@ -154,6 +156,7 @@ public class HttpSchedulerServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response)
      throws ServletException {
 
+   DBBind oDbj;
    boolean bError = false;
    
    String sAction = request.getParameter("action");
@@ -279,7 +282,7 @@ public class HttpSchedulerServlet extends HttpServlet {
               writeXML(response, "<scheduler><error><![CDATA["+xcpt.getClass().getName()+" "+xcpt.getMessage()+"]]></error></scheduler>");
       	  }
         } else {
-          DBBind oDbj = new DBBind(Gadgets.substrUpTo(sProfile.substring(sProfile.lastIndexOf(File.separator)+1),0,'.'));
+          oDbj = new DBBind(Gadgets.substrUpTo(sProfile.substring(sProfile.lastIndexOf(File.separator)+1),0,'.'));
 		  JDCConnection oCon = null;
 		  try {
 		    oCon = oDbj.getConnection("SchedulerDaemon");
@@ -295,6 +298,13 @@ public class HttpSchedulerServlet extends HttpServlet {
 		  }                    
         } // fi
       } // fi
+    } 
+    else if (sAction.equals("stats")) {
+      if (null==oDaemon) {
+        writeXML(response, "<scheduler><error><![CDATA[Job scheduler is not currently running]]></error></scheduler>");
+      } else {
+        writeXML(response, "<scheduler><stats><![CDATA["+oDaemon.databaseBind().connectionPool().dumpStatistics()+"]]></stats></scheduler>");      	
+      }
     } // fi
 
     if (null!=oDaemon) {
