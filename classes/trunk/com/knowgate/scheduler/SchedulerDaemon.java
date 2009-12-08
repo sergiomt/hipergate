@@ -191,6 +191,12 @@ public class SchedulerDaemon extends Thread {
 
   // ---------------------------------------------------------------------------
 
+  public DBBind databaseBind() {
+    return oDbb;
+  }
+
+  // ---------------------------------------------------------------------------
+
   /**
    * <p>Create AtomQueue and start WorkerThreadPool</p>
    */
@@ -300,9 +306,9 @@ public class SchedulerDaemon extends Thread {
           // ****************************************
           // Count jobs pending of begining execution
 
-          if (DebugFile.trace) DebugFile.writeln("Statement.executeQuery(SELECT COUNT(*) FROM k_jobs WHERE id_status=" + String.valueOf(Job.STATUS_PENDING) + ")");
+          if (DebugFile.trace) DebugFile.writeln("Statement.executeQuery(SELECT COUNT(*) FROM k_jobs WHERE id_status=" + String.valueOf(Job.STATUS_PENDING) + " AND ("+DB.dt_execution+" IS NULL OR "+DB.dt_execution+"<="+DBBind.Functions.GETDATE+"))");
 
-          oRSet = oStmt.executeQuery("SELECT COUNT(*) FROM k_jobs WHERE id_status=" + String.valueOf(Job.STATUS_PENDING));
+          oRSet = oStmt.executeQuery("SELECT COUNT(*) FROM k_jobs WHERE id_status=" + String.valueOf(Job.STATUS_PENDING)+" AND ("+DB.dt_execution+" IS NULL OR "+DB.dt_execution+"<="+DBBind.Functions.GETDATE+")");
           oRSet.next();
           iJobCount = oRSet.getInt(1);
           oRSet.close();

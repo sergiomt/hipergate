@@ -44,6 +44,7 @@ import com.knowgate.debug.DebugFile;
  * @version 1.0
  */
 public class AtomQueue extends LinkedList<Atom> {
+
   private int iMaxAtoms;
   private static final long serialVersionUID = 1l;
   

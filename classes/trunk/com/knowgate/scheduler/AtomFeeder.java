@@ -39,6 +39,7 @@ import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.Timestamp;
 
 import com.knowgate.debug.DebugFile;
 import com.knowgate.jdc.JDCConnection;
@@ -55,7 +56,7 @@ import java.util.Properties;
 /**
  * <p>Feeds atoms to RAM based AtomQueue</p>
  * @author Sergio Montoro Ten
- * @version 2.0
+ * @version 5.5
  */
 public class AtomFeeder {
   private int iMaxBatchSize;
@@ -308,10 +309,10 @@ public class AtomFeeder {
 
         // Si la fecha de ejecución del job es null,
         // tomar la fecha actual como fecha de ejecución inmediata
-        if (oDistribList.isNull(DB.dt_execution))
+        if (oJobsSet.isNull(DB.dt_execution,j))
           dtExec = dtNow;
         else
-          dtExec = oDistribList.getDate(DB.dt_execution);
+          dtExec = oJobsSet.getDate(DB.dt_execution,j);
 
         // Para cada tipo de lista usar el método de carga de miembros que corresponda
         switch (oDistribList.getShort(DB.tp_list)) {
@@ -413,10 +414,10 @@ public class AtomFeeder {
 
         // Si la fecha de ejecución del job es null,
         // tomar la fecha actual como fecha de ejecución inmediata
-        if (oDistribList.isNull(DB.dt_execution))
+        if (oJobsSet.isNull(DB.dt_execution,0))
           dtExec = dtNow;
         else
-          dtExec = oDistribList.getDate(DB.dt_execution);
+          dtExec = oJobsSet.getDate(DB.dt_execution,0);
 
         // Para cada tipo de lista usar el método de carga de miembros que corresponda
         switch (oDistribList.getShort(DB.tp_list)) {
@@ -482,7 +483,7 @@ public class AtomFeeder {
    */
 
   public void feedQueue(JDCConnection oConn, AtomQueue oQueue) throws SQLException {
-    Statement oStmt;
+    PreparedStatement oStmt;
     PreparedStatement oUpdt;
     PreparedStatement oPgSt;
     ResultSet oRSet;
@@ -503,13 +504,19 @@ public class AtomFeeder {
 
     // Crear un cursor actualizable para recorrer los átomos y cargarlos en la cola
     // al mismo tiempo que se cambia en la base de datos su estado de Pending a Running
-    oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
-    sSQL = "SELECT a.*, j." + DB.tx_parameters + " FROM " + DB.k_job_atoms + " a, " + DB.k_jobs + " j WHERE a." + DB.id_status + "=" + String.valueOf(Atom.STATUS_PENDING) + " AND j." + DB.gu_job + "=a." + DB.gu_job + " ORDER BY j." + DB.dt_execution;
+    sSQL = "SELECT a.*, j." + DB.tx_parameters + " FROM " + DB.k_job_atoms + " a, " + DB.k_jobs + " j WHERE " +
+    	   "a." + DB.id_status + "=" + String.valueOf(Atom.STATUS_PENDING) + " AND j." + DB.gu_job + "=a." + DB.gu_job +
+    	   " AND (" + DB.dt_execution + " IS NULL OR " + DB.dt_execution + "<=?) " +
+    	   " ORDER BY j." + DB.dt_execution;
 
-    if (DebugFile.trace) DebugFile.writeln("Statement.executeQuery(" + sSQL + ")");
+    if (DebugFile.trace) DebugFile.writeln("JDCConnection.prepareStatement(" + sSQL + ")");
 
-    oRSet = oStmt.executeQuery(sSQL);
+    oStmt = oConn.prepareStatement(sSQL, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+
+    oStmt.setTimestamp(1, new Timestamp(new Date().getTime()));
+
+    oRSet = oStmt.executeQuery();
 
     try {
       oRSet.setFetchSize (getMaxBatchSize());
