@@ -195,6 +195,7 @@ public final class Gadgets {
   /**
    * <p>Return text enconded as XHTML.</p>
    * ASCII-7 characters [0..127] are returned as they are,
+   * except double and single quotes which are returned as &#<i>34</i>; and &#<i>39</i>;
    * any other character is returned as &#<i>code</i>;
    * @param text String
    * @return String
@@ -206,10 +207,20 @@ public final class Gadgets {
 
     for (int i = 0; i < len; ++i) {
       c = text.charAt(i);
-      if (c<=127)
-        results.append(c);
-      else
+      if (c<=127) {
+        switch (c) {
+          case (char) 34:
+            results.append("&#34;");
+            break;
+		  case (char) 39:
+            results.append("&#39;");
+            break;		  	
+		  default:
+		  	results.append(c);
+        }
+      } else {
         results.append("&#"+String.valueOf((int)c)+";");
+      }
     }
     return results.toString();
   }
