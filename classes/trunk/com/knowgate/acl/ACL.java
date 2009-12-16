@@ -253,7 +253,7 @@ public final class ACL {
       throw new IllegalArgumentException("ACL.encript() encryption algorithm must be either PWD_CLEAR_TEXT or PWD_DTIP_RC4");
 
     if (DebugFile.trace) {
-      DebugFile.writeln("Begin ACL.decript(" + sStr + "," + String.valueOf(iFlags) + ")" );
+      DebugFile.writeln("Begin ACL.decript(...," + String.valueOf(iFlags) + ")" );
       DebugFile.incIdent();
     }
 
@@ -272,7 +272,7 @@ public final class ACL {
 	
     if (DebugFile.trace) {
       DebugFile.decIdent();
-      DebugFile.writeln("End ACL.decript() : " + sDecrypted);
+      DebugFile.writeln("End ACL.decript()");
     }
 
     return sDecrypted;
@@ -302,7 +302,7 @@ public final class ACL {
       throw new IllegalArgumentException("ACL.encript() encryption algorithm must be either PWD_CLEAR_TEXT or PWD_DTIP_RC4");
 
     if (DebugFile.trace) {
-      DebugFile.writeln("Begin ACL.encript(" + sStr + "," + String.valueOf(iFlags) + ")" );
+      DebugFile.writeln("Begin ACL.encript(...," + String.valueOf(iFlags) + ")" );
       DebugFile.incIdent();
     }
 
@@ -323,7 +323,7 @@ public final class ACL {
 
     if (DebugFile.trace) {
       DebugFile.decIdent();
-      DebugFile.writeln("End ACL.encript() : " + sEncrypted);
+      DebugFile.writeln("End ACL.encript()");
     }
 
     return sEncrypted;
