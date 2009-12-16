@@ -128,10 +128,13 @@ public class DBTable {
     ResultSet oRSet = null;
 
     if (null==oColumns)
-      throw new IllegalStateException("Table columns list not initialized");
+      throw new IllegalStateException("DBTable.loadRegister() Table columns list not initialized");
+
+    if (null==oConn)
+      throw new NullPointerException("DBTable.loadRegister() Connection is null");
 
     if (DebugFile.trace) {
-      DebugFile.writeln("Begin DBTable.loadRegister([Connection], Object[], [HashMap])" );
+      DebugFile.writeln("Begin DBTable.loadRegister([Connection:"+oConn.pid()+"], Object[], [HashMap])" );
       DebugFile.incIdent();
 
       boolean bAllNull = true;
@@ -247,9 +250,12 @@ public class DBTable {
     int iAffected = 0;
     PreparedStatement oStmt = null;
 
+    if (null==oConn)
+      throw new NullPointerException("DBTable.storeRegister() Connection is null");
+
     if (DebugFile.trace)
       {
-      DebugFile.writeln("Begin DBTable.storeRegister([Connection], {" + AllValues.toString() + "})" );
+      DebugFile.writeln("Begin DBTable.storeRegister([Connection:"+oConn.pid()+"], {" + AllValues.toString() + "})" );
       DebugFile.incIdent();
       }
 
@@ -431,9 +437,12 @@ public class DBTable {
     InputStream oStream;
     String sClassName;
 
+    if (null==oConn)
+      throw new NullPointerException("DBTable.storeRegisterLong() Connection is null");
+
     if (DebugFile.trace)
       {
-      DebugFile.writeln("Begin DBTable.storeRegisterLong([Connection], {" + AllValues.toString() + "})" );
+      DebugFile.writeln("Begin DBTable.storeRegisterLong([Connection:"+oConn.pid()+"], {" + AllValues.toString() + "})" );
       DebugFile.incIdent();
       }
 

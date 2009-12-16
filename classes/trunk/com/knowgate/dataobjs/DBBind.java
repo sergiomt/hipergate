@@ -1291,6 +1291,7 @@ public class DBBind extends Beans implements DataSource {
     }
 
     if (DebugFile.trace) {
+      if (oConn!=null) DebugFile.writeln("Connection process id. is " + oConn.pid());
       DebugFile.decIdent();
       DebugFile.writeln("End DBBind.getConnection(" + sCaller + ") : " + (null==oConn ? "null" : "[Connection]") );
     }

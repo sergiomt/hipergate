@@ -498,6 +498,36 @@ public class DBPersist implements Map {
   }
 
   /**
+   * <p>Get value for a CHAR, VARCHAR or LONGVARCHAR field replacing <b>null</b>
+   * with a default value and replacing non-ASCII and quote values with &#<i>code</i>;<p>
+   * @param sKey Field Name
+   * @param sDefault Value to be returned if field is null. sDefault may itself
+   * be <b>null</b>, provinding a null safe version of getString() method.
+   * @return Field value or default value.
+   * @since 5.5
+   */
+
+  public String getStringHtml(String sKey, String sDefault) {
+    Object oVal;
+    if (getItemMap().containsKey(sKey)) {
+      oVal = getItemMap().get(sKey);
+      if (null==oVal)
+        if (null==sDefault)
+          return sDefault;
+        else
+          return Gadgets.XHTMLEncode(sDefault);
+      else
+        return Gadgets.XHTMLEncode(oVal.toString());
+    }
+    else {
+      if (null==sDefault)
+        return sDefault;
+      else
+      	return Gadgets.XHTMLEncode(sDefault);
+    }
+  }
+
+  /**
    * <p>Get value for SQL92 TIME field</p>
    * @param sKey Field Name
    * @return java.sql.Time

@@ -464,7 +464,7 @@ public final class DBSubset {
 
     if (DebugFile.trace)
       {
-      DebugFile.writeln("Begin DBSubset.call([Connection], Object[]," + iSkip + ")");
+      DebugFile.writeln("Begin DBSubset.call([Connection:"+oConn.pid()+"], Object[]," + iSkip + ")");
       DebugFile.incIdent();
       }
 
