@@ -54,6 +54,7 @@ import javax.sql.ConnectionPoolDataSource;
 import javax.sql.PooledConnection;
 
 import com.knowgate.debug.DebugFile;
+import com.knowgate.debug.StackTraceUtil;
 
 /**
  * <p>Connection pool daemon thread</p>
@@ -974,12 +975,13 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
     */
    public JDCActivityInfo getActivityInfo() throws SQLException {
     JDCActivityInfo oInfo;
-    try { oInfo = new JDCActivityInfo(this);
+    try {
+      oInfo = new JDCActivityInfo(this);
     } catch (Exception xcpt) {
-      throw new SQLException (xcpt.getMessage());
+      throw new SQLException ("JDCActivityInfo.getActivityInfo() "+xcpt.getClass().getName()+" "+xcpt.getMessage());
     }
     return oInfo;
-  }
+  } // getActivityInfo()
 
   // ---------------------------------------------------------
 
@@ -1025,7 +1027,7 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
            sPId = conn.pid();
          } catch (Exception ignore) { sPId=null; }
 
-         sDump += "#" + String.valueOf(++iConnOrdinal) + (conn.inUse() ? " in use, " : " vacant, ") + (stale>conn.getLastUse() ? " staled," : " ready,") + (conn.validate() ?  "validate=yes" : " validate=no") + ", last use=" + new Date(conn.getLastUse()).toString() + ", caller=" + conn.getName() + (sPId==null ? "" : " pid="+sPId) + "\n";
+         sDump += "#" + String.valueOf(++iConnOrdinal) + (conn.inUse() ? " in use, " : " vacant, ") + (stale>conn.getLastUse() ? " staled," : " ready,") + (conn.validate() ?  "validate=yes" : " validate=no") + ", last use=" + new Date(conn.getLastUse()).toString() + ", " + (conn.inUse() ? "caller=" + conn.getName() : "") + (sPId==null ? "" : " pid="+sPId) + "\n";
        }
      } // fi ()
 
@@ -1047,36 +1049,44 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
      sDump += "Actual pool size " + String.valueOf(size()) + "\n\n";
 
      try {
-       JDCProcessInfo[] oPinfo = getActivityInfo().processesInfo();
-       if (oPinfo!=null) {
-         sDump += "Activity information:\n";
-         for (int p=0; p<oPinfo.length; p++) {
-           sDump += "user "+oPinfo[p].getUserName()+" running process "+oPinfo[p].getProcessId();
-           conn = getConnectionForPId(oPinfo[p].getProcessId());
-           if (conn!=null) {
-             sDump += " on connection "+conn.getName();
-           }
-           if (oPinfo[p].getQueryText().length()>0) {
-           	 if (oPinfo[p].getQueryText().equals("<IDLE>"))
-               sDump += " for idle query";
-             else
-               sDump += " for query "+oPinfo[p].getQueryText();
-           }
-           if (oPinfo[p].getQueryStart()!=null) {
-             sDump += " since "+oFmt.format(oPinfo[p].getQueryStart());
-           }
-           sDump += "\n";
-         } // next
-         JDCLockConflict[] oLocks = getActivityInfo().lockConflictsInfo();
-         if (oLocks!=null) {
-           sDump += "Locks information:\n";
-           for (int l=0; l<oLocks.length; l++) {
-              sDump += "PID "+String.valueOf(oLocks[l].getPID())+ " query "+oLocks[l].getQuery()+" is waiting on PID "+String.valueOf(oLocks[l].getWaitingOnPID())+" query "+oLocks[l].getWaitingOnQuery()+"\n";
-           } // next           
-         } // fi
+       JDCActivityInfo oAinf = getActivityInfo();
+       if (oAinf==null) {
+		 sDump += "no activity info available";
+       } else {
+         JDCProcessInfo[] oPinfo = oAinf.processesInfo();
+         if (oPinfo!=null) {
+           sDump += "Activity information:\n";
+           for (int p=0; p<oPinfo.length; p++) {
+             sDump += "user "+oPinfo[p].getUserName()+" running process "+oPinfo[p].getProcessId();
+             conn = getConnectionForPId(oPinfo[p].getProcessId());
+             if (conn!=null) {
+               sDump += " on connection "+conn.getName();
+             }
+             if (oPinfo[p].getQueryText()!=null) {
+               if (oPinfo[p].getQueryText().length()>0) {
+           	     if (oPinfo[p].getQueryText().equals("<IDLE>"))
+                   sDump += " for idle query";
+                 else
+                   sDump += " for query "+oPinfo[p].getQueryText();
+               } // fi (getQueryText()!="")
+             } // fi (getQueryText()!=null)
+             if (oPinfo[p].getQueryStart()!=null) {
+               sDump += " since "+oFmt.format(oPinfo[p].getQueryStart());
+             }
+             sDump += "\n";
+           } // next
+           JDCLockConflict[] oLocks = getActivityInfo().lockConflictsInfo();
+           if (oLocks!=null) {
+             sDump += "Locks information:\n";
+             for (int l=0; l<oLocks.length; l++) {
+               sDump += "PID "+String.valueOf(oLocks[l].getPID())+ " query "+oLocks[l].getQuery()+" is waiting on PID "+String.valueOf(oLocks[l].getWaitingOnPID())+" query "+oLocks[l].getWaitingOnQuery()+"\n";
+             } // next           
+           } // fi
+         }
        }
      } catch (Exception xcpt) {
        sDump += xcpt.getClass().getName()+" trying to get activity information "+xcpt.getMessage()+"\n";
+       try { sDump += StackTraceUtil.getStackTrace(xcpt); } catch (Exception ignore) { }
      }
 
      sDump += "\n";
@@ -1086,6 +1096,8 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
        ListIterator oErrIterator = errorlog.listIterator();
        while (oErrIterator.hasNext()) sDump += oErrIterator.next()+"\n";
      } // fi
+
+     DebugFile.writeln(sDump);
 
      if (DebugFile.trace) {
        DebugFile.decIdent();

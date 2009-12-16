@@ -240,6 +240,7 @@ public final class JDCConnection implements Connection,PooledConnection {
       if (DebugFile.trace) {
         DebugFile.writeln("Begin JDCConnection.close()");
         DebugFile.incIdent();
+        DebugFile.writeln("Connection process id. is "+pid());
       }
 
       if (pool==null) {
@@ -609,7 +610,7 @@ public final class JDCConnection implements Connection,PooledConnection {
     public String pid() throws SQLException {
       Statement oStmt;
       ResultSet oRSet;
-      String sPId = null;
+      String sPId = "unknown";
       switch (getDataBaseProduct()) {
         case DBMS_POSTGRESQL:
           oStmt = createStatement();
