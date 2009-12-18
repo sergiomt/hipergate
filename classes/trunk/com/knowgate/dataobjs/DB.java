@@ -261,6 +261,16 @@ public final class DB {
   public static final String k_education_degree_lookup = "k_education_degree_lookup";
   public static final String k_contact_education = "k_contact_education";
 
+  /**i2e 15-12-2009**/
+  public static final String k_contact_short_courses = "k_contact_short_courses";
+  public static final String k_contact_computer_science = "k_contact_computer_science";
+  public static final String k_contact_computer_science_lookup = "k_contact_computer_science_lookup";
+  public static final String k_contact_languages = "k_contact_languages";
+  public static final String k_contact_languages_lookup = "k_contact_languages_lookup";
+  public static final String k_contact_experience = "k_contact_experience";
+  
+  /**Fin i2e **/
+  
   public static final String k_sms_msisdn = "k_sms_msisdn";
   public static final String k_sms_audit = "k_sms_audit";
 
@@ -1143,6 +1153,25 @@ public final class DB {
 
   // k_contact_education
   public static final String bo_completed = "bo_completed";
+  
+  /**i2e 15-12-2009**/
+  //k_contact_short_courses
+  public static final String gu_scourse = "gu_scourse";
+  public static final String ix_scourse = "ix_scourse";
+  
+  //k_contact_computer_science
+  public static final String gu_ccsskill = "gu_ccsskill";
+  public static final String nm_skill = "nm_skill";
+  public static final String lv_skill = "lv_skill";
+  
+  //k_contact_languages
+  public static final String lv_language_degree = "lv_language_degree";
+
+  //k_contact_experience
+  public static final String gu_experience = "gu_experience";
+  public static final String bo_current_job = "bo_current_job";
+  
+  /**fin i2e**/
 
   // k_sms_audit
   public static final String id_sms = "id_sms";
