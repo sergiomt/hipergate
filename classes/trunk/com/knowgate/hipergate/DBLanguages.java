@@ -314,6 +314,44 @@ public class DBLanguages {
     return sRetVal;
   } // getCountryName
 
+  /** INICIO I2E 2009-12-17 **/
+  /**
+   * <p>Get language translated name given its 2 letter ISO code.</p>
+   * @param oConn Database Connection
+   * @param sLanguageId 2 characters code of country as at k_lu_languages table
+   * @param sIdLanguage 2 characters code of derired language for displaying
+   * @return Language name for the given language or <b>null</b> if no language with such code is found
+   * @throws SQLException
+   * @since 5.0
+   */
+  public String getLanguageName(JDCConnection oConn, String sLanguageId, String sIdLanguage) throws SQLException {
+    String sRetVal;
+    
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin DBLanguages.getLanguageName([Connection]," + sLanguageId + "," + sIdLanguage + ")");
+      DebugFile.incIdent();
+    }
+    if (!bLoaded) {
+    	toHTMLSelect(oConn, sIdLanguage.toLowerCase());
+    }
+	int iColPos = oTranslations.getColumnPosition(DB.tr_lang_+sIdLanguage.toLowerCase());
+	if (iColPos<0) {
+		throw new SQLException("Column "+DB.tr_lang_+sIdLanguage+" not found at "+DB.k_lu_languages+" table");
+	}
+	int iFound = oTranslations.findi(oTranslations.getColumnPosition(DB.id_language), sLanguageId);
+	if (iFound>=0) {
+	  sRetVal = oTranslations.getStringNull(iColPos,iFound,null);
+	} else {
+      sRetVal = null;
+	}
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End DBLanguages.getCountryName() : " + sRetVal);
+    }
+    return sRetVal;
+  } // getLanguageName
+  /** FIN I2E **/
+  
   // ----------------------------------------------------------
 
   /**
@@ -742,6 +780,55 @@ public class DBLanguages {
 
     return oMap;
   } // getLookUpMap()
+  
+  /** INICIO I2E 2009-12-17 **/
+  /**
+   * <p>Get a Map of language lookup talbe values and their corresponding translated labels for a language.</p>
+   * This method is to be used when a listing routine has to lookup several values
+   * at language lookup table for their translated lookup labels. Instead of joining the base table and
+   * the language lookup table, a memory map may be fetched first and then the painting routine translates
+   * each value into its labels without any database access.
+   * @param oConn Database connection
+   * @param sLanguage Language code for retrieved labels
+   * @return A Map associating looukp values (as keys) with values for translated labels into the given language.
+   * @throws SQLException
+   */
+  public static HashMap getLanguageLookUpMap(Connection oConn, String sLanguage) throws SQLException {
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin DBLanguages.getLanguageLookUpMap([Connection], " + sLanguage + ")");
+      DebugFile.incIdent();
+    }
+
+    HashMap oMap = new HashMap();
+
+    String sSQL = "SELECT " + DB.id_language + "," + DB.tr_lang_ + sLanguage + " FROM " + DB.k_lu_languages;
+
+    if (DebugFile.trace){
+    	DebugFile.writeln("Connection.prepareStatement(SELECT " + DB.id_language + "," + DB.tr_lang_ + sLanguage + " FROM " + DB.k_lu_languages);
+    }
+
+    PreparedStatement oStmt = oConn.prepareStatement(sSQL, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+    ResultSet oRSet = oStmt.executeQuery();
+
+    while (oRSet.next()) {
+      oMap.put(oRSet.getObject(1), oRSet.getObject(2));
+    } // wend
+
+    oRSet.close();
+    oStmt.close();
+
+    oRSet = null;
+    oStmt = null;
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End DBLanguages.getLanguageLookUpMap() : " + String.valueOf(oMap.size()));
+    }
+
+    return oMap;
+  } // getLanguageLookUpMap()
+  /** FIN **/
 
   // ----------------------------------------------------------
 
