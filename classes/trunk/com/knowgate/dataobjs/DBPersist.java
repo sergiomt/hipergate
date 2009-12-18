@@ -509,22 +509,25 @@ public class DBPersist implements Map {
 
   public String getStringHtml(String sKey, String sDefault) {
     Object oVal;
-    if (getItemMap().containsKey(sKey)) {
-      oVal = getItemMap().get(sKey);
-      if (null==oVal)
+    try {
+      if (getItemMap().containsKey(sKey)) {
+        oVal = getItemMap().get(sKey);
+        if (null==oVal)
+          if (null==sDefault)
+            return sDefault;
+          else
+            return Gadgets.replace(Gadgets.replace(Gadgets.XHTMLEncode(sDefault),"\"", "&#34;"),"'", "&#39;");
+        else
+          return Gadgets.replace(Gadgets.replace(Gadgets.XHTMLEncode(oVal.toString()),"\"", "&#34;"),"'", "&#39;");
+      }
+      else {
         if (null==sDefault)
           return sDefault;
-        else
-          return Gadgets.XHTMLEncode(sDefault);
-      else
-        return Gadgets.XHTMLEncode(oVal.toString());
-    }
-    else {
-      if (null==sDefault)
-        return sDefault;
-      else
-      	return Gadgets.XHTMLEncode(sDefault);
-    }
+       else
+      	  return Gadgets.replace(Gadgets.replace(Gadgets.XHTMLEncode(sDefault),"\"", "&#34;"),"'", "&#39;");
+      }
+    } catch (org.apache.oro.text.regex.MalformedPatternException neverthrown) { }
+    return null;
   }
 
   /**
