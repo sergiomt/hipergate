@@ -287,6 +287,8 @@ public class HttpSchedulerServlet extends HttpServlet {
 		  try {
 		    oCon = oDbj.getConnection("SchedulerDaemon");
             Job.instantiate(oCon, sId, oDbj.getProperties()).abort(oCon);
+            oCon.close("SchedulerDaemon");
+            oCon=null;
 		  } catch (Exception xcpt) {
               DebugFile.writeln("HttpSchedulerServlet.doGet(abort) : " + xcpt.getClass().getName() + " " + xcpt.getMessage());
               writeXML(response, "<scheduler><error><![CDATA["+xcpt.getClass().getName()+" "+xcpt.getMessage()+"]]></error></scheduler>");
