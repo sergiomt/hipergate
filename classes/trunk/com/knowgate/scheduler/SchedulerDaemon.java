@@ -280,7 +280,7 @@ public class SchedulerDaemon extends Thread {
                  String.valueOf(Atom.STATUS_RUNNING)+","+
                  String.valueOf(Atom.STATUS_SUSPENDED)+"))";
 
-          if (DebugFile.trace) DebugFile.writeln("Statement.executeQuery("+sSQL+")");
+          if (DebugFile.trace) DebugFile.writeln("Statement.executeQuery("+sSQL+") on connection with process id. "+oJcn.pid());
 
           oRSet = oStmt.executeQuery(sSQL);
           LinkedList oFinished = new LinkedList();
@@ -293,7 +293,7 @@ public class SchedulerDaemon extends Thread {
 
           if (oFinished.size()>0) {
             sSQL = "UPDATE k_jobs SET id_status="+String.valueOf(Job.STATUS_FINISHED)+",dt_finished="+DBBind.Functions.GETDATE+" WHERE gu_job=?";
-            if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement("+sSQL+")");
+            if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement("+sSQL+") on connection with process id. "+oJcn.pid());
             PreparedStatement oUpdt = oJcn.prepareStatement(sSQL);
             oIter = oFinished.listIterator();
             while (oIter.hasNext()) {
@@ -306,7 +306,7 @@ public class SchedulerDaemon extends Thread {
           // ****************************************
           // Count jobs pending of begining execution
 
-          if (DebugFile.trace) DebugFile.writeln("Statement.executeQuery(SELECT COUNT(*) FROM k_jobs WHERE id_status=" + String.valueOf(Job.STATUS_PENDING) + " AND ("+DB.dt_execution+" IS NULL OR "+DB.dt_execution+"<="+DBBind.Functions.GETDATE+"))");
+          if (DebugFile.trace) DebugFile.writeln("Statement.executeQuery(SELECT COUNT(*) FROM k_jobs WHERE id_status=" + String.valueOf(Job.STATUS_PENDING) + " AND ("+DB.dt_execution+" IS NULL OR "+DB.dt_execution+"<="+DBBind.Functions.GETDATE+")) on connection with process id. "+oJcn.pid());
 
           oRSet = oStmt.executeQuery("SELECT COUNT(*) FROM k_jobs WHERE id_status=" + String.valueOf(Job.STATUS_PENDING)+" AND ("+DB.dt_execution+" IS NULL OR "+DB.dt_execution+"<="+DBBind.Functions.GETDATE+")");
           oRSet.next();
@@ -329,12 +329,17 @@ public class SchedulerDaemon extends Thread {
 
         if (bContinue) {
 
-		  oJcn = oDbb.getConnection("SchedulerDaemon.AtomFeeder");
-          oJcn.setAutoCommit(true);
-          oFdr.loadAtoms(oJcn, oThreadPool.size());
-          oFdr.feedQueue(oJcn, oQue);
-		  oJcn.close("SchedulerDaemon.AtomFeeder");
-		  
+		  try {
+		    oJcn = oDbb.getConnection("SchedulerDaemon.AtomFeeder");
+            oJcn.setAutoCommit(true);
+            oFdr.loadAtoms(oJcn, oThreadPool.size());
+            oFdr.feedQueue(oJcn, oQue);
+		    oJcn.close("SchedulerDaemon.AtomFeeder");
+		    oJcn=null;
+		  } finally {
+		  	try { if (null!=oJcn) oJcn.close("SchedulerDaemon.AtomFeeder"); } catch (Exception ignore) { }
+		  }
+
           if (oQue.size()>0) {
             oThreadPool.launchAll();
           }
@@ -476,7 +481,11 @@ public class SchedulerDaemon extends Thread {
   // ---------------------------------------------------------------------------
 
   private static void suspendJobs(JDCConnection oCon, Object[] aJobs) throws SQLException {
-    int nJobs;
+    if (DebugFile.trace) {
+	  DebugFile.writeln("Begin SchedulerDaemon.suspendJobs([JDCConnection], Object[])");
+	  DebugFile.incIdent();
+	}    int nJobs;
+
     if (null==aJobs) nJobs=0; else nJobs = aJobs.length;
     if (nJobs>0) {
       PreparedStatement oStmt = oCon.prepareStatement("UPDATE " + DB.k_jobs + " SET " + DB.id_status + "=" + String.valueOf(Job.STATUS_SUSPENDED) + " WHERE " + DB.gu_job + "=?");
@@ -484,11 +493,15 @@ public class SchedulerDaemon extends Thread {
         if (null!=aJobs[j]) {
           oStmt.setObject(1, aJobs[j], Types.CHAR);
           oStmt.executeUpdate();
-        }
-      }
+        } // fi
+      } // next
       oStmt.close();
-    }
-  }
+    } // fi
+	if (DebugFile.trace) {
+	  DebugFile.decIdent();
+	  DebugFile.writeln("End SchedulerDaemon.suspendJobs()");
+	}
+  } // suspendJobs
 
   // ---------------------------------------------------------------------------
 
@@ -500,12 +513,20 @@ public class SchedulerDaemon extends Thread {
   public void haltAll() throws IllegalStateException {
     if (null==oThreadPool)
       throw new IllegalStateException("SchedulerDaemon.haltAll() Thread pool not initialized, call start() method before trying to halt worker threads");
+
+	if (DebugFile.trace) {
+	  DebugFile.writeln("Begin SchedulerDaemon.haltAll()");
+	  DebugFile.incIdent();
+	}
+	
     String[] aInitRunningJobs = oThreadPool.runningJobs();
     oThreadPool.haltAll();
     String[] aStillRunningJobs = oThreadPool.runningJobs();
+
     if (null!=oDbb) {
       try {
         JDCConnection oCon = oDbb.getConnection("SchedulerDaemonHaltAll");
+        oCon.setAutoCommit(true);
         if (null!=aInitRunningJobs) {
           if (null!=aStillRunningJobs) {
             int nInitRunningJobs = aInitRunningJobs.length;
@@ -526,8 +547,13 @@ public class SchedulerDaemon extends Thread {
       }
       oDbb.close();
       oDbb=null;
-    }
-  }
+    } // fi
+
+	if (DebugFile.trace) {
+	  DebugFile.decIdent();
+	  DebugFile.writeln("End SchedulerDaemon.haltAll()");
+	}    
+  } // haltAll()
   // ---------------------------------------------------------------------------
 
   /**
@@ -546,14 +572,16 @@ public class SchedulerDaemon extends Thread {
     if (null==oThreadPool)
       throw new IllegalStateException("SchedulerDaemon.stopAll() Thread pool not initialized, call start() method before trying to stop worker threads");
 
-    oThreadPool.haltAll();
+    bContinue = false;
+
+	// After signaling bContinue = false run() method will exit its internal loop,
+	// call oThreadPool.haltAll() and clean-up atom consumer
 
     try { sleep(lDelayMilis); } catch (InterruptedException ignore) { }
 
-    bContinue = false;
-
     if (null!=oDbb) {
       JDCConnection oCon = oDbb.getConnection("SchedulerDaemonStopAll");
+      oCon.setAutoCommit(true);
       oThreadPool.stopAll(oCon);
       interruptJobs(oCon, oThreadPool.runningJobs());
       oCon.close("SchedulerDaemonStopAll");

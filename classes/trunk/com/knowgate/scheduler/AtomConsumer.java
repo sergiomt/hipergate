@@ -95,7 +95,9 @@ public class AtomConsumer {
       oConn.setAutoCommit(true);
       Iterator<String> oIter = oJobs.keySet().iterator();
       while (oIter.hasNext()) {
-        DBCommand.executeUpdate(oConn, "UPDATE "+DB.k_jobs+" SET "+DB.id_status+"="+String.valueOf(Job.STATUS_PENDING)+" WHERE "+DB.gu_job+"='"+oIter.next()+"'");
+      	String sGuJob = oIter.next();
+        DBCommand.executeUpdate(oConn, "UPDATE "+DB.k_job_atoms+" SET "+DB.id_status+"="+String.valueOf(Job.STATUS_PENDING)+" WHERE "+DB.gu_job+"='"+sGuJob+"' AND "+DB.id_status+"="+String.valueOf(Atom.STATUS_RUNNING));
+        DBCommand.executeUpdate(oConn, "UPDATE "+DB.k_jobs+" SET "+DB.id_status+"="+String.valueOf(Job.STATUS_PENDING)+","+DB.dt_execution+"=NULL WHERE "+DB.gu_job+"='"+sGuJob+"'");
       } // wend
       oConn.close("AtomConsumer.close");
 	} // fi
@@ -127,14 +129,15 @@ public class AtomConsumer {
     Atom oAtm = (Atom) oQueue.pop();
 
     if (oAtm!=null) {
-
-      if (DebugFile.trace) {
-        DebugFile.writeln("Connection.prepareStatement (UPDATE " + DB.k_job_atoms + " SET " + DB.id_status + "=" + String.valueOf(Atom.STATUS_RUNNING) + ", " + DB.dt_execution + "=? WHERE " + DB.gu_job + "=? AND " + DB.pg_atom + "=?)");
-      }
 	  
 	  try {
         oConn = oDbb.getConnection("AtomConsumer");
         oConn.setAutoCommit(true);
+
+        if (DebugFile.trace) {
+      	  DebugFile.writeln("Connection process id is "+oConn.pid());
+          DebugFile.writeln("Connection.prepareStatement (UPDATE " + DB.k_job_atoms + " SET " + DB.id_status + "=" + String.valueOf(Atom.STATUS_RUNNING) + ", " + DB.dt_execution + "=? WHERE " + DB.gu_job + "=? AND " + DB.pg_atom + "=?)");
+        }
 
         oStmt = oConn.prepareStatement("UPDATE " + DB.k_job_atoms + " SET " + DB.id_status + "=" + String.valueOf(Atom.STATUS_RUNNING) + ", " + DB.dt_execution + "=? WHERE " + DB.gu_job + "=? AND " + DB.pg_atom + "=?");
 

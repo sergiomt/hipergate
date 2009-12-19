@@ -45,7 +45,7 @@ import com.knowgate.jdc.JDCConnection;
 /**
  * WorkerThread Pool
  * @author Sergio Montoro Ten
- * @version 3.0
+ * @version 5.5
  */
 
 public class WorkerThreadPool {
@@ -259,10 +259,26 @@ public class WorkerThreadPool {
     * finish pending operations and stop.
     */
    public void haltAll() {
+	 if (DebugFile.trace) {
+	   DebugFile.writeln("Begin WorkerThreadPool.haltAll()");
+	   DebugFile.incIdent();
+	 }
+
      final int iThreads = aThreads.length;
-     for (int t=0; t<iThreads; t++)
+
+	 if (DebugFile.trace) {
+	   DebugFile.writeln(String.valueOf(iThreads)+" running threads");
+	 }
+
+     for (int t=0; t<iThreads; t++) {
        aThreads[t].halt();
-   }
+     }
+
+	 if (DebugFile.trace) {
+	  DebugFile.decIdent();
+	  DebugFile.writeln("End WorkerThreadPool.haltAll()");
+	 }
+   } // haltAll
 
    // --------------------------------------------------------------------------
 
@@ -273,11 +289,26 @@ public class WorkerThreadPool {
     * @deprecated Use stopAll(JDCConnection) instead
     */
    public void stopAll() {
+	 if (DebugFile.trace) {
+	   DebugFile.writeln("Begin WorkerThreadPool.stopAll()");
+	   DebugFile.incIdent();
+	 }
+
      final int iThreads = aThreads.length;
+
+	 if (DebugFile.trace) {
+	   DebugFile.writeln(String.valueOf(iThreads)+" running threads");
+	 }
+
      for (int t=0; t<iThreads; t++) {
        if (aThreads[t].isAlive()) aThreads[t].stop();
      }
-   }
+
+	 if (DebugFile.trace) {
+	  DebugFile.decIdent();
+	  DebugFile.writeln("End WorkerThreadPool.stopAll()");
+	 }
+   } // stopAll
 
    // ---------------------------------------------------------------------------
 
@@ -287,15 +318,31 @@ public class WorkerThreadPool {
     * @since 3.0
     */
    public void stopAll(JDCConnection oConn) throws SQLException {
+	 if (DebugFile.trace) {
+	   DebugFile.writeln("Begin WorkerThreadPool.stopAll([JDCConnection])");
+	   DebugFile.incIdent();
+	 }
+
      final int iThreads = aThreads.length;
+
+	 if (DebugFile.trace) {
+	   DebugFile.writeln(String.valueOf(iThreads)+" running threads");
+	 }
+
      Atom oActiveAtom;
+
      for (int t=0; t<iThreads; t++) {
        oActiveAtom = aThreads[t].activeAtom();
        if (null!=oActiveAtom)
          oActiveAtom.setStatus(oConn, Atom.STATUS_INTERRUPTED, "Interrupted by user");
        if (aThreads[t].isAlive()) aThreads[t].stop();
-     }
-   }
+     } // next
+
+	 if (DebugFile.trace) {
+	  DebugFile.decIdent();
+	  DebugFile.writeln("End WorkerThreadPool.stopAll()");
+	 }
+   } // stopAll
 
    // ---------------------------------------------------------------------------
 

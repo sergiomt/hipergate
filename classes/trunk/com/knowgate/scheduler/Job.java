@@ -979,6 +979,7 @@ public abstract class Job extends DBPersist {
          oDBB = new DBBind(argv[2]);
 
          oCon = oDBB.getConnection("job_main");
+         oCon.setAutoCommit(true);
 
          oJob = new DBPersist(DB.k_jobs, argv[1]);
 

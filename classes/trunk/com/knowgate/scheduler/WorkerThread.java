@@ -45,11 +45,10 @@ import com.knowgate.dataobjs.DB;
 import com.knowgate.debug.DebugFile;
 import com.knowgate.debug.StackTraceUtil;
 
-
 /**
  * <p>Scheduled Job Worker Thread</p>
  * @author Sergio Montoro Ten
- * @version 1.0
+ * @version 5.5
  */
 
 public class WorkerThread extends Thread {
@@ -343,6 +342,9 @@ public class WorkerThread extends Thread {
 
               if (iCallbacks>0) callBack(WorkerThreadCallback.WT_JOB_FINISH, "finish", null, oJob);
             }
+
+          	oCsrConn.close("WorkerThread."+String.valueOf(getId()));
+			oCsrConn = null;
 		  }
           catch (Exception e) {
             if (DebugFile.trace) {
@@ -399,11 +401,14 @@ public class WorkerThread extends Thread {
                 oCsrConn.setAutoCommit(true);
               }
               oAtm.setStatus(oCsrConn, Atom.STATUS_INTERRUPTED, e.getClass().getName() + " " + e.getMessage());
+              oCsrConn.close("WorkerThread.Exception."+String.valueOf(getId()));
+              oCsrConn=null;
             } catch (Exception sqle) {
               if (DebugFile.trace) DebugFile.writeln("Atom.setStatus() " + sqle.getClass().getName() + " " + sqle.getMessage());
+            } finally {
+              if (null!=oCsrConn) try { oCsrConn.close("WorkerThread.Exception."+String.valueOf(getId())); } catch (Exception ignore) { }
+              oCsrConn=null;
             }
-            if (null!=oCsrConn) try { oCsrConn.close("WorkerThread.Exception."+String.valueOf(getId())); } catch (Exception ignore) { }
-            oCsrConn=null;
           } // fi
           sLastError += e.getMessage();
 

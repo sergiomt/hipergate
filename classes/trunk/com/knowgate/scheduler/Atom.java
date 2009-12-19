@@ -252,7 +252,7 @@ public class Atom extends DBPersist {
     Statement oStmt;
 
     if (DebugFile.trace) {
-       DebugFile.writeln("Begin Atom.archive([Connection])");
+       DebugFile.writeln("Begin Atom.archive([Connection:"+oConn.pid()+"])");
        DebugFile.incIdent();
      }
 
@@ -303,7 +303,7 @@ public class Atom extends DBPersist {
     throws SQLException, NullPointerException,NumberFormatException {
 
     if (DebugFile.trace) {
-       DebugFile.writeln("Begin Atom.setStatus([Connection], "+String.valueOf(iStatus)+", "+sLog+")");
+       DebugFile.writeln("Begin Atom.setStatus([Connection:"+oConn.pid()+"], "+String.valueOf(iStatus)+", "+sLog+")");
        DebugFile.incIdent();
      }
 

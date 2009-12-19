@@ -381,7 +381,7 @@ public class AtomFeeder {
     int iLoaded = 0;
 
     if (DebugFile.trace) {
-       DebugFile.writeln("Begin AtomFeeder.loadAtoms([Connection], " + sJobId + ")");
+       DebugFile.writeln("Begin AtomFeeder.loadAtoms([Connection:"+oConn.pid()+"], " + sJobId + ")");
        DebugFile.incIdent();
      }
 
@@ -397,7 +397,7 @@ public class AtomFeeder {
     // Prepara la sentencia para actualizar el estado de los jobs a Running
     sSQL = "UPDATE " + DB.k_jobs + " SET " + DB.id_status + "=" + String.valueOf(Job.STATUS_RUNNING) + "," + DB.dt_execution + "=" + DBBind.Functions.GETDATE + " WHERE " + DB.gu_job + "=?";
 
-    if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(" + sSQL + ")");
+    if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(" + sSQL + ") on connection with process id. "+oConn.pid());
 
     oJobStmt = oConn.prepareStatement(sSQL);
 
@@ -498,7 +498,7 @@ public class AtomFeeder {
     boolean bNext;
 
     if (DebugFile.trace) {
-       DebugFile.writeln("Begin AtomFeeder.feedQueue([Connection], [AtomQueue])");
+       DebugFile.writeln("Begin AtomFeeder.feedQueue([Connection:"+oConn.pid()+"], [AtomQueue])");
        DebugFile.incIdent();
      }
 
@@ -507,10 +507,10 @@ public class AtomFeeder {
 
     sSQL = "SELECT a.*, j." + DB.tx_parameters + " FROM " + DB.k_job_atoms + " a, " + DB.k_jobs + " j WHERE " +
     	   "a." + DB.id_status + "=" + String.valueOf(Atom.STATUS_PENDING) + " AND j." + DB.gu_job + "=a." + DB.gu_job +
-    	   " AND (" + DB.dt_execution + " IS NULL OR " + DB.dt_execution + "<=?) " +
+    	   " AND (j." + DB.dt_execution + " IS NULL OR j." + DB.dt_execution + "<=?) " +
     	   " ORDER BY j." + DB.dt_execution;
 
-    if (DebugFile.trace) DebugFile.writeln("JDCConnection.prepareStatement(" + sSQL + ")");
+    if (DebugFile.trace) DebugFile.writeln("JDCConnection.prepareStatement(" + sSQL + ") on connection with process id. "+oConn.pid());
 
     oStmt = oConn.prepareStatement(sSQL, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
@@ -529,7 +529,7 @@ public class AtomFeeder {
     // Bucle de carga y actualización de estado de job_atoms
 
     sSQL = "UPDATE " + DB.k_job_atoms + " SET " + DB.id_status + "=" + Atom.STATUS_RUNNING + " WHERE " + DB.gu_job + "=? AND " + DB.pg_atom + "=?";
-    if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(" + sSQL + ")");
+    if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(" + sSQL + ") on connection with process id. "+oConn.pid());
     oUpdt = oConn.prepareStatement(sSQL);
 
     iProcessed = 0;
