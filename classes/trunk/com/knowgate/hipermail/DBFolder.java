@@ -112,8 +112,6 @@ public class DBFolder extends Folder {
 
   private Category oCatg;
 
-  private JDCConnection oConn;
-
   private String sFolderDir, sFolderName;
 
   // ---------------------------------------------------------------------------
@@ -173,7 +171,7 @@ public class DBFolder extends Folder {
                                     DB.id_message+" IS NOT NULL AND "+DB.gu_category+"=? AND "+DB.bo_deleted+"<>1 AND "+DB.gu_parent_msg+" IS NULL",0);
     JDCConnection oCnn = null;
     try {
-      oCnn = this.getConnection();
+      oCnn = getConnection();
     } catch (MessagingException msge) {
       throw new SQLException(msge.getMessage(), msge);
     }
@@ -334,6 +332,8 @@ public class DBFolder extends Folder {
     boolean bWasOpen = isOpen();
     if (!bWasOpen) open(Folder.READ_WRITE);
 
+	JDCConnection oConn = null;
+	
     try {
       oConn = getConnection();
 
@@ -559,6 +559,7 @@ public class DBFolder extends Folder {
         mode |= MODE_MBOX;
 
       iOpenMode = mode;
+      JDCConnection oConn = null;
       try {
         oConn = getConnection();
       } catch (SQLException sqle) {
@@ -692,7 +693,6 @@ public class DBFolder extends Folder {
   public void close(boolean expunge) throws MessagingException {
     if (expunge) expunge();
     iOpenMode = 0;
-    oConn = null;
     sFolderDir = null;
   }
 
@@ -837,7 +837,9 @@ public class DBFolder extends Folder {
       	                                  DB.k_mime_parts + " p WHERE m." + DB.gu_mimemsg + "=p." + DB.gu_mimemsg + ")" , 10);
     int iEmptyDrafts = 0;
     
+    JDCConnection oConn = null;
     try {
+      oConn = getConnection();
       iEmptyDrafts = oEmptyDrafts.load(oConn, new Object[]{getCategoryGuid(),((DBStore)getStore()).getUser().getString(DB.gu_workarea)});
     } catch (SQLException sqle) {
 	  throw new MessagingException(sqle.getMessage(), sqle);
@@ -1066,14 +1068,15 @@ public class DBFolder extends Folder {
 
     MboxFile oMBox = null;
     DBSubset oDeleted = new DBSubset(DB.k_mime_msgs, DB.gu_mimemsg+","+DB.pg_message, DB.gu_category+"='"+oCatg.getString(DB.gu_category)+"'", 100);
+    JDCConnection oConn = null;
 
     try {
-      int iDeleted = oDeleted.load(getConnection());
+	  oConn = getConnection();
+      int iDeleted = oDeleted.load(oConn);
       if (DebugFile.trace) DebugFile.writeln("there are "+String.valueOf(iDeleted)+" messages to be deleted");
 
       // ****************************************
-      // Erase files referenced by draft messages
-
+      // Erase files referenced by draft messages	  
       oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
       if (DebugFile.trace) DebugFile.writeln("Statement.executeQuery(SELECT p." + DB.file_name + " FROM " + DB.k_mime_parts + " p," + DB.k_mime_msgs + " m WHERE p." + DB.gu_mimemsg + "=m."+ DB.gu_mimemsg + " AND m." + DB.id_disposition + "='reference' AND m." + DB.bo_deleted + "=1 AND m." + DB.gu_category +"='"+oCatg.getString(DB.gu_category)+"')");
       oRSet = oStmt.executeQuery("SELECT p." + DB.file_name + " FROM " + DB.k_mime_parts + " p," + DB.k_mime_msgs + " m WHERE p." + DB.gu_mimemsg + "=m."+ DB.gu_mimemsg + " AND m." + DB.id_disposition + "='reference' AND m." + DB.bo_deleted + "=1 AND m." + DB.gu_category +"='"+oCatg.getString(DB.gu_category)+"'");
@@ -1257,8 +1260,10 @@ public class DBFolder extends Folder {
                              DB.nm_from+","+DB.by_content;
     InternetAddress oFrom = null, oReply = null;
     MimeMultipart oParts = new MimeMultipart();
-
+	JDCConnection oConn = null;
+	
     try {
+      oConn = getConnection();
       switch (IdType) {
         case 1:
           sSQL = "SELECT "+sColList+" FROM " + DB.k_mime_msgs + " WHERE " + DB.gu_mimemsg + "=?";
@@ -1417,6 +1422,7 @@ public class DBFolder extends Folder {
       DebugFile.incIdent();
     }
 
+    JDCConnection oConn = null;
     PreparedStatement oStmt = null;
     Blob oContentTxt;
     ByteArrayOutputStream byOutPart;
@@ -1440,6 +1446,8 @@ public class DBFolder extends Folder {
             if (DebugFile.trace) DebugFile.writeln("found message boundary token at " + String.valueOf(iPrevPart));
           } // fi (message boundary)
         } // fi (sMsgCharSeq && sBoundary)
+
+		oConn = getConnection();
 
         String sSQL = "INSERT INTO " + DB.k_mime_parts + "(gu_mimemsg,id_message,pg_message,nu_offset,id_part,id_content,id_type,id_disposition,len_part,de_part,tx_md5,file_name,by_content) VALUES ('"+sMsgGuid+"',?,?,?,?,?,?,?,?,?,NULL,?,?)";
 
@@ -1672,10 +1680,11 @@ public class DBFolder extends Folder {
   // ---------------------------------------------------------------------------
 
   private synchronized BigDecimal getNextMessage() throws MessagingException {
+    JDCConnection oConn = null;
     PreparedStatement oStmt = null;
     ResultSet oRSet = null;
     BigDecimal oNext;
-
+	
     try {
       oConn = getConnection();
 
@@ -1735,6 +1744,7 @@ public class DBFolder extends Folder {
     }
 
     Properties pFrom = new Properties(), pTo = new Properties(), pCC = new Properties(), pBCC = new Properties();
+    JDCConnection oConn = null;
     PreparedStatement oStmt = null;
     BigDecimal dPgMessage;
     String sSQL;
@@ -1743,6 +1753,8 @@ public class DBFolder extends Folder {
     if (DebugFile.trace) DebugFile.writeln("part boundary is \"" + (sBoundary==null ? "null" : sBoundary) + "\"");
 
     try {
+      oConn = getConnection();
+      
       sSQL = "INSERT INTO " + DB.k_mime_msgs + "(gu_mimemsg,gu_workarea,gu_category,id_type,id_content,id_message,id_disposition,len_mimemsg,tx_md5,de_mimemsg,file_name,tx_encoding,tx_subject,dt_sent,dt_received,tx_email_from,nm_from,tx_email_reply,nm_to,id_priority,bo_answered,bo_deleted,bo_draft,bo_flagged,bo_recent,bo_seen,bo_spam,pg_message,nu_position,by_content) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
       if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(" + sSQL + ")");
@@ -2443,19 +2455,6 @@ public class DBFolder extends Folder {
 
           oMBox = new MboxFile(oFile, MboxFile.READ_WRITE);
 
-          /*
-          if (DebugFile.trace && (oMsg.getMessageID()!=null)) {
-            if (oMsg.getMessageID().trim().length()>0) {
-              int iMsgCount = oMBox.getMessageCount();
-              for (int m=0; m<iMsgCount; m++) {
-                CharSequence oCharSeq = oMBox.getMessage(m);
-                if (oCharSeq.toString().indexOf(oMsg.getMessageID())>0) {
-                  throw new MessagingException("File " + oFile.getName() + " already contains message " + oMsg.getMessageID() + " at index " + String.valueOf(m));
-                }
-              }
-            }
-          } // fi (DebugFile.trace)
-          */
       } // fi (MODE_MBOX)
 
       indexMessage(gu_mimemsg, gu_workarea, oMsg, oSize,
@@ -2501,19 +2500,14 @@ public class DBFolder extends Folder {
       byOutStrm.close();
       byOutStrm=null;
 
-      if (DebugFile.trace) DebugFile.writeln("Connection.commit()");
-      oConn.commit();
-
     } catch (OutOfMemoryError oom) {
       try { if (null!=byOutStrm) byOutStrm.close(); } catch (Exception ignore) {}
       try { if (null!=oMBox) oMBox.close(); } catch (Exception ignore) {}
-      try { if (null!=oConn) oConn.rollback(); } catch (Exception ignore) {}
       if (DebugFile.trace) DebugFile.decIdent();
       throw new MessagingException("OutOfMemoryError " + oom.getMessage());
     } catch (Exception xcpt) {
       try { if (null!=byOutStrm) byOutStrm.close(); } catch (Exception ignore) {}
       try { if (oMBox!=null) oMBox.close(); } catch (Exception ignore) {}
-      try { if (null!=oConn) oConn.rollback(); } catch (Exception ignore) {}
       if (DebugFile.trace) {
 		DebugFile.writeln(xcpt.getClass().getName() + " " + xcpt.getMessage());
 		DebugFile.writeStackTrace(xcpt);
@@ -2896,7 +2890,8 @@ public class DBFolder extends Folder {
     int iSize;
     Integer oSize;
     MboxFile oInputMbox = null;
-
+	JDCConnection oConn = null;
+	
     if (DebugFile.trace) {
       DebugFile.writeln("Begin DBFolder.reindexMbox("+sMboxFilePath+")");
       DebugFile.incIdent();
@@ -2909,6 +2904,7 @@ public class DBFolder extends Folder {
       String sGuFolder = getCategoryGuid();
       oInputMbox = new MboxFile(sMboxFilePath, MboxFile.READ_ONLY);
       DBSubset oMsgs = new DBSubset (DB.k_mime_msgs, DB.gu_mimemsg+","+DB.gu_workarea, DB.gu_category+"=?", 1000);
+      oConn = getConnection();
       iMsgCount = oMsgs.load(oConn, new Object[]{sGuFolder});
 
       if (DebugFile.trace) DebugFile.writeln(String.valueOf(iMsgCount)+" indexed messages");

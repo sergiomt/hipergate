@@ -133,22 +133,28 @@ public class DBStore extends javax.mail.Store {
 
       connect();
 
-    } else if (!oConn.isValid(10)) {
+    } else if (oConn.getDataBaseProduct()==JDCConnection.DBMS_POSTGRESQL) {
+      if (!oConn.isValid(10)) {
 
-      if (DebugFile.trace) DebugFile.writeln("DBStore.getConnection() connection is not valid");
+        if (DebugFile.trace) DebugFile.writeln("DBStore.getConnection() connection with process id. "+oConn.pid()+" is not valid");
 
-	  try {
-	  	oConn.close();
-	    oConn=null;
-	  }
-	  catch (Exception xcpt) {
-        if (DebugFile.trace)
-      	  DebugFile.writeln("DBStore.getConnection() "+xcpt.getClass().getName()+" "+xcpt.getMessage());
-	  }
+	    try {
+	  	  oConn.close();
+	      oConn=null;
+	    }
+	    catch (Exception xcpt) {
+          if (DebugFile.trace)
+      	    DebugFile.writeln("DBStore.getConnection() "+xcpt.getClass().getName()+" "+xcpt.getMessage());
+	    } 
 
-	  connect();
+	    connect();
 
-	} // isValid
+	  } // isValid
+    } // fi (DBMS_POSTGRESQL)
+    	
+    if (DebugFile.trace) {
+      if (oConn!=null) DebugFile.writeln("DBStore.getConnection() Connection process id. is " + oConn.pid());
+    }
 
     return oConn;
   } // getConnection
@@ -186,7 +192,7 @@ public class DBStore extends javax.mail.Store {
 
     if (oConn!=null || isConnected()) {
       if (DebugFile.trace) DebugFile.decIdent();
-      throw new MessagingException("DBStore ia already connected");
+      throw new MessagingException("DBStore is already connected");
     }
 
     String dburl = Environment.getProfileVar(host, "dburl");
@@ -224,12 +230,13 @@ public class DBStore extends javax.mail.Store {
     }
 
     if (DebugFile.trace) {
+      try { if (oConn!=null) DebugFile.writeln("Connection process id. is "+oConn.pid()); } catch (Exception ignore ) { }
       DebugFile.decIdent();
       DebugFile.writeln("End DBStore.protocolConnect()");
     }
 
     return true;
-  }
+  } // protocolConnect
 
   // ---------------------------------------------------------------------------
 
@@ -237,6 +244,22 @@ public class DBStore extends javax.mail.Store {
     throws MessagingException {
 
     protocolConnect (host, -1, user, password);
+  }
+
+  // ---------------------------------------------------------------------------
+
+  public void commit ()
+    throws MessagingException {
+
+    try {
+      if (oConn!=null) {
+      	if (!oConn.isClosed()) {
+      	  oConn.commit();
+      	}
+      }
+    } catch (Exception xcpt) {
+    	throw new MessagingException(xcpt.getMessage(), xcpt);
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -332,7 +355,7 @@ public class DBStore extends javax.mail.Store {
       if (sFolderName.length()==32) {
         if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(SELECT NULL FROM "+DB.k_categories+" WHERE "+DB.gu_category+"='"+sFolderName+"')");
 
-        oStmt = this.getConnection().prepareStatement("SELECT NULL FROM "+DB.k_categories+" WHERE "+DB.gu_category+"=?");
+        oStmt = getConnection().prepareStatement("SELECT NULL FROM "+DB.k_categories+" WHERE "+DB.gu_category+"=?");
         oStmt.setString(1, sFolderName);
         oRSet = oStmt.executeQuery();
         bExistsGuid = oRSet.next();
