@@ -40,9 +40,11 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Timestamp;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.Vector;
 
 import javax.mail.Message;
 import javax.mail.URLName;
@@ -92,15 +94,13 @@ import com.oreilly.servlet.MailMessage;
 /**
  * <p>Send mime mail message from the outbox of an account to a recipients list</p>
  * @author Sergio Montoro Ten
- * @version 3.0
+ * @version 5.5
  */
 
 public class MimeSender extends Job {
 
   private SessionHandler oHndlr;
   private int iDomainId;
-  private DBStore oStor;
-  private DBFolder oOutBox;
   private String sBody;
   private boolean bPersonalized;
   private DBMimeMessage oDraft;
@@ -108,14 +108,20 @@ public class MimeSender extends Job {
   private InternetAddress[] aFrom;
   private InternetAddress[] aReply;
   private HashMap oDocumentImages;
+  private String[] aBlackList;
+  private String sProfile;
+  private String sMBoxDir;
+  private ACLUser oUser;
 
   // ---------------------------------------------------------------------------
 
   public MimeSender() {
     sBody = null;
     oHndlr = null;
-    oStor = null;
-    oOutBox = null;
+    sMBoxDir = null;
+    sProfile = null;
+    aBlackList = null;
+    oUser = new ACLUser();
     oDocumentImages = new HashMap();
   }
 
@@ -143,7 +149,7 @@ public class MimeSender extends Job {
     sEm = oAtm.getString(DB.tx_email);
 
     try {
-      oConn = getDataBaseBind().getConnection("MimeSender");
+      oConn = getDataBaseBind().getConnection("MimeSender", true);
       if (DebugFile.trace) {
         DebugFile.writeln("Connection.prepareStatement(SELECT "+DB.tx_name+","+DB.tx_surname+","+DB.tx_salutation+","+DB.nm_commercial+" FROM "+DB.k_member_address+" WHERE "+DB.gu_workarea+"='"+getStringNull(DB.gu_workarea,"null")+"' AND "+DB.tx_email+"='"+sEm+"')");
       }
@@ -165,6 +171,9 @@ public class MimeSender extends Job {
       oRSet=null;
       oStmt.close();
       oStmt=null;
+
+      oConn.close("MimeSender");
+      oConn=null;
       
       FastStreamReplacer oRplcr = new FastStreamReplacer(sBody.length()+256);
       try {
@@ -178,8 +187,6 @@ public class MimeSender extends Job {
         log("IOException " + ioe.getMessage() + " sending message "+getParameter("message") + " to " + sEm);
         sPersonalizedBody = sBody;
       }
-      oConn.close("MimeSender");
-      oConn=null;
     } catch (SQLException sqle) {
       if (oRSet!=null) { try { oRSet.close(); } catch (Exception ignore) {} }
       if (oStmt!=null) { try { oStmt.close(); } catch (Exception ignore) {} }
@@ -200,20 +207,25 @@ public class MimeSender extends Job {
 
   public void init(Atom oAtm)
     throws SQLException,MessagingException,NullPointerException {
+
       if (DebugFile.trace) {
         DebugFile.writeln("Begin MimeSender.init()");
         DebugFile.incIdent();
       }
+
       // If mail is personalized (contains {#...} tags) a special parameter must has been previously set
       if (getParameter("personalized")==null)
         bPersonalized = false;
       else
       	bPersonalized = getParameter("personalized").equals("true") ? true : false;
       if (DebugFile.trace) DebugFile.writeln("personalized="+getParameter("personalized"));
+
+      DBStore oStor = null;
+      DBFolder oOutBox = null;
       JDCConnection oConn = null;
       PreparedStatement oUpdt = null;
-      ACLUser oUser = new ACLUser();
       MailAccount oMacc = new MailAccount();
+
       if (DebugFile.trace) DebugFile.writeln("workarea="+getStringNull(DB.gu_workarea,"null"));
       String sWrkA = getString(DB.gu_workarea);
       try {
@@ -241,35 +253,39 @@ public class MimeSender extends Job {
       if (null==oUser) {
         if (DebugFile.trace) {
           DebugFile.decIdent();
-          DebugFile.writeln("End MimeSender.init("+oAtm.getString(DB.gu_job)+":"+String.valueOf(oAtm.getInt(DB.pg_atom))+") : abnormal process termination");
+          DebugFile.writeln("End MimeSender.init("+oAtm.getString(DB.gu_job)+") : abnormal process termination");
         }
         throw new NullPointerException("User "+getStringNull(DB.gu_writer,"null")+" not found");
       }
       if (null==oMacc) {
         if (DebugFile.trace) {
           DebugFile.decIdent();
-          DebugFile.writeln("End MimeSender.init("+oAtm.getString(DB.gu_job)+":"+String.valueOf(oAtm.getInt(DB.pg_atom))+") : abnormal process termination");
+          DebugFile.writeln("End MimeSender.init("+oAtm.getString(DB.gu_job)+") : abnormal process termination");
         }
         throw new NullPointerException("Mail Account "+getParameter("account")+" not found");
       }
       try {
+
         // Create mail session
         if (DebugFile.trace) DebugFile.writeln("new SessionHandler("+oMacc.getStringNull(DB.gu_account,"null")+")");
         oHndlr = new SessionHandler(oMacc);
+
         // Retrieve profile name to be used from a Job parameter
         // Profile is needed because it contains the path to /storage directory
         // which is used for composing the path to outbox mbox file containing
         // source of message to be sent
-        String sProfile = getParameter("profile");
-        String sMBoxDir = DBStore.MBoxDirectory(sProfile,iDomainId,sWrkA);
-        try { if (oStor!=null) oStor.close(); } catch (Exception xcpt) { } finally { oStor=null; }
+        sProfile = getParameter("profile");
+        sMBoxDir = DBStore.MBoxDirectory(sProfile,iDomainId,sWrkA);
+
         oStor = new DBStore(oHndlr.getSession(), new URLName("jdbc://", sProfile, -1, sMBoxDir, oUser.getString(DB.gu_user), oUser.getString(DB.tx_pwd)));
         oStor.connect(sProfile, oUser.getString(DB.gu_user), oUser.getString(DB.tx_pwd));
         oOutBox = (DBFolder) oStor.getFolder("outbox");
         oOutBox.open(Folder.READ_WRITE);
         String sMsgId = getParameter("message");
+
         oDraft = oOutBox.getMessageByGuid(sMsgId);
         if (null==oDraft) throw new MessagingException("DBFolder.getMessageByGuid() Message "+sMsgId+" not found");
+
         oHeaders = oOutBox.getMessageHeaders(sMsgId);
         if (null==oHeaders) throw new MessagingException("DBFolder.getMessageHeaders() Message "+sMsgId+" not found");
         if (null==oHeaders.get(DB.nm_from))
@@ -291,13 +307,32 @@ public class MimeSender extends Job {
             DebugFile.writeln("Message body: " + Gadgets.left(sBody.replace('\n',' '), 100));
         }
 
+		oOutBox.close(false);
+		oOutBox=null;
+		oStor.close();
+		oStor=null;
+
         oConn = getDataBaseBind().getConnection("MimeSender.init.2");
         oConn.setAutoCommit(true);
+
         oUpdt = oConn.prepareStatement("UPDATE "+DB.k_mime_msgs+" SET "+DB.dt_sent+"=? WHERE "+DB.gu_mimemsg+"=?");
         oUpdt.setTimestamp(1, new Timestamp(new Date().getTime()));
     	oUpdt.setString(2, sMsgId);
         oUpdt.executeUpdate();
         oUpdt.close();
+
+		DBSubset oBlck = new DBSubset(DB.k_global_black_list, DBBind.Functions.LOWER+"("+DB.tx_email+")",
+		                              DB.id_domain+"=? AND "+DB.gu_workarea+" IN (?,'00000000000000000000000000000000')", 1000);
+		int nBlacklisted = oBlck.load(oConn, new Object[]{new Integer(iDomainId), getString(DB.gu_workarea)});
+		if (nBlacklisted==0) {
+		  aBlackList = null;
+		} else {
+		  Vector vBlacklisted = oBlck.getRowAsVector(0);
+		  aBlackList = new String[nBlacklisted];		  		
+		  vBlacklisted.toArray(aBlackList);
+		  Arrays.sort(aBlackList);
+		}
+
         oConn.close("MimeSender.init.2");
         oConn=null;
 
@@ -333,11 +368,14 @@ public class MimeSender extends Job {
       DebugFile.writeln("gu_job="+getStringNull(DB.gu_job,"null"));
     }
 
+	DBStore oStor = null;
+	DBFolder oSent = null;
+	
     if (0==iPendingAtoms) {
 
       int iStillExecutable = 0;
       try {
-        JDCConnection oConn = getDataBaseBind().getConnection("MimeSender.free");
+        JDCConnection oConn = getDataBaseBind().getConnection("MimeSender.free", true);
         iStillExecutable = DBCommand.queryCount(oConn, "*", DB.k_job_atoms, DB.id_status+" IN ("+
       					     String.valueOf(Atom.STATUS_INTERRUPTED)+","+String.valueOf(Atom.STATUS_SUSPENDED)+")");
         oConn.close("MimeSender.free");
@@ -349,10 +387,13 @@ public class MimeSender extends Job {
 
       if (0==iStillExecutable) {
         try {
-          DBFolder oSent = (DBFolder) oStor.getFolder("sent");
+          oStor = new DBStore(oHndlr.getSession(), new URLName("jdbc://", sProfile, -1, sMBoxDir, oUser.getString(DB.gu_user), oUser.getString(DB.tx_pwd)));
+          oStor.connect(sProfile, oUser.getString(DB.gu_user), oUser.getString(DB.tx_pwd));
+          oSent = (DBFolder) oStor.getFolder("sent");
           oSent.open(Folder.READ_WRITE);
           oSent.moveMessage(oDraft);
 	      oSent.close(false);
+	      oStor.close();
         } catch (StoreClosedException sce) {
           if (DebugFile.trace) {
             DebugFile.writeln("MimeSender.free() StoreClosedException "+sce.getMessage());
@@ -366,7 +407,7 @@ public class MimeSender extends Job {
     } // fi
 
     oDraft=null;
-    if (null!=oOutBox) { try { oOutBox.close(false); oOutBox=null; } catch (Exception ignore) {} }
+    if (null!=oSent)   { try { oSent.close(false); oSent=null; } catch (Exception ignore) {} }
     if (null!=oStor)   { try { oStor.close(); oStor=null; } catch (Exception ignore) {} }
     if (null!=oHndlr)  { try { oHndlr.close(); oHndlr=null; } catch (Exception ignore) {} }
 
@@ -471,13 +512,14 @@ public class MimeSender extends Job {
         if (DebugFile.trace) DebugFile.writeln("sanitized tx_email="+sSanitizedEmail);
 
 		// No blacklisted e-mails allowed to pass through
-	    oScnn = oStor.getConnection();
-	    bBlackListed = DBCommand.queryExists(oScnn, DB.k_global_black_list,
-	  									     DBBind.Functions.LOWER+"("+DB.tx_email+") IN ('"+sSanitizedEmail.toLowerCase()+"','"+oAtm.getString(DB.tx_email).toLowerCase()+"') AND "+
-	  									     DB.id_domain+"="+String.valueOf(iDomainId)+" AND "+
-	  									     DB.gu_workarea+" IN ('"+getString(DB.gu_workarea)+"','00000000000000000000000000000000')");
-		oScnn = null;
-		if (bBlackListed) throw new SQLException("Could not sent message to "+sSanitizedEmail+" because it is blacklisted");
+	    if (aBlackList==null) {
+	      bBlackListed = false;
+	    } else {
+	      bBlackListed = (Arrays.binarySearch(aBlackList,oAtm.getString(DB.tx_email).toLowerCase())>=0 ||
+	      	              Arrays.binarySearch(aBlackList,sSanitizedEmail.toLowerCase())>=0);
+	    }
+		if (bBlackListed)
+		  throw new SQLException("Could not sent message to "+sSanitizedEmail+" because it is blacklisted");
 
         InternetAddress oRec = DBInetAddr.parseAddress(sSanitizedEmail);
         String sRecType = oAtm.getStringNull(DB.tp_recipient,"to");
@@ -517,14 +559,6 @@ public class MimeSender extends Job {
       }
       throw new MessagingException(e.getMessage(),e);
     } finally {
-      try {
-      	oScnn = oStor.getConnection();
-      	if (null!=oScnn)
-      	  if (!oScnn.isClosed())
-      	  	oScnn.commit();
-      } catch (Exception x) {
-        if (DebugFile.trace) DebugFile.writeln(x.getClass().getName()+" "+x.getMessage());
-      }      
       // Decrement de count of atoms pending of processing at this job
       if (DebugFile.trace) DebugFile.writeln("decrementing pending atoms to "+String.valueOf(iPendingAtoms-1));
       if (0==--iPendingAtoms) {
@@ -616,7 +650,7 @@ public class MimeSender extends Job {
 
 
    if (DebugFile.trace) {
-     DebugFile.writeln("Begin MimeSender.newInstance(JDCConnection, "+sProfile+", "+sIdWrkA+", "+sGuMsg+", "+sIdMsg+", "+sGuUser+", "+sGuAccount+", "+String.valueOf(bIsPersonalizedMail)+", "+sTxTitle+")");
+     DebugFile.writeln("Begin MimeSender.newInstance([JDCConnection:"+oConn.pid()+"], "+sProfile+", "+sIdWrkA+", "+sGuMsg+", "+sIdMsg+", "+sGuUser+", "+sGuAccount+", "+String.valueOf(bIsPersonalizedMail)+", "+sTxTitle+")");
      DebugFile.incIdent();
    }
 
