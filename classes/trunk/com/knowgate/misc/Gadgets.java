@@ -208,16 +208,7 @@ public final class Gadgets {
     for (int i = 0; i < len; ++i) {
       c = text.charAt(i);
       if (c<=127) {
-        switch (c) {
-          case (char) 34:
-            results.append("&#34;");
-            break;
-		  case (char) 39:
-            results.append("&#39;");
-            break;		  	
-		  default:
-		  	results.append(c);
-        }
+		results.append(c);
       } else {
         results.append("&#"+String.valueOf((int)c)+";");
       }
