@@ -1,8 +1,8 @@
 Manifest-version: 1.0
 Name: com/knowgate/forums
 Specification-Title: HiperGate Forum Data Model
-Specification-Version: 4.0
+Specification-Version: 5.5
 Specification-Vendor: Know Gate S.L.
 Implementation-Title: com.knowgate.forums
-Implementation-Version: 4.0
+Implementation-Version: 5.5
 Implementation-Vendor: Know Gate S.L.
