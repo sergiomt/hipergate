@@ -53,6 +53,7 @@ import java.io.FileNotFoundException;
 import com.knowgate.debug.DebugFile;
 import com.knowgate.debug.StackTraceUtil;
 import com.knowgate.dataobjs.DBBind;
+import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
 
@@ -283,11 +284,12 @@ public class SchedulerDaemon extends Thread {
           if (DebugFile.trace) DebugFile.writeln("Statement.executeQuery("+sSQL+") on connection with process id. "+oJcn.pid());
 
           oRSet = oStmt.executeQuery(sSQL);
-          LinkedList oFinished = new LinkedList();
+          LinkedList<String> oFinished = new LinkedList<String>();
           while (oRSet.next()) {
             oFinished.add(oRSet.getString(1));
           } // wend
           oRSet.close();
+		  oStmt.close();
 
           if (DebugFile.trace) DebugFile.writeln("Already finished jobs "+String.valueOf(oFinished.size()));
 
@@ -308,11 +310,7 @@ public class SchedulerDaemon extends Thread {
 
           if (DebugFile.trace) DebugFile.writeln("Statement.executeQuery(SELECT COUNT(*) FROM k_jobs WHERE id_status=" + String.valueOf(Job.STATUS_PENDING) + " AND ("+DB.dt_execution+" IS NULL OR "+DB.dt_execution+"<="+DBBind.Functions.GETDATE+")) on connection with process id. "+oJcn.pid());
 
-          oRSet = oStmt.executeQuery("SELECT COUNT(*) FROM k_jobs WHERE id_status=" + String.valueOf(Job.STATUS_PENDING)+" AND ("+DB.dt_execution+" IS NULL OR "+DB.dt_execution+"<="+DBBind.Functions.GETDATE+")");
-          oRSet.next();
-          iJobCount = oRSet.getInt(1);
-          oRSet.close();
-          oStmt.close();
+		  iJobCount = DBCommand.queryCount(oJcn, "*", DB.k_jobs, DB.id_status + "=" + String.valueOf(Job.STATUS_PENDING)+" AND ("+DB.dt_execution+" IS NULL OR "+DB.dt_execution+"<="+DBBind.Functions.GETDATE+")");
 
 		  oJcn.close("SchedulerDaemon");
 
@@ -380,6 +378,21 @@ public class SchedulerDaemon extends Thread {
     oDbb=null;
     }
     catch (Exception e) {
+      
+      if (DebugFile.trace) {
+        DebugFile.writeln("SchedulerDaemon " + e.getClass().getName() + " " + e.getMessage());
+        try {
+          DebugFile.writeln(StackTraceUtil.getStackTrace(e));
+        } catch (IOException ignore) {}
+        
+        DebugFile.writeln("SchedulerDaemon.run() abnormal termination");
+      }
+      
+      try {
+        System.err.println("Hipergate SchedulerDaemon fatal error " + e.getClass().getName() + " " + e.getMessage());
+        System.err.println(StackTraceUtil.getStackTrace(e));
+      } catch (IOException ignore) {}
+
       try { oThreadPool.haltAll(); oThreadPool=null; } catch (Exception ignore) {}
       try {
         if (oJcn!=null) if (!oJcn.isClosed()) oJcn.close("SchedulerDaemon");
@@ -392,14 +405,6 @@ public class SchedulerDaemon extends Thread {
       dtStartDate = null;
       dtStopDate = new Date();
 
-      if (DebugFile.trace) {
-        DebugFile.writeln("SchedulerDaemon " + e.getClass().getName() + " " + e.getMessage());
-        try {
-          DebugFile.writeln(StackTraceUtil.getStackTrace(e));
-        } catch (IOException ignore) {}
-        
-        DebugFile.writeln("SchedulerDaemon.run() abnormal termination");
-      }
     } // catch
     if (DebugFile.trace) DebugFile.writeln("End SchedulerDaemon.run()");
   } // run

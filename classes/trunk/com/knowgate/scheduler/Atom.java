@@ -260,12 +260,6 @@ public class Atom extends DBPersist {
 
     sWhere = " WHERE gu_job='" + getString(DB.gu_job) + "' AND pg_atom=" + String.valueOf(getInt(DB.pg_atom));
 
-    sSQL = "UPDATE " + DB.k_job_atoms + " SET " + DB.id_status + "=" + String.valueOf(Atom.STATUS_FINISHED) + " " + sWhere;
-
-    if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(" + sSQL + ")");
-
-    oStmt.executeUpdate(sSQL);
-
     sSQL = "INSERT INTO " + DB.k_job_atoms_archived + " (" + COLUMNS_LIST + ") " +
            "SELECT " + COLUMNS_LIST + " FROM " + DB.k_job_atoms + sWhere;
 

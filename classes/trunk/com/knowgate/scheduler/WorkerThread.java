@@ -260,14 +260,23 @@ public class WorkerThread extends Thread {
           sJob = oAtm.getString(DB.gu_job);
 
           try {
-            // Dynamically instantiate the job subclass specified at k_lu_job_commands table
+			if (oJob==null) {
+              // Dynamically instantiate the job subclass specified at k_lu_job_commands table
+              oCsrConn = oConsumer.getDatabaseBind().getConnection("WorkerThread."+String.valueOf(getId()), true);
+              oJob = Job.instantiate(oCsrConn, sJob, oPool.getProperties());
+			  oCsrConn.close("WorkerThread."+String.valueOf(getId()));
+			  oCsrConn = null;
+              if (iCallbacks>0) callBack(WorkerThreadCallback.WT_JOB_INSTANTIATE, "instantiate job " + sJob + " command " + oJob.getString(DB.id_command), null, oJob);
+			} else if (!oJob.getString(DB.gu_job).equals(sJob)) {
+			  oJob.free();
+              // Dynamically instantiate the job subclass specified at k_lu_job_commands table
+              oCsrConn = oConsumer.getDatabaseBind().getConnection("WorkerThread."+String.valueOf(getId()), true);
+              oJob = Job.instantiate(oCsrConn, sJob, oPool.getProperties());
+			  oCsrConn.close("WorkerThread."+String.valueOf(getId()));
+			  oCsrConn = null;			  
+              if (iCallbacks>0) callBack(WorkerThreadCallback.WT_JOB_INSTANTIATE, "instantiate job " + sJob + " command " + oJob.getString(DB.id_command), null, oJob);
+			}
 
-            oCsrConn = oConsumer.getDatabaseBind().getConnection("WorkerThread."+String.valueOf(getId()), true);
-            oJob = Job.instantiate(oCsrConn, sJob, oPool.getProperties());
-			oCsrConn.close("WorkerThread."+String.valueOf(getId()));
-			oCsrConn = null;
-
-            if (iCallbacks>0) callBack(WorkerThreadCallback.WT_JOB_INSTANTIATE, "instantiate job " + sJob + " command " + oJob.getString(DB.id_command), null, oJob);
           }
           catch (ClassNotFoundException e) {
             sJob = "";
@@ -325,10 +334,11 @@ public class WorkerThread extends Thread {
           // Actual Atom processing call here!
 		  
 		  try {
-            oCsrConn = oConsumer.getDatabaseBind().getConnection("WorkerThread."+String.valueOf(getId()));
-		    oCsrConn.setAutoCommit(true);
 
             oJob.process(oAtm);
+
+            oCsrConn = oConsumer.getDatabaseBind().getConnection("WorkerThread."+String.valueOf(getId()));
+		    oCsrConn.setAutoCommit(true);
 
             oAtm.archive(oCsrConn);          	
 			

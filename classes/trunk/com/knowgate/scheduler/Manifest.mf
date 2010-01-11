@@ -1,8 +1,8 @@
 Manifest-version: 1.0
 Name: com/knowgate/scheduler
 Specification-Title: hipergate Job Scheduler
-Specification-Version: 2.2
+Specification-Version: 5.5
 Specification-Vendor: Know Gate S.L.
 Implementation-Title: com.knowgate.scheduler
-Implementation-Version: 2.2
+Implementation-Version: 5.5
 Implementation-Vendor: Know Gate S.L.

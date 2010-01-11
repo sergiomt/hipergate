@@ -558,7 +558,7 @@ public abstract class Job extends DBPersist {
       DebugFile.decIdent();
       DebugFile.writeln("End Job.resolveAtomsEMails()");
     }
-  }
+  } // resolveAtomsEMails
 
   // **********************************************************
   // Static Methods

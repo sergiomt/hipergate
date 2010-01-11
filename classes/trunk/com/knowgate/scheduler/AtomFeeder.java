@@ -45,6 +45,7 @@ import com.knowgate.debug.DebugFile;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBBind;
+import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.dataobjs.DBSubset;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.hipergate.QueryByForm;
@@ -62,7 +63,7 @@ public class AtomFeeder {
   private int iMaxBatchSize;
 
   public AtomFeeder() {
-    iMaxBatchSize = 10000;
+    iMaxBatchSize = 1000;
   }
 
   // ----------------------------------------------------------
@@ -155,8 +156,6 @@ public class AtomFeeder {
   private int loadStaticList(JDCConnection oConn, String sJobGUID,
   							 Date dtExec, String sListGUID, short iInitialStatus)
   	throws SQLException {
-    Statement oStmt;
-    String sSQL;
     int iInserted;
 
     if (DebugFile.trace) {
@@ -169,9 +168,7 @@ public class AtomFeeder {
     String sColumns = "id_format,gu_company,gu_contact,tx_email,tx_name,tx_surname,tx_salutation";
 
     // Insertar los registros a capón haciendo un snapshot de k_member_address a k_job_atoms
-    oStmt = oConn.createStatement();
-
-    sSQL = "INSERT INTO " + DB.k_job_atoms +
+	iInserted =  DBCommand.executeUpdate(oConn, "INSERT INTO " + DB.k_job_atoms +
            " (gu_job,id_status," + sColumns + ") " +
            " (SELECT '" + sJobGUID + "'," + String.valueOf(iInitialStatus) +
            "," + sColumns + " FROM " + DB.k_x_list_members + " m WHERE " +
@@ -184,12 +181,7 @@ public class AtomFeeder {
            " FROM " + DB.k_job_atoms + " j WHERE j." + DB.gu_job + "='" + sJobGUID + "' AND " +
            " j." +DB.tx_email + "=m." + DB.tx_email+") AND NOT EXISTS (SELECT a." + DB.tx_email +
            " FROM " + DB.k_job_atoms_archived + " a WHERE a." + DB.gu_job + "='" + sJobGUID + "' AND " +
-           " a." +DB.tx_email + "=m." + DB.tx_email+"))";
-
-    if (DebugFile.trace) DebugFile.writeln("Connection.executeUpdate(" + sSQL + ")");
-
-    iInserted = oStmt.executeUpdate(sSQL);
-    oStmt.close();
+           " a." +DB.tx_email + "=m." + DB.tx_email+"))");
 
     if (DebugFile.trace) {
        DebugFile.decIdent();
@@ -257,7 +249,8 @@ public class AtomFeeder {
    * for nearest Jobs in time.<br>
    * On each loadAtoms() no more than iWorkerThreads Jobs will be loaded at a time.
    * @param oConn Database Connection
-   * @param iWorkerThreads Number of worker thread. This parameter will limit the number of loaded Jobs as the program will try to use a one to one ratio between Jobs and WorkerThreads.
+   * @param iWorkerThreads Number of worker thread. This parameter will limit the number of loaded Jobs
+   * as the program will try to use a one to one ratio between Jobs and WorkerThreads.
    * @return DBSubset with loaded Jobs
    * @throws SQLException
    */
@@ -283,7 +276,8 @@ public class AtomFeeder {
 
     oJobsSet = new DBSubset(DB.k_jobs,
                             "gu_job,gu_job_group,gu_workarea,id_command,tx_parameters,id_status,dt_execution,dt_finished,dt_created,dt_modified",
-                            DB.id_status + "=" + String.valueOf(Job.STATUS_PENDING) + " ORDER BY " + DB.dt_execution + " DESC", iWorkerThreads);
+                            DB.id_status + " IN (" + String.valueOf(Job.STATUS_PENDING) + "," + String.valueOf(Job.STATUS_RUNNING) + ") ORDER BY " +
+                            DB.id_status + " DESC," + DB.dt_execution + " DESC", iWorkerThreads);
 
     oJobsSet.setMaxRows(iWorkerThreads);
 
@@ -517,10 +511,6 @@ public class AtomFeeder {
     oStmt.setTimestamp(1, new Timestamp(new Date().getTime()));
 
     oRSet = oStmt.executeQuery();
-
-    try {
-      oRSet.setFetchSize (getMaxBatchSize());
-    } catch (SQLException e) { /* Si el driver no soporta setFetchSize da igual */ }
 
     oMDat = oRSet.getMetaData();
     iJobCol = oRSet.findColumn(DB.gu_job);
