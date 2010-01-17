@@ -92,7 +92,7 @@ public class RC4 {
         byte tmp;
         
         if (key == null || key.length == 0) {
-            throw new NullPointerException();
+            throw new NullPointerException("RC4 key may not be null nor empty");
         }
         
         for (int i=0; i < 256; i++) {

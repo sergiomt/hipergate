@@ -55,6 +55,7 @@ import com.knowgate.debug.DebugFile;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBBind;
+import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.dataobjs.DBPersist;
 import com.knowgate.dataobjs.DBSubset;
 import com.knowgate.hipergate.DBLanguages;
@@ -1837,6 +1838,43 @@ public final class ACLUser extends DBPersist {
   	} // fi
   	return true;
   } // resetSignature
+
+  /**
+   * <p>Suggest a unique nick name for a given e-mail</p>
+   * If a user with given e-mail already exists at k_users table,
+   * then the nick name of that user is returned,
+   * else a new nick name unique for that e-mail is suggested
+   * @param JDCConnection
+   * @param sEmail
+   * @throws SQLException if no user with given GUID exists at the database
+   * @throws NullPointerException is sEmail is null
+   * @since 5.5
+   */
+
+  public static String suggestNickForEmail(JDCConnection oConn, String sEmail)
+  	throws SQLException,NullPointerException {
+  	String sTxNick = DBCommand.queryStr(oConn, "SELECT "+DB.tx_nickname+" FROM "+DB.k_users+" WHERE "+DB.tx_main_email+"='"+sEmail+"'");
+  	if (sTxNick==null) {
+  	  sTxNick = DBCommand.queryStr(oConn, "SELECT "+DB.tx_nickname+" FROM "+DB.k_users+" WHERE "+DB.tx_nickname+"='"+sEmail.substring(0,sEmail.indexOf('@'))+"'");
+	  if (null==sTxNick) {
+	  	sTxNick = sEmail.substring(0,sEmail.indexOf('@'));
+	  } else {
+	  	String sNumericSuffix = "";
+	  	for (int c=sTxNick.length()-1; c>=0; c--) {
+	  	  char cAt = sTxNick.charAt(c);
+	  	  if (cAt>='0' && cAt<='9') sNumericSuffix = cAt + sNumericSuffix;
+	  	} // next
+	  	if (sNumericSuffix.length()==0) {
+	  	  sTxNick += "1";
+	  	} else if (sNumericSuffix.length()==sTxNick.length()) {
+	  	  sTxNick = String.valueOf(Integer.parseInt(sTxNick)+1);
+	  	} else {
+	  	  sTxNick = sTxNick.substring(0, sTxNick.length()-sNumericSuffix.length()) + String.valueOf(Integer.parseInt(sNumericSuffix)+1);
+	  	}
+	  }
+  	} // fi
+  	return sTxNick;
+  } // suggestNickForEmail
   	
   // **********************************************************
   // Public Constants
