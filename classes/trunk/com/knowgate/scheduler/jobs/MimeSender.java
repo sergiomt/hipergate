@@ -89,6 +89,7 @@ import com.knowgate.hipermail.SessionHandler;
 import com.knowgate.scheduler.Job;
 import com.knowgate.scheduler.Atom;
 import com.knowgate.scheduler.AtomFeeder;
+import com.knowgate.scheduler.Event;
 import com.oreilly.servlet.MailMessage;
 
 /**
@@ -107,7 +108,6 @@ public class MimeSender extends Job {
   private Properties oHeaders;
   private InternetAddress[] aFrom;
   private InternetAddress[] aReply;
-  private HashMap oDocumentImages;
   private String[] aBlackList;
   private String sProfile;
   private String sMBoxDir;
@@ -122,7 +122,12 @@ public class MimeSender extends Job {
     sProfile = null;
     aBlackList = null;
     oUser = new ACLUser();
-    oDocumentImages = new HashMap();
+  }
+
+  // ---------------------------------------------------------------------------
+
+  protected void finalize() throws Throwable {
+    free();
   }
 
   // ---------------------------------------------------------------------------
@@ -294,11 +299,10 @@ public class MimeSender extends Job {
           aFrom = new InternetAddress[]{new InternetAddress(oHeaders.getProperty(DB.tx_email_from),
                                                             oHeaders.getProperty(DB.nm_from))};
 
-        if (null==oHeaders.get(DB.tx_reply_email))
-          aReply = aFrom;
-        else
-          aReply = new InternetAddress[]{new InternetAddress(oHeaders.getProperty(DB.tx_reply_email))};
-        	
+        if (DebugFile.trace) DebugFile.writeln("tx_email_reply="+oHeaders.getProperty(DB.tx_email_reply));
+
+        aReply = new InternetAddress[]{new InternetAddress(oHeaders.getProperty(DB.tx_email_reply, oHeaders.getProperty(DB.tx_email_from)))};
+
         sBody = oDraft.getText();
         if (DebugFile.trace) {
           if (null==sBody)
@@ -327,12 +331,14 @@ public class MimeSender extends Job {
 		if (nBlacklisted==0) {
 		  aBlackList = null;
 		} else {
-		  Vector vBlacklisted = oBlck.getRowAsVector(0);
 		  aBlackList = new String[nBlacklisted];		  		
-		  vBlacklisted.toArray(aBlackList);
+		  for (int b=0; b<nBlacklisted; b++)
+		  	aBlackList[b] = oBlck.getString(0,b);
 		  Arrays.sort(aBlackList);
 		}
 
+        Event.trigger(oConn, iDomainId, "initjob", this, getProperties());
+                             	
         oConn.close("MimeSender.init.2");
         oConn=null;
 
@@ -370,15 +376,25 @@ public class MimeSender extends Job {
 
 	DBStore oStor = null;
 	DBFolder oSent = null;
+	int iStillExecutable = 0;
 	
     if (0==iPendingAtoms) {
 
-      int iStillExecutable = 0;
       try {
-        JDCConnection oConn = getDataBaseBind().getConnection("MimeSender.free", true);
-        iStillExecutable = DBCommand.queryCount(oConn, "*", DB.k_job_atoms, DB.id_status+" IN ("+
-      					     String.valueOf(Atom.STATUS_INTERRUPTED)+","+String.valueOf(Atom.STATUS_SUSPENDED)+")");
-        oConn.close("MimeSender.free");
+      	if (getDataBaseBind()!=null) {
+          JDCConnection oConn = getDataBaseBind().getConnection("MimeSender.free", true);
+          if (oConn!=null) {
+            iStillExecutable = DBCommand.queryCount(oConn, "*", DB.k_job_atoms, DB.id_status+" IN ("+
+      					       String.valueOf(Atom.STATUS_INTERRUPTED)+","+String.valueOf(Atom.STATUS_SUSPENDED)+
+      					       String.valueOf(Atom.STATUS_RUNNING)+","+String.valueOf(Atom.STATUS_PENDING)+")");
+            if (0==iStillExecutable) {
+              try {
+          	    Event.trigger(oConn, iDomainId, "freejob", this, getProperties());
+              } catch (Exception ignore) { }
+            }
+            oConn.close("MimeSender.free");
+          } // fi (oConn!=null)
+      	} // fi getDataBaseBind()
       } catch (SQLException sqle) {
         if (DebugFile.trace) {
           DebugFile.writeln("SQLException "+sqle.getMessage());
@@ -423,7 +439,6 @@ public class MimeSender extends Job {
     final String Activated = "true";
     final String Yes = "1";
     final String No = "0";
-    JDCConnection oScnn = null;
     boolean bBlackListed = false;
     
     if (DebugFile.trace) {
@@ -534,6 +549,10 @@ public class MimeSender extends Job {
       }
 
       // Set From and Reply-To addresses
+	  if (DebugFile.trace) {
+	  	DebugFile.writeln("from "+aFrom[0].getAddress());
+	  	DebugFile.writeln("reply-to "+aReply[0].getAddress());
+	  }
       oSentMsg.addFrom(aFrom);
       oSentMsg.setReplyTo(aReply);
 
