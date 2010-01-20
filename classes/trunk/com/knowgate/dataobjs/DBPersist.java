@@ -516,15 +516,15 @@ public class DBPersist implements Map {
           if (null==sDefault)
             return sDefault;
           else
-            return Gadgets.replace(Gadgets.replace(Gadgets.XHTMLEncode(sDefault),"\"", "&#34;"),"'", "&#39;");
+            return Gadgets.replace(Gadgets.replace(Gadgets.replace(Gadgets.replace(Gadgets.XHTMLEncode(sDefault),"\"", "&#34;"),"'", "&#39;"),"<","&lt;"),">","&gt;");
         else
-          return Gadgets.replace(Gadgets.replace(Gadgets.XHTMLEncode(oVal.toString()),"\"", "&#34;"),"'", "&#39;");
+          return Gadgets.replace(Gadgets.replace(Gadgets.replace(Gadgets.replace(Gadgets.XHTMLEncode(oVal.toString()),"\"", "&#34;"),"'", "&#39;"),"<","&lt;"),">","&gt;");
       }
       else {
         if (null==sDefault)
           return sDefault;
        else
-      	  return Gadgets.replace(Gadgets.replace(Gadgets.XHTMLEncode(sDefault),"\"", "&#34;"),"'", "&#39;");
+      	  return Gadgets.replace(Gadgets.replace(Gadgets.replace(Gadgets.replace(Gadgets.XHTMLEncode(sDefault),"\"", "&#34;"),"'", "&#39;"),"<","&lt;"),">","&gt;");
       }
     } catch (org.apache.oro.text.regex.MalformedPatternException neverthrown) { }
     return null;

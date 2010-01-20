@@ -2297,6 +2297,29 @@ public final class DBSubset {
   // ----------------------------------------------------------
 
   /**
+   * <p>Get value for a CHAR, VARCHAR or LONGVARCHAR field replacing <b>null</b>
+   * with a default value and replacing non-ASCII and quote values with &#<i>code</i>;<p>
+   * @param iCol Column index
+   * @param iRow Row position [0..getRowCount()-1]
+   * @param sDef Default value
+   * @return Field value or default value encoded as HTML numeric entities.
+   * @since 5.5
+   */
+
+  public String getStringHtml(int iCol, int iRow, String sDef)
+    throws ArrayIndexOutOfBoundsException {
+    String sStr = getString(iCol,iRow);
+    if (null==sStr) sStr = sDef;
+	try {
+    if (null!=sStr)
+      sStr = Gadgets.replace(Gadgets.replace(Gadgets.replace(Gadgets.replace(Gadgets.XHTMLEncode(sStr),"\"", "&#34;"),"'", "&#39;"),"<","&lt;"),">","&gt;");
+	} catch (org.apache.oro.text.regex.MalformedPatternException neverthrown) { }
+	return sStr;
+  } // getStringHtml
+
+  // ----------------------------------------------------------
+
+  /**
    * Get Time column
    * @param iCol Column position [0..getColumnCount()-1]
    * @param iRow Row position [0..getRowCount()-1]

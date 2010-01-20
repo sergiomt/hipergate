@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2003-2009  Know Gate S.L. All rights reserved.
+  Copyright (C) 2003-2010  Know Gate S.L. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -33,7 +33,7 @@ package com.knowgate.dataobjs;
 
 /**
  * <p>Static final variables for table and field names</p>
- * @version 4.0
+ * @version 5.5
  */
 
 public final class DB {
@@ -302,6 +302,11 @@ public final class DB {
   /* FIELD NAMES */
   /***************/
 
+  // k_version
+  public static final String bo_register = "bo_register";
+  public static final String bo_allow_stats = "bo_allow_stats";
+  public static final String gu_support = "gu_support";
+  	
   // k_lu_currencies
   public static final String alpha_code = "alpha_code";
   public static final String alpha_code_from = "alpha_code_from";
@@ -920,6 +925,10 @@ public final class DB {
   public static final String tp_answer = "tp_answer";
   public static final String nm_answer = "nm_answer";
   public static final String tx_answer = "tx_answer";
+
+  // k_events
+  public static final String id_event = "id_event";
+  public static final String de_event = "de_event";
 
   // k_jobs
   public static final String gu_job = "gu_job";
