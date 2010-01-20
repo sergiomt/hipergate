@@ -1,8 +1,8 @@
 Manifest-version: 1.0
 Name: com/knowgate/crm
 Specification-Title: Operational Customer RelationShips Management
-Specification-Version: 2.2
+Specification-Version: 5.5
 Specification-Vendor: Know Gate S.L.
 Implementation-Title: com.knowgate.crm
-Implementation-Version: 2.2
+Implementation-Version: 5.5
 Implementation-Vendor: Know Gate S.L.

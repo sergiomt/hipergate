@@ -19,10 +19,16 @@ public class SocialNetworks {
                           final String sSite, final int iLimit)
   	throws SQLException, IOException,IllegalArgumentException {
     
-    if (!sSite.equals("linkedin") && !sSite.equals("facebook")) {
-      throw new IllegalArgumentException("Crawled sites may be only linkedin or facebook");
+    if (!sSite.equals("linkedin") && !sSite.equals("facebook") && !sSite.equals("xing")) {
+      throw new IllegalArgumentException("Crawled sites may be only linkedin, facebook or xing");
     }
-    
+
+    String sYahooBossKey = oDbb.getProperty("yahoobosskey","");
+
+	if (sYahooBossKey.length()==0){
+      throw new IllegalArgumentException("Could not find yahoobosskey property at "+oDbb.getProfileName()+".cnf");
+	}    
+
     if (DebugFile.trace) {
       DebugFile.writeln("Begin SocialNetworks.crawl("+sWorkArea+","+sWhere+","+sSite+")");
       DebugFile.incIdent();
@@ -44,7 +50,7 @@ public class SocialNetworks {
       String sASCIIName = Gadgets.ASCIIEncode(sFullName);
       
       if (DebugFile.trace) DebugFile.writeln("Searching "+sFullName+"...");
-      YSearchResponse oYsr = oBss.search("CCPHrtTV34Fxw3S4MtMcQ82YGu5H2f_VtcDINUxuGgKeByKmf2lAHbFiIbj4Dg--",
+      YSearchResponse oYsr = oBss.search(sYahooBossKey,
                                          Gadgets.ASCIIEncode(oDbs.getStringNull(1,c,""))+" "+
                                          Gadgets.ASCIIEncode(oDbs.getStringNull(2,c,"")),
                                          sSite+".com");
