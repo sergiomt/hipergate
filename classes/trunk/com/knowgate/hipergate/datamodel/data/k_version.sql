@@ -1,1 +1,1 @@
-﻿INSERT INTO k_version VALUES ('4.0.0');
+﻿INSERT INTO k_version (vs_stamp,dt_created,dt_modified,bo_register,gu_support,gu_contact,tx_name,tx_surname,nu_employees,nm_company,id_sector,id_country,nm_state,mn_city,zipcode,work_phone,tx_email) VALUES ('5.0.0',CURRENT_TIMESTAMP,NULL,0,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
