@@ -15,6 +15,6 @@ ALTER TABLE k_activities ADD CONSTRAINT f5_activities FOREIGN KEY (gu_writer) RE
 ALTER TABLE k_x_activity_audience ADD CONSTRAINT f1_x_activity_audience FOREIGN KEY (gu_activity) REFERENCES k_activities (gu_activity);
 ALTER TABLE k_x_activity_audience ADD CONSTRAINT f2_x_activity_audience FOREIGN KEY (gu_address) REFERENCES k_addresses (gu_address);
 ALTER TABLE k_x_activity_audience ADD CONSTRAINT f3_x_activity_audience FOREIGN KEY (gu_contact) REFERENCES k_contacts (gu_contact);
-ALTER TABLE k_x_activity_audience ADD CONSTRAINT f4_activities FOREIGN KEY (gu_list) REFERENCES k_lists (gu_list);
+ALTER TABLE k_x_activity_audience ADD CONSTRAINT f4_x_activity_audience FOREIGN KEY (gu_list) REFERENCES k_lists (gu_list);
 ALTER TABLE k_x_activity_audience ADD CONSTRAINT f5_x_activity_audience FOREIGN KEY (gu_writer) REFERENCES k_users (gu_user);
 

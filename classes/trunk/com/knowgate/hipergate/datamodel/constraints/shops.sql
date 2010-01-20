@@ -14,8 +14,6 @@ ALTER TABLE k_orders_lookup ADD CONSTRAINT f1_orders_lookup  FOREIGN KEY(gu_owne
 
 ALTER TABLE k_order_lines ADD CONSTRAINT f1_order_lines FOREIGN KEY (gu_order) REFERENCES k_orders(gu_order);
 
-ALTER TABLE k_invoices ADD CONSTRAINT u1_invoices UNIQUE (pg_invoice,gu_shop);
-
 ALTER TABLE k_invoices ADD CONSTRAINT f1_invoices FOREIGN KEY (gu_company)    REFERENCES k_companies(gu_company);
 ALTER TABLE k_invoices ADD CONSTRAINT f2_invoices FOREIGN KEY (gu_contact)    REFERENCES k_contacts(gu_contact);
 ALTER TABLE k_invoices ADD CONSTRAINT f3_invoices FOREIGN KEY (gu_ship_addr)  REFERENCES k_addresses(gu_address);
@@ -40,7 +38,7 @@ ALTER TABLE k_invoice_lines ADD CONSTRAINT f1_invoice_lines FOREIGN KEY (gu_invo
 ALTER TABLE k_x_orders_invoices ADD CONSTRAINT f1_x_orders_invoices FOREIGN KEY (gu_order) REFERENCES k_orders(gu_order);
 ALTER TABLE k_x_orders_invoices ADD CONSTRAINT f2_x_orders_invoices FOREIGN KEY (gu_invoice) REFERENCES k_invoices(gu_invoice);
 
-ALTER TABLE k_despatch_lines ADD CONSTRAINT f1_despatch_advices FOREIGN KEY (gu_despatch) REFERENCES k_despatch_advices(gu_despatch);
+ALTER TABLE k_despatch_lines ADD CONSTRAINT f1_despatch_lines FOREIGN KEY (gu_despatch) REFERENCES k_despatch_advices(gu_despatch);
 
 ALTER TABLE k_x_orders_despatch ADD CONSTRAINT f1_x_orders_despatch FOREIGN KEY (gu_order) REFERENCES k_orders(gu_order);
 ALTER TABLE k_x_orders_despatch ADD CONSTRAINT f2_x_orders_despatch FOREIGN KEY (gu_despatch) REFERENCES k_despatch_advices(gu_despatch);

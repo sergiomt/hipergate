@@ -10,5 +10,6 @@ ALTER TABLE k_absentisms ADD CONSTRAINT f3_absentisms FOREIGN KEY (gu_writer) RE
 ALTER TABLE k_absentisms_lookup ADD CONSTRAINT f1_absentisms_lookup FOREIGN KEY (gu_owner) REFERENCES k_workareas(gu_workarea);
 ALTER TABLE k_education_institutions ADD CONSTRAINT f1_education_institutions FOREIGN KEY (gu_workarea) REFERENCES k_workareas(gu_workarea);
 ALTER TABLE k_education_degree ADD CONSTRAINT f1_education_degree FOREIGN KEY (gu_workarea) REFERENCES k_workareas(gu_workarea);
+ALTER TABLE k_education_degree ADD CONSTRAINT f2_education_degree FOREIGN KEY (id_country) REFERENCES k_lu_countries(id_country);
 ALTER TABLE k_education_degree_lookup ADD CONSTRAINT f1_education_degree_lookup FOREIGN KEY (gu_owner) REFERENCES k_workareas(gu_workarea);
 ALTER TABLE k_contact_education ADD CONSTRAINT f2_contact_education FOREIGN KEY (gu_contact) REFERENCES k_contacts(gu_contact);

@@ -60,8 +60,8 @@ ALTER TABLE k_oportunities_attrs ADD CONSTRAINT f1_oportunities_attrs FOREIGN KE
 
 ALTER TABLE k_oportunities_changelog ADD CONSTRAINT f1_oportunities_changelog FOREIGN KEY (gu_oportunity) REFERENCES k_oportunities(gu_oportunity);
 
-ALTER TABLE k_contact_attachs ADD CONSTRAINT f1_oportunities_attachs FOREIGN KEY (gu_contact) REFERENCES k_oportunities(gu_oportunity);
-ALTER TABLE k_contact_attachs ADD CONSTRAINT f2_oportunities_attachs FOREIGN KEY (gu_writer) REFERENCES k_users(gu_user);
+ALTER TABLE k_oportunities_attachs ADD CONSTRAINT f1_oportunities_attachs FOREIGN KEY (gu_oportunity) REFERENCES k_oportunities(gu_oportunity);
+ALTER TABLE k_oportunities_attachs ADD CONSTRAINT f2_oportunities_attachs FOREIGN KEY (gu_writer) REFERENCES k_users(gu_user);
 
 ALTER TABLE k_sales_men ADD CONSTRAINT f1_sales_men FOREIGN KEY (gu_sales_man) REFERENCES k_users(gu_user);
 ALTER TABLE k_sales_men ADD CONSTRAINT f2_sales_men FOREIGN KEY (gu_geozone) REFERENCES k_thesauri(gu_term);
@@ -95,5 +95,5 @@ ALTER TABLE k_sms_audit ADD CONSTRAINT f1_sms_audit FOREIGN KEY(gu_workarea) REF
 ALTER TABLE k_sms_audit ADD CONSTRAINT f2_sms_audit FOREIGN KEY(gu_writer) REFERENCES k_users(gu_user);
 ALTER TABLE k_sms_audit ADD CONSTRAINT f3_sms_audit FOREIGN KEY(gu_address) REFERENCES k_addresses(gu_address);
 ALTER TABLE k_sms_audit ADD CONSTRAINT f4_sms_audit FOREIGN KEY(gu_contact) REFERENCES k_contacts(gu_contact);
-ALTER TABLE k_sms_audit ADD CONSTRAINT f5_sms_audit FOREIGN KEY(gu_company) REFERENCES k_companies(company);
+ALTER TABLE k_sms_audit ADD CONSTRAINT f5_sms_audit FOREIGN KEY(gu_company) REFERENCES k_companies(gu_company);
 
