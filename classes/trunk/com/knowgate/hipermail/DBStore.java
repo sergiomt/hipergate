@@ -209,8 +209,6 @@ public class DBStore extends javax.mail.Store {
       else
         oConn = new JDCConnection(DriverManager.getConnection(dburl, dbusr, dbpwd), null);
 
-      oConn.setAutoCommit(false);
-
       short iAuth = ACL.autenticate(oConn, user, password, ACL.PWD_CLEAR_TEXT);
 
       if (iAuth<0) {
@@ -222,6 +220,7 @@ public class DBStore extends javax.mail.Store {
       else {
         oUser = new ACLUser(oConn, user);
         setConnected(true);
+        oConn.setAutoCommit(false);
       }
     }
     catch (SQLException sqle) {

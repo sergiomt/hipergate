@@ -104,7 +104,7 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
   private String sGuid;
   private Folder oFolder;
   private Address[] aAddrs;
-  private HashMap oHeaders;
+  private HashMap<String,Object> oHeaders;
 
   // private static PatternMatcher oMatcher = new Perl5Matcher();
   // private static PatternCompiler oCompiler = new Perl5Compiler();
@@ -498,7 +498,7 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
         oRSet = oStmt.executeQuery();
 
         if (oRSet.next()) {
-          oHeaders = new HashMap (23);
+          oHeaders = new HashMap<String,Object> (23);
           oHeaders.put("Content-Type", oRSet.getString(1));
           oHeaders.put("Subject", oRSet.getString(2));
           oHeaders.put("Message-ID", oRSet.getString(3));
@@ -847,8 +847,9 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
           DebugFile.writeln("Connection.prepareStatement(SELECT id_part,id_content,id_disposition,len_part,de_part,tx_md5,id_encoding,file_name,id_type FROM "+ DB.k_mime_parts + " WHERE " + DB.gu_mimemsg + "='"+sGuid+"')");
         }
 
-        oStmt = ((DBFolder)oFolder).getConnection().prepareStatement("SELECT id_part,id_content,id_disposition,len_part,de_part,tx_md5,id_encoding,file_name,id_type FROM " + DB.k_mime_parts + " WHERE " + DB.gu_mimemsg + "=?",
-                                                                     ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+		JDCConnection oJdcc = ((DBFolder)oFolder).getConnection();
+        oStmt = oJdcc.prepareStatement("SELECT id_part,id_content,id_disposition,len_part,de_part,tx_md5,id_encoding,file_name,id_type FROM " + DB.k_mime_parts + " WHERE " + DB.gu_mimemsg + "=?",
+                                        ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
         oStmt.setString(1, sGuid);
 
         oRSet = oStmt.executeQuery();

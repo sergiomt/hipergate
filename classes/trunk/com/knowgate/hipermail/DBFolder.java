@@ -2793,7 +2793,10 @@ public class DBFolder extends Folder {
     else {
       if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(SELECT " + DB.gu_mimemsg + "," + DB.id_message + "," + DB.pg_message + "," + DB.tx_subject + "," + DB.tx_email_from + "," + DB.tx_email_reply + "," + DB.nm_from + " FROM " + DB.k_mime_msgs + " WHERE " + DB.id_message + "='"+sMsgId+"' AND " + DB.gu_category + "='"+getCategoryGuid()+"' AND " + DB.bo_deleted + "<>1)");
 
-      oStmt = oJdcn.prepareStatement("SELECT " + DB.gu_mimemsg + "," + DB.id_message + "," + DB.pg_message + "," + DB.tx_subject + "," + DB.tx_email_from + "," + DB.tx_email_reply + "," + DB.nm_from + " FROM " + DB.k_mime_msgs + " WHERE " + DB.id_message + "=? AND " + DB.gu_category + "=? AND " + DB.bo_deleted + "<>1",
+      oStmt = oJdcn.prepareStatement("SELECT " + DB.gu_mimemsg + "," + DB.id_message + "," + DB.pg_message + "," +
+      	                                         DB.tx_subject + "," + DB.tx_email_from + "," + DB.tx_email_reply + "," +
+      	                                         DB.nm_from + " FROM " + DB.k_mime_msgs +
+      	                             " WHERE " + DB.id_message + "=? AND " + DB.gu_category + "=? AND " + DB.bo_deleted + "<>1",
                                      ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
       oStmt.setString(1, sMsgId);
       oStmt.setString(2, getCategoryGuid());
@@ -2830,11 +2833,14 @@ public class DBFolder extends Folder {
     oStmt.close();
 
     if (DebugFile.trace) {
-      DebugFile.decIdent();
-      if (oRetVal==null)
+      if (oRetVal==null) {
+        DebugFile.decIdent();
         DebugFile.writeln("End DBFolder.getMessageHeaders() : null");
-      else
+      } else {
+        DebugFile.writeln(oRetVal.toString());
+        DebugFile.decIdent();
         DebugFile.writeln("End DBFolder.getMessageHeaders() : Properties["+String.valueOf(oRetVal.size())+"]");
+      }
     }
 
     return oRetVal;
