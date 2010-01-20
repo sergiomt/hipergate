@@ -8,7 +8,8 @@ CREATE INDEX i4_orders ON k_orders(gu_contact);
 CREATE INDEX i5_orders ON k_orders(dt_payment);
 CREATE INDEX i6_orders ON k_orders(gu_shop);
 
-CREATE UNIQUE INDEX i1_invoices UNIQUE (gu_workarea,pg_invoice);
+CREATE UNIQUE INDEX u1_invoices ON k_invoices (gu_workarea,pg_invoice);
+CREATE UNIQUE INDEX u2_invoices ON k_invoices (gu_shop,pg_invoice);
 
 CREATE INDEX i2_invoices ON k_invoices(gu_workarea);
 CREATE INDEX i3_invoices ON k_invoices(gu_company);
