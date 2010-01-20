@@ -190,7 +190,7 @@ CREATE TABLE k_events (
     id_domain   INTEGER                NOT NULL,
     id_event    CHARACTER VARYING(64)  NOT NULL,
     dt_created  DATETIME DEFAULT CURRENT_TIMESTAMP,
-    dt_modified DATETIME DEFAULT CURRENT_TIMESTAMP,
+    dt_modified DATETIME               NULL,
     bo_active   SMALLINT               DEFAULT 1,
     gu_writer   CHAR(32)               NOT NULL,
     id_command  CHAR(4)                NOT NULL,

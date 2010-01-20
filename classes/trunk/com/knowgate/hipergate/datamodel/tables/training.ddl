@@ -278,8 +278,7 @@ CREATE TABLE k_education_degree (
   tp_degree   VARCHAR(50)  NULL,
   id_degree   VARCHAR(32)  NULL,
   CONSTRAINT pk_education_degree PRIMARY KEY (gu_degree),
-  CONSTRAINT u1_education_degree UNIQUE (gu_workarea,tp_degree,nm_degree),
-  CONSTRAINT f1_education_degree FOREIGN KEY (id_country) REFERENCES k_lu_countries(id_country)  
+  CONSTRAINT u1_education_degree UNIQUE (gu_workarea,tp_degree,nm_degree)
 )
 GO;
 
@@ -454,5 +453,67 @@ CREATE TABLE k_contact_experience
   tx_comments    VARCHAR(254)    NULL,
     
 CONSTRAINT pk_contact_experience PRIMARY KEY (gu_experience)
+)
+GO;
+
+CREATE TABLE k_admission (
+  gu_admission		CHAR(32)    	NOT NULL,
+  gu_contact		CHAR(32)    	NOT NULL,
+  gu_oportunity		CHAR(32)    	NOT NULL,
+  gu_workarea    	CHAR(32)		NOT NULL,
+  gu_acourse    	CHAR(32)		NOT NULL,
+  id_objetive_1		VARCHAR(50)		NULL, /*Program in which admission sought 1*/
+  id_objetive_2		VARCHAR(50) 	NULL, /*Program in which admission sought 2*/
+  id_objetive_3		VARCHAR(50) 	NULL, /*Program in which admission sought 3*/
+  dt_created     	DATETIME 		DEFAULT CURRENT_TIMESTAMP,/*admission application date*/
+  dt_target      	DATETIME 		NULL, /*Target date for the admission test*/
+  is_call			SMALLINT		NULL, /*Call Meeting (Yes) or Special (No) admission test*/
+  id_place    		VARCHAR(50) 	NULL, /*Place of entrance examinations*/
+  id_interviewer   	VARCHAR(50) 	NULL, /*Name of interviewer*/
+  dt_interview     	DATETIME 		NULL, /*Date of completion of the interview*/
+  dt_admision_test 	DATETIME 		NULL, /*Actual date for the admission test*/
+  is_grant			SMALLINT		NULL, /*Grant Request (Yes / No)*/
+  nu_grant        	DECIMAL(4,2)	NULL, /*The amount or percentage of scholarship*/
+  nu_interview     	INTEGER         NULL, /*points interview */
+  nu_vips   	  	INTEGER         NULL, /*points vips */
+  nu_nips	     	INTEGER         NULL, /*points nips */
+  nu_elp	     	INTEGER         NULL, /*points elp */
+  nu_total	     	INTEGER         NULL, /*points total */
+  id_test_result 	VARCHAR(50)		NULL, /*Test result (Admitted, admitted conditionally, not supported)*/
+  CONSTRAINT pk_admission PRIMARY KEY (gu_admission),
+  CONSTRAINT u_admission UNIQUE (gu_contact,gu_oportunity)
+)
+GO;
+
+CREATE TABLE k_admission_lookup
+(
+gu_owner   CHAR(32)    NOT NULL,
+id_section CHARACTER VARYING(30) NOT NULL,
+pg_lookup  INTEGER     NOT NULL,
+vl_lookup  VARCHAR(50)     NULL,
+tr_es      VARCHAR(50)     NULL,
+tr_en      VARCHAR(50)     NULL,
+tr_de      VARCHAR(50)     NULL,
+tr_it      VARCHAR(50)     NULL,
+tr_fr      VARCHAR(50)     NULL,
+tr_pt      VARCHAR(50)     NULL,
+tr_ca      VARCHAR(50)     NULL,
+tr_gl      VARCHAR(50)     NULL,
+tr_eu      VARCHAR(50)     NULL,
+tr_ja      VARCHAR(50)     NULL,
+tr_cn      VARCHAR(50)     NULL,
+tr_tw      VARCHAR(50)     NULL,
+tr_fi      VARCHAR(50)     NULL,
+tr_ru      VARCHAR(50)     NULL,
+tr_nl      VARCHAR(50)     NULL,
+tr_th      VARCHAR(50)     NULL,
+tr_cs      VARCHAR(50)     NULL,
+tr_uk      VARCHAR(50)     NULL,
+tr_no      VARCHAR(50)     NULL,
+tr_sk      VARCHAR(50)     NULL,
+tr_pl      VARCHAR(50)     NULL,
+tr_vn      VARCHAR(50)     NULL,
+
+CONSTRAINT pk_admission_lookup PRIMARY KEY (gu_owner,id_section,pg_lookup)
 )
 GO;
