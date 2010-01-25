@@ -274,6 +274,11 @@ public final class DB {
   public static final String k_sms_msisdn = "k_sms_msisdn";
   public static final String k_sms_audit = "k_sms_audit";
 
+  /**i2e 20-01-2010**/
+  public static final String k_admission = "k_admission";
+  public static final String k_admission_lookup = "k_admission_lookup";
+  /**fin**/
+
   /***************/
   /* VIEW NAMES  */
   /***************/
@@ -1175,6 +1180,8 @@ public final class DB {
   
   //k_contact_languages
   public static final String lv_language_degree = "lv_language_degree";
+  public static final String lv_language_written = "lv_language_written";
+  public static final String lv_language_spoken = "lv_language_spoken";
 
   //k_contact_experience
   public static final String gu_experience = "gu_experience";
@@ -1187,5 +1194,26 @@ public final class DB {
   public static final String nu_msisdn = "nu_msisdn";
   public static final String pg_part = "pg_part";
   public static final String bo_validated = "bo_validated";
+  
+  /**i2e 20-01-2010**/
+  //k_admission
+  public static final String id_objetive_1 = "id_objetive_1";
+  public static final String id_objetive_2 = "id_objetive_2";
+  public static final String id_objetive_3 = "id_objetive_3";
+  public static final String dt_target = "dt_target";
+  public static final String is_call = "is_call";
+  public static final String id_place = "id_place";
+  public static final String id_interviewer = "id_interviewer";
+  public static final String dt_interview = "dt_interview";
+  public static final String dt_admision_test = "dt_admision_test";
+  public static final String is_grant = "is_grant";
+  public static final String nu_grant = "nu_grant";
+  public static final String nu_interview = "nu_interview";
+  public static final String nu_vips = "nu_vips";
+  public static final String nu_nips = "nu_nips";
+  public static final String nu_elp = "nu_elp";
+  public static final String nu_total = "nu_total";
+  public static final String id_test_result = "id_test_result";
+  /**fin i2e**/
   
 }
