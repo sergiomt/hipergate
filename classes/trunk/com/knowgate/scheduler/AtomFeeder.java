@@ -63,7 +63,7 @@ public class AtomFeeder {
   private int iMaxBatchSize;
 
   public AtomFeeder() {
-    iMaxBatchSize = 1000;
+    iMaxBatchSize = 5;
   }
 
   // ----------------------------------------------------------
@@ -276,7 +276,7 @@ public class AtomFeeder {
 
     oJobsSet = new DBSubset(DB.k_jobs,
                             "gu_job,gu_job_group,gu_workarea,id_command,tx_parameters,id_status,dt_execution,dt_finished,dt_created,dt_modified",
-                            DB.id_status + " IN (" + String.valueOf(Job.STATUS_PENDING) + "," + String.valueOf(Job.STATUS_RUNNING) + ") ORDER BY " +
+                            DB.id_status + "=" + String.valueOf(Job.STATUS_PENDING) + " ORDER BY " +
                             DB.id_status + " DESC," + DB.dt_execution + " DESC", iWorkerThreads);
 
     oJobsSet.setMaxRows(iWorkerThreads);
