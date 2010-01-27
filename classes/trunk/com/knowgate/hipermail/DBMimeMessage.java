@@ -1637,7 +1637,8 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
           else {
             oImgBodyPart.setDataHandler(new DataHandler(new FileDataSource(sSrc)));
           }
-
+		  
+		  if (sSrc.endsWith(".png")) oImgBodyPart.setHeader("Content-Type", "image/png;name="+sCid);
           oImgBodyPart.setDisposition("inline");
           oImgBodyPart.setHeader("Content-ID", sCid);
           oImgBodyPart.setFileName(sCid);

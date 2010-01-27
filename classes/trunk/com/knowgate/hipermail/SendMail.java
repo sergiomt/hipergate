@@ -40,6 +40,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import java.sql.SQLException;
+import java.sql.PreparedStatement;
 
 import java.util.Date;
 import java.util.Properties;
@@ -62,6 +63,7 @@ import com.knowgate.dataobjs.DBBind;
 import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.dataobjs.DBPersist;
 import com.knowgate.dfs.FileSystem;
+import com.knowgate.hipermail.DBMimePart;
 import com.knowgate.misc.Environment;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.scheduler.Job;
@@ -300,6 +302,7 @@ public final class SendMail {
 		  Job oSnd;
 		  DBPersist oJob = new DBPersist(DB.k_jobs,"Job");
 		  oCon = oDbb.getConnection("SendMail");
+		  oCon.setAutoCommit(false);
 
 		  ACLUser oUsr = new ACLUser(oCon, oMacc.getString(DB.gu_user));
 
@@ -332,6 +335,27 @@ public final class SendMail {
                              	     sFromAddr,sReplyAddr,sFromPersonal,
                              	     sSubject, "text/"+(sTextHtml==null ? "plain" : "html")+";charset="+sEncoding,
                              	    (sTextHtml==null ? sTextPlain : sTextHtml), null, null, null);
+
+			if (aAttachments!=null) {
+    		  Integer oPart = DBCommand.queryMaxInt(oCon, DB.id_part, DB.k_mime_parts, DB.gu_mimemsg+"='"+oMsg.getMessageGuid()+"'");
+    		  if (oPart==null) oPart = new Integer(1);
+    		  PreparedStatement oStm = oCon.prepareStatement("INSERT INTO " + DB.k_mime_parts + "("+DB.gu_mimemsg+","+DB.id_message+","+DB.id_part+","+DB.id_disposition+","+DB.id_content+","+DB.id_type+","+DB.len_part+","+DB.de_part+","+DB.file_name+") VALUES ('"+oMsg.getMessageGuid()+"',?,?,'reference',?,?,?,?,?)");
+			  for (int p=0; p<aAttachments.length; p++) {
+	      	    String sFilePath = Gadgets.chomp(sUserDir,File.separator)+aAttachments[p];
+	      	    File oAttach = new File(sFilePath);
+	      	    if (oAttach.exists()) {
+	      	      oStm.setString(1, sMsgId);
+                  oStm.setInt(2, oPart.intValue()+p);
+	      		  oStm.setString(3, DBMimePart.getMimeType(oCon,aAttachments[p]));        
+	      		  oStm.setString(4, DBMimePart.getMimeType(oCon,aAttachments[p]));        
+        		  oStm.setInt(5, (int) oAttach.length());
+	      		  oStm.setString(6, aAttachments[p]);
+	      		  oStm.setString(7, sFilePath);	
+	      		  oStm.executeUpdate();
+	      	    } // fi
+			  } // next
+			  oStm.close();	
+			} // fi
 
 			sJobId = (sId.length()==32 ? sId : Gadgets.generateUUID());
 		  	oJob.put(DB.gu_job, sJobId);
@@ -372,7 +396,7 @@ public final class SendMail {
 		                          Job.STATUS_PENDING);
 
 		  }
-
+		  oCon.commit();
 		  oCon.close("SendMail");
 		  oCon = null;
 		  
@@ -387,7 +411,10 @@ public final class SendMail {
 		  if (DebugFile.trace) DebugFile.writeln("SQLException "+sqle.getMessage());
 	      aWarnings.add("SQLException "+sqle.getMessage());
 		  if (null!=oCon) {
-		    if (!oCon.isClosed()) oCon.close("SendMail");
+		    if (!oCon.isClosed()) {
+		      if (!oCon.getAutoCommit()) oCon.rollback();
+		      oCon.close("SendMail");
+		    }
 		    oCon = null;
 		  }
 		  if (null==oGlobalDbb && null!=oDbb) oDbb.close();
