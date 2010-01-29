@@ -61,6 +61,14 @@ INSERT INTO k_classes VALUES(96,'DistributionList');
 INSERT INTO k_classes VALUES(97,'SalesMan');
 INSERT INTO k_classes VALUES(98,'SalesObjectives');
 INSERT INTO k_classes VALUES(99,'WelcomePack');
+/** Inicio i2e 25-01-2010 **/
+INSERT INTO k_classes VALUES(100,'ContactShortCourses');
+INSERT INTO k_classes VALUES(101,'ContactLanguages');
+INSERT INTO k_classes VALUES(102,'ContactExperience');
+INSERT INTO k_classes VALUES(103,'ContactEducation');
+INSERT INTO k_classes VALUES(104,'ContactComputerScience');
+INSERT INTO k_classes VALUES(105,'Admission');
+/** Fin i2e **/
 INSERT INTO k_classes VALUES(200,'Question');
 INSERT INTO k_classes VALUES(201,'Choice');
 INSERT INTO k_classes VALUES(202,'MultiChoice');
