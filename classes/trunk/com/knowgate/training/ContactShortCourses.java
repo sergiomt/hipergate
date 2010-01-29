@@ -44,6 +44,8 @@ import com.knowgate.misc.Gadgets;
  * @version 1.0
  */
 public class ContactShortCourses extends DBPersist {
+	
+	public static final short ClassId = 100;
 
 	public ContactShortCourses() {
 		super(DB.k_contact_short_courses, "ContactShortCourses");
@@ -64,4 +66,5 @@ public class ContactShortCourses extends DBPersist {
 		return super.store(oConn);
 	} // store
 
+	
 }

@@ -9,6 +9,8 @@ import com.knowgate.misc.Gadgets;
 
 public class ContactExperience extends DBPersist {
 
+	public static final short ClassId = 102;
+	
 	public ContactExperience() {
 		super(DB.k_contact_experience, "ContactExperience");
 	}

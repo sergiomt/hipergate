@@ -5,10 +5,11 @@ import java.sql.SQLException;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBPersist;
 import com.knowgate.jdc.JDCConnection;
-import com.knowgate.misc.Gadgets;
 
 public class ContactLanguages extends DBPersist {
 
+	public static final short ClassId = 101;
+	
 	public ContactLanguages() {
 		super(DB.k_contact_languages, "ContactLanguages");
 	}

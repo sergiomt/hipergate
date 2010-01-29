@@ -9,6 +9,8 @@ import com.knowgate.misc.Gadgets;
 
 public class ContactComputerScience extends DBPersist {
 
+	public static final short ClassId = 104;
+	
 	public ContactComputerScience() {
 		super(DB.k_contact_computer_science, "ContactComputerScience");
 	}
