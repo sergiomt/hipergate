@@ -102,7 +102,7 @@ public class Indexer {
   // ---------------------------------------------------------------------------
 
   private static boolean allowedTable(String sTableName) {
-    return sTableName.equalsIgnoreCase("k_bugs") || sTableName.equalsIgnoreCase("k_newsmsgs") || sTableName.equalsIgnoreCase("k_mime_msgs");
+    return sTableName.equalsIgnoreCase("k_bugs") || sTableName.equalsIgnoreCase("k_newsmsgs") || sTableName.equalsIgnoreCase("k_mime_msgs")||sTableName.equalsIgnoreCase("k_contacts");
   }
 
   // ---------------------------------------------------------------------------
@@ -332,7 +332,53 @@ public class Indexer {
       } // wend
       oRSet.close();
     }
-    else if (sTableName.equalsIgnoreCase("k_mime_msgs")) {
+    // Inicio I2E 2009-12-23
+    else if (sTableName.equalsIgnoreCase("k_contacts")) {
+    	
+    	Map<String,ContactRecord> contacts = new HashMap<String,ContactRecord>();
+    	String consultas[] = new String[6];
+    	consultas[0] = "SELECT c.gu_contact, c.gu_workarea, c.tx_name, c.tx_surname, csc.nm_scourse, csc.lv_scourse FROM k_contacts c, k_contact_short_courses csc WHERE c.gu_workarea='" + sWorkArea + "' AND csc.gu_contact = c.gu_contact";
+    	consultas[1] = "SELECT c.gu_contact, c.gu_workarea, c.tx_name, c.tx_surname, ccsl.tr_es,ccsl2.tr_es FROM k_contacts c, k_contact_computer_science ccc, k_contact_computer_science_lookup ccsl, k_contact_computer_science_lookup ccsl2 WHERE c.gu_workarea='"+ sWorkArea +"' AND ccc.gu_contact = c.gu_contact AND ccc.nm_skill = ccsl.vl_lookup AND ccc.lv_skill = ccsl2.vl_lookup";
+    	consultas[2] = "SELECT c.gu_contact, c.gu_workarea, c.tx_name, c.tx_surname, ccsl.tr_en,ccsl2.tr_en FROM k_contacts c, k_contact_computer_science ccc, k_contact_computer_science_lookup ccsl, k_contact_computer_science_lookup ccsl2 WHERE c.gu_workarea='"+ sWorkArea +"' AND ccc.gu_contact = c.gu_contact AND ccc.nm_skill = ccsl.vl_lookup AND ccc.lv_skill = ccsl2.vl_lookup";
+    	consultas[3] = "SELECT c.gu_contact, c.gu_workarea, c.tx_name, c.tx_surname, ed.nm_degree,'' as level FROM k_contacts c,k_contact_education ce,k_education_degree ed WHERE c.gu_workarea='"+ sWorkArea +"' AND ce.gu_contact = c.gu_contact AND ce.gu_degree= ed.gu_degree";
+    	consultas[4] = "SELECT c.gu_contact, c.gu_workarea, c.tx_name, c.tx_surname, ll.tr_lang_es,cll.tr_es FROM k_contacts c, k_contact_languages cl, k_lu_languages ll,k_contact_languages_lookup cll WHERE c.gu_workarea='"+ sWorkArea +"' AND c.gu_contact = cl.gu_contact AND cl.id_language = ll.id_language AND cl.lv_language_degree = cll.vl_lookup";
+    	consultas[5] = "SELECT c.gu_contact, c.gu_workarea, c.tx_name, c.tx_surname, ll.tr_lang_en,cll.tr_en FROM k_contacts c, k_contact_languages cl, k_lu_languages ll,k_contact_languages_lookup cll WHERE c.gu_workarea='"+ sWorkArea +"' AND c.gu_contact = cl.gu_contact AND cl.id_language = ll.id_language AND cl.lv_language_degree = cll.vl_lookup";
+    	
+    	for(int i=0;i<consultas.length;i++){
+            if (DebugFile.trace)
+                DebugFile.writeln("Statement.executeQuery(" + consultas[i] + ")");
+
+    		oRSet = oStmt.executeQuery(consultas[i]);
+
+    	    while (oRSet.next()) {
+            	sGuid = oRSet.getString(1);
+            	sWorkArea = oRSet.getString(2);
+            	String sName = oRSet.getString(3);
+            	String sSurname = oRSet.getString(4);
+            	String sValue = oRSet.getString(5);
+            	String sLevel = oRSet.getString(6);
+            	if(sLevel==null) sLevel="";
+            	ContactRecord contact = contacts.get(sGuid);
+            	if(contact==null){
+            		contact = new ContactRecord(null,sName+" "+ sSurname,sWorkArea,sGuid);
+            		contacts.put(sGuid, contact);
+            	}
+            	contact.addValue(sValue, sLevel);
+
+            	//ContactIndexer.addDocument(oIWrt, sGuid, sWorkArea, sName, sSurname, ContactRecord.COURSE, sValue, sLevel,null);
+            	
+            }
+    	    oRSet.close();
+    	}
+    	ContactRecord arrayContactos[] = contacts.values().toArray(new ContactRecord[contacts.size()]);
+    	for(int i=0;i<arrayContactos.length;i++){
+    		ContactIndexer.addDocument(oIWrt,arrayContactos[i]);
+    	}
+    	
+    	
+      }
+    //Fin i2E
+      else if (sTableName.equalsIgnoreCase("k_mime_msgs")) {
 
       LinkedList oIndexedGuids = new LinkedList();
 
@@ -649,12 +695,11 @@ public class Indexer {
     return iDeleted;
   } // delete
 
-  // ---------------------------------------------------------------------------
 
   private static void printUsage() {
     System.out.println("");
     System.out.println("Usage:");
-    System.out.println("Indexer cnf_path rebuild {k_bugs|k_newsmsgs|k_mime_msgs}");
+    System.out.println("Indexer cnf_path rebuild {k_bugs|k_newsmsgs|k_mime_msgs|k_contacts}");
     System.out.println("cnf_path  : Full path to hipergate.cnf file");
   }
 
