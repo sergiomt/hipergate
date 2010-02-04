@@ -278,7 +278,12 @@ public final class DB {
   public static final String k_admission = "k_admission";
   public static final String k_admission_lookup = "k_admission_lookup";
   /**fin**/
-
+  
+  /**i2e 01-02-2010**/
+  public static final String k_registrations = "k_registrations";
+  public static final String k_registrations_lookup = "k_registrations_lookup";
+  /**fin**/
+  
   /***************/
   /* VIEW NAMES  */
   /***************/
@@ -1215,5 +1220,16 @@ public final class DB {
   public static final String nu_total = "nu_total";
   public static final String id_test_result = "id_test_result";
   /**fin i2e**/
+
+  /**i2e 01-02-2010**/
+  //k_registrations
+  public static final String id_institution = "id_institution";
+  public static final String dt_reserve = "dt_reserve";
+  public static final String dt_registration = "dt_registration";
+  public static final String dt_drop = "dt_drop";
+  public static final String id_drop_cause = "id_drop_cause";
+  /**fin i2e**/
+
+
   
 }
