@@ -1,0 +1,784 @@
+0,Fuerzas armadas
+U,Fuerzas armadas
+00,Fuerzas armadas
+001,Escala superior
+0010,Escala superior
+002,Escala media
+0020,Escala media
+003,Escala básica
+0030,Escala básica
+1,Dirección de las empresas y de las administraciones públicas
+A,Dirección de las administraciones públicas y de empresas de 10 o más asalariados
+10,Poder ejecutivo y legislativo y dirección de las administraciones públicas; dirección de organizacio
+101,Poder ejecutivo y legislativo, y consejo general del poder judicial
+1011,Poder ejecutivo
+1012,Poder legislativo
+1013,Consejo general del poder judicial
+102,Personal directivo de las administraciones publicas
+1020,Personal directivo de las administraciones publicas
+103,Gobierno local
+1031,Alcaldías y concejalías de las capitales de provincia
+1032,Alcaldías y concejalías de otros ayuntamientos
+104,Dirección de organizaciones de interés
+1041,Dirección de partidos políticos
+1042,Dirección de organizaciones empresariales, de sindicatos de trabajadores y otras organizaciones de i
+1043,Dirección de organizaciones humanitarias y otras organizaciones de interés
+11,Dirección de empresas de 10 ó más asalariados
+111,Dirección general y presidencia ejecutiva
+1110,Dirección general y presidencia ejecutiva
+112,Dirección de departamento de producción
+1121,Dirección de departamento de producción en explotaciones agrarias, de caza, forestales y pesqueras
+1122,Dirección de departamento de producción en empresas industriales
+1123,Dirección de departamento de producción en empresas de construcción
+1124,Dirección de departamento de operaciones en empresas de comercio
+1125,Dirección de departamento de operaciones en empresas de hostelería
+1126,Dirección de departamento de operaciones en empresas de transporte, almacenamiento y comunicaciones
+1127,Dirección de departamento de operaciones en empresas de intermediación y servicios a otras empresas
+1128,Dirección de departamento de operaciones en empresas de servicios personales, limpieza y similares
+1129,Dirección de departamento de producción y operaciones de otras empresas no clasificadas anteriorment
+113,Dirección de áreas y departamentos especializados
+1131,Dirección de departamentos de administración y finanzas
+1132,Dirección de departamentos de relaciones laborales y de recursos humanos
+1133,Dirección de departamentos de comercialización y ventas
+1134,Dirección de departamentos de publicidad y relaciones públicas
+1135,Dirección de departamentos de abastecimiento y distribución
+1136,Dirección de departamentos de servicios informáticos
+1137,Dirección de departamentos de investigación y desarrollo
+1138,Dirección de departamentos de servicios médicos
+1139,Dirección de otros departamentos especializados no mencionados anteriormente
+B,Gerencia de empresas con menos de 10 asalariados
+12,Gerencia de empresas de comercio con menos de 10 asalariados
+121,Gerencia de empresas de comercio al por mayor con menos de 10 asalariados
+1210,Gerencia de empresas de comercio al por mayor con menos de 10 asalariados
+122,Gerencia de empresas de comercio al por menor con menos de 10 asalariados
+1220,Gerencia de empresas de comercio al por menor con menos de 10 asalariados
+13,Gerencia de empresas de hostelería y restauración con menos de 10 asalariados
+131,Gerencia de empresas de hospedaje con menos de 10 asalariados
+1311,Gerencia de hoteles con menos de 10 asalariados
+1312,Gerencia de pensiones con menos de 10 asalariados
+1319,Gerencia de otras empresas de hospedaje con menos de 10 asalariados
+132,Gerencia de empresas de restauración con menos de 10 asalariados
+1320,Gerencia de empresas de restauración con menos de 10 asalariados
+14,Gerencia de otras empresas con menos de 10 asalariados
+140,Gerencia de otras empresas con menos de 10 asalariados
+1401,Gerencia de explotaciones agrarias, de caza, de pesca y de silvicultura con menos de 10 asalariados
+1402,Gerencia de empresas industriales con menos de 10 asalariados
+1403,Gerencia de empresas de construcción con menos de 10 asalariados
+1404,Gerencia de empresas de transporte, almacenamiento y comunicaciones con menos de 10 asalariados
+1405,Gerencia de empresas de intermediación y servicios a otras empresas con menos de 10 asalariados
+1406,Gerencia de empresas de servicios de cuidados personales, de limpieza y similares con menos de 10 as
+1409,Gerencia de otras empresas con menos de 10 asalariados, no incluidas anteriormente
+C,Gerencia de empresas sin asalariados
+15,Gerencia de empresas de comercio sin asalariados
+151,Gerencia de empresas de comercio al por mayor sin asalariados
+1510,Gerencia de empresas de comercio al por mayor sin asalariados
+152,Gerencia de empresas de comercio al por menor sin asalariados
+1520,Gerencia de empresas de comercio al por menor sin asalariados
+16,Gerencia de empresas de hostelería sin asalariados
+161,Gerencia de empresas de hospedaje sin asalariados
+1611,Gerencia de hoteles sin asalariados
+1612,Gerencia de pensiones sin asalariados
+1619,Gerencia de otras empresas de hospedaje sin asalariados
+162,Gerencia de empresas de restauración sin asalariados
+1620,Gerencia de empresas de restauración sin asalariados
+17,Gerencia de otras empresas sin asalariados
+170,Gerencia de otras empresas sin asalariados
+1701,Gerencia de explotaciones agrarias, de caza, de pesca y de silvicultura sin asalariados
+1702,Gerencia de empresas industriales sin asalariados
+1703,Gerencia de empresas de construccion sin asalariados
+1704,Gerencia de empresas de transporte, almacenamiento y comunicaciones sin asalariados
+1705,Gerencia de empresas de intermediación y servicios a otras empresas sin asalariados
+1706,Gerencia de empresas de servicios de cuidados personales, de limpieza y similares sin asalariados
+1709,Gerencia de otras empresas sin asalariados
+2,Técnicos y profesionales científicos e intelectuales
+D,Profesiones asociadas a titulaciones de 2º y 3er ciclo universitario y afines
+20,Profesiones asociadas a titulaciones de 2º y 3er ciclo universitario en ciencias físicas, químicas, 
+201,Físicos, químicos y asimilados
+2011,Físicos y astrónomos
+2012,Meteorólogos
+2013,Químicos
+2014,Geólogos y geofísicos
+202,Matemáticos, actuarios, estadísticos y asimilados
+2021,Matemáticos y actuarios
+2022,Estadísticos
+203,Profesionales de la informática de nivel superior
+2031,Analistas de sistemas y asimilados
+2039,Otros profesionales de nivel superior de informática
+204,Arquitectos, urbanistas e ingenieros planificadores de tráfico
+2040,Arquitectos, urbanistas e ingenieros planificadores de tráfico
+205,Ingenieros superiores
+2051,Ingenieros en construcción y obra civil
+2052,Ingenieros en electricidad
+2053,Ingenieros en electrónica y telecomunicaciones
+2054,Ingenieros mecánicos
+2055,Ingenieros químicos
+2056,Ingenieros de minas
+2057,Ingenieros en metalurgia
+2058,Ingenieros geógrafos
+2059,Otros ingenieros superiores (excepto agropecuarios)
+21,Profesiones asociadas a titulaciones de 2º y 3er ciclo universitario en ciencias naturales y sanidad
+211,Profesionales en ciencias naturales
+2111,Biólogos, botánicos, zoólogos y asimilados
+2112,Patólogos, farmacólogos y asimilados
+2113,Agrónomos y asimilados
+212,Médicos y odontólogos
+2121,Médicos
+2122,Odontólogos
+213,Veterinarios
+2130,Veterinarios
+214,Farmacéuticos
+2140,Farmacéuticos
+219,Otros profesionales de nivel superior de la sanidad
+2190,Otros profesionales de nivel superior de la sanidad
+22,Profesiones asociadas a titulaciones de 2º y 3er ciclo universitario en la enseñanza
+221,Profesores de universidades y otros centros de enseñanza superior
+2210,Profesores de universidades y otros centros de enseñanza superior
+222,Profesores de enseñanza secundaria
+2220,Profesores de enseñanza secundaria
+223,Otros profesionales de la enseñanza
+2231,Especialistas en métodos didácticos y pedagógicos
+2232,Inspectores de enseñanza
+2239,Otros diversos profesionales de la enseñanza
+23,Profesionales del derecho
+231,Abogados y fiscales
+2311,Abogados
+2312,Fiscales
+232,Jueces y magistrados
+2320,Jueces y magistrados
+239,Otros profesionales del derecho
+2391,Notarios
+2392,Registradores
+2393,Procuradores
+2399,Otros diversos profesionales del derecho
+24,Profesionales en organizaciones de empresas, profesionales en las ciencias sociales y humanas asocia
+241,Profesionales en organización y administración de empresas
+2411,Profesionales en contabilidad
+2412,Profesionales en recursos humanos
+2413,Profesionales de la publicidad y de las relaciones públicas
+2419,Otros profesionales en organización y administración de empresas
+242,Economistas
+2420,Economistas
+243,Sociólogos, historiadores, filósofos, filólogos, psicólogos y asimilados
+2431,Sociólogos, antropólogos y asimilados
+2432,Filosofos, historiadores y profesionales en ciencias politicas
+2433,Filólogos, intérpretes y traductores
+2434,Psicologos
+25,Escritores, artistas y otras profesiones asociadas a
+251,Escritores y artistas de la creación o de la interpretación
+2511,Escritores, periodistas y asimilados
+2512,Escultores, pintores y asimilados
+2513,Compositores, musicos y cantantes
+2514,Coreografos y bailarines
+2515,Actores y directores de cine, radio, television y de teatro y asimilados
+252,Archiveros, bibliotecarios y profesionales asimilados
+2521,Archiveros y conservadores de museos
+2522,Bibliotecarios, documentalistas y asimilados
+253,Diversos profesionales de las administraciones publicas que no pueden ser clasificados en apartados 
+2530,Diversos profesionales de las administraciones publicas que no pueden ser clasificados en apartados 
+E,Profesiones asociadas a una titulación de 1er ciclo universitario y afines
+26,Profesiones asociadas a una titulacion de 1er ciclo universitario en ciencias físicas, químicas, mat
+261,Profesionales asociados a una titulación de 1er ciclo universitario en ciencias físicas, químicas y 
+2611,Profesionales en ciencias físicas
+2612,Profesionales en meteorología
+2613,Profesionales en ciencias químicas
+2614,Profesionales en ciencias geológicas
+262,Profesionales asociados a una titulacion de 1er ciclo universitario en matematicas, estadistica y as
+2621,Profesionales en ciencias matemáticas
+2622,Profesionales en estadística y asimilados
+263,Profesionales de nivel medio de informática
+2631,Analistas de aplicaciones y programadores informáticos de nivel medio
+2639,Otros profesionales de nivel medio de informática
+264,Arquitectos técnicos
+2640,Arquitectos técnicos
+265,Ingenieros técnicos
+2651,Ingenieros técnicos en construcción y obra civil
+2652,Ingenieros técnicos en electricidad
+2653,Ingenieros técnicos en electrónica y telecomunicaciones
+2654,Ingenieros técnicos mecánicos
+2655,Ingenieros técnicos químicos
+2656,Ingenieros técnicos de minas y metalurgia
+2657,Ingenieros tecnicos en topografía
+2659,Otros ingenieros técnicos (excepto en especialidades agrícolas y forestales)
+27,Profesiones asociadas a una titulación de 1er ciclo universitario en ciencias naturales y sanidad, e
+271,Profesionales asociados a una titulación de 1er ciclo universitario en ciencias naturales
+2711,Profesionales en ciencias biológicas y asimilados
+2712,Ingenieros técnicos en especialidades agrícolas y forestales
+272,Enfermeros
+2720,Enfermeros
+28,Profesiones asociadas a una titulación de 1er ciclo universitario en la enseñanza
+281,Profesores de enseñanza primaria e infantil
+2811,Profesores de enseñanza primaria
+2812,Profesores de enseñanza infantil
+282,Profesores de educación especial
+2820,Profesores de educación especial
+283,Profesorado técnico de formación profesional
+2831,Maestro de taller de artes plasticas y diseño
+2839,Otro profesorado tecnico de formacion profesional
+29,Otras profesiones asociadas a una titulación de 1er ciclo universitaria
+291,Diplomados en contabilidad y graduados sociales y técnicos de empresas y actividades turísticas
+2911,Diplomados en contabilidad
+2912,Graduados sociales y asimilados
+2913,Técnicos de empresas y actividades turísticas
+292,Ayudantes de archivo, biblioteca y asimilados
+2921,Ayudantes de archivo y de museo
+2922,Ayudantes de biblioteca y asimilados
+293,Diplomados en trabajo social
+2931,Diplomados en educación social
+2939,Agentes de igualdad de oportunidades para la mujer y otros diplomados en trabajo social
+294,Sacerdotes de las distintas religiones
+2940,Sacerdotes de las distintas religiones
+295,Otros profesionales de las administraciones públicas que no pueden ser clasificados en apartados ant
+2950,Otros profesionales de las administraciones públicas que no pueden ser clasificados en apartados ant
+3,Técnicos y profesionales de apoyo
+F,Técnicos y profesionales de apoyo
+30,Técnicos de las ciencias físicas, químicas e ingenierías
+301,Delineantes y diseñadores técnicos
+3010,Delineantes y diseñadores técnicos
+302,Técnicos de las ciencias físicas, químicas y de las ingenierías
+3021,Técnicos en ciencias físicas y químicas
+3022,Técnicos en ingeniería civil
+3023,Técnicos en electricidad
+3024,Técnicos en electrónica y telecomunicaciones
+3025,Técnicos en mecánica
+3026,Técnicos en química industrial
+3027,Técnicos en metalurgia y minas
+3029,Otros técnicos en ciencias físicas, químicas e ingenierías
+303,Profesionales técnicos de la informática
+3031,Programadores de aplicaciones informáticas y controladores de equipos informáticos
+3032,Controladores de robots industriales
+304,Operadores de equipos ópticos y electrónicos
+3041,Fotógrafos y operadores de equipos de grabación de imagen y sonido
+3042,Operadores de equipos de radio y televisión y de telecomunicacion
+3043,Operadores de equipo de diagnóstico y tratamiento médico
+3049,Otros operadores de equipos ópticos y electrónicos
+305,Profesionales en navegación marítima
+3051,Oficiales maquinistas
+3052,Capitanes y oficiales de puente
+306,Profesionales en navegación aeronáutica
+3061,Pilotos de aviación y profesionales asimilados
+3062,Controladores de tráfico aéreo
+3063,Técnicos en seguridad aeronáutica
+307,Técnicos en edificación, seguridad en el trabajo y control de calidad
+3071,Técnicos en edificación, prevención e investigación de incendios
+3072,Técnicos de seguridad en el trabajo
+3073,Técnicos en el control de calidad
+31,Técnicos de las ciencias naturales y de la sanidad
+311,Técnicos de las ciencias naturales y profesionales auxiliares asimilados
+3111,Técnicos en ciencias biológicas
+3112,Técnicos agrónomos, zootécnicos y forestales
+3113,Asesores agrícolas y forestales
+312,Técnicos de sanidad
+3121,Técnicos de laboratorio sanitario
+3122,Ayudantes de veterinaria
+3123,Higienistas
+3124,Ayudantes de odontologia
+3125,Ayudantes farmacéuticos
+3129,Otros diversos técnicos en sanidad, incluidos los de medicina tradicional
+313,Diversos técnicos de sanidad no clasificados en rúbricas anteriores
+3131,Profesionales en dietética y nutrición
+3132,Opticos y optometristas
+3133,Fisioterapeutas
+3134,Terapeutas ocupacionales
+3135,Logopedas
+3136,Podólogos
+32,Técnicos en educación infantil, instructores de vuelo, navegación y conducción de vehículos
+321,Técnicos en educación infantil y educación especial
+3211,Técnicos en educación infantil
+3212,Técnicos educadores de educación especial
+322,Instructores de vuelo, navegación y conducción de vehículos
+3220,Instructores de vuelo, navegación y conducción de vehiculos
+33,Profesionales de apoyo en operaciones financieras y comerciales
+331,Profesionales de apoyo en operaciones financieras y algunas operaciones comerciales
+3311,Intermediarios de cambio, bolsa y finanzas
+3312,Agentes de seguros
+3313,Agentes inmobiliarios
+3314,Agentes de viaje
+3315,Tasadores y subastadores
+3316,Agentes de compras
+3319,Otros profesionales de apoyo en operaciones financieras
+332,Representantes de comercio y tecnicos de venta
+3320,Representantes de comercio y tecnicos de venta
+34,Profesionales de apoyo a la gestión administrativa
+341,Profesionales de apoyo de la gestión administrativa, con tareas administrativas generales
+3411,Secretarios administrativos y asimilados
+3412,Profesionales de apoyo de servicios jurídicos y servicios similares
+3413,Tenedores de libros
+3414,Profesionales de apoyo en servicios estadísticos, matemáticos y afines
+342,Profesionales de carácter administrativo de aduanas, de tributos y asimilados que trabajan en tareas
+3421,Agentes de aduanas y fronteras
+3422,Profesionales de apoyo de las administraciones públicas de tributos
+3423,Profesionales de apoyo de las administraciones públicas de servicios sociales
+3424,Profesionales de apoyo de las administraciones públicas de servicios de expedicion de licencias
+3429,Otros profesionales de apoyo de las administraciones públicas para tareas de inspección y control y 
+35,Otros técnicos y profesionales de apoyo
+351,Consignatarios y agentes en la contratación de mano de obra
+3511,Consignatarios
+3512,Gestores de aduanas
+3513,Agentes o intermediarios en la contratación de la mano de obra (excepto representantes de espectácul
+3519,Representantes de artistas, agentes de venta de espacios publicitarios y otros similares
+352,Tecnicos especialistas de las Fuerzas de Seguridad y detectives privados
+3521,Técnicos especialistas de la policía
+3522,Suboficiales de la guardia civil
+3523,Detectives privados
+353,Profesionales de apoyo de promoción social
+3531,Educadores sociales
+3532,Animadores comunitarios
+3539,Promotores de igualdad de oportunidades para la mujer y otros profesionales de apoyo a la promoción 
+354,Profesionales del mundo artístico, del espectáculo y de los deportes
+3541,Decoradores
+3542,Locutores de radio, televisión y otros presentadores
+3543,Músicos, cantantes y bailarines de espectáculos en cabarets y similares
+3544,Payasos, prestidigitadores, acróbatas y profesionales similares
+3545,Deportistas y profesionales similares
+3546,Profesionales de espectáculos taurinos
+355,Auxiliares laicos de las religiones
+3550,Auxiliares laicos de las religiones
+4,Empleados de tipo administrativo
+G,Empleados de tipo administrativo
+40,Empleados en servicios contables, financieros, y de servicios de apoyo a la produccion y al transpor
+401,Auxiliares contables y financieros
+4011,Empleados de contabilidad y cálculo de nóminas y salarios
+4012,Empleados de oficina de servicios estadísticos, financieros y bancarios
+402,Empleados de registro de materiales, de servicios de apoyo a la producción y al transporte
+4021,Empleados de control de abastecimientos e inventario
+4022,Empleados de oficina de servicios de produccion
+4023,Empleados de oficina de servicios de transportes
+41,Empleados de bibliotecas, servicios de correos y asimilados
+410,Empleados de bibliotecas, servicios de correos y asimilados
+4101,Empleados de bibliotecas y archivos
+4102,Empleados de servicios de correos (excepto empleados de ventanilla)
+4103,Agentes de encuestas
+4104,Codificadores de datos
+4105,Correctores de imprenta y asimilados
+42,Operadores de máquinas de oficina
+421,Taquígrafos y mecanógrafos
+4210,Taquígrafos y mecanógrafos
+422,Grabadores de datos
+4220,Grabadores de datos
+43,Auxiliares administrativos sin tareas de atencion al publico no clasificados anteriormente
+430,Auxiliares administrativos sin tareas de atención al público no clasificados anteriormente
+4300,Auxiliares administrativos sin tareas de atención al público no clasificados anteriormente
+44,Auxiliares administrativos con tareas de atención al público no clasificados anteriormente
+440,Auxiliares administrativos con tareas de atención al público no clasificados anteriormente
+4400,Auxiliares administrativos con tareas de atención al público no clasificados anteriormente
+45,Empleados de trato directo con el público en agencias de viajes, recepcionistas y telefonistas
+451,Empleados de información y recepcionistas en oficinas
+4510,Empleados de información y recepcionistas en oficinas
+452,Empleados de agencias de viajes, recepcionistas en establecimientos distintos de oficinas y telefoni
+4521,Empleados de agencias de viajes
+4522,Recepcionistas en establecimientos distintos de oficinas
+4523,Telefonistas
+46,Cajeros, taquilleros y otros empleados asimilados en trato directo con el público
+460,Cajeros, taquilleros y otros empleados asimilados en trato directo con el público
+4601,Cajeros, taquilleros (excepto bancos y correos)
+4602,Empleados de ventanilla de bancos y de correos
+4603,Croupiers y otros empleados de salas de juego y apuestas
+4604,Empleados de casas de empeño y de préstamos
+4605,Cobradores de facturas, deudas y empleados asimilados
+5,Trabajadores de los servicios de restauración, personales, protección y vendedores de los comercios
+H,Trabajadores de los servicios de restauración y de servicios personales
+50,Trabajadores de los servicios de restauración
+501,Cocineros y otros preparadores de comidas
+5010,Cocineros y otros preparadores de comidas
+502,Camareros, bármanes y asimilados
+5020,Camareros, bármanes y asimilados
+503,Jefes de cocineros, de camareros y asimilados
+5030,Jefes de cocineros, de camareros y asimilados
+51,Trabajadores de los servicios personales
+511,Auxiliares de enfermería y asimilados
+5111,Auxiliares de enfermería hospitalaria
+5112,Auxiliares de enfermería de atención primaria
+5113,Asistentes domiciliarios
+512,Trabajadores que se dedican al cuidado de personas y asimilados (excepto auxiliares de enfermería)
+5121,Empleados para el cuidado de niños
+5129,Otros empleados en el cuidado de personas y asimilados
+513,Peluqueros, especialistas en tratamiento de belleza y trabajadores asimilados
+5130,Peluqueros, especialistas en tratamiento de belleza y trabajadores asimilados
+514,Trabajadores que atienden a viajeros y asimilados
+5141,Azafatas o camareros de avión y de barco
+5142,Revisores, controladores de coches-cama y cobradores de los transportes
+5143,Guías y azafatas de tierra
+515,Mayordomos, ecónomos y asimilados
+5150,Mayordomos, ecónomos y asimilados
+519,Otros trabajadores de servicios personales
+5191,Ayudas de cámara y asimilados
+5192,Empleados de pompas fúnebres y embalsamadores
+5199,Otros diversos trabajadores de servicios personales
+J,Trabajadores de los servicios de protección y seguridad
+52,Trabajadores de servicios de protección y seguridad
+521,Guardias civiles
+5210,Guardias civiles
+522,Policías
+5221,Policías nacionales
+5222,Policías autonómicos
+5223,Policias locales
+523,Bomberos
+5230,Bomberos
+524,Funcionario de prisiones
+5240,Funcionario de prisiones
+525,Guardias jurados y personal de seguridad privado
+5250,Guardias jurados y personal de seguridad privado
+529,Otros trabajadores de los servicios de protección y seguridad
+5291,Bañista-socorrista
+5299,Otros diversos trabajadores de los servicios de protección y seguridad
+K,Dependientes de comercio y asimilados
+53,Dependientes de comercio y asimilados
+531,Modelos de moda, arte y publicidad
+5310,Modelos de moda, arte y publicidad
+532,Encargado de sección dentro de un comercio y asimilados
+5320,Encargado de sección dentro de un comercio y asimilados
+533,Dependientes y exhibidores en tiendas, almacenes, quioscos y mercados
+5330,Dependientes y exhibidores en tiendas, almacenes, quioscos y mercados
+6,Trabajadores cualificados en la agricultura y en la pesca
+L,Trabajadores cualificados en la agricultura y en la pesca
+60,Trabajadores cualificados en actividades agrícolas
+601,Trabajadores cualificados por cuenta propia en actividades agrícolas
+6011,Trabajadores cualificados por cuenta propia en actividades agricolas, excepto en huertas, viveros y 
+6012,Trabajadores cualificados por cuenta propia en huertas, viveros y jardines
+602,Trabajadores cualificados por cuenta ajena en actividades agrícolas
+6021,Trabajadores cualificados por cuenta ajena en actividades agrícolas, excepto en huertas, viveros y j
+6022,Trabajadores cualificados por cuenta ajena en huertas, viveros y jardines
+61,Trabajadores cualificados en actividades ganaderas
+611,Trabajadores cualificados por cuenta propia en actividades ganaderas
+6111,Trabajadores cualificados por cuenta propia en actividades ganaderas, incluidas las de animales de c
+6112,Trabajadores cualificados por cuenta propia en actividades avícolas
+6119,Otros trabajadores cualificados por cuenta propia en actividades ganaderas
+612,Trabajadores cualificados por cuenta ajena en actividades ganaderas
+6121,Trabajadores cualificados por cuenta ajena en actividades ganaderas, incluidas las de animales de co
+6122,Trabajadores cualificados por cuenta ajena en actividades avícolas
+6129,Otros trabajadores cualificados por cuenta ajena en actividades ganaderas
+62,Trabajadores cualificados en otras actividades agrarias
+621,Trabajadores cualificados por cuenta propia en actividades agropecuarias
+6210,Trabajadores cualificados por cuenta propia en actividades agropecuarias
+622,Trabajadores cualificados por cuenta propia en actividades forestales y asimilados
+6220,Trabajadores cualificados por cuenta propia en actividades forestales y asimilados
+623,Trabajadores cualificados por cuenta ajena en actividades agropecuarias
+6230,Trabajadores cualificados por cuenta ajena en actividades agropecuarias
+624,Trabajadores cualificados por cuenta ajena en actividades forestales y asimilados
+6241,Taladores, trozadores y otros trabajadores forestales
+6242,Carboneros de carbón vegetal y asimilados
+63,Pescadores y trabajadores cualificados en actividades piscícolas
+631,Pescadores y trabajadores cualificados por cuenta propia en actividades piscícolas
+6311,Trabajadores cualificados por cuenta propia en la cría de especies acuáticas
+6312,Pescador por cuenta propia de agua dulce y de aguas costeras
+6313,Pescador por cuenta propia de altura
+6314,Cazador  por cuenta propia
+632,Pescadores y trabajadores cualificados por cuenta ajena en actividades piscícolas
+6321,Trabajadores cualificados por cuenta ajena en la cría de especies acuáticas
+6322,Pescador por cuenta ajena de agua dulce y de aguas costeras
+6323,Pescador por cuenta ajena de altura
+6324,Cazador por cuenta ajena
+7,Artesanos y trabajadores cualificados de las industrias manufactureras, la construcción, y la minerí
+M,Trabajadores cualificados de la construccion, excepto los operadores de maquinaria
+70,Encargados de obra y otros encargados en la construcción
+701,Encargados y jefes de equipo en obras estructurales de la construcción
+7010,Encargados y jefes de equipo en obras estructurales de la construcción
+702,Jefes de taller y encargados de trabajadores de acabado de edificios
+7020,Jefes de taller y encargados de trabajadores de acabado de edificios
+703,Encargados de pintores, empapeladores y asimilados
+7030,Encargados de pintores, empapeladores y asimilados
+71,Trabajadores en obras estructurales de construcción y asimilados
+711,Albañiles y mamposteros
+7110,Albañiles y mamposteros
+712,Trabajadores en hormigón armado, enfoscadores, ferrallistas y asimilados
+7120,Trabajadores en hormigón armado, enfoscadores, ferrallistas y asimilados
+713,Carpinteros (excepto carpinteros de estructuras metálicas)
+7130,Carpinteros (excepto carpinteros de estructuras metálicas)
+714,Otros trabajadores de las obras estructurales de construcción
+7140,Otros trabajadores de las obras estructurales de construcción
+72,Trabajadores de acabado de construcciones y asimilados; pintores y otros asimilados
+721,Revocadores, escayolistas y estuquistas
+7210,Revocadores, escayolistas y estuquistas
+722,Fontaneros e instaladores de tuberías
+7220,Fontaneros e instaladores de tuberías
+723,Electricista de construcción y asimilados
+7230,Electricista de construcción y asimilados
+724,Pintores, barnizadores, empapeladores y asimilados
+7240,Pintores, barnizadores, empapeladores y asimilados
+725,Personal de limpieza de fachadas de edificios y deshollinadores
+7250,Personal de limpieza de fachadas de edificios y deshollinadores
+729,Otros trabajadores de acabado de construcción y asimilados
+7291,Techadores
+7292,Parqueteros, soladores y asimilados
+7293,Instaladores de material aislante térmico y de insonorización
+7294,Cristaleros
+7299,Otros trabajadores diversos de acabado de construcciones
+N,Trabajadores cualificados de las industrias extractivas, de la metalurgia, la construcción de maquin
+73,Encargados en la metalurgia y jefes de talleres mecánicos
+731,Jefes de taller y encargados de moldeadores, soldadores montadores de estructuras metálicas y afines
+7310,Jefes de taller y encargados de moldeadores, soldadores, montadores de estructuras metálicas y afine
+732,Jefes de taller de vehículos de motor
+7320,Jefes de taller de vehículos de motor
+733,Jefes de taller de máquinas agrícolas e industriales y motores de avión
+7331,Jefes de taller de máquinas agrícolas e industriales
+7332,Jefes de taller de motores de avión
+734,Jefes de equipos de mecánicos y ajustadores de equipos eléctricos y electrónicos
+7340,Jefes de equipos de mecánicos y ajustadores de equipos eléctricos y electrónicos
+74,Trabajadores de las industrias extractivas
+741,Encargados y capataces de la minería
+7410,Encargados y capataces de la minería
+742,Mineros, canteros, pegadores y labrantes de piedras
+7421,Mineros, canteros y asimilados
+7422,Pegadores
+7423,Tronzadores, labrantes y grabadores de piedras
+75,Soldadores, chapistas, montadores de estructuras metalicas, herreros, elaboradores de herramientas y
+751,Moldeadores, soldadores, chapistas, montadores de estructuras metálicas y trabajadores asimilados
+7511,Moldeadores y macheros
+7512,Soldadores y oxicortadores
+7513,Chapistas y caldereros
+7514,Montadores de estructuras metálicas
+7515,Montadores y empalmadores de cables
+7516,Buzos
+752,Herreros, elaboradores de herramientas y asimilados
+7521,Herreros y forjadores
+7522,Trabajadores de la fabricación de herramientas, mecánicos y ajustadores, modelistas, matriceros y as
+7523,Ajustadores operadores de máquinas-herramienta
+7524,Pulidores de metales y afiladores de herramientas
+76,Mecánicos y ajustadores de maquinaria y equipos eléctricos y electrónicos
+761,Mecanicos y ajustadores de maquinaria
+7611,Mecánicos y ajustadores de vehículos de motor
+7612,Mecánicos y ajustadores de motores de avión
+7613,Mecánicos y ajustadores de maquinaria agrícola e industrial
+762,Mecánicos y ajustadores de equipos eléctricos y electrónicos
+7621,Mecánicos y reparadores de equipos eléctricos
+7622,Ajustadores y reparadores de equipos electrónicos
+7623,Instaladores y reparadores de equipos telefónicos y telegráficos
+7624,Instaladores y reparadores de líneas eléctricas
+P,Trabajadores cualificados de industrias de artes gráficas, textil y de la confección, de la elaborac
+77,Mecánicos de precisión en metales, trabajadores de artes gráficas, ceramistas, vidrieros y artesanos
+771,Mecánicos de precisión en metales y materiales similares
+7711,Relojeros y mecánicos de instrumentos de precisión
+7712,Constructores y afinadores de instrumentos musicales
+7713,Joyeros, orfebres y plateros
+772,Trabajadores de artes gráficas y asimilados
+7721,Cajistas, monotipistas y asimilados
+7722,Estereotipadores y galvanotipistas
+7723,Grabadores de imprenta y trabajadores asimilados
+7724,Trabajadores de los laboratorios fotográficos y asimilados
+7725,Encuadernadores y asimilados
+7726,Impresores de sericigrafía y estampadores en plancha y en textiles
+773,Ceramistas, vidrieros y asimilados
+7731,Trabajadores de la cerámica, alfareros y asimilados
+7732,Sopladores, modeladores, laminadores, cortadores y pulidores de vidrio
+7733,Grabadores de vidrio
+7734,Pintores decoradores en vidrio, cerámica y otros materiales
+774,Artesanos de la madera, de textiles, del cuero y materiales similares
+7741,Artesanos en madera y materiales similares
+7742,Artesanos en tejidos, cueros y materiales similares
+78,Trabajadores de la industria de la alimentación, bebidas y tabaco
+780,Trabajadores de la industria de la alimentación, bebidas y tabaco
+7801,Matarifes y trabajadores de las industrias cárnicas y del pescado
+7802,Panaderos, pasteleros y confiteros
+7803,Trabajadores del tratamiento de la leche y elaboración de productos lácteos; heladeros
+7804,Trabajadores conserveros de frutas y verduras
+7805,Catadores y clasificadores de alimentos y bebidas
+7806,Preparadores y elaboradores del tabaco y sus productos
+79,Trabajadores que tratan la madera, ebanistas, trabajadores de la industria textil, confección piel, 
+791,Trabajadores que tratan la madera y asimilados
+7911,Trabajadores del tratamiento de la madera
+7912,Ajustadores de máquinas de labrar madera
+7913,Cesteros, bruceros y trabajadores asimilados
+792,Ebanistas y trabajadores asimilados
+7920,Ebanistas y trabajadores asimilados
+793,Trabajadores de la industria textil, la confección y asimilados
+7931,Preparadores de fibra
+7932,Tejedores con telares artesanos o de tejidos de punto y asimilados
+7933,Sastres, modistos y sombrereros
+7934,Peleteros y trabajadores asimilados
+7935,Patronistas y cortadores de tela, cuero y piel
+7936,Costureros a mano, bordadores y asimilados
+7937,Tapiceros, colchoneros y asimilados
+794,Trabajadores de la industria de la piel, del cuero y del calzado
+7941,Curtidores y preparadores de pieles
+7942,Zapateros y asimilados
+8,Operadores de instalaciones y maquinaria, y montadores
+Q,Operadores de instalaciones industriales, de maquinaria fija; montadores y ensambladores
+80,Jefes de equipo y encargados en instalaciones industriales fijas
+801,Encargados en instalaciones mineras
+8010,Encargados en instalaciones mineras
+802,Encargados en instalaciones de procesamiento de metales
+8020,Encargados en instalaciones de procesamiento de metales
+803,Encargados de taller de vidriería, cerámica y asimilados
+8030,Encargados de taller de vidriería, cerámica y asimilados
+804,Encargados de taller de madera y jefes de equipo en la fabricación de papel
+8040,Encargados de taller de madera y jefes de equipo en la fabricacion de papel
+805,Jefes de equipo en instalaciones de tratamiento quimico
+8050,Jefes de equipo en instalaciones de tratamiento quimico
+806,Jefes de equipo en instalaciones de producción de energía y asimilados
+8060,Jefes de equipo en instalaciones de producción de energía y asimilados
+807,Jefes de equipo de operadores de robots industriales
+8070,Jefes de equipo de operadores de robots industriales
+81,Operadores de instalaciones industriales fijas y asimilados
+811,Operadores en instalaciones de la extracción y explotación de minerales
+8111,Operadores en instalaciones mineras
+8112,Operadores en instalaciones para la preparación de minerales y rocas
+8113,Sondistas y trabajadores asimilados
+812,Operadores en instalaciones para la obtención y transformación de metales
+8121,Operadores en hornos de minerales y en hornos de primera fusión de metales
+8122,Operadores en hornos de segunda fusión, máquinas de colar y moldear metales; operadores de trenes de
+8123,Operadores en instalaciones de tratamiento térmico de metales
+8124,Operadores de máquinas trefiladoras y estiradoras de metales
+813,Operadores en instalaciones para la obtención, transformación y manipulado del vidrio y la cerámica 
+8131,Operadores de hornos de vidriería y cerámica y de máquinas similares
+8139,Otros operadores en instalaciones para vidriería y cerámica
+814,Operadores en instalaciones para el trabajo de la madera y la fabricación de papel
+8141,Operadores de serrerías, de máquinas de contrachapado y en instalaciones conexas para el tratamiento
+8142,Operadores en instalaciones para la fabricación de pasta de papel
+8143,Operadores en instalaciones para la fabricación de papel
+815,Operadores en plantas industriales químicas
+8151,Operadores de máquinas quebrantadoras, trituradoras y mezcladoras de sustancias quimicas
+8152,Operadores en instalaciones de tratamiento químico termico
+8153,Operadores de equipos de filtración y separación de sustancias químicas
+8154,Operadores de equipos de destilación y reacción química (excepto tratamiento del petroleo y gas natu
+8155,Operadores de refinerías de petróleo y gas natural
+8159,Otros operadores de instalaciones de tratamiento de productos químicos
+816,Operadores en plantas para producción de energía y similares
+8161,Operadores en instalaciones de producción de energía eléctrica
+8162,Operadores de calderas y máquinas de vapor
+8163,Operadores en instalaciones de incineración, de tratamiento de aguas y otros operadores en plantas s
+817,Operadores de robots industriales
+8170,Operadores de robots industriales
+82,Encargado de operadores de máquinas fijas
+821,Encargado de operadores de máquinas para trabajar metales
+8210,Encargado de operadores de máquinas para trabajar metales
+822,Encargado de operadores de máquinas para fabricar productos químicos
+8220,Encargado de operadores de máquinas para fabricar productos químicos
+823,Encargado de operadores de máquinas para fabricar productos de caucho y de material plástico
+8230,Encargado de operadores de máquinas para fabricar productos de caucho y de material plástico
+824,Encargado de operadores de máquinas para fabricar productos de madera
+8240,Encargado de operadores de máquinas para fabricar productos de madera
+825,Jefes de taller de imprenta, encuadernación y fabricación de productos de papel
+8250,Jefes de taller de imprenta, encuadernación y fabricación de productos de papel
+826,Encargado de operadores de máquinas para fabricar productos textiles y artículos de piel y cuero
+8260,Encargado de operadores de máquinas para fabricar productos textiles y artículos de piel y cuero
+827,Encargado de operadores de máquinas para elaborar productos alimenticios, bebidas y tabaco
+8270,Encargado de operadores de máquinas para elaborar productos alimenticios, bebidas y tabaco
+828,Encargado de montadores
+8280,Encargado de montadores
+83,Operadores de máquinas fijas
+831,Operadores de máquinas para trabajar metales y otros productos minerales
+8311,Operadores de máquinas-herramienta
+8312,Operadores de maquinaria para fabricar productos derivados de minerales no metálicos
+832,Operadores de máquinas para fabricar productos químicos
+8321,Operadores de máquinas para fabricar productos farmacéuticos y cosméticos
+8322,Operadores de máquinas para fabricar municiones y explosivos
+8323,Operadores de máquinas pulidoras, galvanizadoras y recubridoras de metales
+8324,Operadores de máquinas para fabricar accesorios fotográficos
+8329,Otros operadores de máquinas para fabricar productos químicos
+833,Operadores de máquinas para fabricar productos de caucho y plástico
+8331,Operadores de máquinas para fabricar productos de caucho
+8332,Operadores de máquinas para fabricar productos de materias plásticas
+834,Operadores de máquinas para fabricar productos de madera
+8340,Operadores de máquinas para fabricar productos de madera
+835,Operadores de máquinas para imprimir, encuadernar y para fabricar productos de papel y cartón
+8351,Operadores de máquinas para imprimir
+8352,Operadores de máquinas para encuadernar
+8353,Operadores de máquinas para fabricar productos de papel y carton
+836,Operadores de máquinas para fabricar productos textiles artículos de piel y de cuero
+8361,Operadores de máquinas de preparar fibras, hilar y devanar
+8362,Operadores de telares y otras máquinas tejedoras
+8363,Operadores de máquinas de coser y bordar
+8364,Operadores de maquinas para blanquear, teñir, limpiar y tintar
+8365,Operadores de máquinas para tratar pieles y cuero
+8366,Operadores de máquinas para la fabricación del calzado
+8369,Otros operadores de máquinas para fabricar productos textiles y artículos de piel y cuero
+837,Operadores de máquinas para elaborar productos alimenticios, bebidas y tabaco
+8371,Operadores de máquinas para elaborar productos derivados de carne, pescado y marisco
+8372,Operadores de máquinas para tratar la leche y elaborar producto lácteos y de heladería
+8373,Operadores de máquinas para molturar cereales y especias
+8374,Operadores de máquinas para elaborar productos de panadería, reposteria, artículos de chocolate y pr
+8375,Operadores de máquinas para elaborar productos derivados de frutas, verduras y frutos secos
+8376,Operadores de máquinas para refinar y fabricar azúcar
+8377,Operadores de máquinas para elaborar té, café y cacao
+8378,Operadores de máquinas para elaborar bebidas alcohólicas y no alcohólicas, excepto jugos de frutas
+8379,Operadores de máquinas para elaborar productos del tabaco
+84,Montadores y emsambladores
+841,Montadores y ensambladores
+8411,Montadores de maquinaria mecánica
+8412,Montadores de maquinaria eléctrica
+8413,Montadores de equipos electrónicos
+8414,Ensambladores de productos metálicos, de caucho y de plástico
+8415,Montadores ensambladores de productos de madera y de materiales similares
+8416,Montadores de productos de cartón, textiles y materiales similares
+8417,Montadores ensambladores de productos mixtos
+849,Otros montadores y ensambladores
+8490,Otros montadores y ensambladores
+R,Conductores y operadores de maquinaria móvil
+85,Maquinista de locomotora, operador de maquinaria agrícola y de equipos pesados móviles, y marineros
+851,Maquinistas de locomotoras y asimilados
+8511,Maquinistas de locomotoras
+8512,Agentes de maniobras ferroviarias
+852,Encargado de operadores de maquinaria de movimiento de tierras y de materiales
+8520,Encargado de operadores de maquinaria de movimiento de tierras y de materiales
+853,Operadores de maquinaria agrícola móvil
+8530,Operadores de maquinaria agrícola móvil
+854,Operadores de otras máquinas móviles
+8541,Conductores de maquinaria de movimientos de tierras y equipos similares
+8542,Operadores de grúas, camiones montacargas y de maquinaria similar de movimiento de materiales
+8543,Operadores de carretillas elevadoras
+855,Marineros de cubierta de barco y asimilados
+8550,Marineros de cubierta de barco y asimilados
+86,Conductores de vehículos para el transporte urbano o por carretera
+861,Taxistas y conductores de automóviles y furgonetas
+8610,Taxistas y conductores de automóviles y furgonetas
+862,Conductores de autobuses
+8620,Conductores de autobuses
+863,Conductores de camiones
+8630,Conductores de camiones
+864,Conductores de motocicletas y ciclomotores
+8640,Conductores de motocicletas y ciclomotores
+9,Trabajadores no cualificados
+S,Trabajadores no cualificados en servicios (excepto transportes)
+90,Trabajadores no cualificados en el comercio
+900,Vendedores ambulantes y asimilados
+9001,Vendedores ambulantes
+9002,Vendedores a domicilio y por teléfono
+91,Empleados domésticos y otro personal de limpieza de interior de edificios
+911,Empleados del hogar
+9110,Empleados del hogar
+912,Personal de limpieza de oficinas, hoteles y otros trabajadores asimilados
+9121,Personal de limpieza de oficinas, hoteles (camareras de piso) y otros establecimientos similares
+9122,Lavanderos, planchadores y asimilados
+92,Conserje de edificios, limpiacristales y vigilantes
+921,Conserjes de edificios, limpiacristales y asimilados
+9211,Conserjes de edificios
+9212,Limpiacristales, lavacoches y asimilados
+922,Vigilantes, guardianes y asimilados
+9220,Vigilantes, guardianes y asimilados
+93,Otros trabajadores no cualificados en otros servicios
+931,Limpiabotas y otros trabajadores de oficios callejeros
+9310,Limpiabotas y otros trabajadores de oficios callejeros
+932,Ordenanzas
+9320,Ordenanzas
+933,Mozos de equipaje y asimilados
+9330,Mozos de equipaje y asimilados
+934,Lectores de contadores (agua...) y recolectores de dinero de máquinas expendedoras
+9340,Lectores de contadores (agua...) y recolectores de dinero de maquinas expendedoras
+935,Recogedores de basura y obreros asimilados
+9351,Recogedores de basura
+9352,Barrenderos y asimilados
+T,Peones de la agricultura, pesca, construccion, industrias manufactureras y transportes
+94,Peones agropecuarios y de la pesca
+941,Peones agrícolas
+9410,Peones agrícolas
+942,Peones ganaderos
+9420,Peones ganaderos
+943,Peones agropecuarios
+9430,Peones agropecuarios
+944,Peones forestales
+9440,Peones forestales
+945,Peones de la pesca
+9450,Peones de la pesca
+95,Peones de la minería
+950,Peones de la minería
+9500,Peones de la minería
+96,Peones de la construcción
+960,Peones de la construcción
+9601,Peones de obras públicas y mantenimiento de carreteras, presas y construcciones similares
+9602,Peones de la construcción de edificios
+97,Peones de las industrias manufactureras
+970,Peones de industrias manufactureras
+9700,Peones de industrias manufactureras
+98,Peones del transporte y descargadores
+980,Peones del transporte y descargadores
+9800,Peones del transporte y descargadores
