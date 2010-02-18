@@ -15,5 +15,4 @@ DROP PROCEDURE k_sp_cat_del_usr;
 DROP PROCEDURE k_sp_cat_set_grp;
 DROP PROCEDURE k_sp_cat_set_usr;
 DROP PROCEDURE k_sp_cat_level;
-DROP PROCEDURE k_sp_cat_descendant;
 DROP PROCEDURE k_sp_get_cat_id;
