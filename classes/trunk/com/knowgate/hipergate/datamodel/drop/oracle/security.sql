@@ -24,6 +24,8 @@ DROP PROCEDURE k_is_workarea_user;
 
 DROP PROCEDURE k_is_workarea_guest;
 
+DROP PROCEDURE k_is_workarea_anyrole;
+
 DROP PROCEDURE k_get_user_from_email;
 
 DROP PROCEDURE k_get_user_from_nick;
