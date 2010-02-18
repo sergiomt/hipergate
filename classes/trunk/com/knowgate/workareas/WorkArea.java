@@ -1,6 +1,5 @@
 /*
-  Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+  Copyright (C) 2003-2010  Know Gate S.L. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -127,7 +126,7 @@ public class WorkArea extends DBPersist {
 
   public boolean store(JDCConnection oConn) throws SQLException {
 
-	oParams.clear();
+	if (null!=oParams) oParams.clear();
 
     // Si no se especificó un identificador para el área de trabajo
     // entonces añadirlo autimaticamente
@@ -258,7 +257,7 @@ public class WorkArea extends DBPersist {
       DebugFile.incIdent();
     }
 
-	oParams.clear();
+	if (null!=oParams) oParams.clear();
 
     // -----------------------------------------------------------------------------------
     // Verificar que la WorkArea realmente existe antes de empezar a borrar y tambien
@@ -1027,8 +1026,7 @@ public class WorkArea extends DBPersist {
       try { if (oConn.getDataBaseProduct()!=JDCConnection.DBMS_POSTGRESQL) oStmt.setQueryTimeout(30); } catch (SQLException sqle) {}
       sSQL = "DELETE FROM " + DB.k_education_degree + " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "'";
       if (DebugFile.trace) DebugFile.writeln("Statement.execute(" + sSQL + ")");
-      oStmt.executeUpdate(sSQL);
-      oStmt.close();    	
+      oStmt.executeUpdate(sSQL);   	
       sSQL = "DELETE FROM " + DB.k_education_degree_lookup + " WHERE " + DB.gu_owner + "='" + sWrkAreaGUID + "'";
       if (DebugFile.trace) DebugFile.writeln("Statement.execute(" + sSQL + ")");
       oStmt.executeUpdate(sSQL);
