@@ -69,12 +69,12 @@ import com.knowgate.hipergate.DBLanguages;
  * <p>It may be used as an alternative method to database dumps for initial data loading,
  * or, also, as a tool for porting the data model to a new DBMS in a structured way.</p>
  * @author Sergio Montoro ten
- * @version 5.0
+ * @version 5.5
  */
 
 public class ModelManager {
 
-  private static final String VERSION = "5.0.0";
+  private static final String VERSION = "5.5.0";
 
   private static final int BULK_PROCEDURES = 1;
   private static final int BULK_STATEMENTS = 2;
@@ -383,6 +383,8 @@ public class ModelManager {
   private String translate(String sSQL)
     throws NullPointerException {
 
+	String sRetSql;
+	
     if (DebugFile.trace) {
      DebugFile.writeln("Begin ModelManager.translate(" + sSQL + ")");
      DebugFile.incIdent();
@@ -400,7 +402,7 @@ public class ModelManager {
         DebugFile.decIdent();
         DebugFile.writeln("End ModelManager.translate()");
       }
-      return "";
+      sRetSql = "";
     }
     else {
       int iPos, iOff;
@@ -578,11 +580,6 @@ public class ModelManager {
         }
       } // next
 
-      if (DebugFile.trace) {
-        DebugFile.decIdent();
-        DebugFile.writeln("End ModelManager.translate() :\n" + oTrn.toString() + "\n");
-      }
-
       if (bASCII) {
         int iTrn = oTrn.length();
         StringBuffer oAsc = new StringBuffer(iTrn);
@@ -594,13 +591,33 @@ public class ModelManager {
           else
             oAsc.append('?');
         } // next
-        return oAsc.toString().replace((char)13, (char)32);
+        sRetSql = oAsc.toString().replace((char)13, (char)32);
       }
       else {
-        return oTrn.toString().replace((char)13, (char)32);
+        sRetSql = oTrn.toString().replace((char)13, (char)32);
       } // fi (iLen)
     }
 
+	if (iDbms==DBMS_MYSQL) {
+
+	  try {
+	    sRetSql = Gadgets.replace(sRetSql, " DROP CONSTRAINT ", " DROP FOREIGN KEY ",
+	                              org.apache.oro.text.regex.Perl5Compiler.CASE_INSENSITIVE_MASK);
+	  } catch (org.apache.oro.text.regex.MalformedPatternException neverthrown) { }
+
+	  if (sRetSql.toUpperCase().startsWith("DROP INDEX ")) {
+	  	int iDot = sRetSql.indexOf('.');
+	  	if (iDot>0) {
+	  	  sRetSql = "DROP INDEX "+sRetSql.substring(iDot+1)+" ON "+sRetSql.substring(11,iDot);
+	  	}
+	  }
+	} // fi
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End ModelManager.translate() :\n" + sRetSql + "\n");
+    }
+	return sRetSql;
   } // translate
 
   // ---------------------------------------------------------------------------
@@ -1085,6 +1102,11 @@ public class ModelManager {
         case DBMS_MYSQL:
           executeBulk("procedures/mysql/kernel.ddl", BULK_PLSQL);
           break;
+        case DBMS_POSTGRESQL:
+          executeBulk("procedures/postgresql/kernel.sql", BULK_STATEMENTS);
+          executeBulk("procedures/postgresql/kernel.ddl", BULK_PLSQL);
+          executeBulk("views/postgresql/kernel.sql", BULK_STATEMENTS);
+          break;
         default:
           executeBulk("procedures/" + sDbms + "/kernel.sql", BULK_PLSQL);
           break;
@@ -1352,11 +1374,10 @@ public class ModelManager {
     executeBulk("procedures/" + sDbms + "/training.ddl", BULK_PLSQL);
 
   } else if (sModuleName.equals("marketing")) {
-
     executeBulk("tables/marketing.ddl", BULK_STATEMENTS);
     executeBulk("procedures/" + sDbms + "/marketing.ddl", BULK_PLSQL);
+    executeBulk("views/marketing.sql", BULK_STATEMENTS);
     executeBulk("constraints/marketing.sql", BULK_STATEMENTS);
-
   }
   } catch (InterruptedException ie) {
     if (null!=oStrLog) oStrLog.append("STOP ON ERROR SET TO ON: SCRIPT INTERRUPTED\n");
@@ -2801,6 +2822,11 @@ public class ModelManager {
       else if (sOldVersion.equals("400") &&
                sNewVersion.equals("500")) {
         executeBulk("upgrade/" + sDbms + "/400-500.ddl", BULK_PLSQL);
+        if (iDbms==DBMS_ORACLE) recompileOrcl();
+      }
+      else if (sOldVersion.equals("500") &&
+               sNewVersion.equals("550")) {
+        executeBulk("upgrade/" + sDbms + "/500-550.ddl", BULK_PLSQL);
         if (iDbms==DBMS_ORACLE) recompileOrcl();
       }
       else
