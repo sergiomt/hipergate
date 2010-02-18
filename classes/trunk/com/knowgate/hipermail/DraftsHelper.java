@@ -95,6 +95,10 @@ public class DraftsHelper {
 
     oConn.setAutoCommit(false);
 
+    if (DebugFile.trace) {
+      DebugFile.writeln("JDCConnection.prepareStatement(SELECT MAX("+DB.pg_message+") FROM "+DB.k_mime_msgs+" WHERE "+DB.gu_category+"='"+sGuFldr+"')");
+    }
+
     oStmt = oConn.prepareStatement("SELECT MAX("+DB.pg_message+") FROM "+DB.k_mime_msgs+" WHERE "+DB.gu_category+"=?");
     oStmt.setString (1,sGuFldr);
     oRSet = oStmt.executeQuery();
@@ -103,6 +107,10 @@ public class DraftsHelper {
     if (oRSet.wasNull()) oMax = new java.math.BigDecimal(0);
     oRSet.close();
     oStmt.close();
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("JDCConnection.prepareStatement(INSERT INTO "+DB.k_mime_msgs+" ("+DB.gu_mimemsg+","+DB.pg_message+","+DB.gu_workarea+","+DB.gu_category+","+DB.id_type+","+DB.id_message+","+DB.tx_subject+","+DB.tx_email_from+","+DB.tx_email_reply+","+DB.nm_from+","+DB.len_mimemsg+","+DB.bo_draft+","+DB.bo_deleted+") VALUES('"+sGuMsg+"',"+oMax.add(new java.math.BigDecimal(1)).toString()+",'"+sGuWorkArea+"','"+sGuFldr+"','text/"+sContentType+"; charset=utf-8','"+sIdMsg+"','','"+oUsr.getString(DB.tx_main_email)+"','"+oUsr.getString(DB.tx_main_email)+"','"+sFrom.trim()+"',0,1,0))");
+    }
 
     oStmt = oConn.prepareStatement("INSERT INTO "+DB.k_mime_msgs+" ("+DB.gu_mimemsg+","+DB.pg_message+","+DB.gu_workarea+","+DB.gu_category+","+DB.id_type+","+DB.id_message+","+DB.tx_subject+","+DB.tx_email_from+","+DB.tx_email_reply+","+DB.nm_from+","+DB.len_mimemsg+","+DB.bo_draft+","+DB.bo_deleted+") VALUES(?,?,?,?,?,?,?,?,?,?,0,1,0)");
     oStmt.setString (1,sGuMsg);
@@ -146,14 +154,16 @@ public class DraftsHelper {
       DebugFile.writeln(String.valueOf(nAffected)+" affected rows");
     }	  
 
+	DBMimeMessage oRetVal = oDraftsFldr.getMessageByGuid(sGuMsg);
+
     if (!oConn.getAutoCommit()) oConn.commit();
-		
+			
     if (DebugFile.trace) {
       DebugFile.decIdent();
       DebugFile.writeln("End DraftsHelper.draftMessage() : "+sGuMsg);
     }
 
-    return oDraftsFldr.getMessageByGuid(sGuMsg);
+    return oRetVal;
 
   } // draftMessage
 

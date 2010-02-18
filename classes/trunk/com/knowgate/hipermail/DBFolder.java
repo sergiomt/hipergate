@@ -1292,10 +1292,13 @@ public class DBFolder extends Folder {
 
       if (oRSet.next()) {
         sMsgGuid = oRSet.getString(1);
-
-        if (DebugFile.trace) DebugFile.writeln("gu_mimemsg="+sMsgGuid);
-
         sContentId = oRSet.getString(2);
+
+        if (DebugFile.trace) {
+          DebugFile.writeln("gu_mimemsg="+sMsgGuid);
+          DebugFile.writeln("id_message="+sContentId);
+        }
+        
         sMsgDisposition = oRSet.getString(3);
         sMsgMD5 = oRSet.getString(4);
         sMsgDesc = oRSet.getString(5);
@@ -2813,6 +2816,7 @@ public class DBFolder extends Folder {
       oRetVal.put(DB.gu_mimemsg, s);
       s = oRSet.getString(2);
       if (!oRSet.wasNull()) oRetVal.put(DB.id_message, s);
+      if (DebugFile.trace) DebugFile.writeln("id_message="+s);
       d = oRSet.getBigDecimal(3);
       if (!oRSet.wasNull()) oRetVal.put(DB.pg_message, d.toString());
       s = oRSet.getString(4);

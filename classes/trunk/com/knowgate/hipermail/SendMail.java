@@ -323,12 +323,16 @@ public final class SendMail {
     		SessionHandler oHndl = new SessionHandler(oMacc,sMBoxDir);
     		DBStore oRDBMS = DBStore.open(oHndl.getSession(), oDbb.getProfileName(), sMBoxDir, oUsr.getString(DB.gu_user), oUsr.getString(DB.tx_pwd));
 			DBFolder oOutbox = oRDBMS.openDBFolder("outbox",DBFolder.READ_WRITE);
+
 			DBMimeMessage oMsg = DraftsHelper.draftMessage(oOutbox, oMacc.getString(DB.outgoing_server),
 														   oUsr.getString(DB.gu_workarea),
 														   oUsr.getString(DB.gu_user),
 														   sTextHtml==null ? "plain" : "html");
-			String sMsgId = DBCommand.queryStr(oCon, "SELECT "+DB.id_message+" FROM "+DB.k_mime_msgs+
-    								 	             " WHERE "+DB.gu_mimemsg+"='"+oMsg.getMessageGuid()+"'");
+
+			String sMsgId = oMsg.getContentID();
+
+    		if (null==sMsgId) throw new NullPointerException("MIME message identifier could not be set for message with GUID "+oMsg.getMessageGuid());
+
     		DraftsHelper.draftUpdate(oCon, oUsr.getInt(DB.id_domain),
     								 oUsr.getString(DB.gu_workarea),
     								 oMsg.getMessageGuid(), sMsgId,
