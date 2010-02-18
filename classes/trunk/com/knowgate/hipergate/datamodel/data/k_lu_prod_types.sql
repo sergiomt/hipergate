@@ -25,6 +25,7 @@ INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES
 INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES ('DBX','Outlook Express E-mail Folder','/images/mime/x_oe.gif',NULL);
 INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES ('DLL','Dynamic Link Library',NULL,'application/octet-stream');
 INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES ('DOC','Microsoft Word','/images/mime/x_msword.gif','application/msword');
+INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES ('DOCX','Microsoft Word 2007','/images/mime/x_msword.gif','application/vnd.openxmlformats-officedocument.wordprocessingml.document');
 INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES ('DOT','Microsoft Word Template','/images/mime/x_msword.gif','application/msword');
 INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES ('DTD','XML Document Type Definition','/images/mime/x_xml.gif','text/xml');
 INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES ('EMF','Enhaced Metafile',NULL,'image/x-emf');
@@ -95,6 +96,7 @@ INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES
 INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES ('QWD','QuarkXPress Web Document','/images/mime/vnd_quark.gif','application/vnd.quark.quarkxpress');
 INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES ('QWT','QuarkXPress Web Template','/images/mime/vnd_quark.gif','application/vnd.quark.quarkxpress');
 INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES ('RA','Video',NULL,NULL);
+INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES ('RAR','Compressed File','/images/mime/x_rar.gif','application/x-rar-compressed');
 INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES ('RAM','Video',NULL,'application/vnd.rn-realmedia');
 INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES ('RC','Windows Text Resources',NULL,NULL);
 INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES ('RDF','RDF','/images/mime/x_xml.gif','application/rdf+xml');
@@ -138,6 +140,7 @@ INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES
 INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES ('XHTML','XHTML',NULL,'text/xhtml');
 INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES ('XLK','Excel backup copy',NULL,NULL);
 INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES ('XLS','Microsoft Excel','/images/mime/x_msexcel.gif','application/x-msexcel');
+INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES ('XLSX','Microsoft Excel 2007','/images/mime/x_msexcel.gif','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES ('XML','XML Document','/images/mime/x_xml.gif','text/xml');
 INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES ('XPM','XPM Image',NULL,'image/xpm');
 INSERT INTO k_lu_prod_types (id_prod_type,de_prod_type,nm_icon,mime_type) VALUES ('XSL','XSL Style Sheet','/images/mime/x_xml.gif','text/xml');
