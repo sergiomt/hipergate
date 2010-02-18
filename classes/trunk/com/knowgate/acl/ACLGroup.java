@@ -254,7 +254,7 @@ public final class ACLGroup  extends DBPersist {
                                    DB.sn_passport+",u."+DB.tp_passport+",u."+
                                    DB.tx_comments,
                                    "x."+DB.gu_acl_group + "=? AND "+
-                                   "x."+DB.gu_user+"=u."+DB.gu_users,10);
+                                   "x."+DB.gu_user+"=u."+DB.gu_user,10);
 
     oUsers.load (oConn, aGroup);
     return oUsers;
