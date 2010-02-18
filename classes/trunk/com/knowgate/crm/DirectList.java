@@ -36,6 +36,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -312,7 +313,7 @@ public class DirectList extends DistributionList {
    * @throws StringIndexOutOfBoundsException If a row if malformed
    * @throws SQLException
    */
-  public void updateList(JDCConnection oConn, String sListId, short iStatus) throws IllegalArgumentException,IllegalStateException,ClassCastException,SQLException {
+  public void updateList(Connection oConn, String sListId, short iStatus) throws IllegalArgumentException,IllegalStateException,ClassCastException,SQLException {
     Statement oStmt;
     ResultSet oRSet;
     boolean bExists;
