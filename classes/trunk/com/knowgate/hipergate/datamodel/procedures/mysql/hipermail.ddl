@@ -46,7 +46,7 @@ BEGIN
 END
 GO;
 
-CREATE PROCEDURE k_sp_del_adhoc_mailing (MimeMsgId CHAR(32))
+CREATE PROCEDURE k_sp_del_adhoc_mailing (AdHocId CHAR(32))
 BEGIN
   DELETE FROM k_x_adhoc_mailing_list WHERE gu_mailing=AdHocId;
   DELETE FROM k_adhoc_mailings WHERE gu_mailing=AdHocId;
