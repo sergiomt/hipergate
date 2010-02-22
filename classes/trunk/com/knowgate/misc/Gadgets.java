@@ -1249,21 +1249,23 @@ public final class Gadgets {
    * @return List joined as a String
    */
   public static String join (Collection oList, String sDelimiter) {
-    // Join a LinkedList into a single String
+    // Join a Collection into a single String
     StringBuffer oBuff = new StringBuffer(oList.size()*(32+sDelimiter.length())+1);
     Iterator oIter = oList.iterator();
-
+    boolean bFirst = true;
+    
     while (oIter.hasNext()) {
+      if (bFirst) {
+      	bFirst = false;
+      } else {
+        oBuff.append(sDelimiter);
+      }
       oBuff.append(oIter.next());
-      oBuff.append(sDelimiter);
     } // wend()
 
     oIter = null;
 
-    if (oBuff.length()>0)
-      return oBuff.substring(0, oBuff.length()-sDelimiter.length()-1);
-    else
-      return "";
+    return oBuff.toString();
   } // join
 
   // ----------------------------------------------------------
