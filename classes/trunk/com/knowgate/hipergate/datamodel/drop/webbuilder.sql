@@ -18,6 +18,7 @@ ALTER TABLE k_pageset_answers DROP CONSTRAINT f2_pageset_answers;
 ALTER TABLE k_pageset_answers DROP CONSTRAINT f3_pageset_answers;
 ALTER TABLE k_pageset_answers DROP CONSTRAINT f4_pageset_answers;
 
+DROP VIEW v_pagesets_mailings;
 DROP TABLE k_datasheets_lookup;
 DROP TABLE k_pageset_answers;
 DROP TABLE k_pageset_datasheets;

@@ -1,5 +1,14 @@
 DROP VIEW v_contact_education_degree;
 DROP VIEW v_active_courses;
+
+DROP TABLE k_admission_lookup;
+DROP TABLE k_admission;
+DROP TABLE k_contact_experience;
+DROP TABLE k_contact_computer_science_lookup;
+DROP TABLE k_contact_computer_science;
+DROP TABLE k_contact_languages_lookup;
+DROP TABLE k_contact_languages;
+DROP TABLE k_contact_short_courses;
 DROP TABLE k_contact_education;
 DROP TABLE k_education_degree_lookup;
 DROP TABLE k_education_degree;

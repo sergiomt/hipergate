@@ -82,7 +82,6 @@ ALTER TABLE k_oportunities_changelog DROP CONSTRAINT f1_oportunities_changelog;
 
 ALTER TABLE k_sales_men DROP CONSTRAINT f1_sales_men;
 ALTER TABLE k_sales_men DROP CONSTRAINT f2_sales_men;
-ALTER TABLE k_sales_men DROP CONSTRAINT f3_sales_men;
 
 ALTER TABLE k_sales_men_lookup DROP CONSTRAINT f1_sales_men_lookup;
 

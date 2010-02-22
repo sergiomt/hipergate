@@ -10,6 +10,9 @@ ALTER TABLE k_projects DROP CONSTRAINT f3_projects;
 ALTER TABLE k_project_expand DROP CONSTRAINT f1_project_expand;
 ALTER TABLE k_project_expand DROP CONSTRAINT f2_project_expand;
 
+ALTER TABLE k_duties DROP CONSTRAINT f1_duties;
+ALTER TABLE k_duties DROP CONSTRAINT f2_duties;
+
 ALTER TABLE k_x_duty_resource DROP CONSTRAINT f1_x_duty_resource;
 
 ALTER TABLE k_duties_attach DROP CONSTRAINT f1_duties_attach;
