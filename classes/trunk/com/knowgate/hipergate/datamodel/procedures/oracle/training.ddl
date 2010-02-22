@@ -9,12 +9,17 @@ END k_sp_del_subject;
 GO;
 
 CREATE OR REPLACE PROCEDURE k_sp_del_acourse (CourseId CHAR) IS
+  GuAddress CHAR(32);
 BEGIN
-  DELETE FROM k_addresses WHERE gu_address IN (SELECT gu_address FROM k_academic_courses WHERE gu_acourse=CourseId);
+  SELECT gu_address INTO GuAddress FROM k_academic_courses WHERE gu_acourse=CourseId;
   DELETE FROM k_x_course_alumni WHERE gu_acourse=CourseId;
   DELETE FROM k_x_course_bookings WHERE gu_acourse=CourseId;
   DELETE FROM k_evaluations WHERE gu_acourse=CourseId;
   DELETE FROM k_absentisms WHERE gu_acourse=CourseId;
+  DELETE FROM k_academic_courses WHERE gu_acourse=CourseId;
+  IF GuAddress IS NOT NULL THEN
+    DELETE FROM k_addresses WHERE gu_address=GuAddress;
+  END IF;  
   DELETE FROM k_academic_courses WHERE gu_acourse=CourseId;
 END k_sp_del_acourse;
 GO;

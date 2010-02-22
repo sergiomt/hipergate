@@ -1,6 +1,7 @@
 CREATE OR REPLACE PROCEDURE k_sp_del_product (IdProduct CHAR) IS
+  GuAddress CHAR(32);
 BEGIN
-  DELETE FROM k_addresses WHERE gu_address IN (SELECT gu_address FROM k_products WHERE gu_product=IdProduct);
+  SELECT gu_address INTO GuAddress FROM k_products WHERE gu_product=IdProduct;
   DELETE FROM k_images WHERE gu_product=IdProduct;
   DELETE FROM k_x_cat_objs WHERE gu_object=IdProduct;
   DELETE FROM k_prod_keywords WHERE gu_product=IdProduct;
@@ -9,6 +10,10 @@ BEGIN
   DELETE FROM k_prod_attr WHERE gu_product=IdProduct;
   DELETE FROM k_prod_locats WHERE gu_product=IdProduct;
   DELETE FROM k_products WHERE gu_product=IdProduct;
+  IF GuAddress IS NOT NULL THEN
+    UPDATE k_academic_courses SET gu_address=NULL WHERE gu_acourse=IdProduct;
+    DELETE FROM k_addresses WHERE gu_address=GuAddress;
+  END IF;
 END k_sp_del_product;
 GO;
 
