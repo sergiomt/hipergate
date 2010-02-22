@@ -2410,24 +2410,33 @@ public final class DBSubset {
   public long getIntervalMilis (int iCol, int iRow)
     throws ArrayIndexOutOfBoundsException,ClassCastException {
     Object obj = (((Vector) oResults.get(iRow)).get(iCol));
-
+    // 	0 years 0 mons 0 days 0 hours 0 mins 0.00 secs
+    String s;
+   
     if (null==obj)
       return 0l;
     else if (obj.getClass().getName().equals("org.postgresql.util.PGInterval")) {
-      final long SecMilis = 1000l, MinMilis = 60000l, HourMilis=3600000l, DayMilis=86400000l;
-      long lInterval;
-      String[] aHMS;
-      String sInt = obj.toString();
-      int iDays = sInt.indexOf("days");
-      if (iDays>0) {
-        lInterval = Long.parseLong(sInt.substring(0,iDays-1));
-        aHMS = Gadgets.split(sInt.substring(iDays+5),':');
-      }
-      else {
-        lInterval =0;
-        aHMS = Gadgets.split(sInt,':');
-      }
-      lInterval += Long.parseLong(aHMS[0])*HourMilis+Long.parseLong(aHMS[1])*MinMilis+Long.parseLong(aHMS[2])*SecMilis;
+      final float SecMilis = 1000f;
+      final long MinMilis = 60000l, HourMilis=3600000l, DayMilis=86400000l;
+      long lInterval = 0;
+      String[] aParts = obj.toString().trim().split("\\s");
+	  for (int p=0; p<aParts.length-1; p+=2) {
+	  	Float fPart = new Float(aParts[p]);
+	  	if (fPart.floatValue()!=0f) {
+	  	  if (aParts[p+1].startsWith("year"))
+	  	  	lInterval += fPart.longValue()*DayMilis*365l;
+	  	  else if (aParts[p+1].startsWith("mon"))
+	  	  	lInterval += fPart.longValue()*DayMilis*30l;
+	  	  else if (aParts[p+1].startsWith("day"))
+	  	  	lInterval += fPart.longValue()*DayMilis;
+	  	  else if (aParts[p+1].startsWith("hour"))
+	  	  	lInterval += fPart.longValue()*HourMilis;
+	  	  else if (aParts[p+1].startsWith("min"))
+	  	  	lInterval += fPart.longValue()*MinMilis;
+	  	  else if (aParts[p+1].startsWith("sec"))
+	  	  	lInterval += new Float(fPart.floatValue()*SecMilis).longValue();	  	  	
+	  	}
+	  }
       return lInterval;
     }
     else
