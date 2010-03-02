@@ -32,7 +32,9 @@
 
 package com.knowgate.lucene;
 
+import java.sql.SQLException;
 import java.util.Comparator;
+import java.util.Properties;
 import java.io.File;
 import java.io.IOException;
 
@@ -83,22 +85,21 @@ public class ContactSearcher {
    * @throws IOException
    * @throws NullPointerException
    */
-  public static ContactRecord[] search (String sLuceneIndexPath,
+  public static ContactRecord[] search (Properties oProps,
                                      String sWorkArea, 
                                      String values[],
-                                     boolean obligatorio[],
-                                     int iLimit, Comparator oSortBy)
+                                     boolean obligatorio[])
     throws ParseException, IOException, NullPointerException {
 
-  if (null==sLuceneIndexPath)
+  if (null==oProps.getProperty("luceneindex"))
     throw new NullPointerException("ContactSearcher.search() luceindex parameter cannot be null");
 
     if (null==sWorkArea)
       throw new NullPointerException("ContactSearcher.search() workarea parameter cannot be null");
 
     if (DebugFile.trace) {
-      DebugFile.writeln("Begin ContactSearcher.search("+sLuceneIndexPath+","+
-                        sWorkArea+","+String.valueOf(iLimit)+")");
+      DebugFile.writeln("Begin ContactSearcher.search("+oProps.getProperty("luceneindex")+","+
+                        sWorkArea+","+String.valueOf(20)+")");
       DebugFile.incIdent();
     }
 
@@ -115,8 +116,18 @@ public class ContactSearcher {
 	}
 
 
-	String sSegments = Gadgets.chomp(sLuceneIndexPath,File.separator)+"k_contacts"+File.separator+sWorkArea;	
+	String sSegments = Gadgets.chomp(oProps.getProperty("luceneindex"),File.separator)+"k_contacts"+File.separator+sWorkArea;	
     if (DebugFile.trace) DebugFile.writeln("new IndexSearcher("+sSegments+")");
+	
+    File oDir = new File(sSegments);
+	if(!oDir.exists()){
+		try {
+			Indexer.rebuild(oProps, "k_contacts", sWorkArea);
+		} catch (Exception e) {
+			if(DebugFile.trace)
+				DebugFile.writeln(e.getMessage());
+		} 
+	}
     IndexSearcher oSearch = new IndexSearcher(sSegments);
     
     Document oDoc;
@@ -124,8 +135,7 @@ public class ContactSearcher {
     ContactRecord aRetArr[] = null;
     //Recorremos los resultados y los vamos añadiendo al map
     
-    if (iLimit>0) {
-      TopDocs oTopSet = oSearch.search(oQry, null, iLimit);
+      TopDocs oTopSet = oSearch.search(oQry, null, 20);
       if (oTopSet.scoreDocs!=null) {
         ScoreDoc[] oTopDoc = oTopSet.scoreDocs;
         int iDocCount = oTopDoc.length;
@@ -139,25 +149,7 @@ public class ContactSearcher {
       } else {
     	  aRetArr = null;
       }
-    } else {
-      Hits oHitSet = oSearch.search(oQry);
-      int iHitCount = oHitSet.length();
-      if (iHitCount>0) {
-        aRetArr = new ContactRecord[iHitCount];
-        for (int h=0; h<iHitCount; h++) {
-          oDoc = oHitSet.doc(h);
-          aRetArr[h] = new ContactRecord(oHitSet.score(h),oDoc.get("author"),
-        			  oDoc.get("workarea"),oDoc.get("guid"),oDoc.get("value"));
-        } // next
-      } else {
-        aRetArr = null;
-      }
-    } // fi (iLimit>0)
-
-   /* if (oSortBy!=null) {
-      Arrays.sort(aRetArr, oSortBy);
-    }*/
-
+   
     if (DebugFile.trace) {
       DebugFile.decIdent();
       if (null==aRetArr)

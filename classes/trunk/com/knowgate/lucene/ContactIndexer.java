@@ -35,13 +35,9 @@ package com.knowgate.lucene;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.lucene.index.IndexReader;
@@ -53,7 +49,6 @@ import org.apache.lucene.document.Field;
 
 import com.knowgate.dataobjs.DB;
 import com.knowgate.debug.DebugFile;
-import com.knowgate.dfs.FileSystem;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.misc.Gadgets;
 
@@ -159,7 +154,6 @@ public class ContactIndexer extends Indexer {
 			IOException, IllegalArgumentException, NoSuchFieldException,
 			IllegalAccessException, InstantiationException,
 			NullPointerException, SQLException {
-
 		String sDirectory = oProps.getProperty("luceneindex");
 
 		if (null == sDirectory) {
@@ -177,18 +171,9 @@ public class ContactIndexer extends Indexer {
 		File oDir = new File(sDirectory);
 		boolean bNewIndex = !oDir.exists();
 		if (bNewIndex) {
-			FileSystem oFs = new FileSystem();
-			try {
-				oFs.mkdirs("file://" + sDirectory);
-			} catch (Exception xcpt) {
-				if (DebugFile.trace)
-					DebugFile
-							.writeln(xcpt.getClass() + " " + xcpt.getMessage());
-				throw new FileNotFoundException("Could not create directory "
-						+ sDirectory + " " + xcpt.getMessage());
-			}
+			Indexer.rebuild(oProps, "k_contacts", sWorkArea);
 		}
-
+		
 		if (DebugFile.trace)
 			DebugFile.writeln("Class.forName("
 					+ oProps.getProperty("analyzer", DEFAULT_ANALYZER) + ")");
@@ -212,76 +197,6 @@ public class ContactIndexer extends Indexer {
 
 	} // addOrReplaceNewsMessage
 	
- /* public static void addContact(IndexWriter oIWrt, JDCConnection oCon,
-                            String sWorkArea, Bug oBug)
-    throws SQLException,IOException,ClassNotFoundException,NoSuchFieldException,
-           IllegalAccessException, InstantiationException, NullPointerException {
-    Short oSeverity;
-    Short oPriority;
-
-    if (null==oBug) throw new NullPointerException ("BugIndexer.addBug() Bug may not be null");
-    if (null==oCon) throw new NullPointerException ("BugIndexer.addBug() JDBC Connection may not be null");
-    if (oCon.isClosed()) throw new SQLException("BugIndexer.addBug() JDBC connection is closed");
-
-    if (oBug.isNull(DB.od_priority))
-      oPriority = null;
-    else
-      oPriority = new Short(oBug.getShort(DB.od_priority));
-
-    if (oBug.isNull(DB.od_severity))
-      oSeverity = null;
-    else
-      oSeverity = new Short(oBug.getShort(DB.od_severity));
-
-    addContact(oIWrt, oBug.getString(DB.gu_bug), oBug.getInt(DB.pg_bug),
-           sWorkArea, oBug.getString(DB.gu_project),
-           oBug.getStringNull(DB.tl_bug,""), oBug.getString(DB.gu_writer),
-           oBug.getStringNull(DB.nm_reporter,""), oBug.getCreationDate(oCon),
-           oBug.getStringNull(DB.tp_bug,null), oPriority, oSeverity,
-           oBug.getStringNull(DB.tx_status, null), oBug.getStringNull(DB.tx_comments,null),
-           oBug.getStringNull(DB.tx_bug_brief,null));
-  }*/
-
-  /**
-   * Add bug to index
-   * @param oProps Properties
-   * @param oCon JDCConnection
-   * @param sWorkArea String
-   * @param oBug Bug
-   * @throws SQLException
-   * @throws IOException
-   * @throws ClassNotFoundException
-   * @throws NoSuchFieldException
-   * @throws IllegalAccessException
-   * @throws InstantiationException
-   * @throws NullPointerException
-   * @throws NoSuchFieldException
-   */
-  /*public static void addContact(Properties oProps, JDCConnection oCon,
-                            String sWorkArea, Bug oBug)
-    throws SQLException,IOException,ClassNotFoundException,NoSuchFieldException,
-           IllegalAccessException, InstantiationException, NullPointerException,
-           NoSuchFieldException {
-
-
-    String sDirectory = oProps.getProperty("luceneindex");
-
-    if (null==sDirectory)
-     throw new NoSuchFieldException ("Cannot find luceneindex property");
-
-     sDirectory = Gadgets.chomp(sDirectory, File.separator) + DB.k_bugs + File.separator + sWorkArea;
-     File oDir = new File(sDirectory);
-     if (!oDir.exists()) {
-       FileSystem oFS = new FileSystem();
-       try { oFS.mkdirs(sDirectory); } catch (Exception e) { throw new IOException(e.getClass().getName()+" "+e.getMessage()); }
-    }  // fi
-
-    Class oAnalyzer = Class.forName(oProps.getProperty("analyzer" , DEFAULT_ANALYZER));
-
-    IndexWriter oIWrt = new IndexWriter(sDirectory, (Analyzer) oAnalyzer.newInstance(), true);
-    addContact(oIWrt, oCon, sWorkArea, oBug);
-    oIWrt.close();
-  } // addBug*/
 
   /**
    * Delete a bug with a given GUID
