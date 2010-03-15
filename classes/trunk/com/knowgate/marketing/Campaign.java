@@ -86,7 +86,7 @@ public class Campaign extends DBPersist {
 	DBSubset oActivities = new DBSubset(DB.k_activities, DB.gu_activity, DB.gu_campaign+"=?", 100);
 	int iActivities = oActivities.load(oConn, new Object[]{getString(DB.gu_campaign)});
 	Activity oActy = new Activity();
-	for (int a=0; a<=iActivities; a++) {
+	for (int a=0; a<iActivities; a++) {
 	  oActy.replace(DB.gu_activity, oActivities.getString(0,a));
 	  oActy.delete(oConn);
 	} // next
