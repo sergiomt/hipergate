@@ -41,6 +41,7 @@ import java.sql.SQLException;
 
 import com.knowgate.dataobjs.DBBind;
 import com.knowgate.debug.DebugFile;
+import com.knowgate.debug.StackTraceUtil;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.jdc.JDCActivityInfo;
 import com.knowgate.jdc.JDCProcessInfo;
@@ -230,13 +231,11 @@ public class HttpSchedulerServlet extends HttpServlet {
           if (null!=oDaemon.stopDate()) sStopDate = oDaemon.stopDate().toString();
           oDaemon=null;
           sStatus = "stop";
-        } catch (IllegalStateException ist) {
+        } catch (Exception xcpt) {
             bError = true;
-            DebugFile.writeln("HttpSchedulerServlet.doGet(stop) : IllegalStateException " + ist.getMessage());
-            writeXML(response, "<scheduler><error><![CDATA["+ist.getMessage()+"]]></error></scheduler>");
-        } catch (SQLException sql) {
-            DebugFile.writeln("HttpSchedulerServlet.doGet(stop) : SQLException " + sql.getMessage());
-            writeXML(response, "<scheduler><error><![CDATA["+sql.getMessage()+"]]></error></scheduler>");
+            DebugFile.writeln("HttpSchedulerServlet.doGet(stop) : "+xcpt.getClass().getName()+" " + xcpt.getMessage());
+            try { DebugFile.writeln(StackTraceUtil.getStackTrace(xcpt)); } catch (Exception ignore) {}
+            writeXML(response, "<scheduler><error><![CDATA["+xcpt.getMessage()+"]]></error></scheduler>");
         }
         if (null!=oDaemon) {
           if (oDaemon.isAlive()) { try { oDaemon.stop(); } catch (Exception ignore) {} }
