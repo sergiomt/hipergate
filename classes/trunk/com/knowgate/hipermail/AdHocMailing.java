@@ -237,7 +237,10 @@ public class AdHocMailing extends DBPersist {
   	    replace(DB.nm_mailing, oSource.getString(DB.nm_mailing)+" (2)");  	
   	  }
   	} catch (org.apache.oro.text.regex.MalformedPatternException neverthrown) { }
-  	replace(DB.pg_mailing, DBBind.nextVal(oConn, "seq_k_adhoc_mailings"));
+  	if (oConn.getDataBaseProduct()==JDCConnection.DBMS_MSSQL || oConn.getDataBaseProduct()==JDCConnection.DBMS_MYSQL)
+  	  replace(DB.pg_mailing, DBBind.nextVal(oConn, "seq_k_adhoc_mail"));
+  	else
+  	  replace(DB.pg_mailing, DBBind.nextVal(oConn, "seq_k_adhoc_mailings"));
   	store(oConn);
   	setCreationDate(oConn, dtNow);
 

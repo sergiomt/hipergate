@@ -112,8 +112,9 @@ public class HtmlMimeBodyPart {
     if (DebugFile.trace) DebugFile.writeln("Images NodeList.size() = " + String.valueOf(nImgs));
 
     for (int i=0; i<nImgs; i++) {
-
-        sSrc = (((ImageTag) oCollectionList.elementAt(i)).extractImageLocn()).replace('\\','/');
+		ImageTag oImgTag = (ImageTag) oCollectionList.elementAt(i);
+			
+        sSrc = oImgTag.extractImageLocn().replace('\\','/');
 
         // Keep a reference to every related image name so that the same image is not included twice in the message
         if (!oImgs.containsKey(sSrc)) {
@@ -139,8 +140,9 @@ public class HtmlMimeBodyPart {
         } // fi (!oImgs.containsKey(sSrc))
 
         try {
-          Pattern oPattern = oCompiler.compile(Gadgets.replace(((ImageTag) oCollectionList.elementAt(i)).extractImageLocn(),'\\',"\\\\"),
-            								   Perl5Compiler.SINGLELINE_MASK);
+          String sPattern = Gadgets.replace(oImgTag.extractImageLocn(),'\\',"\\\\");
+          if (DebugFile.trace) DebugFile.writeln("Perl5Compiler.compile(\""+sPattern+"\", Perl5Compiler.SINGLELINE_MASK)");
+          Pattern oPattern = oCompiler.compile(sPattern, Perl5Compiler.SINGLELINE_MASK);
           oSrcSubs.setSubstitution(sPreffix+oImgs.get(sSrc));
           if (DebugFile.trace) DebugFile.writeln("Util.substitute([PatternMatcher],"+ sSrc + ","+sPreffix+oImgs.get(sSrc)+",...)");
             sBodyCid = Util.substitute(oMatcher, oPattern, oSrcSubs, sBodyCid);
