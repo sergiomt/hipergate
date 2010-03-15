@@ -62,8 +62,11 @@ import java.util.Properties;
 public class AtomFeeder {
   private int iMaxBatchSize;
 
+  /**
+   * Create an Atom Feeder with a default batch size of 10000 atoms
+   */
   public AtomFeeder() {
-    iMaxBatchSize = 5;
+    iMaxBatchSize = 10000;
   }
 
   // ----------------------------------------------------------

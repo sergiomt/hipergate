@@ -129,6 +129,7 @@ public abstract class Event extends DBPersist {
 	String sGuWorkArea;
 	Integer oIdDomain;
 	Statement oStmt;
+	int nCmmds = 0;
 	
 	if (DebugFile.trace) {
 	  DebugFile.writeln("Begin Event.trigger([JDCConnection], "+String.valueOf(iDomainId)+", "+sEventId.toLowerCase()+")");
@@ -137,22 +138,31 @@ public abstract class Event extends DBPersist {
 	
     if (null==oCmmdClasses) {
       oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+	  if (DebugFile.trace)
+	    DebugFile.writeln("Statement.executeQuery(SELECT "+DB.id_command+","+DB.nm_class+" FROM "+DB.k_lu_job_commands+")");
       oRSet = oStmt.executeQuery("SELECT "+DB.id_command+","+DB.nm_class+" FROM "+DB.k_lu_job_commands);
       oCmmdClasses = new HashMap<String,Class>(113);
       while (oRSet.next()) {
+      	if (DebugFile.trace) DebugFile.writeln("Caching "+oRSet.getString(1)+" "+oRSet.getString(2));
         try {
           oCmmdClasses.put(oRSet.getString(1), Class.forName(oRSet.getString(2)));  
+          nCmmds++;
         } catch (ClassNotFoundException cnfe) {
 	      if (DebugFile.trace) DebugFile.writeln("Class "+oRSet.getString(2)+" not found for command "+oRSet.getString(1));
         }
+        if (DebugFile.trace) DebugFile.writeln(oRSet.getString(2)+" cached");
       } // wend
       oRSet.close();
       oStmt.close();
     } // fi
-    
+
+    if (DebugFile.trace) DebugFile.writeln(String.valueOf(nCmmds)+" commands found at "+DB.k_lu_job_commands+" table");
+	    	
     if (null==oEventsPerDomain) {
       oEventsPerDomain = new HashMap<Integer,HashMap<String,String>>(113);
       oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+	  if (DebugFile.trace)
+	    DebugFile.writeln("Statement.executeQuery(SELECT "+DB.id_domain+","+DB.id_event+","+DB.id_command+" FROM "+DB.k_events+" WHERE "+DB.bo_active+"<>0)");
 	  oRSet = oStmt.executeQuery("SELECT "+DB.id_domain+","+DB.id_event+","+DB.id_command+" FROM "+DB.k_events+" WHERE "+DB.bo_active+"<>0");
 	  while (oRSet.next()) {
 	  	oIdDomain = new Integer(oRSet.getInt(1));
@@ -175,6 +185,7 @@ public abstract class Event extends DBPersist {
 	        if (null==oEventCache) oEventCache = new DistributedCachePeer();
 	        Event oEvnt = (Event) oEventCache.get(sEventId.toLowerCase()+"("+String.valueOf(iDomainId)+")");
 	        if ((null==oEvnt)) {
+	          if (DebugFile.trace) DebugFile.writeln("Creating instance of "+oEvntClss.getName());
 	  	      oEvnt = (Event) oEvntClss.newInstance();
 	          oEvnt.load(oConn, new Object[]{new Integer(iDomainId), sEventId.toLowerCase()});
 		      oEventCache.put(sEventId.toLowerCase()+"("+String.valueOf(iDomainId)+")",oEvnt);

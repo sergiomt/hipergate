@@ -565,7 +565,9 @@ public class MimeSender extends Job {
 	  
       // Send message here
       String sTestMode = getParameter("testmode");
-      if (!Activated.equals(sTestMode) && !Yes.equals(sTestMode)) {
+      if (Activated.equals(sTestMode) || Yes.equals(sTestMode)) {
+		if (DebugFile.trace) DebugFile.writeln("Test mode activated, skiping recipient "+oAtm.getStringNull(DB.tx_email,""));
+      } else {
         oHndlr.sendMessage(oSentMsg);
       }
 

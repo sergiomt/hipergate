@@ -43,6 +43,7 @@ import java.sql.Types;
 
 import java.util.Date;
 import java.util.Properties;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -220,9 +221,11 @@ public class SchedulerDaemon extends Thread {
     try {
 
     if (null==oDbb) oDbb = new DBBind(sProfile);
-    // Disable connection reaper to avoid connections being closed in the middle of job execution
-    oDbb.connectionPool().setReaperDaemonDelay(0l);
-    // Allocate four connections per thread
+
+    oJcn = oDbb.getConnection("SchedulerDaemon",true);
+	Event.trigger(oJcn, 1024, "startschedulerdaemon", new HashMap(), oEnvProps);
+	oJcn.close("SchedulerDaemon");
+	
 	oDbb.connectionPool().setPoolSize(4*nThreads);
 	// No more that ten times the number of threads allowed for connections
 	oDbb.connectionPool().setMaxPoolSize(10*nThreads);
@@ -305,12 +308,12 @@ public class SchedulerDaemon extends Thread {
             oUpdt.close();
           } // fi
 
-          // ****************************************
-          // Count jobs pending of begining execution
+          // ***************************************************
+          // Count jobs running or pending of begining execution
 
           if (DebugFile.trace) DebugFile.writeln("Statement.executeQuery(SELECT COUNT(*) FROM k_jobs WHERE id_status=" + String.valueOf(Job.STATUS_PENDING) + " AND ("+DB.dt_execution+" IS NULL OR "+DB.dt_execution+"<="+DBBind.Functions.GETDATE+")) on connection with process id. "+oJcn.pid());
 
-		  iJobCount = DBCommand.queryCount(oJcn, "*", DB.k_jobs, DB.id_status + "=" + String.valueOf(Job.STATUS_PENDING)+" AND ("+DB.dt_execution+" IS NULL OR "+DB.dt_execution+"<="+DBBind.Functions.GETDATE+")");
+		  iJobCount = DBCommand.queryCount(oJcn, "*", DB.k_jobs, DB.id_status + "=" + String.valueOf(Job.STATUS_RUNNING) + " OR (" + DB.id_status + "=" + String.valueOf(Job.STATUS_PENDING)+" AND ("+DB.dt_execution+" IS NULL OR "+DB.dt_execution+"<="+DBBind.Functions.GETDATE+"))");
 
 		  oJcn.close("SchedulerDaemon");
 
@@ -336,6 +339,10 @@ public class SchedulerDaemon extends Thread {
 		    oJcn=null;
 		  } finally {
 		  	try { if (null!=oJcn) oJcn.close("SchedulerDaemon.AtomFeeder"); } catch (Exception ignore) { }
+		  }
+
+		  if (DebugFile.trace) {
+		    DebugFile.writeln("Queue has "+String.valueOf(oQue.size())+" atoms");
 		  }
 
           if (oQue.size()>0) {
@@ -373,6 +380,10 @@ public class SchedulerDaemon extends Thread {
     if (DebugFile.trace) DebugFile.writeln("JDConnection.close()");
 
 	if (oJcn!=null) { if (!oJcn.isClosed()) { oJcn.close("SchedulerDaemon"); } oJcn = null; }
+
+    oJcn = oDbb.getConnection("SchedulerDaemon",true);
+	Event.trigger(oJcn, 1024, "stopschedulerdaemon", new HashMap(), oEnvProps);
+	oJcn.close("SchedulerDaemon");
 
     oDbb.close();
     oDbb=null;
@@ -574,6 +585,11 @@ public class SchedulerDaemon extends Thread {
   public synchronized void stopAll(long lDelayMilis)
     throws IllegalStateException,SQLException {
 
+	if (DebugFile.trace) {
+	  DebugFile.writeln("Begin SchedulerDaemon.stopAll("+String.valueOf(lDelayMilis)+")");
+	  DebugFile.incIdent();
+	}    
+
     if (null==oThreadPool)
       throw new IllegalStateException("SchedulerDaemon.stopAll() Thread pool not initialized, call start() method before trying to stop worker threads");
 
@@ -596,6 +612,10 @@ public class SchedulerDaemon extends Thread {
       oThreadPool.stopAll();
     }
 
+	if (DebugFile.trace) {
+	  DebugFile.decIdent();
+	  DebugFile.writeln("End SchedulerDaemon.stopAll()");
+	}    
   } // stopAll
 
   // ---------------------------------------------------------------------------

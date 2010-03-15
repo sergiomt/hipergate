@@ -67,6 +67,7 @@ import javax.mail.internet.MimeMultipart;
 import org.htmlparser.Parser;
 import org.htmlparser.Node;
 import org.htmlparser.Attribute;
+import org.htmlparser.util.NodeList;
 import org.htmlparser.util.NodeIterator;
 import org.htmlparser.util.ParserException;
 import org.htmlparser.nodes.TagNode;
@@ -303,10 +304,13 @@ public class EmailSender extends Job {
           oAttr.toString(oBuffer);
         }
         oBuffer.append(">");
-        for (NodeIterator i = oNode.getChildren().elements(); i.hasMoreNodes(); ) {
-          Node oChildNode = i.nextNode();
-          oBuffer.append(parseNode(oChildNode, oCompiler, oMatcher));
-        } // next
+        NodeList oChilds = oNode.getChildren();
+        if (oChilds!=null) {
+          for (NodeIterator i = oNode.getChildren().elements(); i.hasMoreNodes(); ) {
+            Node oChildNode = i.nextNode();
+            oBuffer.append(parseNode(oChildNode, oCompiler, oMatcher));
+          } // next
+        } // fi
         oBuffer.append(oCTag.getEndTag().toTagHtml());
         
       } catch (ParserException xcpt) {

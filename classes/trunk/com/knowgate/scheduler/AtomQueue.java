@@ -49,10 +49,10 @@ public class AtomQueue extends LinkedList<Atom> {
   private static final long serialVersionUID = 1l;
   
   /**
-   * Create an empty queue with a maximum of 1000 atoms
+   * Create an empty queue with a maximum of 10000 atoms
    */
   public AtomQueue() {
-    iMaxAtoms = 1000;
+    iMaxAtoms = 10000;
   }
 
   /**
@@ -90,13 +90,24 @@ public class AtomQueue extends LinkedList<Atom> {
    */
 
   public synchronized Atom pop() {
+	if (DebugFile.trace) {
+	  DebugFile.writeln("Begin AtomQueue.pop()");
+	  DebugFile.incIdent();
+	}
     Atom oAtm;
-    if (this.size()>0) {
+    if (size()>0) {
       oAtm = (Atom) getFirst();
       removeFirst();
     } else {
       oAtm = null;
     }
+	if (DebugFile.trace) {
+	  DebugFile.decIdent();
+	  if (oAtm==null)
+	    DebugFile.writeln("End AtomQueue.pop() : null");
+	  else
+	    DebugFile.writeln("End AtomQueue.pop() : "+String.valueOf(oAtm.getInt(DB.pg_atom)));
+	}
     return oAtm;
   } // pop
 
