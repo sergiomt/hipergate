@@ -1172,6 +1172,8 @@ public final class DB {
 
   // k_contact_education
   public static final String bo_completed = "bo_completed";
+  public static final String lv_language_spoken = "lv_language_spoken";
+  public static final String lv_language_written = "lv_language_written";
   
   /**i2e 15-12-2009**/
   //k_contact_short_courses
@@ -1185,8 +1187,6 @@ public final class DB {
   
   //k_contact_languages
   public static final String lv_language_degree = "lv_language_degree";
-  public static final String lv_language_written = "lv_language_written";
-  public static final String lv_language_spoken = "lv_language_spoken";
 
   //k_contact_experience
   public static final String gu_experience = "gu_experience";
