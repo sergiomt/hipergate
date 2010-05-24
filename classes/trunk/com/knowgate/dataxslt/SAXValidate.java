@@ -56,15 +56,18 @@ public class SAXValidate extends DefaultHandler
    private static final String
            DEFAULT_PARSER = "org.apache.xerces.parsers.SAXParser";
    private boolean schemavalidate = false;
+   private boolean valid;
 
    /**
     * Construye una instancia de la clase handler
     */
    public SAXValidate(boolean validateschema) {
      this.schemavalidate = validateschema;
+     this.valid = true;
    }
 
    public void error (SAXParseException exception) throws SAXException {
+     this.valid = false;
      System.out.println("ERROR: " + exception.getMessage());
    }
 

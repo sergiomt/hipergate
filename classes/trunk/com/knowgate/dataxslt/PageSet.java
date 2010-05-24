@@ -52,6 +52,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.StringWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.UTFDataFormatException;
 
 import java.net.MalformedURLException;
@@ -87,7 +88,7 @@ import com.knowgate.dataobjs.DBSubset;
 /**
  * PageSet DOMDocument
  * @author Sergio Montoro Ten
- * @version 2.1
+ * @version 5.5
  */
 public class PageSet extends DOMDocument {
 
@@ -189,7 +190,7 @@ public class PageSet extends DOMDocument {
 
       if (DebugFile.trace) DebugFile.writeln("parseURI (" + sPageSetURI  + ");");
 
-      parseURI(sPageSetURI);
+      parseURI(sPageSetURI, "UTF-8");
     }
     else {
       oPFile = new File(sPageSetURI);
@@ -389,8 +390,15 @@ public class PageSet extends DOMDocument {
     // Find <pages> node
     oPagesNode = seekChildByName(oPageSetNode, "pages");
 
-    if (oPagesNode==null)
+    if (oPagesNode==null) {
+      if (DebugFile.trace) {
+        DebugFile.writeln("DOMException <pages> node not found");
+        ByteArrayOutputStream baOut = new ByteArrayOutputStream();
+        try { print(baOut); } catch (IOException ignore) {}
+        DebugFile.write("\n"+baOut.toString()+"\n");
+      }
       throw new DOMException(DOMException.NOT_FOUND_ERR, "<pages> node not found");
+    }
 
     oNodeList = ((Element)oPagesNode).getElementsByTagName("page");
 
@@ -419,11 +427,11 @@ public class PageSet extends DOMDocument {
    * @return vector of Page objects
    * @throws DOMException If <pages> node is not found
    */
-  public Vector pages() throws DOMException {
+  public Vector<Page> pages() throws DOMException {
     Node oPagesNode;
     Element oContainers;
     NodeList oNodeList;
-    Vector oLinkVctr;
+    Vector<Page> oLinkVctr;
 
     if (DebugFile.trace) {
       DebugFile.writeln("Begin PageSet.pages()");
@@ -1250,7 +1258,7 @@ public class PageSet extends DOMDocument {
     if (DebugFile.trace) {
       DebugFile.writeln("End Pageset.save("+sFilePath+")");
     }
-
+	
     FileOutputStream oOutFile = new FileOutputStream(sFilePath, false);
 
     print(oOutFile);

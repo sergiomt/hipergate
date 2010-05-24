@@ -144,7 +144,7 @@ public class Block extends DOMSubDocument {
   /**
    * @return Vector with Paragraph objects for this Block.
    */
-  public Vector paragraphs() {
+  public Vector<Paragraph> paragraphs() {
     Node oParagraphsNode = null;
     NodeList oNodeList;
     Vector oLinkVctr;
@@ -155,7 +155,7 @@ public class Block extends DOMSubDocument {
 
     oNodeList = ((Element) oParagraphsNode).getElementsByTagName("paragraph");
 
-    oLinkVctr = new Vector(oNodeList.getLength());
+    oLinkVctr = new Vector<Paragraph>(oNodeList.getLength());
 
     for (int i=0; i<oNodeList.getLength(); i++)
       oLinkVctr.add(new Paragraph(oNodeList.item(i)));

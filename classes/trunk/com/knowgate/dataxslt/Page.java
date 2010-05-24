@@ -232,7 +232,7 @@ public class Page extends DOMSubDocument {
    * block id attribute. The metablock id and the block id are concatenated
    * @throws DOMException If &lt;blocks&gt; node is not found
    */
-  public Vector blocks()
+  public Vector<Block> blocks()
     throws DOMException {
 
     if (DebugFile.trace) {
@@ -244,7 +244,7 @@ public class Page extends DOMSubDocument {
     Node oBlksNode = null;
     NodeList oNodeList = null;
     int iNodeListLen = 0;
-    Vector oLinkVctr = null;
+    Vector<Block> oLinkVctr = null;
     SortedMap oSortedMap = new TreeMap();
 
     if (DebugFile.trace) {
@@ -269,7 +269,7 @@ public class Page extends DOMSubDocument {
     if (DebugFile.trace)
       DebugFile.writeln(String.valueOf(iNodeListLen) + " blocks found.");
 
-    oLinkVctr = new Vector(iNodeListLen);
+    oLinkVctr = new Vector<Block>(iNodeListLen);
 
     for (int i=0; i<iNodeListLen; i++) {
 
@@ -298,7 +298,7 @@ public class Page extends DOMSubDocument {
             if (((Element)oNodeList.item(i)).getElementsByTagName("metablock").item(0).getFirstChild().getNodeValue().length()==0)
               DebugFile.writeln("ERROR: MetaBlock for Block " + String.valueOf(i) + " id attribute is empty.");
             else
-              DebugFile.writeln("SortedMap.put(" + ((Element)oNodeList.item(i)).getElementsByTagName("metablock").item(0).getFirstChild().getNodeValue() + sPaddedID + ", " + oNodeList.item(i).toString());
+              DebugFile.writeln("SortedMap.put(" + ((Element)oNodeList.item(i)).getElementsByTagName("metablock").item(0).getFirstChild().getNodeValue() + sPaddedID + ", " + oNodeList.item(i).toString()+")");
       }
 
       oSortedMap.put(((Element)oNodeList.item(i)).getElementsByTagName("metablock").item(0).getFirstChild().getNodeValue() + sPaddedID, oNodeList.item(i));
@@ -318,7 +318,10 @@ public class Page extends DOMSubDocument {
 
     if (DebugFile.trace) {
       DebugFile.decIdent();
-      DebugFile.writeln("End Page.blocks()");
+      if (null==oLinkVctr)
+        DebugFile.writeln("End Page.blocks() : null");
+      else
+        DebugFile.writeln("End Page.blocks() : "+String.valueOf(oLinkVctr.size()));
     }
 
     return oLinkVctr;
@@ -344,7 +347,7 @@ public class Page extends DOMSubDocument {
    * Blocks are returned in source order. Independently of theit id attribute value.
    * @throws DOMException If &lt;blocks&gt; node is not found
    */
-  public Vector blocks(String sMetaBlockId, String sTag, String sZone)
+  public Vector<Block> blocks(String sMetaBlockId, String sTag, String sZone)
     throws DOMException {
 
     if (DebugFile.trace) {
@@ -357,7 +360,7 @@ public class Page extends DOMSubDocument {
     Node oBlksNode = null;
     NodeList oNodeList = null;
     int iNodeListLen = 0;
-    Vector oLinkVctr = null;
+    Vector<Block> oLinkVctr = null;
 
     if (DebugFile.trace) {
       if (null==oNode.getFirstChild())
@@ -381,7 +384,7 @@ public class Page extends DOMSubDocument {
     if (DebugFile.trace)
       DebugFile.writeln(String.valueOf(iNodeListLen) + " total blocks found.");
 
-    oLinkVctr = new Vector();
+    oLinkVctr = new Vector<Block>();
 
     for (int i=0; i<iNodeListLen; i++) {
       oAux = oNodeList.item(i);
@@ -444,6 +447,11 @@ public class Page extends DOMSubDocument {
     NodeList oNodeList = null;
     int iNodeListLen = 0;
 
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin Page.blockIds()");
+      DebugFile.incIdent();
+    }
+
     for (oBlksNode=oNode.getFirstChild(); oBlksNode!=null; oBlksNode=oBlksNode.getNextSibling())
       if (Node.ELEMENT_NODE==oBlksNode.getNodeType())
         if (oBlksNode.getNodeName().equals("blocks")) break;
@@ -455,6 +463,14 @@ public class Page extends DOMSubDocument {
 
     for (int i=0; i<iNodeListLen; i++)
       aIds[i] = Integer.parseInt(oNodeList.item(i).getAttributes().getNamedItem("id").getNodeValue());
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      if (null==aIds)
+        DebugFile.writeln("End Page.blockIds() : null");
+      else
+        DebugFile.writeln("End Page.blockIds() : "+String.valueOf(aIds.length));
+    }
 
     return aIds;
   } // blockIds
@@ -537,22 +553,30 @@ public class Page extends DOMSubDocument {
 
     // Check that existing and new block permutations have same count of blocks
     if (aOldBlcksPerm.length!=aNewBlcksPerm.length)
-      throw new ArrayIndexOutOfBoundsException("Length of Blocks array does not match Block count for already loaded Document");
+      throw new ArrayIndexOutOfBoundsException("Length of new Blocks array "+String.valueOf(aNewBlcksPerm.length)+" does not match Block count for already loaded Document "+String.valueOf(aOldBlcksPerm.length));
 
-    Vector vOldPerm = blocks();
-    int iBlckCount = vOldPerm.size();
+    Vector<Block> vOldPerm = blocks();
+    final int iBlckCount = vOldPerm.size();
+
+    if (iBlckCount!=aNewBlcksPerm.length)
+      throw new ArrayIndexOutOfBoundsException("Length of former Blocks vector "+String.valueOf(iBlckCount)+" does not match Block count for new permutation "+String.valueOf(aNewBlcksPerm.length));
 
     if (iBlckCount>0) {
-      Vector vNewPerm = new Vector(iBlckCount);
+      Vector<Block> vNewPerm = new Vector<Block>(iBlckCount);
 
       // Create a Vector with Blocks cloned from the existing ones but in the new order
       for (int blck=0; blck<iBlckCount; blck++) {
+    	if (DebugFile.trace) {
+          DebugFile.writeln("Permuting block "+String.valueOf(blck));
+        }
         iCurrent = aNewBlcksPerm[blck];
 
         for (int oldpos=0; oldpos<iBlckCount; oldpos++) {
-
           if (aOldBlcksPerm[oldpos]==iCurrent) {
-            vNewPerm.add (new Block(((Block)vOldPerm.get(oldpos)).getNode().cloneNode(true)));
+     		if (DebugFile.trace) {
+              DebugFile.writeln("Former block "+String.valueOf(oldpos)+" was permuted to "+String.valueOf(vNewPerm.size()));
+        	}
+            vNewPerm.add (new Block(vOldPerm.get(oldpos).getNode().cloneNode(true)));
             break;
           }
         } // next (oldpos)
@@ -574,11 +598,13 @@ public class Page extends DOMSubDocument {
          if (null==oBlksNode)
            DebugFile.writeln("ERROR: blocks node not found");
 
-       // Remove all old Blocks
+       // Remove old blocks
+       if (DebugFile.trace) DebugFile.writeln("Removing old blocks...");
        for (int chld=0; chld<iBlckCount; chld++)
          oBlksNode.removeChild (((Block)vOldPerm.get(chld)).getNode());
 
        // Re-insert previously cloned Blocks
+       if (DebugFile.trace) DebugFile.writeln("Re-inserting previously cloned blocks...");
        Block oClon;
        for (int chld=0; chld<iBlckCount; chld++) {
          oClon = ( (Block) vNewPerm.get(chld));

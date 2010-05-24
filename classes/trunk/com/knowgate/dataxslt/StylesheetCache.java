@@ -161,7 +161,7 @@ public class StylesheetCache {
     if (DebugFile.trace) {
       DebugFile.writeln("Begin StylesheetCache.setParameters(Transformer, Properties)");
       if (null==oXSL) throw new NullPointerException("StylesheetCache.setParameters() Transformer may not be null");
-      if (null==oXSL) throw new NullPointerException("StylesheetCache.setParameters() Properties may not be null");
+      if (null==oProps) throw new NullPointerException("StylesheetCache.setParameters() Properties may not be null");
       DebugFile.writeln(oProps.toString());
       DebugFile.incIdent();
     }
@@ -213,7 +213,19 @@ public class StylesheetCache {
 
     long lElapsed = 0;
 
+    if (null==sStyleSheetPath)
+      	throw new NullPointerException ("StylesheetCache.transform() style sheet path may not be null");
+
+    if (null==oXMLInputStream)
+      	throw new NullPointerException ("StylesheetCache.transform() InputStream may not be null");
+
+    if (null==oOutputStream)
+      	throw new NullPointerException ("StylesheetCache.transform() OutputStream may not be null");
+
     if (DebugFile.trace) {
+      if (!new File(sStyleSheetPath).exists())
+      	throw new FileNotFoundException ("StylesheetCache.transform() "+sStyleSheetPath);
+
       lElapsed = System.currentTimeMillis();
 
       DebugFile.writeln("Begin StylesheetCache.transform(" + sStyleSheetPath + ", InputStream, Properties)");
