@@ -236,6 +236,7 @@ public class WorkArea extends DBPersist {
    * <tr><td>DELETE k_thesauri_lookup</td></tr>
    * <tr><td>DELETE k_bank_accounts</td></tr>
    * <tr><td>DELETE k_bank_accounts_lookup</td></tr>
+   * <tr><td>DELETE k_urls</td></tr>
    * <tr><td>DELETE k_x_app_workarea</td></tr>
    * <tr><td>DELETE k_workareas</td></tr>
    * </table>
@@ -1055,6 +1056,18 @@ public class WorkArea extends DBPersist {
       if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(" + sSQL + ")");
       oStmt.executeUpdate(sSQL);
       oStmt.close();	  
+    }
+
+    // Borrar las URLs
+    // Nuevo para la 5.5
+    if (DBBind.exists(oConn, DB.k_urls, "U")) {
+            
+      oStmt = oConn.createStatement();
+      try { if (oConn.getDataBaseProduct()!=JDCConnection.DBMS_POSTGRESQL) oStmt.setQueryTimeout(30); } catch (SQLException sqle) {}
+      sSQL = "DELETE FROM " + DB.k_urls + " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "'";
+      if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(" + sSQL + ")");
+      oStmt.executeUpdate(sSQL);
+      oStmt.close();
     }
     
     // -----------------------------------------------------------------------------------
