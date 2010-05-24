@@ -53,12 +53,17 @@ import javax.mail.Folder;
 import javax.mail.MessagingException;
 import javax.mail.StoreClosedException;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.AddressException;
 
+import org.htmlparser.util.ParserException;
+
+/*
 import org.htmlparser.Parser;
 import org.htmlparser.Node;
 import org.htmlparser.util.NodeIterator;
-import org.htmlparser.util.ParserException;
+
 import org.htmlparser.tags.ImageTag;
+*/
 
 import org.apache.oro.text.regex.*;
 
@@ -85,6 +90,7 @@ import com.knowgate.hipermail.DBInetAddr;
 import com.knowgate.hipermail.DBMimeMessage;
 import com.knowgate.hipermail.DraftsHelper;
 import com.knowgate.hipermail.MailAccount;
+import com.knowgate.hipermail.HtmlMimeBodyPart;
 import com.knowgate.hipermail.SessionHandler;
 import com.knowgate.scheduler.Job;
 import com.knowgate.scheduler.Atom;
@@ -130,6 +136,25 @@ public class MimeSender extends Job {
     free();
   }
 
+  // ---------------------------------------------------------------------------
+
+  public String redirectExternalLinks(Atom oAtm) throws ParserException {
+    
+    String sRedirectorDir = getProperty("webbeacon");
+    if (sRedirectorDir==null) {
+	  sRedirectorDir = Gadgets.chomp(getParameter("webserver"),'/')+"hipermail/";
+	} else if (sRedirectorDir.trim().length()==0) {
+	  sRedirectorDir = Gadgets.chomp(getParameter("webserver"),'/')+"hipermail/";
+	}
+	
+	String sRedirectorUrl = Gadgets.chomp(sRedirectorDir,'/')+"web_clicktrough.jsp?";
+
+    HtmlMimeBodyPart oPart = new HtmlMimeBodyPart(sBody, null);
+    sBody = oPart.addClickThroughRedirector(sRedirectorUrl+"gu_job="+getString(DB.gu_job)+"&pg_atom="+String.valueOf(oAtm.getInt(DB.pg_atom))+"&tx_email="+oAtm.getStringNull(DB.tx_email,"")+(oAtm.isNull(DB.gu_company) ? "" : "&gu_company="+oAtm.getString(DB.gu_company))+(oAtm.isNull(DB.gu_contact) ? "" : "&gu_contact="+oAtm.getString(DB.gu_contact))+"&url=");
+
+	return sBody;
+  } // addClickThroughRedirector
+  
   // ---------------------------------------------------------------------------
 
   private String personalizeBody(Atom oAtm) throws NullPointerException {
@@ -282,8 +307,8 @@ public class MimeSender extends Job {
         sProfile = getParameter("profile");
         sMBoxDir = DBStore.MBoxDirectory(sProfile,iDomainId,sWrkA);
 
-        oStor = new DBStore(oHndlr.getSession(), new URLName("jdbc://", sProfile, -1, sMBoxDir, oUser.getString(DB.gu_user), oUser.getString(DB.tx_pwd)));
-        oStor.connect(sProfile, oUser.getString(DB.gu_user), oUser.getString(DB.tx_pwd));
+        oStor = new DBStore(oHndlr.getSession(), new URLName("jdbc://", sProfile, -1, sMBoxDir, oUser.getString(DB.gu_user), oUser.getStringNull(DB.tx_pwd,"")));
+        oStor.connect(sProfile, oUser.getString(DB.gu_user), oUser.getStringNull(DB.tx_pwd,""));
         oOutBox = (DBFolder) oStor.getFolder("outbox");
         oOutBox.open(Folder.READ_WRITE);
         String sMsgId = getParameter("message");
@@ -403,23 +428,42 @@ public class MimeSender extends Job {
 
       if (0==iStillExecutable) {
         try {
-          oStor = new DBStore(oHndlr.getSession(), new URLName("jdbc://", sProfile, -1, sMBoxDir, oUser.getString(DB.gu_user), oUser.getString(DB.tx_pwd)));
-          oStor.connect(sProfile, oUser.getString(DB.gu_user), oUser.getString(DB.tx_pwd));
-          oSent = (DBFolder) oStor.getFolder("sent");
-          oSent.open(Folder.READ_WRITE);
-          oSent.moveMessage(oDraft);
-	      oSent.close(false);
-	      oStor.close();
+          if (oHndlr==null) {
+            throw new MessagingException("Session lost. SessionHandler is null");
+          } else if (oHndlr.getSession()==null) {
+            throw new MessagingException("Session lost. SessionHandler.getSession() is null");
+          } else {
+            oStor = new DBStore(oHndlr.getSession(), new URLName("jdbc://", sProfile, -1, sMBoxDir, oUser.getString(DB.gu_user), oUser.getStringNull(DB.tx_pwd,"")));
+            oStor.connect(sProfile, oUser.getString(DB.gu_user), oUser.getStringNull(DB.tx_pwd,""));
+            oSent = (DBFolder) oStor.getFolder("sent");
+            oSent.open(Folder.READ_WRITE);
+            oSent.moveMessage(oDraft);
+	        oSent.close(false);
+	        oStor.close();
+          }
         } catch (StoreClosedException sce) {
           if (DebugFile.trace) {
             DebugFile.writeln("MimeSender.free() StoreClosedException "+sce.getMessage());
+            try  {
+              DebugFile.writeln(StackTraceUtil.getStackTrace(sce));
+            } catch (IOException ignore) {}
           }      	
-        }  catch (MessagingException mse) {
+        } catch (MessagingException mse) {
           if (DebugFile.trace) {
             DebugFile.writeln("MimeSender.free() MessagingException "+mse.getMessage());
+            try  {
+              DebugFile.writeln(StackTraceUtil.getStackTrace(mse));
+            } catch (IOException ignore) {}
           }
-        } // fi (0==iStillExecutable)
-      } 	
+        } catch (NullPointerException npe) {
+          if (DebugFile.trace) {
+            DebugFile.writeln("MimeSender.free() NullPointerException "+npe.getMessage());
+            try  {
+              DebugFile.writeln(StackTraceUtil.getStackTrace(npe));
+            } catch (IOException ignore) {}
+          }
+        }
+      } // fi (0==iStillExecutable)	
     } // fi
 
     oDraft=null;
@@ -496,6 +540,12 @@ public class MimeSender extends Job {
 	  String sEncoding = getParameter("encoding");
 	  if (sEncoding==null) sEncoding = "UTF-8";
 	  String sPBody;
+
+	  String sClickThrough = getParameter("clickthrough");
+	  if (sClickThrough==null) sClickThrough = No;
+	  if (Yes.equals(sClickThrough) || Activated.equals(sClickThrough)) {
+	    redirectExternalLinks(oAtm);
+	  }
       	  	  
       if (bPersonalized) {
         sPBody = personalizeBody(oAtm);
@@ -510,7 +560,13 @@ public class MimeSender extends Job {
 	  if (Yes.equals(sWebBeacon) || Activated.equals(sWebBeacon)) {
 	    int iEndBody = Gadgets.indexOfIgnoreCase(sPBody, "</body>", 0);
 	  	if (iEndBody>0) {
-	  	  sPBody = sPBody.substring(0, iEndBody)+"<!--WEBBEACON SRC=\""+Gadgets.chomp(getParameter("webserver"),'/')+"hipermail/web_beacon.jsp?gu_job="+getString(DB.gu_job)+"&pg_atom="+String.valueOf(oAtm.getInt(DB.pg_atom))+"&gu_company="+oAtm.getStringNull(DB.gu_company,"")+"&gu_contact="+oAtm.getStringNull(DB.gu_contact,"")+"&tx_email="+oAtm.getStringNull(DB.tx_email,"")+"\"-->"+sPBody.substring(iEndBody);
+	  	  String sWebBeaconDir = getProperty("webbeacon");	  	  
+	  	  if (sWebBeaconDir==null) {
+	  	  	sWebBeaconDir = Gadgets.chomp(getParameter("webserver"),'/')+"hipermail/";
+	  	  } else if (sWebBeaconDir.trim().length()==0) {
+	  	  	sWebBeaconDir = Gadgets.chomp(getParameter("webserver"),'/')+"hipermail/";
+	  	  }
+	  	  sPBody = sPBody.substring(0, iEndBody)+"<!--WEBBEACON SRC=\""+Gadgets.chomp(sWebBeaconDir,'/')+"web_beacon.jsp?gu_job="+getString(DB.gu_job)+"&pg_atom="+String.valueOf(oAtm.getInt(DB.pg_atom))+"&gu_company="+oAtm.getStringNull(DB.gu_company,"")+"&gu_contact="+oAtm.getStringNull(DB.gu_contact,"")+"&tx_email="+oAtm.getStringNull(DB.tx_email,"")+"\"-->"+sPBody.substring(iEndBody);
 	  	} // fi </body>
 	  } // fi (bo_webbeacon)
 
@@ -525,6 +581,8 @@ public class MimeSender extends Job {
         if (DebugFile.trace) DebugFile.writeln("tx_email="+oAtm.getString(DB.tx_email));
         String sSanitizedEmail = MailMessage.sanitizeAddress(oAtm.getString(DB.tx_email));
         if (DebugFile.trace) DebugFile.writeln("sanitized tx_email="+sSanitizedEmail);
+        // An AddressException can be thrown here even after sanitizing the e-mail address
+        InternetAddress oRec = DBInetAddr.parseAddress(sSanitizedEmail);
 
 		// No blacklisted e-mails allowed to pass through
 	    if (aBlackList==null) {
@@ -535,8 +593,7 @@ public class MimeSender extends Job {
 	    }
 		if (bBlackListed)
 		  throw new SQLException("Could not sent message to "+sSanitizedEmail+" because it is blacklisted");
-
-        InternetAddress oRec = DBInetAddr.parseAddress(sSanitizedEmail);
+        
         String sRecType = oAtm.getStringNull(DB.tp_recipient,"to");
         if (sRecType.equalsIgnoreCase("to"))
           oSentMsg.setRecipient(Message.RecipientType.TO, oRec);

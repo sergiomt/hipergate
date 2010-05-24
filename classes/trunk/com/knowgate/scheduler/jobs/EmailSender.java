@@ -619,7 +619,13 @@ public class EmailSender extends Job {
 	  if (Yes.equals(getParameter("bo_webbeacon"))) {
 	  	int iEndBody = Gadgets.indexOfIgnoreCase(oReplaced, "</body>", 0);
 	  	if (iEndBody>0) {
-	  	  oReplaced = oReplaced.substring(0, iEndBody)+"<img src=\""+Gadgets.chomp(getProperty("webserver"),'/')+"hipermail/web_beacon.jsp?gu_job="+getString(DB.gu_job)+"&pg_atom="+String.valueOf(oAtm.getInt(DB.pg_atom))+"&gu_company="+oAtm.getStringNull(DB.gu_company,"")+"&gu_contact="+oAtm.getStringNull(DB.gu_contact,"")+"&tx_email="+oAtm.getStringNull(DB.tx_email,"")+"\" width=\"1\" height=\"1\" border=\"0\" alt=\"\" />"+oReplaced.substring(iEndBody);	  	  	
+	  	  String sWebBeaconDir = getProperty("webbeacon");	  	  
+	  	  if (sWebBeaconDir==null) {
+	  	  	sWebBeaconDir = Gadgets.chomp(getParameter("webserver"),'/')+"hipermail/";
+	  	  } else if (sWebBeaconDir.trim().length()==0) {
+	  	  	sWebBeaconDir = Gadgets.chomp(getParameter("webserver"),'/')+"hipermail/";
+	  	  }
+	  	  oReplaced = oReplaced.substring(0, iEndBody)+"<img src=\""+Gadgets.chomp(sWebBeaconDir,'/')+"web_beacon.jsp?gu_job="+getString(DB.gu_job)+"&pg_atom="+String.valueOf(oAtm.getInt(DB.pg_atom))+"&gu_company="+oAtm.getStringNull(DB.gu_company,"")+"&gu_contact="+oAtm.getStringNull(DB.gu_contact,"")+"&tx_email="+oAtm.getStringNull(DB.tx_email,"")+"\" width=\"1\" height=\"1\" border=\"0\" alt=\"\" />"+oReplaced.substring(iEndBody);	  	  	
 	  	} // fi </body>
 	  } // fi (bo_webbeacon)
       
