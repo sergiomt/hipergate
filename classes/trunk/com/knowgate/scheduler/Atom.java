@@ -66,6 +66,8 @@ public class Atom extends DBPersist {
    * values for corresponding fields.<br>
    * <table border=1 cellpadding=4>
    * <tr><td><b>Database Field</b></td><td><b>English Alias</b></td><td><b>Spanish Alias</b></td></tr>
+   * <tr><td>gu_company</td><td>Data.Company_Guid</td><td>Datos.Guid_Empresa</td></tr>
+   * <tr><td>gu_contact</td><td>Data.Contact_Guid</td><td>Datos.Guid_Contacto</td></tr>
    * <tr><td>tx_name</td><td>Data.Name</td><td>Datos.Nombre</td></tr>
    * <tr><td>tx_surname</td><td>Data.Surname</td><td>Datos.Apellidos</td></tr>
    * <tr><td>tx_salutation</td><td>Data.Salutation</td><td>Datos.Saludo</td></tr>

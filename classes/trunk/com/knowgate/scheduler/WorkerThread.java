@@ -366,7 +366,15 @@ public class WorkerThread extends Thread {
             sLastError = "atom " + String.valueOf(oAtm.getInt(DB.pg_atom)) + " ";
             sLastError += e.getMessage() + "\n" + StackTraceUtil.getStackTrace(e) + "\n";
             try {
-              if (null!=oCsrConn) oAtm.setStatus(oCsrConn, Atom.STATUS_INTERRUPTED, e.getClass().getName() + " " + e.getMessage());
+              if (null!=oCsrConn) {
+              	oAtm.setStatus(oCsrConn, Atom.STATUS_INTERRUPTED, e.getClass().getName() + " " + e.getMessage());
+              } else {
+            	oCsrConn = oConsumer.getDatabaseBind().getConnection("WorkerThread."+String.valueOf(getId()));
+		    	oCsrConn.setAutoCommit(true);
+              	oAtm.setStatus(oCsrConn, Atom.STATUS_INTERRUPTED, e.getClass().getName() + " " + e.getMessage());
+          	    oCsrConn.close("WorkerThread."+String.valueOf(getId()));
+			    oCsrConn = null;
+              }
             } catch (SQLException sqle) {
               if (DebugFile.trace) DebugFile.writeln("Atom.setStatus() SQLException " + sqle.getMessage());
             }
