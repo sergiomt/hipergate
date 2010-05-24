@@ -63,12 +63,14 @@ public final class DB {
   public static final String k_acl_groups = "k_acl_groups";
   public static final String k_addresses = "k_addresses";
   public static final String k_addresses_lookup = "k_addresses_lookup";
+  public static final String k_bulkloads = "k_bulkloads";
   public static final String k_distances_cache = "k_distances_cache";
   public static final String k_thesauri_root = "k_thesauri_root";
   public static final String k_thesauri = "k_thesauri";
   public static final String k_thesauri_lookup = "k_thesauri_lookup";
   public static final String k_bank_accounts = "k_bank_accounts";
   public static final String k_bank_accounts_lookup = "k_bank_accounts_lookup";
+  public static final String k_urls = "k_urls";
   public static final String k_cat_labels = "k_cat_labels";
   public static final String k_cat_root = "k_cat_root";
   public static final String k_cat_tree = "k_cat_tree";
@@ -213,6 +215,7 @@ public final class DB {
   public static final String k_lu_job_commands = "k_lu_job_commands";
   public static final String k_lu_job_status = "k_lu_job_status";
   public static final String k_job_atoms_tracking = "k_job_atoms_tracking";
+  public static final String k_job_clicks = "k_job_clicks";
 
   public static final String k_fellows = "k_fellows";
   public static final String k_fellows_attach = "k_fellows_attach";
@@ -667,6 +670,11 @@ public final class DB {
   public static final String de_term = "de_term";
   public static final String id_scope = "id_scope";
   public static final String id_term = "id_term";
+
+  // k_urls
+  public static final String gu_url = "gu_url";
+  public static final String de_url = "de_url";
+  public static final String tx_title = "tx_title";
 
   // k_pagesets
   public static final String gu_pageset = "gu_pageset";

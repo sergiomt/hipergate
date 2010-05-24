@@ -64,6 +64,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 import com.knowgate.debug.DebugFile;
+import com.knowgate.debug.StackTraceUtil;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.misc.CSVParser;
@@ -788,8 +789,17 @@ public final class DBSubset {
         Object oParam = aFilterValues[p];
         if (null==oParam) {
           ParameterMetaData oParMDat = oStmt.getParameterMetaData();
-          if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setNull("+String.valueOf(p+1)+","+oParMDat.getParameterTypeName(p+1)+")");
-          oStmt.setNull(p+1, oParMDat.getParameterType(p+1));
+          int pType;
+          try {
+          	pType = oParMDat.getParameterType(p+1);
+          } catch (SQLException parameternotavailable) {
+            if (DebugFile.trace) {
+              DebugFile.writeln("DBSubset.load() : SQLException "+parameternotavailable.getMessage()+" at ParameterMetaData.getParameterType("+String.valueOf(p+1)+")");
+      		}
+      		pType = Types.NULL;
+          }
+          if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setNull("+String.valueOf(p+1)+","+String.valueOf(pType)+")");
+          oStmt.setNull(p+1, pType);
         } else {
           if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setObject("+String.valueOf(p+1)+","+oParam.toString()+")");
           oStmt.setObject(p+1, oParam);
@@ -832,6 +842,9 @@ public final class DBSubset {
       oStmt = null;
     }
     catch (SQLException sqle) {
+      try { 
+      	if (DebugFile.trace) DebugFile.writeln("SQLException "+sqle.getMessage()+"\n"+StackTraceUtil.getStackTrace(sqle));
+      } catch (java.io.IOException ignore) {}
       try { if (null!=oRSet) oRSet.close();
       } catch (Exception logit) { if (DebugFile.trace) DebugFile.writeln(logit.getClass().getName()+" "+logit.getMessage()); }
       try { if (null!=oStmt) oStmt.close();
