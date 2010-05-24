@@ -87,6 +87,15 @@ public class PageSetDB extends DBPersist {
 
   // ----------------------------------------------------------
 
+  public PageSet getPageSet(JDCConnection oConn, String sBasePath)
+  	throws SQLException,ClassNotFoundException,Exception {
+  	MicrositeDB oMst = new MicrositeDB(oConn, getString(DB.gu_microsite));
+    return new PageSet(Gadgets.chomp(sBasePath,File.separator)+oMst.getString(DB.path_metadata),
+    				   Gadgets.chomp(sBasePath,File.separator)+getString(DB.path_data));
+  }
+
+  // ----------------------------------------------------------
+
   public boolean load(JDCConnection oConn, Object aPK[]) throws SQLException {
     // Rutina especial de carga con procedimiento almacenado para maxima velocidad en el rendering
 

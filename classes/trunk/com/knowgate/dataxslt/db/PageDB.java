@@ -42,6 +42,7 @@ import java.sql.Timestamp;
 
 import java.util.Date;
 
+import com.knowgate.dataxslt.Page;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBBind;
 import com.knowgate.dataobjs.DBPersist;
@@ -53,6 +54,18 @@ public class PageDB extends DBPersist {
 
   public PageDB() {
     super(DB.k_pageset_pages, "PageDB");
+  }
+
+  // ----------------------------------------------------------
+
+  public PageSetDB getPageSetDB(JDCConnection oConn) throws SQLException {
+  	return new PageSetDB(oConn, getString(DB.gu_pageset));
+  }
+
+  // ----------------------------------------------------------
+
+  public Page getPage(JDCConnection oConn, String sBasePath) throws SQLException,ClassNotFoundException,Exception {
+  	return new PageSetDB(oConn, getString(DB.gu_pageset)).getPageSet(oConn,sBasePath).page(getString(DB.gu_page));
   }
 
   // ----------------------------------------------------------
