@@ -115,7 +115,6 @@ public class ContactSearcher {
 		}
 	}
 
-
 	String sSegments = Gadgets.chomp(oProps.getProperty("luceneindex"),File.separator)+"k_contacts"+File.separator+sWorkArea;	
     if (DebugFile.trace) DebugFile.writeln("new IndexSearcher("+sSegments+")");
 	
@@ -150,6 +149,8 @@ public class ContactSearcher {
     	  aRetArr = null;
       }
    
+    oSearch.close();
+
     if (DebugFile.trace) {
       DebugFile.decIdent();
       if (null==aRetArr)

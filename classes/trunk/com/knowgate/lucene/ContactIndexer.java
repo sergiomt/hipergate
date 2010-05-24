@@ -150,26 +150,39 @@ public class ContactIndexer extends Indexer {
   }
   
 	public static void addOrReplaceContact(Properties oProps, String sGuid,
-			String sWorkArea,JDCConnection oConn) throws ClassNotFoundException,
+			String sWorkArea, JDCConnection oConn) throws ClassNotFoundException,
 			IOException, IllegalArgumentException, NoSuchFieldException,
 			IllegalAccessException, InstantiationException,
 			NullPointerException, SQLException {
 		String sDirectory = oProps.getProperty("luceneindex");
 
+    	if (DebugFile.trace) {
+          DebugFile.writeln("Begin ContactIndexer.addOrReplaceContact([Properties]," + sGuid + "," + sWorkArea + ", [JDCConnection])");
+          DebugFile.incIdent();
+    	}
+
+		sDirectory = Gadgets.chomp(sDirectory, File.separator) + "k_contacts" + File.separator + sWorkArea;
+
 		if (null == sDirectory) {
-			if (DebugFile.trace)
-				DebugFile.decIdent();
+			if (DebugFile.trace) DebugFile.decIdent();
 			throw new NoSuchFieldException("Cannot find luceneindex property");
 		}
-
-		sDirectory = Gadgets.chomp(sDirectory, File.separator) + "k_contacts"
-				+ File.separator + sWorkArea;
 
 		if (DebugFile.trace)
 			DebugFile.writeln("index directory is " + sDirectory);
 
 		File oDir = new File(sDirectory);
 		boolean bNewIndex = !oDir.exists();
+		
+		if (oDir.exists()) {
+		  File[] aFiles = oDir.listFiles();
+		  if (aFiles==null) {
+		  	bNewIndex = true;
+		  } else if (aFiles.length==0) {
+		  	bNewIndex = true;
+		  }
+		}
+
 		if (bNewIndex) {
 			Indexer.rebuild(oProps, "k_contacts", sWorkArea);
 		}
@@ -178,11 +191,10 @@ public class ContactIndexer extends Indexer {
 			DebugFile.writeln("Class.forName("
 					+ oProps.getProperty("analyzer", DEFAULT_ANALYZER) + ")");
 
-		Class oAnalyzer = Class.forName(oProps.getProperty("analyzer",
-				DEFAULT_ANALYZER));
+		Class oAnalyzer = Class.forName(oProps.getProperty("analyzer", DEFAULT_ANALYZER));
 
 		if (DebugFile.trace)
-			DebugFile.writeln("new IndexWriter(...)");
+			DebugFile.writeln("IndexReader.open("+sDirectory+")");
 
 		IndexReader oIRdr = IndexReader.open(sDirectory);
 		oIRdr.deleteDocuments(new Term("guid", sGuid));
@@ -195,7 +207,12 @@ public class ContactIndexer extends Indexer {
 
 		oIWrt.close();
 
-	} // addOrReplaceNewsMessage
+    	if (DebugFile.trace) {
+          DebugFile.decIdent();
+          DebugFile.writeln("End ContactIndexer.addOrReplaceContact()");
+    	}
+
+	} // addOrReplaceContact
 	
 
   /**

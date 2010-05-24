@@ -267,9 +267,14 @@ public class Indexer {
     // Delete every document from this table and WorkArea before re-indexing
     File oDir = new File(sDirectory);
     if (oDir.exists()) {
-      IndexReader oReader = IndexReader.open(sDirectory);      
-      int iDeleted = oReader.deleteDocuments(new Term("workarea", sWorkArea));
-      oReader.close();
+      File[] aFiles = oDir.listFiles();
+      if (null!=aFiles) {
+        if (aFiles.length>0) {
+          IndexReader oReader = IndexReader.open(sDirectory);      
+          int iDeleted = oReader.deleteDocuments(new Term("workarea", sWorkArea));
+          oReader.close();
+        }
+      }
     } else {
       FileSystem oFS = new FileSystem();
       try { oFS.mkdirs(sDirectory); } catch (Exception e) { throw new IOException(e.getClass().getName()+" "+e.getMessage()); }
