@@ -39,6 +39,10 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import javax.net.ssl.HttpsURLConnection;
 
+import java.util.TreeSet;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 import javax.activation.DataHandler;
 
 import org.apache.http.HttpResponse;
@@ -52,6 +56,14 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import com.enterprisedt.net.ftp.FTPClient;
 import com.enterprisedt.net.ftp.FTPException;
 import com.enterprisedt.net.ftp.FTPTransferType;
+
+import org.apache.oro.text.regex.Util;
+import org.apache.oro.text.regex.Pattern;
+import org.apache.oro.text.regex.Perl5Matcher;
+import org.apache.oro.text.regex.Perl5Compiler;
+import org.apache.oro.text.regex.StringSubstitution;
+import org.apache.oro.text.regex.PatternMatcherInput;
+import org.apache.oro.text.regex.MalformedPatternException;
 
 import com.knowgate.debug.DebugFile;
 import com.knowgate.misc.Gadgets;
@@ -2041,6 +2053,174 @@ public class FileSystem {
     }
   } // writefileobj
 
+  // ----------------------------------------------------------
+
+  /**
+   * Download an HTML page and all its referenced files into a ZIP
+   * @param sBasePath String Base path for page and its referenced files
+   * @param sFilePath String File path from sBasePath
+   * @param oOutStrm OutputStream where ZIP is written
+   * @throws IOException
+   * @since 5.5
+   */
+  public void downloadhtmlpage (String sBasePath, String sFilePath, OutputStream oOutStrm)
+    throws IOException {
+
+	if (DebugFile.trace) {
+	  DebugFile.writeln("Begin FileSystem.downloadhtmlpage("+sBasePath+","+sFilePath+",[OutputStream])");
+	  DebugFile.incIdent();
+	}
+	
+    String sEncoding;
+	String sBaseHref = "";
+	boolean bAutoDetectEncoding = true;
+	TreeSet<String> oFiles = new TreeSet<String>();
+	TreeSet<String> oEntries = new TreeSet<String>();
+    Perl5Matcher oMatcher = new Perl5Matcher();
+    Perl5Matcher oReplacer = new Perl5Matcher();
+    Perl5Compiler oCompiler = new Perl5Compiler();
+
+    try {
+      String sHtml = readfilestr(sBasePath+sFilePath,"ASCII");
+
+      if (oMatcher.contains(sHtml, oCompiler.compile("<meta\\x20+http-equiv=(\"|')?Content-Type(\"|')?\\x20+content=(\"|')?text/html;\\x20+charset=(\\w|-){3,32}(\"|')?>",Perl5Compiler.CASE_INSENSITIVE_MASK))) {
+        if (DebugFile.trace) DebugFile.writeln("<meta http-equiv> tag found");
+        String sHttpEquiv = oMatcher.getMatch().toString();
+        int iCharset = Gadgets.indexOfIgnoreCase(sHttpEquiv,"charset=");
+        if (iCharset>0) {
+          int iQuoute = sHttpEquiv.indexOf('"', iCharset);
+          if (iQuoute<0) iQuoute = sHttpEquiv.indexOf((char)39, iCharset);
+          if (iQuoute<0) {
+            bAutoDetectEncoding = true;
+          } else {
+            sEncoding = sHttpEquiv.substring(iCharset+8, iQuoute);
+        	if (DebugFile.trace) DebugFile.writeln("setting charset encoding to "+sEncoding);
+            bAutoDetectEncoding = false;
+            try {
+          	  byte[] aTest = new String("Test").getBytes(sEncoding);
+            } catch (UnsupportedEncodingException uex) {
+              bAutoDetectEncoding = true;
+            }
+          }
+        } else {
+          bAutoDetectEncoding = true;
+        }
+      } else {
+        bAutoDetectEncoding = true;    	
+      }
+    
+      if (bAutoDetectEncoding) {
+        if (DebugFile.trace) DebugFile.writeln("Autodetecting encoding");
+      	ByteArrayInputStream oHtmlStrm = new ByteArrayInputStream(sHtml.getBytes("ASCII"));
+        sEncoding = new CharacterSetDetector().detect(oHtmlStrm,"ASCII");
+        oHtmlStrm.close();
+        if (DebugFile.trace) DebugFile.writeln("Encoding set to "+sEncoding);
+      }
+    	
+      Pattern oPattern = oCompiler.compile("<base(\\x20)+href=(\"|')?([^'\"\\r\\n]+)(\"|')?(\\x20)*/?>", Perl5Compiler.CASE_INSENSITIVE_MASK);
+	  if (oMatcher.contains(sHtml, oPattern)) {
+	    sBaseHref = Gadgets.chomp(oMatcher.getMatch().group(3),"/");
+	    if (DebugFile.trace) DebugFile.writeln("<base href="+sBaseHref+">");
+	  }
+	
+      PatternMatcherInput oMatchInput = new PatternMatcherInput(sHtml);
+	  oPattern = oCompiler.compile("\\x20(src=|background=|background-image:url\\x28)(\"|')?([^'\"\\r\\n]+)(\"|')?(\\x20|\\x29|/|>)", Perl5Compiler.CASE_INSENSITIVE_MASK);
+	  StringSubstitution oSrcSubs = new StringSubstitution();
+	  int nMatches = 0;
+	  while (oMatcher.contains(oMatchInput, oPattern)) {
+	    nMatches++;
+	    String sMatch = oMatcher.getMatch().toString();
+	    String sAttr = oMatcher.getMatch().group(1);
+	    String sQuo = oMatcher.getMatch().group(2);
+	    if (sQuo==null) sQuo = "";
+	    String sSrc = oMatcher.getMatch().group(3);
+	    if (DebugFile.trace) DebugFile.writeln("Source file found at "+sSrc);
+	    String sEnd = oMatcher.getMatch().group(5);
+	    if (!oFiles.contains(sSrc)) oFiles.add(sSrc);
+	    String sFilename = sSrc.substring(sSrc.replace('\\','/').lastIndexOf('/')+1);
+	    if (DebugFile.trace)
+	      DebugFile.writeln("StringSubstitution.setSubstitution("+sMatch+" replace with "+sMatch.substring(0,sAttr.length()+1)+sQuo+sFilename+sQuo+sEnd+")");
+	    oSrcSubs.setSubstitution(sMatch.substring(0,sAttr.length()+1)+sQuo+sFilename+sQuo+sEnd);
+        sHtml = Util.substitute(oReplacer, oCompiler.compile(sMatch), oSrcSubs, sHtml, Util.SUBSTITUTE_ALL);
+	  } //wend
+	  
+	  oMatchInput = new PatternMatcherInput(sHtml);
+	  oPattern = oCompiler.compile("<link\\x20+(rel=(\"|')?stylesheet(\"|')?\\x20+)?(type=(\"|')?text/css(\"|')?\\x20+)?href=(\"|')?([^'\"\\r\\n]+)(\"|')?");
+	  while (oMatcher.contains(oMatchInput, oPattern)) {
+	    nMatches++;
+	    String sMatch = oMatcher.getMatch().toString();
+	    String sSrc = oMatcher.getMatch().group(8);
+	    String sFilename = sSrc.substring(sSrc.replace('\\','/').lastIndexOf('/')+1);
+	    if (!oFiles.contains(sSrc)) oFiles.add(sSrc);
+	    if (DebugFile.trace)
+	      DebugFile.writeln("StringSubstitution.setSubstitution("+sMatch+" replace with "+Gadgets.replace(sMatch, sSrc, sFilename)+")");
+	    oSrcSubs.setSubstitution(Gadgets.replace(sMatch, sSrc, sFilename));
+        sHtml = Util.substitute(oReplacer, oCompiler.compile(sMatch), oSrcSubs, sHtml);	   
+	  } // wend	  
+	  
+	  if (DebugFile.trace) {
+	  	DebugFile.writeln(String.valueOf(nMatches)+" matches found");
+	    DebugFile.write("\n"+sHtml+"\n");
+	  }
+
+      ZipOutputStream oZOut = new ZipOutputStream(oOutStrm);
+      String sLocalName = sFilePath.substring(sFilePath.replace('\\','/').lastIndexOf('/')+1);
+	  int iDot = sLocalName.lastIndexOf('.');
+	  if (iDot>0)
+	  	sLocalName = Gadgets.ASCIIEncode(sLocalName.substring(0, iDot)).toLowerCase()+".html";
+      else
+      	sLocalName = Gadgets.ASCIIEncode(sLocalName).toLowerCase();
+	  oEntries.add(sLocalName);
+      if (DebugFile.trace) DebugFile.writeln("Putting entry "+sLocalName+" into ZIP");
+	  oZOut.putNextEntry(new ZipEntry(sLocalName));
+      StringBufferInputStream oHtml = new StringBufferInputStream(sHtml);
+      new StreamPipe().between(oHtml, oZOut);
+      oHtml.close();
+      oZOut.closeEntry();
+
+      for (String sName : oFiles) {
+      	String sZipEntryName = sName.substring(sName.replace('\\','/').lastIndexOf('/')+1);
+      	if (!oEntries.contains(sZipEntryName)) {
+      	  oEntries.add(sZipEntryName);
+          if (DebugFile.trace) DebugFile.writeln("Putting entry "+sZipEntryName+" into ZIP");
+	      oZOut.putNextEntry(new ZipEntry(sZipEntryName));
+          if (sName.startsWith("http://") || sName.startsWith("https://") || sName.startsWith("file://") || sBaseHref.length()>0) {
+            try {
+              new StreamPipe().between(new ByteArrayInputStream(readfilebin(sBaseHref+sName)), oZOut);
+            } catch (IOException ioe) {
+              if (DebugFile.trace) {
+                DebugFile.decIdent();
+                DebugFile.writeln("Could not download file "+sName);
+              }
+            }        
+          } else {
+            try {
+              new StreamPipe().between(new ByteArrayInputStream(readfilebin(sBasePath+(sName.startsWith("/") ? sName.substring(1) : sName))), oZOut);
+
+            } catch (IOException ioe) {
+              if (DebugFile.trace) {
+			    DebugFile.decIdent();
+                DebugFile.writeln("Could not download file "+sName);
+              }
+            }      	
+          }
+          oZOut.closeEntry();
+      	} // fi (sName!=sLocalName)
+      } // next
+      oZOut.close();
+
+    } catch (MalformedPatternException mpe) {
+      
+    } catch (FTPException ftpe) {
+    	
+    }
+
+	if (DebugFile.trace) {
+	  DebugFile.decIdent();
+	  DebugFile.writeln("End FileSystem.downloadhtmlpage()");
+	}
+  } // downloadhtmlpage
+    
   // ----------------------------------------------------------
 
   // ******************
