@@ -46,6 +46,11 @@ import java.io.FileInputStream;
 
 import java.util.HashMap;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+
 import com.knowgate.debug.DebugFile;
 import com.knowgate.misc.Gadgets;
 
@@ -135,6 +140,124 @@ public class CSVParser  {
 
   // ----------------------------------------------------------
 
+  private char extractDelimiter(String sFileDescriptor) {
+    char cDlimiter;
+    boolean bIgnore = false;
+    final int iFileDescLen = sFileDescriptor.length();
+    // Inferir el delimitador
+
+    for (int p=0; p<iFileDescLen && cDelimiter==(char)0; p++) {
+
+      char cAt = sFileDescriptor.charAt(p);
+
+      if (cAt=='"') bIgnore = !bIgnore;
+      if (!bIgnore) {
+        switch (cAt) {
+          case ',':
+            cDelimiter = ',';
+            break;
+          case ';':
+            cDelimiter = ';';
+            break;
+          case '|':
+            cDelimiter = '|';
+            break;
+          case '`':
+            cDelimiter = '`';
+            break;
+          case '¨':
+            cDelimiter = '¨';
+            break;
+          case '\t':
+            cDelimiter = '\t';
+            break;
+        } // end switch()
+      } // fi ()
+    } // next
+
+    // If no delimiter is found, then assume that file has just one column and use Tab as default
+    if (cDelimiter==(char)0) cDelimiter = '\t';  	
+  
+    return cDelimiter;
+  }
+
+  // ----------------------------------------------------------
+
+  private boolean isVoid(String sStr) {
+    if (sStr==null)
+      return true;
+    else
+      return sStr.trim().length()==0;
+  }
+
+  // ----------------------------------------------------------
+
+  private boolean isEmptyRow(HSSFRow oRow, int nCols) {
+  	for (int c=0; c<nCols; c++) {
+  	  if (oRow.getCell(c)!=null) {
+  	  	if (!isVoid(oRow.getCell(c).getStringCellValue()))
+  	  	  return false;
+  	  }
+  	}
+  	return true;
+  }
+  
+  // ----------------------------------------------------------
+
+  public void parseSheet(HSSFSheet oSheet, String sFileDescriptor) {
+  	HSSFCell oCel;
+  	HSSFRow oRow = oSheet.getRow(0);
+    int iRow;
+    char cDelim;
+    String[] aFileDescriptor;
+    int iFileDescLen;
+    
+  	if (isVoid(sFileDescriptor)) {
+  	  iRow = 1;
+  	  sFileDescriptor = "";
+  	  short iCel = (short) 0;
+	  oCel = oRow.getCell(iCel);
+	  while (oCel!=null) {
+	  	if (isVoid(oCel.getStringCellValue())) break;
+	  	sFileDescriptor += (sFileDescriptor.length()==0 ? "" : "\t") + oCel.getStringCellValue();
+	    oCel = oRow.getCell(++iCel);
+	  } // wend
+  	} else {
+  	  iRow = 1;
+  	  aFileDescriptor = Gadgets.split(sFileDescriptor, extractDelimiter(sFileDescriptor));
+  	  iFileDescLen = aFileDescriptor.length;
+  	  for (int c=0; c<iFileDescLen; c++) {
+  	  	oCel = oRow.getCell(c);
+  	  	if (null==oCel) {
+  	  	  iRow = 0;
+  	  	  break;
+  	  	} else if (!aFileDescriptor[c].equalsIgnoreCase(oCel.getStringCellValue())) {
+  	  	  iRow = 0;
+  	  	  break;  	  	  
+  	  	}
+  	  } //next
+  	} // fi
+  	cDelim = extractDelimiter(sFileDescriptor);
+  	aFileDescriptor = Gadgets.split(sFileDescriptor, cDelim);
+    iFileDescLen = aFileDescriptor.length;
+    StringBuffer oData = new StringBuffer();
+	while (!isEmptyRow(oSheet.getRow(iRow),iFileDescLen)){
+	  oRow = oSheet.getRow(iRow);
+	  if (oRow.getCell(0)!=null)
+	    oData.append(oRow.getCell(0).getStringCellValue());
+	  for (int c=1; c<iFileDescLen; c++) {
+	    oData.append(cDelim);
+	    if (oRow.getCell(c)!=null) 
+	      oData.append(oRow.getCell(c).getStringCellValue());
+	  } // next
+	  oData.append((char) 10);
+	  iRow++;
+	} // wend
+	parseData(oData.toString().toCharArray(), sFileDescriptor);
+  } // parseSheet
+
+  // ----------------------------------------------------------
+
   /**
    * <p>Parse data from a character array</p>
    * Parsed values are stored at an internal array in this CSVParser.
@@ -196,7 +319,7 @@ public class CSVParser  {
     // Si el primer caracter no en blanco es comillas,
     // entonces se entiende que los campos van entrecomillados
 
-    int iFileDescLen = sFileDescriptor.length();
+    final int iFileDescLen = sFileDescriptor.length();
 
     for (int p=0; p<iBuffer; p++) {
       cAt = sFileDescriptor.charAt(p);
@@ -211,39 +334,7 @@ public class CSVParser  {
       if (bQuoted) DebugFile.writeln("asume quoted identifiers");
     }
 
-    // Inferir el delimitador
-
-    for (int p=0; p<iFileDescLen && cDelimiter==(char)0; p++) {
-
-      cAt = sFileDescriptor.charAt(p);
-
-      if (cAt=='"') bIgnore = !bIgnore;
-      if (!bIgnore) {
-        switch (cAt) {
-          case ',':
-            cDelimiter = ',';
-            break;
-          case ';':
-            cDelimiter = ';';
-            break;
-          case '|':
-            cDelimiter = '|';
-            break;
-          case '`':
-            cDelimiter = '`';
-            break;
-          case '¨':
-            cDelimiter = '¨';
-            break;
-          case '\t':
-            cDelimiter = '\t';
-            break;
-        } // end switch()
-      } // fi ()
-    } // next
-
-    // If no delimiter is found, then assume that file has just one column and use Tab as default
-    if (cDelimiter==(char)0) cDelimiter = '\t';
+	cDelimiter = extractDelimiter(sFileDescriptor);
 
     // Almacenar los nombres de campo y contar el número de columnas
     ColNames = Gadgets.split(sFileDescriptor, new String(new char[]{cDelimiter}));
@@ -354,12 +445,12 @@ public class CSVParser  {
       DebugFile.incIdent();
     }
 
-    if (sFileDescriptor==null) {
+    if (sFileDescriptor==null && !oFile.getName().endsWith(".xls")) {
       if (DebugFile.trace) DebugFile.decIdent();
       throw new NullPointerException("CSVParser.parseFile() File Descriptor parameter may not be null");
     }
 
-    if (sFileDescriptor.trim().length()==0) {
+    if (sFileDescriptor.trim().length()==0 && !oFile.getName().endsWith(".xls")) {
       if (DebugFile.trace) DebugFile.decIdent();
       throw new IllegalArgumentException("File Descriptor parameter may not be an empty string");
     }
@@ -377,18 +468,27 @@ public class CSVParser  {
       return;
     }
 
-    cBuffer = new char[iBuffer];
+	if (oFile.getName().endsWith(".xls")) {
+	  FileInputStream oFistrm = new FileInputStream(oFile);
+	  HSSFWorkbook oWrkb = new HSSFWorkbook(oFistrm);
+	  HSSFSheet oSheet = oWrkb.getSheetAt(0);
+	  oFistrm.close();
+	  parseSheet(oSheet, sFileDescriptor);
+	} else {
 
-    if (null==sCharSet) {
-      oReader = new FileReader(oFile);
-    } else {
-      oReader = new InputStreamReader(new FileInputStream(oFile), sCharSet);
-    }
-    oReader.read(cBuffer);
-    oReader.close();
-    oReader = null;
+      cBuffer = new char[iBuffer];
 
-    parseData (cBuffer, sFileDescriptor);
+      if (null==sCharSet) {
+        oReader = new FileReader(oFile);
+      } else {
+        oReader = new InputStreamReader(new FileInputStream(oFile), sCharSet);
+      }
+      oReader.read(cBuffer);
+      oReader.close();
+      oReader = null;
+
+      parseData (cBuffer, sFileDescriptor);
+	}
 
     if (DebugFile.trace) {
       DebugFile.decIdent();
