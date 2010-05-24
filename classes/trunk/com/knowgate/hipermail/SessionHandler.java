@@ -548,14 +548,29 @@ public class SessionHandler {
 
   public void sendMessage(Message oMsg)
     throws NoSuchProviderException,SendFailedException,ParseException,
-           MessagingException,NullPointerException {
+           MessagingException,NullPointerException,IllegalStateException {
+
     if (DebugFile.trace) {
       DebugFile.writeln("Begin SessionHandler.sendMessage([Message])");
       DebugFile.incIdent();
     }
+    
     oMsg.setSentDate(new java.util.Date());
-    if (DebugFile.trace) DebugFile.writeln("Transport.send(Message)");
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Transport.send(Message)");
+
+      try {
+        java.io.ByteArrayOutputStream baOut = new java.io.ByteArrayOutputStream();      
+        ((javax.mail.internet.MimeMessage) oMsg).saveChanges();
+        ((javax.mail.internet.MimeMessage) oMsg).writeTo(baOut);
+        DebugFile.writeln(baOut.toString());
+        baOut.close();
+      } catch (IOException ioe) { DebugFile.writeln("IOException "+ioe.getMessage()); }
+    }
+    
     Transport.send(oMsg);
+    
     if (DebugFile.trace) {
       DebugFile.decIdent();
       DebugFile.writeln("End SessionHandler.sendMessage()");

@@ -301,7 +301,7 @@ public final class SendMail {
 
 		  Job oSnd;
 		  DBPersist oJob = new DBPersist(DB.k_jobs,"Job");
-		  oCon = oDbb.getConnection("SendMail");
+		  oCon = oDbb.getConnection("SendMail",false);
 		  oCon.setAutoCommit(false);
 
 		  ACLUser oUsr = new ACLUser(oCon, oMacc.getString(DB.gu_user));
@@ -634,7 +634,7 @@ public final class SendMail {
 	  else
 		oDbb = oGlobalDbb;
 
-	  JDCConnection oCon = oDbb.getConnection("SendMail_RO1", true);
+	  JDCConnection oCon = oDbb.getConnection("SendMail_RO1", false);
 	  
 	  ACLUser oUsr = new ACLUser(oCon, ACLUser.getIdFromEmail(oCon,sFromAddr));
 	  if (!oUsr.exists(oCon)) {

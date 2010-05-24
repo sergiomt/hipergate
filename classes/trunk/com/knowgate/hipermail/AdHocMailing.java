@@ -197,8 +197,13 @@ public class AdHocMailing extends DBPersist {
       put (DB.dt_modified, dtNow);
     if (!AllVals.containsKey(DB.gu_mailing))
       put (DB.gu_mailing, Gadgets.generateUUID());
-    if (!AllVals.containsKey(DB.pg_mailing))
-      put (DB.pg_mailing, DBBind.nextVal(oConn, "seq_k_adhoc_mailings"));
+    if (!AllVals.containsKey(DB.pg_mailing)) {
+      if (oConn.getDataBaseProduct()==JDCConnection.DBMS_MYSQL || oConn.getDataBaseProduct()==JDCConnection.DBMS_MSSQL)
+        put (DB.pg_mailing, DBBind.nextVal(oConn, "seq_k_adhoc_mail"));
+      else
+        put (DB.pg_mailing, DBBind.nextVal(oConn, "seq_k_adhoc_mailings"));
+    }
+    	
     if (!AllVals.containsKey(DB.dt_created))
       put (DB.dt_created, dtNow);
     if (AllVals.containsKey(DB.tx_email_from))

@@ -32,6 +32,7 @@ package com.knowgate.hipermail;
 */
 
 import java.util.HashMap;
+import java.net.URL;
 
 import org.apache.oro.text.regex.Pattern;
 import org.apache.oro.text.regex.PatternMatcher;
@@ -47,14 +48,18 @@ import org.htmlparser.Node;
 import org.htmlparser.util.NodeList;
 import org.htmlparser.util.NodeIterator;
 import org.htmlparser.util.ParserException;
+import org.htmlparser.Tag;
+import org.htmlparser.tags.LinkTag;
 import org.htmlparser.tags.ImageTag;
 import org.htmlparser.tags.TableTag;
 import org.htmlparser.tags.TableColumn;
 import org.htmlparser.beans.StringBean;
 import org.htmlparser.filters.TagNameFilter;
+import org.htmlparser.visitors.NodeVisitor;
 
 import com.knowgate.misc.Gadgets;
 import com.knowgate.debug.DebugFile;
+import com.knowgate.debug.StackTraceUtil;
 
 /**
  * <p>Used to perform some maipulations in HTML source code for e-mails</p>
@@ -81,10 +86,60 @@ public class HtmlMimeBodyPart {
     return oImgs;
   }
 
+  private String doSubstitution(String sBase, String sAttributeName, String sFormerValue, String sNewValue)
+  	throws ParserException {
+  	
+  	if (DebugFile.trace) DebugFile.writeln("HtmlMomeBodyPart.doSubstitution(..., "+sAttributeName+","+sFormerValue+","+sNewValue);
+
+    StringSubstitution oSrcSubs = new StringSubstitution();
+
+    String sPattern = "("+sAttributeName.toLowerCase()+"|"+sAttributeName.toUpperCase()+"|"+sAttributeName+")\\x20*=\\x20*(\"|')?" + sFormerValue + "(\"|')?";
+
+    try {
+
+      if (DebugFile.trace) DebugFile.writeln("Perl5Compiler.compile(\""+sPattern+"\", Perl5Compiler.SINGLELINE_MASK)");
+      Pattern oPattern = oCompiler.compile(sPattern, Perl5Compiler.SINGLELINE_MASK);
+
+      if (oMatcher.contains(sBase, oPattern)) {
+      	String sMatch = oMatcher.getMatch().toString();
+      	int iDquote = sMatch.indexOf('"');
+      	int iSquote = sMatch.indexOf("'");
+      	char cQuote = (char) 0;
+      	if (iDquote>0 && iSquote>0)
+      	  cQuote = iDquote<iSquote ? (char)34 : (char)39;
+      	else if (iDquote>0)
+      	  cQuote = (char)34;
+      	else if (iSquote>0)
+      	  cQuote = (char)39;
+		if (cQuote==(char)0)
+          oSrcSubs.setSubstitution(sMatch.substring(0,sAttributeName.length())+"="+sNewValue);
+        else
+          oSrcSubs.setSubstitution(sMatch.substring(0,sAttributeName.length())+"="+cQuote+sNewValue+cQuote);
+    	return Util.substitute(oMatcher, oPattern, oSrcSubs, sBase);			
+      } else {
+      	return sBase;
+      } // fi (oMatcher.contains())
+    } catch (MalformedPatternException mpe) {
+      if (DebugFile.trace) {
+        DebugFile.writeln("MalformedPatternException " + mpe.getMessage());
+        try { DebugFile.writeln(StackTraceUtil.getStackTrace(mpe)); } catch (Exception ignore) { }
+      }
+      throw new ParserException("ArrayIndexOutOfBoundsException " + mpe.getMessage()+ " pattern " + sPattern + " substitution " + sNewValue, mpe);        
+    }
+    catch (ArrayIndexOutOfBoundsException aiob) {
+      if (DebugFile.trace) {
+        DebugFile.writeln("ArrayIndexOutOfBoundsException " + aiob.getMessage());
+        try { DebugFile.writeln(StackTraceUtil.getStackTrace(aiob)); } catch (Exception ignore) { }
+      }
+      throw new ParserException("ArrayIndexOutOfBoundsException " + aiob.getMessage()+ " pattern " + sPattern + " substitution " + sNewValue, aiob);
+    }
+  } // doSubstitution
+  
   /**
    * <p>Add a preffix to &lt;IMG SRC="..."&gt; &lt;TABLE BACKGROUND="..."&gt; and &lt;TD BACKGROUND="..."&gt; tags</p>
    * @param sPreffix String preffix to be added to &lt;img&gt; src attribute and &lt;table&gt; and &lt;td&gt; background
    * @return New HTML source with preffixed attributes
+   * @throws ParserException
    */
   public String addPreffixToImgSrc(String sPreffix)
   	throws ParserException {
@@ -95,7 +150,6 @@ public class HtmlMimeBodyPart {
     String sBodyCid = sBody;
     NodeList oCollectionList;
     TagNameFilter oImgFilter;
-    StringSubstitution oSrcSubs = new StringSubstitution();
 
 	// **********************************************************************
 	// Replace <IMG SRC="..." >
@@ -139,14 +193,25 @@ public class HtmlMimeBodyPart {
           oImgs.put(sSrc, sCid);
         } // fi (!oImgs.containsKey(sSrc))
 
+		/*
         try {
-          String sPattern = Gadgets.replace(oImgTag.extractImageLocn(),'\\',"\\\\");
+          sPattern = Gadgets.replace(oImgTag.extractImageLocn(),'\\',"\\\\");
           if (DebugFile.trace) DebugFile.writeln("Perl5Compiler.compile(\""+sPattern+"\", Perl5Compiler.SINGLELINE_MASK)");
           Pattern oPattern = oCompiler.compile(sPattern, Perl5Compiler.SINGLELINE_MASK);
           oSrcSubs.setSubstitution(sPreffix+oImgs.get(sSrc));
           if (DebugFile.trace) DebugFile.writeln("Util.substitute([PatternMatcher],"+ sSrc + ","+sPreffix+oImgs.get(sSrc)+",...)");
             sBodyCid = Util.substitute(oMatcher, oPattern, oSrcSubs, sBodyCid);
         } catch (MalformedPatternException neverthrown) { }
+          catch (ArrayIndexOutOfBoundsException aiob) {
+          	if (DebugFile.trace) {
+          	  DebugFile.writeln("ArrayIndexOutOfBoundsException " + aiob.getMessage());
+          	  try { DebugFile.writeln(StackTraceUtil.getStackTrace(aiob)); } catch (Exception ignore) { }
+          	}
+          	throw new ParserException("ArrayIndexOutOfBoundsException " + aiob.getMessage()+ " pattern " + sPattern + " substitution " + sPreffix+oImgs.get(sSrc),aiob);
+        }
+        */
+        
+        sBodyCid = doSubstitution (sBodyCid, "Src", Gadgets.replace(oImgTag.extractImageLocn(),'\\',"\\\\"), sPreffix+oImgs.get(sSrc));
     } // next
 
 	// **********************************************************************
@@ -189,6 +254,7 @@ public class HtmlMimeBodyPart {
             oImgs.put(sSrc, sCid);
           } // fi (!oImgs.containsKey(sSrc))
 
+		  /*
           try {
             Pattern oPattern = oCompiler.compile(Gadgets.replace(((TableTag) oCollectionList.elementAt(i)).getAttribute("background"),'\\',"\\\\"),
             									 Perl5Compiler.SINGLELINE_MASK);
@@ -196,6 +262,9 @@ public class HtmlMimeBodyPart {
             if (DebugFile.trace) DebugFile.writeln("Util.substitute([PatternMatcher],"+ sSrc + ","+sPreffix+oImgs.get(sSrc)+",...)");
             sBodyCid = Util.substitute(oMatcher, oPattern, oSrcSubs, sBodyCid);
           } catch (MalformedPatternException neverthrown) { }
+		  */
+		  
+		  sBodyCid = doSubstitution (sBodyCid, "Background", Gadgets.replace(((TableTag) oCollectionList.elementAt(i)).getAttribute("background"),'\\',"\\\\"), sPreffix+oImgs.get(sSrc));
 
         } // fi
       } // fi
@@ -241,6 +310,7 @@ public class HtmlMimeBodyPart {
             oImgs.put(sSrc, sCid);
           } // fi (!oImgs.containsKey(sSrc))
 
+		  /*
           try {
             Pattern oPattern = oCompiler.compile(Gadgets.replace(((TableColumn) oCollectionList.elementAt(i)).getAttribute("background"),'\\',"\\\\"),
             									 Perl5Compiler.SINGLELINE_MASK);
@@ -248,7 +318,9 @@ public class HtmlMimeBodyPart {
             if (DebugFile.trace) DebugFile.writeln("Util.substitute([PatternMatcher],"+ sSrc + ","+sPreffix+oImgs.get(sSrc)+",...)");
             sBodyCid = Util.substitute(oMatcher, oPattern, oSrcSubs, sBodyCid);
           } catch (MalformedPatternException neverthrown) { }
-
+		  */
+		  
+		  sBodyCid = doSubstitution(sBodyCid, "Background", Gadgets.replace(((TableColumn) oCollectionList.elementAt(i)).getAttribute("background"),'\\',"\\\\"), sPreffix+oImgs.get(sSrc));
         } // fi
       } // fi
     } // next
@@ -261,6 +333,7 @@ public class HtmlMimeBodyPart {
    * <p>Remove a preffix from &lt;IMG SRC="..."&gt; &lt;TABLE BACKGROUND="..."&gt; and &lt;TD BACKGROUND="..."&gt; tags</p>
    * @param sPreffix String preffix to be removed from &lt;img&gt; src attribute and &lt;table&gt; and &lt;td&gt; background
    * @return New HTML source with unpreffixed attributes
+   * @throws ParserException
    */
   public String removePreffixFromImgSrcs(String sPreffix)
   	throws ParserException {
@@ -271,7 +344,6 @@ public class HtmlMimeBodyPart {
     String sBodyCid = sBody;
     NodeList oCollectionList;
     TagNameFilter oImgFilter;
-    StringSubstitution oSrcSubs = new StringSubstitution();
 
 	// **********************************************************************
 	// Replace <IMG SRC="..." >
@@ -314,6 +386,7 @@ public class HtmlMimeBodyPart {
           oImgs.put(sSrc, sCid);
         } // fi (!oImgs.containsKey(sSrc))
 
+		/*
         try {
           String sImgSrc = ((ImageTag) oCollectionList.elementAt(i)).extractImageLocn();
           if (sImgSrc.startsWith(sPreffix)) {
@@ -324,6 +397,13 @@ public class HtmlMimeBodyPart {
               sBodyCid = Util.substitute(oMatcher, oPattern, oSrcSubs, sBodyCid);
           }
         } catch (MalformedPatternException neverthrown) { }
+        */
+        
+        String sImgSrc = ((ImageTag) oCollectionList.elementAt(i)).extractImageLocn();
+        if (sImgSrc.startsWith(sPreffix)) {
+          sBodyCid = doSubstitution(sBodyCid, "Src", Gadgets.replace(sImgSrc,'\\',"\\\\"), sImgSrc.substring(sPreffix.length()));
+        }
+        
     } // next
 
 	// **********************************************************************
@@ -366,6 +446,7 @@ public class HtmlMimeBodyPart {
             oImgs.put(sSrc, sCid);
           } // fi (!oImgs.containsKey(sSrc))
 
+		  /*
           try {
           	String sBckGrnd = ((TableTag) oCollectionList.elementAt(i)).getAttribute("background");
             if (sBckGrnd.startsWith(sPreffix)) {
@@ -376,7 +457,13 @@ public class HtmlMimeBodyPart {
               sBodyCid = Util.substitute(oMatcher, oPattern, oSrcSubs, sBodyCid);
             } 
           } catch (MalformedPatternException neverthrown) { }
+          */
 
+          String sBckGrnd = ((TableTag) oCollectionList.elementAt(i)).getAttribute("background");
+          if (sBckGrnd.startsWith(sPreffix)) {
+            sBodyCid = doSubstitution(sBodyCid, "Background", Gadgets.replace(sBckGrnd,'\\',"\\\\"), sBckGrnd.substring(sPreffix.length()));
+          }          
+          
         } // fi
       } // fi
     } // next
@@ -421,6 +508,7 @@ public class HtmlMimeBodyPart {
             oImgs.put(sSrc, sCid);
           } // fi (!oImgs.containsKey(sSrc))
 
+          /*
           try {
           	String sTdBckg = ((TableColumn) oCollectionList.elementAt(i)).getAttribute("background");
             if (sTdBckg.startsWith(sPreffix)) {
@@ -431,6 +519,12 @@ public class HtmlMimeBodyPart {
               sBodyCid = Util.substitute(oMatcher, oPattern, oSrcSubs, sBodyCid);
             }
           } catch (MalformedPatternException neverthrown) { }
+		  */
+
+          String sTdBckg = ((TableColumn) oCollectionList.elementAt(i)).getAttribute("background");
+          if (sTdBckg.startsWith(sPreffix)) {
+            sBodyCid = doSubstitution(sBodyCid, "Background", Gadgets.replace(sTdBckg,'\\',"\\\\"), sTdBckg.substring(sPreffix.length()));
+          }
 
         } // fi
       } // fi
@@ -439,9 +533,43 @@ public class HtmlMimeBodyPart {
     return sBodyCid;
   } // removePreffixFromImgSrcs
 
+  /**
+   * <p>Replace a preffix from &lt;IMG SRC="..."&gt; &lt;TABLE BACKGROUND="..."&gt; and &lt;TD BACKGROUND="..."&gt; tags with another one</p>
+   * @param sFormerPreffix String
+   * @param sNewPreffix String
+   * @return New HTML source with replaced preffixed attributes
+   * @throws ParserException
+   */
+
   public String replacePreffixFromImgSrcs(String sFormerPreffix, String sNewPreffix)
   	throws ParserException {
 	HtmlMimeBodyPart oHtml = new HtmlMimeBodyPart(removePreffixFromImgSrcs(sFormerPreffix), sEnc);
 	return oHtml.addPreffixToImgSrc(sNewPreffix);
   } // replacePreffixFromImgSrcs
+
+  public String addClickThroughRedirector(final String sRedirectorUrl)
+  	throws ParserException {
+    final NodeVisitor linkVisitor = new NodeVisitor() {
+
+        public void visitTag(Tag tag) {
+            // Process any tag/node in your HTML 
+            String name = tag.getTagName();
+
+            // Set the Link's target to _blank if the href is external
+            if ("a".equalsIgnoreCase(name)) {
+            	LinkTag lnk = (LinkTag) tag;
+            	String sUrl = lnk.extractLink();
+                if(sUrl.startsWith("http://") || sUrl.startsWith("https://")) {
+                    lnk.setLink(sRedirectorUrl+Gadgets.URLEncode(sUrl));
+                }
+            }
+        }
+    };
+
+    Parser parser = Parser.createParser(sBody, sEnc);
+    NodeList list = parser.parse(null);
+    list.visitAllNodesWith(linkVisitor);
+    return list.toHtml();
+  } // addClickThroughRedirector
+
 }
