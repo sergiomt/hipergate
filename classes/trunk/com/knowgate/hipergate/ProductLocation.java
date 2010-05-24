@@ -108,7 +108,7 @@ public class ProductLocation extends DBPersist {
     if (!sPath.endsWith(sFileSep) && !sXPath.startsWith(sFileSep)) sPath += sFileSep;
 
     sPath += sXPath;
-
+		
     return sPath;
   } // getPath()
 

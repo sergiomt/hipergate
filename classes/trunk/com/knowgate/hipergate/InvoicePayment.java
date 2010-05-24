@@ -49,9 +49,20 @@ public class InvoicePayment extends DBPersist {
   	super(DB.k_invoice_payments,"InvoicePayment");
   }
 
-  public boolean store(JDCConnection oConn) throws SQLException {
+  public boolean store(JDCConnection oConn) throws SQLException,NullPointerException {
+
+	if (isNull(DB.gu_invoice) || !AllVals.containsKey(DB.gu_invoice))
+	  throw new NullPointerException("InvoicePayment.store() gu_invoice not set");
+		
+  	if (DebugFile.trace) {
+  	  DebugFile.writeln("Begin InvoicePayment.store([JDCConnection])");
+  	  DebugFile.incIdent();
+  	}
+  	
     if (isNull(DB.pg_payment)) {
-      Integer oNextPayId = DBCommand.queryInt(oConn, "SELECT MAX("+DB.pg_payment+") FROM "+DB.k_invoice_payments+" WHERE "+DB.gu_invoice+"='"+getString(DB.gu_invoice)+"'");
+      Integer oNextPayId = DBCommand.queryInt(oConn, "SELECT MAX("+DB.pg_payment+") FROM "+
+      	                                      DB.k_invoice_payments+" WHERE "+
+      	                                      DB.gu_invoice+"='"+getString(DB.gu_invoice)+"'");
       if (null==oNextPayId) oNextPayId = new Integer(0);
       put(DB.pg_payment, oNextPayId.intValue()+1);
     }
@@ -65,7 +76,14 @@ public class InvoicePayment extends DBPersist {
 	  put(DB.id_currency, DBCommand.queryStr(oConn, "SELECT "+DB.id_currency+" FROM "+DB.k_invoices+" WHERE "+DB.gu_invoice+"='"+getString(DB.gu_invoice)+"'"));
     }
 
-	return super.store(oConn);    
+	boolean bRetVal = super.store(oConn);    
+
+  	if (DebugFile.trace) {
+  	  DebugFile.decIdent();
+  	  DebugFile.writeln("End InvoicePayment.store([JDCConnection]) : "+String.valueOf(bRetVal));
+  	}
+
+	return bRetVal;
   } // store
 
   public boolean delete(JDCConnection oConn) throws SQLException {
