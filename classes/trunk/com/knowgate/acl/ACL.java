@@ -504,6 +504,8 @@ public final class ACL {
           return "WorkArea not found";
         case WORKAREA_NOT_SET:
           return "WorkArea not set";
+        case WORKAREA_ACCESS_DENIED:
+          return "WorkArea access denied";
         case ACCOUNT_CANCELLED:
           return "Account cancelled";
         case PASSWORD_EXPIRED:
