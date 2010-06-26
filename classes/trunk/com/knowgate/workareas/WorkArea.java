@@ -195,6 +195,7 @@ public class WorkArea extends DBPersist {
    * <tr><td>DELETE k_phone_calls</td></tr>
    * <tr><td>DELETE k_sales_men</td></tr>
    * <tr><td>DELETE k_sales_men_lookup</td></tr>
+   * <tr><td>DELETE k_bulkloads</td></tr>
    * <tr><td>Supplier.delete</td></tr>
    * <tr><td>Company.delete</td></tr>
    * <tr><td>DELETE k_companies_lookup</td></tr>
@@ -556,6 +557,17 @@ public class WorkArea extends DBPersist {
       oStmt.close();
     }
 
+    // -----------------------------------------------------------------------------------
+    // Nuevo para la v5.5, borrar los lotes de carga
+    if (DBBind.exists(oConn, DB.k_bulkloads, "U")) {
+      oStmt = oConn.createStatement();
+      try { if (oConn.getDataBaseProduct()!=JDCConnection.DBMS_POSTGRESQL) oStmt.setQueryTimeout(30); } catch (SQLException sqle) {}
+      sSQL = "DELETE FROM " + DB.k_bulkloads + " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "'";
+      if (DebugFile.trace) DebugFile.writeln("Statement.execute(" + sSQL + ")");
+      oStmt.execute(sSQL);
+      oStmt.close();
+    }    
+    	
     // -----------------------------------------------------------------------------------
     // Nuevo para la v4.0, borrar los proveedores
     if (DBBind.exists(oConn, DB.k_suppliers, "U")) {
