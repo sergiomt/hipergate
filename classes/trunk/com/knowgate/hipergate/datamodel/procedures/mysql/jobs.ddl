@@ -1,6 +1,7 @@
 
 CREATE PROCEDURE k_sp_del_job (IdJob CHAR(32))
 BEGIN
+  DELETE FROM k_job_atoms_clicks WHERE gu_job=IdJob;
   DELETE FROM k_job_atoms_tracking WHERE gu_job=IdJob;
   DELETE FROM k_job_atoms_archived WHERE gu_job=IdJob;
   DELETE FROM k_job_atoms WHERE gu_job=IdJob;

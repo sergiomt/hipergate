@@ -4,6 +4,9 @@ GO;
 CREATE SEQUENCE seq_k_welcme_pak INCREMENT BY 1 START WITH 1
 GO;
 
+CREATE SEQUENCE seq_k_bulkloads INCREMENT BY 1 START WITH 1
+GO;
+
 CREATE OR REPLACE PROCEDURE k_sp_del_contact (ContactId CHAR) IS
   TYPE GUIDS IS TABLE OF k_addresses.gu_address%TYPE;
   TYPE BANKS IS TABLE OF k_bank_accounts.nu_bank_acc%TYPE;
