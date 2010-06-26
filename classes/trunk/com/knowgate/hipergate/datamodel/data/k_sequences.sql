@@ -17,3 +17,4 @@ INSERT INTO k_sequences (nm_table,nu_initial,nu_maxval,nu_increase,nu_current) V
 INSERT INTO k_sequences (nm_table,nu_initial,nu_maxval,nu_increase,nu_current) VALUES ('seq_k_msg_votes', 1, 2147483647, 1, 1);
 INSERT INTO k_sequences (nm_table,nu_initial,nu_maxval,nu_increase,nu_current) VALUES ('seq_k_webbeacons', 1, 2147483647, 1, 1);
 INSERT INTO k_sequences (nm_table,nu_initial,nu_maxval,nu_increase,nu_current) VALUES ('seq_k_adhoc_mail', 1, 2147483647, 1, 1);
+INSERT INTO k_sequences (nm_table,nu_initial,nu_maxval,nu_increase,nu_current) VALUES ('seq_k_bulkloads', 1, 2147483647, 1, 1);
