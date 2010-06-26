@@ -733,3 +733,19 @@ tx_err        VARCHAR(254) NULL,
 CONSTRAINT pk_sms_audit PRIMARY KEY(id_sms)
 )
 GO;
+
+CREATE TABLE k_bulkloads (
+pg_bulkload   INTEGER  NOT NULL,
+dt_uploaded   DATETIME NOT NULL,
+gu_workarea   CHAR(32) NOT NULL,
+nm_file       VARCHAR(254) NOT NULL,
+id_batch      VARCHAR(32)  NULL,
+id_status     VARCHAR(30)  NULL,
+dt_processed  DATETIME NOT NULL,
+nu_lines      INTEGER DEFAULT 0,
+nu_successful INTEGER DEFAULT 0,
+nu_errors     INTEGER DEFAULT 0,
+CONSTRAINT pk_bulkloads PRIMARY KEY(pg_bulkload),
+CONSTRAINT u1_bulkloads UNIQUE(dt_uploaded,gu_workarea,nm_file)
+)
+GO;

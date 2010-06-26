@@ -242,3 +242,14 @@ CREATE TABLE k_distances_cache
   CONSTRAINT pk_distances_cache PRIMARY KEY (lo_from,lo_to)  
 )
 GO;
+
+CREATE TABLE k_urls
+(
+gu_url CHAR(32) NOT NULL,
+gu_workarea CHAR(32) NOT NULL,
+url_addr VARCHAR(2000) NOT NULL,
+tx_title VARCHAR(2000) NULL,
+de_url VARCHAR(2000) NULL,
+CONSTRAINT pk_urls PRIMARY KEY(gu_url,gu_workarea)
+)
+GO;

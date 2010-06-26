@@ -147,6 +147,20 @@ user_agent     VARCHAR(254) NULL
 )
 GO;
 
+CREATE TABLE k_job_atoms_clicks
+(
+gu_job         CHAR(32)   NOT NULL,
+pg_atom        INTEGER    NOT NULL,
+gu_url         CHAR(32)   NOT NULL,
+dt_action      DATETIME   DEFAULT CURRENT_TIMESTAMP,
+id_status      SMALLINT   DEFAULT 1,
+gu_company     CHAR(32)     NULL,
+gu_contact     CHAR(32)     NULL,
+ip_addr        CHARACTER VARYING(16) NULL,
+tx_email       CHARACTER VARYING(100) NULL
+)
+GO;
+
 CREATE TABLE k_queries
 (
 gu_query      CHAR(32)     NOT NULL,
