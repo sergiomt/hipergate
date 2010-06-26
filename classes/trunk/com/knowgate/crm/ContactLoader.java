@@ -45,6 +45,7 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.sql.Types;
 
+import com.knowgate.dataobjs.DB;
 import com.knowgate.crm.DistributionList;
 import com.knowgate.debug.DebugFile;
 import com.knowgate.misc.Gadgets;
@@ -683,6 +684,21 @@ public final class ContactLoader implements ImportLoader {
         if (DebugFile.trace) DebugFile.writeln("PreparedStatement.executeUpdate(oCompUpdt)");
         iAffected = oCompUpdt.executeUpdate();
         if (DebugFile.trace) DebugFile.writeln("affected="+String.valueOf(iAffected));
+
+        if (test(iFlags,ADD_TO_LIST) && iListType==DistributionList.TYPE_DIRECT) {
+          PreparedStatement oUdlm = oConn.prepareStatement("UPDATE "+DB.k_x_list_members+" SET "+
+			    				    DB.dt_modified+"=?,"+DB.tx_name+"=?,"+DB.tx_surname+"=?,"+
+			    				    DB.mov_phone+"=? WHERE "+DB.gu_list+"=? AND "+DB.tx_email+"=?");
+	      oUdlm.setTimestamp(1, new Timestamp(new Date().getTime()));
+	      oUdlm.setObject(2, get(tx_name), Types.VARCHAR);
+		  oUdlm.setObject(3, get(tx_surname), Types.VARCHAR);
+		  oUdlm.setObject(4, get(mov_phone), Types.VARCHAR);
+		  oUdlm.setObject(5, get(gu_list), Types.CHAR);
+		  oUdlm.setObject(6, get(tx_email), Types.VARCHAR);
+		  oUdlm.executeUpdate();
+		  oUdlm.close();
+        }
+
       }
       if (test(iFlags,MODE_APPEND) && (iAffected==0)) {
         if (DebugFile.trace) DebugFile.writeln("COMPANY MODE_APPEND AND affected=0");
@@ -758,7 +774,12 @@ public final class ContactLoader implements ImportLoader {
         oContUpdt.setString(14, getColNull(de_title));
         oContUpdt.setString(15, getColNull(id_gender));
         if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setObject(16, "+aValues[dt_birth]+", Types.TIMESTAMP)");
-        oContUpdt.setObject(16, aValues[dt_birth], Types.TIMESTAMP);
+        if (null==aValues[dt_birth])
+          oContUpdt.setNull(16, Types.TIMESTAMP);
+        else if (aValues[dt_birth].getClass().getName().equals("java.util.Date"))
+          oContUpdt.setObject(16, new Timestamp(((java.util.Date)aValues[dt_birth]).getTime()), Types.TIMESTAMP);
+        else
+          oContUpdt.setObject(16, aValues[dt_birth], Types.TIMESTAMP);        	
         if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setObject(17, "+aValues[ny_age]+", Types.INTEGER)");
         oContUpdt.setObject(17, aValues[ny_age], Types.INTEGER);
         oContUpdt.setString(18, getColNull(sn_passport));
@@ -818,7 +839,12 @@ public final class ContactLoader implements ImportLoader {
           oContInst.setString(13, getColNull(tx_surname));
           oContInst.setString(14, getColNull(de_title));
           oContInst.setString(15, getColNull(id_gender));
-          oContInst.setObject(16, aValues[dt_birth], Types.TIMESTAMP);
+          if (null==aValues[dt_birth])
+            oContInst.setNull(16, Types.TIMESTAMP);
+          else if (aValues[dt_birth].getClass().getName().equals("java.util.Date"))
+            oContInst.setObject(16, new Timestamp(((java.util.Date)aValues[dt_birth]).getTime()), Types.TIMESTAMP);
+          else
+            oContInst.setObject(16, aValues[dt_birth], Types.TIMESTAMP);
           oContInst.setObject(17, aValues[ny_age], Types.INTEGER);
           oContInst.setString(18, getColNull(sn_passport));
           oContInst.setString(19, getColNull(tp_passport));
@@ -1008,7 +1034,23 @@ public final class ContactLoader implements ImportLoader {
 			boolean bMmbrExists = oRmbr.next();
 			oRmbr.close();
 			oMmbr.close();
-			if (!bMmbrExists) oDistribList.addContact(oConn, (String) aValues[gu_contact]);
+			if (bMmbrExists) {
+			  if (iListType==DistributionList.TYPE_DIRECT) {
+			    PreparedStatement oUdlm = oConn.prepareStatement("UPDATE "+DB.k_x_list_members+" SET "+
+			    						  DB.dt_modified+"=?,"+DB.tx_name+"=?,"+DB.tx_surname+"=?,"+
+			    						  DB.mov_phone+"=? WHERE "+DB.gu_list+"=? AND "+DB.tx_email+"=?");
+			    oUdlm.setTimestamp(1, new Timestamp(new Date().getTime()));
+			    oUdlm.setObject(2, get(tx_name), Types.VARCHAR);
+			    oUdlm.setObject(3, get(tx_surname), Types.VARCHAR);
+			    oUdlm.setObject(4, get(mov_phone), Types.VARCHAR);
+			    oUdlm.setObject(5, get(gu_list), Types.CHAR);
+			    oUdlm.setObject(6, get(tx_email), Types.VARCHAR);
+			    oUdlm.executeUpdate();
+			    oUdlm.close();
+			  }
+		  	} else {
+			  oDistribList.addContact(oConn, (String) aValues[gu_contact]);
+			}
 	    }      
       } // fi (iAffected==0)
     } // fi test(iFlags,MODE_APPEND))
