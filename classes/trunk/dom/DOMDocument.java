@@ -391,6 +391,7 @@ public class DOMDocument {
     //---------------------------------------------------------
 
     public void print(OutputStream oOutStream) throws IOException,UnsupportedEncodingException {
+      if (DebugFile.trace) DebugFile.writeln("DOMDocument.print([OutputStream],"+sEncoding+")");
       oPrtWritter = new PrintWriter(new OutputStreamWriter(oOutStream, sEncoding));
       print(oDocument);
     } // print()
@@ -421,6 +422,8 @@ public class DOMDocument {
                         Encoding = "ISO-8859-1";
                     else if ( Encoding.equalsIgnoreCase( "Unicode" ) )
                         Encoding = "UTF-16";
+					else if ( Encoding.equalsIgnoreCase( "UTF-8" ) )
+                        Encoding = "UTF-8";
                     else
                         //Encoding = MIME2Java.reverse( Encoding );
                         Encoding = "ISO-8859-1";
