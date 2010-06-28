@@ -860,7 +860,7 @@ public class Product extends DBPersist {
     int iDeleted = 0;
     PreparedStatement oStmt;
 
-    oStmt = oConn.prepareStatement("DELETE FROM " + DB.k_x_cat_objs + " WHERE " + DB.gu_category + "=? AND " + DB.gu_object + "=? AND " + DB.id_class + "=" + String.valueOf(ClassId));
+    oStmt = oConn.prepareStatement("DELETE FROM " + DB.k_x_cat_objs + " WHERE " + DB.gu_category + "=? AND " + DB.gu_object + "=?");
     oStmt.setString(1, idCategory);
     oStmt.setString(2, getString(DB.gu_product));
     iDeleted = oStmt.executeUpdate();
@@ -938,7 +938,7 @@ public class Product extends DBPersist {
    */
   public DBSubset getCategories(JDCConnection oConn) throws SQLException {
     DBSubset oCats = new DBSubset(DB.k_x_cat_objs,DB.gu_category,
-    					 DB.gu_object+"=? AND "+DB.id_class+"="+String.valueOf(Product.ClassId),4);
+    					 DB.gu_object+"=?",4);
 	oCats.load(oConn, new Object[]{get(DB.gu_product)});
     return oCats;
   }
@@ -952,7 +952,7 @@ public class Product extends DBPersist {
    */
   public String getCategoryId(JDCConnection oConn) throws SQLException {
     DBSubset oCats = new DBSubset(DB.k_x_cat_objs,DB.gu_category,
-    							  DB.gu_object+"=? AND "+DB.id_class+"="+String.valueOf(Product.ClassId),4);
+    							  DB.gu_object+"=?",4);
 	oCats.load(oConn, new Object[]{get(DB.gu_product)});
     if (oCats.getRowCount()>0)
       return oCats.getString(0,0);
@@ -967,11 +967,13 @@ public class Product extends DBPersist {
    * @param Connection
    * @return GUID of Shop or <b>null</b> if no Shop is found for this Product
    * @throws SQLException
+   * @throws IllegalStateException
    * @since 4.0
    */
-  public String getShopId (JDCConnection oConn) throws SQLException {
+  public String getShopId (JDCConnection oConn) throws SQLException,IllegalStateException {
     String sGuShop = null;
     DBSubset oCats = getCategories(oConn);
+    String sIdDomain = null;
 
     if (DebugFile.trace) {
       DebugFile.writeln("Begin Product.getShopId([JDCConnection])");
@@ -980,15 +982,20 @@ public class Product extends DBPersist {
     
     if (oCats.getRowCount()!=0) {
 
+	  if (isNull(DB.gu_owner))
+	  	throw new IllegalStateException("Product must be fully loaded before calling getShopId()");
+	  		
       PreparedStatement oQury = oConn.prepareStatement("SELECT "+DB.id_domain+" FROM "+DB.k_users+" WHERE "+DB.gu_user+"=?",
                                                        ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
       if (DebugFile.trace) DebugFile.writeln("Statement.executeQuery(SELECT "+DB.id_domain+" FROM "+DB.k_users+" WHERE "+DB.gu_user+"='"+getStringNull(DB.gu_owner,"null")+"'");
       oQury.setString(1, getString(DB.gu_owner));
       ResultSet oRSet = oQury.executeQuery();
-      oRSet.next();
-      String sIdDomain = String.valueOf(oRSet.getInt(1));
+      if (oRSet.next())
+        sIdDomain = String.valueOf(oRSet.getInt(1));
       oRSet.close();
       oQury.close();
+      
+      if (null==sIdDomain) throw new SQLException("User "+getString(DB.gu_owner)+" not found at "+DB.k_users+" table");
       
       oQury = oConn.prepareStatement("SELECT "+DB.gu_shop+" FROM "+DB.k_shops+" WHERE "+DB.id_domain+"="+sIdDomain+" AND "+DB.gu_root_cat+"=?",
                                      ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
