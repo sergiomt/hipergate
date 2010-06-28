@@ -405,6 +405,7 @@ public class EmailSender extends Job {
    * <tr><td>gu_workarea</td><td>GUID of WorkArea owner of document to be sent</td></tr>
    * <tr><td>gu_pageset</td><td>GUID of PageSet to be sent</td></tr>
    * <tr><td>nm_pageset</td><td>Name of PageSet to be sent</td></tr>
+   * <tr><td>nm_page</td><td>File Name of HTML page to be sent</td></tr>
    * <tr><td>bo_attachimages</td><td>"1" if must attach images on document,<br>"0" if images must be absolute references</td></tr>
    * <tr><td>tx_sender</td><td>Full Name of sender to be displayed</td></tr>
    * <tr><td>tx_from</td><td>Sender e-mail address</td></tr>
@@ -440,14 +441,15 @@ public class EmailSender extends Job {
       // Compose the full path to document template file
 
       // First get the storage base path from hipergate.cnf
-      sPathHTML = getProperty("workareasput");
+      sPathHTML = getParameter("workareasput");
+      if (null==sPathHTML) sPathHTML = getProperty("workareasput");
       if (!sPathHTML.endsWith(sSep)) sPathHTML += sSep;
 
         // Concatenate PageSet workarea guid and subpath to Mailwire application directory
       sPathHTML += getParameter("gu_workarea") + sSep + "apps" + sSep + "Mailwire" + sSep + "html" + sSep + getParameter("gu_pageset") + sSep;
 
-      // Concatenate PageSet Name
-      sPathHTML += getParameter("nm_pageset").replace(' ', '_') + ".html";
+      // Concatenate HTML Page Name
+      sPathHTML += getParameter("nm_page").replace(' ', '_');
 
       if (DebugFile.trace) DebugFile.writeln("PathHTML = " + sPathHTML);
 
@@ -508,7 +510,7 @@ public class EmailSender extends Job {
         sPathHTML = getProperty("workareasput");
         if (!sPathHTML.endsWith(sSep)) sPathHTML += sSep;
 
-        sPathHTML += getParameter("gu_workarea") + sSep + "apps" + sSep + "Mailwire" + sSep + "html" + sSep + getParameter("gu_pageset") + sSep + getParameter("nm_pageset").replace(' ', '_') + ".html";
+        sPathHTML += getParameter("gu_workarea") + sSep + "apps" + sSep + "Mailwire" + sSep + "html" + sSep + getParameter("gu_pageset") + sSep + getParameter("nm_page").replace(' ', '_');
 
         if (DebugFile.trace) DebugFile.writeln("PathHTML = " + sPathHTML);
 

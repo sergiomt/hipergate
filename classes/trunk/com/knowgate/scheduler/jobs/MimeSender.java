@@ -139,6 +139,11 @@ public class MimeSender extends Job {
   // ---------------------------------------------------------------------------
 
   public String redirectExternalLinks(Atom oAtm) throws ParserException {
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin MimeSender.redirectExternalLinks([Atom])");
+      DebugFile.incIdent();
+    }
     
     String sRedirectorDir = getProperty("webbeacon");
     if (sRedirectorDir==null) {
@@ -152,8 +157,13 @@ public class MimeSender extends Job {
     HtmlMimeBodyPart oPart = new HtmlMimeBodyPart(sBody, null);
     sBody = oPart.addClickThroughRedirector(sRedirectorUrl+"gu_job="+getString(DB.gu_job)+"&pg_atom="+String.valueOf(oAtm.getInt(DB.pg_atom))+"&tx_email="+oAtm.getStringNull(DB.tx_email,"")+(oAtm.isNull(DB.gu_company) ? "" : "&gu_company="+oAtm.getString(DB.gu_company))+(oAtm.isNull(DB.gu_contact) ? "" : "&gu_contact="+oAtm.getString(DB.gu_contact))+"&url=");
 
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End MimeSender.redirectExternalLinks()");
+    }
+
 	return sBody;
-  } // addClickThroughRedirector
+  } // redirectExternalLinks
   
   // ---------------------------------------------------------------------------
 
