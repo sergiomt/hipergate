@@ -2195,12 +2195,17 @@ public class FileSystem {
             }        
           } else {
             try {
-              new StreamPipe().between(new ByteArrayInputStream(readfilebin(sBasePath+(sName.startsWith("/") ? sName.substring(1) : sName))), oZOut);
-
+              byte[] aFile = readfilebin(sBasePath+(sName.startsWith("/") ? sName.substring(1) : sName));
+              if (null!=aFile) {
+              	if (aFile.length>0)
+                  new StreamPipe().between(new ByteArrayInputStream(aFile), oZOut);
+              } else {
+                DebugFile.writeln("Could not find file "+sBasePath+(sName.startsWith("/") ? sName.substring(1) : sName));
+              }
             } catch (IOException ioe) {
               if (DebugFile.trace) {
 			    DebugFile.decIdent();
-                DebugFile.writeln("Could not download file "+sName);
+                DebugFile.writeln("Could not download file "+sBasePath+(sName.startsWith("/") ? sName.substring(1) : sName));
               }
             }      	
           }
