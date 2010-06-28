@@ -212,6 +212,7 @@ public final class DB {
   public static final String k_jobs = "k_jobs";
   public static final String k_job_atoms = "k_job_atoms";
   public static final String k_job_atoms_archived = "k_job_atoms_archived";
+  public static final String k_job_atoms_clicks = "k_job_atoms_clicks";
   public static final String k_lu_job_commands = "k_lu_job_commands";
   public static final String k_lu_job_status = "k_lu_job_status";
   public static final String k_job_atoms_tracking = "k_job_atoms_tracking";
