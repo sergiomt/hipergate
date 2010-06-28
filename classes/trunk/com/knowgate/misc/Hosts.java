@@ -38,7 +38,10 @@ public class Hosts {
   public static String resolve(final String sUrl) {
   	String sRetVal = sUrl;
   	try {
-	  sRetVal = Gadgets.replace(sUrl, "hipergate1\\x2Eeoi\\x2Eadminia\\x2Ees", "localhost");  	
+  	  if (sUrl.indexOf("eoi.es")>=0) {
+	    sRetVal = Gadgets.replace(sUrl, "hipergate1\\x2Eeoi\\x2Ees", "localhost");  	
+	    sRetVal = Gadgets.replace(sUrl, "hipergate2\\x2Eeoi\\x2Ees", "localhost");  	
+  	  }
   	} catch (Exception ignore) { }
   	return sRetVal;
   }

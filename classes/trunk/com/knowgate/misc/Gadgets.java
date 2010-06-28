@@ -922,6 +922,9 @@ public final class Gadgets {
         case '°':
           sStrBuff.append('o');
           break;
+        case 'ª':
+          sStrBuff.append('a');
+          break;
         case '\\':
         case '.':
         case '/':
@@ -1356,6 +1359,27 @@ public final class Gadgets {
     final int nList = aList.length;
     for (int a=0; a<nList && iRetVal==-1; a++) {
       if (sSought.equals(aList[a])) {
+      	iRetVal = a;
+      }
+    } //next
+    return iRetVal;
+  } // search
+
+  // ----------------------------------------------------------
+
+  /**
+   * Perform brute force search of an int into an Array
+   * @param aList Array of int
+   * @param iSought Value sought
+   * @return Index into Array or -1 if not found
+   * @since v5.5
+   */
+
+  public static int search (int[] aList, int iSought) {
+    int iRetVal = -1;
+    final int nList = aList.length;
+    for (int a=0; a<nList && iRetVal==-1; a++) {
+      if (iSought==aList[a]) {
       	iRetVal = a;
       }
     } //next
