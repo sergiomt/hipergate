@@ -109,6 +109,17 @@ public class Block extends DOMSubDocument {
   // ----------------------------------------------------------
 
   /**
+   * @return tag element value
+   */
+  public void tag(String sNewTag) {
+    Node oItem = oNode.getAttributes().getNamedItem("tag");
+
+    oItem.setNodeValue(sNewTag);
+  } // tag()
+
+  // ----------------------------------------------------------
+
+  /**
    * @return zone element value
    */
   public String zone() {

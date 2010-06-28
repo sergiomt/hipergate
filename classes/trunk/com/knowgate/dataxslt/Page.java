@@ -338,13 +338,28 @@ public class Page extends DOMSubDocument {
       return s1.equals(s2);
   } // eqnull
 
+  // ----------------------------------------------------------
+
+  private Vector<Block> sortById(Vector<Block> vBlocks) {
+  	Vector<Block> vSorted = new Vector<Block>(vBlocks.size());
+  	TreeMap<String,Block> oSortedMap = new TreeMap<String,Block>();
+  	for (Block oBlck : vBlocks) oSortedMap.put(oBlck.id(), oBlck);
+    Iterator oIterator = oSortedMap.keySet().iterator();
+    while (oIterator.hasNext()) {
+      vSorted.add(oSortedMap.get(oIterator.next()));
+    } // wend
+    return vSorted;
+  } // sortById
+
+  // ----------------------------------------------------------
+
   /**
    * Get Page blocks matching a given criteria.
    * @param sMetaBlockId Identifier of metablock to match
    * @param sTag
    * @param sZone
    * @return Vector containing objects of class Block for this Page.<br>
-   * Blocks are returned in source order. Independently of theit id attribute value.
+   * Blocks are returned in source order. Independently of their id attribute value.
    * @throws DOMException If &lt;blocks&gt; node is not found
    */
   public Vector<Block> blocks(String sMetaBlockId, String sTag, String sZone)
@@ -537,56 +552,36 @@ public class Page extends DOMSubDocument {
   /**
    * <p>Permute Blocks</p>
    * This method is used for reordering blocks.
-   * @param aNewBlcksPerm New order for blocks.
+   * @param aPermutation New order for blocks.
    * @throws ArrayIndexOutOfBoundsException
    */
-  public void permute (int[] aNewBlcksPerm)
+  public void permute (String sMetaBlockId, int[] aPermutation)
     throws ArrayIndexOutOfBoundsException {
 
-    if (DebugFile.trace) {
-      DebugFile.writeln("Begin Page.permute()");
-      DebugFile.incIdent();
-    }
+      if (DebugFile.trace) {
+        DebugFile.writeln("Begin Page.permute("+sMetaBlockId+")");
+        DebugFile.incIdent();
+      }
 
-    int iCurrent;
-    int[] aOldBlcksPerm = blockIds();
+	  Vector<Block> vFormerOrderBlcks = sortById(blocks(sMetaBlockId, null, null));
+	  final int nBlocks = vFormerOrderBlcks.size();
 
-    // Check that existing and new block permutations have same count of blocks
-    if (aOldBlcksPerm.length!=aNewBlcksPerm.length)
-      throw new ArrayIndexOutOfBoundsException("Length of new Blocks array "+String.valueOf(aNewBlcksPerm.length)+" does not match Block count for already loaded Document "+String.valueOf(aOldBlcksPerm.length));
-
-    Vector<Block> vOldPerm = blocks();
-    final int iBlckCount = vOldPerm.size();
-
-    if (iBlckCount!=aNewBlcksPerm.length)
-      throw new ArrayIndexOutOfBoundsException("Length of former Blocks vector "+String.valueOf(iBlckCount)+" does not match Block count for new permutation "+String.valueOf(aNewBlcksPerm.length));
-
-    if (iBlckCount>0) {
-      Vector<Block> vNewPerm = new Vector<Block>(iBlckCount);
-
-      // Create a Vector with Blocks cloned from the existing ones but in the new order
-      for (int blck=0; blck<iBlckCount; blck++) {
-    	if (DebugFile.trace) {
-          DebugFile.writeln("Permuting block "+String.valueOf(blck));
-        }
-        iCurrent = aNewBlcksPerm[blck];
-
-        for (int oldpos=0; oldpos<iBlckCount; oldpos++) {
-          if (aOldBlcksPerm[oldpos]==iCurrent) {
-     		if (DebugFile.trace) {
-              DebugFile.writeln("Former block "+String.valueOf(oldpos)+" was permuted to "+String.valueOf(vNewPerm.size()));
-        	}
-            vNewPerm.add (new Block(vOldPerm.get(oldpos).getNode().cloneNode(true)));
-            break;
-          }
-        } // next (oldpos)
-      } // next (blck)
+	  if (nBlocks!=aPermutation.length)
+	    throw new ArrayIndexOutOfBoundsException("Permutation length "+String.valueOf(aPermutation.length)+" does not match number of blocks of type "+sMetaBlockId+" "+String.valueOf(nBlocks));
+	  
+	  Vector<Block> vNewPermutedBlcks = new Vector<Block>(nBlocks); 
+    		
+	  for (int p=0; p<nBlocks; p++) {
+	  	Block oBlk = new Block(vFormerOrderBlcks.get(aPermutation[p]).getNode().cloneNode(true));
+	  	oBlk.id(vFormerOrderBlcks.get(p).id());
+	    vNewPermutedBlcks.add(oBlk);
+	  }
 
       // Search for <blocks> Node
       if (DebugFile.trace) {
-         if (null==oNode.getFirstChild())
-           DebugFile.writeln("Node.getFirstChild() returned null");
-       }
+        if (null==oNode.getFirstChild())
+        DebugFile.writeln("Node.getFirstChild() returned null");
+      }
 
        Node oBlksNode = null;
 
@@ -598,28 +593,18 @@ public class Page extends DOMSubDocument {
          if (null==oBlksNode)
            DebugFile.writeln("ERROR: blocks node not found");
 
-       // Remove old blocks
-       if (DebugFile.trace) DebugFile.writeln("Removing old blocks...");
-       for (int chld=0; chld<iBlckCount; chld++)
-         oBlksNode.removeChild (((Block)vOldPerm.get(chld)).getNode());
+	   for (int c=0; c<nBlocks; c++) {
+	   	 if (DebugFile.trace) DebugFile.writeln("removing child "+vFormerOrderBlcks.get(c).id());
+	   	 oBlksNode.removeChild(vFormerOrderBlcks.get(c).getNode());
+	   }
+	   for (int c=0; c<nBlocks; c++) {
+	   	 if (DebugFile.trace) DebugFile.writeln("append child "+vNewPermutedBlcks.get(c).id());
+	   	 oBlksNode.appendChild(vNewPermutedBlcks.get(c).getNode());
+	   }
 
-       // Re-insert previously cloned Blocks
-       if (DebugFile.trace) DebugFile.writeln("Re-inserting previously cloned blocks...");
-       Block oClon;
-       for (int chld=0; chld<iBlckCount; chld++) {
-         oClon = ( (Block) vNewPerm.get(chld));
-
-         // Assign next block identifier for mantining consistency between
-         // source order and id attributes
-         oClon.id(Gadgets.leftPad(String.valueOf(chld+1), '0', 3));
-
-         oBlksNode.appendChild( oClon.getNode());
-       } // next
-    } // fi (iBlckCount>0)
-
-    if (DebugFile.trace) {
-      DebugFile.decIdent();
-      DebugFile.writeln("End Page.permute()");
-    }
+      if (DebugFile.trace) {
+        DebugFile.decIdent();
+        DebugFile.writeln("End Page.permute()");
+      }
   } // permute
 }

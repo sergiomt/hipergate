@@ -1256,10 +1256,12 @@ public class PageSet extends DOMDocument {
 
   public void save(String sFilePath) throws IOException {
     if (DebugFile.trace) {
-      DebugFile.writeln("End Pageset.save("+sFilePath+")");
+      DebugFile.writeln("Begin Pageset.save("+sFilePath+")");
     }
 	
-    FileOutputStream oOutFile = new FileOutputStream(sFilePath, false);
+	File oFOut = new File(sFilePath);
+	
+    FileOutputStream oOutFile = new FileOutputStream(sFilePath,false);
 
     print(oOutFile);
 
