@@ -94,7 +94,7 @@ public class NewsMessageIndexer extends Indexer {
                                              String sContainer, String sTitle,
                                              String sAuthor, Date dtCreated,
                                               String sText)
-    throws ClassNotFoundException, IOException, IllegalArgumentException,
+    throws ClassNotFoundException, IOException, IllegalArgumentException, 
              NoSuchFieldException, IllegalAccessException, InstantiationException, NullPointerException {
 
     String sDirectory = oProps.getProperty("luceneindex");
@@ -118,7 +118,15 @@ public class NewsMessageIndexer extends Indexer {
         if (DebugFile.trace) DebugFile.writeln(xcpt.getClass()+" "+xcpt.getMessage());
         throw new FileNotFoundException ("Could not create directory "+sDirectory+" "+xcpt.getMessage());
 	  }
+    } else {
+	  File[] aFiles = oDir.listFiles();
+	  if (aFiles==null) {
+	    bNewIndex = true;
+	  } else if (aFiles.length==0) {
+		bNewIndex = true;
+	  }	
     }
+
 
     if (DebugFile.trace)
       DebugFile.writeln("Class.forName(" + oProps.getProperty("analyzer" , DEFAULT_ANALYZER) + ")");
@@ -128,9 +136,11 @@ public class NewsMessageIndexer extends Indexer {
     if (DebugFile.trace)
       DebugFile.writeln("new IndexWriter(...)");
 
-    IndexReader oIRdr = IndexReader.open(sDirectory);
-    oIRdr.deleteDocuments(new Term("guid",sGuid));
-    oIRdr.close();
+	if (!bNewIndex) {
+      IndexReader oIRdr = IndexReader.open(sDirectory);
+      oIRdr.deleteDocuments(new Term("guid",sGuid));
+      oIRdr.close();
+	}
 
     IndexWriter oIWrt = new IndexWriter(sDirectory, (Analyzer) oAnalyzer.newInstance(), bNewIndex);
 	
