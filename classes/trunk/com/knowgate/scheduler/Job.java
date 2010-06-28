@@ -60,6 +60,7 @@ import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBBind;
 import com.knowgate.dataobjs.DBPersist;
 import com.knowgate.dataobjs.DBCommand;
+import com.knowgate.dataxslt.db.PageSetDB;
 import com.knowgate.crm.MemberAddress;
 import com.knowgate.hipergate.Address;
 import com.knowgate.crm.GlobalBlackList;
@@ -243,12 +244,22 @@ public abstract class Job extends DBPersist {
         if (oRSet.next()) {
           oParams.put("gu_workarea", oRSet.getString(1));
           oParams.put("nm_pageset", oRSet.getString(2));
+
+          oRSet.close();
+          oStmt.close();
+
+          PageSetDB oPageSetDB = new PageSetDB(oConn,sPageSet);
+		  try {
+		    oParams.put("nm_page", oPageSetDB.getFirstPage(oConn).getPage(oConn, Gadgets.chomp(getProperty("storage"),File.separator)).getTitle().replace(' ', '_') + ".html");
+		  } catch (Exception xcpt) {
+		  	throw new SQLException(xcpt.getMessage());
+		  }
         }
         else {
           bRetVal = false;
+          oRSet.close();
+          oStmt.close();
         }
-        oRSet.close();
-        oStmt.close();
 
 		if (!bRetVal) {
           if (DebugFile.trace) {
@@ -685,6 +696,7 @@ public abstract class Job extends DBPersist {
 
       oJobImplementation = Class.forName(sClassNm);
       oRetObj = (Job) oJobImplementation.newInstance();
+      oRetObj.oEnvProps = oEnvironmentProps;
 
       if (oRetObj.load(oConn, new Object[] {sJobId})) {
         if (null!=oConn.getPool()) {
@@ -697,7 +709,6 @@ public abstract class Job extends DBPersist {
         } else {
           if (DebugFile.trace) DebugFile.writeln("Connection has no pool from which to get database binding for Job");
         }
-        oRetObj.oEnvProps = oEnvironmentProps;
 
       } else {
 
