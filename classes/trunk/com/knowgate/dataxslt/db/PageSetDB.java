@@ -533,6 +533,7 @@ public class PageSetDB extends DBPersist {
 	String sXmlFileName = oSource.getString(DB.nm_pageset);
 	iParenthesis = sXmlFileName.indexOf('(');
 	if (iParenthesis>0) sXmlFileName = sXmlFileName.substring(0, iParenthesis);	
+	sXmlFileName = Gadgets.ASCIIEncode(sXmlFileName).toLowerCase();
 
     if (DebugFile.trace) DebugFile.writeln("path_data="+sPathData+sXmlFileName+" ("+oFmt.format(dtCreated)+").xml");
 
@@ -590,7 +591,8 @@ public class PageSetDB extends DBPersist {
 
         try {
           oFS.mkdirs(sProtocol+sPathPages);
-          oFS.copy(sProtocol+sSrcPathPage, sProtocol+sPathPage);	      
+          if (oFS.exists(sProtocol+sSrcPathPage)) 
+            oFS.copy(sProtocol+sSrcPathPage, sProtocol+sPathPage);	      
         } catch (Exception xcpt) {
           throw new IOException(xcpt.getMessage(), xcpt);
         }
