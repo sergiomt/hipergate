@@ -138,36 +138,36 @@ public class MimeSender extends Job {
 
   // ---------------------------------------------------------------------------
 
-  public String redirectExternalLinks(Atom oAtm) throws ParserException {
+  public static String redirectExternalLinks(String sLBody, MimeSender oJob, Atom oAtm) throws ParserException {
 
     if (DebugFile.trace) {
       DebugFile.writeln("Begin MimeSender.redirectExternalLinks([Atom])");
       DebugFile.incIdent();
     }
     
-    String sRedirectorDir = getProperty("webbeacon");
+    String sRedirectorDir = oJob.getProperty("webbeacon");
     if (sRedirectorDir==null) {
-	  sRedirectorDir = Gadgets.chomp(getParameter("webserver"),'/')+"hipermail/";
+	  sRedirectorDir = Gadgets.chomp(oJob.getParameter("webserver"),'/')+"hipermail/";
 	} else if (sRedirectorDir.trim().length()==0) {
-	  sRedirectorDir = Gadgets.chomp(getParameter("webserver"),'/')+"hipermail/";
+	  sRedirectorDir = Gadgets.chomp(oJob.getParameter("webserver"),'/')+"hipermail/";
 	}
 	
 	String sRedirectorUrl = Gadgets.chomp(sRedirectorDir,'/')+"web_clicktrough.jsp?";
 
-    HtmlMimeBodyPart oPart = new HtmlMimeBodyPart(sBody, null);
-    sBody = oPart.addClickThroughRedirector(sRedirectorUrl+"gu_job="+getString(DB.gu_job)+"&pg_atom="+String.valueOf(oAtm.getInt(DB.pg_atom))+"&tx_email="+oAtm.getStringNull(DB.tx_email,"")+(oAtm.isNull(DB.gu_company) ? "" : "&gu_company="+oAtm.getString(DB.gu_company))+(oAtm.isNull(DB.gu_contact) ? "" : "&gu_contact="+oAtm.getString(DB.gu_contact))+"&url=");
+    HtmlMimeBodyPart oPart = new HtmlMimeBodyPart(sLBody, null);
+    String sRBody = oPart.addClickThroughRedirector(sRedirectorUrl+"gu_job="+oJob.getString(DB.gu_job)+"&pg_atom="+String.valueOf(oAtm.getInt(DB.pg_atom))+"&tx_email="+oAtm.getStringNull(DB.tx_email,"")+(oAtm.isNull(DB.gu_company) ? "" : "&gu_company="+oAtm.getString(DB.gu_company))+(oAtm.isNull(DB.gu_contact) ? "" : "&gu_contact="+oAtm.getString(DB.gu_contact))+"&url=");
 
     if (DebugFile.trace) {
       DebugFile.decIdent();
       DebugFile.writeln("End MimeSender.redirectExternalLinks()");
     }
 
-	return sBody;
+	return sRBody;
   } // redirectExternalLinks
   
   // ---------------------------------------------------------------------------
 
-  private String personalizeBody(Atom oAtm) throws NullPointerException {
+  private static String personalizeBody(String sFBody, MimeSender oJob, Atom oAtm) throws NullPointerException {
     JDCConnection oConn = null;
     PreparedStatement oStmt = null;
     ResultSet oRSet = null;
@@ -189,11 +189,11 @@ public class MimeSender extends Job {
     sEm = oAtm.getString(DB.tx_email);
 
     try {
-      oConn = getDataBaseBind().getConnection("MimeSender", true);
+      oConn = oJob.getDataBaseBind().getConnection("MimeSender", true);
       if (DebugFile.trace) {
-        DebugFile.writeln("Connection.prepareStatement(SELECT "+DB.tx_name+","+DB.tx_surname+","+DB.tx_salutation+","+DB.nm_commercial+" FROM "+DB.k_member_address+" WHERE "+DB.gu_workarea+"='"+getStringNull(DB.gu_workarea,"null")+"' AND "+DB.tx_email+"='"+sEm+"')");
+        DebugFile.writeln("Connection.prepareStatement(SELECT "+DB.tx_name+","+DB.tx_surname+","+DB.tx_salutation+","+DB.nm_commercial+" FROM "+DB.k_member_address+" WHERE "+DB.gu_workarea+"='"+oJob.getStringNull(DB.gu_workarea,"null")+"' AND "+DB.tx_email+"='"+sEm+"')");
       }
-      oStmt = oConn.prepareStatement("SELECT "+DB.tx_name+","+DB.tx_surname+","+DB.tx_salutation+","+DB.nm_commercial+","+DB.gu_company+","+DB.gu_contact+" FROM "+DB.k_member_address+" WHERE "+DB.gu_workarea+"='"+getString(DB.gu_workarea)+"' AND "+DB.tx_email+"=?",
+      oStmt = oConn.prepareStatement("SELECT "+DB.tx_name+","+DB.tx_surname+","+DB.tx_salutation+","+DB.nm_commercial+","+DB.gu_company+","+DB.gu_contact+" FROM "+DB.k_member_address+" WHERE "+DB.gu_workarea+"='"+oJob.getString(DB.gu_workarea)+"' AND "+DB.tx_email+"=?",
                                      ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
       oStmt.setString(1, sEm);
       oRSet = oStmt.executeQuery();
@@ -215,25 +215,25 @@ public class MimeSender extends Job {
       oConn.close("MimeSender");
       oConn=null;
       
-      FastStreamReplacer oRplcr = new FastStreamReplacer(sBody.length()+256);
+      FastStreamReplacer oRplcr = new FastStreamReplacer(sFBody.length()+256);
       try {
-        sPersonalizedBody = oRplcr.replace(new StringBuffer(sBody), FastStreamReplacer.createMap(
+        sPersonalizedBody = oRplcr.replace(new StringBuffer(sFBody), FastStreamReplacer.createMap(
                              new String[]{"Data.Name","Data.Surname","Data.Salutation","Data.Legal_Name","Address.EMail","Job.Guid","Job.Atom","Data.Company_Guid","Data.Contact_Guid",
                                           "Datos.Nombre","Datos.Apellidos","Datos.Saludo","Datos.Razon_Social","Direccion.EMail","Lote.Guid","Lote.Atomo","Datos.Guid_Empresa","Datos.Guid_Contacto"},
-                             new String[]{sNm,sSn,sSl,sCo,sEm,getString(DB.gu_job),String.valueOf(oAtm.getInt(DB.pg_atom)),sCp,sCn,
-                                          sNm,sSn,sSl,sCo,sEm,getString(DB.gu_job),String.valueOf(oAtm.getInt(DB.pg_atom)),sCp,sCn}));
+                             new String[]{sNm,sSn,sSl,sCo,sEm,oJob.getString(DB.gu_job),String.valueOf(oAtm.getInt(DB.pg_atom)),sCp,sCn,
+                                          sNm,sSn,sSl,sCo,sEm,oJob.getString(DB.gu_job),String.valueOf(oAtm.getInt(DB.pg_atom)),sCp,sCn}));
       } catch (IOException ioe) {
-        if (DebugFile.trace) DebugFile.writeln("IOException " + ioe.getMessage() + " sending message "+getParameter("message") + " to " + sEm);
-        log("IOException " + ioe.getMessage() + " sending message "+getParameter("message") + " to " + sEm);
-        sPersonalizedBody = sBody;
+        if (DebugFile.trace) DebugFile.writeln("IOException " + ioe.getMessage() + " sending message "+oJob.getParameter("message") + " to " + sEm);
+        oJob.log("IOException " + ioe.getMessage() + " sending message "+oJob.getParameter("message") + " to " + sEm);
+        sPersonalizedBody = sFBody;
       }
     } catch (SQLException sqle) {
       if (oRSet!=null) { try { oRSet.close(); } catch (Exception ignore) {} }
       if (oStmt!=null) { try { oStmt.close(); } catch (Exception ignore) {} }
       if (oConn!=null) { try { oConn.close(); } catch (Exception ignore) {} }
-      if (DebugFile.trace) DebugFile.writeln("SQLException " + sqle.getMessage() + " sending message "+getParameter("message") + " to " + sEm);
-      log("SQLException " + sqle.getMessage() + " sending message "+getParameter("message") + " to " + sEm);
-      sPersonalizedBody = sBody;
+      if (DebugFile.trace) DebugFile.writeln("SQLException " + sqle.getMessage() + " sending message "+oJob.getParameter("message") + " to " + sEm);
+      oJob.log("SQLException " + sqle.getMessage() + " sending message "+oJob.getParameter("message") + " to " + sEm);
+      sPersonalizedBody = sFBody;
     }
 
     if (DebugFile.trace) {
@@ -549,20 +549,21 @@ public class MimeSender extends Job {
 
 	  String sEncoding = getParameter("encoding");
 	  if (sEncoding==null) sEncoding = "UTF-8";
+	  
 	  String sPBody;
-
-	  String sClickThrough = getParameter("clickthrough");
-	  if (sClickThrough==null) sClickThrough = No;
-	  if (Yes.equals(sClickThrough) || Activated.equals(sClickThrough)) {
-	    redirectExternalLinks(oAtm);
-	  }
       	  	  
       if (bPersonalized) {
-        sPBody = personalizeBody(oAtm);
+        sPBody = personalizeBody(sBody, this, oAtm);
       }
       else {
       	sPBody = sBody;      	
       }
+
+	  String sClickThrough = getParameter("clickthrough");
+	  if (sClickThrough==null) sClickThrough = No;
+	  if (Yes.equals(sClickThrough) || Activated.equals(sClickThrough)) {
+	    sPBody = redirectExternalLinks(sPBody,this,oAtm);
+	  }
 
 	  // Insert Web Beacon just before </BODY> tag
 	  String sWebBeacon = getParameter("webbeacon");
