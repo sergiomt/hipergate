@@ -33,7 +33,7 @@ package com.knowgate.dataobjs;
 
 /**
  * <p>Static final variables for table and field names</p>
- * @version 5.5
+ * @version 6.0
  */
 
 public final class DB {
@@ -213,6 +213,9 @@ public final class DB {
   public static final String k_job_atoms = "k_job_atoms";
   public static final String k_job_atoms_archived = "k_job_atoms_archived";
   public static final String k_job_atoms_clicks = "k_job_atoms_clicks";
+  public static final String k_jobs_atoms_by_day = "k_jobs_atoms_by_day";
+  public static final String k_jobs_atoms_by_hour = "k_jobs_atoms_by_hour";
+  public static final String k_jobs_atoms_by_agent = "k_jobs_atoms_by_agent";
   public static final String k_lu_job_commands = "k_lu_job_commands";
   public static final String k_lu_job_status = "k_lu_job_status";
   public static final String k_job_atoms_tracking = "k_job_atoms_tracking";
@@ -958,8 +961,14 @@ public final class DB {
   public static final String pg_atom = "pg_atom";
   public static final String tx_log = "tx_log";
   public static final String dt_execution = "dt_execution";
+  public static final String dt_hour = "dt_hour";
   public static final String dt_finished = "dt_finished";
   public static final String dt_action = "dt_action";
+  public static final String nu_sent = "nu_sent";
+  public static final String nu_opened = "nu_opened";
+  public static final String nu_clicks = "nu_clicks";
+  public static final String nu_unique = "nu_unique";
+  public static final String id_agent = "id_agent";
 
   // k_lu_job_commands
   public static final String tx_command = "tx_command";
