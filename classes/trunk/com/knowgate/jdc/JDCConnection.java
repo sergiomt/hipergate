@@ -184,34 +184,37 @@ public final class JDCConnection implements Connection,PooledConnection {
         return name;
     }
 
-    public int getDataBaseProduct() throws SQLException {
+    public static int getDataBaseProduct(Connection conn) throws SQLException {
       DatabaseMetaData mdat;
       String prod;
 
-      if (DBMS_UNKNOWN==dbms) {
         try {
           mdat = conn.getMetaData();
           prod = mdat.getDatabaseProductName();
 
           if (prod.equals(DBMSNAME_MSSQL))
-            dbms = DBMS_MSSQL;
+            return DBMS_MSSQL;
           else if (prod.equals(DBMSNAME_POSTGRESQL))
-            dbms = DBMS_POSTGRESQL;
+            return DBMS_POSTGRESQL;
           else if (prod.equals(DBMSNAME_ORACLE))
-            dbms = DBMS_ORACLE;
+            return DBMS_ORACLE;
           else if (prod.equals(DBMSNAME_MYSQL))
-            dbms = DBMS_MYSQL;
+            return DBMS_MYSQL;
           else
-            dbms = DBMS_GENERIC;
+            return DBMS_GENERIC;
         }
         catch (NullPointerException npe) {
           if (DebugFile.trace) DebugFile.writeln("NullPointerException at JDCConnection.getDataBaseProduct()");
-          dbms = DBMS_GENERIC;
+          return DBMS_GENERIC;
         }
-      }
-      return dbms;
     }
 
+    public int getDataBaseProduct() throws SQLException {
+      if (DBMS_UNKNOWN==dbms)
+        dbms = getDataBaseProduct(conn);
+      return dbms;
+    }
+    
     public String getSchemaName() throws SQLException {
       String sname;
 
