@@ -101,6 +101,7 @@ public class HttpRequest extends Thread {
 
       HttpRequest oMoved = new HttpRequest(oCon.getHeaderField("Location"), oUrl, "POST", aParams);	  
 	  oRetVal = oMoved.post();
+	  sUrl = oMoved.url();
 	} else if (responseCode == HttpURLConnection.HTTP_OK ||
 	    responseCode == HttpURLConnection.HTTP_ACCEPTED) {
 	  InputStream oStm = oCon.getInputStream();
@@ -126,6 +127,12 @@ public class HttpRequest extends Thread {
 	oCon.disconnect();
 	return oRetVal;
   } // post
+
+  // ------------------------------------------------------------------------
+
+  public String url() {
+    return sUrl;
+  }
 
   // ------------------------------------------------------------------------
 
@@ -159,7 +166,8 @@ public class HttpRequest extends Thread {
 	if (responseCode == HttpURLConnection.HTTP_MOVED_PERM ||
 		responseCode == HttpURLConnection.HTTP_MOVED_TEMP) {
       HttpRequest oMoved = new HttpRequest(oCon.getHeaderField("Location"), oUrl, "GET", null);
-	  oRetVal = oMoved.get();	  
+	  oRetVal = oMoved.get();
+	  sUrl = oMoved.url();
 	} else if (responseCode == HttpURLConnection.HTTP_OK ||
 	    responseCode == HttpURLConnection.HTTP_ACCEPTED) {
 	  InputStream oStm = oCon.getInputStream();
