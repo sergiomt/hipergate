@@ -1288,6 +1288,8 @@ public class DBFolder extends Folder {
           break;
       }
 
+      if (DebugFile.trace) DebugFile.writeln("ResultSet = PreparedStatement.executeQuery("+sSQL+")");
+
       oRSet = oStmt.executeQuery();
 
       if (oRSet.next()) {
@@ -1371,10 +1373,12 @@ public class DBFolder extends Folder {
 
         oRetVal.setContent(oParts);
       } else {
+	    if (DebugFile.trace) DebugFile.writeln("Message "+sMsgId+" not found at "+DB.k_mime_msgs+" table");
         oRSet.close();
         oRSet = null;
       }// fi (oRSet.next())
 
+	  if (DebugFile.trace) DebugFile.writeln("PreparedStatement.close()");
       oStmt.close();
       oStmt = null;
 

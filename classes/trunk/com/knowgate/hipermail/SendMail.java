@@ -235,10 +235,16 @@ public final class SendMail {
 
 	  boolean bAttachImages = oSessionProps.getProperty("attachimages","yes").equalsIgnoreCase("yes") || oSessionProps.getProperty("attachimages","true").equalsIgnoreCase("true") || oSessionProps.getProperty("attachimages","1").equalsIgnoreCase("1");
 	  boolean bWebBeacon = oSessionProps.getProperty("webbeacon","no").equalsIgnoreCase("yes") || oSessionProps.getProperty("webbeacon","false").equalsIgnoreCase("true") || oSessionProps.getProperty("webbeacon","0").equalsIgnoreCase("1");
+	  boolean bClickThrough = oSessionProps.getProperty("clickthrough","no").equalsIgnoreCase("yes") || oSessionProps.getProperty("clickthrough","false").equalsIgnoreCase("true") || oSessionProps.getProperty("clickthrough","0").equalsIgnoreCase("1");
 
 	  if (bWebBeacon && oSessionProps.getProperty("webserver")==null) {
 	    if (DebugFile.trace) DebugFile.decIdent();
 	    throw new NullPointerException("SendMail.send() If webbeacon property is true then webserver property is required");
+	  }
+
+	  if (bClickThrough && oSessionProps.getProperty("webserver")==null) {
+	    if (DebugFile.trace) DebugFile.decIdent();
+	    throw new NullPointerException("SendMail.send() If clickthrough property is true then webserver property is required");
 	  }
 
 	  DBBind oDbb;
@@ -375,6 +381,7 @@ public final class SendMail {
 		    	                       "account:"+oMacc.getString(DB.gu_account)+","+
 		    	                       "personalized:true"+","+
 		    	                       "attachimages:"+(bAttachImages ? "true" : "false")+","+
+		    	                       "clickthrough:"+(bClickThrough ? "true" : "false")+","+
 		    	                       "webbeacon:"+(bWebBeacon ? "true" : "false")+","+
 		    	                       "webserver:"+oSessionProps.getProperty("webserver")+","+
 		    	                       "encoding:"+sEncoding);

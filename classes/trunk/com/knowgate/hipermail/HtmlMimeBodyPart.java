@@ -31,15 +31,18 @@ package com.knowgate.hipermail;
   if not, visit http://www.hipergate.org or mail to info@hipergate.org
 */
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.net.URL;
 
 import org.apache.oro.text.regex.Pattern;
+import org.apache.oro.text.regex.MatchResult;
 import org.apache.oro.text.regex.PatternMatcher;
 import org.apache.oro.text.regex.PatternCompiler;
 import org.apache.oro.text.regex.StringSubstitution;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.oro.text.regex.Perl5Compiler;
+import org.apache.oro.text.regex.PatternMatcherInput;
 import org.apache.oro.text.regex.MalformedPatternException;
 import org.apache.oro.text.regex.Util;
 
@@ -58,6 +61,7 @@ import org.htmlparser.filters.TagNameFilter;
 import org.htmlparser.visitors.NodeVisitor;
 
 import com.knowgate.misc.Gadgets;
+import com.knowgate.misc.Base64Encoder;
 import com.knowgate.debug.DebugFile;
 import com.knowgate.debug.StackTraceUtil;
 
@@ -68,8 +72,15 @@ import com.knowgate.debug.StackTraceUtil;
  */
 public class HtmlMimeBodyPart {
 
-  private static PatternMatcher oMatcher = new Perl5Matcher();
+  private PatternMatcher oMatcher = new Perl5Matcher();
   private static PatternCompiler oCompiler = new Perl5Compiler();
+
+  private static Pattern oFullHref = null;
+  private static Pattern oGoodHref = null;
+  private static Pattern oHostHref = null;
+  private static Pattern oFullSrc = null;
+  private static Pattern oGoodSrc = null;
+  private static Pattern oHostSrc = null;
 
   private String sBody;
   private String sEnc;
@@ -82,18 +93,95 @@ public class HtmlMimeBodyPart {
     oImgs = new HashMap<String,String>(23);
   }
 
+  public void setHtml(String sHtml) {
+  	sBody = sHtml;
+  }
+
+  public ArrayList<String> extractHrefs() {
+
+    ArrayList<String> aHrefs = new ArrayList<String>();
+	try {
+      if (null==oFullHref) oFullHref = oCompiler.compile("<a ((accesskey|charset|class|coords|dir|hreflang|id|lang|name|rel|rev|shape|style|tabindex|target|title)\\s*=\\s*[\"']?([^'\"\\r\\n]+)[\"']?)* href\\s*=\\s*[\"']?([^'\"\\r\\n]+)[\"']?", Perl5Compiler.CASE_INSENSITIVE_MASK);
+  	  PatternMatcherInput oPinpt = new PatternMatcherInput(sBody);
+      while (oMatcher.contains(oPinpt, oFullHref)) {
+	    aHrefs.add(oMatcher.getMatch().group(4));
+	    if (oPinpt.endOfInput()) break;
+      } // wend
+    } catch (MalformedPatternException neverthrown) { } 
+    return aHrefs;
+  } // extractHrefs()
+
+  /**
+   * Get a list of <img src="..." tags that point to a local resource
+   * such as src="/tmp/myfile.gif" or src="http://localhost/imgs/myfile.gif"
+   */
+  public ArrayList<String> extractLocalUrls()
+  	throws ArrayIndexOutOfBoundsException {
+
+    ArrayList<String> aLocalUrls = new ArrayList<String>();
+    PatternMatcherInput oPinpt;
+    String sSrcUrl, sHrefUrl;
+    
+    try {
+      synchronized(oCompiler) {
+        if (null==oFullHref) oFullHref = oCompiler.compile("<a( (accesskey|charset|class|coords|dir|hreflang|id|lang|name|rel|rev|shape|style|tabindex|target|title)\\s*=\\s*[\"']?([^'\"\\r\\n]+)[\"']?)* href\\s*=\\s*[\"']?([^'\"\\r\\n]+)[\"']?", Perl5Compiler.CASE_INSENSITIVE_MASK);
+        if (null==oGoodHref) oGoodHref = oCompiler.compile("<a( (accesskey|charset|class|coords|dir|hreflang|id|lang|name|rel|rev|shape|style|tabindex|target|title)\\s*=\\s*[\"']?([^'\"\\r\\n]+)[\"']?)* href\\s*=\\s*[\"']?(http://|https://|mailto:)\\w+([^'\"\\r\\n]+)[\"']?", Perl5Compiler.CASE_INSENSITIVE_MASK);
+        if (null==oHostHref) oHostHref = oCompiler.compile("<a( (accesskey|charset|class|coords|dir|hreflang|id|lang|name|rel|rev|shape|style|tabindex|target|title)\\s*=\\s*[\"']?([^'\"\\r\\n]+)[\"']?)* href\\s*=\\s*[\"']?(http://|https://)localhost([^'\"\\r\\n]+)[\"']?", Perl5Compiler.CASE_INSENSITIVE_MASK);
+        if (null==oFullSrc) oFullSrc = oCompiler.compile("<img( (align|alt|border|class|dir|height|hspace|id|ismap|lang|longdesc|style|title|usemap|vspace|width)\\s*=\\s*[\"']?([^'\"\\r\\n]+)[\"']?)* src\\s*=\\s*[\"']?([^'\"\\r\\n]+)[\"']?", Perl5Compiler.CASE_INSENSITIVE_MASK);
+	    if (null==oGoodSrc) oGoodSrc = oCompiler.compile("<img( (align|alt|border|class|dir|height|hspace|id|ismap|lang|longdesc|style|title|usemap|vspace|width)\\s*=\\s*[\"']?([^'\"\\r\\n]+)[\"']?)* src\\s*=\\s*[\"']?(cid:|http://|https://)([^'\"\\r\\n]+)[\"']?", Perl5Compiler.CASE_INSENSITIVE_MASK);
+	    if (null==oHostSrc) oHostSrc = oCompiler.compile("<img( (align|alt|border|class|dir|height|hspace|id|ismap|lang|longdesc|style|title|usemap|vspace|width)\\s*=\\s*[\"']?([^'\"\\r\\n]+)[\"']?)* src\\s*=\\s*[\"']?(http://localhost|https://localhost)([^'\"\\r\\n]+)[\"']?", Perl5Compiler.CASE_INSENSITIVE_MASK);
+      }
+
+  	  oPinpt = new PatternMatcherInput(sBody);
+      while (oMatcher.contains(oPinpt, oFullSrc)) {
+	    sSrcUrl = oMatcher.getMatch().toString();
+	    if (!oMatcher.matches(sSrcUrl, oGoodSrc))
+		  aLocalUrls.add(sSrcUrl);
+	    if (oPinpt.endOfInput()) break;
+      } // wend
+
+  	  oPinpt.setCurrentOffset(oPinpt.getBeginOffset());
+      while (oMatcher.contains(oPinpt, oFullSrc)) {
+	    sSrcUrl = oMatcher.getMatch().toString();
+		if (oMatcher.matches(sSrcUrl, oHostSrc))
+		  aLocalUrls.add(sSrcUrl);
+	    if (oPinpt.endOfInput()) break;
+      } // wend
+      
+  	  oPinpt.setCurrentOffset(oPinpt.getBeginOffset());
+      while (oMatcher.contains(oPinpt, oFullHref)) {
+		sHrefUrl = oMatcher.getMatch().toString();
+	    if (!oMatcher.matches(sHrefUrl, oGoodHref))
+		  aLocalUrls.add(sHrefUrl);
+	    if (oPinpt.endOfInput()) break;
+      } // wend
+
+  	  oPinpt.setCurrentOffset(oPinpt.getBeginOffset());
+      while (oMatcher.contains(oPinpt, oFullHref)) {
+		sHrefUrl = oMatcher.getMatch().toString();
+		if (oMatcher.matches(sHrefUrl, oHostHref))
+		  aLocalUrls.add(sHrefUrl);		
+	    if (oPinpt.endOfInput()) break;
+      } // wend
+    } catch (MalformedPatternException neverthrown) { } 
+
+	return aLocalUrls;
+  } // extractLocalUrls
+  	
   public HashMap getImagesCids() {
     return oImgs;
   }
 
-  private String doSubstitution(String sBase, String sAttributeName, String sFormerValue, String sNewValue)
+  private String doSubstitution(final String sBase, final String sAttributeName, final String sFormerValue, final String sNewValue)
   	throws ParserException {
+  	
+  	String sMatch = "";
   	
   	if (DebugFile.trace) DebugFile.writeln("HtmlMomeBodyPart.doSubstitution(..., "+sAttributeName+","+sFormerValue+","+sNewValue);
 
     StringSubstitution oSrcSubs = new StringSubstitution();
 
-    String sPattern = "("+sAttributeName.toLowerCase()+"|"+sAttributeName.toUpperCase()+"|"+sAttributeName+")\\x20*=\\x20*(\"|')?" + sFormerValue + "(\"|')?";
+    final String sPattern = "("+sAttributeName.toLowerCase()+"|"+sAttributeName.toUpperCase()+"|"+sAttributeName+")\\s*=\\s*(\"|')?" + sFormerValue + "(\"|')?";
 
     try {
 
@@ -101,7 +189,19 @@ public class HtmlMimeBodyPart {
       Pattern oPattern = oCompiler.compile(sPattern, Perl5Compiler.SINGLELINE_MASK);
 
       if (oMatcher.contains(sBase, oPattern)) {
-      	String sMatch = oMatcher.getMatch().toString();
+      	MatchResult oMtrs = oMatcher.getMatch();
+      	if (oMtrs!=null) sMatch = oMtrs.toString();
+      	if (sMatch.length()==0) {
+      	  oCompiler = new Perl5Compiler();
+      	  oMatcher = new Perl5Matcher();
+      	  oPattern = oCompiler.compile(sPattern, Perl5Compiler.SINGLELINE_MASK);
+      	  if (oMatcher.contains(sBase, oPattern)) {
+      	  	oMtrs = oMatcher.getMatch();
+      	  	if (oMtrs!=null)  sMatch = oMtrs.toString();
+      	  }
+      	} // fi
+      	if (sMatch.length()==0)
+          throw new ParserException("Match could not be retrieved for pattern " + sPattern);        
       	int iDquote = sMatch.indexOf('"');
       	int iSquote = sMatch.indexOf("'");
       	char cQuote = (char) 0;
@@ -115,6 +215,7 @@ public class HtmlMimeBodyPart {
           oSrcSubs.setSubstitution(sMatch.substring(0,sAttributeName.length())+"="+sNewValue);
         else
           oSrcSubs.setSubstitution(sMatch.substring(0,sAttributeName.length())+"="+cQuote+sNewValue+cQuote);
+    	if (DebugFile.trace) DebugFile.writeln("Util.substitute("+sPattern+","+sMatch.substring(0,sAttributeName.length())+"="+cQuote+sNewValue+cQuote+")");
     	return Util.substitute(oMatcher, oPattern, oSrcSubs, sBase);			
       } else {
       	return sBase;
@@ -124,14 +225,14 @@ public class HtmlMimeBodyPart {
         DebugFile.writeln("MalformedPatternException " + mpe.getMessage());
         try { DebugFile.writeln(StackTraceUtil.getStackTrace(mpe)); } catch (Exception ignore) { }
       }
-      throw new ParserException("ArrayIndexOutOfBoundsException " + mpe.getMessage()+ " pattern " + sPattern + " substitution " + sNewValue, mpe);        
+      throw new ParserException("MalformedPatternException " + mpe.getMessage()+ " pattern " + sPattern + " substitution " + sNewValue, mpe);        
     }
     catch (ArrayIndexOutOfBoundsException aiob) {
       if (DebugFile.trace) {
         DebugFile.writeln("ArrayIndexOutOfBoundsException " + aiob.getMessage());
         try { DebugFile.writeln(StackTraceUtil.getStackTrace(aiob)); } catch (Exception ignore) { }
       }
-      throw new ParserException("ArrayIndexOutOfBoundsException " + aiob.getMessage()+ " pattern " + sPattern + " substitution " + sNewValue, aiob);
+      throw new ParserException("ArrayIndexOutOfBoundsException " + aiob.getMessage()+ " attribute " + sAttributeName + " pattern " + sPattern + " match " + sMatch + " former value " + sFormerValue + " substitution " + sNewValue, aiob);
     }
   } // doSubstitution
   
@@ -144,6 +245,11 @@ public class HtmlMimeBodyPart {
   public String addPreffixToImgSrc(String sPreffix)
   	throws ParserException {
 
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin HtmlMimeBodyPart.addPreffixToImgSrc("+sPreffix+")");
+      DebugFile.incIdent();
+    }
+    
     int iSlash;
     Parser oPrsr;
     String sCid, sSrc;
@@ -169,7 +275,9 @@ public class HtmlMimeBodyPart {
 		ImageTag oImgTag = (ImageTag) oCollectionList.elementAt(i);
 			
         sSrc = oImgTag.extractImageLocn().replace('\\','/');
-
+		
+		if (DebugFile.trace) DebugFile.writeln("Processing image location "+sSrc);
+		
         // Keep a reference to every related image name so that the same image is not included twice in the message
         if (!oImgs.containsKey(sSrc)) {
 
@@ -184,34 +292,12 @@ public class HtmlMimeBodyPart {
           else {
             sCid = sSrc;
           }
-
-          // String sUid = Gadgets.generateUUID();
-          // sCid = sUid.substring(0,12)+"$"+sUid.substring(12,20)+"$"+sUid.substring(20,28)+"@hipergate.org";
-
           if (DebugFile.trace) DebugFile.writeln("HashMap.put("+sSrc+","+sCid+")");
 
           oImgs.put(sSrc, sCid);
         } // fi (!oImgs.containsKey(sSrc))
-
-		/*
-        try {
-          sPattern = Gadgets.replace(oImgTag.extractImageLocn(),'\\',"\\\\");
-          if (DebugFile.trace) DebugFile.writeln("Perl5Compiler.compile(\""+sPattern+"\", Perl5Compiler.SINGLELINE_MASK)");
-          Pattern oPattern = oCompiler.compile(sPattern, Perl5Compiler.SINGLELINE_MASK);
-          oSrcSubs.setSubstitution(sPreffix+oImgs.get(sSrc));
-          if (DebugFile.trace) DebugFile.writeln("Util.substitute([PatternMatcher],"+ sSrc + ","+sPreffix+oImgs.get(sSrc)+",...)");
-            sBodyCid = Util.substitute(oMatcher, oPattern, oSrcSubs, sBodyCid);
-        } catch (MalformedPatternException neverthrown) { }
-          catch (ArrayIndexOutOfBoundsException aiob) {
-          	if (DebugFile.trace) {
-          	  DebugFile.writeln("ArrayIndexOutOfBoundsException " + aiob.getMessage());
-          	  try { DebugFile.writeln(StackTraceUtil.getStackTrace(aiob)); } catch (Exception ignore) { }
-          	}
-          	throw new ParserException("ArrayIndexOutOfBoundsException " + aiob.getMessage()+ " pattern " + sPattern + " substitution " + sPreffix+oImgs.get(sSrc),aiob);
-        }
-        */
         
-        sBodyCid = doSubstitution (sBodyCid, "Src", Gadgets.replace(oImgTag.extractImageLocn(),'\\',"\\\\"), sPreffix+oImgs.get(sSrc));
+        sBodyCid = doSubstitution (sBodyCid, "Src", Gadgets.replace(Gadgets.replace(oImgTag.extractImageLocn(),'\\',"\\\\"),'.',"\\x2E"), sPreffix+oImgs.get(sSrc));
     } // next
 
 	// **********************************************************************
@@ -234,6 +320,8 @@ public class HtmlMimeBodyPart {
         if (sSrc.length()>0) {
           sSrc = sSrc.replace('\\','/');
 
+		  if (DebugFile.trace) DebugFile.writeln("Processing background location "+sSrc);
+
           // Keep a reference to every related image name so that the same image is not included twice in the message
           if (!oImgs.containsKey(sSrc)) {
 
@@ -253,18 +341,8 @@ public class HtmlMimeBodyPart {
 
             oImgs.put(sSrc, sCid);
           } // fi (!oImgs.containsKey(sSrc))
-
-		  /*
-          try {
-            Pattern oPattern = oCompiler.compile(Gadgets.replace(((TableTag) oCollectionList.elementAt(i)).getAttribute("background"),'\\',"\\\\"),
-            									 Perl5Compiler.SINGLELINE_MASK);
-            oSrcSubs.setSubstitution(sPreffix+oImgs.get(sSrc));
-            if (DebugFile.trace) DebugFile.writeln("Util.substitute([PatternMatcher],"+ sSrc + ","+sPreffix+oImgs.get(sSrc)+",...)");
-            sBodyCid = Util.substitute(oMatcher, oPattern, oSrcSubs, sBodyCid);
-          } catch (MalformedPatternException neverthrown) { }
-		  */
 		  
-		  sBodyCid = doSubstitution (sBodyCid, "Background", Gadgets.replace(((TableTag) oCollectionList.elementAt(i)).getAttribute("background"),'\\',"\\\\"), sPreffix+oImgs.get(sSrc));
+		  sBodyCid = doSubstitution (sBodyCid, "Background", Gadgets.replace(Gadgets.replace(((TableTag) oCollectionList.elementAt(i)).getAttribute("background"),'\\',"\\\\"),'.',"\\x2E"), sPreffix+oImgs.get(sSrc));
 
         } // fi
       } // fi
@@ -290,6 +368,8 @@ public class HtmlMimeBodyPart {
         if (sSrc.length()>0) {
           sSrc = sSrc.replace('\\','/');
 
+		  if (DebugFile.trace) DebugFile.writeln("Processing td bg location "+sSrc);
+
           // Keep a reference to every related image name so that the same image is not included twice in the message
           if (!oImgs.containsKey(sSrc)) {
 
@@ -309,21 +389,17 @@ public class HtmlMimeBodyPart {
 
             oImgs.put(sSrc, sCid);
           } // fi (!oImgs.containsKey(sSrc))
-
-		  /*
-          try {
-            Pattern oPattern = oCompiler.compile(Gadgets.replace(((TableColumn) oCollectionList.elementAt(i)).getAttribute("background"),'\\',"\\\\"),
-            									 Perl5Compiler.SINGLELINE_MASK);
-            oSrcSubs.setSubstitution(sPreffix+oImgs.get(sSrc));
-            if (DebugFile.trace) DebugFile.writeln("Util.substitute([PatternMatcher],"+ sSrc + ","+sPreffix+oImgs.get(sSrc)+",...)");
-            sBodyCid = Util.substitute(oMatcher, oPattern, oSrcSubs, sBodyCid);
-          } catch (MalformedPatternException neverthrown) { }
-		  */
 		  
-		  sBodyCid = doSubstitution(sBodyCid, "Background", Gadgets.replace(((TableColumn) oCollectionList.elementAt(i)).getAttribute("background"),'\\',"\\\\"), sPreffix+oImgs.get(sSrc));
+		  sBodyCid = doSubstitution(sBodyCid, "Background", Gadgets.replace(Gadgets.replace(((TableColumn) oCollectionList.elementAt(i)).getAttribute("background"),'\\',"\\\\"),'.',"\\x2E"), sPreffix+oImgs.get(sSrc));
         } // fi
       } // fi
     } // next
+
+    if (DebugFile.trace) {
+	  DebugFile.write(sBodyCid);
+      DebugFile.decIdent();
+      DebugFile.writeln("End HtmlMimeBodyPart.addPreffixToImgSrc()");
+    }
 
     return sBodyCid;
   } // addPreffixToImgSrcs
@@ -337,6 +413,11 @@ public class HtmlMimeBodyPart {
    */
   public String removePreffixFromImgSrcs(String sPreffix)
   	throws ParserException {
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin HtmlMimeBodyPart.removePreffixFromImgSrcs("+sPreffix+")");
+      DebugFile.incIdent();
+    }
 
     int iSlash;
     Parser oPrsr;
@@ -385,23 +466,10 @@ public class HtmlMimeBodyPart {
 
           oImgs.put(sSrc, sCid);
         } // fi (!oImgs.containsKey(sSrc))
-
-		/*
-        try {
-          String sImgSrc = ((ImageTag) oCollectionList.elementAt(i)).extractImageLocn();
-          if (sImgSrc.startsWith(sPreffix)) {
-            Pattern oPattern = oCompiler.compile(Gadgets.replace(sImgSrc,'\\',"\\\\"),
-            								     Perl5Compiler.SINGLELINE_MASK);
-            oSrcSubs.setSubstitution(sImgSrc.substring(sPreffix.length()));
-            if (DebugFile.trace) DebugFile.writeln("Util.substitute([PatternMatcher],"+ sSrc + ","+sImgSrc.substring(sPreffix.length())+",...)");
-              sBodyCid = Util.substitute(oMatcher, oPattern, oSrcSubs, sBodyCid);
-          }
-        } catch (MalformedPatternException neverthrown) { }
-        */
         
         String sImgSrc = ((ImageTag) oCollectionList.elementAt(i)).extractImageLocn();
         if (sImgSrc.startsWith(sPreffix)) {
-          sBodyCid = doSubstitution(sBodyCid, "Src", Gadgets.replace(sImgSrc,'\\',"\\\\"), sImgSrc.substring(sPreffix.length()));
+          sBodyCid = doSubstitution(sBodyCid, "Src", Gadgets.replace(Gadgets.replace(sImgSrc,'\\',"\\\\"),'.',"\\x2E"), sImgSrc.substring(sPreffix.length()));
         }
         
     } // next
@@ -446,22 +514,9 @@ public class HtmlMimeBodyPart {
             oImgs.put(sSrc, sCid);
           } // fi (!oImgs.containsKey(sSrc))
 
-		  /*
-          try {
-          	String sBckGrnd = ((TableTag) oCollectionList.elementAt(i)).getAttribute("background");
-            if (sBckGrnd.startsWith(sPreffix)) {
-              Pattern oPattern = oCompiler.compile(Gadgets.replace(sBckGrnd,'\\',"\\\\"),
-            									   Perl5Compiler.SINGLELINE_MASK);
-              oSrcSubs.setSubstitution(sBckGrnd.substring(sPreffix.length()));
-              if (DebugFile.trace) DebugFile.writeln("Util.substitute([PatternMatcher],"+ sSrc + ","+sBckGrnd.substring(sPreffix.length())+",...)");
-              sBodyCid = Util.substitute(oMatcher, oPattern, oSrcSubs, sBodyCid);
-            } 
-          } catch (MalformedPatternException neverthrown) { }
-          */
-
           String sBckGrnd = ((TableTag) oCollectionList.elementAt(i)).getAttribute("background");
           if (sBckGrnd.startsWith(sPreffix)) {
-            sBodyCid = doSubstitution(sBodyCid, "Background", Gadgets.replace(sBckGrnd,'\\',"\\\\"), sBckGrnd.substring(sPreffix.length()));
+            sBodyCid = doSubstitution(sBodyCid, "Background", Gadgets.replace(Gadgets.replace(sBckGrnd,'\\',"\\\\"),'.',"\\x2E"), sBckGrnd.substring(sPreffix.length()));
           }          
           
         } // fi
@@ -508,27 +563,20 @@ public class HtmlMimeBodyPart {
             oImgs.put(sSrc, sCid);
           } // fi (!oImgs.containsKey(sSrc))
 
-          /*
-          try {
-          	String sTdBckg = ((TableColumn) oCollectionList.elementAt(i)).getAttribute("background");
-            if (sTdBckg.startsWith(sPreffix)) {
-              Pattern oPattern = oCompiler.compile(Gadgets.replace(sTdBckg,'\\',"\\\\"),
-            									 Perl5Compiler.SINGLELINE_MASK);
-              oSrcSubs.setSubstitution(sTdBckg.substring(sPreffix.length()));
-              if (DebugFile.trace) DebugFile.writeln("Util.substitute([PatternMatcher],"+ sSrc + ","+sPreffix.length()+",...)");
-              sBodyCid = Util.substitute(oMatcher, oPattern, oSrcSubs, sBodyCid);
-            }
-          } catch (MalformedPatternException neverthrown) { }
-		  */
-
           String sTdBckg = ((TableColumn) oCollectionList.elementAt(i)).getAttribute("background");
           if (sTdBckg.startsWith(sPreffix)) {
-            sBodyCid = doSubstitution(sBodyCid, "Background", Gadgets.replace(sTdBckg,'\\',"\\\\"), sTdBckg.substring(sPreffix.length()));
+            sBodyCid = doSubstitution(sBodyCid, "Background", Gadgets.replace(Gadgets.replace(sTdBckg,'\\',"\\\\"),'.',"\\x2E"), sTdBckg.substring(sPreffix.length()));
           }
 
         } // fi
       } // fi
     } // next
+
+    if (DebugFile.trace) {
+	  DebugFile.write(sBodyCid);
+      DebugFile.decIdent();
+      DebugFile.writeln("End HtmlMimeBodyPart.removePreffixFromImgSrcs()");
+    }
 
     return sBodyCid;
   } // removePreffixFromImgSrcs
@@ -547,20 +595,33 @@ public class HtmlMimeBodyPart {
 	return oHtml.addPreffixToImgSrc(sNewPreffix);
   } // replacePreffixFromImgSrcs
 
+
+  /**
+   * <p>Replace HREF targets with an intermediate page for tracking click through</p>
+   * @param sRedirectorUrl String Full HTTP path where all HREF URLs must be redirected
+   * @return New HTML source with replaced HREF attributes
+   * @throws ParserException
+   */
+
   public String addClickThroughRedirector(final String sRedirectorUrl)
   	throws ParserException {
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin HtmlMimeBodyPart.addClickThroughRedirector("+sRedirectorUrl+")");
+      DebugFile.incIdent();
+    }
+    
     final NodeVisitor linkVisitor = new NodeVisitor() {
 
         public void visitTag(Tag tag) {
             // Process any tag/node in your HTML 
             String name = tag.getTagName();
-
             // Set the Link's target to _blank if the href is external
             if ("a".equalsIgnoreCase(name)) {
             	LinkTag lnk = (LinkTag) tag;
             	String sUrl = lnk.extractLink();
                 if(sUrl.startsWith("http://") || sUrl.startsWith("https://")) {
-                    lnk.setLink(sRedirectorUrl+Gadgets.URLEncode(sUrl));
+                    lnk.setLink(sRedirectorUrl+Base64Encoder.encode(sUrl));
                 }
             }
         }
@@ -569,6 +630,12 @@ public class HtmlMimeBodyPart {
     Parser parser = Parser.createParser(sBody, sEnc);
     NodeList list = parser.parse(null);
     list.visitAllNodesWith(linkVisitor);
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End HtmlMimeBodyPart.addClickThroughRedirector()");
+    }
+
     return list.toHtml();
   } // addClickThroughRedirector
 

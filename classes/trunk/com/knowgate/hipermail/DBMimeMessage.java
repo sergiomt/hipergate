@@ -33,12 +33,21 @@
 package com.knowgate.hipermail;
 
 import com.knowgate.debug.DebugFile;
+import com.knowgate.debug.StackTraceUtil;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBSubset;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.dfs.StreamPipe;
 import com.knowgate.dfs.ByteArrayDataSource;
+
+import org.apache.oro.text.regex.Pattern;
+import org.apache.oro.text.regex.PatternMatcher;
+import org.apache.oro.text.regex.PatternCompiler;
+import org.apache.oro.text.regex.Perl5Matcher;
+import org.apache.oro.text.regex.Perl5Compiler;
+import org.apache.oro.text.regex.PatternMatcherInput;
+import org.apache.oro.text.regex.MalformedPatternException;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,6 +57,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 
 import java.math.BigDecimal;
+
+import java.util.ArrayList;
 
 import java.sql.ResultSet;
 import java.sql.CallableStatement;
@@ -1465,12 +1476,14 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
    * @throws IOException
    * @throws MessagingException
    * @throws SecurityException
+   * @throws ArrayIndexOutOfBoundsException
    * @throws IllegalArgumentException if sContentType is not "plain" or "html"
    */
   public SMTPMessage composeFinalMessage(Session oMailSession, String sSubject, String sBody,
                                          String sId, String sContentType, String sEncoding,
                                          boolean bAttachInlineImages)
-    throws IOException,MessagingException,IllegalArgumentException,SecurityException {
+    throws IOException,MessagingException,IllegalArgumentException,
+    	   ArrayIndexOutOfBoundsException,SecurityException {
 
     int iWebBeaconStart, iWebBeaconEnd, iSrcTagStart, iSrcTagEnd;
 
@@ -1509,11 +1522,6 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
       // ************************************************************************
       // Replace image CIDs
 
-      //HashMap oDocumentImages = new HashMap(23);
-      //int nImgs = 0;
-
-      //StringSubstitution oSrcSubs = new StringSubstitution();
-
       String sSrc, sCid, sText = "";
 
       Parser oPrsr = Parser.createParser(sBody, getEncoding());
@@ -1533,6 +1541,9 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
         try {
           oPrsr.visitAllNodesWith (oStrBn);
         } catch (ParserException pe) {
+          if (DebugFile.trace) {
+            DebugFile.writeln("org.htmlparser.util.ParserException " + pe.getMessage());
+          }
           throw new MessagingException(pe.getMessage(), pe);
         }
 
@@ -1559,10 +1570,29 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
         if (DebugFile.trace) {
           DebugFile.writeln("org.htmlparser.util.ParserException " + pe.getMessage());
         }
+        throw new MessagingException(pe.getMessage(), pe);
       }
       // End replace image CIDs
       // ************************************************************************
 
+
+      // ************************************************************************
+      // Some defensive programming: ensure that all src="..." attributes point
+      // either to an absolute http:// URL or to a cid:
+      oHtmBdy.setHtml (sBody);
+      ArrayList<String> aLocalUrls = oHtmBdy.extractLocalUrls();
+      if (aLocalUrls.size()>0) {
+        if (DebugFile.trace) {
+          DebugFile.writeln("HTML body part contains local references to external resources");
+          for (String i : aLocalUrls) {
+            DebugFile.writeln(i);
+          }
+          DebugFile.write(sBody+"\n");
+        }
+      	throw new MessagingException("HTML body part "+(sId==null ? "" : "of message"+sId)+" contains local references to external resources such as "+aLocalUrls.get(0));
+      } // aLocalUrls != {}
+
+      
       // ************************************************************************
       // Add HTML related images
 
@@ -1590,6 +1620,7 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
           
           oMsgHtml.setText(sBody,sEncoding,"html");
           oTextHtmlAlt.addBodyPart(oMsgHtml);
+          
       } else {
 
         // Set HTML text related part
@@ -1613,7 +1644,7 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
 	    } catch (Exception malformedwebbeacon) {
 	  	    if (DebugFile.trace) DebugFile.writeln("Malformed Web Beacon");
 	    } 
-
+        
         oMsgHtmlText.setText(sBody,sEncoding,"html");
         if (DebugFile.trace) DebugFile.writeln("MimeBodyPart(multipart/related).addBodyPart(text/html)");
         oHtmlRelated.addBodyPart(oMsgHtmlText);

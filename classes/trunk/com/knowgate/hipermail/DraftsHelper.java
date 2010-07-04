@@ -96,6 +96,7 @@ public class DraftsHelper {
     oConn.setAutoCommit(false);
 
     if (DebugFile.trace) {
+      DebugFile.writeln("Creating message "+sGuMsg+" "+sIdMsg+" at folder "+oDraftsFldr.getName()+" "+sGuFldr);
       DebugFile.writeln("JDCConnection.prepareStatement(SELECT MAX("+DB.pg_message+") FROM "+DB.k_mime_msgs+" WHERE "+DB.gu_category+"='"+sGuFldr+"')");
     }
 
@@ -154,10 +155,14 @@ public class DraftsHelper {
       DebugFile.writeln(String.valueOf(nAffected)+" affected rows");
     }	  
 
-	DBMimeMessage oRetVal = oDraftsFldr.getMessageByGuid(sGuMsg);
+    if (!oConn.getAutoCommit()) {
+      if (DebugFile.trace)
+        DebugFile.writeln("Connection.commit()");
+      oConn.commit();
+    }
 
-    if (!oConn.getAutoCommit()) oConn.commit();
-			
+	DBMimeMessage oRetVal = oDraftsFldr.getMessageByGuid(sGuMsg);
+    		
     if (DebugFile.trace) {
       DebugFile.decIdent();
       DebugFile.writeln("End DraftsHelper.draftMessage() : "+sGuMsg);
