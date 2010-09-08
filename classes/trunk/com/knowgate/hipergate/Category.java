@@ -69,7 +69,7 @@ import com.knowgate.hipergate.DBLanguages;
 /**
  * Categories from k_categories database table
  * @author Sergio Montoro Ten
- * @version 5.0
+ * @version 6.0
  */
 public class Category  extends DBPersist {
 
@@ -131,7 +131,7 @@ public class Category  extends DBPersist {
    * @return LinkedList of Category objects.
    * @throws SQLException
    */
-  public LinkedList browse (JDCConnection oConn, int iDirection, int iOrder) throws SQLException {
+  public LinkedList<Category> browse (JDCConnection oConn, int iDirection, int iOrder) throws SQLException {
     String sCatId = getString(DB.gu_category);
     String sNeighbour;
     boolean bDoNext;
@@ -140,7 +140,7 @@ public class Category  extends DBPersist {
     ResultSet oRSet;
     ResultSetMetaData oMDat;
     
-    LinkedList oCatList = new LinkedList();
+    LinkedList<Category> oCatList = new LinkedList<Category>();
     Category oCatg;
 
     if (DebugFile.trace) {
@@ -1562,15 +1562,12 @@ public class Category  extends DBPersist {
         if (DebugFile.trace) DebugFile.writeln("new StringTokenizer(" + sName + ", \"" + sColDelim + "\"");
 
         // Para cada registro separar los campos
-        oColTok = new StringTokenizer(sName, sColDelim);
-
-        if (DebugFile.trace) DebugFile.writeln("StringTokenizer.nextToken(" + String.valueOf(r) + ") for id_language");
-
-        sLanguageId = oColTok.nextToken();
-
-        if (DebugFile.trace) DebugFile.writeln("StringTokenizer.nextToken(" + String.valueOf(r) + ") for tr_category");
-
-        sTrCategory = oColTok.nextToken();
+        String[] aPair = Gadgets.split2(sName,sColDelim);
+		
+		if (aPair.length<2) throw new NoSuchElementException("Invalid language value pair "+sName);
+		
+		sLanguageId = aPair[0];
+		sTrCategory = aPair[1];
 
         if (sTrCategory!=null) {
           sTrCategory = sTrCategory.trim();
@@ -1603,7 +1600,7 @@ public class Category  extends DBPersist {
    * @param sSourcePath String "file:///tmp/upload/myfiles"
    * @param sProtocol String "file://"
    * @param sServer String Server name (for FTP transfers)
-   * @param sTargetPath String "file:///opt/hipergate/storege/domians/2050/..."
+   * @param sTargetPath String "file:///opt/hipergate/storege/domains/2050/..."
    * @param sLanguage String
    * @throws Exception
    * @throws IOException
@@ -2128,6 +2125,9 @@ public class Category  extends DBPersist {
           if (oProd.exists(oConn)) {
             oProd.delete(oConn);          
           }
+          break;
+        case com.knowgate.crm.DistributionList.ClassId:
+          com.knowgate.crm.DistributionList.delete(oConn, oObjs.getString(0, o));
           break;
         case com.knowgate.crm.Company.ClassId:
           com.knowgate.crm.Company.delete(oConn, oObjs.getString(0, o));

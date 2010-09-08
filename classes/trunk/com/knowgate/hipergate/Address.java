@@ -146,6 +146,12 @@ public class Address extends DBPersist {
     }
 
 	// ************
+    // New for v6.0
+
+	  if (isNull(DB.gu_workarea)) put(DB.gu_workarea, DBCommand.queryStr(oConn, "SELECT "+DB.gu_workarea+" FROM "+DB.k_addresses+" WHERE "+DB.gu_address+"='"+ getString(DB.gu_address)+"'"));
+      oDlte.executeUpdate("DELETE FROM "+DB.k_meetings_lookup+" WHERE "+DB.id_section+"='"+DB.gu_address+"' AND "+DB.gu_owner+"='"+getString(DB.gu_workarea)+"' AND "+DB.vl_lookup+"='"+getString(DB.gu_address)+"'");
+
+	// ************
     // New for v5.0
 
     if (DBBind.exists(oConn, DB.k_activities, "U")) {
