@@ -50,7 +50,7 @@ import com.knowgate.dataobjs.DBColumn;
 /**
  * JDBC Connection Wrapper
  * @author Sergio Montoro Ten
- * @version 5.0
+ * @version 6.0
  */
 public final class JDCConnection implements Connection,PooledConnection {
 
@@ -63,6 +63,7 @@ public final class JDCConnection implements Connection,PooledConnection {
     public static final int DBMS_ORACLE = 5;
     public static final int DBMS_XBASE = 9;
     public static final int DBMS_ACCESS = 10;
+    public static final int DBMS_SQLITE = 11;
 
     private static final int DBMS_UNKNOWN = -1;
     private static final int DBMS_SYBASE = 4;
@@ -85,6 +86,7 @@ public final class JDCConnection implements Connection,PooledConnection {
     private static final String DBMSNAME_MYSQL = "MySQL";
     private static final String DBMSNAME_XBASE = "XBase";
     private static final String DBMSNAME_ACCESS = "ACCESS";
+    private static final String DBMSNAME_SQLITE = "SQLite";
 
     public JDCConnection(Connection conn, JDCConnectionPool pool, String schemaname) {
         this.dbms = DBMS_UNKNOWN;
@@ -200,6 +202,8 @@ public final class JDCConnection implements Connection,PooledConnection {
             return DBMS_ORACLE;
           else if (prod.equals(DBMSNAME_MYSQL))
             return DBMS_MYSQL;
+          else if (prod.equals(DBMSNAME_SQLITE))
+            return DBMS_SQLITE;
           else
             return DBMS_GENERIC;
         }
