@@ -44,6 +44,7 @@ import java.io.Reader;
 import java.io.InputStreamReader;
 import java.io.FileInputStream;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -58,7 +59,7 @@ import com.knowgate.misc.Gadgets;
  * <p>Delimited Text Parser</p>
  * <p>Parses a delimited text file into a memory array</p>
  * @author Sergio Montoro Ten
- * @version 3.0
+ * @version 6.0
  */
 public class CSVParser  {
 
@@ -486,8 +487,24 @@ public class CSVParser  {
       oReader.read(cBuffer);
       oReader.close();
       oReader = null;
+	
+	  // Skip Unicode characters prolog
+	  if (sCharSet==null) {
+        parseData (cBuffer, sFileDescriptor);	  	
+	  } else {
+	    if (sCharSet.startsWith("UTF") || sCharSet.startsWith("utf") || sCharSet.startsWith("Unicode")) {
+	      int iSkip = 0;
+	      if  ((int) cBuffer[0] == 65279 || (int) cBuffer[0] == 65533 || (int) cBuffer[0] == 65534) iSkip++;
+	      if  ((int) cBuffer[1] == 65279 || (int) cBuffer[1] == 65533 || (int) cBuffer[1] == 65534) iSkip++;
 
-      parseData (cBuffer, sFileDescriptor);
+	      if (0==iSkip)
+            parseData (cBuffer, sFileDescriptor);
+	      else
+	  	    parseData (Arrays.copyOfRange(cBuffer, iSkip, iBuffer), sFileDescriptor);
+	    } else {
+          parseData (cBuffer, sFileDescriptor);	  	
+	    }
+	  }
 	}
 
     if (DebugFile.trace) {

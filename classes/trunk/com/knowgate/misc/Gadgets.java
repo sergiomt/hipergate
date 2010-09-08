@@ -735,6 +735,9 @@ public final class Gadgets {
         case ' ':
           sEscaped.append("%20");
           break;
+        case '/':
+          sEscaped.append("%2F");
+          break;
         case '"':
           sEscaped.append("%22");
           break;
@@ -1598,12 +1601,19 @@ public final class Gadgets {
    * @param sRegExp Regular Expression to be matched
    * @param sNewVal New value for replacement
    * @throws MalformedPatternException
+   * @throws NullPointerException if either sRegExp or NewVal is null
    * @see http://www.savarese.org/oro/docs/OROMatcher/Syntax.html
    */
   public static String replace(String sSource, String sRegExp, String sNewVal) throws MalformedPatternException {
     Pattern oPattern;
+
     if (null==oMatcher) oMatcher = new Perl5Matcher();
     if (null==oCompiler) oCompiler = new Perl5Compiler();
+
+	if (null==sSource) return null;
+	
+	if (null==sRegExp) throw new NullPointerException("Gadgets.replace() pattern may not be null");
+	if (null==sNewVal) throw new NullPointerException("Gadgets.replace() new value may not be null");
 
     oPattern = oCompiler.compile(sRegExp);
 
