@@ -90,6 +90,37 @@ public class FileSystemWorkArea extends FileSystem {
 
   /** 
    * Read text file under storage root directory using given encoding
+   * @param sPath Relative path to file under storage root directory including file name. For example "cache/recent.html"
+   * @param sEncoding Encoding to be used
+   * see <a href="http://java.sun.com/j2se/1.4.2/docs/guide/intl/encoding.doc.html">Java Supported Encodings</a>
+   * @throws IllegalArgumentException if sWorkArea or sPath is null
+   * @throws IOException
+   * @throws OutOfMemoryError
+   * @since 6.0
+   */
+  
+  public String readstorfilestr (String sPath, String sEncoding)
+  	throws IllegalArgumentException, IOException, FTPException, OutOfMemoryError {
+
+    if (sPath==null)
+      throw new IllegalArgumentException("File path may not be null");
+
+    String sProtocol = oPropsCNF.getProperty("protocol", "file://");
+    String sWorkAreaPath = oPropsCNF.getProperty("storage");
+
+    if (sProtocol.equalsIgnoreCase("ftp://")) {
+      if (!sWorkAreaPath.endsWith("/")) sWorkAreaPath += "/";
+    } else {
+      if (!sWorkAreaPath.endsWith(SLASH)) sWorkAreaPath += SLASH;
+    }
+    
+    return readfilestr(sProtocol + sWorkAreaPath + sPath, sEncoding);
+  } // readstorfilestr
+
+  // ---------------------------------------------------------------------------
+
+  /** 
+   * Read text file under storage root directory using given encoding
    * @param iDomain Domain Numeric Identifier
    * @param sWorkArea WorkArea GUID
    * @param sPath Relative path to file under storage root directory including file name. For example "cache/recent.html"
@@ -101,7 +132,7 @@ public class FileSystemWorkArea extends FileSystem {
    * @since 4.0
    */
   
-  public String readstorfilestr (int iDomain, String sWorkArea, String sPath, String sText, String sEncoding)
+  public String readstorfilestr (int iDomain, String sWorkArea, String sPath, String sEncoding)
   	throws IllegalArgumentException, IOException, FTPException, OutOfMemoryError {
 
     if (sWorkArea==null)
@@ -115,13 +146,15 @@ public class FileSystemWorkArea extends FileSystem {
 
     if (sProtocol.equalsIgnoreCase("ftp://")) {
       if (!sWorkAreaPath.endsWith("/")) sWorkAreaPath += "/";
-      sWorkAreaPath += "domains/" + String.valueOf(iDomain) + "/workareas/";
+      sWorkAreaPath += "domains/" + String.valueOf(iDomain) + "/workareas/"+sWorkArea;
+      if (sPath.startsWith("/")) sWorkAreaPath += sPath; else sWorkAreaPath += "/" + sPath;
     } else {
       if (!sWorkAreaPath.endsWith(SLASH)) sWorkAreaPath += SLASH;
-      sWorkAreaPath += "domains" + SLASH + String.valueOf(iDomain) + SLASH + "workareas" + SLASH;
+      sWorkAreaPath += "domains" + SLASH + String.valueOf(iDomain) + SLASH + "workareas" + SLASH + sWorkArea;
+      if (sPath.startsWith(SLASH)) sWorkAreaPath += sPath; else sWorkAreaPath += SLASH + sPath;
     }
     
-    return readfilestr(sProtocol + sWorkAreaPath + sWorkArea + sPath, sEncoding);
+    return readfilestr(sProtocol + sWorkAreaPath, sEncoding);
   } // readstorfilestr
 
   // ---------------------------------------------------------------------------
