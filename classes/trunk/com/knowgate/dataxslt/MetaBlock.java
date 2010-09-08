@@ -45,7 +45,7 @@ import dom.DOMSubDocument;
  * and then DOMDocument nodes are wrapped with classes that add specific Microsite
  * behavior.</p>
  * @author Sergio Montoro Ten
- * @version 1.1
+ * @version 6.0
  */
 public class MetaBlock extends DOMSubDocument {
 
@@ -55,6 +55,17 @@ public class MetaBlock extends DOMSubDocument {
   public MetaBlock(Node oRefNode) {
     super(oRefNode);
   }
+
+  // ----------------------------------------------------------
+
+  public boolean allowHTML() {
+    Node oItem = oNode.getAttributes().getNamedItem("allowHTML");
+
+    if (null==oItem)
+      return false;
+    else
+      return oItem.getNodeValue().equalsIgnoreCase("true") || oItem.getNodeValue().equalsIgnoreCase("yes") || oItem.getNodeValue().equals("1");
+  } // allowHTML()
 
   // ----------------------------------------------------------
 

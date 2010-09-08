@@ -63,6 +63,8 @@ public class Paragraph extends DOMSubDocument {
       return getElement("url");
   } // url()
 
+  // ----------------------------------------------------------
+
   public String text() {
     if (null==getElement("text"))
       return "";
