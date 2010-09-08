@@ -81,7 +81,7 @@ import java.util.Properties;
  * atomic calls.
  * <p>This is an alpha state testing module.</p>
  * @author Sergio Montoro Ten
- * @version 5.0
+ * @version 6.0
  */
 
 public class FileSystem {
@@ -1809,7 +1809,7 @@ public class FileSystem {
         int iReaded = oReader.read(aBuffer, 0, iFLen);
 
         // Skip FF FE character mark for Unidode files
-        int iSkip = ( (int) aBuffer[0] == 65279 || (int) aBuffer[0] == 65534 ? 1 : 0);
+        int iSkip = ( (int) aBuffer[0] == 65279 || (int) aBuffer[0] == 65533 || (int) aBuffer[0] == 65534 ? 1 : 0);
 
         oBuffer.append(aBuffer, iSkip, iReaded - iSkip);
 
