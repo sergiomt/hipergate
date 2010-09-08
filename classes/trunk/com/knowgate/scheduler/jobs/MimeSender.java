@@ -152,7 +152,7 @@ public class MimeSender extends Job {
 	  sRedirectorDir = Gadgets.chomp(oJob.getParameter("webserver"),'/')+"hipermail/";
 	}
 	
-	String sRedirectorUrl = Gadgets.chomp(sRedirectorDir,'/')+"web_clicktrough.jsp?";
+	String sRedirectorUrl = Gadgets.chomp(sRedirectorDir,'/')+"contenido.jsp?";
 
     HtmlMimeBodyPart oPart = new HtmlMimeBodyPart(sLBody, null);
     String sRBody = oPart.addClickThroughRedirector(sRedirectorUrl+"gu_job="+oJob.getString(DB.gu_job)+"&pg_atom="+String.valueOf(oAtm.getInt(DB.pg_atom))+"&tx_email="+oAtm.getStringNull(DB.tx_email,"")+(oAtm.isNull(DB.gu_company) ? "" : "&gu_company="+oAtm.getString(DB.gu_company))+(oAtm.isNull(DB.gu_contact) ? "" : "&gu_contact="+oAtm.getString(DB.gu_contact))+"&url=");
@@ -363,14 +363,41 @@ public class MimeSender extends Job {
 		DBSubset oBlck = new DBSubset(DB.k_global_black_list, DBBind.Functions.LOWER+"("+DB.tx_email+")",
 		                              DB.id_domain+"=? AND "+DB.gu_workarea+" IN (?,'00000000000000000000000000000000')", 1000);
 		int nBlacklisted = oBlck.load(oConn, new Object[]{new Integer(iDomainId), getString(DB.gu_workarea)});
+
 		if (nBlacklisted==0) {
-		  aBlackList = null;
+		  if (getDataBaseBind().exists(oConn, DB.k_grey_list, "U")) {
+		  	DBSubset oGrey = new DBSubset(DB.k_grey_list+" g", DBBind.Functions.LOWER+"("+DB.tx_email+")", null, 1000);
+		    int nGreylisted = oGrey.load(oConn);
+			if (nGreylisted>0) {
+		  	  aBlackList = new String[nGreylisted];
+		      for (int g=0; g<nGreylisted; g++)
+		  	    aBlackList[g] = oGrey.getString(0,g);
+			} else {
+		      aBlackList = null;
+			}
+		  } else {
+		    aBlackList = null;
+		  } 		  
 		} else {
-		  aBlackList = new String[nBlacklisted];		  		
+		  aBlackList = new String[nBlacklisted];
 		  for (int b=0; b<nBlacklisted; b++)
 		  	aBlackList[b] = oBlck.getString(0,b);
+		  if (getDataBaseBind().exists(oConn, DB.k_grey_list, "U")) {
+		  	DBSubset oGrey = new DBSubset(DB.k_grey_list+" g", DBBind.Functions.LOWER+"("+DB.tx_email+")",
+		  	                              "NOT EXISTS (SELECT "+DB.tx_email+" FROM "+DB.k_global_black_list+" b WHERE b."+DB.tx_email+"=g."+DB.tx_email+" AND b."+DB.id_domain+"=? AND b."+DB.gu_workarea+" IN (?,'00000000000000000000000000000000'))", 1000);
+		    
+		    int nGreylisted = oGrey.load(oConn, new Object[]{new Integer(iDomainId), getString(DB.gu_workarea)});
+			if (nGreylisted>0) {
+		  	  String[] aBlackGrey = new String[nBlacklisted+nGreylisted];
+		  	  for (int b=0; b<nBlacklisted; b++)
+		  	    aBlackGrey[b] = oBlck.getString(0,b);
+		  	  for (int g=0; g<nGreylisted; g++)
+		  	    aBlackGrey[g+nBlacklisted] = oGrey.getString(0,g);
+		  	  aBlackList = aBlackGrey;
+			}
+		  }
 		  Arrays.sort(aBlackList);
-		}
+		} // fi
 
         Event.trigger(oConn, iDomainId, "initjob", this, getProperties());
                              	
