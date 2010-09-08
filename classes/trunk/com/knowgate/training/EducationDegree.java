@@ -31,6 +31,8 @@ package com.knowgate.training;
   if not, visit http://www.hipergate.org or mail to info@hipergate.org
 */
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.knowgate.jdc.JDCConnection;
@@ -53,6 +55,92 @@ public class EducationDegree extends DBPersist {
 
     return super.store(oConn);
   }
+  
+  /*
+   * <p>Get GUID of a degree given its type and name</p>
+   * Search is case sensitive
+   * @param oConn JDCConnection
+   * @param sGuWorkArea String GUID of WorkArea
+   * @param sTpDegree Column tp_degree of table k_education_degree (optional, may be <b>null</b>)
+   * @param sNmDegree Column nm_degree of table k_education_degree
+   * @return GUID of degree or <b>null</b> if no degree with such name was found
+   * @throws SQLException
+   * @since 6.0
+   */
+  public static String getIdFromName(JDCConnection oConn, String sGuWorkArea, String sTpDegree, String sNmDegree)
+  	throws SQLException {
+  	
+  	PreparedStatement oStmt;
+  	ResultSet oRset;
+  	String sGuDegree;
+  	
+  	if (sTpDegree==null) {
+  	  oStmt = oConn.prepareStatement("SELECT "+DB.gu_degree+" FROM "+DB.k_education_degree+" WHERE "+DB.gu_workarea+"=? AND "+DB.nm_degree+"=?");
+  	  oStmt.setString(1, sGuWorkArea);
+  	  oStmt.setString(2, sNmDegree);
+  	} else if (sTpDegree.length()==0) {
+  	  oStmt = oConn.prepareStatement("SELECT "+DB.gu_degree+" FROM "+DB.k_education_degree+" WHERE "+DB.gu_workarea+"=? AND "+DB.nm_degree+"=?");
+  	  oStmt.setString(1, sGuWorkArea);
+  	  oStmt.setString(2, sNmDegree);	  
+  	} else {
+  	  oStmt = oConn.prepareStatement("SELECT "+DB.gu_degree+" FROM "+DB.k_education_degree+" WHERE "+DB.gu_workarea+"=? AND "+DB.tp_degree+"=? AND "+DB.nm_degree+"=?");
+  	  oStmt.setString(1, sGuWorkArea);
+  	  oStmt.setString(2, sTpDegree);	  
+  	  oStmt.setString(3, sNmDegree);	  
+  	}
+  	oRset = oStmt.executeQuery();
+  	if (oRset.next())
+  	  sGuDegree = oRset.getString(1);
+  	else
+  	  sGuDegree = null;
+  	oRset.close();
+  	oStmt.close();
+  	return sGuDegree;
+
+  } // getIdFromName
+
+  /*
+   * <p>Get GUID of a degree given its type and identifier</p>
+   * Search is case sensitive
+   * @param oConn JDCConnection
+   * @param sGuWorkArea String GUID of WorkArea
+   * @param sTpDegree Column tp_degree of table k_education_degree (optional, may be <b>null</b>)
+   * @param sIdDegree Column id_degree of table k_education_degree
+   * @return GUID of degree or <b>null</b> if no degree with such name was found
+   * @throws SQLException
+   * @since 6.0
+   */
+  public static String getIdFromRef(JDCConnection oConn, String sGuWorkArea, String sTpDegree, String sIdDegree)
+  	throws SQLException {
+  	
+  	PreparedStatement oStmt;
+  	ResultSet oRset;
+  	String sGuDegree;
+  	
+  	if (sTpDegree==null) {
+  	  oStmt = oConn.prepareStatement("SELECT "+DB.gu_degree+" FROM "+DB.k_education_degree+" WHERE "+DB.gu_workarea+"=? AND "+DB.id_degree+"=?");
+  	  oStmt.setString(1, sGuWorkArea);
+  	  oStmt.setString(2, sIdDegree);
+  	} else if (sTpDegree.length()==0) {
+  	  oStmt = oConn.prepareStatement("SELECT "+DB.gu_degree+" FROM "+DB.k_education_degree+" WHERE "+DB.gu_workarea+"=? AND "+DB.id_degree+"=?");
+  	  oStmt.setString(1, sGuWorkArea);
+  	  oStmt.setString(2, sIdDegree);	  
+  	} else {
+  	  oStmt = oConn.prepareStatement("SELECT "+DB.gu_degree+" FROM "+DB.k_education_degree+" WHERE "+DB.gu_workarea+"=? AND "+DB.tp_degree+"=? AND "+DB.id_degree+"=?");
+  	  oStmt.setString(1, sGuWorkArea);
+  	  oStmt.setString(2, sTpDegree);	  
+  	  oStmt.setString(3, sIdDegree);	  
+  	}
+  	oRset = oStmt.executeQuery();
+  	if (oRset.next())
+  	  sGuDegree = oRset.getString(1);
+  	else
+  	  sGuDegree = null;
+  	oRset.close();
+  	oStmt.close();
+  	return sGuDegree;
+
+  } // getIdFromRef
   
   public static final short ClassId = 67;
 }
