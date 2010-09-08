@@ -32,9 +32,15 @@
 
 package com.knowgate.hipergate.datamodel;
 
+import java.math.BigDecimal;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 import java.util.ListIterator;
 import java.util.HashMap;
 
+import java.sql.Types;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
@@ -48,13 +54,16 @@ import com.knowgate.misc.Gadgets;
 /**
  * Generic text to table loader
  * @author Sergio Montoro Ten
- * @version 1.0
+ * @version 2.0
  */
 public class TableLoader extends DBTable implements ImportLoader {
 
   private JDCConnection jConn;
+  private short[] aColTypes;
   private String[] aColNames;
   private Object[] aValues;
+  private SimpleDateFormat oDtFmt = new SimpleDateFormat("yyyy-MM-dd");
+  private SimpleDateFormat oTsFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
   HashMap oInsrColPos;
   HashMap oUpdtColPos;
   private PreparedStatement oInsr;
@@ -65,6 +74,7 @@ public class TableLoader extends DBTable implements ImportLoader {
   public TableLoader(String sTableName) {
     super(sTableName);
     aColNames = null;
+    aColTypes = null;
     jConn = null;
   }
 
@@ -74,6 +84,14 @@ public class TableLoader extends DBTable implements ImportLoader {
     if (null==aColNames)
       throw new IllegalStateException("TableLoader: must call prepare() before columnNames()");
     return aColNames;
+  }
+
+  // ---------------------------------------------------------------------------
+
+  public short[] columnTypes() throws IllegalStateException {
+    if (null==aColTypes)
+      throw new IllegalStateException("TableLoader: must call prepare() before columnTypes()");
+    return aColTypes;
   }
 
   // ---------------------------------------------------------------------------
@@ -90,6 +108,12 @@ public class TableLoader extends DBTable implements ImportLoader {
       throw new SQLException("No columns found for table "+getName());
     }
     aColNames = Gadgets.split(","+getColumnsStr(),',');
+    aColTypes = new short[aColNames.length];
+    ListIterator<DBColumn> oColIter = getColumns().listIterator();
+    int t=-1;
+    while (oColIter.hasNext()) {
+      aColTypes[++t] = oColIter.next().getSqlType();
+    } // wend
     aValues = new Object[columnCount()+1];
     String sSQL;
     String sCol;
@@ -162,6 +186,48 @@ public class TableLoader extends DBTable implements ImportLoader {
 
   public Object get(String sColumnName) throws ArrayIndexOutOfBoundsException {
     return aValues[getColumnIndex(sColumnName)-1];
+  }
+
+  // ---------------------------------------------------------------------------
+
+  public void put(int iColumnIndex, String sValue)
+  	throws NumberFormatException,ArrayIndexOutOfBoundsException,ParseException {
+    switch (aColTypes[iColumnIndex]) {
+      case Types.TINYINT:
+    	aValues[iColumnIndex]=new Byte(sValue);
+        break;
+      case Types.SMALLINT:
+    	aValues[iColumnIndex]=new Short(sValue);
+        break;
+      case Types.INTEGER:
+    	aValues[iColumnIndex]=new Integer(sValue);
+        break;
+      case Types.BIGINT:
+    	aValues[iColumnIndex]=new Long(sValue);
+        break;
+      case Types.FLOAT:
+    	aValues[iColumnIndex]=new Float(sValue);
+        break;
+      case Types.DOUBLE:
+      case Types.REAL:
+    	aValues[iColumnIndex]=new Double(sValue);
+        break;
+      case Types.DECIMAL:
+      case Types.NUMERIC:
+    	aValues[iColumnIndex]=new BigDecimal(sValue);
+        break;
+      case Types.DATE:
+      	if (sValue.length()==10)
+    	  aValues[iColumnIndex]=oDtFmt.parse(sValue);
+      	else    	
+    	  aValues[iColumnIndex]=oTsFmt.parse(sValue);
+        break;        
+      case Types.TIMESTAMP:    	
+    	aValues[iColumnIndex]=oTsFmt.parse(sValue);
+        break;        
+      default:
+    	aValues[iColumnIndex]=sValue;      	
+    }
   }
 
   // ---------------------------------------------------------------------------

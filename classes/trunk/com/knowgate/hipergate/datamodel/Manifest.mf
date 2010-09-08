@@ -1,8 +1,8 @@
 Manifest-version: 1.0
 Name: com/knowgate/hipergate/datamodel
 Specification-Title: HiperGate Data Model Manager
-Specification-Version: 5.5
+Specification-Version: 6.0
 Specification-Vendor: Know Gate S.L.
 Implementation-Title: com.knowgate.hipergate.datamodel
-Implementation-Version: 5.5
+Implementation-Version: 6.0
 Implementation-Vendor: Know Gate S.L.

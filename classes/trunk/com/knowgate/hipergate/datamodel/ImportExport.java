@@ -34,7 +34,7 @@ package com.knowgate.hipergate.datamodel;
 
 /**
  * @author Sergio Montoro Ten
- * @version 5.0
+ * @version 6.0
  */
 
 import java.sql.DriverManager;
@@ -64,6 +64,7 @@ import com.knowgate.crm.ContactLoader;
 import com.knowgate.crm.CompanyLoader;
 import com.knowgate.crm.DistributionList;
 import com.knowgate.crm.VCardLoader;
+import com.knowgate.crm.OportunityLoader;
 import com.knowgate.addrbook.FellowLoader;
 import com.knowgate.hipergate.ProductLoader;
 import com.knowgate.hipergate.DespatchAdviceLoader;
@@ -78,7 +79,7 @@ public class ImportExport {
   "DISCARDFILE", "CHARSET", "CHARACTERSET", "ROWDELIM", "COLDELIM", "RECOVERABLE",
   "UNRECOVERABLE", "PRESERVESPACE", "WORKAREA", "MAXERRORS", "INSERTLOOKUPS", "SKIP",
   "CATEGORY", "USERS", "CONTACTS", "COMPANIES", "PRODUCTS", "FELLOWS", "DESPATCHS","VCARDS",
-  "WITHOUT", "DUPLICATED", "NAMES", "EMAILS", "LIST" };
+  "OPORTUNITIES", "OPPORTUNITIES", "WITHOUT", "DUPLICATED", "NAMES", "EMAILS", "LIST" };
 
   // ---------------------------------------------------------------------------
 
@@ -154,6 +155,9 @@ public class ImportExport {
       } else if (sEntity.equalsIgnoreCase("COMPANIES")) {
         oImplLoad = new CompanyLoader();
         iFlags |= ContactLoader.WRITE_ADDRESSES;
+	  } else if (sEntity.equalsIgnoreCase("OPORTUNITIES") || sEntity.equalsIgnoreCase("OPPORTUNITIES")) {
+        oImplLoad = new OportunityLoader();
+        iFlags = 0;        
       } else if (sEntity.equalsIgnoreCase("USERS")) {
         oImplLoad = new UserLoader();
       } else if (sEntity.equalsIgnoreCase("FELLOWS")) {
@@ -809,9 +813,17 @@ public class ImportExport {
           throw new ImportExportException("Unsupported Encoding "+sCharSet, uee);
         }
 
-        try {
-        	// Read input file by one character at a time
+        try {          
+          if (DebugFile.trace) {
+          	String sRowDelimChr = "", sColDelimChr = "";
+          	for (int d=0; d<sRowDelim.length(); d++) sRowDelimChr += "Chr("+String.valueOf((int)sRowDelim.charAt(d))+")";
+          	for (int d=0; d<sColDelim.length(); d++) sColDelimChr += "Chr("+String.valueOf((int)sColDelim.charAt(d))+")";
+          	DebugFile.writeln("  Read input stream with row delimiter "+sRowDelimChr+" and col delimiter "+sColDelimChr);
+          }
+          int nCharCount = 0;
+          // Read input file by one character at a time
           while (((i=oInRdr.read())!=-1) && (iErrorCount<=iMaxErrors)) {
+            nCharCount++;
             // Skip row delimiter, let r be the relative position inside the row delimiter
             // then skip as many characters readed at i as they match with row delimiter + offset r
             r=0;
@@ -922,6 +934,8 @@ public class ImportExport {
                     } // catch
                   } // fi (aLine.length!=iColFmtsCount)
                 } // fi (sLine!="")
+              } else {
+ 				if (DebugFile.trace) DebugFile.writeln("  Skiping line "+String.valueOf(iLine));
               } // fi (iLine>iSkip)
               oRow.setLength(0);
               if (i!=-1) oRow.append((char)i);
@@ -934,7 +948,7 @@ public class ImportExport {
   		  if (null!=oInRdr) oInRdr.close();
 
           if (DebugFile.trace) {
-            DebugFile.writeln("End read data from text file");
+            DebugFile.writeln("End read data from text file. "+String.valueOf(nCharCount)+" characters readed with error count "+String.valueOf(iErrorCount));
           }
 
         if (oInBuff!=null) { oInBuff.close(); }

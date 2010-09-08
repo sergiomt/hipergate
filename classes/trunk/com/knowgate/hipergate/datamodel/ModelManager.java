@@ -32,6 +32,7 @@
 
 package com.knowgate.hipergate.datamodel;
 
+import java.io.UnsupportedEncodingException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,6 +51,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Types;
 
+import java.text.ParseException;
+
 import java.util.Properties;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -57,10 +60,15 @@ import java.util.ListIterator;
 import bsh.Interpreter;
 import bsh.EvalError;
 
+import com.knowgate.dataobjs.DBBind;
 import com.knowgate.debug.DebugFile;
+import com.knowgate.misc.CSVParser;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.jdc.JDCConnection;
+import com.knowgate.dataobjs.DBColumn;
+import com.knowgate.datacopy.DataStruct;
 import com.knowgate.hipergate.DBLanguages;
+import com.knowgate.workareas.FileSystemWorkArea;
 
 /**
  * <p>hipergate Data Model Manager</p>
@@ -69,7 +77,7 @@ import com.knowgate.hipergate.DBLanguages;
  * <p>It may be used as an alternative method to database dumps for initial data loading,
  * or, also, as a tool for porting the data model to a new DBMS in a structured way.</p>
  * @author Sergio Montoro ten
- * @version 5.5
+ * @version 6.0
  */
 
 public class ModelManager {
@@ -763,6 +771,89 @@ public class ModelManager {
 
     return aArray;
   } // split
+
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Load a delimited text file into a database table
+   * @param sTableName String Fully qualified table name
+   * @param sFilePath String File Path
+   * @param sEncoding String File Character encoding
+   * @throws SQLException
+   * @throws ParseException
+   * @throws NumberFormatException
+   * @throws IOException
+   * @throws FileNotFoundException
+   * @throws UnsupportedEncodingException
+   * @since 6.0
+   */
+  public void bulkLoad (String sTableName, String sFilePath, String sEncoding)
+  	throws SQLException,IOException,FileNotFoundException,UnsupportedEncodingException,
+  	       NumberFormatException,ArrayIndexOutOfBoundsException,ParseException {
+
+	int c;
+	String f = "";
+	ColumnList oColList = new ColumnList();
+	
+    PreparedStatement oStmt = getConnection().prepareStatement("SELECT * FROM "+sTableName);
+    ResultSet oRSet = oStmt.executeQuery();
+    int iFlags = oRSet.next() ? ImportLoader.MODE_APPENDUPDATE : ImportLoader.MODE_APPEND;
+    ResultSetMetaData oMDat = oRSet.getMetaData();
+    for (c=1; c<=oMDat.getColumnCount(); c++) {
+      oColList.add(new DBColumn(sTableName, oMDat.getColumnName(c), (short) oMDat.getColumnType(c), oMDat.getColumnTypeName(c), oMDat.getPrecision(c), oMDat.getScale(c), oMDat.isNullable(c), c));    
+    }
+    oRSet.close();
+    oStmt.close();
+
+  	TableLoader oTblLdr = new TableLoader(sTableName);
+  	oTblLdr.prepare(getConnection(),oColList);
+  	String[] aColumns = oTblLdr.columnNames();
+
+  	CSVParser oCsvPrsr = new CSVParser(sEncoding);
+  	oCsvPrsr.parseFile(sFilePath, Gadgets.join(aColumns,"\t"));
+  	final int nLines = oCsvPrsr.getLineCount();
+  	final int nCols = oCsvPrsr.getColumnCount();
+
+    getConnection().setAutoCommit(false);
+
+    for (int l=0; l<nLines; l++) {
+      c = -1;
+      try {
+        while (++c<nCols) {
+          f = oCsvPrsr.getField(c,l);
+          oTblLdr.put(c, f);
+        } // wend   
+        oTblLdr.store(getConnection(), "", iFlags);
+        oTblLdr.setAllColumnsToNull();
+    	getConnection().commit();
+      } catch (Exception xcpt) {
+        iErrors++;
+        String sTrc = "";
+        try { sTrc = com.knowgate.debug.StackTraceUtil.getStackTrace(xcpt); } catch (IOException ignore) {}
+        if (null!=oStrLog) oStrLog.append(xcpt.getClass().getName()+" for value "+f+" at line " + String.valueOf(l+1) + " column "+String.valueOf(c+1)+" of type "+oColList.getColumn(c).getSqlTypeName()+": " + xcpt.getMessage() + "\t" + oCsvPrsr.getLine(l) + "\n" + sTrc);
+    	getConnection().rollback();
+        oTblLdr.setAllColumnsToNull();
+        break;
+      }
+    } // next
+    oTblLdr.close();
+  } // bulkLoad
+
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Truncate table
+   * @param sTableName String Table name
+   * @throws SQLException
+   * @since 6.0
+   */
+
+  public void truncate (String sTableName) throws SQLException {
+    Statement oStmt = getConnection().createStatement();
+    oStmt.execute("TRUNCATE TABLE "+sTableName);
+    oStmt.close();
+    if (!getConnection().getAutoCommit()) getConnection().commit();
+  }
 
   // ---------------------------------------------------------------------------
 
@@ -2019,6 +2110,186 @@ public class ModelManager {
   // ----------------------------------------------------------
 
   /**
+   * <p>Clone a set of Contacts</p>
+   * Contacts are cloned by following instructions contained in contact_clon.xml file.
+   * @param sContactsFilter WHERE clause of contacts to be cloned, for cloning just one contact use "gu_contact='<i>GUID_OF_CONTACT</i>'"
+   * @param sTargetWorkArea GUID of WorkArea where new contact is to be written
+   * @param sNewOwner GUID of user (from k_users table) that will be the new owner of the contact or <b>null</b>
+   * @return Error messages are written to internal ModelManager log and can be inspected by
+   * calling report() method after cloneContacts()
+   * @throws SQLException
+   * @throws IOException XML definition file for cloning not found
+   * @throws InstantiationException SAX parser is not properly installed
+   * @throws IllegalAccessException SAX parser is not properly installed
+   * @throws ClassNotFoundException SAX parser is not properly installed
+   * @throws org.xml.sax.SAXException Parsing error at file workarea_clon.xml
+   * @throws IOException
+   * @since 6.0
+   */
+  public void cloneContacts(String sContactsFilter, String sTargetWorkArea, String sNewOwnerId)
+    throws SQLException,IOException,InstantiationException,IllegalAccessException,
+           IOException, ClassNotFoundException, org.xml.sax.SAXException {
+
+	ListIterator oIter;
+    Statement oStmt= null;
+    ResultSet oRSet= null;
+    Object[] oPKOr = new Object[1];
+	Object[] oPKTr = new Object[1];
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin ModelManager.cloneContacts(" + sContactsFilter + "," + sTargetWorkArea + "," + sNewOwnerId + ")");
+      DebugFile.incIdent();
+    }
+
+    if (null==oConn)
+      throw new IllegalStateException("Not connected to database");
+
+	JDCConnection oJDC;
+    // Get a JDC Connection Wrapper
+    if (oConn instanceof JDCConnection)
+      oJDC = (JDCConnection) oConn;
+    else
+      oJDC = new JDCConnection(oConn, null);
+
+	String sContactXml = null;
+	String sCompanyXml = null;
+	
+	if (oJDC.getPool()==null) {
+      switch (oJDC.getDataBaseProduct()) {
+        case JDCConnection.DBMS_MSSQL:
+          sContactXml = getResourceAsString("scripts/mssql/contact_clon.xml", sEncoding);
+          sCompanyXml = getResourceAsString("scripts/mssql/company_clon.xml", sEncoding);
+          break;
+        case JDCConnection.DBMS_MYSQL:
+          sContactXml = getResourceAsString("scripts/mysql/contact_clon.xml", sEncoding);
+          sCompanyXml = getResourceAsString("scripts/mysql/company_clon.xml", sEncoding);
+          break;
+      case JDCConnection.DBMS_ORACLE:
+        sContactXml = getResourceAsString("scripts/oracle/contact_clon.xml", sEncoding);
+        sCompanyXml = getResourceAsString("scripts/oracle/company_clon.xml", sEncoding);
+        break;
+      case JDCConnection.DBMS_POSTGRESQL:
+        sContactXml = getResourceAsString("scripts/postgresql/contact_clon.xml", sEncoding);
+        sCompanyXml = getResourceAsString("scripts/postgresql/company_clon.xml", sEncoding);
+        break;
+      default:
+        if (DebugFile.trace) {
+          DebugFile.writeln("Unsupported database");
+          DebugFile.decIdent();
+        }
+      	throw new SQLException ("Unsupported database");
+      }
+	}
+	else {
+	  FileSystemWorkArea oFsw = new FileSystemWorkArea(((DBBind)oJDC.getPool().getDatabaseBinding()).getProperties());
+      try {
+        switch (oJDC.getDataBaseProduct()) {
+          case JDCConnection.DBMS_MSSQL:
+            sContactXml = oFsw.readstorfilestr("datacopy/mssql/contact_clon.xml", sEncoding);
+            sCompanyXml = oFsw.readstorfilestr("datacopy/mssql/company_clon.xml", sEncoding);
+            break;
+          case JDCConnection.DBMS_MYSQL:
+            sContactXml = oFsw.readstorfilestr("datacopy/mysql/contact_clon.xml", sEncoding);
+            sCompanyXml = oFsw.readstorfilestr("datacopy/mysql/company_clon.xml", sEncoding);
+            break;
+          case JDCConnection.DBMS_ORACLE:
+            sContactXml = oFsw.readstorfilestr("datacopy/oracle/contact_clon.xml", sEncoding);
+            sCompanyXml = oFsw.readstorfilestr("datacopy/oracle/company_clon.xml", sEncoding);
+            break;
+          case JDCConnection.DBMS_POSTGRESQL:
+            sContactXml = oFsw.readstorfilestr("datacopy/postgresql/contact_clon.xml", sEncoding);
+            sCompanyXml = oFsw.readstorfilestr("datacopy/postgresql/company_clon.xml", sEncoding);
+            break;
+          default:
+            if (DebugFile.trace) {
+              DebugFile.writeln("Unsupported database "+oJDC.getMetaData().getDatabaseProductName());
+              DebugFile.decIdent();
+            }
+      	    throw new SQLException ("Unsupported database "+oJDC.getMetaData().getDatabaseProductName());
+        }
+      } catch (com.enterprisedt.net.ftp.FTPException neverthrown) { }
+	} // fi
+	
+    Properties oParams = new Properties();
+    oParams.put("IdWorkArea", sTargetWorkArea);
+    oParams.put("IdOwner", sNewOwnerId==null ? "null" : sNewOwnerId);
+
+    DataStruct oCS = new DataStruct();
+    DataStruct oDS = new DataStruct();
+
+    oCS.setOriginConnection(oConn);
+    oCS.setTargetConnection(oConn);
+    oCS.setAutoCommit(false);
+
+    oDS.setOriginConnection(oConn);
+    oDS.setTargetConnection(oConn);
+    oDS.setAutoCommit(false);
+
+    oCS.parse (sCompanyXml, oParams);
+    oDS.parse (sContactXml, oParams);
+
+	try {
+
+	  LinkedList<String> oContacts = new LinkedList<String>();
+	  LinkedList<String> oCompanies = new LinkedList<String>();
+
+	  oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+	  oRSet = oStmt.executeQuery("SELECT gu_contact,gu_company,gu_workarea FROM k_contacts WHERE "+sContactsFilter);
+	  while (oRSet.next()) {
+	  	oContacts.add(oRSet.getString(1));
+	  	String sCompany = oRSet.getString(2);
+	  	if (!oRSet.wasNull()) {
+	  	  if (!sTargetWorkArea.equals(oRSet.getString(3))) {
+	  	    oCompanies.add(sCompany);
+	  	  }
+	  	}
+	  } // wend
+	  oRSet.close();
+	  oRSet=null;
+	  oStmt.close();
+	  oStmt=null;
+
+	  if (oCompanies.size()>0) {
+	    oIter = oCompanies.listIterator();
+	    while (oIter.hasNext()) {
+	      oPKOr[0] = oIter.next();
+	      oPKTr[0] = Gadgets.generateUUID();
+          oCS.insert(oPKOr, oPKTr, 1);
+	      oCS.commit();
+          if (null!=oStrLog) oStrLog.append("New Company "+oPKTr[0]+" created successfully\n");
+	    } // wend
+	  } // fi
+
+	  oIter = oContacts.listIterator();
+	  while (oIter.hasNext()) {
+	    oPKOr[0] = oIter.next();
+	    oPKTr[0] = Gadgets.generateUUID();
+        oDS.insert(oPKOr, oPKTr, 1);
+	    oDS.commit();
+        if (null!=oStrLog) oStrLog.append("New Contact "+oPKTr[0]+" created successfully\n");
+	  } // wend
+
+	} catch (SQLException sqle) {
+      if (null!=oStrLog) oStrLog.append("SQLException at ModelManager.cloneContacts() "+sqle.getMessage()+"\n");
+	  try { System.out.println(com.knowgate.debug.StackTraceUtil.getStackTrace(sqle));}
+	  catch (Exception ignore){}
+	} finally {
+	  if (null!=oRSet) oRSet.close();
+	  if (null!=oStmt) oStmt.close();
+      oDS.clear();
+      oCS.clear();
+	}
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End ModelManager.cloneContacts()");
+    }
+
+  } // cloneContacts()
+
+  // ----------------------------------------------------------
+
+  /**
    * <p>Create a clone of a WorkArea</p>
    * WorkAreas are cloned by following instructions contained in
    * com/knowgate/hipergate/datamodel/scripts/<i>dbms</i>/workarea_clon.xml file.
@@ -2053,8 +2324,12 @@ public class ModelManager {
     if (null==oConn)
       throw new IllegalStateException("Not connected to database");
 
+	com.knowgate.jdc.JDCConnection oJDC;
     // Get a JDC Connection Wrapper
-    com.knowgate.jdc.JDCConnection oJDC = new com.knowgate.jdc.JDCConnection(oConn, null);
+    if (oConn instanceof com.knowgate.jdc.JDCConnection)
+      oJDC = (com.knowgate.jdc.JDCConnection) oConn;
+    else
+      oJDC = new com.knowgate.jdc.JDCConnection(oConn, null);
 
     // Split Domain and WorkArea names
     String[] aOriginWrkA = com.knowgate.misc.Gadgets.split2 (sOriginWorkArea, '.');
@@ -2836,7 +3111,7 @@ public class ModelManager {
       if (null!=oStrLog) oStrLog.append("STOP ON ERROR SET TO ON: SCRIPT INTERRUPTED\n");
     }
   } // upgrade
-
+  
   // ----------------------------------------------------------
 
   public int fixTranslationColumns() throws SQLException {
@@ -2909,7 +3184,7 @@ public class ModelManager {
    * java com.knowgate.hipergate.datamodel.ModelManager /etc/hipergate.cnf <i>command</i> <i>module</i> [domain_name|domain_name.workarea_name] [verbose]<br>
    * Path "/etc/hipergate.cnf" must point to where hipergate.cnf file is located.<br>
    * @param argv Array of Strings with 3 to 6 elements<br>
-   * <b>argv[0]</b>: (Command) May be { create | drop | clone | execute | script | upgrade }<br>
+   * <b>argv[0]</b>: (Command) May be { bulkload | create | drop | clone | execute | script | truncate | upgrade }<br>
    * <b>argv[1]</b>: (Object) May be { database | <i>a module_name</i> | all | domain | workarea }<br>
    * Valid module names are: { { all | kernel | lookups | security | jobs | categories | addrbook | webbuilder | crm | shops | projtrack }<br>
    * "all" will create or drop all modules.<br>
@@ -2920,6 +3195,10 @@ public class ModelManager {
    * java com.knowgate.hipergate.datamodel.ModelManager /etc/hipergate.cnf execute /tmp/statements.sql verbose<br>
    * Example for generating a SQL script for a table :<br>
    * java com.knowgate.hipergate.datamodel.ModelManager /etc/hipergate.cnf script k_lu_languages /tmp/langs.sql<br>
+   * Example for loading a text file delimited by tabs and line feeds into a table :<br>
+   * java com.knowgate.hipergate.datamodel.ModelManager /etc/hipergate.cnf bulkload k_tablename /tmp/data.txt UTF-8 verbose<br>
+   * Example for truncating a table :<br>
+   * java com.knowgate.hipergate.datamodel.ModelManager /etc/hipergate.cnf truncate k_tablename<br>
    * Example for fixing missing translation columns :<br>
    * java com.knowgate.hipergate.datamodel.ModelManager /etc/hipergate.cnf fixtr<br>
    */
@@ -2930,13 +3209,15 @@ public class ModelManager {
 
     if (argv.length<2 || argv.length>6)
       printUsage();
-    else if (!argv[1].equals("create") && !argv[1].equals("drop") && !argv[1].equals("clone") && !argv[1].equals("execute") && !argv[1].equals("script") && !argv[1].equals("upgrade") && !argv[1].equals("fixtr"))
+    else if (!argv[1].equals("bulkload") && !argv[1].equals("create") && !argv[1].equals("drop") && !argv[1].equals("clone") && !argv[1].equals("execute") && !argv[1].equals("script") && !argv[1].equals("upgrade") && !argv[1].equals("fixtr") && !argv[1].equals("truncate"))
       printUsage();
     else if ((argv[1].equals("create") || argv[1].equals("drop")) && argv.length>5)
       printUsage();
+    else if (argv[1].equals("bulkload") && argv.length>6)
+      printUsage();
     else if (argv[1].equals("execute") && argv.length>4)
       printUsage();
-    else if (argv[1].equals("script") && argv.length>4)
+    else if ((argv[1].equals("script") || argv[1].equals("truncate")) && argv.length>4)
       printUsage();
     else if (argv[1].equals("clone") && argv.length<5)
       printUsage();
@@ -2953,7 +3234,18 @@ public class ModelManager {
 
         oMan.connect (oProps.getProperty("driver"), oProps.getProperty("dburl"), oProps.getProperty("schema",""), oProps.getProperty("dbuser"), oProps.getProperty("dbpassword"));
 
-        if (argv[1].equals("create")) {
+        if (argv[1].equals("bulkload")) {
+          if (argv.length>4) {
+            if (argv[4].equalsIgnoreCase("verbose"))
+              oMan.bulkLoad(argv[2],argv[3],"UTF-8");
+            else
+              oMan.bulkLoad(argv[2],argv[3],argv[4]);            	
+          }
+          else {
+            oMan.bulkLoad(argv[2],argv[3],"UTF-8");
+          }
+        }
+        else if (argv[1].equals("create")) {
 
           if (argv[2].equals("domain"))
             if (argv.length<4)
@@ -3025,6 +3317,9 @@ public class ModelManager {
         else if (argv[1].equals("fixtr")) {
           int nFixes = oMan.fixTranslationColumns();
           System.out.println(String.valueOf(nFixes)+" columns fixed");
+        }
+         else if (argv[1].equals("truncate")) {
+          oMan.truncate(argv[2]);
         }
 
         switch (argv.length) {
