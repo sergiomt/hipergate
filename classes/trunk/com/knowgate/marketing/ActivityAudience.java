@@ -99,33 +99,35 @@ public class ActivityAudience extends DBPersist {
 	if (bRetVal) {
 	  String sColunmName;
 	  ListIterator<DBColumn> oIter;
-	  if (oAddr==null) oAddr = new Address();
-	  boolean bHasAnyAddressValue = false;
-	  oIter = oAddr.getTable(oConn).getColumns().listIterator();
-	  while (oIter.hasNext() && !bHasAnyAddressValue) {
-	  	sColunmName = oIter.next().getName();
-	  	if (!sColunmName.equals(DB.gu_workarea))
-	      bHasAnyAddressValue = AllVals.containsKey(sColunmName);
-	  } // wend
-	  if (bHasAnyAddressValue) {
-	  	oAddr.putAll(getItemMap());
-	  	oAddr.replace(DB.ix_address, 1);
-	  	oAddr.replace(DB.bo_active, (short) 1);
-	  	oAddr.store(oConn);
-	  }
+
 	  if (oCont==null) oCont = new Contact();
 	  boolean bHasAnyContactValue = false;
 	  oIter = oCont.getTable(oConn).getColumns().listIterator();
 	  while (oIter.hasNext() && !bHasAnyContactValue) {
 	  	sColunmName = oIter.next().getName();
-	  	if (!sColunmName.equals(DB.gu_workarea))
+	  	if (!sColunmName.equals(DB.gu_workarea) && !sColunmName.equals(DB.gu_contact) && !sColunmName.equals(DB.gu_writer))
 	      bHasAnyContactValue = AllVals.containsKey(sColunmName);
+	  } // wend
+	  if (bHasAnyContactValue) {
+	  	oCont.putAll(getItemMap());
+	  	oCont.store(oConn);
+	  }
+	  
+	  if (oAddr==null) oAddr = new Address();
+	  boolean bHasAnyAddressValue = false;
+	  oIter = oAddr.getTable(oConn).getColumns().listIterator();
+	  while (oIter.hasNext() && !bHasAnyAddressValue) {
+	  	sColunmName = oIter.next().getName();
+	  	if (!sColunmName.equals(DB.gu_workarea) && !sColunmName.equals(DB.gu_address) && !sColunmName.equals(DB.gu_user))
+	      bHasAnyAddressValue = AllVals.containsKey(sColunmName);
 	  } // wend
 	  if (bHasAnyAddressValue) {
 	  	oAddr.putAll(getItemMap());
+	  	oAddr.replace(DB.ix_address, Address.nextLocalIndex(oConn, DB.k_x_contact_addr, DB.gu_contact, oCont.getString(DB.gu_contact)));
 	  	oAddr.replace(DB.bo_active, (short) 1);
 	  	oAddr.store(oConn);
 	  }
+
 	} // fi 
 
 	return bRetVal;
