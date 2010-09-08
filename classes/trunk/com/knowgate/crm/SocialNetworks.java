@@ -13,16 +13,28 @@ import com.knowgate.dataobjs.DBSubset;
 import com.knowgate.debug.DebugFile;
 import com.knowgate.misc.Gadgets;
 
-public class SocialNetworks {
+public class SocialNetworks extends Thread {
 
-  public static int crawl(DBBind oDbb, final String sWorkArea, final String sWhere,
-                          final String sSite, final int iLimit)
-  	throws SQLException, IOException,IllegalArgumentException {
+  private DBBind oDbb;
+  private int iLimit;
+  private String sWorkArea, sWhere, sSite;
+  
+  public SocialNetworks (DBBind oDbbd, final String sGuWorkArea, final String sSQLWhere, final String sNmSite, final int iMaxRows) {
+  	oDbb = oDbbd;
+  	sWorkArea = sGuWorkArea;
+  	sWhere = sSQLWhere;
+  	sSite = sNmSite;
+  	iLimit = iMaxRows;
+  }
+
+  public void run() {
     
-    if (!sSite.equals("linkedin") && !sSite.equals("facebook") && !sSite.equals("xing")) {
-      throw new IllegalArgumentException("Crawled sites may be only linkedin, facebook or xing");
+    if (!sSite.equals("linkedin") && !sSite.equals("facebook") && !sSite.equals("twitter") && !sSite.equals("xing")) {
+      throw new IllegalArgumentException("Crawled sites may be only linkedin, facebook, twitter or xing");
     }
 
+    int nFound = 0;
+	JDCConnection oCon = null;
     String sYahooBossKey = oDbb.getProperty("yahoobosskey","");
 
 	if (sYahooBossKey.length()==0){
@@ -34,8 +46,10 @@ public class SocialNetworks {
       DebugFile.incIdent();
     }
     
+    try {
+    
     Boss oBss = new Boss();
-    JDCConnection oCon = oDbb.getConnection("SocialNetworksCrawler");
+    oCon = oDbb.getConnection("SocialNetworksCrawler");
     oCon.setAutoCommit(true);
     DBSubset oDbs = new DBSubset(DB.k_contacts, DB.gu_contact+","+DB.tx_name+","+DB.tx_surname,
     							 DB.gu_workarea+"=? AND "+DB.tx_name+" IS NOT NULL AND "+
@@ -44,7 +58,6 @@ public class SocialNetworks {
     oDbs.setMaxRows(iLimit);
     final int nContacts = oDbs.load(oCon, new Object[]{sWorkArea});
     if (DebugFile.trace) DebugFile.writeln("Crawling "+String.valueOf(nContacts)+" contacts");
-    int nFound = 0;
     for (int c=0; c<nContacts; c++) {
       String sFullName = oDbs.getStringNull(1,c,"")+" "+oDbs.getStringNull(2,c,"");
       String sASCIIName = Gadgets.ASCIIEncode(sFullName);
@@ -66,12 +79,25 @@ public class SocialNetworks {
     } // next
     oCon.close("SocialNetworksCrawler");
 
+    } catch (Exception oXct) {
+      if (null!=oCon) {
+      	try { if (!oCon.isClosed()) oCon.close(); } catch (SQLException ignore) {}
+      }
+    }
+    
     if (DebugFile.trace) {
       DebugFile.decIdent();
       DebugFile.writeln("End SocialNetworks.crawl() : "+String.valueOf(nFound));
     }
+   
+  } // run
 
-    return nFound;
-  } // crawl
+  public static void crawl(DBBind oDbb, final String sWorkArea, final String sWhere,
+                           final String sSite, final int iLimit)
+  	throws SQLException, IOException,IllegalArgumentException {
+  
+    SocialNetworks oSnt = new SocialNetworks(oDbb, sWorkArea, sWhere, sSite, iLimit);
+    oSnt.start();
+  }
 
 }

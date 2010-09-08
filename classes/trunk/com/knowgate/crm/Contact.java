@@ -33,10 +33,12 @@
 package com.knowgate.crm;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.FileNotFoundException;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Properties;
 import java.util.ListIterator;
 import java.util.StringTokenizer;
 
@@ -46,6 +48,8 @@ import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
+
+import org.xml.sax.SAXException;
 
 import com.knowgate.debug.DebugFile;
 import com.knowgate.misc.Environment;
@@ -60,6 +64,7 @@ import com.knowgate.dataobjs.DBPersist;
 
 import com.knowgate.hipergate.Product;
 import com.knowgate.hipergate.Address;
+import com.knowgate.datacopy.DataStruct;
 import com.knowgate.hipergate.DBLanguages;
 import com.knowgate.hipergate.ProductLocation;
 import com.knowgate.workareas.FileSystemWorkArea;
@@ -68,7 +73,7 @@ import com.knowgate.workareas.FileSystemWorkArea;
  * <p>Contact</p>
  * <p>Copyright: Copyright (c) KnowGate 2003</p>
  * @author Sergio Montoro Ten
- * @version 5.5
+ * @version 6.0
  */
 
 public class Contact extends DBPersist {
@@ -172,6 +177,124 @@ public class Contact extends DBPersist {
   public boolean delete(JDCConnection oConn) throws SQLException {
     return Contact.delete(oConn, getString(DB.gu_contact));
   }
+
+  // ----------------------------------------------------------
+
+  /**
+   * Clone Contact.
+   * @param oConn JDBC connection
+   * @param sTargetWorkAreaId GUID of targer WorkArea or <b>null</b> if the contact is to be cloned in the same WorkArea as this one.
+   * @throws SQLException
+   * @see com.knowgate.hipergate.datamodel.ModelManager#cloneContacts(String,String,String)
+   * @since 6.0
+   */
+  public void clone(JDCConnection oConn, String sTargetWorkAreaId, String sNewOwnerId)
+  	throws SQLException {
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin Contact.clone(" + sTargetWorkAreaId + "," + sNewOwnerId + ")");
+      DebugFile.incIdent();
+    }
+
+	DataStruct oDS = null;
+    Object[] oPKOr = new Object[] { getString(DB.gu_contact) };
+	Object[] oPKTr = new Object[] { Gadgets.generateUUID() } ;
+	String sContactXml = null;
+	String sCompanyXml = null;
+	
+	FileSystemWorkArea oFsw = new FileSystemWorkArea(((DBBind)oConn.getPool().getDatabaseBinding()).getProperties());
+    try {
+        switch (oConn.getDataBaseProduct()) {
+          case com.knowgate.jdc.JDCConnection.DBMS_MSSQL:
+            sContactXml = oFsw.readstorfilestr("datacopy/mssql/contact_clon.xml", "UTF-8");
+            sCompanyXml = oFsw.readstorfilestr("datacopy/mssql/company_clon.xml", "UTF-8");
+            break;
+          case com.knowgate.jdc.JDCConnection.DBMS_MYSQL:
+            sContactXml = oFsw.readstorfilestr("datacopy//mysql/contact_clon.xml", "UTF-8");
+            sCompanyXml = oFsw.readstorfilestr("datacopy//mysql/company_clon.xml", "UTF-8");
+            break;
+          case com.knowgate.jdc.JDCConnection.DBMS_ORACLE:
+            sContactXml = oFsw.readstorfilestr("datacopy/oracle/contact_clon.xml", "UTF-8");
+            sCompanyXml = oFsw.readstorfilestr("datacopy/oracle/company_clon.xml", "UTF-8");
+            break;
+          case com.knowgate.jdc.JDCConnection.DBMS_POSTGRESQL:
+            sContactXml = oFsw.readstorfilestr("datacopy/postgresql/contact_clon.xml", "UTF-8");
+            sCompanyXml = oFsw.readstorfilestr("datacopy/postgresql/company_clon.xml", "UTF-8");
+            break;
+          default:
+            if (DebugFile.trace) {
+              DebugFile.writeln("Unsupported database "+oConn.getMetaData().getDatabaseProductName());
+              DebugFile.decIdent();
+            }
+      	    throw new SQLException ("Unsupported database "+oConn.getMetaData().getDatabaseProductName());
+        }
+    } catch (com.enterprisedt.net.ftp.FTPException neverthrown) { }
+	  catch (IOException ioe) { throw new SQLException (ioe.getMessage(), ioe); }
+
+    Properties oParams = new Properties();
+    oParams.put("WorkAreaId", sTargetWorkAreaId==null ? getString(DB.gu_workarea) : sTargetWorkAreaId);
+    oParams.put("OwnerId", sNewOwnerId==null ? getStringNull(DB.gu_writer,null) : sNewOwnerId);
+
+	try {
+	  String sCompanyGuid = null;
+
+	  if (!isNull(DB.gu_company) && !getString(DB.gu_workarea).equals(sTargetWorkAreaId)) {        
+        String[] aCompanyInfo = DBCommand.queryStrs(oConn, "SELECT "+DB.nm_legal+","+DB.id_legal+" FROM "+DB.k_companies+" WHERE "+DB.gu_company+"='"+getString(DB.gu_company)+"'");
+        
+        PreparedStatement oStmt = oConn.prepareStatement("SELECT "+DB.gu_company+" FROM "+DB.k_companies+" WHERE "+DB.gu_workarea+"='"+sTargetWorkAreaId+"' AND ("+DB.nm_legal+"=? OR "+DB.id_legal+"=?)", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+		oStmt.setString(1, aCompanyInfo[0]);
+		oStmt.setString(2, aCompanyInfo[1]);
+		ResultSet oRSet = oStmt.executeQuery();
+		if (oRSet.next())
+		  sCompanyGuid = oRSet.getString(1);
+		else
+		  sCompanyGuid = Gadgets.generateUUID();
+		oRSet.close();
+		oStmt.close();
+
+        oDS = new DataStruct();
+        oDS.setOriginConnection(oConn);
+        oDS.setTargetConnection(oConn);
+        oDS.setAutoCommit(false);
+        oDS.parse (sCompanyXml, oParams);
+        oDS.insert(new Object[]{getString(DB.gu_company)}, new Object[]{sCompanyGuid}, 0);
+	    oDS.commit();
+	    oDS.clear();
+	    oDS = null;
+	  }
+	  
+      oDS = new DataStruct();
+
+      oDS.setOriginConnection(oConn);
+      oDS.setTargetConnection(oConn);
+      oDS.setAutoCommit(false);
+
+      oDS.parse (sContactXml, oParams);
+      oDS.insert(oPKOr, oPKTr, 0);
+	  oDS.commit();
+	  
+	  if (sCompanyGuid!=null)
+	    DBCommand.executeUpdate(oConn, "UPDATE "+DB.k_contacts+" SET "+DB.gu_company+"='"+sCompanyGuid+"' WHERE "+DB.gu_contact+"='"+oPKTr[0]+"'");
+
+	} catch (SAXException se) {
+	  throw new SQLException (se.getMessage(), se);
+	} catch (IOException io) {
+	  throw new SQLException (io.getMessage(), io);
+	} catch (ClassNotFoundException ce) {
+	  throw new SQLException (ce.getMessage(), ce);
+	} catch (IllegalAccessException ia) {
+	  throw new SQLException (ia.getMessage(), ia);
+	} catch (InstantiationException ie) {
+	  throw new SQLException (ie.getMessage(), ie);
+	} finally {
+      if (oDS!=null) oDS.clear();
+	}
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End Contact.clone()");
+    }
+  } // clone
 
   // ----------------------------------------------------------
 
@@ -997,12 +1120,12 @@ public class Contact extends DBPersist {
   } // delete
 
   /**
-   * <p>Add a Street Type lookup value</a>
+   * <p>Add a legal identification document type lookup value</a>
    * @param oConn Connection
    * @param sGuWorkArea String GUID of WorkArea
    * @param sTpPassport String Passport Type Internal Value
    * @param oTranslations HashMap with one entry for each language
-   * @return boolean <b>true</b> if new passport type was added, <b>false</b> if it already existed
+   * @return boolean <b>true</b> if new legal identification document type was added, <b>false</b> if it already existed
    * @throws SQLException
    * @since 3.0
    */

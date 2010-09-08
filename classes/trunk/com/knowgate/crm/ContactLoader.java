@@ -551,8 +551,8 @@ public final class ContactLoader implements ImportLoader {
     if (test(iFlags,ADD_TO_LIST)) {
 	  if (!test(iFlags,MODE_APPEND))
         throw new IllegalArgumentException("ContactLoader.store() MODE_APPEND is required if ADD_TO_LIST is set");
-	  if (!test(iFlags,WRITE_CONTACTS))
-        throw new IllegalArgumentException("ContactLoader.store() WRITE_CONTACTS is required if ADD_TO_LIST is set");
+	  if (!test(iFlags,WRITE_CONTACTS) && !test(iFlags,WRITE_COMPANIES))
+        throw new IllegalArgumentException("ContactLoader.store() WRITE_CONTACTS or WRITE_COMPANIES are required if ADD_TO_LIST is set");
 	  if (!test(iFlags,WRITE_ADDRESSES))
         throw new IllegalArgumentException("ContactLoader.store() WRITE_ADDRESSES is required if ADD_TO_LIST is set");
 	  if (get(gu_list)==null) {
@@ -700,6 +700,7 @@ public final class ContactLoader implements ImportLoader {
         }
 
       }
+
       if (test(iFlags,MODE_APPEND) && (iAffected==0)) {
         if (DebugFile.trace) DebugFile.writeln("COMPANY MODE_APPEND AND affected=0");
         oCompInst.setString(1, getColNull(nm_legal));
@@ -1022,12 +1023,18 @@ public final class ContactLoader implements ImportLoader {
         }
 
         if (test(iFlags,ADD_TO_LIST)) {
-	      oDistribList.addContact(oConn, (String) aValues[gu_contact]);
-	    }
+          if (test(iFlags,WRITE_CONTACTS))
+	        oDistribList.addContact(oConn, (String) aValues[gu_contact]);
+	      else if (test(iFlags,WRITE_COMPANIES))
+	        oDistribList.addCompany(oConn, (String) aValues[gu_company]);	      	
+	    } 
       } else {
         if (test(iFlags,ADD_TO_LIST)) {
-        	PreparedStatement oMmbr = oConn.prepareStatement("SELECT NULL FROM k_x_list_members WHERE gu_list=? AND gu_contact=?",
-        							  ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+          PreparedStatement oMmbr;
+          PreparedStatement oUdlm;
+          if (test(iFlags,WRITE_CONTACTS)) {
+            oMmbr = oConn.prepareStatement("SELECT NULL FROM k_x_list_members WHERE gu_list=? AND gu_contact=?",
+        							       ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			oMmbr.setObject(1, get(gu_list), Types.CHAR);
 			oMmbr.setObject(2, get(gu_contact), Types.CHAR);
 			ResultSet oRmbr = oMmbr.executeQuery();
@@ -1036,7 +1043,7 @@ public final class ContactLoader implements ImportLoader {
 			oMmbr.close();
 			if (bMmbrExists) {
 			  if (iListType==DistributionList.TYPE_DIRECT) {
-			    PreparedStatement oUdlm = oConn.prepareStatement("UPDATE "+DB.k_x_list_members+" SET "+
+			    oUdlm = oConn.prepareStatement("UPDATE "+DB.k_x_list_members+" SET "+
 			    						  DB.dt_modified+"=?,"+DB.tx_name+"=?,"+DB.tx_surname+"=?,"+
 			    						  DB.mov_phone+"=? WHERE "+DB.gu_list+"=? AND "+DB.tx_email+"=?");
 			    oUdlm.setTimestamp(1, new Timestamp(new Date().getTime()));
@@ -1051,6 +1058,31 @@ public final class ContactLoader implements ImportLoader {
 		  	} else {
 			  oDistribList.addContact(oConn, (String) aValues[gu_contact]);
 			}
+          } else if (test(iFlags,WRITE_COMPANIES)) {
+            oMmbr = oConn.prepareStatement("SELECT NULL FROM k_x_list_members WHERE gu_list=? AND gu_company=?",
+        							       ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			oMmbr.setObject(1, get(gu_list), Types.CHAR);
+			oMmbr.setObject(2, get(gu_company), Types.CHAR);
+			ResultSet oRmbr = oMmbr.executeQuery();
+			boolean bMmbrExists = oRmbr.next();
+			oRmbr.close();
+			oMmbr.close();
+			if (bMmbrExists) {
+			  if (iListType==DistributionList.TYPE_DIRECT) {
+			    oUdlm = oConn.prepareStatement("UPDATE "+DB.k_x_list_members+" SET "+
+			    						  DB.dt_modified+"=?,"+DB.mov_phone+"=? "+
+			    						  "WHERE "+DB.gu_list+"=? AND "+DB.tx_email+"=?");
+			    oUdlm.setTimestamp(1, new Timestamp(new Date().getTime()));
+			    oUdlm.setObject(4, get(mov_phone), Types.VARCHAR);
+			    oUdlm.setObject(5, get(gu_list), Types.CHAR);
+			    oUdlm.setObject(6, get(tx_email), Types.VARCHAR);
+			    oUdlm.executeUpdate();
+			    oUdlm.close();
+			  }
+		  	} else {
+			  oDistribList.addCompany(oConn, (String) aValues[gu_company]);
+			}
+          }
 	    }      
       } // fi (iAffected==0)
     } // fi test(iFlags,MODE_APPEND))

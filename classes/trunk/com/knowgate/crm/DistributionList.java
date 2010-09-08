@@ -45,6 +45,7 @@ import com.knowgate.jdc.JDCConnection;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBBind;
+import com.knowgate.dataobjs.DBKeySet;
 import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.dataobjs.DBPersist;
 
@@ -53,7 +54,7 @@ import com.knowgate.hipergate.QueryByForm;
 /**
  * <p>Distribution List</p>
  * @author Sergio Montoro Ten
- * @version 5.0
+ * @version 6.0
  */
 public class DistributionList extends DBPersist {
 
@@ -508,18 +509,61 @@ public class DistributionList extends DBPersist {
 
   // ----------------------------------------------------------
 
+  public boolean load(JDCConnection oConn, Object[] PKVals) throws SQLException {
+    boolean bRetVal = super.load(oConn, PKVals);
+    if (bRetVal) {
+      String sGuCategory = DBCommand.queryStr(oConn, "SELECT "+DB.gu_category+" FROM "+DB.k_x_cat_objs+" WHERE "+DB.gu_object+"='"+getString(DB.gu_list)+"'");
+      if (null!=sGuCategory) put(DB.gu_category, sGuCategory);
+    }
+    return bRetVal;
+  } // load
+
+  // ----------------------------------------------------------
+
+  public boolean load(JDCConnection oConn, String sGuList) throws SQLException {
+    boolean bRetVal = super.load(oConn, sGuList);
+    if (bRetVal) {
+      String sGuCategory = DBCommand.queryStr(oConn, "SELECT "+DB.gu_category+" FROM "+DB.k_x_cat_objs+" WHERE "+DB.gu_object+"='"+sGuList+"'");
+      if (null!=sGuCategory) put(DB.gu_category, sGuCategory);
+    }
+    return bRetVal;
+  } // load
+  
+  // ----------------------------------------------------------
+
   /**
-   * Store DistributionList
+   * <p>Store DistributionList</p>
    * Automatically generates gu_list GUID if not explicitly set.
+   * If value gu_category is set then this list is added to that category
+   * and removed from any previous category to which it belonged.
    * @param oConn Database Connection
    * @throws SQLException
    */
   public boolean store(JDCConnection oConn) throws SQLException {
 
-    if (!AllVals.containsKey(DB.gu_list))
+	if (DebugFile.trace) {
+	  DebugFile.writeln("Begin DistributionList.store([JDCConnection])");
+	  DebugFile.incIdent();
+	  DebugFile.writeln("gu_category="+getStringNull(DB.gu_category,"null"));
+	}
+	
+	boolean bRetVal;
+    if (!AllVals.containsKey(DB.gu_list)) {
       put(DB.gu_list, Gadgets.generateUUID());
+	  bRetVal = super.store(oConn);
+    } else {
+	  bRetVal = super.store(oConn);
+	  DBCommand.executeUpdate(oConn, "DELETE FROM "+DB.k_x_cat_objs+" WHERE "+DB.gu_object+"='"+getString(DB.gu_list)+"'");		
+    }
+    if (!isNull(DB.gu_category))
+	  DBCommand.executeUpdate(oConn, "INSERT INTO "+DB.k_x_cat_objs+" ("+DB.gu_category+","+DB.gu_object+","+DB.id_class+","+DB.bi_attribs+","+DB.od_position+") VALUES ('"+getString(DB.gu_category)+"','"+getString(DB.gu_list)+"',"+String.valueOf(DistributionList.ClassId)+",0,0)");
 
-    return super.store(oConn);
+	if (DebugFile.trace) {
+	  DebugFile.decIdent();
+	  DebugFile.writeln("End DistributionList.store()");
+	}
+
+    return bRetVal;
   } // store()
 
   // ----------------------------------------------------------
@@ -609,6 +653,41 @@ public class DistributionList extends DBPersist {
 
 	return iAffected;
   } // addContact
+
+  // ----------------------------------------------------------
+
+  /**
+   * <p>Add Contact e-mails to Static, Direct or Black List</p>
+   * If Contact has several addresses then all of them are added to the list
+   * @param oConn Database Connection
+   * @param Contact GUID
+   * @return Black List GUID or <b>null</b> if there is no associated Black List.
+   * @throws SQLException
+   * @throws IllegalStateException if this DistributionList has not been previously loaded
+   * @since 6.0
+   */
+  public int addCompany(Connection oConn, String sCompanyGUID)
+  	throws IllegalStateException,SQLException {
+    
+    if (isNull(DB.gu_list)) throw new IllegalStateException("DistributionList.addContact() List GUID not set");
+    if (isNull(DB.gu_workarea)) throw new IllegalStateException("DistributionList.addContact() List Work Area not set");
+    if (isNull(DB.tp_list)) throw new IllegalStateException("DistributionList.addContact() List Type not set");
+	if (getShort(DB.tp_list)==TYPE_DYNAMIC) throw new SQLException ("DistributionList.addContact() Dynamic list "+getString(DB.gu_list)+" does not allow manual addition of contact members");
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin DistributionList.addCompany([JDCConnection], "+sCompanyGUID+")");
+      DebugFile.incIdent();
+    }
+  	
+	int iAffected = DBCommand.executeUpdate(oConn, "INSERT INTO "+DB.k_x_list_members+" (gu_list,tx_email,tx_name,tx_surname,mov_phone,dt_created,gu_company,gu_contact) SELECT '"+getString(DB.gu_list)+"',"+DBBind.Functions.ISNULL+"(tx_email,'"+sCompanyGUID+"@hasnoemailaddress.net'),tx_name,tx_surname,mov_phone,dt_created,gu_company,NULL FROM "+DB.k_member_address+" WHERE "+DB.gu_workarea+"='"+getString(DB.gu_workarea)+"' AND "+DB.gu_company+"='"+sCompanyGUID+"' AND "+DB.gu_company+" NOT IN (SELECT "+DB.gu_company+" FROM "+DB.k_x_list_members+" WHERE "+DB.gu_list+"='"+getString(DB.gu_list)+"') AND ("+DB.tx_email+" IS NOT NULL OR "+DB.mov_phone+" IS NOT NULL)");
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End DistributionList.addCompany() : "+String.valueOf(iAffected));
+    }
+
+	return iAffected;
+  } // addCompany
   
   // ----------------------------------------------------------
 
@@ -893,6 +972,63 @@ public class DistributionList extends DBPersist {
     }
     return sCloneId;
   } // clone
+
+  // ----------------------------------------------------------
+
+  /**
+   * <p>Delete duplicated e-mails from a static or direct list.</p>
+   * This method calls k_sp_del_duplicates stored procedure for PostgreSQL, MySQL and Microsoft SQL Server.
+   * For Oracle a direct DELETE statement is executed using ROWID for removing duplicate e-mails.
+   * @param oConn Database Connection
+   * @return Count of deleted members
+   * @throws SQLException If the list type is not STATIC or DIRECT.
+   * @throws IllegalStateException is this DistributionList has not been previously loaded
+   * @throws UnsupportedOperationException if the underlying RDBMS is not PostgreSQL, MySQL, SQL Server or Oracle.
+   * @since 6.0
+   */
+  public int deleteDuplicates(JDCConnection oConn) throws SQLException,IllegalStateException,UnsupportedOperationException {
+  
+  	int iDeleted = 0;
+  	ResultSet oRSet;
+    PreparedStatement oStmt;
+    CallableStatement oCall;
+
+    if (isNull(DB.tp_list))
+	  throw new IllegalStateException("DistributionList.deleteDuplicates() List must be loaded before attempting to delete duplicates");
+    
+    if (getShort(DB.tp_list)!=TYPE_STATIC && getShort(DB.tp_list)!=TYPE_DIRECT)
+	  throw new SQLException("DistributionList.deleteDuplicates() is only allowed for static or direct lists");
+  
+	switch (oConn.getDataBaseProduct()) {
+	  case JDCConnection.DBMS_POSTGRESQL:
+	    oStmt = oConn.prepareStatement("SELECT k_sp_del_duplicates(?)");
+	    oStmt.setString(1, getString(DB.gu_list));
+	    oRSet = oStmt.executeQuery();
+		oRSet.next();
+		iDeleted = oRSet.getInt(1);
+		oStmt.close();
+		break;
+	  case JDCConnection.DBMS_MSSQL:
+	  case JDCConnection.DBMS_MYSQL:
+	  	oCall = oConn.prepareCall("{ call k_sp_del_duplicates(?,?) }");
+        oCall.setString(1, getString(DB.gu_list));
+        oCall.registerOutParameter(2, java.sql.Types.INTEGER);
+        oCall.execute();
+        iDeleted = oCall.getInt(2);
+        oCall.close();
+        break;
+      case JDCConnection.DBMS_ORACLE:
+	    oStmt = oConn.prepareStatement("DELETE FROM "+DB.k_x_list_members+" WHERE "+DB.gu_list+"=? AND ROWID NOT IN (SELECT MAX(ROWID) FROM "+DB.k_x_list_members+" WHERE "+DB.gu_list+"=? GROUP BY "+DB.tx_email+")");
+	    oStmt.setString(1, getString(DB.gu_list));
+	    oStmt.setString(2, getString(DB.gu_list));
+	    iDeleted = oStmt.executeUpdate();
+		oStmt.close();
+		break;
+	  default:
+	    throw new java.lang.UnsupportedOperationException("DistributionList.deleteDuplicates() Unsuppoted RDBMS");
+	}
+	return iDeleted;
+  } // deleteDuplicates
 
   // ----------------------------------------------------------
 
