@@ -209,8 +209,10 @@ public class DataTransformation {
        break;
      case Operations.IFNULL:
         if (null==oInput) {
-          if (IfNullValue.equalsIgnoreCase("SYSDATE") ||
-              IfNullValue.equalsIgnoreCase("GETDATE()") )
+          if (IfNullValue.equalsIgnoreCase("SYSDATE")  ||
+              IfNullValue.equalsIgnoreCase("GETDATE()")||
+              IfNullValue.equalsIgnoreCase("NOW()") ||
+              IfNullValue.equalsIgnoreCase("CURRENT_TIMESTAMP"))
             oRetVal = new java.sql.Date(new java.util.Date().getTime());
           else
             oRetVal = IfNullValue;
