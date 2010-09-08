@@ -30,8 +30,9 @@ BEGIN
 
   DELETE FROM k_x_campaign_lists WHERE gu_list=$1;
 
-    DELETE FROM k_x_adhoc_mailing_list WHERE gu_list=$1;
+  DELETE FROM k_x_adhoc_mailing_list WHERE gu_list=$1;
 
+  DELETE FROM k_x_cat_objs WHERE gu_object=$1;
   UPDATE k_activities SET gu_list=NULL WHERE gu_list=$1;
   UPDATE k_x_activity_audience SET gu_list=NULL WHERE gu_list=$1;
 
@@ -373,6 +374,35 @@ GO;
 
 CREATE TRIGGER k_tr_upd_cont AFTER UPDATE ON k_contacts FOR EACH ROW EXECUTE PROCEDURE k_sp_upd_cont()
 GO;
+
+CREATE FUNCTION k_sp_del_duplicates (CHAR) RETURNS INTEGER AS '
+DECLARE
+  deleted INTEGER;
+  txemail VARCHAR(100);
+  tmpmail VARCHAR(100);
+  members NO SCROLL CURSOR (gu CHAR(32)) IS SELECT tx_email FROM k_x_list_members WHERE gu_list = gu;
+BEGIN
+  CREATE TEMPORARY TABLE k_temp_list_emails (tx_email VARCHAR(100) CONSTRAINT pk_temp_list_emails PRIMARY KEY) ON COMMIT DROP;
+  INSERT INTO k_temp_list_emails SELECT DISTINCT(tx_email) FROM k_x_list_members WHERE gu_list=$1;
+  deleted:=0;
+  OPEN members($1);
+  FETCH members INTO txemail;
+  WHILE FOUND LOOP
+    tmpmail:=NULL;
+    DELETE FROM k_temp_list_emails WHERE tx_email=txemail RETURNING tx_email INTO tmpmail;
+    IF tmpmail IS NULL THEN
+      deleted:=deleted+1;
+      DELETE FROM k_x_list_members WHERE CURRENT OF members;
+    END IF;
+    FETCH members INTO txemail;
+  END LOOP;
+  CLOSE members;
+  DROP TABLE k_temp_list_emails;
+  return deleted;
+END;
+' LANGUAGE 'plpgsql';
+GO;
+
 
 CREATE FUNCTION k_sp_rebuild_member_address () RETURNS INTEGER AS '
 DECLARE

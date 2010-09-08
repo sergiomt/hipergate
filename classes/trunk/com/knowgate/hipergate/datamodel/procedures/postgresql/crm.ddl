@@ -185,3 +185,94 @@ BEGIN
 END;
 ' LANGUAGE 'plpgsql';
 GO;
+
+CREATE FUNCTION k_sp_dedup_email_contacts () RETURNS INTEGER AS '
+DECLARE
+  addr RECORD;
+  addrs text;
+  aCount INTEGER := 0;
+  TxPreve VARCHAR(100);
+  TxEmail VARCHAR(100);
+  GuWorkArea CHAR(32);
+  GuContact CHAR(32);
+  Dups NO SCROLL CURSOR FOR SELECT a.tx_email,a.gu_workarea FROM k_member_address a, k_member_address b WHERE a.tx_email=b.tx_email AND a.gu_contact<>b.gu_contact AND a.gu_contact IS NOT NULL and b.gu_contact IS NOT NULL AND a.gu_workarea=b.gu_workarea ORDER BY 1;
+BEGIN
+  CREATE TEMPORARY TABLE k_discard_contacts (gu_contact CHAR(32));
+  CREATE TEMPORARY TABLE k_newer_contacts (gu_contact CHAR(32));
+  
+  TxPreve := '''';
+  OPEN Dups;
+  LOOP
+
+    FETCH Dups INTO TxEmail,GuWorkArea;
+    EXIT WHEN NOT FOUND;  
+	IF TxEmail<>TxPreve THEN
+      TxEmail:=TxPreve;
+      SELECT gu_contact INTO GuContact FROM k_member_address WHERE gu_contact IS NOT NULL AND tx_email=TxEmail AND gu_workarea=GuWorkArea ORDER BY dt_created LIMIT 1;
+      INSERT INTO k_newer_contacts (SELECT gu_contact FROM k_member_address WHERE gu_contact IS NOT NULL AND tx_email=TxEmail AND gu_workarea=GuWorkArea AND gu_contact<>GuContact);
+	  INSERT INTO k_discard_contacts (SELECT gu_contact FROM k_newer_contacts);
+		
+      UPDATE k_sms_audit SET gu_contact=GuContact WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+  	  UPDATE k_x_activity_audience SET gu_contact=GuContact WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+      UPDATE k_contact_education SET gu_contact=GuContact WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+      UPDATE k_contact_languages SET gu_contact=GuContact WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+      UPDATE k_contact_computer_science SET gu_contact=GuContact WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+      UPDATE k_contact_experience SET gu_contact=GuContact WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+      UPDATE k_x_duty_resource SET nm_resource=GuContact WHERE nm_resource IN (SELECT gu_contact FROM k_newer_contacts);
+      UPDATE k_welcome_packs SET gu_contact=GuContact WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+      UPDATE k_x_list_members SET gu_contact=GuContact WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+      UPDATE k_oportunities SET gu_contact=GuContact WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+      UPDATE k_x_cat_objs SET gu_object=GuContact WHERE gu_object IN (SELECT gu_contact FROM k_newer_contacts) AND id_class=90;
+      UPDATE k_x_contact_prods SET gu_contact=GuContact WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+      UPDATE k_contacts_attrs SET gu_object=GuContact WHERE gu_object IN (SELECT gu_contact FROM k_newer_contacts);
+      UPDATE k_contact_notes SET gu_contact=GuContact WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+      UPDATE k_contact_attachs SET gu_contact=GuContact WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+      UPDATE k_phone_calls SET gu_contact=GuContact WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+      UPDATE k_x_meeting_contact SET gu_contact=GuContact WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+      UPDATE k_inet_addrs SET gu_contact=GuContact WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+      UPDATE k_projects SET gu_contact=GuContact WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+      UPDATE k_orders SET gu_contact=GuContact WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+      UPDATE k_x_course_bookings SET gu_contact=GuContact WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+      UPDATE k_job_atoms_archived SET gu_contact=GuContact WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+      UPDATE k_job_atoms_tracking SET gu_contact=GuContact WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+      UPDATE k_job_atoms_clicks SET gu_contact=GuContact WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+      
+      DELETE FROM k_contacts_recent WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+      DELETE FROM k_x_group_contact WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+
+      FOR addr IN SELECT * FROM k_x_contact_addr WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts) LOOP
+        aCount := aCount + 1;
+        IF 1=aCount THEN
+          addrs := quote_literal(addr.gu_address);
+        ELSE
+          addrs := addrs || chr(44) || quote_literal(addr.gu_address);
+        END IF;
+      END LOOP;
+
+      DELETE FROM k_x_contact_addr WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+  
+      IF char_length(addrs)>0 THEN
+        EXECUTE ''DELETE FROM '' || quote_ident(''k_addresses'') || '' WHERE gu_address IN ('' || addrs || '')'';
+      END IF;
+
+      DELETE FROM k_member_address WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts);
+
+      INSERT INTO k_contacts_deduplicated (SELECT current_timestamp AS dt_dedup,GuContact AS gu_dup,* FROM k_contacts WHERE gu_contact IN (SELECT gu_contact FROM k_newer_contacts));
+    
+      DELETE FROM k_newer_contacts;
+    END IF;
+  END LOOP;
+  CLOSE Dups;
+  
+
+	SELECT SUM(k_sp_del_contact(gu_contact)) INTO aCount FROM k_discard_contacts;
+	
+	SELECT COUNT(*) INTO aCount FROM k_discard_contacts;
+	
+	DROP TABLE k_discard_contacts;
+	DROP TABLE k_newer_contacts;
+	
+	RETURN aCount;
+END;
+' LANGUAGE 'plpgsql';
+GO;

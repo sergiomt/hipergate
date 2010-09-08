@@ -6,6 +6,7 @@ BEGIN
 
   SELECT tp_list,gu_workarea INTO tp,wa FROM k_lists WHERE gu_list=ListId;
 
+  DELETE FROM k_x_cat_objs WHERE gu_object=ListId;
   UPDATE k_activities SET gu_list=NULL WHERE gu_list=ListId;
   UPDATE k_x_activity_audience SET gu_list=NULL WHERE gu_list=ListId;
 
@@ -258,3 +259,29 @@ BEGIN
 END
 GO;
 
+CREATE PROCEDURE k_sp_del_duplicates (ListId CHAR(32), OUT Deleted INTEGER)
+BEGIN
+  DECLARE NuTimes INTEGER;
+  DECLARE TxEmail VARCHAR(100);
+  DECLARE Members CURSOR FOR SELECT tx_email FROM k_x_list_members WHERE gu_list = ListId;
+  CREATE TEMPORARY TABLE k_temp_list_emails (tx_email VARCHAR(100) CONSTRAINT pk_temp_list_emails PRIMARY KEY, nu_times INTEGER) ENGINE = MEMORY;
+  INSERT INTO k_temp_list_emails SELECT DISTINCT(tx_email),0 FROM k_x_list_members WHERE gu_list=ListId;
+  SET Deleted=0;
+  OPEN Members;
+  FETCH Members INTO TxEmail;
+  WHILE FOUND DO
+    UPDATE k_temp_list_emails SET nu_times=nu_times+1 WHERE tx_email = TxEmail;    
+    FETCH Members INTO TxEmail;
+  END WHILE;
+  CLOSE Members;
+  DECLARE Dups CURSOR FOR SELECT tx_email,nu_times FROM k_temp_list_emails WHERE nu_times>1;
+  OPEN Dups;
+  FETCH Dups INTO TxEmail,NuTimes;
+  WHILE FOUND DO
+    DELETE FROM k_x_list_members WHERE gu_list=ListId AND tx_email=TxEmail LIMIT NuTimes-1;
+    FETCH Dups INTO TxEmail,NuTimes;
+  END WHILE;
+  CLOSE Dups;
+  DROP TABLE k_temp_list_emails;
+END
+GO;

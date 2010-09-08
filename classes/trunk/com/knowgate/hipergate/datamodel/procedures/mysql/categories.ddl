@@ -140,7 +140,7 @@ BEGIN
   DECLARE GuPrnt CHAR(32);
   DECLARE GuChld CHAR(32);
   DECLARE NmChld VARCHAR(50);
-  DECLARE CurName VARCHAR(50) DEFAULT NULL;
+  DECLARE CurName VARCHAR(100) DEFAULT NULL;
   DECLARE StackBot INTEGER;
   DECLARE StackTop INTEGER;
   DECLARE Done INT DEFAULT 0;
@@ -168,8 +168,7 @@ BEGIN
       SET StackBot = StackTop+1;
       SET Level = Level+1;
       SELECT MAX(nu_pos) INTO StackTop FROM tmp_exp_cat_stack;
-      UNTIL StackTop<StackBot
-    END REPEAT;
+    UNTIL StackTop<StackBot END REPEAT;
 
     SET Walk = 2;
     SET Level = 2;

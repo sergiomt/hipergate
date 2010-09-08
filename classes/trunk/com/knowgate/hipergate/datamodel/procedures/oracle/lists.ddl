@@ -9,6 +9,7 @@ BEGIN
 
   SELECT gu_list INTO bk FROM k_lists WHERE gu_workarea=wa AND gu_query=ListId AND tp_list=4;
 
+  DELETE k_x_cat_objs WHERE gu_object=ListId;
   UPDATE k_activities SET gu_list=NULL WHERE gu_list=ListId;
   UPDATE k_x_activity_audience SET gu_list=NULL WHERE gu_list=ListId;
 

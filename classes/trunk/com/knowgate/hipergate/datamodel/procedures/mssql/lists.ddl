@@ -41,6 +41,7 @@ CREATE PROCEDURE k_sp_del_list @ListId CHAR(32) AS
 
   DELETE k_x_adhoc_mailing_list WHERE gu_list=@ListId
 
+  DELETE k_x_cat_objs WHERE gu_object=@ListId
   UPDATE k_activities SET gu_list=NULL WHERE gu_list=@ListId
   UPDATE k_x_activity_audience SET gu_list=NULL WHERE gu_list=@ListId
 
@@ -229,4 +230,31 @@ CREATE TRIGGER k_tr_upd_cont ON k_contacts FOR UPDATE AS
 
   UPDATE k_member_address SET gu_company=@GuCompany,tx_name=@TxName,tx_surname=@TxSurname,de_title=@DeTitle,tr_title=@TrTitle,dt_birth=@DtBirth,sn_passport=@SnPassport,id_gender=@IdGender,ny_age=@NyAge,tx_dept=@TxDept,tx_division=@TxDivision,tx_comments=@TxComments
   WHERE gu_contact IN (SELECT gu_contact FROM inserted)
+GO;
+
+CREATE PROCEDURE k_sp_del_duplicates @GuList CHAR(32), @Deleted INTEGER OUTPUT AS
+  
+  DECLARE @TxEMail VARCHAR(100)
+  DECLARE @TmpMail VARCHAR(100)  
+  DECLARE Members CURSOR FOR SELECT tx_email FROM k_x_list_members WHERE gu_list = @GuList
+
+  CREATE TABLE #k_temp_list_emails (tx_email VARCHAR(100) CONSTRAINT pk_temp_list_emails PRIMARY KEY)  
+  INSERT INTO k_temp_list_emails SELECT DISTINCT(tx_email) FROM k_x_list_members WHERE gu_list=@GuList
+  SET @Deleted = 0
+  OPEN Members
+  FETCH NEXT FROM Members INTO @TxEMail
+  WHILE (@@FETCH_STATUS<>-1)
+  BEGIN
+    SET @TmpMail = NULL
+    DELETE FROM k_temp_list_emails WHERE tx_email=@TxEMail OUTPUT DELETED.tx_email INTO @TmpMail
+    IF @TmpMail IS NULL THEN
+      BEGIN
+        SET @Deleted = @Deleted + 1
+        DELETE FROM k_x_list_members WHERE CURRENT OF members
+      END
+    FETCH NEXT FROM Members INTO @TxEMail
+  END
+  CLOSE Members  
+  DEALLOCATE Members
+  DROP TABLE k_temp_list_emails
 GO;

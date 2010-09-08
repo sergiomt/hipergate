@@ -2,6 +2,9 @@ CREATE SEQUENCE seq_k_job_atoms INCREMENT 1 MINVALUE 1 START 1;
 
 CREATE FUNCTION k_sp_del_job (CHAR) RETURNS INTEGER AS '
 BEGIN
+  DELETE FROM k_jobs_atoms_by_agent WHERE gu_job=$1;
+  DELETE FROM k_jobs_atoms_by_hour WHERE gu_job=$1;
+  DELETE FROM k_jobs_atoms_by_day WHERE gu_job=$1;
   DELETE FROM k_job_atoms_clicks WHERE gu_job=$1;
   DELETE FROM k_job_atoms_tracking WHERE gu_job=$1;
   DELETE FROM k_job_atoms_archived WHERE gu_job=$1;
@@ -89,4 +92,37 @@ END;
 GO;
 
 CREATE TRIGGER k_tr_ins_atom BEFORE INSERT ON k_job_atoms FOR EACH ROW EXECUTE PROCEDURE k_sp_ins_atom();
+GO;
+
+CREATE FUNCTION k_sp_del_test_jobs () RETURNS INTEGER AS '
+DECLARE
+  Jobs  NO SCROLL CURSOR FOR SELECT gu_job FROM k_jobs;
+  Atoms NO SCROLL CURSOR (j CHAR(32)) FOR SELECT pg_atom FROM k_job_atoms_archived WHERE gu_job=j LIMIT 15;
+  GuJob CHAR(32);
+  PgAtm INTEGER;
+  RowCount INTEGER;
+  Deleted INTEGER;
+BEGIN
+  Deleted:=0;
+  OPEN Jobs;
+  LOOP
+    FETCH Jobs INTO GuJob;
+    EXIT WHEN NOT FOUND;
+    RowCount:=0;
+    OPEN Atoms(GuJob);
+    LOOP
+      FETCH Atoms INTO PgAtm;
+      EXIT WHEN NOT FOUND OR RowCount>10;
+      RowCount:=RowCount+1;
+    END LOOP;
+    CLOSE Atoms;
+    IF RowCount<10 THEN
+      PERFORM k_sp_del_job(GuJob);
+      Deleted:=Deleted+1;
+    END IF;
+  END LOOP;
+  CLOSE Jobs;
+  RETURN Deleted;
+END;
+' LANGUAGE 'plpgsql';
 GO;

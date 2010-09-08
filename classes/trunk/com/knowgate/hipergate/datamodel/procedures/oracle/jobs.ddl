@@ -10,6 +10,9 @@ GO;
 
 CREATE OR REPLACE PROCEDURE k_sp_del_job (IdJob CHAR) IS
 BEGIN
+  DELETE k_jobs_atoms_by_agent WHERE gu_job=IdJob;
+  DELETE k_jobs_atoms_by_hour WHERE gu_job=IdJob;
+  DELETE k_jobs_atoms_by_day WHERE gu_job=IdJob;
   DELETE k_job_atoms_clicks WHERE gu_job=IdJob;
   DELETE k_job_atoms_tracking WHERE gu_job=IdJob;
   DELETE k_job_atoms_archived WHERE gu_job=IdJob;

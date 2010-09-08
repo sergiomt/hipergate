@@ -1,4 +1,7 @@
 CREATE PROCEDURE k_sp_del_job @IdJob CHAR(32) AS
+  DELETE FROM k_jobs_atoms_by_agent WHERE gu_job=@IdJob
+  DELETE FROM k_jobs_atoms_by_hour WHERE gu_job=@IdJob
+  DELETE FROM k_jobs_atoms_by_day WHERE gu_job=@IdJob
   DELETE FROM k_job_atoms_clicks WHERE gu_job=@IdJob
   DELETE FROM k_job_atoms_tracking WHERE gu_job=@IdJob
   DELETE FROM k_job_atoms_archived WHERE gu_job=@IdJob
