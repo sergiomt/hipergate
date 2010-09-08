@@ -55,7 +55,10 @@ tx_parameters VARCHAR(2000)   NULL,		/* Parámetros de ejecución (atributo=valor,
 dt_execution  DATETIME        NULL,		/* Fecha programada de ejecución */
 dt_finished   DATETIME        NULL,  	        /* Fecha de terminación */
 dt_modified   DATETIME        NULL,	        /* Fecha de modificación del registro */
-
+nu_sent       INTEGER    DEFAULT 0,
+nu_opened     INTEGER    DEFAULT 0,
+nu_unique     INTEGER    DEFAULT 0,
+nu_clicks     INTEGER    DEFAULT 0,
 CONSTRAINT pk_jobs PRIMARY KEY(gu_job)
 )
 GO;
@@ -145,6 +148,40 @@ ip_addr        CHARACTER VARYING(16) NULL,
 tx_email       CHARACTER VARYING(100) NULL,
 user_agent     VARCHAR(254) NULL
 )
+GO;
+
+CREATE TABLE k_jobs_atoms_by_day
+(
+dt_execution  CHAR(10)    NOT NULL,
+gu_job        CHAR(32)    NOT NULL,
+gu_workarea   CHAR(32)    NOT NULL,
+gu_job_group  CHAR(32)        NULL,
+nu_msgs       INTEGER    DEFAULT 0,
+nu_docs       INTEGER    DEFAULT 0,
+CONSTRAINT pk_jobs_atoms_by_day PRIMARY KEY(dt_execution,gu_job)
+)  
+GO;
+
+CREATE TABLE k_jobs_atoms_by_hour
+(
+dt_hour       SMALLINT    NOT NULL,
+gu_job        CHAR(32)    NOT NULL,
+gu_workarea   CHAR(32)    NOT NULL,
+gu_job_group  CHAR(32)        NULL,
+nu_msgs       INTEGER    DEFAULT 0,
+CONSTRAINT pk_jobs_atoms_by_hour PRIMARY KEY(dt_hour,gu_job)
+)  
+GO;
+
+CREATE TABLE k_jobs_atoms_by_agent
+(
+id_agent      VARCHAR(50) NOT NULL,
+gu_job        CHAR(32)    NOT NULL,
+gu_workarea   CHAR(32)    NOT NULL,
+gu_job_group  CHAR(32)        NULL,
+nu_msgs       INTEGER    DEFAULT 0,
+CONSTRAINT pk_jobs_atoms_by_agent PRIMARY KEY(id_agent,gu_job)
+)  
 GO;
 
 CREATE TABLE k_job_atoms_clicks

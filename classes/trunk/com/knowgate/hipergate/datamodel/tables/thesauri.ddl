@@ -248,8 +248,11 @@ CREATE TABLE k_urls
 gu_url CHAR(32) NOT NULL,
 gu_workarea CHAR(32) NOT NULL,
 url_addr VARCHAR(2000) NOT NULL,
+nu_clicks INTEGER NULL,
+dt_last_visit DATETIME NULL,
 tx_title VARCHAR(2000) NULL,
 de_url VARCHAR(2000) NULL,
-CONSTRAINT pk_urls PRIMARY KEY(gu_url,gu_workarea)
+CONSTRAINT pk_urls PRIMARY KEY(gu_url,gu_workarea),
+CONSTRAINT u1_urls UNIQUE(gu_workarea,url_addr)
 )
 GO;

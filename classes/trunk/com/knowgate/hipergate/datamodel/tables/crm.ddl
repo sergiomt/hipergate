@@ -254,6 +254,7 @@ gu_sales_man   CHAR(32)     NULL,  /* Vendedor */
 tx_comments    VARCHAR(254) NULL,  /* Comentarios */
 url_linkedin   CHARACTER VARYING(254) NULL,
 url_facebook   CHARACTER VARYING(254) NULL,
+url_twitter    CHARACTER VARYING(254) NULL,
 
 CONSTRAINT pk_contacts PRIMARY KEY (gu_contact),
 CONSTRAINT c1_contacts CHECK (tx_name IS NULL OR LENGTH(tx_name)>0),
@@ -740,11 +741,13 @@ dt_uploaded   DATETIME NOT NULL,
 gu_workarea   CHAR(32) NOT NULL,
 nm_file       VARCHAR(254) NOT NULL,
 id_batch      VARCHAR(32)  NULL,
+tp_batch      VARCHAR(32)  NULL,
 id_status     VARCHAR(30)  NULL,
 dt_processed  DATETIME NOT NULL,
 nu_lines      INTEGER DEFAULT 0,
 nu_successful INTEGER DEFAULT 0,
 nu_errors     INTEGER DEFAULT 0,
+de_file       VARCHAR(254) NULL,
 CONSTRAINT pk_bulkloads PRIMARY KEY(pg_bulkload),
 CONSTRAINT u1_bulkloads UNIQUE(dt_uploaded,gu_workarea,nm_file)
 )

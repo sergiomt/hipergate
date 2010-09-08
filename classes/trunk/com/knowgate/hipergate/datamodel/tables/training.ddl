@@ -123,6 +123,7 @@ tr_th      VARCHAR(50)     NULL,
 tr_cs      VARCHAR(50)     NULL,
 tr_uk      VARCHAR(50)     NULL,
 tr_no      VARCHAR(50)     NULL,
+tr_ko      VARCHAR(50)     NULL,
 tr_sk      VARCHAR(50)     NULL,
 tr_pl      VARCHAR(50)     NULL,
 tr_vn      VARCHAR(50)     NULL,
@@ -251,6 +252,7 @@ tr_th      VARCHAR(50)     NULL,
 tr_cs      VARCHAR(50)     NULL,
 tr_uk      VARCHAR(50)     NULL,
 tr_no      VARCHAR(50)     NULL,
+tr_ko      VARCHAR(50)     NULL,
 tr_sk      VARCHAR(50)     NULL,
 tr_pl      VARCHAR(50)     NULL,
 tr_vn      VARCHAR(50)     NULL,
@@ -307,6 +309,7 @@ tr_th      VARCHAR(50)     NULL,
 tr_cs      VARCHAR(50)     NULL,
 tr_uk      VARCHAR(50)     NULL,
 tr_no      VARCHAR(50)     NULL,
+tr_ko      VARCHAR(50)     NULL,
 tr_sk      VARCHAR(50)     NULL,
 tr_pl      VARCHAR(50)     NULL,
 tr_vn      VARCHAR(50)     NULL,
@@ -332,7 +335,9 @@ CREATE TABLE k_contact_education (
   gu_product     CHAR(32)     NULL,
   
   CONSTRAINT pk_contact_education PRIMARY KEY (gu_contact,gu_degree),
-  CONSTRAINT f1_contact_education FOREIGN KEY (gu_degree) REFERENCES k_education_degree(gu_degree)  
+  CONSTRAINT f1_contact_education FOREIGN KEY (gu_degree) REFERENCES k_education_degree(gu_degree),
+  CONSTRAINT f2_contact_education FOREIGN KEY (gu_contact) REFERENCES k_contacts(gu_contact),
+  CONSTRAINT f3_contact_education FOREIGN KEY (gu_institution) REFERENCES k_education_institutions(gu_institution)
 )
 GO;
 
@@ -388,6 +393,7 @@ tr_th      VARCHAR(50)     NULL,
 tr_cs      VARCHAR(50)     NULL,
 tr_uk      VARCHAR(50)     NULL,
 tr_no      VARCHAR(50)     NULL,
+tr_ko      VARCHAR(50)     NULL,
 tr_sk      VARCHAR(50)     NULL,
 tr_pl      VARCHAR(50)     NULL,
 tr_vn      VARCHAR(50)     NULL,
@@ -431,6 +437,7 @@ tr_th      VARCHAR(50)     NULL,
 tr_cs      VARCHAR(50)     NULL,
 tr_uk      VARCHAR(50)     NULL,
 tr_no      VARCHAR(50)     NULL,
+tr_ko      VARCHAR(50)     NULL,
 tr_sk      VARCHAR(50)     NULL,
 tr_pl      VARCHAR(50)     NULL,
 tr_vn      VARCHAR(50)     NULL,
@@ -510,10 +517,60 @@ tr_th      VARCHAR(50)     NULL,
 tr_cs      VARCHAR(50)     NULL,
 tr_uk      VARCHAR(50)     NULL,
 tr_no      VARCHAR(50)     NULL,
+tr_ko      VARCHAR(50)     NULL,
 tr_sk      VARCHAR(50)     NULL,
 tr_pl      VARCHAR(50)     NULL,
 tr_vn      VARCHAR(50)     NULL,
 
 CONSTRAINT pk_admission_lookup PRIMARY KEY (gu_owner,id_section,pg_lookup)
+)
+GO;
+
+CREATE TABLE k_registrations
+(
+  gu_contact CHAR(32) NOT NULL,
+  gu_oportunity CHAR(32) NOT NULL,
+  gu_acourse CHAR(32) NULL,
+  id_institution VARCHAR(200) NULL,
+  dt_reserve DATETIME NULL,
+  dt_registration DATETIME NULL,
+  dt_drop DATETIME NULL,
+  id_drop_cause SMALLINT NULL,
+  CONSTRAINT pk_registrations PRIMARY KEY (gu_contact, gu_oportunity),
+  CONSTRAINT f1_registrations FOREIGN KEY (gu_oportunity) REFERENCES k_oportunities (gu_oportunity),
+  CONSTRAINT f2_registrations FOREIGN KEY (gu_acourse) REFERENCES k_academic_courses (gu_acourse)
+)
+GO;
+
+CREATE TABLE k_registrations_lookup
+(
+  gu_owner CHAR(32) NOT NULL,
+  id_section CHARACTER VARYING(30) NOT NULL,
+  pg_lookup INTEGER NOT NULL,
+  vl_lookup VARCHAR(50) NULL,
+  tr_es VARCHAR(50) NULL,
+  tr_en VARCHAR(50) NULL,
+  tr_de VARCHAR(50) NULL,
+  tr_it VARCHAR(50) NULL,
+  tr_fr VARCHAR(50) NULL,
+  tr_pt VARCHAR(50) NULL,
+  tr_ca VARCHAR(50) NULL,
+  tr_gl VARCHAR(50) NULL,
+  tr_eu VARCHAR(50) NULL,
+  tr_ja VARCHAR(50) NULL,
+  tr_cn VARCHAR(50) NULL,
+  tr_tw VARCHAR(50) NULL,
+  tr_fi VARCHAR(50) NULL,
+  tr_ru VARCHAR(50) NULL,
+  tr_nl VARCHAR(50) NULL,
+  tr_th VARCHAR(50) NULL,
+  tr_cs VARCHAR(50) NULL,
+  tr_uk VARCHAR(50) NULL,
+  tr_no VARCHAR(50) NULL,
+  tr_ko VARCHAR(50) NULL,
+  tr_sk VARCHAR(50) NULL,
+  tr_pl VARCHAR(50) NULL,
+  tr_vn VARCHAR(50) NULL,
+  CONSTRAINT pk_registrations_lookup PRIMARY KEY (gu_owner, id_section, pg_lookup)
 )
 GO;
