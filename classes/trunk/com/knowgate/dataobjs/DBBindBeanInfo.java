@@ -34,7 +34,7 @@ package com.knowgate.dataobjs;
 
 /**
  * @author Sergio Montoro Ten
- * @version 1.0
+ * @version 6.0
  */
 
 import com.knowgate.dataobjs.DBBind;
@@ -120,12 +120,14 @@ public class DBBindBeanInfo extends SimpleBeanInfo {
             new MethodDescriptor(DBBind.class.getMethod("escape", escapeParams));
         MethodDescriptor exists =
             new MethodDescriptor(DBBind.class.getMethod("exists", existsParams));
+        MethodDescriptor toXml =
+            new MethodDescriptor(DBBind.class.getMethod("toXml", voidParams));
 
         MethodDescriptor rv[] = { getProfileName,getProperties,getProperty,getProperty2,
         						  restartBind, closeBind, nextVal, getTable,
         						  getConnection0, getConnection1, getConnection2,
         						  getDataModelVersion, getDataModelVersionNumber,
-        						  getDatabaseProductName, getTime, connectionPool, escape, exists };
+        						  getDatabaseProductName, getTime, connectionPool, escape, exists, toXml };
         return rv;
     } catch (ClassNotFoundException e) {
          throw new Error(e.toString());

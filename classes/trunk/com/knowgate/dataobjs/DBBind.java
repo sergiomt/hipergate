@@ -39,6 +39,8 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.LinkedList;
+import java.util.ListIterator;
 
 import java.sql.DriverManager;
 import java.sql.Connection;
@@ -80,9 +82,9 @@ public class DBBind extends Beans implements DataSource {
 
   private static HashMap oGlobalTableMap;
 
-  private HashMap oTableMap;
+  private HashMap<String,DBTable> oTableMap;
 
-  private static final String VERSION = "5.5.0";
+  private static final String VERSION = "6.0.0";
 
   // ***********
   // Constructor
@@ -343,7 +345,7 @@ public class DBBind extends Beans implements DataSource {
     Iterator oTableIterator;
     String[] aExclude;
 
-    oTableMap = new HashMap(255);
+    oTableMap = new HashMap<String,DBTable>(255);
     oGlobalTableMap = oTableMap ;
 
     if (DebugFile.trace)
@@ -416,11 +418,11 @@ public class DBBind extends Beans implements DataSource {
         iDatabaseProductId = DBMS_MYSQL;
       else if (sDatabaseProductName.equals(DBMSNAME_ACCESS))
         iDatabaseProductId = DBMS_ACCESS;
+      else if (sDatabaseProductName.equals(DBMSNAME_SQLITE))
+        iDatabaseProductId = DBMS_SQLITE;
       else if (sDatabaseProductName.equals("StelsDBF JDBC driver") ||
       	       sDatabaseProductName.equals("HXTT DBF"))
         iDatabaseProductId = DBMS_XBASE;
-
-
       else
         iDatabaseProductId = DBMS_GENERIC;
 
@@ -1440,12 +1442,58 @@ public class DBBind extends Beans implements DataSource {
     return System.currentTimeMillis();
    }
 
+  // ----------------------------------------------------------
+
+  /**
+   * Dump table definitions as a database independent XML file
+   * @since 6.0
+   */
+  public String toXml() {
+  	StringBuffer oXml = new StringBuffer(32000);
+  	oXml.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<MetaData>\n");
+  	oXml.append("  <Schema name=\""+getProfileName()+"\">");
+	Iterator<String> oTbls = getDBTablesMap().keySet().iterator();
+	while (oTbls.hasNext()) {
+	  DBTable oTbl = getDBTable(oTbls.next());
+	  if (!oTbl.getName().endsWith("_lookup") && !(oTbl.getName().indexOf("_lu_")>0) ) {
+	  LinkedList<String> oPk = oTbl.getPrimaryKey();
+	  LinkedList<DBIndex> oIx = oTbl.getIndexes();
+  	  oXml.append("  <Table name=\""+oTbl.getName()+"\">\n");
+  	  ListIterator<DBColumn> oCols = oTbl.getColumns().listIterator();
+  	  while (oCols.hasNext()) {
+  	    DBColumn oCol = oCols.next();
+  	    oXml.append("    <Column name=\""+oCol.getName()+"\" type=\""+oCol.getSqlTypeName()+"\" ");
+  	    oXml.append("maxlength=\""+oCol.getPrecision()+"\" nullable=\""+oCol.isNullable()+"\"");
+  	    if (oPk!=null) {
+  	      for (String p : oPk) {
+  	      	if (p.equalsIgnoreCase(oCol.getName()))
+  	    	  oXml.append(" constraint=\"primary key\"");
+  	      } // next
+  	    } // fi
+  	    if (oIx!=null) {
+  	      for (DBIndex i : oIx) {
+			for (String c : i.getColumns()) {
+  	      	  if (c.equalsIgnoreCase(oCol.getName())) {
+  	    	    oXml.append(" indexed=\"true\"");			  
+			  } // fi
+  	        } // next
+  	      } // next
+  	    } // fi
+  	    oXml.append("></Column>\n");
+   	  }
+  	  oXml.append("  </Table>\n");
+	  }	  
+	} // wend
+  	oXml.append("  </Schema>");
+  	return oXml.toString();
+  } // toXml
+
   // ===========================================================================
 
   /**
    * <p>Aliases for common SQL functions in different database dialects.</p>
    * @author Sergio Montoro Ten
-   * @version 1.2
+   * @version 6.0
    */
 
   public static class Functions {
@@ -1557,6 +1605,17 @@ public class DBBind extends Beans implements DataSource {
         CHR = "CHR";
         LOWER = "LCASE";
         UPPER = "UCASE";
+        ILIKE = "LIKE";
+
+      } else if (sDBMSName.equals("SQLite")) {
+        iDBMS = JDCConnection.DBMS_SQLITE;
+        ISNULL = "coalesce";
+        CONCAT = "||";
+        GETDATE = "date('now')";
+        LENGTH = "length";
+        CHR = null; // SQLite does not have a CHR function
+        LOWER = "lower";
+        UPPER = "upper";
         ILIKE = "LIKE";
 
       } else if (sDBMSName.equals("StelsDBF JDBC driver") ||
@@ -1745,6 +1804,7 @@ public class DBBind extends Beans implements DataSource {
   private static final int DBMS_DERBY = 8;
   private static final int DBMS_XBASE = 9;
   public static final int DBMS_ACCESS = 10;
+  public static final int DBMS_SQLITE = 11;
 
   private static final String DBMSNAME_MSSQL = "Microsoft SQL Server";
   private static final String DBMSNAME_POSTGRESQL = "PostgreSQL";
@@ -1752,5 +1812,6 @@ public class DBBind extends Beans implements DataSource {
   private static final String DBMSNAME_MYSQL = "MySQL";
   private static final String DBMSNAME_XBASE = "XBase";
   private static final String DBMSNAME_ACCESS = "ACCESS";
+  private static final String DBMSNAME_SQLITE = "SQLite";
 
 } // DBBind

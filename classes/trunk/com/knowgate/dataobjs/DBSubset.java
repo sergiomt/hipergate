@@ -849,7 +849,16 @@ public final class DBSubset {
       } catch (Exception logit) { if (DebugFile.trace) DebugFile.writeln(logit.getClass().getName()+" "+logit.getMessage()); }
       try { if (null!=oStmt) oStmt.close();
       } catch (Exception logit) { if (DebugFile.trace) DebugFile.writeln(logit.getClass().getName()+" "+logit.getMessage()); }
-      throw new SQLException(sqle.getMessage(), sqle.getSQLState(), sqle.getErrorCode());
+      if (aFilterValues==null)  
+        throw new SQLException(sqle.getMessage()+" "+sSelect+" with no parameters set", sqle.getSQLState(), sqle.getErrorCode());
+      else if (aFilterValues.length==0)
+        throw new SQLException(sqle.getMessage()+" "+sSelect+" with zero parameters set", sqle.getSQLState(), sqle.getErrorCode());
+	  else {
+	  	String sParams = "";
+	  	for (int v=0; v<aFilterValues.length; v++)
+	  	  sParams += (v==0 ? "" : ",") + aFilterValues[v];
+        throw new SQLException(sqle.getMessage()+" "+sSelect+" with parameters "+sParams, sqle.getSQLState(), sqle.getErrorCode());	  
+	  }
     }
     catch (ArrayIndexOutOfBoundsException aiob) {
       try { if (null!=oRSet) oRSet.close();
@@ -858,7 +867,6 @@ public final class DBSubset {
       } catch (Exception logit) { if (DebugFile.trace) DebugFile.writeln(logit.getClass().getName()+" "+logit.getMessage()); }
       throw new ArrayIndexOutOfBoundsException("DBSubset.load() " + aiob.getMessage());
     }
-    /*
     catch (NullPointerException npe) {
       try { if (null!=oRSet) oRSet.close();
       } catch (Exception logit) { if (DebugFile.trace) DebugFile.writeln(logit.getClass().getName()+" "+logit.getMessage()); }
@@ -866,7 +874,6 @@ public final class DBSubset {
       } catch (Exception logit) { if (DebugFile.trace) DebugFile.writeln(logit.getClass().getName()+" "+logit.getMessage()); }
       throw new NullPointerException("DBSubset.load()");
     }
-    */
 
     if (DebugFile.trace)
       {
@@ -1091,7 +1098,7 @@ public final class DBSubset {
    * Trying to find <b>null</b> always return -1 even thought the column contains indeed a <b>null</b> value.<br>
    * @param iCol Column to be searched [0..getColumnCount()-1]
    * @param oVal Value searched
-   * @return Row where seached value was found or -1 is value was not found.
+   * @return Row where seached value was found or -1 if value was not found.
    * @throws ClassCastException if column iCol is not Comparable
    * @since 4.0
    */
@@ -1112,17 +1119,35 @@ public final class DBSubset {
 	
 	if (oVal!=null) {
 	  while (iLow<=iHigh) {
-        int iMid = (iLow + iHigh) / 2;
-	    Comparable oCmp = (Comparable) get(iCol, iMid);
-	    int iComparison = oCmp.compareTo(oVal);
-		if (0==iComparison) {
-		  iFound = iMid;
-		  break;
-		} else if (iComparison>0) {
-		  iHigh = iMid - 1;
-		} else {
-          iLow = iMid + 1;
-		}
+	  	Comparable oCmp;
+	  	int iComparison;
+	  	    
+ 		if (iLow==iHigh) {
+	      oCmp = (Comparable) get(iCol, iLow);
+	  	  iComparison = oCmp.compareTo(oVal);
+		  if (0==iComparison) iFound = iLow;
+	  	  break;	  	
+ 		} else if (iLow==iHigh-1) {
+	      oCmp = (Comparable) get(iCol, iLow);
+	  	  iComparison = oCmp.compareTo(oVal);
+		  if (0==iComparison) iFound = iLow;
+	      oCmp = (Comparable) get(iCol, iHigh);
+	  	  iComparison = oCmp.compareTo(oVal);
+		  if (0==iComparison) iFound = iHigh;
+	  	  break;	  	  
+	  	} else {
+          int iMid = (iLow + iHigh) / 2;
+	      oCmp = (Comparable) get(iCol, iMid);
+	      iComparison = oCmp.compareTo(oVal);
+		  if (0==iComparison) {
+		    iFound = iMid;
+		    break;
+		  } else if (iComparison>0) {
+		    iHigh = iMid - 1;
+		  } else {
+            iLow = iMid + 1;
+		  }
+	  	} // fi
 	  } // wend
 	} // fi
 

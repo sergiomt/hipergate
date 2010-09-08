@@ -140,6 +140,7 @@ public final class DB {
   public static final String k_lists = "k_lists";
   public static final String k_list_members = "k_list_members";
   public static final String k_x_list_members = "k_x_list_members";
+  public static final String k_grey_list = "k_grey_list";
   public static final String k_global_black_list = "k_global_black_list";
   public static final String k_list_jobs = "k_list_jobs";
   public static final String k_member_address = "k_member_address";
@@ -198,6 +199,7 @@ public final class DB {
   
   public static final String k_activities = "k_activities";
   public static final String k_x_activity_audience = "k_x_activity_audience";
+  public static final String k_activity_audience_lookup = "k_activity_audience_lookup";
   public static final String k_activity_attachs = "k_activity_attachs";
 
   public static final String k_microsites = "k_microsites";

@@ -32,10 +32,10 @@
 
 package com.knowgate.dataobjs;
 
-import java.lang.System;
 import java.util.TreeMap;
+import java.util.SortedMap;
 import java.util.Iterator;
-import java.lang.Thread;
+import java.util.Collections;
 
 final class DBSubsetCacheReaper extends Thread {
 
@@ -94,7 +94,7 @@ public final class DBSubsetCache {
       iCacheCapacity = 100;
       LRUList = new String[iCacheCapacity];
       for (int s=0; s<iCacheCapacity; s++) LRUList[s] = null;
-      oCache = new TreeMap();
+      oCache = Collections.synchronizedSortedMap(new TreeMap<String,DBCacheEntry>());
     }
 
     /**
@@ -108,7 +108,7 @@ public final class DBSubsetCache {
     iCacheCapacity = iCapacity;
     LRUList = new String[iCacheCapacity];
     for (int s=0; s<iCacheCapacity; s++) LRUList[s] = null;
-    oCache = new TreeMap();
+    oCache = Collections.synchronizedSortedMap(new TreeMap<String,DBCacheEntry>());
   }
 
   // ----------------------------------------------------------
@@ -129,7 +129,7 @@ public final class DBSubsetCache {
    * @param sKey Unique key for cache entry
    * @param oDBSS Stored DBSubset
    */
-  public synchronized void put(String sTableName, String sKey, DBSubset oDBSS) {
+  public void put(String sTableName, String sKey, DBSubset oDBSS) {
     int iIndex = iTopIndex%iCacheCapacity; iTopIndex++; iUsed++;
     DBCacheEntry oEntry = new DBCacheEntry(oDBSS, sTableName, iIndex);
     DBSubsetCacheReaper oReaper;
@@ -153,7 +153,7 @@ public final class DBSubsetCache {
    * @return <b>true</b> if cache already contained an entry with given key, <b>false</b> if no entry was removed from cache.
    */
 
-  public synchronized boolean expire(String sKey) {
+  public boolean expire(String sKey) {
     Object objEntry = oCache.get(sKey);
 
     if (null!=objEntry) {
@@ -184,7 +184,7 @@ public final class DBSubsetCache {
    * Clear cache
    */
 
-  public synchronized void clear() {
+  public void clear() {
     oCache.clear();
     for (int s=0; s<iCacheCapacity; s++) LRUList[s] = null;
     iTopIndex=0;
@@ -198,7 +198,7 @@ public final class DBSubsetCache {
    * @param sTable Table Name
    */
 
-  public synchronized void clear(String sTable) {
+  public void clear(String sTable) {
     Iterator oIter = oCache.keySet().iterator();
     String sKey;
     DBCacheEntry oEntry;
@@ -290,7 +290,7 @@ public final class DBSubsetCache {
 
   private int iCacheCapacity; // Número máximo de entradas en el cache
   private String LRUList[];   // Slots usados por el algoritmo de limpieza Least Recently Used
-  private TreeMap oCache;     // B-Tree con las entradas del cache
+  private SortedMap oCache;     // B-Tree con las entradas del cache
 
   public int iTopIndex;       // Máximo índice en el cache (siempre de accede módulo la capacidad)
   public int iUsed;           // Contador de entradas actualmente en uso

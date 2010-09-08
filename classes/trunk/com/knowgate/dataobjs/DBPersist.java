@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2003  Know Gate S.L. All rights reserved.
+  Copyright (C) 2003-2010  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@
 package com.knowgate.dataobjs;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.FileNotFoundException;
 import java.io.File;
 
@@ -88,10 +89,10 @@ import com.knowgate.misc.Gadgets;
  * It is the programmer's responsability to pass an open database connection on each method call
  * and to commit or rollback transaction involving the usage of a DBPersist object.
  * @author Sergio Montoro Ten
- * @version 3.0
+ * @version 6.0
  */
 
-public class DBPersist implements Map {
+public class DBPersist implements Map,Serializable {
 
   /**
    * Create instance for reading and writing register from a table
@@ -1062,13 +1063,29 @@ public class DBPersist implements Map {
     if (null==sVal)
       AllVals.put(sKey, null);
     else if (bAllCaps) {
-      if (sKey.equalsIgnoreCase(DB.tx_email) ||
+      if (sKey.startsWith("id_") ||
+      	  sKey.startsWith("gu_") ||
+      	  sKey.startsWith("tp_") ||
+      	  sKey.equalsIgnoreCase(DB.tx_note) ||
+      	  sKey.equalsIgnoreCase(DB.tx_email) ||
     	  sKey.equalsIgnoreCase(DB.tx_alt_email) ||
     	  sKey.equalsIgnoreCase(DB.tx_email_alt) ||
     	  sKey.equalsIgnoreCase(DB.tx_main_email) ||
     	  sKey.equalsIgnoreCase(DB.tx_email_to) ||
     	  sKey.equalsIgnoreCase(DB.tx_email_from) ||
-		  sKey.equalsIgnoreCase(DB.tx_email_reply))
+		  sKey.equalsIgnoreCase(DB.tx_email_reply) ||
+		  sKey.equalsIgnoreCase(DB.tx_cause) ||
+		  sKey.equalsIgnoreCase(DB.tx_comments) ||
+		  sKey.equalsIgnoreCase(DB.tx_remarks) ||
+		  sKey.equalsIgnoreCase(DB.tx_bug_info) ||
+		  sKey.equalsIgnoreCase(DB.tx_bug_brief) ||
+		  sKey.equalsIgnoreCase(DB.nm_attr) ||
+		  sKey.equalsIgnoreCase(DB.nm_class) ||
+		  sKey.equalsIgnoreCase(DB.nm_domain) ||
+		  sKey.equalsIgnoreCase(DB.nm_mailing) ||
+		  sKey.equalsIgnoreCase(DB.nm_microsite) ||
+		  sKey.equalsIgnoreCase(DB.nm_workarea) ||
+		  sKey.equalsIgnoreCase(DB.nm_zone))		  	
         AllVals.put(sKey, sVal);
       else
         AllVals.put(sKey, sVal.toUpperCase());
@@ -1938,10 +1955,6 @@ public class DBPersist implements Map {
           DebugFile.writeln("Connection.prepareCall({ call " + sStoredProc + " ('" + sInstanceNm + "',?)})");
 
         oCall = oConn.prepareCall("{ call " + sStoredProc + " (?,?)}");
-        try {
-          oCall.setQueryTimeout(15);
-        }
-        catch (SQLException sqle) {}
 
         oCall.setString(1, sInstanceNm);
         oCall.registerOutParameter(2, java.sql.Types.CHAR);

@@ -58,7 +58,7 @@ import com.knowgate.jdc.*;
 /**
  * <p>A database table as a Java Object</p>
  * @author Sergio Montoro Ten
- * @version 5.0
+ * @version 6.0
  */
 
 public class DBTable {
@@ -786,6 +786,17 @@ public class DBTable {
   // ---------------------------------------------------------------------------
 
   /**
+   * @return List of {@link DBIndex} objects of this table.
+   * @since 6.0
+   */
+
+  public LinkedList<DBIndex> getIndexes() {
+    return oIndexes;
+  }
+
+  // ---------------------------------------------------------------------------
+
+  /**
    * @return Columns names separated by commas
    * @throws IllegalStateException
    */
@@ -945,6 +956,7 @@ public class DBTable {
       String sSetNoPKCols = "";
 
       oColumns = new LinkedList<DBColumn>();
+	  oIndexes = new LinkedList<DBIndex>();
       oPrimaryKeys = new LinkedList<String>();
 
       if (DebugFile.trace)
@@ -959,8 +971,14 @@ public class DBTable {
         iDBMS = JDCConnection.DBMS_POSTGRESQL;
       else if (oConn.getMetaData().getDatabaseProductName().equals("Oracle"))
         iDBMS = JDCConnection.DBMS_ORACLE;
+      else if (oConn.getMetaData().getDatabaseProductName().equals("MySQL"))
+        iDBMS = JDCConnection.DBMS_MYSQL;
       else if (oConn.getMetaData().getDatabaseProductName().equals("ACCESS"))
         iDBMS = JDCConnection.DBMS_ACCESS;
+      else if (oConn.getMetaData().getDatabaseProductName().equals("Microsoft SQL Server"))
+        iDBMS = JDCConnection.DBMS_MSSQL;
+      else if (oConn.getMetaData().getDatabaseProductName().equals("SQLite"))
+        iDBMS = JDCConnection.DBMS_SQLITE;
       else
         iDBMS = 0;
 
@@ -1150,7 +1168,48 @@ public class DBTable {
         sDelete = null;
         sExists = null;
       }
-    } // fi (o==iErrCode)
+      
+      // New for v6.0
+      try {
+        switch (iDBMS) {
+      	case JDCConnection.DBMS_POSTGRESQL:
+      	  oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+      	  oRSet = oStmt.executeQuery("SELECT indexname,indexdef FROM pg_indexes WHERE tablename='"+sName+"'");
+      	  while (oRSet.next()) {
+      	  	String sIndexName = oRSet.getString(1);
+      	  	String sIndexDef = oRSet.getString(2);
+      	  	int lPar = sIndexDef.indexOf('(');
+      	  	int rPar = sIndexDef.indexOf(')');
+      	  	if (lPar>0 && rPar>0) {      	  	  
+      	  	  oIndexes.add(new DBIndex(sIndexName, sIndexDef.substring(++lPar,rPar).split(","), sIndexDef.toUpperCase().indexOf("UNIQUE")>0));
+      	  	}
+      	  } //wend
+      	  oRSet.close();
+      	  oRSet=null;
+      	  oStmt.close();
+      	  oStmt=null;
+      	  break;
+      	case JDCConnection.DBMS_MYSQL:
+      	  oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+      	  oRSet = oStmt.executeQuery("SELECT COLUMN_NAME,COLUMN_KEY FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME ='"+sName+"' AND COLUMN_KEY!=''");
+      	  while (oRSet.next()) {
+      	  	String sIndexName = oRSet.getString(1);
+      	  	String sIndexType = oRSet.getString(2);
+      	  	oIndexes.add(new DBIndex(sIndexName, new String[]{sIndexName},
+      	  	             sIndexType.equalsIgnoreCase("PRI") || sIndexType.equalsIgnoreCase("UNI")));
+      	  } //wend
+      	  oRSet.close();
+      	  oRSet=null;
+      	  oStmt.close();
+      	  oStmt=null;
+      	  break;
+        }
+      } catch (SQLException sqle) {
+      	if (DebugFile.trace) DebugFile.writeln("Cannot get indexes for " + sName );
+		if (oRSet!=null) oRSet.close();
+		if (oStmt!=null) oStmt.close();
+      } 
+    } // fi (0==iErrCode)
 
     if (DebugFile.trace)
       {
@@ -1172,6 +1231,7 @@ public class DBTable {
   private String sName;
   private int iHashCode;
   private LinkedList<DBColumn> oColumns;
+  private LinkedList<DBIndex> oIndexes;
   private LinkedList<String> oPrimaryKeys;
 
   private String sSelect;
