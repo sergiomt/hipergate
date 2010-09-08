@@ -228,11 +228,22 @@ public class HtmlMimeBodyPart {
       throw new ParserException("MalformedPatternException " + mpe.getMessage()+ " pattern " + sPattern + " substitution " + sNewValue, mpe);        
     }
     catch (ArrayIndexOutOfBoundsException aiob) {
+      String sStack = "";
+      try { sStack =  StackTraceUtil.getStackTrace(aiob); } catch (Exception ignore) { }
       if (DebugFile.trace) {
         DebugFile.writeln("ArrayIndexOutOfBoundsException " + aiob.getMessage());
-        try { DebugFile.writeln(StackTraceUtil.getStackTrace(aiob)); } catch (Exception ignore) { }
+        DebugFile.writeln(sStack);
       }
-      throw new ParserException("ArrayIndexOutOfBoundsException " + aiob.getMessage()+ " attribute " + sAttributeName + " pattern " + sPattern + " match " + sMatch + " former value " + sFormerValue + " substitution " + sNewValue, aiob);
+      int iAt = sStack.indexOf("at "); 
+      if (iAt>0) {
+      	int iLf = sStack.indexOf("\n",iAt);
+      	if (iLf>iAt)
+          throw new ParserException("ArrayIndexOutOfBoundsException " + sStack.substring(iAt,iLf) + " " + aiob.getMessage()+ " attribute " + sAttributeName + " pattern " + sPattern + " match " + sMatch + " former value " + sFormerValue + " substitution " + sNewValue, aiob);
+        else
+          throw new ParserException("ArrayIndexOutOfBoundsException " + sStack.substring(iAt) + " " + aiob.getMessage()+ " attribute " + sAttributeName + " pattern " + sPattern + " match " + sMatch + " former value " + sFormerValue + " substitution " + sNewValue, aiob);        	
+      } else {
+        throw new ParserException("ArrayIndexOutOfBoundsException " + aiob.getMessage()+ " attribute " + sAttributeName + " pattern " + sPattern + " match " + sMatch + " former value " + sFormerValue + " substitution " + sNewValue, aiob);
+      }
     }
   } // doSubstitution
   
@@ -621,7 +632,7 @@ public class HtmlMimeBodyPart {
             	LinkTag lnk = (LinkTag) tag;
             	String sUrl = lnk.extractLink();
                 if(sUrl.startsWith("http://") || sUrl.startsWith("https://")) {
-                    lnk.setLink(sRedirectorUrl+Base64Encoder.encode(sUrl));
+                    lnk.setLink(sRedirectorUrl+Gadgets.URLEncode(Base64Encoder.encode(sUrl)));
                 }
             }
         }

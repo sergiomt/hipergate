@@ -1888,8 +1888,11 @@ public class DBFolder extends Folder {
 
         if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setBinaryStream(30, new ByteArrayInputStream("+String.valueOf(byOutStrm.size())+"))");
 
+		if (DebugFile.trace) DebugFile.writeln("Binding ByteArrayInputStream of "+String.valueOf(byOutStrm.size()));
+			
         if (byOutStrm.size()>0)
-          oStmt.setBinaryStream(30, new ByteArrayInputStream(byOutStrm.toByteArray()), byOutStrm.size());
+          oStmt.setBytes(30, byOutStrm.toByteArray());
+          // oStmt.setBinaryStream(30, new ByteArrayInputStream(byOutStrm.toByteArray()), byOutStrm.size());
         else
           oStmt.setNull(30, Types.LONGVARBINARY);
       }
@@ -1901,6 +1904,10 @@ public class DBFolder extends Folder {
       oStmt=null;
 
     } catch (SQLException sqle) {
+      String sTrace = "";
+      try { sTrace = com.knowgate.debug.StackTraceUtil.getStackTrace(sqle);
+        DebugFile.writeln(sTrace);
+      } catch (Exception ignore) {}
       try { if (null!=oStmt) oStmt.close(); oStmt=null; } catch (Exception ignore) {}
       try { if (null!=oConn) oConn.rollback(); } catch (Exception ignore) {}
       throw new MessagingException(DB.k_mime_msgs + " " + sqle.getMessage(), sqle);

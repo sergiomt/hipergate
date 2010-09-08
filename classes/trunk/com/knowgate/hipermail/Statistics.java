@@ -159,13 +159,14 @@ public class Statistics {
 
 	boolean bRetVal = true;
     Date dtNow = new Date();
-	Date dtTheDay;
+	long lTheDay;
 	Timestamp tsNow = new Timestamp(dtNow.getTime());
 	int iDBMS = JDCConnection.DBMS_GENERIC;
 	Statement oStmt;
   	Connection oConn = null;
 	PreparedStatement oPtmt = null;
 	PreparedStatement oQtmt = null;
+	PreparedStatement oDocs = null;
 	ResultSet oRSet;
 	String sJobs = "";
 	ArrayList<String> aJobs = new ArrayList<String>();
@@ -226,7 +227,7 @@ public class Statistics {
 	  	// Set count of opened messages for each job of the group
 	    oPtmt = oConn.prepareStatement("UPDATE "+DB.k_jobs+" SET "+DB.nu_opened+"=? WHERE "+DB.gu_job+"=?");
 	    oStmt = oConn.createStatement();
-	    oRSet = oStmt.executeQuery("SELECT COUNT(*) AS nu_messages,j."+DB.gu_job+" FROM "+DB.k_jobs+" j,"+DB.k_job_atoms_tracking+" a WHERE "+"j."+DB.gu_job+"=a."+DB.gu_job+" AND "+"a."+DB.id_status+" IN ("+String.valueOf(Atom.STATUS_FINISHED)+","+String.valueOf(Atom.STATUS_RUNNING)+") AND j."+DB.gu_job+" IN "+sJobs+" GROUP BY 2");
+	    oRSet = oStmt.executeQuery("SELECT COUNT(*) AS nu_messages,j."+DB.gu_job+" FROM "+DB.k_jobs+" j,"+DB.k_job_atoms_tracking+" a WHERE "+"j."+DB.gu_job+"=a."+DB.gu_job+" AND j."+DB.gu_job+" IN "+sJobs+" GROUP BY 2");
         while (oRSet.next()) {
           oPtmt.setInt(1, oRSet.getInt(1));
           oPtmt.setString(2, oRSet.getString(2));
@@ -297,27 +298,29 @@ public class Statistics {
 		  default:
 		  	throw new SQLException ("Unsupported RDBMS");
 		}
+
 	    oQtmt = oConn.prepareStatement("INSERT INTO "+DB.k_jobs_atoms_by_day+" (dt_execution,gu_job,gu_job_group,gu_workarea,nu_msgs) VALUES (?,?,'"+sGuJobGroup+"',?,?)");
 	    for (String j : aJobs) {
 	      oPtmt.setString(1, j);
 	      oRSet = oPtmt.executeQuery();
           while (oRSet.next()) {
+          	          	
 		    switch (iDBMS) {
 		    case JDCConnection.DBMS_POSTGRESQL:
-          	  dtTheDay = new Date(tsNow.getTime()-getIntervalMilis(oRSet.getObject(2)));
+          	  lTheDay = tsNow.getTime()-((getIntervalMilis(oRSet.getObject(2))/86400000l)*86400000l);
 		      break;
 		    case JDCConnection.DBMS_MSSQL:
 		    case JDCConnection.DBMS_MYSQL:
-          	  dtTheDay = new Date(tsNow.getTime()-((long)oRSet.getInt(2))*86400000l);
+		      lTheDay = tsNow.getTime()-((long)oRSet.getInt(2))*86400000l;
               break;
 		    case JDCConnection.DBMS_ORACLE:
-          	  dtTheDay = new Date(tsNow.getTime()-(oRSet.getBigDecimal(2).longValue()*86400000l));
+		      lTheDay = tsNow.getTime()-(oRSet.getBigDecimal(2).longValue()*86400000l);
               break;
             default:
               throw new SQLException ("Unsupported RDBMS");
-		    }
+		    }			
             oStmt.executeUpdate("DELETE FROM "+DB.k_jobs_atoms_by_day+" WHERE "+DB.gu_job+"='"+j+"'");
-            oQtmt.setString(1, oYmd.format(dtTheDay));
+            oQtmt.setString(1, oYmd.format(new Date(lTheDay)));
             oQtmt.setString(2, j);
             oQtmt.setObject(3, mWrks.get(j), Types.CHAR);
             oQtmt.setInt(4, oRSet.getInt(1));
@@ -417,7 +420,7 @@ public class Statistics {
   	  Class oDriver = Class.forName(oEnvProps.getProperty("driver"));	
   	  oConn = DriverManager.getConnection(oEnvProps.getProperty("dburl"),oEnvProps.getProperty("dbuser"),oEnvProps.getProperty("dbpassword"));
 	  Statement oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-	  ResultSet oRSet = oStmt.executeQuery("SELECT "+DB.gu_job_group+" FROM "+DB.k_jobs);
+	  ResultSet oRSet = oStmt.executeQuery("SELECT DISTINCT("+DB.gu_job_group+") FROM "+DB.k_jobs+" WHERE "+DB.gu_job_group+" IS NOT NULL");
 	  ArrayList<String> aGroups = new ArrayList<String>();
 	  while (oRSet.next()) aGroups.add(oRSet.getString(1));
 	  oRSet.close();
