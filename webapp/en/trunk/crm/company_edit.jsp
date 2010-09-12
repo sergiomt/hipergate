@@ -173,6 +173,8 @@
         sProdFamilies.append (oProdFamilies.getString(1,f) + "</OPTION>");      
       } // next(f) 
     } // fi (iAppMask & Shop)
+    
+    sendUsageStats(request, "company_edit");
   }
   catch (SQLException e) {  
     if (oConn!=null)

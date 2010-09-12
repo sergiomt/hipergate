@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.Statement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.misc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.Statement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.misc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.DistributionList,com.knowgate.hipergate.Category" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><% 
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -57,7 +57,13 @@
 
   boolean bIsGuest = true;
   JDCConnection oConn = null;  
-    
+  DBSubset oCatgs = new DBSubset (DB.k_cat_expand + " e," + DB.k_categories + " c",
+                                  "e." + DB.gu_category + ",c." + DB.nm_category + ",e." + DB.od_level + ",e." + DB.od_walk + ",e." + DB.gu_parent_cat + ",'' AS "+DB.tr_+sLanguage,
+    				                      "e." + DB.gu_category + "=c." + DB.gu_category + " AND "+
+    				                      "e." + DB.od_level + ">1 AND e." + DB.gu_rootcat + "=? AND e." + DB.gu_parent_cat + " IS NOT NULL ORDER BY e." + DB.od_walk, 50);
+  int iCatgs = 0;
+  String sGuRootCategory = "";
+  
   try {
   
     bIsGuest = isDomainGuest (GlobalDBBind, request, response);
@@ -91,6 +97,14 @@
         sTpList = "Direct";
         break;
     } // end switch()
+  
+    sGuRootCategory = Category.getIdFromName(oConn, n_domain+"_apps_sales_lists_"+gu_workarea);
+		iCatgs = oCatgs.load(oConn, new Object[]{sGuRootCategory});
+    Category oCatg = new Category();
+    for (int l=0; l<iCatgs; l++) {
+      oCatg.replace (DB.gu_category, oCatgs.getString(0,l));
+      oCatgs.setElementAt(oCatg.getLabel(oConn, sLanguage), 5, l); 
+    } // next
   }
   catch (SQLException e) {  
     tp_list = -100;
@@ -115,7 +129,7 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
       function showCalendar(ctrl) {       
         var dtnw = new Date();
@@ -152,29 +166,33 @@
       function validate() {
         var frm = window.document.forms[0];
 
-	if (frm.de_list.value.length>50) {
-	  alert ("List description may not be longer than 50 characters");
-	  return false;
-	}
-
-	if (!check_email(frm.tx_from.value)) {
-	  alert ("sender e-mail address is not valid");
-	  return false;
-        }
-
-	/*
-	if (!check_email(frm.tx_reply.value)) {
-	  alert ("return e-mail address is not valid");
-	  return false;
-        }
-        */
+	      if (frm.de_list.value.length>50) {
+	        alert ("List description may not be longer than 50 characters");
+	        return false;
+	      }
+        
+	      if (!check_email(frm.tx_from.value)) {
+	        alert ("sender e-mail address is not valid");
+	        return false;
+              }
+        
+	      /*
+	      if (!check_email(frm.tx_reply.value)) {
+	        alert ("return e-mail address is not valid");
+	        return false;
+              }
+              */
         	        
         return true;
       } // validate;
+      
+      function setCombos() {
+        setCombo(document.forms[0].gu_category, "<%=oList.getStringNull(DB.gu_category,sGuRootCategory)%>");
+      }
     //-->
   </SCRIPT>
 </HEAD>
-<BODY  TOPMARGIN="8" MARGINHEIGHT="8">
+<BODY TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()">
   <FORM NAME="" METHOD="post" ACTION="list_wizard_store.jsp" onSubmit="return validate()">
   <DIV class="cxMnu1" style="width:300px"><DIV class="cxMnu2">
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
@@ -224,7 +242,18 @@
             <TD></TD>
             <TD ALIGN="left"><FONT CLASS="formplain"><I>(<% out.write (String.valueOf(nu_members)); %>&nbsp;members)</I></FONT></TD>
           </TR>
-
+					<TR>
+				    <TD CLASS="formstrong" ALIGN="right">[~Categor&iacute;a~]</TD>
+				    <TD><SELECT name="gu_category" class="combomini"><%
+    		      out.write ("<OPTION VALUE=\"" + sGuRootCategory + "\"></OPTION>");
+    			    for (int c=0; c<iCatgs; c++) {		    
+        	      out.write ("<OPTION VALUE=\"" + oCatgs.getString(0,c) + "\">");
+        		    for (int s=1; s<oCatgs.getInt(2,c); s++) out.write("&nbsp;&nbsp;&nbsp;");
+        		    out.write (oCatgs.getString(5,c));
+                out.write ("</OPTION>");
+        	    }					
+		 	      %></SELECT></TD>
+				  </TR>
           <TR>
             <TD ALIGN="right" WIDTH="200"><FONT CLASS="formplain">Description:</FONT></TD>
             <TD ALIGN="left"><TEXTAREA NAME="de_list" COLS="28"><%=oList.getStringNull(DB.de_list,"")%></TEXTAREA></TD>

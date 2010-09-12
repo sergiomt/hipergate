@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.workareas.WorkArea" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*
@@ -51,10 +51,13 @@
   String sLocationLookUp = "", sStreetLookUp = "", sStatusLookUp = "", sOriginLookUp = "", sObjectiveLookUp = "", sCountriesLookUp = "";
 
   JDCConnection oConn = null;
+  boolean bAllCaps = false;
     
   try {    
     oConn = GlobalDBBind.getConnection("oportunity_new");  
 
+    bAllCaps = WorkArea.allCaps(oConn, gu_workarea);
+    
     sLocationLookUp = DBLanguages.getHTMLSelectLookUp (oConn, DB.k_addresses_lookup, gu_workarea, DB.tp_location, sLanguage);
     sStreetLookUp = DBLanguages.getHTMLSelectLookUp (oConn, DB.k_addresses_lookup, gu_workarea, DB.tp_street, sLanguage);
     sStatusLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_oportunities_lookup, gu_workarea, DB.id_status, sLanguage);
@@ -89,6 +92,8 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
+    
+    var allcaps = <%=String.valueOf(bAllCaps)%>;
 
       function setCombos() {
         var frm = document.forms[0];
@@ -267,6 +272,8 @@
       	if (hasForbiddenChars(txt)) {
       	  alert ("Opportunity title contains invalid characters");
       	  return false;	  
+      	} else if (allcaps) {
+      	  frm.tl_oportunity.value = txt.toUpperCase();
       	}
       
       	txt = frm.im_revenue.value;
@@ -279,11 +286,15 @@
       	if (frm.tx_name.value.length==0) {
       	  alert ("The name of contact person is required");
       	  return false;
+      	} else if (allcaps) {
+      	  frm.tx_name.value	= frm.tx_name.value.toUpperCase();
       	}
       
       	if (frm.tx_surname.value.length==0) {
       	  alert ("Surname of contact person is required");
       	  return false;
+      	} else if (allcaps) {
+      	  frm.tx_surname.value	= frm.tx_surname.value.toUpperCase();
       	}
       
       	if (frm.tx_note.value.length>254) {
@@ -358,9 +369,18 @@
               &nbsp;<A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Status List"></A>
               <INPUT TYPE="hidden" NAME="id_status">
               &nbsp;&nbsp;
-              <FONT CLASS="formplain">Origin:</FONT>&nbsp;
+              <FONT CLASS="formplain">[~Medio:~]</FONT>&nbsp;
               <SELECT NAME="sel_origin"><OPTION VALUE=""></OPTION><%=sOriginLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(5)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Origins List"></A>
               <INPUT TYPE="hidden" NAME="tp_origin">
+            </TD>
+          </TR>
+          <TR>
+            <TD ALIGN="right" WIDTH="175"><FONT CLASS="formplain">Interest Degree</FONT></TD>
+            <TD ALIGN="left" WIDTH="420" CLASS="formplain">
+            	<INPUT TYPE="radio" NAME="lv_interest" VALUE="0">&nbsp;None&nbsp;&nbsp;&nbsp;
+            	<INPUT TYPE="radio" NAME="lv_interest" VALUE="1">&nbsp;A few&nbsp;&nbsp;&nbsp;
+            	<INPUT TYPE="radio" NAME="lv_interest" VALUE="2">&nbsp;Some&nbsp;&nbsp;&nbsp;
+            	<INPUT TYPE="radio" NAME="lv_interest" VALUE="3">&nbsp;Much&nbsp;&nbsp;&nbsp;            	
             </TD>
           </TR>
           <TR>
@@ -415,14 +435,14 @@
           <TR>
             <TD ALIGN="right"><FONT CLASS="formstrong">Name</FONT></TD>
             <TD ALIGN="left">
-              <INPUT TYPE="text" NAME="tx_name" MAXLENGTH="50" SIZE="40" onchange="document.forms[0].gu_contact.value=''">
+              <INPUT TYPE="text" NAME="tx_name" MAXLENGTH="50" SIZE="40" <%=bAllCaps ? "STYLE=\"text-transform:uppercase\"" : ""%> onchange="document.forms[0].gu_contact.value=''">
             </TD>
           </TR>
           <TR>
             <TD ALIGN="right"><FONT CLASS="formstrong">Surname</FONT></TD>
             <TD ALIGN="left">
               <INPUT TYPE="hidden" NAME="tx_contact">
-              <INPUT TYPE="text" NAME="tx_surname" MAXLENGTH="50" SIZE="40" onchange="document.forms[0].gu_contact.value=''">
+              <INPUT TYPE="text" NAME="tx_surname" MAXLENGTH="50" SIZE="40" <%=bAllCaps ? "STYLE=\"text-transform:uppercase\"" : ""%> onchange="document.forms[0].gu_contact.value=''">
             </TD>
           </TR>
           <TR>
@@ -454,7 +474,7 @@
             <TD ALIGN="left" WIDTH="460">
               <TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="0" BORDER="0"><TR>
                 <TD ALIGN="left">
-                  <A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Address Types"></A>&nbsp;<SELECT CLASS="combomini" NAME="sel_location"><OPTION VALUE=""></OPTION><%=sLocationLookUp%></SELECT>          
+                  <!--<A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Address Types"></A>&nbsp;<SELECT CLASS="combomini" NAME="sel_location"><OPTION VALUE=""></OPTION><%=sLocationLookUp%></SELECT>-->
                   <INPUT TYPE="hidden" NAME="tp_location">
                 </TD>
                 <TD></TD>
@@ -464,14 +484,14 @@
 <% if (sLanguage.equalsIgnoreCase("es")) { %>
           <TR>
             <TD ALIGN="right" WIDTH="140">
-              <A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Street Types"></A>&nbsp;
+              <!--<A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Street Types"></A>&nbsp;-->
               <SELECT CLASS="combomini" NAME="sel_street"><OPTION VALUE=""></OPTION><%=sStreetLookUp%></SELECT>
             </TD>
             <TD ALIGN="left" WIDTH="460">
               <INPUT TYPE="hidden" NAME="tp_street" VALUE="">
-              <INPUT TYPE="text" NAME="nm_street" MAXLENGTH="100" SIZE="40" VALUE="" onchange="document.forms[0].gu_address.value=''">
+              <INPUT TYPE="text" NAME="nm_street" MAXLENGTH="100" SIZE="40" <%=bAllCaps ? "STYLE=\"text-transform:uppercase\"" : ""%> VALUE="" onchange="document.forms[0].gu_address.value=''">
               &nbsp;&nbsp;
-              <FONT CLASS="formplain">Num.</FONT>&nbsp;<INPUT TYPE="text" NAME="nu_street" MAXLENGTH="16" SIZE="4" VALUE="">
+              <FONT CLASS="formplain">Num.</FONT>&nbsp;<INPUT TYPE="text" NAME="nu_street" MAXLENGTH="16" SIZE="4" VALUE="" <%=bAllCaps ? "STYLE=\"text-transform:uppercase\"" : ""%>>
             </TD>
           </TR>
 <% } else { %>
@@ -484,17 +504,17 @@
               <INPUT TYPE="text" NAME="nm_street" MAXLENGTH="100" SIZE="40" VALUE="">
               <INPUT TYPE="hidden" NAME="tp_street" VALUE="">
               <SELECT CLASS="combomini" NAME="sel_street"><OPTION VALUE=""></OPTION><%=sStreetLookUp%></SELECT>
-              <A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Street Types"></A>              
+              <!--<A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Street Types"></A>-->
             </TD>
           </TR>
 <% } %>
           <TR>
             <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Flat:</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
-              <INPUT TYPE="text" NAME="tx_addr1" MAXLENGTH="100" SIZE="10">
+              <INPUT TYPE="text" NAME="tx_addr1" MAXLENGTH="100" SIZE="10" <%=bAllCaps ? "STYLE=\"text-transform:uppercase\"" : ""%>>
               &nbsp;&nbsp;
               <FONT CLASS="formplain">Rest:</FONT>&nbsp;
-              <INPUT TYPE="text" NAME="tx_addr2" MAXLENGTH="100" SIZE="32">              
+              <INPUT TYPE="text" NAME="tx_addr2" MAXLENGTH="100" SIZE="32" <%=bAllCaps ? "STYLE=\"text-transform:uppercase\"" : ""%>>
             </TD>
           </TR>
           <TR>

@@ -1,8 +1,8 @@
 <%@ page import="java.net.URLDecoder,java.util.Date,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.hipergate.QueryByForm,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %>
+<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/reqload.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
-  Copyright (C) 2003-2008  Know Gate S.L. All rights reserved.
+  Copyright (C) 2003-2010  Know Gate S.L. All rights reserved.
                            C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
@@ -57,12 +57,12 @@
   fScreenRatio = ((float) iScreenWidth) / 800f;
   if (fScreenRatio<1) fScreenRatio=1;
 
-  String sField = request.getParameter("field")==null ? "" : request.getParameter("field").trim();
-  String sFind = request.getParameter("find")==null ? "" : request.getParameter("find").trim();
-  String sWhere = request.getParameter("where")==null ? "" : request.getParameter("where").trim();
-  String sQuery = request.getParameter("query")==null ? "" : request.getParameter("query");
-  String sPrivate = request.getParameter("private")==null ? "0" : request.getParameter("private");
-  String sSalesMan = request.getParameter("salesman")==null ? "" : request.getParameter("salesman");
+  String sField = safeSqlGetParameter(request,"field","").trim();
+  String sFind = safeSqlGetParameter(request,"find","").trim();
+  String sWhere = nullif(request.getParameter("where")).trim();
+  String sQuery = nullif(request.getParameter("query")).trim();
+  String sPrivate = safeSqlGetParameter(request,"private","0").trim();
+  String sSalesMan = safeSqlGetParameter(request,"salesman","").trim();
   String sSecurityFilter;
   boolean bPrivate = sPrivate.equals("1");
 
@@ -340,7 +340,9 @@
       iContactCount = oContacts.load(oConn,aFind,iSkip);
     }
     oConn.close("contact_listing");
-    oConn = null;      
+    oConn = null;
+
+    sendUsageStats(request, "contact_listing");      
   }
   catch (SQLException e) {  
     oContacts = null;
@@ -362,6 +364,7 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" >
     dynapi.library.setPath('../javascript/dynapi3/');
@@ -466,8 +469,10 @@
         // ----------------------------------------------------
 
 	function modifyContact(id) {
-	  self.open ("contact_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_contact=" + id, "editcontact", "directories=no,toolbar=no,scrollbars=yes,menubar=no,width=660,height=660");
+	  self.open ("contact_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_contact=" + id, "editcontact", "directories=no,toolbar=no,scrollbars=yes,menubar=no,width=760,height=660");
 	}	
+
+	
 
         // ----------------------------------------------------
 	
@@ -501,12 +506,17 @@
 
 	function findContact() {
 	  var frm = document.forms[0];
-		
+		if (hasForbiddenChars(frm.find.value)) {
+		  alert ("Searched text contains invalid characters");
+		  frm.find.focus();
+		  return false;
+		}
 <% if (bIsAdmin) { %>
 	  window.location="contact_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=<%=sOrderBy%>&field=" + getCombo(frm.sel_searched) + "&find=" + escape(frm.find.value) + "&salesman=" + getCombo(frm.salesman) + "&face=<%=sFace%>&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");	
 <% } else { %>
 	  window.location="contact_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=<%=sOrderBy%>&field=" + getCombo(frm.sel_searched) + "&find=" + escape(frm.find.value) + "&private=" + (frm.private[0].checked ? "0" : "1") + "&face=<%=sFace%>&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");	
 <% } %>
+    return true;
 	} // findContact()
 
       // ------------------------------------------------------
@@ -691,7 +701,12 @@
       }	// clone()
 	
       //--------------------------------------------------
-		
+    //-- Inicio I2E 2009-01-20
+	function searchCandidate() {
+	  window.open("candidate_search.jsp?gu_workarea=<%=gu_workarea%>","", "directories=no,toolbar=no,scrollbars=yes,menubar=no,width=760,height=660");
+	}		
+
+	//-- Fin I2E
     //-->    
   </SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
@@ -765,6 +780,7 @@
 	          &nbsp;&nbsp;
             <INPUT TYPE="radio" NAME="private" VALUE="1" onclick="if (document.forms[0].sel_query.selectedIndex>0) runQuery(); else findContact();" <% if (bPrivate) out.write("CHECKED"); %>>&nbsp;<FONT CLASS="textplain">Private Contacts Only</FONT>
 <% } %>
+			<A HREF="#" TARGET="_top" CLASS="linkplain" onclick="searchCandidate();return false;">Search Applicants</A>
 	        </TD>
 	</TR>
         <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
@@ -827,11 +843,11 @@
 	  {
 	  
 	    sContactId = oContacts.getStringNull(0,i,"");
-            sName = oContacts.getStringNull(1,i,"");
+            sName = oContacts.getStringHtml(1,i,"");
             if (sName.equals(", ")) sName = "<I>(unnamed)</I>";
             sTitle = oContacts.getStringNull(2,i,"");
             sCompanyId= oContacts.getStringNull(3,i,"");
-            sCompany_name= oContacts.getStringNull(4,i,"");
+            sCompany_name= oContacts.getStringHtml(4,i,"");
             sDtModified = oContacts.getDateShort(7,i);
             if (null==sDtModified) sDtModified = "";
             

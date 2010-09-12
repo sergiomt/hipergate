@@ -231,6 +231,19 @@
       // ------------------------------------------------------
       
       var xrq = false;
+	  // I2E 2009-11-30
+	  
+	  function pasarMayusculas(cadena) {
+    	var result="";
+		var str = cadena.split('');
+	    for(i=0; i<=str.length-1; i++) {
+	        str[i] = str[i].toUpperCase();
+        	result+=str[i];
+    	}
+    	return(result);
+	  }
+	  
+      var idExistente = false;
       
       function processDocId() {
         if (xrq.readyState == 4) {
@@ -239,24 +252,30 @@
             if (rs) {
               if (window.confirm("Another contact with the same identity document number already exists "+rs[0].childNodes[0].data+" Do you want to abandon the creation of a new contact and switch back to editing the already existing one?")) {
 							  top.location="contact_edit.jsp?id_domain=<%=id_domain%>&gu_contact=" + rs[0].attributes.item(0).value;
+              }else{
+                  idExistente = true;
               }
             }
             xrq = false;
           }
         }
       }
-
+      
+		//Fin I2E
       // ------------------------------------------------------
       
       function checkIdDoc(docid) {
+          var docid2 = pasarMayusculas(docid)
 	      if (!xrq) {
 	        xrq = createXMLHttpRequest();
 	        xrq.onreadystatechange = processDocId;
-	        xrq.open("GET","../common/autocomplete.jsp?gu_workarea=<%=gu_workarea%>&nm_table=k_contact_doc_id&tx_like="+docid,true);
+	        xrq.open("GET","../common/autocomplete.jsp?gu_workarea=<%=gu_workarea%>&nm_table=k_contact_doc_id&tx_like="+docid2,true);
 	        xrq.send(null);
 	      } // fi
 	    } // fi
 
+	  // I2E 2009-11-30
+	  var emailExistente = false;  
       function processEmail() {
         if (xrq.readyState == 4) {
           if (xrq.status == 200) {
@@ -264,13 +283,15 @@
             if (rs) {
               if (window.confirm("Another contact with the same e-mail already exists "+rs[0].childNodes[0].data+" Do you want to abandon the creation of a new contact and switch back to editing the already existing one?")) {
 							  top.location="contact_edit.jsp?id_domain=<%=id_domain%>&gu_contact=" + rs[0].attributes.item(0).value;
+              }else{
+                  emailExistente = true;
               }
             }
             xrq = false;
           }
         }
       }
-
+		// Fin I2E
       // ------------------------------------------------------
       
       function checkEmail(email) {
@@ -290,6 +311,17 @@
 	var txt;
 	var cur;
 
+	//I2E 2009-11-30
+	if(idExistente){
+		alert("Another contact with the same legal document already exists.");
+		return false;
+	}
+	if(emailExistente){
+		alert("Another contact with the same email already exists.");
+		return false;
+	}
+
+	//Fin I2E
         // ****************************
         // Validate Contact Information
         

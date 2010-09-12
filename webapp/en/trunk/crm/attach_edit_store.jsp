@@ -1,4 +1,4 @@
-<%@ page import="java.lang.System,java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.SQLException,java.sql.ResultSet,java.util.Enumeration,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.workareas.FileSystemWorkArea,com.knowgate.crm.Attachment,com.knowgate.hipergate.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.oreilly.servlet.MultipartRequest" language="java" session="false" %>
+<%@ page import="java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.SQLException,java.sql.ResultSet,java.util.Enumeration,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.workareas.FileSystemWorkArea,com.knowgate.crm.Attachment,com.knowgate.hipergate.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.oreilly.servlet.MultipartRequest" language="java" session="false" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/multipartreqload.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -61,6 +61,8 @@
   String de_product = oReq.getParameter("de_product");  
   String gu_contact = oReq.getParameter("gu_contact");
   String gu_location = oReq.getParameter("gu_location");
+  String tp_product = oReq.getParameter("type_of");
+  String id_format = oReq.getParameter("format");
   
   String nm_legal;
   
@@ -80,6 +82,7 @@
   File oTmpFile;
   FileSystemWorkArea oFileSys;
   ProductLocation oLoca;
+  ProductAttribute oAttr;
   
   Object aProd[] = { id_product };
 
@@ -111,6 +114,9 @@
       
     if (id_product.length()==0) {
       oProd = new Product();
+      oAttr = new ProductAttribute();
+      if (tp_product.length()>0) oAttr.put("typeof", tp_product);
+      if (id_format.length()>0) oAttr.put("format", id_format);
       loadRequest(oCon1, oReq, oProd);
     }
     else
@@ -118,6 +124,10 @@
       oProd = new Product(oCon1, id_product);
       oProd.replace(DB.nm_product, nm_product);
       oProd.replace(DB.de_product, de_product);
+
+      oAttr = new ProductAttribute(oCon1, id_product);
+      if (tp_product.length()>0) oAttr.replace("typeof", tp_product);
+      if (id_format.length()>0) oAttr.replace("format", id_format);
 
       // Erase previous locations
       oProd.eraseLocations(oCon1);
@@ -130,6 +140,8 @@
     // fi (id_product=="")
   
     oProd.store(oCon1);
+    oAttr.replace(DB.gu_product, oProd.getString(DB.gu_product));
+    oAttr.store(oCon1);
 
     oFileSys = new FileSystemWorkArea(Environment.getProfile(GlobalDBBind.getProfileName()));
     oFileSys.mkstorpath(Integer.parseInt(id_domain), id_workarea, sCatPath);

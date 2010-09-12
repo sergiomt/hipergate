@@ -82,6 +82,10 @@
     oContact.store(oConn);
     
     storeAttributes (request, GlobalCacheClient, oConn, DB.k_contacts_attrs, gu_workarea, oContact.getString(DB.gu_contact));
+    /* Inicio I2E 2009-12-09 */
+    storeInterest(request, oConn, DB.k_contacts_attrs, oContact.getString(DB.gu_contact));
+    /*Fin I2E*/
+    
     
     if (courses.length()>0) {
       String[] aCourses = Gadgets.split(courses,',');

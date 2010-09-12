@@ -53,10 +53,11 @@
   boolean bIsAdmin = false;
   boolean bOk = false;
   
+  
   try {    
     bIsGuest = isDomainGuest (GlobalCacheClient, GlobalDBBind, request, response);
     bIsAdmin = isDomainAdmin (GlobalCacheClient, GlobalDBBind, request, response);
-    
+  
     oSalesMen = GlobalCacheClient.getDBSubset(DB.k_sales_men + ".DBSubset.[" + gu_workarea + "]");
 
     oConn = GlobalDBBind.getConnection("contact_edit");
@@ -78,7 +79,16 @@
       Object aComp[] = { gu_contact };
 
       bOk = oCont.load(oConn, aComp);
-			
+
+			if (GlobalDBBind.getProperty("yahoobosskey","").length()>0) {
+			  if (oCont.isNull(DB.url_linkedin)) {
+          com.knowgate.crm.SocialNetworks.crawl(GlobalDBBind, gu_workarea, DB.gu_contact+"='"+gu_contact+"'", "linkedin", 1);
+			  }
+			  if (oCont.isNull(DB.url_facebook)) {
+          com.knowgate.crm.SocialNetworks.crawl(GlobalDBBind, gu_workarea, DB.gu_contact+"='"+gu_contact+"'", "facebook", 1);
+			  }
+      }
+      
       if (oCont.isNull(DB.bo_private))
         sPrivate = "";
       else
@@ -96,7 +106,29 @@
     } // fi (gu_contact!="")
     
     sStatusLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_contacts_lookup, gu_workarea, "id_status", sLanguage);    
-    sTitleLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_contacts_lookup, gu_workarea, "de_title", sLanguage);    
+    sTitleLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_contacts_lookup, gu_workarea, "de_title", sLanguage);
+    /* Inicio I2E 2009-12-10 */
+    String query = "SELECT gu_term, tx_term FROM k_thesauri WHERE id_domain=? AND id_scope='cno'";
+    java.sql.PreparedStatement oStmt;
+    java.sql.ResultSet oRSet;
+    if (com.knowgate.debug.DebugFile.trace) com.knowgate.debug.DebugFile.writeln("&&&&&&&&&&"+query);
+
+    oStmt = oConn.prepareStatement(query);
+    oStmt.setInt(1, Integer.parseInt(id_domain));
+
+    oRSet = oStmt.executeQuery();
+
+    String titulaciones = "";
+    
+    while(oRSet.next()){
+ 		titulaciones += "<OPTION VALUE=\"" +oRSet.getString(1).trim() +"\">" + oRSet.getString(2).trim()+"</OPTION>"; 	   
+    }
+    oRSet.close();
+    oStmt.close();
+    
+    sTitleLookUp += titulaciones;
+    
+    /* Fin I2E */
     sPassportLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_contacts_lookup, gu_workarea, "tp_passport", sLanguage);
     sCountriesLookUp = GlobalDBLang.getHTMLCountrySelect(oConn, sLanguage);
 
@@ -119,6 +151,8 @@
 
     oConn.setAutoCommit (true);      
     com.knowgate.http.portlets.HipergatePortletConfig.touch(oConn, id_user, "com.knowgate.http.portlets.RecentContactsTab", gu_workarea);
+
+    sendUsageStats(request, "contact_edit");
 
   }
   catch (SQLException e) {  
@@ -224,18 +258,19 @@
 
       function viewWelcomePack() {
         document.location.href = "welcomepack_edit.jsp?gu_workarea="+getCookie("workarea")+"&gu_contact=" + getURLParam("gu_contact") + "&linktable=k_x_contact_addr&linkfield=gu_contact&linkvalue=" + getURLParam("gu_contact");
-	return true;
+	      return true;
       }
 
       // ----------------------------------------------------
 	
       function viewOportunities() {
         var frm = window.document.forms["fixedAttrs"];
-      
-	self.open("oportunity_listing_f.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_contact=" + frm.gu_contact.value + "&where=" + escape(" AND gu_contact='" + frm.gu_contact.value + "'") + "&field=" + escape("<%=DB.tx_contact%>") + "&find=" + escape(frm.tx_surname.value + ", " + frm.tx_name.value) + "&show=oportunities&skip=0&selected=2&subselected=2");
+   		  // Inicio I2E 2009-12-15
+			  //self.open("oportunity_listing_f.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_contact=" + frm.gu_contact.value + "&where=" + escape(" AND gu_contact='" + frm.gu_contact.value + "'") + "&field=" + escape("<%=DB.tx_contact%>") + "&find=" + escape(frm.tx_name.value + " " + frm.tx_surname.value) + "&show=oportunities&skip=0&selected=2&subselected=2");
+			  self.open("oportunity_listing_f.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&field=" + escape("<%=DB.gu_contact%>") + "&find=" + escape(frm.gu_contact.value) + "&show=oportunities&skip=0&selected=2&subselected=2");
+		    //Fin I2E
 
-	return true;
-
+	      return true;
       }
 
       // ------------------------------------------------------
@@ -283,9 +318,9 @@
 	var w = window.opener;
 		
 	if (typeof(w)=="undefined")
-	  window.open("../projtrack/project_listing.jsp?where=" +  escape(" AND b.gu_contact='<% out.write(gu_contact); %>'") + "&find=" + escape("<%=sFullName%>") + "&field=full_name&selected=4&subselected=0");
+	  window.open("../projtrack/project_listing.jsp?where=" +  escape(" AND b.gu_contact='<% out.write(gu_contact); %>'") + "&find=<%=Gadgets.URLEncode(sFullName)%>&field=full_name&selected=4&subselected=0");
 	else {
-	  w.document.location.href = "../projtrack/project_listing.jsp?where=" +  escape(" AND b.gu_contact='<% out.write(gu_contact); %>'") + "&find=" + escape("<%=sFullName%>") + "&field=full_name&selected=4&subselected=0";
+	  w.document.location.href = "../projtrack/project_listing.jsp?where=" +  escape(" AND b.gu_contact='<% out.write(gu_contact); %>'") + "&find=<%=Gadgets.URLEncode(sFullName)%>&field=full_name&selected=4&subselected=0";
 	  w.focus();
         }
       }
@@ -342,7 +377,7 @@
       } // validate()
       //-->
     </SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript">
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
       <!--
         function setCombos() {
           var frm = document.forms[0];
@@ -415,7 +450,7 @@
       }
 
       .panel {
-      font-family: sans-serif; font-size: 12px; position:absolute; border: 2px; border-color:#999999; border-style:outset; width:600px; height:500px; left:0px; top:24px; margin:0px; padding:6px;
+      font-family: sans-serif; font-size: 12px; position:absolute; border: 2px; border-color:#999999; border-style:outset; width:720px; height:500px; left:0px; top:24px; margin:0px; padding:6px;
       }
       -->
     </STYLE>                

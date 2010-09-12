@@ -9,6 +9,10 @@
 
   String sLanguage = getNavigatorLanguage(request);
 
+  String sRealPath = request.getRealPath(request.getServletPath());
+     	   sRealPath = sRealPath.substring(0, sRealPath.lastIndexOf(File.separator));
+         sRealPath = sRealPath.substring(0, sRealPath.lastIndexOf(File.separator)+1);
+
   String sSkin = getCookie(request, "skin", "xp");
   boolean bCampaignsEnabled = ((Integer.parseInt(getCookie(request, "appmask", "0")) & (1<<18))!=0);
 
@@ -25,13 +29,26 @@
   String sFind = nullif(request.getParameter("find")); 
   String sCampaignId = nullif(request.getParameter("gu_campaign"));
   String sSalesManId = nullif(request.getParameter("gu_sales_man"));
+  String sObjetiveId = nullif(request.getParameter("gu_objetive"));
+  String sFullName = "";
 
+  String sObjectiveLookUp = "";
   String sCampaignsLookUp = "";
   String sStatusLookUp = "";
   String sSalesMenLookUp = "";
   HashMap oStatusLookUp = null;
   HashMap oCausesLookUp = null;
   int iOportunityCount = 0;
+
+  Properties EnvPros = new Properties();
+  EnvPros.put("domain", id_domain);
+  EnvPros.put("workarea", gu_workarea);
+  EnvPros.put("user", id_user);
+  EnvPros.put("maxrows", "6");
+  EnvPros.put("storage", GlobalDBBind.getPropertyPath("storage"));
+  HipergateRenderResponse portletResponse = new HipergateRenderResponse(response);
+  HipergateRenderRequest  portletRequest = new HipergateRenderRequest(request);
+  portletRequest.setProperties (EnvPros);
 
   boolean bIsGuest = isDomainGuest (GlobalCacheClient, GlobalDBBind, request, response);
   boolean bIsAdmin = isDomainAdmin (GlobalCacheClient, GlobalDBBind, request, response);
@@ -42,7 +59,9 @@
   DBSubset oStatusSummary = null;
   DBSubset oCausesSummary = null;
   DBSubset oRevenueSummary = null;
-    
+  DBSubset oPortlets = new DBSubset(DB.k_x_portlet_user, "nm_portlet,od_position,id_state,dt_modified,nm_template,nm_zone", "nm_page='oportunity_listing.jsp' AND gu_user=? AND gu_workarea=? ORDER BY 2", 5);
+  int nPortlets = 0;
+
   String sFilterClause;
   String sOrderBy;
   String sPrivate = null;
@@ -102,6 +121,18 @@
 
     oConn = GlobalDBBind.getConnection("oportunitylisting");
 
+    nPortlets = oPortlets.load (oConn, new Object[]{id_user,gu_workarea});
+    if (nPortlets==0) {
+      PreparedStatement oInsPrtlt = oConn.prepareStatement("INSERT INTO k_x_portlet_user (gu_user,nm_page,nm_portlet,gu_workarea,id_domain,nm_zone,od_position,id_state,nm_template) VALUES (?,'oportunity_listing.jsp','com.knowgate.http.portlets.CalendarTab',?,?,'topright',1,'NORMAL','crm_todo.xsl')");
+      oInsPrtlt.setString(1, id_user);
+      oInsPrtlt.setString(2, gu_workarea);
+      oInsPrtlt.setInt(3, Integer.parseInt(id_domain));
+      oInsPrtlt.executeUpdate();
+      oInsPrtlt.close();
+      nPortlets = oPortlets.load (oConn, new Object[]{id_user,gu_workarea});
+    }
+
+    sObjectiveLookUp = DBLanguages.getHTMLSelectLookUp (oConn, DB.k_oportunities_lookup, gu_workarea, DB.id_objetive, sLanguage);
     sStatusLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_oportunities_lookup, gu_workarea, DB.id_status, sLanguage);
     oStatusLookUp = DBLanguages.getLookUpMap(oConn, DB.k_oportunities_lookup, gu_workarea, DB.id_status, sLanguage);
     oCausesLookUp = DBLanguages.getLookUpMap(oConn, DB.k_oportunities_lookup, gu_workarea, DB.tx_cause, sLanguage);
@@ -151,10 +182,11 @@
       oRevenueSummary = new DBSubset (DB.k_oportunities, "SUM("+DB.im_revenue+")", sFilterClause, 1);
       oRevenueSummary.load(oConn);
     }
-    else if (sFind.length()==0 || sField.length()==0) {
+    else if (sFind.length()==0 || sField.length()==0) {		  
 		  sFilterClause = DB.gu_workarea + "='" + gu_workarea + "' AND (" + sPrivate + ") " +
       				       (sStatusId.length()>0 ? " AND "+DB.id_status+"='"+sStatusId+"' " : "") +
       				       (sCampaignId.length()>0 ? " AND "+DB.gu_campaign+"='"+sCampaignId+"' " : "") +
+      				       (sObjetiveId.length()>0 ? " AND "+DB.id_objetive+"='"+sObjetiveId+"' " : "") +
       				       (sSalesManId.length()>0 ? " AND (EXISTS (SELECT NULL FROM "+DB.k_contacts+" c WHERE c."+DB.gu_sales_man+"='"+sSalesManId+"' AND c."+DB.gu_contact+"=b."+DB.gu_contact+") OR EXISTS (SELECT NULL FROM "+DB.k_companies+" k WHERE k."+DB.gu_sales_man+"='"+sSalesManId+"' AND k."+DB.gu_company+"=b."+DB.gu_company+")) " : "");
       oOportunities = new DBSubset (DB.k_oportunities + " b", 
       				 DB.gu_oportunity + "," + DB.id_status+ ",tl_oportunity,"+DBBind.Functions.ISNULL + "(tx_contact,tx_company),dt_next_action,gu_contact,gu_company,im_revenue,gu_campaign,lv_interest,id_objetive,dt_last_call,tx_note,tx_cause",
@@ -181,11 +213,11 @@
 																			sFilterClause + (iOrderBy>0 ? " ORDER BY " + sOrderBy + ",10 DESC" : " ORDER BY 10 DESC"), iMaxRows);
         oOportunities.setMaxRows(iMaxRows);
         iOportunityCount = oOportunities.load (oConn,iSkip);
-		    oStatusSummary = new DBSubset (DB.k_oportunities, "COUNT("+DB.id_status+"),"+DB.id_status, sFilterClause + " GROUP BY "+DB.id_status, 10);
+		    oStatusSummary = new DBSubset (DB.k_oportunities+" b", "COUNT("+DB.id_status+"),"+DB.id_status, sFilterClause + " GROUP BY "+DB.id_status, 10);
         oStatusSummary.load (oConn);
-		    oCausesSummary = new DBSubset (DB.k_oportunities, "COUNT("+DB.tx_cause+"),"+DB.tx_cause, sFilterClause + " GROUP BY "+DB.tx_cause, 10);
+		    oCausesSummary = new DBSubset (DB.k_oportunities+" b", "COUNT("+DB.tx_cause+"),"+DB.tx_cause, sFilterClause + " GROUP BY "+DB.tx_cause, 10);
         oCausesSummary.load (oConn);
-        oRevenueSummary = new DBSubset (DB.k_oportunities, "SUM("+DB.im_revenue+")", sFilterClause, 1);
+        oRevenueSummary = new DBSubset (DB.k_oportunities+" b", "SUM("+DB.im_revenue+")", sFilterClause, 1);
         oRevenueSummary.load(oConn);
       } else if (sField.equals(DB.gu_campaign)) {
       	int iCampaign = oCampaigns.findi(1, sFind);
@@ -200,16 +232,20 @@
 																				sFilterClause + (iOrderBy>0 ? " ORDER BY " + sOrderBy + ",10 DESC" : " ORDER BY 10 DESC"), iMaxRows);
           oOportunities.setMaxRows(iMaxRows);
           iOportunityCount = oOportunities.load (oConn,new Object[]{oCampaigns.get(0,iCampaign)},iSkip);
-		      oStatusSummary = new DBSubset (DB.k_oportunities, "COUNT("+DB.id_status+"),"+DB.id_status, sFilterClause + " GROUP BY "+DB.id_status, 10);
+		      oStatusSummary = new DBSubset (DB.k_oportunities+" b", "COUNT("+DB.id_status+"),"+DB.id_status, sFilterClause + " GROUP BY "+DB.id_status, 10);
           oStatusSummary.load (oConn,new Object[]{oCampaigns.get(0,iCampaign)});
-		      oCausesSummary = new DBSubset (DB.k_oportunities, "COUNT("+DB.tx_cause+"),"+DB.tx_cause, sFilterClause + " GROUP BY "+DB.tx_cause, 10);
+		      oCausesSummary = new DBSubset (DB.k_oportunities+" b", "COUNT("+DB.tx_cause+"),"+DB.tx_cause, sFilterClause + " GROUP BY "+DB.tx_cause, 10);
           oCausesSummary.load (oConn,new Object[]{oCampaigns.get(0,iCampaign)});
-          oRevenueSummary = new DBSubset (DB.k_oportunities, "SUM("+DB.im_revenue+")", sFilterClause, 1);
+          oRevenueSummary = new DBSubset (DB.k_oportunities+" b", "SUM("+DB.im_revenue+")", sFilterClause, 1);
           oRevenueSummary.load(oConn,new Object[]{oCampaigns.get(0,iCampaign)});
         } else {
         	iOportunityCount = 0;
         }
       } else {
+        DBSubset oFullName = new DBSubset(DB.k_contacts, DB.tx_name+","+DB.tx_surname, DB.gu_contact+"=?", 1);
+        if (oFullName.load(oConn, new Object[]{sFind})>0)
+          sFullName = (oFullName.getStringNull(0,0,"")+" "+oFullName.getStringNull(1,0,"")).trim();
+
         sFilterClause = DB.gu_workarea + "='" + gu_workarea + "' AND (" + sPrivate + ") " + " AND " +
       				          sField + " " + DBBind.Functions.ILIKE + " ? " +
       				         (sStatusId.length()>0 ? " AND "+DB.id_status+"='"+sStatusId+"' " : "") +
@@ -221,11 +257,11 @@
         oOportunities.setMaxRows(iMaxRows);
         Object[] aFind = { '%' + sFind + '%' };
         iOportunityCount = oOportunities.load (oConn,aFind,iSkip);
-		    oStatusSummary = new DBSubset (DB.k_oportunities, "COUNT("+DB.id_status+"),"+DB.id_status, sFilterClause + " GROUP BY "+DB.id_status, 10);
+		    oStatusSummary = new DBSubset (DB.k_oportunities+" b", "COUNT("+DB.id_status+"),"+DB.id_status, sFilterClause + " GROUP BY "+DB.id_status, 10);
         oStatusSummary.load (oConn,aFind);
-		    oCausesSummary = new DBSubset (DB.k_oportunities, "COUNT("+DB.tx_cause+"),"+DB.tx_cause, sFilterClause + " GROUP BY "+DB.tx_cause, 10);
+		    oCausesSummary = new DBSubset (DB.k_oportunities+" b", "COUNT("+DB.tx_cause+"),"+DB.tx_cause, sFilterClause + " GROUP BY "+DB.tx_cause, 10);
         oCausesSummary.load (oConn,aFind);
-        oRevenueSummary = new DBSubset (DB.k_oportunities, "SUM("+DB.im_revenue+")", sFilterClause, 1);
+        oRevenueSummary = new DBSubset (DB.k_oportunities+" b", "SUM("+DB.im_revenue+")", sFilterClause, 1);
         oRevenueSummary.load(oConn, aFind);
       }
     }

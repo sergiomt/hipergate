@@ -173,7 +173,9 @@
     
     oStatusMap = GlobalDBLang.getLookUpMap((Connection) oConn, DB.k_companies_lookup, gu_workarea, "id_status", sLanguage);
 
-    oConn.close("companylisting"); 
+    oConn.close("companylisting");
+    
+    sendUsageStats(request, "company_listing");
   }
   catch (SQLException e) {  
     oCompanies = null;

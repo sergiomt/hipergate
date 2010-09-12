@@ -1,4 +1,4 @@
-<%@ page import="com.knowgate.debug.*,java.net.URLDecoder,java.io.File,java.io.FileNotFoundException,java.io.IOException,java.sql.Connection,java.sql.SQLException,java.sql.PreparedStatement,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.*,com.knowgate.misc.Environment,com.knowgate.hipergate.QueryByForm" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.knowgate.debug.*,java.net.URLDecoder,java.io.File,java.io.FileNotFoundException,java.io.IOException,java.sql.Connection,java.sql.SQLException,java.sql.PreparedStatement,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.*,com.knowgate.misc.Environment,com.knowgate.hipergate.Category,com.knowgate.hipergate.QueryByForm" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -97,7 +97,6 @@
     oDirect = null;
   }
 
-
   if (null==oDirect) return;
   
   JDCConnection oConn = null;
@@ -111,14 +110,18 @@
     // Primero guardar el registro principal de la lista en si misma
       
     loadRequest(oConn, request, oList);
-    
+    if (nullif(request.getParameter("gu_category")).length()>0)
+      oList.replace(DB.gu_category, request.getParameter("gu_category"));
+    else
+      oList.remove(DB.gu_category);
+
     // Las listas directas no tienen query asociada
     if (null!=tp_list) if (tp_list.equals("3")) oList.remove(DB.gu_query);
 
     oConn.setAutoCommit (true);
     
     oList.store(oConn);
-
+    
     gu_list = oList.getString("gu_list");
 
   }
@@ -265,12 +268,14 @@
   else if ((tp_list.equals("3")) && (caller.equals("wizard"))) {
         
     try {
-    
-      oDirect.updateList(oConn, gu_list, (short) 1);
-
+      oCon2 = GlobalDBBind.getConnection(GlobalDBBind.getProperty("dbuser"), GlobalDBBind.getProperty("dbpassword"));
+      oCon2.setAutoCommit (true);
+      oDirect.updateList((Connection) oCon2, gu_list, (short) 1);
+			oCon2.close();
     }
 
     catch (SQLException sqle) {            
+      if (oCon2!=null) if (!oCon2.isClosed()) { oConn.close(); }
       if (oConn!=null) if (!oConn.isClosed()) { oConn.close("list_wizard_store"); }
       oConn = null;
       response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + sqle.getMessage() + "&resume=_back"));
@@ -319,10 +324,9 @@
     
     if (DebugFile.trace) DebugFile.writeln("End list_wizard_store.jsp");
     
-    // [~//Refrescar el padre y abrir lista creada~]
     out.write("<HTML><HEAD><TITLE>Wait...</TITLE><SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>");
     out.write("window.opener.location.reload(true);");
-    out.write("window.resizeTo(600,420);");
+    out.write("window.resizeTo(600,480);");
     out.write("window.location = 'list_edit.jsp?id_domain=" + id_domain + "&n_domain='+escape('" + n_domain + "') + '&gu_list=" + gu_list + "&n_list=' + escape('" + n_list+ "');");
     //if (caller.equals("edit")) out.write("self.close();");
     out.write("</SCRIPT></HEAD></HTML>");

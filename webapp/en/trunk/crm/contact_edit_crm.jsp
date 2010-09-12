@@ -16,8 +16,8 @@
   </DIV></DIV>
 <% if (gu_contact.length()>0) { %>
   <TABLE CELLSPACING="2" CELLPADDING="2">
-    <TR><TD COLSPAN="10"><IMG SRC="../images/images/spacer.gif" HEIGHT="4"></TD></TR>
-    <TR><TD COLSPAN="10" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
+    <TR><TD COLSPAN="12"><IMG SRC="../images/images/spacer.gif" HEIGHT="4"></TD></TR>
+    <TR><TD COLSPAN="12" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
     <TR>
       <TD VALIGN="middle"><IMG SRC="../images/images/theworld16.gif" WIDTH="16" HEIGHT="16" BORDER="0"></TD>
       <TD VALIGN="middle"><A HREF="#" onclick="viewAddrs()" CLASS="linkplain">Addresses</A></TD>
@@ -31,6 +31,10 @@
       <TD VALIGN="middle"><A HREF="#" onclick="viewWelcomePack()" CLASS="linkplain">Welcome Pack</A></TD>
     </TR>
     <TR>
+   <% /* Inicio i2e 2009-11-30 */ %>
+    <TD VALIGN="middle"><IMG SRC="../images/images/crm/cv.png" WIDTH="16" HEIGHT="16" BORDER="0"></TD>
+    <TD VALIGN="middle"><A HREF="cv_contact_edit.jsp?gu_contact=<%=oCont.getString(DB.gu_contact)%>&fullname=<%=Gadgets.URLEncode(oCont.getStringNull(DB.tx_name,"") + " " + oCont.getStringNull(DB.tx_surname,""))%>" onclick="top.resizeTo(860,760);" CLASS="linkplain">Curriculum</A></TD>
+    <%/* fin i2e */%>
 <% if (((iAppMask & (1<<CollaborativeTools))!=0) && (gu_contact.length()>0)) { %>
       <TD VALIGN="middle"><IMG SRC="../images/images/addrbook/telephone16.gif" WIDTH="16" HEIGHT="16" BORDER="0"></TD>
       <TD VALIGN="middle"><A HREF="#" onclick="window.opener.parent.location.href='../addrbook/phonecall_listing.jsp?selected=1&subselected=5&field=<%=DB.gu_contact%>&find=<%=gu_contact%>&contact_person=<%=Gadgets.URLEncode(oCont.getStringNull(DB.tx_name,"") + " " + oCont.getStringNull(DB.tx_surname,""))%>'; window.opener.top.focus()" CLASS="linkplain">Calls</A></TD>
@@ -62,11 +66,11 @@
       <TD COLSPAN="2"></TD>
 <% } %>
     </TR>
-    <TR><TD COLSPAN="10" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
+    <TR><TD COLSPAN="12" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
   </TABLE>
 <% } else { out.write("<BR><BR>"); } // fi (gu_contact) %>
   
-  <DIV style="background-color:transparent; position: relative;width:600px;height:446px">
+  <DIV style="background-color:transparent; position: relative;width:700px;height:446px">
   <DIV id="p1panel0" class="panel" style="background-color:#eee;z-index:2">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
     <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
@@ -91,15 +95,18 @@
               <INPUT TYPE="hidden" NAME="bo_private" VALUE="<%=(sPrivate.length()>0 ? "1" : "0")%>">
               <INPUT TYPE="checkbox" NAME="chk_private" VALUE="1" <%=sPrivate%>>
               &nbsp;&nbsp;&nbsp;<FONT CLASS="formplain">Reference:</FONT>&nbsp;<INPUT TYPE="text" NAME="id_ref" MAXLENGTH="50" SIZE="20" VALUE="<%=oCont.getStringNull(DB.id_ref,"")%>" <% if (bContactAutoRefs) out.write("TABINDEX=\"-1\" onfocus=\"document.forms['fixedAttrs'].tx_name.focus()\""); %>>
+<%            if (!oCont.isNull(DB.url_facebook)) out.write("&nbsp;<A HREF=\""+oCont.getString(DB.url_facebook)+"\" TARGET=\"_blank\"><IMG SRC=\"../images/images/facebook.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\"></A>");
+              if (!oCont.isNull(DB.url_linkedin)) out.write("&nbsp;<A HREF=\""+oCont.getString(DB.url_linkedin)+"\" TARGET=\"_blank\"><IMG SRC=\"../images/images/linkedin.gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\"></A>");
+%>
             </TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">Name:</FONT></TD>
-            <TD ALIGN="left" WIDTH="420"><INPUT TYPE="text" NAME="tx_name" MAXLENGTH="50" SIZE="32" VALUE="<%=oCont.getStringNull(DB.tx_name,"")%>"></TD>
+            <TD ALIGN="left" WIDTH="420"><INPUT TYPE="text" NAME="tx_name" MAXLENGTH="50" SIZE="32" VALUE="<%=oCont.getStringHtml(DB.tx_name,"")%>"></TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">Surname</FONT></TD>
-            <TD ALIGN="left" WIDTH="420"><INPUT TYPE="text" NAME="tx_surname" MAXLENGTH="50" SIZE="32" VALUE="<%=oCont.getStringNull(DB.tx_surname,"")%>"></TD>
+            <TD ALIGN="left" WIDTH="420"><INPUT TYPE="text" NAME="tx_surname" MAXLENGTH="50" SIZE="32" VALUE="<%=oCont.getStringHtml(DB.tx_surname,"")%>"></TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Position:</FONT></TD>
@@ -120,9 +127,9 @@
           <TR>
             <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Division:</FONT></TD>
             <TD ALIGN="left" WIDTH="420">
-              <INPUT TYPE="text" NAME="tx_division" SIZE="20" MAXLENGTH="32" VALUE="<%=oCont.getStringNull(DB.tx_division,"")%>">
+              <INPUT TYPE="text" NAME="tx_division" SIZE="20" MAXLENGTH="32" VALUE="<%=oCont.getStringHtml(DB.tx_division,"")%>">
               &nbsp;&nbsp;<FONT CLASS="formplain">Department:</FONT>
-              <INPUT TYPE="text" NAME="tx_dept" SIZE="20" MAXLENGTH="32" VALUE="<%=oCont.getStringNull(DB.tx_dept,"")%>">
+              <INPUT TYPE="text" NAME="tx_dept" SIZE="20" MAXLENGTH="32" VALUE="<%=oCont.getStringHtml(DB.tx_dept,"")%>">
             </TD>
           </TR>                              
           <TR>
@@ -177,7 +184,10 @@
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Comments:</FONT></TD>
-            <TD ALIGN="left" WIDTH="420"><TEXTAREA NAME="tx_comments" ROWS="3" COLS="44"><%=oCont.getStringNull(DB.tx_comments,"")%></TEXTAREA></TD>
+            <TD ALIGN="left" WIDTH="420">
+            	<TEXTAREA NAME="tx_comments" ROWS="1" COLS="44"><%=oCont.getStringHtml(DB.tx_comments,"")%></TEXTAREA>
+              <DIV STYLE="display:none"><TEXTAREA NAME="areas_interes" ROWS="1" COLS="44"><%=loadInterest(oConn,DB.k_contacts_attrs, gu_contact )%></TEXTAREA></DIV>
+            </TD>
           </TR>
           <TR>
     	    <TD COLSPAN="2"><HR></TD>

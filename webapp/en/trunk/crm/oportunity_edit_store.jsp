@@ -1,7 +1,6 @@
-<%@ page import="java.text.SimpleDateFormat,java.text.ParseException,java.util.Date,java.util.StringTokenizer,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.Timestamp,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.*,com.knowgate.addrbook.Meeting,com.knowgate.misc.Gadgets,com.knowgate.http.portlets.HipergatePortletConfig" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.text.SimpleDateFormat,java.text.ParseException,java.util.Date,java.util.StringTokenizer,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.Timestamp,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.*,com.knowgate.addrbook.Meeting,com.knowgate.misc.Gadgets,com.knowgate.http.portlets.HipergatePortletConfig,com.knowgate.scheduler.Event,com.knowgate.workareas.WorkArea" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/customattrs.jspf" %>
-<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
-<%
+<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -59,14 +58,16 @@
   JDCConnection oConn = null;  
   ResultSet oRSet;
   
-  com.knowgate.crm.Oportunity oOprt = new com.knowgate.crm.Oportunity();    
+  Oportunity oOprt = new Oportunity();
   
   try {
 
     oConn = GlobalDBBind.getConnection("oportunitystore");
 
+    oOprt.allcaps(WorkArea.allCaps(oConn, gu_workarea));
+		
     loadRequest(oConn, request, oOprt);
-        
+    
     oConn.setAutoCommit (false);    
     
     if (gu_list.length()==0) {
@@ -76,7 +77,16 @@
       }
       oOprt.store(oConn);    
 
-      DBCommand.executeUpdate(oConn, "UPDATE k_oportunities SET dt_last_call = (SELECT MAX(dt_start) FROM k_oportunities AS s INNER JOIN k_phone_calls AS r ON  r.gu_oportunity = s.gu_oportunity AND k_oportunities.gu_oportunity = s.gu_oportunity WHERE s.gu_oportunity='"+oOprt.getString(DB.gu_oportunity)+"') WHERE gu_oportunity='"+oOprt.getString(DB.gu_oportunity)+"'");
+			Date dtStart = DBCommand.queryMaxDate(oConn, DB.dt_start,
+			                                      DB.k_oportunities+" AS s INNER JOIN "+DB.k_phone_calls+" AS r ON r.gu_oportunity = s.gu_oportunity",
+			                                      "s."+DB.gu_oportunity+"='"+oOprt.getString(DB.gu_oportunity)+"'");
+			if (dtStart!=null) {
+        PreparedStatement oUlc = oConn.prepareStatement("UPDATE k_oportunities SET dt_last_call = ? WHERE gu_oportunity=?");
+        oUlc.setTimestamp(1, new Timestamp(dtStart.getTime()));
+        oUlc.setString(2, oOprt.getString(DB.gu_oportunity));
+        oUlc.executeUpdate();
+        oUlc.close();
+      }
 
 			if (!id_status.equals(id_former_status)) {
 				PreparedStatement oClog = oConn.prepareStatement("INSERT INTO k_oportunities_changelog (gu_oportunity,nm_column,dt_modified,gu_writer,id_former_status,id_new_status,tx_value) VALUES (?,'id_status',?,?,?,?,?)");
@@ -93,6 +103,9 @@
       storeAttributes (request, GlobalCacheClient, oConn, DB.k_oportunities_attrs, gu_workarea, oOprt.getString(DB.gu_oportunity));
 
       DBAudit.log(oConn, com.knowgate.crm.Oportunity.ClassId, sOpCode, id_user, oOprt.getString(DB.gu_oportunity), null, 0, 0, oOprt.getStringNull(DB.tl_oportunity,""), null);    
+    
+      Event.trigger(oConn, Integer.parseInt(id_domain), sOpCode, oOprt, GlobalDBBind.getProperties());
+
     }
     else {
       DistributionList oList = new DistributionList(oConn, gu_list);
@@ -112,7 +125,7 @@
         oCont.setString(1, sContactId);
         oRSet = oCont.executeQuery(); 
 
-	if (oRSet.next()) {
+	      if (oRSet.next()) {
           sCompanyId = oRSet.getString(1);
           if (oRSet.wasNull())  {
             oOprt.remove(DB.gu_company);
@@ -132,20 +145,23 @@
           
         oRSet.close();
 
-	if (null!=sCompanyId) {
+	      if (null!=sCompanyId) {
           oComp.setString(1, sCompanyId);
           oRSet = oComp.executeQuery(); 
-	  oRSet.next();
+	        oRSet.next();
           oOprt.replace(DB.gu_company, sCompanyId);
           oOprt.replace(DB.tx_company, oRSet.getString(1));
           oRSet.close();	  
-	}
+	      }
 	
-        oOprt.replace(DB.gu_oportunity, Gadgets.generateUUID());    
+        oOprt.replace(DB.gu_oportunity, Gadgets.generateUUID());
 
         oOprt.store(oConn);
+
         storeAttributes (request, GlobalCacheClient, oConn, DB.k_oportunities_attrs, gu_workarea, oOprt.getString(DB.gu_oportunity));
+
         DBAudit.log(oConn, com.knowgate.crm.Oportunity.ClassId, sOpCode, id_user, oOprt.getString(DB.gu_oportunity), null, 0, 0, oOprt.getStringNull(DB.tl_oportunity,""), null);
+
       } // wend
       
       oComp.close();

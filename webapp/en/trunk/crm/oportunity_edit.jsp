@@ -1,4 +1,4 @@
-<%@ page import="java.util.Date,java.text.SimpleDateFormat,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Date,java.text.SimpleDateFormat,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets,com.knowgate.workareas.WorkArea" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/customattrs.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%
@@ -72,6 +72,9 @@
   String sDtCreated = "";
   String sDtModified = "";
   String sTxEMails = "";
+  /*Inicio 2009-12-15*/
+  String tx_nickname ="";
+  /* Fin I2E*/
   int iNuEMails = 0;
  
   String sToday = DBBind.escape(new java.util.Date(), "shortDate").trim();
@@ -82,10 +85,13 @@
   ResultSet oRSet = null;
   boolean bLoaded = false;
   boolean bIsGuest = true;
+  boolean bAllCaps = false;
   boolean bHasMailAccount = false;
   
   try {    
     bIsGuest = isDomainGuest (GlobalCacheClient, GlobalDBBind, request, response);
+    
+    bAllCaps = WorkArea.allCaps(oConn, gu_workarea);
     
     if (gu_oportunity.length()>0) {
       Object aOprt[] = { gu_oportunity };
@@ -123,11 +129,11 @@
       Object aComp[] = { gu_company };
       oComp.load(oConn, aComp);
     }
-        
-    sStatusLookUp = DBLanguages.getHTMLSelectLookUp (oConn, "k_oportunities_lookup", gu_workarea, DB.id_status, sLanguage);
-    sOriginLookUp = DBLanguages.getHTMLSelectLookUp (oConn, "k_oportunities_lookup", gu_workarea, DB.tp_origin, sLanguage);
-    sObjectiveLookUp = DBLanguages.getHTMLSelectLookUp (oConn, "k_oportunities_lookup", gu_workarea, DB.id_objetive, sLanguage);
-    sCauseLookUp = DBLanguages.getHTMLSelectLookUp (oConn, "k_oportunities_lookup", gu_workarea, DB.tx_cause, sLanguage);
+
+    sStatusLookUp = DBLanguages.getHTMLSelectLookUp (oConn, DB.k_oportunities_lookup, gu_workarea, DB.id_status, sLanguage);
+    sOriginLookUp = DBLanguages.getHTMLSelectLookUp (oConn, DB.k_oportunities_lookup, gu_workarea, DB.tp_origin, sLanguage);
+    sObjectiveLookUp = DBLanguages.getHTMLSelectLookUp (oConn, DB.k_oportunities_lookup, gu_workarea, DB.id_objetive, sLanguage);
+    sCauseLookUp = DBLanguages.getHTMLSelectLookUp (oConn, DB.k_oportunities_lookup, gu_workarea, DB.tx_cause, sLanguage);
 
 		DBSubset oSalesMen = new DBSubset (DB.k_sales_men+" m,"+DB.k_users+" u",
 		                                   "m."+DB.gu_sales_man+",u."+DB.nm_user+",u."+DB.tx_surname1+",u."+DB.tx_surname2,
@@ -149,7 +155,27 @@
     oConn.setAutoCommit (true);
 
     com.knowgate.http.portlets.HipergatePortletConfig.touch(oConn, id_user, "com.knowgate.http.portlets.OportunitiesTab", gu_workarea);
+    
+    /* Inicio I2E 2009-12-15*/
+    String gu_writer = null;
+    try{
+    	gu_writer=oOprt.getString(DB.gu_writer);
+    }catch(Exception e){}
+    
+   	if(gu_writer!=null){
+	    oStmt = oConn.prepareStatement("SELECT " +  DB.tx_nickname + " FROM " + DB.k_users + " WHERE " + DB.gu_user + "=?");
+	    oStmt.setString(1, gu_writer);
+	    oRSet = oStmt.executeQuery();
+	    oRSet.next();
+	    tx_nickname = oRSet.getString(1);
+	    oRSet.close();
+	    oRSet = null;
+	    oStmt.close();
+	    oStmt = null;
+   	}
+    /* Fin I2E*/
 
+    sendUsageStats(request, "oportunity_edit"); 
   }
   catch (SQLException e) {  
     if (oConn!=null)
@@ -166,17 +192,17 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//<%=sLanguage.toUpperCase()%>">
 <HTML LANG="<%=sLanguage.toUpperCase()%>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/datefuncs.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/simplevalidations.js"></SCRIPT>    
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>      
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>    
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>      
   <TITLE>hipergate :: Edit Opportunity</TITLE>
 
-    <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript">
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
       <!--        
         function lookup(odctrl) {
         
@@ -395,7 +421,7 @@
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()">
 <FORM NAME="fixedAttrs" METHOD="post" ACTION="oportunity_edit_store.jsp" onSubmit="return validate()">
-  <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
+  <DIV class="cxMnu1" style="width:300px"><DIV class="cxMnu2">
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
@@ -432,6 +458,17 @@
         	  <TD COLSPAN="4"></TD>
         </TR>
 <% } %>
+	<%/** Inicio I2E 20-01-2010 **/ %>
+	    <TR HEIGHT="18">
+        	  <TD><IMG SRC="../images/images/training/diploma16.gif" HEIGHT="16" WIDTH="16" BORDER="0" ALT="View Admission"></TD>
+        	  <TD><A HREF="admission_edit.jsp?id_domain=<%=id_domain%>&n_domain=<%=Gadgets.URLEncode(n_domain)%>&gu_workarea=<%=gu_workarea%>&gu_contact=<%=gu_contact%>&gu_oportunity=<%=gu_oportunity%>" CLASS="linkplain">Show Admission</A></TD>
+        	  <TD WIDTH="8"></TD>
+        	  <%/** Inicio I2E 01-02-2010 **/ %>
+        	  <TD><IMG SRC="../images/images/training/student16.gif" HEIGHT="16" WIDTH="16" BORDER="0" ALT="View Registration"></TD>
+        	  <TD><A HREF="../training/registration_edit.jsp?id_domain=<%=id_domain%>&n_domain=<%=Gadgets.URLEncode(n_domain)%>&gu_workarea=<%=gu_workarea%>&gu_contact=<%=gu_contact%>&gu_oportunity=<%=gu_oportunity%>" CLASS="linkplain">Show Enrollment</A></TD>
+        	  <%/** Fin I2E **/ %>
+        </TR>
+      <%/** Fin I2E **/ %>
       </TABLE>
   <DIV style="background-color:transparent; position: relative;width:600px;height:496px">
   <DIV id="p1panel0" class="panel" style="background-color:#eee;z-index:2">
@@ -470,6 +507,20 @@
               </I>
             </TD>
           </TR>
+		  <!-- Inicio I2E 2009-12-15 -->	         
+          <TR>
+          	<TD colspan="2">
+	          	<TABLE>
+	          	<TR>
+		          	<TD ALIGN="right" WIDTH="175"><FONT CLASS="formplain">Responsible</FONT></TD>
+		            <TD ALIGN="left" WIDTH="420" CLASS="formplain"><%=tx_nickname%></TD>
+		            <TD ALIGN="right" WIDTH="175"><FONT CLASS="formplain">[~Fecha~]</FONT></TD>
+		            <TD ALIGN="left" WIDTH="420" CLASS="formplain"><%=sDtCreated%></TD>
+	            </TR>
+	            </TABLE>
+            </TD>
+          </TR>
+          <!-- Fin I2E -->
 <% if (0==gu_oportunity.length() || oOprt.getStringNull(DB.gu_writer,"").equals(id_user)) { %>
           <TR>            
             <TD ALIGN="right" WIDTH="175"><FONT CLASS="formstrong">Private:</FONT></TD>            
@@ -490,7 +541,9 @@
           </TR>
 <% } %>
           <TR>
-            <TD ALIGN="right" WIDTH="175"><FONT CLASS="formstrong">Objective:</FONT></TD>
+          <!-- Inicio I2E 2009-12-15 -->
+            <TD ALIGN="right" WIDTH="175"><FONT CLASS="formstrong">Interest Programme</FONT></TD>
+            <!-- Fin I2E -->
             <TD ALIGN="left" WIDTH="420">
               <SELECT NAME="sel_objetive" onChange="if (document.forms[0].tl_oportunity.value.length==0) document.forms[0].tl_oportunity.value=getComboText(document.forms[0].sel_objetive);"><OPTION VALUE=""></OPTION><%=sObjectiveLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Objectives List"></A>
               <INPUT TYPE="hidden" NAME="id_objetive" VALUE="<%=oOprt.getStringNull(DB.id_objetive,"")%>">
@@ -533,7 +586,7 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="175"><FONT CLASS="formplain">Origin:</FONT></TD>
+            <TD ALIGN="right" WIDTH="175"><FONT CLASS="formplain">Information Media</FONT></TD>
             <TD ALIGN="left" WIDTH="420">
               <SELECT NAME="sel_origin"><OPTION VALUE=""></OPTION><%=sOriginLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Origins List"></A>
               <INPUT TYPE="hidden" NAME="tp_origin" VALUE="<%=oOprt.getStringNull(DB.tp_origin,"")%>">

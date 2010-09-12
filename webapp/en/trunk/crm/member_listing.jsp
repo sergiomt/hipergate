@@ -37,39 +37,17 @@
   response.addHeader ("cache-control", "no-store");
   response.setIntHeader("Expires", 0);
 
-  // [~//obtener el idioma del navegador cliente~]
   String sLanguage = getNavigatorLanguage(request);
 
-  // [~//Obtener el skin actual~]
   String sSkin = getCookie(request, "skin", "default");
 
-  // [~//Resolucion de pantalla en el cliente~]
-  int iScreenWidth;
-  float fScreenRatio;
-
-  // [~//Obtener el dominio y la workarea~]
   String id_domain = getCookie(request,"domainid","");
   String n_domain = getCookie(request,"domainnm",""); 
-  String gu_workarea = getCookie(request,"workarea",""); 
+  String gu_workarea = getCookie(request,"workarea","");
   String gu_list = request.getParameter("gu_list");
   String de_list = request.getParameter("de_list");
-  String screen_width = request.getParameter("screen_width");
   String tp_list = null;
   String gu_blacklist = null;
-  
-  // [~//La resolución de pantalla debe pasarse como parámetro por JavaScript cliente~]
-  // [~//en caso de que el parámetro no exista, se asume 800x600~]
-  if (screen_width==null)
-    iScreenWidth = 800;
-  else if (screen_width.length()==0)
-    iScreenWidth = 800;
-  else
-    iScreenWidth = Integer.parseInt(screen_width);
-  
-  fScreenRatio = (float) iScreenWidth;
-  if (fScreenRatio<1) fScreenRatio=1;
-  
-  // [~//Cadena de de filtrado (claúsula WHERE)~]
         
   String sField = request.getParameter("field")==null ? "" : request.getParameter("field");
   String sFind = request.getParameter("find")==null ? "" : request.getParameter("find");
@@ -135,11 +113,10 @@
   HashMap oBlockMap = null;
   DBSubset oMembers = null;        
 
-  DistributionList oList;  
+  DistributionList oList = null;  
   Statement oStmt;
   ResultSet oRSet;
     
-  // [~//Obtener una conexión del pool a bb.dd. (el nombre de la conexión es arbitrario)~]
   JDCConnection oConn = null;  
   boolean bIsGuest = true;
     
@@ -151,8 +128,6 @@
     oList = new DistributionList(oConn, gu_list);
     
     tp_list = String.valueOf(oList.getShort(DB.tp_list));
-                
-    // [~//Si el filtro no existe devolver todos los registros~]
 
     if (sFind.length()==0) {
       oMembers = new DBSubset (DB.k_x_list_members + " b", 
@@ -162,7 +137,6 @@
       iMemberCount = oMembers.load (oConn, iSkip);
     }
     else {
-      // [~//Listados con filtro~]
 
       oMembers = new DBSubset (DB.k_x_list_members + " b", 
       			       "b." + DB.tx_surname + ", b." + DB.tx_name + ", b." + DB.tx_email + ", b." + DB.gu_company + ", b." + DB.gu_contact + ", b." + DB.bo_active,
@@ -222,20 +196,18 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: <%=de_list%>: members of distribution list</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/layer.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
-        // [~//Variables globales para traspasar la instancia clickada al menu contextual~]
         var jsInstanceId;
         var jsInstanceNm;
             
-<%
-          // [~//Escribir los nombres de instancias en Arrays JavaScript~]
-          // [~//Estos arrays se usan en las llamadas de borrado múltiple.~]
-          
+<%          
           out.write("        var jsInstances = new Array(");
             for (int i=0; i<iMemberCount; i++) {
               if (i>0) out.write(","); 
@@ -246,136 +218,130 @@
 
         // ----------------------------------------------------
         	
-	function createInstance() {	  
-	  // [~//Crear una nueva instancia del tipo de objeto listado~]
-	  self.open ("member_wizard_01.jsp?gu_list=<%=gu_list%>&id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>"), "editinstance", "directories=no,toolbar=no,menubar=no,top=" +  (screen.height-600)/2+ ",left=" + (screen.width-800)/2 + ",width=800,height=600,scrollbars=yes,toolbar=no,menubar=no");	  
-	} // createInstance()
+	      function createInstance() {	  
+	        self.open ("member_wizard_01.jsp?gu_list=<%=gu_list%>&id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>"), "editinstance", "directories=no,toolbar=no,menubar=no,top=" +  (screen.height-600)/2+ ",left=" + (screen.width-800)/2 + ",width=800,height=600,scrollbars=yes,toolbar=no,menubar=no");	  
+	      } // createInstance()
 
         // ----------------------------------------------------
 
-	function listEMails() {
-	  var offset = 0;
-	  var frm = document.forms[0];
-	  var chi = frm.checkeditems;
-
-          chi.value = "";	  	  
-  	  
-          for (var i=0;i<jsInstances.length; i++) {
-            while (frm.elements[offset].type!="checkbox") offset++;
-  	      if (frm.elements[offset].checked)
-              chi.value += jsInstances[i] + ",";
-            offset++;
-          } // next()
-
-          if (chi.value.length>0)
-            return chi.value.substr(0,chi.value.length-1);
-          else
-            return "";
-	      
-	}  // listEMails
+      	function listEMails() {
+      	  var offset = 0;
+      	  var frm = document.forms[0];
+      	  var chi = frm.checkeditems;
+      
+                chi.value = "";	  	  
+        	  
+                for (var i=0;i<jsInstances.length; i++) {
+                  while (frm.elements[offset].type!="checkbox") offset++;
+        	      if (frm.elements[offset].checked)
+                    chi.value += jsInstances[i] + ",";
+                  offset++;
+                } // next()
+      
+                if (chi.value.length>0)
+                  return chi.value.substr(0,chi.value.length-1);
+                else
+                  return "";
+      	      
+      	}  // listEMails
 	
         // ----------------------------------------------------
 	
-	function deleteMembers() {
-	  // [~//Borrar las instancias marcadas con checkboxes~]
-	  
-	  var frm = document.forms[0];
-	  	  
-	  if (window.confirm("Are you sure you want to delete selected members?")) {
-	  	  
-	    frm.checkeditems.value = listEMails();
-	    
-	    if (frm.checkeditems.value.length>0) {
-	      frm.action = "member_edit_delete.jsp";
-              frm.submit();
-            }
-
-          } // fi (confirm)
-	} // deleteMembers()
-
-        // ----------------------------------------------------
-	
-	function deactivateMembers() {
-	  // [~//Borrar las instancias marcadas con checkboxes~]
-	  
-	  var frm = document.forms[0];
-	  	  
-	  if (window.confirm("Are you sure you want to deactivate selected members?")) {
-	  	  
-	    frm.checkeditems.value = listEMails();
-	    
-	    if (frm.checkeditems.value.length>0) {
-	      frm.action = "member_edit_activate.jsp";
-              frm.submit();
-            }
-
-          } // fi (confirm)
-	} // deactivateMembers()
+      	function deleteMembers() {
+      	  
+      	  var frm = document.forms[0];
+      	  	  
+      	  if (window.confirm("Are you sure you want to delete selected members?")) {
+      	  	  
+      	    frm.checkeditems.value = listEMails();
+      	    
+      	    if (frm.checkeditems.value.length>0) {
+      	      frm.action = "member_edit_delete.jsp";
+                    frm.submit();
+                  }
+      
+                } // fi (confirm)
+      	} // deleteMembers()
 
         // ----------------------------------------------------
 	
-	function blockMembers() {
-	  // [~//Borrar las instancias marcadas con checkboxes~]
-	  
-	  var frm = document.forms[0];
-	  	  
-	  if (window.confirm("Are you sure you want to block selected mebers?")) {
-	  	  
-	    frm.checkeditems.value = listEMails();
-	    
-	    if (frm.checkeditems.value.length>0) {
-	      frm.action = "member_edit_block.jsp?de_list=" + getURLParam("de_list");
-              frm.submit();
-            }
+      	function deactivateMembers() {
+      	  
+      	  var frm = document.forms[0];
+      	  	  
+      	  if (window.confirm("Are you sure you want to deactivate selected members?")) {
+      	  	  
+      	    frm.checkeditems.value = listEMails();
+      	    
+      	    if (frm.checkeditems.value.length>0) {
+      	      frm.action = "member_edit_activate.jsp";
+                    frm.submit();
+                  }
+      
+                } // fi (confirm)
+      	} // deactivateMembers()
 
-          } // fi (confirm)
-	} // blockMembers()
+        // ----------------------------------------------------
+	
+      	function blockMembers() {
+      
+      	  
+      	  var frm = document.forms[0];
+      	  	  
+      	  if (window.confirm("Are you sure you want to block selected mebers?")) {
+      	  	  
+      	    frm.checkeditems.value = listEMails();
+      	    
+      	    if (frm.checkeditems.value.length>0) {
+      	      frm.action = "member_edit_block.jsp?de_list=" + getURLParam("de_list");
+                    frm.submit();
+                  }
+      
+                } // fi (confirm)
+      	} // blockMembers()
 	
         // ----------------------------------------------------
 
-	function modifyMember(id) {
-	  
-	  window.open ("member_edit.jsp?id_domain=" + getCookie("domainid") + "&gu_workarea=" + getCookie("workarea") + "&gu_list=" + getURLParam("gu_list") + "&de_list=" + getURLParam("de_list") + "&tp_list=<%=tp_list%>&gu_member=" + id, "editmember", "directories=no,toolbar=no,menubar=no,top=" + (screen.height-460)/2 + ",left=" + (screen.width-500)/2 + ",width=500,height=460");
-	}
+      	function modifyMember(id) {
+      	  
+      	  window.open ("member_edit.jsp?id_domain=" + getCookie("domainid") + "&gu_workarea=" + getCookie("workarea") + "&gu_list=" + getURLParam("gu_list") + "&de_list=" + getURLParam("de_list") + "&tp_list=<%=tp_list%>&gu_member=" + id, "editmember", "directories=no,toolbar=no,menubar=no,top=" + (screen.height-460)/2 + ",left=" + (screen.width-500)/2 + ",width=500,height=460");
+      	}
 
         // ----------------------------------------------------
 
-	function sortBy(fld) {
-	  // Ordenar por un campo
-	  
-	  window.location = "member_listing.jsp?gu_list=<%=gu_list%>&de_list=" + escape("<%=de_list%>") + "&id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=" + fld + "&field=<%=sField%>&find=<%=sFind%>" + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
-	}			
+      	function sortBy(fld) {
+      	  
+      	  window.location = "member_listing.jsp?gu_list=<%=gu_list%>&de_list=" + escape("<%=de_list%>") + "&id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=" + fld + "&field=<%=sField%>&find=<%=sFind%>" + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
+      	}			
 
         // ----------------------------------------------------
 
         function selectAll() {
-          // [~//Seleccionar/Deseleccionar todas las instancias~]
           
           var frm = document.forms[0];
           var offset = 0;
 
           while (frm.elements[offset].type!="checkbox") offset++;
           
-	  for (var i=0;i<jsInstances.length; i++) {
-    	    frm.elements[offset].checked = !frm.elements[offset].checked;
+	        for (var i=0;i<jsInstances.length; i++) {
+    	      frm.elements[offset].checked = !frm.elements[offset].checked;
             offset++;
-	  } // next()            
+	        } // next()            
                         
         } // selectAll()
        
        // ----------------------------------------------------
 	
-	function findInstance() {
-	  // [~//Recargar la página para buscar una instancia~]
-	  	  
-	  var frm = document.forms[0];
-	  
-	  if (frm.find.value.length>0)
-	    window.location = "member_listing.jsp?gu_list=<%=gu_list%>&de_list=<%=de_list%>&id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=<%=sOrderBy%>&field=" + getCombo(frm.sel_searched) + "&find=" + escape(frm.find.value);
-	  else
-	    window.location = "member_listing.jsp?gu_list=<%=gu_list%>&de_list=<%=de_list%>&id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=<%=sOrderBy%>";
-	  
-	} // findInstance()
+       	function findInstance() {
+       	  	  
+       	  var frm = document.forms[0];
+       	  
+       	  if (frm.find.value.length>0)
+       	    window.location = "member_listing.jsp?gu_list=<%=gu_list%>&de_list=<%=de_list%>&id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=<%=sOrderBy%>&field=" + getCombo(frm.sel_searched) + "&find=" + escape(frm.find.value);
+       	  else
+       	    window.location = "member_listing.jsp?gu_list=<%=gu_list%>&de_list=<%=de_list%>&id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=<%=sOrderBy%>";
+       	  
+       	} // findInstance()
 
         // ----------------------------------------------------
 
@@ -397,6 +363,18 @@
                           
           window.document.location = url;
         } // viewOnly        
+
+        // ----------------------------------------------------
+
+        function validate() {
+				  if (check_email(document.forms["memberdata"].tx_email.value)) {
+				    return true;
+				  } else {
+				  	alert ("El e-mail no es válido~]");
+				  	document.forms["memberdata"].tx_email.focus();
+				    return false;
+				  }
+        }
       
       // ------------------------------------------------------	
     //-->    
@@ -412,7 +390,6 @@
   </SCRIPT>
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()">
-    <!--%@ include file="../common/tabmenu.jspf" %-->
     <FORM METHOD="post">
       <TABLE WIDTH="100%"><TR><TD><IMG SRC="../skins/<%=sSkin%>/hglogopeq.jpg" BORDER="0" ALIGN="MIDDLE"></TD></TR></TABLE>  
       <TABLE WIDTH="100%"><TR><TD CLASS="striptitle"><FONT CLASS="title1"><%=de_list%>: members of distribution list</FONT></TD></TR></TABLE>
@@ -424,7 +401,7 @@
       <INPUT TYPE="hidden" NAME="where" VALUE="<%=sWhere%>">
       <INPUT TYPE="hidden" NAME="checkeditems">
       <INPUT TYPE="hidden" NAME="gu_list" value="<%=gu_list%>">
-      <INPUT TYPE="hidden" NAME="de_list" value="<%=de_list%>">
+      <INPUT TYPE="hidden" NAME="de_list" value="<%=Gadgets.HTMLEncode(de_list)%>">
       <TABLE CELLSPACING="2" CELLPADDING="2">
       <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       <TR>
@@ -494,7 +471,12 @@
 	<TR>
           <TD VALIGN="bottom">&nbsp;<IMG SRC="../images/images/crm/member_load.gif" BORDER="0" WIDTH="24" HEIGHT="24" ALT="Combine with another list"></TD>
           <TD COLSPAN="3" VALIGN="middle"><A HREF="list_merge.jsp?id_domain?<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_list=<%=gu_list%>" CLASS="linkplain">Combine with another list</A></TD>
+<% if (oList.getShort(DB.tp_list)==DistributionList.TYPE_DIRECT) { %>
+          <TD><IMG SRC="../images/images/crm/newmember.gif" WIDTH="22" HEIGHT="22" BORDER="0" ALT="Add Member"></TD>
+          <TD COLSPAN="2"><A HREF="#" onclick="showLayer('newmember')" CLASS="linkplain">Add Member</A></TD>
+<% } else { %>
           <TD COLSPAN="4"></TD>
+<% } %>
 	</TR>
         <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       </TABLE>
@@ -502,7 +484,6 @@
         <TR>
           <TD COLSPAN="3" ALIGN="left">
 <%
-    	  // [~//Pintar los enlaces de siguiente y anterior~]
     
           if (iSkip>0) // [~//Si iSkip>0 entonces hay registros anteriores~]
             out.write("            <A HREF=\"member_listing.jsp?gu_list=" + gu_list + "&de_list=" + Gadgets.URLEncode(de_list) + "&id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
@@ -612,6 +593,37 @@
         </TR>
       </TABLE>
     </DIV>
-    <!-- /RightMenuBody -->    
+    <!-- /RightMenuBody -->
+    <DIV id="newmember" STYLE="visibility:hidden;position:absolute;top:180;left:240;width:200;height:200;">
+    <FORM ID="memberdata" METHOD="post" ACTION="list_member_add.jsp" onsubmit="return validate()">
+    <INPUT TYPE="hidden" NAME="gu_list" value="<%=gu_list%>">
+    <INPUT TYPE="hidden" NAME="de_list" value="<%=Gadgets.HTMLEncode(de_list)%>">
+    <TABLE CLASS="formback">
+      <TR><TD>
+        <TABLE WIDTH="100%" CLASS="formfront">
+          <TR>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">e-mail</FONT></TD>
+            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="tx_email" MAXLENGTH="100" SIZE="50"></TD>
+          </TR>
+          <TR>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Name</FONT></TD>
+            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="tx_name" MAXLENGTH="100" SIZE="50"></TD>
+          </TR>
+          <TR>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Surname</FONT></TD>
+            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="tx_surname" MAXLENGTH="100" SIZE="50"></TD>
+          </TR>
+          <TR>
+    	    <TD COLSPAN="2" ALIGN="center">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" TITLE="ALT+c" onclick="hideLayer('newmember')">
+    	      <BR><BR>
+    	    </TD>
+    	  </TR>            
+        </TABLE>
+      </TD></TR>
+    </TABLE>
+    </FORM>
+    </DIV>
 </BODY>
 </HTML>

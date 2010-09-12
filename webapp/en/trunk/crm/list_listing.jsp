@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.crm.DistributionList,com.knowgate.hipergate.Category,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%
@@ -64,10 +64,16 @@
   String sField = request.getParameter("field")==null ? "" : request.getParameter("field");
   String sFind = request.getParameter("find")==null ? "" : request.getParameter("find");
   String sWhere = request.getParameter("where")==null ? "" : request.getParameter("where");
+  String sCateg = request.getParameter("categ")==null ? "" : request.getParameter("categ");
   boolean bHasAccounts = false;
-        
+  String sGuRootCategory = null;    
   int iListCount = 0;
-  DBSubset oLists = null;        
+  DBSubset oLists = null;
+  DBSubset oCatgs = new DBSubset (DB.k_cat_expand + " e," + DB.k_categories + " c",
+                                  "e." + DB.gu_category + ",c." + DB.nm_category + ",e." + DB.od_level + ",e." + DB.od_walk + ",e." + DB.gu_parent_cat + ",'' AS "+DB.tr_+sLanguage,
+    				                      "e." + DB.gu_category + "=c." + DB.gu_category + " AND "+
+    				                      "e." + DB.od_level + ">1 AND e." + DB.gu_rootcat + "=? AND e." + DB.gu_parent_cat + " IS NOT NULL ORDER BY e." + DB.od_walk, 50);
+  int iCatgs = 0;
   Object[] aFind = { '%' + sFind + '%' };
   String sOrderBy;
   int iOrderBy;  
@@ -107,7 +113,7 @@
     bIsGuest = isDomainGuest (GlobalCacheClient, GlobalDBBind, request, response);
     
     oConn = GlobalDBBind.getConnection("listlisting");
-
+		
     PreparedStatement oStmt = oConn.prepareStatement("SELECT NULL FROM "+DB.k_user_mail+" WHERE "+DB.gu_user+"=?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
     oStmt.setString(1, id_user);
     ResultSet oRSet = oStmt.executeQuery();
@@ -115,40 +121,94 @@
     oRSet.close();
     oStmt.close();
 
-    if (sFind.length()==0) {
-      oLists = new DBSubset (DB.k_lists, 
-      			     "gu_list,tp_list,gu_query,tx_subject,de_list",
-      		             DB.tp_list + "<>" + String.valueOf(DistributionList.TYPE_BLACK) + " AND " + DB.gu_workarea + "='" + gu_workarea + "' " + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);      				 
-      oLists.setMaxRows(iMaxRows);
-      iListCount = oLists.load (oConn, iSkip);
+		sGuRootCategory = Category.getIdFromName(oConn, n_domain+"_apps_sales_lists_"+gu_workarea);
+    if (null==sGuRootCategory) {
+			oConn.setAutoCommit(false);
+		  String sGuSalesCategory = Category.getIdFromName(oConn, n_domain+"_apps_sales");
+    	Category oRootCat = new Category();
+    	oRootCat.put(DB.gu_owner, DBCommand.queryStr(oConn, "SELECT "+DB.gu_owner+" FROM "+DB.k_domains+" WHERE "+DB.id_domain+"="+id_domain));
+    	oRootCat.put(DB.nm_category, n_domain+"_apps_sales_lists_"+gu_workarea);
+      oRootCat.put(DB.bo_active, (short) 1);
+      oRootCat.put(DB.id_doc_status, (short) 1);
+      oRootCat.put(DB.len_size, 0);
+      oRootCat.store(oConn);
+      if (sGuSalesCategory!=null) {
+        DBCommand.executeUpdate(oConn, "INSERT INTO "+DB.k_cat_tree+" ("+DB.gu_parent_cat+","+DB.gu_child_cat+") VALUES ('"+sGuSalesCategory+"','"+oRootCat.getString(DB.gu_category)+"')");
+      }
+      oConn.commit();
+    } else {
+      iCatgs = oCatgs.load(oConn, new Object[]{sGuRootCategory});
+      Category oCatg = new Category();
+      for (int l=0; l<iCatgs; l++) {
+        oCatg.replace (DB.gu_category, oCatgs.getString(0,l));
+        oCatgs.setElementAt(nullif(oCatg.getLabel(oConn, sLanguage), oCatgs.getString(1,l)), 5, l); 
+      } // next
+    } // fi
+
+    if (sCateg.length()>0) {
+
+      DBSubset oChlds = new DBSubset (DB.k_cat_expand, DB.gu_category, DB.gu_rootcat+"=?", 20);
+      int iChlds = oChlds.load(oConn, new Object[]{sCateg});
+      sCateg = "'"+sCateg+"'";
+      for (int c=0; c<iChlds; c++) {
+        sCateg += ",'"+oChlds.getString(0,c)+"'";
+      }
+
+      if (sFind.length()==0) {
+        oLists = new DBSubset (DB.k_lists+" l,"+DB.k_x_cat_objs+" c", 
+      			                   "l.gu_list,l.tp_list,l.gu_query,l.tx_subject,l.de_list",
+      			                   "l."+DB.gu_list+"=c."+DB.gu_object+" AND c."+DB.id_class+"="+String.valueOf(DistributionList.ClassId)+" AND "+
+      			                   "c."+DB.gu_category+" IN ("+sCateg+") AND "+
+      		                     "l."+DB.tp_list + "<>" + String.valueOf(DistributionList.TYPE_BLACK) + " AND l." + DB.gu_workarea + "='" + gu_workarea + "' " + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
+        oLists.setMaxRows(iMaxRows);
+        iListCount = oLists.load (oConn, iSkip);
+      }
+      else {
+        oLists = new DBSubset (DB.k_lists+" l,"+DB.k_x_cat_objs+" c",
+      			                   "l.gu_list,l.tp_list,l.gu_query,l.tx_subject,l.de_list",
+      			                   "l."+DB.gu_list+"=c."+DB.gu_object+" AND c."+DB.id_class+"="+String.valueOf(DistributionList.ClassId)+" AND "+
+      			                   "c."+DB.gu_category+" IN ("+sCateg+") AND "+
+      		                     "l."+DB.tp_list + "<>" + String.valueOf(DistributionList.TYPE_BLACK) + " AND l." + DB.gu_workarea + "='" + gu_workarea + "' AND " + sField + " " + DBBind.Functions.ILIKE + " ? " + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);      				 
+        oLists.setMaxRows(iMaxRows);
+        iListCount = oLists.load (oConn, new Object[] { "%" + sFind +"%" }, iSkip);
+      }
+    } else {
+      if (sFind.length()==0) {
+        oLists = new DBSubset (DB.k_lists, 
+      			                   "gu_list,tp_list,gu_query,tx_subject,de_list",
+      		                     DB.tp_list + "<>" + String.valueOf(DistributionList.TYPE_BLACK) + " AND " + DB.gu_workarea + "='" + gu_workarea + "' " + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
+        oLists.setMaxRows(iMaxRows);
+        iListCount = oLists.load (oConn, iSkip);
+      }
+      else {
+        oLists = new DBSubset (DB.k_lists, 
+      			                   "gu_list,tp_list,gu_query,tx_subject,de_list",
+      		                     DB.tp_list + "<>" + String.valueOf(DistributionList.TYPE_BLACK) + " AND " + DB.gu_workarea + "='" + gu_workarea + "' AND " + sField + " " + DBBind.Functions.ILIKE + " ? " + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);      				 
+        oLists.setMaxRows(iMaxRows);
+        iListCount = oLists.load (oConn, new Object[] { "%" + sFind +"%" }, iSkip);
+      }
     }
-    else {
-      oLists = new DBSubset (DB.k_lists, 
-      			     "gu_list,tp_list,gu_query,tx_subject,de_list",
-      		             DB.tp_list + "<>" + String.valueOf(DistributionList.TYPE_BLACK) + " AND " + DB.gu_workarea + "='" + gu_workarea + "' AND " + sField + " " + DBBind.Functions.ILIKE + " ? " + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);      				 
-      oLists.setMaxRows(iMaxRows);
-      iListCount = oLists.load (oConn, new Object[] { "%" + sFind +"%" }, iSkip);
-    }
-    
+
     oConn.close("listlisting"); 
   }
   catch (SQLException e) {  
     oLists = null;
     oConn.close("listlisting");
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_back"));
+    return;
   }
-  oConn = null;  
-%>
+  oConn = null;
+  sendUsageStats(request, "list_listing");   
 
-<HTML LANG="<% out.write(sLanguage); %>">
+%><HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>  
 
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript">
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" >
     dynapi.library.setPath('../javascript/dynapi3/');
     dynapi.library.include('dynapi.api.DynLayer');
   </SCRIPT>
@@ -164,7 +224,7 @@
       menuLayer.setHTML(rightMenuHTML);
     }
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
 
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
@@ -187,50 +247,50 @@
 
         // ----------------------------------------------------
         	
-	function createList() {	  	  
-	  self.open ("list_wizard_01.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>" , "listwizard", "directories=no,scrollbars=yes,toolbar=no,menubar=no,top=" + (screen.height-420)/2 + ",left=" + (screen.width-420)/2 + ",width=420,height=420");	  
-	} // createList()
+	      function createList() {	  	  
+	        self.open ("list_wizard_01.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>" , "listwizard", "directories=no,scrollbars=yes,toolbar=no,menubar=no,top=" + (screen.height-420)/2 + ",left=" + (screen.width-420)/2 + ",width=420,height=420");	  
+	      } // createList()
 
         // ----------------------------------------------------
 	
-	function deleteLists() {	  
-	  var offset = 0;
-	  var frm = document.forms[0];
-	  var chi = frm.checkeditems;
-	  	  
-	  if (window.confirm("Are you sure you want to delete selected lists?á certo de")) {
-	  	  
-	    chi.value = "";	  	  
-	    
-	    frm.action = "list_edit_delete.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
-	  	  
-	    for (var i=0;i<jsLists.length; i++) {
-              while (frm.elements[offset].type!="checkbox") offset++;
-    	      if (frm.elements[offset].checked)
-                chi.value += jsLists[i] + ",";
-              offset++;
-	    } // next()
-
-	    if (chi.value.length>0) {
-	      chi.value = chi.value.substr(0,chi.value.length-1);
-              frm.submit();
-            } // fi(chi!="")
-          } // fi (confirm)
-	} // deleteLists()
+	      function deleteLists() {	  
+	        var offset = 0;
+	        var frm = document.forms[0];
+	        var chi = frm.checkeditems;
+	        	  
+	        if (window.confirm("Are you sure you want to delete selected lists?á certo de")) {
+	        	  
+	          chi.value = "";	  	  
+	          
+	          frm.action = "list_edit_delete.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
+	        	  
+	          for (var i=0;i<jsLists.length; i++) {
+                    while (frm.elements[offset].type!="checkbox") offset++;
+          	      if (frm.elements[offset].checked)
+                      chi.value += jsLists[i] + ",";
+                    offset++;
+	          } // next()
+        
+	          if (chi.value.length>0) {
+	            chi.value = chi.value.substr(0,chi.value.length-1);
+                    frm.submit();
+                  } // fi(chi!="")
+                } // fi (confirm)
+	      } // deleteLists()
 	
         // ----------------------------------------------------
 
-	function modifyList(id,nm) {	  
-	  self.open ("list_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_list=" + id + "&n_list=" + escape(nm), "editlist", "directories=no,toolbar=no,menubar=no,top=" + (screen.height-420)/2 + ",left=" + (screen.width-600)/2 + ",width=600,height=480");
-	}	
+	      function modifyList(id,nm) {	  
+	        self.open ("list_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_list=" + id + "&n_list=" + escape(nm), "editlist", "directories=no,toolbar=no,menubar=no,top=" + (screen.height-420)/2 + ",left=" + (screen.width-600)/2 + ",width=600,height=480");
+	      }	
 
         // ----------------------------------------------------
 
-	function sortBy(fld) {
-	  // Ordenar por un campo
-	  
-	  window.location = "list_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=" + fld + "&field=<%=sField%>&find=<%=sFind%>" + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
-	}			
+	      function sortBy(fld) {
+	        // Ordenar por un campo
+	        
+	        window.location = "list_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=" + fld + "&field=<%=sField%>&find=<%=sFind%>" + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&categ=" + (frm.sel_category.selectedIndex<=0 ? "" : frm.sel_category.options[frm.sel_category.selectedIndex].value) + "&maxrows=" + document.forms[0].maxrows.value;
+	      }
 
         // ----------------------------------------------------
 
@@ -245,54 +305,54 @@
        
        // ----------------------------------------------------
 	
-	function findList() {	  	  
-	  var frm = document.forms[0];
-
-	  if (frm.find.value!="")
-	    window.location = "list_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=<%=sOrderBy%>&field=tx_subject&find=" + escape(frm.find.value) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&maxrows=" + document.forms[0].maxrows.value;
-          else
-	    window.location = "list_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=<%=sOrderBy%>&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&maxrows=" + document.forms[0].maxrows.value;
-	} // findList()
-
-       // ----------------------------------------------------
-	
-	function editMembers(id,de) {
-          if (jsListTp==<% out.write(String.valueOf(DistributionList.TYPE_STATIC)); %> || jsListTp==<% out.write(String.valueOf(DistributionList.TYPE_DIRECT)); %>)
-            window.open('member_listing.jsp?gu_list=' + id + '&de_list=' + escape(de),'wMembers','height=' + (screen.height>600 ? '600' : '520') + ',width= ' + (screen.width>800 ? '800' : '760') + ',scrollbars=yes,toolbar=no,menubar=no');
-          else if (jsListTp==<% out.write(String.valueOf(DistributionList.TYPE_DYNAMIC)); %>)
-            window.open('../common/qbf.jsp?caller=list_listing.jsp&queryspec=listmember&caller=list_listing.jsp?gu_list=' + id + '&de_title=' + escape('Consulta de Miembros: ' + de) + '&queryspec=listmember&queryid=' + jsListQr,'wMemberList','height=' + (screen.height>600 ? '600' : '520') + ',width= ' + (screen.width>800 ? '800' : '760') + ',scrollbars=yes,toolbar=no,menubar=no');
-        }
+	     function findList() {	  	  
+	       var frm = document.forms[0];
+       
+	       if (frm.find.value!="")
+	         window.location = "list_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=<%=sOrderBy%>&field=tx_subject&find=" + escape(frm.find.value) + "&categ=" + (frm.sel_category.selectedIndex<=0 ? "" : frm.sel_category.options[frm.sel_category.selectedIndex].value) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&maxrows=" + document.forms[0].maxrows.value;
+         else
+	         window.location = "list_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=<%=sOrderBy%>&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&categ=" + (frm.sel_category.selectedIndex<=0 ? "" : frm.sel_category.options[frm.sel_category.selectedIndex].value) + "&maxrows=" + document.forms[0].maxrows.value;
+	     } // findList()
 
        // ----------------------------------------------------
 	
-	function exportMembers(id) {
-            window.open('list_members_csv.jsp?gu_list=' + id);
-        }
+	     function editMembers(id,de) {
+         if (jsListTp==<% out.write(String.valueOf(DistributionList.TYPE_STATIC)); %> || jsListTp==<% out.write(String.valueOf(DistributionList.TYPE_DIRECT)); %>)
+           window.open('member_listing.jsp?gu_list=' + id + '&de_list=' + escape(de),'wMembers','height=' + (screen.height>600 ? '600' : '520') + ',width= ' + (screen.width>800 ? '800' : '760') + ',scrollbars=yes,toolbar=no,menubar=no');
+         else if (jsListTp==<% out.write(String.valueOf(DistributionList.TYPE_DYNAMIC)); %>)
+           window.open('../common/qbf.jsp?caller=list_listing.jsp&queryspec=listmember&caller=list_listing.jsp?gu_list=' + id + '&de_title=' + escape('Consulta de Miembros: ' + de) + '&queryspec=listmember&queryid=' + jsListQr,'wMemberList','height=' + (screen.height>600 ? '600' : '520') + ',width= ' + (screen.width>800 ? '800' : '760') + ',scrollbars=yes,toolbar=no,menubar=no');
+       }
 
        // ----------------------------------------------------
 	
-	function editQuery(id,de) {
-          if (jsListTp==<% out.write(String.valueOf(DistributionList.TYPE_DYNAMIC)); %>)
-            window.open('../common/qbf.jsp?caller=list_listing.jsp&queryspec=listmember&caller=list_listing.jsp?gu_list=' + id + '&de_title=' + escape('Consulta de Miembros: ' + de) + '&queryspec=listmember&queryid=' + jsListQr,'wMemberQuery','height=' + (screen.height>600 ? '600' : '520') + ',width= ' + (screen.width>800 ? '800' : '760') + ',scrollbars=yes,toolbar=no,menubar=no');
-        }
+	     function exportMembers(id) {
+         window.open('list_members_csv.jsp?gu_list=' + id);
+       }
 
        // ----------------------------------------------------
 	
-	function mergeMembers(id,de) {
+	     function editQuery(id,de) {
+         if (jsListTp==<% out.write(String.valueOf(DistributionList.TYPE_DYNAMIC)); %>)
+           window.open('../common/qbf.jsp?caller=list_listing.jsp&queryspec=listmember&caller=list_listing.jsp?gu_list=' + id + '&de_title=' + escape('Consulta de Miembros: ' + de) + '&queryspec=listmember&queryid=' + jsListQr,'wMemberQuery','height=' + (screen.height>600 ? '600' : '520') + ',width= ' + (screen.width>800 ? '800' : '760') + ',scrollbars=yes,toolbar=no,menubar=no');
+       }
+
+       // ----------------------------------------------------
+	
+	     function mergeMembers(id,de) {
           if (isRightMenuOptionEnabled(3)) {
             window.open('list_merge.jsp?id_domain=' + getCookie('domainid') + '&gu_workarea=' + getCookie('workarea') + '&gu_list=' + id + '&de_list=' + escape(de),'wListMerge','height=460,width=600,scrollbars=yes,toolbar=no,menubar=no');
           }
-        }
+       }
 
       // ----------------------------------------------------
         	
-	function createOportunity (id,de) {	  
+	    function createOportunity (id,de) {	  
 <% if (bIsGuest) { %>
         alert("Your credential level as Guest does not allow you to perform this action");
 <% } else { %>
-	  self.open ("oportunity_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>&gu_list=" + id + "&de_list=" + escape(de), "createoportunity", "directories=no,toolbar=no,menubar=no,width=640,height=560");	  
+	      self.open ("oportunity_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>&gu_list=" + id + "&de_list=" + escape(de), "createoportunity", "directories=no,toolbar=no,menubar=no,width=640,height=560");	  
 <% } %>
-	} // createOportunity()
+	    } // createOportunity()
 
       // ------------------------------------------------------
 
@@ -348,7 +408,6 @@
       var winclone;
       
       function findCloned() {
-        // [~//Funcion temporizada que se llama cada 100 milisegundos para ver si ha terminado el clonado~]
         
         if (winclone.closed) {
           clearInterval(intervalId);
@@ -371,10 +430,11 @@
   </SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
-	function setCombos() {
-	  setCookie ("maxrows", "<%=iMaxRows%>");
-	  setCombo(document.forms[0].maxresults, "<%=iMaxRows%>");
-	} // setCombos()  
+	  function setCombos() {
+	    setCookie ("maxrows", "<%=iMaxRows%>");
+	    setCombo(document.forms[0].maxresults, "<%=iMaxRows%>");
+	    setCombo(document.forms[0].sel_category, "<%=nullif(request.getParameter("categ"))%>");
+	  } // setCombos()  
     //-->    
   </SCRIPT>  
   <TITLE>hipergate :: Distribution Lists</TITLE>
@@ -412,8 +472,7 @@
         </TD>
         <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Find List"></TD>
         <TD VALIGN="middle">
-          <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>">
-	  &nbsp;<A HREF="javascript:findList()" CLASS="linkplain" TITLE="Search">Search</A>	  
+          <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>"&nbsp;<A HREF="javascript:findList()" CLASS="linkplain" TITLE="Search">Search</A>	  
         </TD>
         <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard Find Filter"></TD>
         <TD VALIGN="bottom">
@@ -421,15 +480,28 @@
           <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;Show&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;results&nbsp;</FONT>
         </TD>
         </TR>
+        <TR>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/tree/menu_root.gif" WIDTH="18" HEIGHT="18" BORDER="0"></TD>
+        <TD><A HREF="list_tree_f.htm?selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>&top_parent_cat=<%=sGuRootCategory%>" TARGET="_top" CLASS="linkplain">[~&Aacute;rbol~]</A></TD>
+				<TD COLSPAN="6"><SELECT name="sel_category" class="combomini" onchange="document.location='list_listing.jsp?selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>&find=<%=Gadgets.URLEncode(sFind)%>&field=<%=sField%>&screen_width='+String(screen.width)+'&categ='+(this.selectedIndex<=0 ? '' : this.options[this.selectedIndex].value)"><%
+
+    		  out.write ("<OPTION VALUE=\"" + sGuRootCategory + "\"></OPTION>");
+    			for (int c=0; c<iCatgs; c++) {		    
+        	  out.write ("<OPTION VALUE=\"" + oCatgs.getString(0,c) + "\">");
+        		for (int s=1; s<oCatgs.getInt(2,c); s++) out.write("&nbsp;&nbsp;&nbsp;");
+        		out.write (oCatgs.getString(5,c));
+            out.write ("</OPTION>");
+        	}                            
+					
+		 	  %></SELECT></TD>
+			  </TR>
         <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       </TABLE>
       <TABLE CELLSPACING="1" CELLPADDING="0">
         <TR>
           <TD COLSPAN="3" ALIGN="left">
-<%
-    	  // [~//Pintar los enlaces de siguiente y anterior~]
-    
-          if (iSkip>0) // [~//Si iSkip>0 entonces hay registros anteriores~]
+<%    
+          if (iSkip>0)
             out.write("            <A HREF=\"list_listing.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&orderby=" + sOrderBy + "&field=" + sField + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
     
           if (!oLists.eof())

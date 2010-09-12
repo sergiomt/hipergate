@@ -1,9 +1,7 @@
 <%@ page import="java.net.URLDecoder,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.Contact,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/dbbind.jsp" %>
-<jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
+<%@ include file="../methods/dbbind.jsp" %><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%  response.setHeader("Cache-Control","no-cache");response.setHeader("Pragma","no-cache"); response.setIntHeader("Expires", 0); %>
-<%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %>
-<%
+<%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -40,8 +38,10 @@
   String id_product = nullif(request.getParameter("id_product"));
   String pg_product = nullif(request.getParameter("pg_product"));
   String id_user = getCookie (request, "userid", null);
+  String gu_workarea = getCookie (request, "workarea", null);
   String gu_contact = request.getParameter("gu_contact");
-  
+  String[] aProdAttrs = new String[]{"",""};
+
   String nm_product;
   String de_product;
   String id_language;
@@ -52,15 +52,18 @@
   JDCConnection oConn = GlobalDBBind.getConnection("attachedit");
 
   String sSelLang = GlobalDBLang.toHTMLSelect(oConn, sLanguage);
+  String sSelType  = GlobalDBLang.getHTMLSelectLookUp (GlobalCacheClient, oConn, "k_contacts_lookup", gu_workarea, "typeof", sLanguage);
+  String sSelFrmt  = GlobalDBLang.getHTMLSelectLookUp (GlobalCacheClient, oConn, "k_contacts_lookup", gu_workarea, "format", sLanguage);
+
   String sContactFullName = "";
   Contact oCont;
   
   if (null!=gu_contact) {
     oCont = new Contact(oConn, gu_contact);
-    sContactFullName = " para " + oCont.getStringNull(DB.tx_name, "") + " " + oCont.getStringNull(DB.tx_surname, "");
+    sContactFullName = " for " + oCont.getStringNull(DB.tx_name, "") + " " + oCont.getStringNull(DB.tx_surname, "");
     oCont = null;
   }
-  
+
   if (id_product.length()>0) {
     oProd = new Product(oConn, id_product);
     
@@ -76,6 +79,8 @@
     
     oLoca = null;
     oProd = null;
+
+    aProdAttrs = DBCommand.queryStrs(oConn, "SELECT typeof,format FROM "+DB.k_prod_attr+" WHERE "+DB.gu_product+"='"+id_product+"'");
   }
   else {
     nm_product = "";
@@ -84,23 +89,36 @@
     xfile = "";
   }
   
-  oConn.close("attachedit");  
+  oConn.close("attachedit");
+
 %>
   <!-- +------------------------------------------------+ -->
-  <!-- | Edit documents associated with an Individual | -->
-  <!-- | © KnowGate 2003                                | -->
+  <!-- | Edición de documentos asociados a un individuo | -->
+  <!-- | © KnowGate 2003-2009                           | -->
   <!-- +------------------------------------------------+ -->
-
-
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>   
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>   
   <TITLE>hipergate :: Attach File</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
   <!--
+
+    function lookup(odctrl) {
+	      var frm = window.document.forms[0];
+        
+        switch(parseInt(odctrl)) {
+          case 1:
+            window.open("../common/lookup_f.jsp?nm_table=k_contacts_lookup&id_language=" + getUserLanguage() + "&id_section=typeof&tp_control=2&nm_control=sel_typeof&nm_coding=type_of", "", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
+            break;
+          case 2:
+            window.open("../common/lookup_f.jsp?nm_table=k_contacts_lookup&id_language=" + getUserLanguage() + "&id_section=format&tp_control=2&nm_control=sel_format&nm_coding=format", "", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
+            break;
+        } // end switch()
+    } // lookup()
+  
     function validate() {
       var frm = document.forms[0];
 
@@ -115,9 +133,11 @@
       }
       
       frm.id_language.value = getCombo(frm.sel_language);
+      frm.type_of.value = getCombo(frm.sel_typeof);
+      frm.format.value = getCombo(frm.sel_format);
       
       return true;
-    }    
+    } // validate
     
     // --------------------------------------------------------
     
@@ -143,6 +163,8 @@
   <!--
     function setCombos() {
       setCombo(document.forms[0].sel_language, "<%=id_language%>");   
+      setCombo(document.forms[0].sel_typeof, "<%=nullif(aProdAttrs[0])%>");
+      setCombo(document.forms[0].sel_format, "<%=nullif(aProdAttrs[1])%>");
     }
   //-->
   </SCRIPT>
@@ -180,14 +202,26 @@
 	  </TR>
 <% } %>
           <TR>
+            <TD ALIGN="right" WIDTH="130"><FONT CLASS="formplain">Type:</FONT></TD>
+            <TD WIDTH="310">
+	            <INPUT TYPE="hidden" NAME="type_of">
+              <SELECT NAME="sel_typeof"><OPTION VALUE="" SELECTED><% out.write (sSelType); %></SELECT><A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Types List"></A></TD>
+          </TR>
+          <TR>
+            <TD ALIGN="right" WIDTH="130"><FONT CLASS="formplain">Format:</FONT></TD>
+            <TD WIDTH="310">
+	            <INPUT TYPE="hidden" NAME="format">
+              <SELECT NAME="sel_format"><OPTION VALUE="" SELECTED><% out.write (sSelFrmt); %></SELECT><A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Formats List"></A></TD>
+          </TR>
+          <TR>
             <TD ALIGN="right" WIDTH="130"><FONT CLASS="formplain">Language:</FONT></TD>            
             <TD WIDTH="310">
-	      <INPUT TYPE="hidden" NAME="id_language">
+	            <INPUT TYPE="hidden" NAME="id_language">
               <SELECT NAME="sel_language"><OPTION VALUE="" SELECTED><% out.write (sSelLang); %></SELECT></TD>
           </TR>  
           <TR>
             <TD ALIGN="right" WIDTH="130"><FONT CLASS="formplain">Description:</FONT></TD>
-            <TD WIDTH="310"><TEXTAREA NAME="de_product" COLS="32" ROWS="3"><% out.write(de_product); %></TEXTAREA></TD>
+            <TD WIDTH="310"><TEXTAREA NAME="de_product" COLS="32" ROWS="2"><% out.write(de_product); %></TEXTAREA></TD>
           </TR>
           <TR>
     	    <TD COLSPAN="2"><HR></TD>
