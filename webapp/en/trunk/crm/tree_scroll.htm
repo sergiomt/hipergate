@@ -1,0 +1,60 @@
+<HTML>
+<HEAD>
+  <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <!--  
+    // ----------------------------------------------------------------
+        
+    function createCategory() {                       	
+      window.open ("catedit.jsp?id_domain=" + getURLParam("id_domain") + "&id_user=" + getURLParam("id_user") + "&top_parent_cat=" + getURLParam("top_parent_cat") + "&id_parent_cat=" + parent.cmds.document.forms[0].code.value, "editlistcategory", "directories=no,toolbar=no,menubar=no,width=420,height=240");
+    } // createCategory()
+
+    // ----------------------------------------------------------------
+        
+    function editCategory() {
+      var id_cat = parent.cmds.document.forms[0].code.value;
+      
+      if (id_cat.length==0)
+        alert ("[~Debe seleccionar primero una categoría a editar~]");
+      else                           	
+        window.open ("catedit.jsp?id_domain=" + getURLParam("id_domain") + "&id_user=" + getURLParam("id_user") + "&id_category=" + id_cat + "&top_parent_cat=" + getURLParam("top_parent_cat"), "editlistcategory", "directories=no,toolbar=no,menubar=no,width=420,height=240");
+    } // editCategory()
+
+
+    // ----------------------------------------------------------------
+        
+    function deleteCategory() {
+      var id_cat = parent.cmds.document.forms[0].code.value;
+            
+      if (id_cat.length==0) {
+        alert ("[~Debe seleccionar primero una categoría eliminar~]");
+      } else if (window.confirm("[~¿Está seguro de que desea eliminar la categoría?~] " + parent.cmds.document.forms[0].ctrl.value + "[~ y todas las listas que contiene?~]")) {
+        parent.parent.msgsadmin.location = "../common/blank.htm";
+        parent.parent.msgsexec.location = "../shop/catedit_del.jsp?id_domain=" + getURLParam("id_domain") + "&checkeditems=" + id_cat + "&id_user=" + getURLParam("id_user") + "&top_parent_cat=" + getURLParam("top_parent_cat");
+      }
+    } // deleteCategory()
+    
+    //-->
+  </SCRIPT>
+</HEAD>
+<BODY >
+      <TABLE CELLSPACING="2" CELLPADDING="2" WIDTH="100%">
+      <TR><TD COLSPAN="6" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
+      <TR>
+        <TD COLSPAN="6" CLASS="textplain">[~Categor&iacute;as~]</TD>
+      </TR>
+      <TR>
+        <TD ALIGN="right" ><IMG SRC="../images/images/newfolder16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nueva Categoria~]"></TD>
+        <TD ALIGN="left" VALIGN="center"><A HREF="#" onclick="createCategory()" CLASS="linkplain" TITLE="[~Nueva Categoria~]">[~Nueva~]</A></TD>
+        <TD ALIGN="right" ><IMG SRC="../images/images/folderoptions.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Editar Categoria~]"></TD>
+        <TD ALIGN="left" VALIGN="center"><A HREF="#" onclick="editCategory()" CLASS="linkplain" TITLE="[~Editar Categoria~]">[~Editar~]</A></TD>
+        <TD ALIGN="right"><IMG SRC="../images/images/deletefolder.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar Categoria~]"></TD>
+        <TD ALIGN="left" ><A HREF="#" onClick="deleteCategory();"  CLASS="linkplain" TITLE="[~Eliminar Categoria~]">[~Eliminar~]</A></TD>
+      </TR>
+      <TR><TD COLSPAN="6" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
+      </TABLE>
+</BODY>
+</HTML>

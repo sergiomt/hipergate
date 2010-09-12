@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//EN" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">
+<!-- +-------------------------------------------------+ -->
+<!-- | Marco de listado de listas de una categoría     | -->
+<!-- | (c) KnowGate 2010                               | -->
+<!-- +-------------------------------------------------+ -->  
+<HTML>
+  <HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+    <SCRIPT LANGUAGE="javascript" SRC="../javascript/getparam.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="true">
+    <!--
+      function goURL() {
+        this.frames['msgslist'].document.location = "list_list.jsp?gu_category=" + getURLParam("gu_category") + "&tr_category=" + getURLParam("tr_category") + "&top_parent_cat=" + getURLParam("top_parent_cat") + "&screen_width=" + String(screen.width) + "&void";
+      }
+    //-->
+    </SCRIPT>    
+  </HEAD>
+  <FRAMESET NAME="msgsframe" ROWS="*,2" onLoad="goURL()">
+    <FRAME NAME="msgslist" FRAMEBORDER="no" MARGINWIDTH="16" MARGINHEIGHT="0" >
+    <FRAME NAME="msgsexec" FRAMEBORDER="no" MARGINWIDTH="16" MARGINHEIGHT="2" SRC="../common/blank.htm">
+  </FRAMESET>
+  <NOFRAMES>
+    <BODY>
+      <P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
+    </BODY>
+  </NOFRAMES>
+</HTML>

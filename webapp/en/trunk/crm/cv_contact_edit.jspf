@@ -1,0 +1,374 @@
+<%     // 01. Verify user credentials
+
+if (autenticateSession(GlobalDBBind, request, response)<0) return;
+
+// 02. Avoid page caching
+
+response.addHeader ("Pragma", "no-cache");
+response.addHeader ("cache-control", "no-store");
+response.setIntHeader("Expires", 0);
+
+// 03. Get parameters
+
+final String PAGE_NAME = "cv_contact_edit";
+
+final String sLanguage = getNavigatorLanguage(request);
+final String sSkin = getCookie(request, "skin", "xp");
+final int iAppMask = Integer.parseInt(getCookie(request, "appmask", "0"));
+String selectTab = nullif(request.getParameter("selectTab"));
+
+final String id_user = getCookie(request, "userid", "");
+final String id_domain = getCookie(request,"domainid","");
+final String n_domain = getCookie(request,"domainnm","");
+final String gu_workarea = getCookie(request,"workarea","");
+final String gu_contact = request.getParameter("gu_contact");
+final String gu_degree = request.getParameter("gu_degree");
+final String gu_scourse = request.getParameter("gu_scourse");
+final String gu_ccsskill = request.getParameter("gu_ccsskill");
+final String id_language = request.getParameter("id_language");
+final String gu_experience = request.getParameter("gu_experience");
+final String sFullName = request.getParameter("fullname");
+
+
+
+boolean bIsGuest = true;
+
+ContactEducation oObj = new ContactEducation();
+ContactShortCourses oObj2 = new ContactShortCourses();
+ContactComputerScience oContactCS = new ContactComputerScience();
+ContactLanguages oContacL = new ContactLanguages();
+ContactExperience oContactEx = new ContactExperience();
+
+String sTypeLookUp = "";
+String sNmSkillLookUp = null;
+String sLvSkillLookUp = null;
+String sSelLang = null;
+String sLvLanguageDegreeLookUp = null;
+String sIdSectorLookUp = null;
+String sDeTitleLookUp = null;
+
+HashMap oNmSkillLookUp = null;
+HashMap oLvSkillLookUp = null;
+HashMap oLanguagesLookUp = null;
+HashMap oLvLanguageDegreeLookUp = null;
+HashMap oDeTitleLookUp = null;
+
+
+
+DBSubset oDegreeTypes = new DBSubset(DB.k_education_degree, DB.tp_degree+","+DB.gu_degree+","+DB.nm_degree, DB.gu_workarea+"=? ORDER BY 1,3", 0);
+DBSubset oInstitutions= new DBSubset(DB.k_education_institutions, DB.gu_institution+","+DB.nm_institution, DB.gu_workarea+"=? AND "+DB.bo_active+"<>0 ORDER BY 2", 0);
+DBSubset oDegrees = new DBSubset(DB.v_contact_education_degree, "gu_contact,gu_degree,ix_degree,tp_degree,'' AS tr_degree,nm_degree,lv_degree,dt_created,bo_completed,gu_institution,'' AS nm_institution,nm_center,tx_dt_from,tx_dt_to",DB.gu_workarea+"=? AND "+DB.gu_contact+"=?", 0);
+DBSubset oShortCourses = new DBSubset(DB.k_contact_short_courses, "gu_contact,gu_scourse,nm_scourse,dt_created,nm_center,lv_scourse,ix_scourse,tx_dt_from,tx_dt_to,nu_credits", DB.gu_contact+"=? ORDER BY 1,3", 0);
+DBSubset oRelInstitutions = GlobalCacheClient.getDBSubset("k_institutions["+gu_workarea+"]");
+DBSubset oComputerScienceSkill = new DBSubset(DB.k_contact_computer_science, "gu_ccsskill,gu_contact,nm_skill,lv_skill", DB.gu_contact+"=?", 0);
+DBSubset oContactLanguage = new DBSubset(DB.k_contact_languages, "gu_contact,id_language,lv_language_degree,lv_language_spoken,lv_language_written", DB.gu_contact+"=?", 0);
+DBSubset oContactExperience = new DBSubset(DB.k_contact_experience, "gu_experience,gu_contact,nm_company,bo_current_job,id_sector,de_title,tx_dt_from,tx_dt_to,contact_person,tx_comments", DB.gu_contact+"=?", 0);
+
+
+int iInstitutions = 0;
+int iRelInstitutions = 0;
+int iDegrees = 0;
+int iShortCourses = 0;
+int iComputerScienceSkill = 0;
+int iContactLanguage = 0;
+int iContactExperience = 0;
+JDCConnection oConn = null;
+
+try {
+	bIsGuest = isDomainGuest (GlobalCacheClient, GlobalDBBind, request, response);
+	oConn = GlobalDBBind.getConnection(PAGE_NAME);
+	int iDegreeTypes = oDegreeTypes.load(oConn, new Object[]{gu_workarea});
+	iInstitutions = oInstitutions.load(oConn, new Object[]{gu_workarea});
+	iDegrees = oDegrees.load(oConn, new Object[]{gu_workarea,gu_contact});
+	iShortCourses = oShortCourses.load(oConn, new Object[]{gu_contact});
+	iComputerScienceSkill = oComputerScienceSkill.load(oConn, new Object[]{gu_contact});
+	iContactLanguage  = oContactLanguage.load(oConn, new Object[]{gu_contact});
+	iContactExperience  = oContactExperience.load(oConn, new Object[]{gu_contact});
+	
+	oNmSkillLookUp = DBLanguages.getLookUpMap(oConn, DB.k_contact_computer_science_lookup, gu_workarea, DB.nm_skill, sLanguage);
+	oLvSkillLookUp = DBLanguages.getLookUpMap(oConn, DB.k_contact_computer_science_lookup, gu_workarea, DB.lv_skill, sLanguage);
+	oLanguagesLookUp = DBLanguages.getLanguageLookUpMap(oConn,sLanguage);
+	oLvLanguageDegreeLookUp = DBLanguages.getLookUpMap(oConn, DB.k_contact_languages_lookup, gu_workarea, DB.lv_language_degree, sLanguage);
+	oDeTitleLookUp = DBLanguages.getLookUpMap(oConn, DB.k_contacts_lookup, gu_workarea, DB.de_title, sLanguage);
+	
+
+	 if (null==oRelInstitutions) {
+		 oRelInstitutions = new DBSubset(DB.k_education_institutions, DB.gu_institution+","+DB.nm_institution,DB.bo_active+"<>0 AND "+DB.gu_workarea+"=? ORDER BY 1", 100);
+	     iRelInstitutions = oRelInstitutions.load(oConn, new Object[]{gu_workarea});
+	 } else {
+	      iRelInstitutions = oRelInstitutions.getRowCount();
+	 }
+	 
+	String sPrevType = "";
+	int nTyped = 0;
+	for (int t=0; t<iDegreeTypes; t++) {
+		if (!oDegreeTypes.isNull(0,t)) {
+	    	if (!oDegreeTypes.getString(0,t).equals(sPrevType)) {
+	        	if (sPrevType.length()>0) {
+	        		sTypeLookUp += "</OPTGROUP>"; 
+	        	}
+				sTypeLookUp += "<OPTGROUP LABEL=\""+DBLanguages.getLookUpTranslation(oConn, DB.k_education_degree_lookup, gu_workarea, "tp_degree", sLanguage, oDegreeTypes.getString(0,t))+"\">"; 
+	          	sPrevType = oDegreeTypes.getString(0,t);
+	        } // fi
+	        sTypeLookUp += "<OPTION VALUE=\""+oDegreeTypes.getString(1,t)+"\">"+oDegreeTypes.getString(2,t)+"</OPTION>";
+	        nTyped++;
+	    } // fi
+	 } // next
+	 if (sPrevType.length()>0) {
+	 	sTypeLookUp += "</OPTGROUP>"; 
+	 }
+	 if (nTyped!=iDegreeTypes) {
+	 	sTypeLookUp += "<OPTGROUP LABEL=\"Other degrees\">"; 
+	    for (int t=0; t<iDegreeTypes; t++) {
+	    	if (oDegreeTypes.isNull(0,t)) {
+	        	sTypeLookUp += "<OPTION VALUE=\""+oDegreeTypes.getString(1,t)+"\">"+oDegreeTypes.getString(2,t)+"</OPTION>";
+	          	sPrevType = oDegreeTypes.getString(0,t);
+	        } // fi
+	      } // next
+	      sTypeLookUp += "</OPTGROUP>"; 
+	 } // fi
+	 iDegrees = oDegrees.load(oConn, new Object[]{gu_workarea,gu_contact});
+	 for (int d=0; d<iDegrees; d++) {
+	      if (!oDegrees.isNull(3,d)) {
+	        oDegrees.setElementAt(DBLanguages.getLookUpTranslation(oConn, DB.k_education_degree_lookup, gu_workarea, DB.tp_degree, sLanguage, oDegrees.getString(3,d)),4,d);
+	      }
+	      if (!oDegrees.isNull(9,d)) {
+	        int i = oRelInstitutions.binaryFind(0,oDegrees.getString(9,d));
+	        if (i>=0) oDegrees.setElementAt(oRelInstitutions.getString(1,i),10,d);
+	      }
+	 }
+	 
+	 sNmSkillLookUp = DBLanguages.getHTMLSelectLookUp (oConn, "k_contact_computer_science_lookup", gu_workarea, "nm_skill", sLanguage);
+	 sLvSkillLookUp = DBLanguages.getHTMLSelectLookUp (oConn, "k_contact_computer_science_lookup", gu_workarea, "lv_skill", sLanguage);
+	 sLvLanguageDegreeLookUp = DBLanguages.getHTMLSelectLookUp (oConn, "k_contact_languages_lookup", gu_workarea, "lv_language_degree", sLanguage);
+	 sSelLang = GlobalDBLang.toHTMLSelect(oConn, sLanguage);
+	 sIdSectorLookUp = DBLanguages.getHTMLSelectLookUp (oConn, "k_companies_lookup", gu_workarea, "id_sector", sLanguage);
+	 sDeTitleLookUp = DBLanguages.getHTMLSelectLookUp (oConn, "k_contacts_lookup", gu_workarea, "de_title", sLanguage);
+	 
+	 if (null!=gu_degree) {
+		oObj.load(oConn, new Object[]{gu_contact,gu_degree});
+	 }
+	 if (null!=gu_scourse) {
+		oObj2.load(oConn, new Object[]{gu_contact,gu_scourse});
+	 }
+	 if (null!=gu_ccsskill){
+		 oContactCS.load(oConn, new Object[]{gu_ccsskill,gu_contact}); 
+	 }
+	 if (null!=id_language){
+		 oContacL.load(oConn, new Object[]{gu_contact,id_language}); 
+	 }
+	 if (null!=gu_experience){
+		 oContactEx.load(oConn, new Object[]{gu_experience,gu_contact}); 
+	 }
+	}catch (SQLException e) {  
+	    if (oConn!=null){
+	        if (!oConn.isClosed()){
+	        	oConn.close(PAGE_NAME);
+	        }
+	      oConn = null;
+	      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_close"));
+    }
+}
+if (null==oConn){
+	return;
+}
+oConn = null;
+//for selectTab
+selectTab = selectTab.equals("") ? "1" : selectTab;
+%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML LANG="<%=sLanguage.toUpperCase()%>">
+<HEAD>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/datefuncs.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <!--
+    function cancelar(selectTab) {
+        document.location.href = "cv_contact_edit.jsp?gu_contact=<%=gu_contact%>&fullname=<%=Gadgets.URLEncode(sFullName)%>&selectTab="+selectTab;
+        return true;
+    }
+    
+    function viewAttachments() {
+        document.location.href = "attach_listing.jsp?gu_contact=<%=gu_contact%>";
+        return true;
+      }
+    <% if (!bIsGuest) { %> 
+    function deleteEducation(gu_workarea,gu_contact,gu_degree,fullname) {
+    	document.location.href = "cv_contact_education_delete.jsp?gu_workarea="+gu_workarea+"&gu_contact="+gu_contact+"&gu_degree="+gu_degree+"&fullname="+fullname;
+        	
+        return true;
+    }
+
+    function deleteShortCourse(gu_workarea,gu_contact,gu_scourse,fullname) {
+    	document.location.href = "cv_contact_scourses_delete.jsp?gu_workarea="+gu_workarea+"&gu_contact="+gu_contact+"&gu_scourse="+gu_scourse+"&fullname="+fullname;
+        	
+        return true;
+    }
+
+    function deleteComputerScience(gu_workarea,gu_contact,gu_ccsskill,fullname) {
+    	document.location.href = "cv_contact_computer_science_delete.jsp?gu_workarea="+gu_workarea+"&gu_contact="+gu_contact+"&gu_ccsskill="+gu_ccsskill+"&fullname="+fullname;
+        return true;
+    }
+
+    function deleteLanguage(gu_workarea,gu_contact,id_language,fullname) {
+    	document.location.href = "cv_contact_languages_delete.jsp?gu_workarea="+gu_workarea+"&gu_contact="+gu_contact+"&id_language="+id_language+"&fullname="+fullname;
+        return true;
+    }
+
+    function deleteExperience(gu_workarea,gu_contact,gu_experience,fullname) {
+    	document.location.href = "cv_contact_experience_delete.jsp?gu_workarea="+gu_workarea+"&gu_contact="+gu_contact+"&gu_experience="+gu_experience+"&fullname="+fullname;
+        return true;
+    }
+    
+    <% } %>
+      function setCombos() {
+        var frm = document.forms[0];
+        
+        setCombo(frm.gu_degree,"<% out.write(oObj.getStringNull(DB.gu_degree,"")); %>");
+        setCombo(frm.gu_institution,"<% out.write(oObj.getStringNull(DB.gu_institution,"")); %>");
+
+<% if (!oObj.isNull(DB.bo_completed)) { %>
+        setCheckedValue(frm.bo_completed,<% out.write(String.valueOf(oObj.getShort(DB.bo_completed))); %>)
+<% } %>
+        //
+        frm = document.forms[2]; //ComputerScience
+        setCombo(frm.sel_nm_skill,"<%=oContactCS.getStringNull(DB.nm_skill,"")%>");
+        setCombo(frm.sel_lv_skill,"<%=oContactCS.getStringNull(DB.lv_skill,"")%>");
+
+        //
+        frm = document.forms[3]; //Language
+        setCombo(frm.sel_language,"<%=oContacL.getStringNull(DB.id_language,"")%>");
+        setCombo(frm.sel_lv_language_degree,"<%=oContacL.getStringNull(DB.lv_language_degree,"")%>");
+        setCombo(frm.sel_language_spoken,"<%=oContacL.getStringNull(DB.lv_language_spoken,"")%>");
+        setCombo(frm.sel_language_written,"<%=oContacL.getStringNull(DB.lv_language_written,"")%>");
+
+        //
+        frm = document.forms[4]; //Experience
+        <% if (!oContactEx.isNull(DB.bo_current_job)) { %>
+        setCheckedValue(frm.bo_current_job,<% out.write(String.valueOf(oContactEx.getShort(DB.bo_current_job))); %>)
+		<% } %>
+		setCombo(frm.sel_id_sector,"<%=oContactEx.getStringNull(DB.id_sector,"")%>");
+        setCombo(frm.sel_de_title,"<%=oContactEx.getStringNull(DB.de_title,"")%>");
+        
+        return true;
+      } // validate;
+
+      function validateComputerScience(){
+    	   var frm = window.document.forms[2];
+
+    	   frm.nm_skill.value = nullif(getCombo(frm.sel_nm_skill));
+    	   frm.lv_skill.value = nullif(getCombo(frm.sel_lv_skill));
+          return true;
+      }
+
+    function validateLanguages(){
+   	   var frm = window.document.forms[3];
+
+   	   frm.id_language.value = nullif(getCombo(frm.sel_language));
+   	   frm.lv_language_degree.value = nullif(getCombo(frm.sel_lv_language_degree));
+   	   frm.lv_language_spoken.value = nullif(getCombo(frm.sel_language_spoken));
+   	   frm.lv_language_written.value = nullif(getCombo(frm.sel_language_written));
+         return true;
+    }
+
+	function validateExperience(){
+		var frm = window.document.forms[4];
+		
+		frm.id_sector.value = nullif(getCombo(frm.sel_id_sector));
+		frm.de_title.value = nullif(getCombo(frm.sel_de_title));
+		return true;
+    }
+      
+      function lookup(odctrl) {
+	      var frm = window.document.forms[2];
+        
+        switch(parseInt(odctrl)) {
+          case 1:
+            window.open("../common/lookup_f.jsp?nm_table=k_contact_computer_science_lookup&id_language=" + getUserLanguage() + "&id_section=nm_skill&tp_control=2&nm_control=sel_nm_skill&nm_coding=nm_skill&id_form=2", "", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
+            break;
+          case 2:
+        	window.open("../common/lookup_f.jsp?nm_table=k_contact_computer_science_lookup&id_language=" + getUserLanguage() + "&id_section=lv_skill&tp_control=2&nm_control=sel_lv_skill&nm_coding=lv_skill&id_form=2", "", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
+            break;
+          case 3:
+          	window.open("../common/lookup_f.jsp?nm_table=k_contact_languages_lookup&id_language=" + getUserLanguage() + "&id_section=lv_language_degree&tp_control=2&nm_control=sel_lv_language_degree&nm_coding=lv_language_degree&id_form=3", "", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
+           break;
+          case 4:
+          	window.open("../common/lookup_f.jsp?nm_table=k_companies_lookup&id_language=" + getUserLanguage() + "&id_section=id_sector&tp_control=2&nm_control=sel_id_sector&nm_coding=id_sector&id_form=4", "", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
+           break;
+          case 5:
+           	window.open("../common/lookup_f.jsp?nm_table=k_contacts_lookup&id_language=" + getUserLanguage() + "&id_section=de_title&tp_control=2&nm_control=sel_de_title&nm_coding=de_title&id_form=4", "", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
+           break;
+        } // end switch()
+      }
+    //-->
+  </SCRIPT>       
+  <TITLE>hipergate :: Edit Curriculum</TITLE>
+    <!--
+    tabbed panel by Jamie Jaworski taken from builder.com
+    http://builder.cnet.com/webbuilding/0-7701-8-5056260-1.html?tag=st.bl.3882.dir1.7701-8-5056260-1
+    -->    
+    <SCRIPT language="JavaScript">
+      <!--
+        function selectTab(n) {
+        	/* var frm = document.forms["fixedAttrs"];
+        	
+        	if (0==n) {
+        	  frm.sel_title.style.visibility = "visible";
+        	  frm.sel_gender.style.visibility = "visible";
+        	  frm.sel_status.style.visibility = "visible";
+        	  frm.sel_passport.style.visibility = "visible";
+		  if (getCookie("face")=="edu")
+        	    frm.sel_geozone.style.visibility = "hidden";
+        	  else
+        	    frm.sel_geozone.style.visibility = "visible";
+
+        	  frm.sel_delcustomfield.style.visibility = "hidden";
+        	}
+        	else  {
+        	  frm.sel_title.style.visibility = "hidden";
+        	  frm.sel_gender.style.visibility = "hidden";
+        	  frm.sel_status.style.visibility = "hidden";
+        	  frm.sel_passport.style.visibility = "hidden";
+        	  frm.sel_geozone.style.visibility = "hidden";
+        	  frm.sel_delcustomfield.style.visibility = "visible";
+        	} */
+        
+        	var panelID = "p1"
+        	var numDiv = 5
+        	// iterate all tab-panel pairs
+        	for(var i=1; i <= numDiv; i++) {
+        		var panelDiv = window.document.getElementById(panelID+"panel"+i)
+        		var tabDiv = document.getElementById(panelID+"tab"+i)
+        		z = panelDiv.style.zIndex
+        		// if this is the one clicked and it isn't in front, move it to the front
+        		if (i == n) { 
+            		z = numDiv
+            		tabDiv.style.backgroundColor="#eee";
+            	} else {
+            		// in all other cases move it to the original position 
+                	z = (numDiv-i)
+                	tabDiv.style.backgroundColor="#ddd"; 
+                }
+        		panelDiv.style.zIndex = z;
+        		tabDiv.style.zIndex = z;
+        	}
+        }
+      //-->
+    </SCRIPT>
+    <STYLE TYPE="text/css">
+      <!--
+      .tab {
+      font-family: sans-serif; font-size: 12px; line-height:150%; font-weight: bold; position:absolute; text-align: center; border: 2px; border-color:#999999; border-style: outset; border-bottom-style: none; width:160px; margin:0px;
+      }
+
+      .panel {
+      font-family: sans-serif; font-size: 12px; position:absolute; border: 2px; border-color:#999999; border-style:outset; width:800px; height:500px; left:0px; top:24px; margin:0px; padding:6px;
+      }
+      -->
+    </STYLE>                
+</HEAD>
