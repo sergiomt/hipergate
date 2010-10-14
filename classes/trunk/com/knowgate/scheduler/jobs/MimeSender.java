@@ -110,6 +110,7 @@ public class MimeSender extends Job {
   private int iDomainId;
   private String sBody;
   private boolean bPersonalized;
+  private Boolean oBeforeSend;
   private DBMimeMessage oDraft;
   private Properties oHeaders;
   private InternetAddress[] aFrom;
@@ -128,6 +129,7 @@ public class MimeSender extends Job {
     sProfile = null;
     aBlackList = null;
     oUser = new ACLUser();
+    oBeforeSend = null;
   }
 
   // ---------------------------------------------------------------------------
@@ -661,10 +663,30 @@ public class MimeSender extends Job {
       // Send message here
       String sTestMode = getParameter("testmode");
       if (Activated.equals(sTestMode) || Yes.equals(sTestMode)) {
+
 		if (DebugFile.trace) DebugFile.writeln("Test mode activated, skiping recipient "+oAtm.getStringNull(DB.tx_email,""));
+
       } else {
+
+      	JDCConnection oConn = null;
+      	if (oBeforeSend==null) {
+      	  oConn = getDataBaseBind().getConnection("MimeSender.process");
+      	  oBeforeSend = new Boolean (Event.getEvent(oConn, iDomainId, "beforesmtpmime")!=null);
+      	  oConn.close("MimeSender.process");
+      	}
+      	if (oBeforeSend.booleanValue()) {
+		  HashMap oJobParams = new HashMap(size()*2);
+		  oJobParams.putAll(this);
+		  oJobParams.putAll(oAtm.getItemMap());
+		  oJobParams.put("bin_smtpmessage", oSentMsg);
+		  oConn = getDataBaseBind().getConnection("MimeSender.process");
+		  Event.trigger(oConn, iDomainId, "beforesmtpmime", oJobParams, getProperties());
+      	  oConn.close("MimeSender.process");
+      	}
+
         oHndlr.sendMessage(oSentMsg);
-      }
+
+      } // fi testmode
 
     } catch (Exception e) {
       if (DebugFile.trace) {
