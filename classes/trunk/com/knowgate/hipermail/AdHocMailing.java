@@ -135,7 +135,7 @@ public class AdHocMailing extends DBPersist {
   }
 
   public void addRecipients(String[] aEMails)
-  	throws MalformedPatternException {
+  	throws ArrayIndexOutOfBoundsException,MalformedPatternException {
 	String sAllowPattern, sDenyPattern;
     ArrayList<String> oRecipientsWithoutDuplicates;
     boolean bAllowed;
@@ -157,8 +157,16 @@ public class AdHocMailing extends DBPersist {
 	  	  	  
 	    for (int r=0; r<nRecipients-1; r++) {
 		  bAllowed = true;
-		  if (sAllowPattern.length()>0) bAllowed &= Gadgets.matches(aRecipients[r], sAllowPattern);
+		  try {
+		    if (sAllowPattern.length()>0) bAllowed &= Gadgets.matches(aRecipients[r], sAllowPattern);
+		  } catch (ArrayIndexOutOfBoundsException aiob) {
+		  	throw new ArrayIndexOutOfBoundsException("Gadgets.matches("+aRecipients[r]+","+sAllowPattern+")");
+		  }
+		  try {
 		  if (sDenyPattern.length()>0) bAllowed &= !Gadgets.matches(aRecipients[r], sDenyPattern);
+		  } catch (ArrayIndexOutOfBoundsException aiob) {
+		  	throw new ArrayIndexOutOfBoundsException("Gadgets.matches("+aRecipients[r]+","+sDenyPattern+")");
+		  }
 		  if (bAllowed) {
 	  	    if (!aRecipients[r].equalsIgnoreCase(aRecipients[r+1])) {
 	  	      if (aBlackList==null) {
@@ -171,8 +179,16 @@ public class AdHocMailing extends DBPersist {
 	    } // next      
 
 	    bAllowed=true;
-	    if (sAllowPattern.length()>0) bAllowed &= Gadgets.matches(aRecipients[nRecipients-1], sAllowPattern);
-	    if (sDenyPattern.length()>0) bAllowed &= !Gadgets.matches(aRecipients[nRecipients-1], sDenyPattern);
+		try {
+	      if (sAllowPattern.length()>0) bAllowed &= Gadgets.matches(aRecipients[nRecipients-1], sAllowPattern);
+		} catch (ArrayIndexOutOfBoundsException aiob) {
+		  throw new ArrayIndexOutOfBoundsException("Gadgets.matches("+aRecipients[nRecipients-1]+","+sAllowPattern+")");
+		}
+		try {
+	      if (sDenyPattern.length()>0) bAllowed &= !Gadgets.matches(aRecipients[nRecipients-1], sDenyPattern);
+		} catch (ArrayIndexOutOfBoundsException aiob) {
+		  throw new ArrayIndexOutOfBoundsException("Gadgets.matches("+aRecipients[nRecipients-1]+","+sDenyPattern+")");
+		}
 	    if (bAllowed) {
 	      if (aBlackList==null) {
 	        if (aRecipients[nRecipients-1].trim().length()>0) oRecipientsWithoutDuplicates.add(aRecipients[nRecipients-1].trim());
