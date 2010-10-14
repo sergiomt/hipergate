@@ -36,6 +36,8 @@ import java.io.File;
 
 import java.net.URL;
 
+import java.rmi.RemoteException;
+
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -121,21 +123,11 @@ public abstract class Event extends DBPersist {
   } // listEventHandlers
 */
 
-  public static void trigger(JDCConnection oConn, int iDomainId, String sEventId,
-                             Map oParameters, Properties oEnvironment)
-    throws Exception {
+  private static void cacheEventsActions(JDCConnection oConn) throws SQLException {
 	ResultSet oRSet;
-	String sIdCmmd = null;
-	String sGuWorkArea;
-	Integer oIdDomain;
 	Statement oStmt;
 	int nCmmds = 0;
-	
-	if (DebugFile.trace) {
-	  DebugFile.writeln("Begin Event.trigger([JDCConnection], "+String.valueOf(iDomainId)+", "+sEventId.toLowerCase()+")");
-	  DebugFile.incIdent();
-	}
-	
+
     if (null==oCmmdClasses) {
       oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 	  if (DebugFile.trace)
@@ -157,7 +149,7 @@ public abstract class Event extends DBPersist {
     } // fi
 
     if (DebugFile.trace) DebugFile.writeln(String.valueOf(nCmmds)+" commands found at "+DB.k_lu_job_commands+" table");
-	    	
+
     if (null==oEventsPerDomain) {
       oEventsPerDomain = new HashMap<Integer,HashMap<String,String>>(113);
       oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -165,7 +157,7 @@ public abstract class Event extends DBPersist {
 	    DebugFile.writeln("Statement.executeQuery(SELECT "+DB.id_domain+","+DB.id_event+","+DB.id_command+" FROM "+DB.k_events+" WHERE "+DB.bo_active+"<>0)");
 	  oRSet = oStmt.executeQuery("SELECT "+DB.id_domain+","+DB.id_event+","+DB.id_command+" FROM "+DB.k_events+" WHERE "+DB.bo_active+"<>0");
 	  while (oRSet.next()) {
-	  	oIdDomain = new Integer(oRSet.getInt(1));
+	  	Integer oIdDomain = new Integer(oRSet.getInt(1));
 		if (!oEventsPerDomain.containsKey(oIdDomain))
 		  oEventsPerDomain.put(oIdDomain, new HashMap<String,String>());
 		oEventsPerDomain.get(oIdDomain).put(oRSet.getString(2), oRSet.getString(3));
@@ -173,8 +165,21 @@ public abstract class Event extends DBPersist {
       oRSet.close();
       oStmt.close();
     } // fi (oEventsPerDomain)
+
+  } // initCmmdClasses
+
+  public static Event getEvent(JDCConnection oConn, int iDomainId, String sEventId)
+  	throws SQLException, InstantiationException, IllegalAccessException, RemoteException {
+
+	Integer oIdDomain = new Integer(iDomainId);
+	String sIdCmmd = null;
+	Event oEvnt = null;
+
+	if (DebugFile.trace) {
+	  DebugFile.writeln("Begin Event.getEvent([JDCConnection], "+String.valueOf(iDomainId)+", "+sEventId.toLowerCase()+")");
+	  DebugFile.incIdent();
+	}
 	
-	oIdDomain = new Integer(iDomainId);
 	if (oEventsPerDomain.containsKey(oIdDomain)) {
 	  if (oEventsPerDomain.get(oIdDomain).containsKey(sEventId.toLowerCase())) {
 	    sIdCmmd = oEventsPerDomain.get(oIdDomain).get(sEventId.toLowerCase());
@@ -183,20 +188,13 @@ public abstract class Event extends DBPersist {
 
 	      if (null!=oEvntClss) {
 	        if (null==oEventCache) oEventCache = new DistributedCachePeer();
-	        Event oEvnt = (Event) oEventCache.get(sEventId.toLowerCase()+"("+String.valueOf(iDomainId)+")");
+	        oEvnt = (Event) oEventCache.get(sEventId.toLowerCase()+"("+String.valueOf(iDomainId)+")");
 	        if ((null==oEvnt)) {
 	          if (DebugFile.trace) DebugFile.writeln("Creating instance of "+oEvntClss.getName());
 	  	      oEvnt = (Event) oEvntClss.newInstance();
 	          oEvnt.load(oConn, new Object[]{new Integer(iDomainId), sEventId.toLowerCase()});
 		      oEventCache.put(sEventId.toLowerCase()+"("+String.valueOf(iDomainId)+")",oEvnt);
 	        } // fi
-	        if (oParameters.containsKey(DB.gu_workarea))
-	          sGuWorkArea = (String) oParameters.get(DB.gu_workarea);
-	        else
-	          sGuWorkArea = "";
-	        if (oEvnt.isNull(DB.gu_workarea) || oEvnt.getStringNull(DB.gu_workarea,"").equals(sGuWorkArea)) {
-	          oEvnt.trigger(oConn, oParameters, oEnvironment);
-	        }
 	      } // fi (null!=sEvntClss)
 		} else {
 	      if (DebugFile.trace) DebugFile.writeln("Class not found for command "+sIdCmmd+" of event "+sEventId.toLowerCase()+" for domain "+String.valueOf(iDomainId));
@@ -206,6 +204,41 @@ public abstract class Event extends DBPersist {
 	  }
 	} else {
 	  if (DebugFile.trace) DebugFile.writeln("No event commands found for domain "+String.valueOf(iDomainId));
+	}
+
+	if (DebugFile.trace) {
+	  DebugFile.decIdent();
+	  if (null==oEvnt)
+	    DebugFile.writeln("End Event.getEvent() : null");
+	  else
+	    DebugFile.writeln("End Event.getEvent() : "+oEvnt.getStringNull(DB.id_event,"no event id found!"));
+	}
+
+    return oEvnt;
+  } // getEvent
+  
+  public static void trigger(JDCConnection oConn, int iDomainId, String sEventId,
+                             Map oParameters, Properties oEnvironment)
+    throws Exception {
+	String sGuWorkArea;
+	
+	if (DebugFile.trace) {
+	  DebugFile.writeln("Begin Event.trigger([JDCConnection], "+String.valueOf(iDomainId)+", "+sEventId.toLowerCase()+")");
+	  DebugFile.incIdent();
+	}
+	
+	cacheEventsActions(oConn);
+		    		
+	Event oEvnt = getEvent(oConn, iDomainId, sEventId);
+
+	if (null!=oEvnt) {
+	  if (oParameters.containsKey(DB.gu_workarea))
+	    sGuWorkArea = (String) oParameters.get(DB.gu_workarea);
+	  else
+	    sGuWorkArea = "";
+	  if (oEvnt.isNull(DB.gu_workarea) || oEvnt.getStringNull(DB.gu_workarea,"").equals(sGuWorkArea)) {
+	    oEvnt.trigger(oConn, oParameters, oEnvironment);
+	  }
 	}
 
 	if (DebugFile.trace) {
