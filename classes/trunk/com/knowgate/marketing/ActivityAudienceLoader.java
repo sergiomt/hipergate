@@ -346,7 +346,10 @@ public final class ActivityAudienceLoader implements ImportLoader {
 			else
 			  oAcAuInsr.setNull(2, Types.CHAR);
 		}	else	{
-			  oAcAuInsr.setNull(1, Types.CHAR);
+			oAcAuInsr.setObject(1, oCntLdr.get(ContactLoader.gu_contact), Types.CHAR);
+			if (test(iFlags,WRITE_ADDRESSES))
+			  oAcAuInsr.setObject(2, oCntLdr.get(ContactLoader.gu_address), Types.CHAR);
+			else
 			  oAcAuInsr.setNull(2, Types.CHAR);			
 		}
 
