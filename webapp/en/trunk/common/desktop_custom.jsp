@@ -112,7 +112,8 @@
 	                               "com.knowgate.http.portlets.RecentContactsTab",
 	                               "com.knowgate.http.portlets.RecentPostsTab",
 	                               "com.knowgate.http.portlets.NewMail",
-	                               "com.knowgate.http.portlets.Favorites");
+	                               "com.knowgate.http.portlets.Favorites",
+	                               "com.knowgate.http.portlets.Invoicing");
 	      var labels =  new Array("Calendar",
 	      												"Calls",
 	      												"Incidents",
@@ -120,16 +121,17 @@
 	      												"Contacts",
 	      												"Forums",
 	      												"E-Mail",
-	      												"Favourites");
+	      												"Favourites",
+	      												"Invoicing");
 	      var enabled =  new Array(<%=(((iAppMask & (1<<CollaborativeTools))==0) ? "false" : "true")%>,
 	      												 <%=(((iAppMask & (1<<CollaborativeTools))==0) ? "false" : "true")%>,
-	      												 <%=(((iAppMask & (1<<IncidentsManager))==0) ? "false" : "true")%>,
 	      												 <%=(((iAppMask & (1<<IncidentsManager))==0) ? "false" : "true")%>,
 	      												 <%=(((iAppMask & (1<<Sales))==0) ? "false" : "true")%>,
 	      												 <%=(((iAppMask & (1<<Sales))==0) ? "false" : "true")%>,
 	      												 <%=(((iAppMask & (1<<CollaborativeTools))==0) ? "false" : "true")%>,
 	      												 <%=(((iAppMask & (1<<Hipermail))==0) ? "false" : "true")%>,
-	      												 <%=(((iAppMask & (1<<Directory))==0) ? "false" : "true")%>);
+	      												 <%=(((iAppMask & (1<<Directory))==0) ? "false" : "true")%>,
+	      												 <%=(((iAppMask & (1<<Shop))==0) ? "false" : "true")%>);
 
         var frm = document.forms[0];
 

@@ -44,10 +44,11 @@
   String nm_control = request.getParameter("nm_control");
   String nm_coding = request.getParameter("nm_coding");
   String id_form = nullif(request.getParameter("id_form"), "0");
-  
+
   DBTable oTable = null;
   DBColumn oColumn = null;
-  String sQryStr = "?nm_table="+ nm_table + "&id_language=" + id_language + "&id_section=" + id_section + "&tp_control=" + tp_control + "&nm_control=" + nm_control + "&nm_coding=" + nm_coding + "&id_form=" + id_form;
+  String sWorkArea = nullif(request.getParameter("gu_workarea"), getCookie(request,"workarea", request.getParameter("gu_workarea")));
+  String sQryStr = "?gu_workarea="+sWorkArea+"&nm_table="+ nm_table + "&id_language=" + id_language + "&id_section=" + id_section + "&tp_control=" + tp_control + "&nm_control=" + nm_control + "&nm_coding=" + nm_coding + "&id_form=" + id_form;
 
   if (nm_table.endsWith("_lookup")) {    
     oTable = GlobalDBBind.getDBTable(nm_table.substring(0,nm_table.length()-7));    

@@ -1,4 +1,4 @@
-<%@ page import="java.util.Iterator,java.math.BigDecimal,java.sql.Types.*,java.util.Date,java.text.SimpleDateFormat,java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.Statement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.debug.*,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Iterator,java.math.BigDecimal,java.sql.Types.*,java.util.Date,java.text.SimpleDateFormat,java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.Statement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.debug.*,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -79,13 +79,23 @@
     
     // Borrar la dirección anterior y asociar la nueva    
     if (linktable.length()>0) {
-      oStmt = oConn.createStatement();
-      oStmt.executeUpdate("DELETE FROM " + linktable + " WHERE " + DB.gu_address + "='" + oAddr.getString(DB.gu_address) + "' AND " + linkfield + "='" + linkvalue +"'");
-      oStmt.close();
-      oStmt = oConn.createStatement();
-      oStmt.executeUpdate("INSERT INTO " + linktable + "(" + DB.gu_address + "," + linkfield + ") VALUES ('" + oAddr.getString(DB.gu_address) + "','" + linkvalue + "')");
-      oStmt.close();
       
+      if (linktable.equals("k_meetings_lookup")) {
+        DBCommand.executeUpdate(oConn, "DELETE FROM " + linktable + " WHERE " + DB.vl_lookup + "='" + oAddr.getString(DB.gu_address) + "' AND " + linkfield + "='" + linkvalue +"'");
+        oUpdt = oConn.prepareStatement("INSERT INTO " + linktable + "(" + DB.pg_lookup + "," + DB.id_section + "," + DB.vl_lookup + "," + linkfield + "," + DB.tr_ + Gadgets.join(DBLanguages.SupportedLanguages,",tr_") + ") VALUES (?,?,?,?"+Gadgets.repeat(",?", DBLanguages.SupportedLanguages.length)+")");
+        oUpdt.setInt(1, DBLanguages.nextLookuUpProgressive(oConn, linktable, linkvalue, "gu_address"));
+        oUpdt.setString(2, "gu_address");
+        oUpdt.setString(3, oAddr.getString(DB.gu_address));
+        oUpdt.setString(4, linkvalue);
+				for (int l=0; l<DBLanguages.SupportedLanguages.length; l++)
+          oUpdt.setString(l+5, Gadgets.left(oAddr.toLocaleString(),50));
+        oUpdt.executeUpdate();
+        oUpdt.close();
+      } else {
+        DBCommand.executeUpdate(oConn, "DELETE FROM " + linktable + " WHERE " + DB.gu_address + "='" + oAddr.getString(DB.gu_address) + "' AND " + linkfield + "='" + linkvalue +"'");
+        DBCommand.executeUpdate(oConn, "INSERT INTO " + linktable + "(" + DB.gu_address + "," + linkfield + ") VALUES ('" + oAddr.getString(DB.gu_address) + "','" + linkvalue + "')");
+      }
+
       RecentlyUsed oRecent;
       DBPersist oItem;
       
@@ -269,7 +279,7 @@
 <HTML>
 <HEAD>
   <TITLE>hipergate :: Save Address</TITLE>
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript">
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--      
       if ("<%=noreload%>"=="0") {
         if (window.parent.opener)

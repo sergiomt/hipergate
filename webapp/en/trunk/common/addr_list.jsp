@@ -58,7 +58,7 @@
 
   String nm_company;
 
-  if (sLinkTable.equals("k_x_contact_addr"))
+  if (sLinkTable.equals("k_x_contact_addr") || sLinkTable.equals("k_meetings_lookup"))
     nm_company = "";
   else
     nm_company = request.getParameter("nm_company");
@@ -98,9 +98,14 @@
 
     // Si el filtro no existe devolver todos los registros
     if (sFind.length()==0) {
-      oAddresses = new DBSubset (DB.k_addresses + " a," + sLinkTable + " x",
-      				 "a." + DB.gu_address + ",a." + DB.tp_location + ",a." + DB.nm_street + ",a." + DB.mn_city + ",a." + DB.tx_email + ",a." + DB.work_phone + ",a." + DB.direct_phone + ",a." + DB.direct_phone + ",a." + DB.home_phone + ",a." + DB.mov_phone + ",a." + DB.nm_company,
-      				 "x." + sLinkField + "='" + sLinkValue + "' AND a." + DB.gu_address + "=x." + DB.gu_address + " AND a." + DB.gu_workarea + "='" + gu_workarea + "' ORDER BY " + sOrderBy, iMaxRows);      				 
+      if (sLinkTable.equals("k_meetings_lookup"))
+        oAddresses = new DBSubset (DB.k_addresses + " a," + DB.k_meetings_lookup+ " x",
+      				                     "a." + DB.gu_address + ",a." + DB.tp_location + ",a." + DB.nm_street + ",a." + DB.mn_city + ",a." + DB.tx_email + ",a." + DB.work_phone + ",a." + DB.direct_phone + ",a." + DB.direct_phone + ",a." + DB.home_phone + ",a." + DB.mov_phone + ",a." + DB.nm_company,
+      				                     "x." + sLinkField + "='" + sLinkValue + "' AND a." + DB.gu_address + "=x." + DB.vl_lookup + " AND a." + DB.gu_workarea + "='" + gu_workarea + "' ORDER BY " + sOrderBy, iMaxRows);      				 
+      else
+        oAddresses = new DBSubset (DB.k_addresses + " a," + sLinkTable + " x",
+      				                     "a." + DB.gu_address + ",a." + DB.tp_location + ",a." + DB.nm_street + ",a." + DB.mn_city + ",a." + DB.tx_email + ",a." + DB.work_phone + ",a." + DB.direct_phone + ",a." + DB.direct_phone + ",a." + DB.home_phone + ",a." + DB.mov_phone + ",a." + DB.nm_company,
+      				                     "x." + sLinkField + "='" + sLinkValue + "' AND a." + DB.gu_address + "=x." + DB.gu_address + " AND a." + DB.gu_workarea + "='" + gu_workarea + "' ORDER BY " + sOrderBy, iMaxRows);      				 
       oAddresses.setMaxRows(iMaxRows);
       iAddressCount = oAddresses.load (oConn, iSkip);
     }
@@ -192,7 +197,7 @@
 
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8">
   <FORM METHOD="post">
-  <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
+  <DIV class="cxMnu1" style="width:300px"><DIV class="cxMnu2">
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
@@ -251,7 +256,10 @@
 	  for (int i=0; i<iAddressCount; i++) {
             sAddrId = oAddresses.getString(0,i);
             sAddrTp = oAddresses.getStringNull(1,i,"");
-            if (sAddrTp.length()>0) sAddrTp = oLocationTypes.get(sAddrTp).toString();              
+            if (sAddrTp.length()>0 && oLocationTypes!=null) {
+              if (oLocationTypes.containsKey(sAddrTp))
+                sAddrTp = oLocationTypes.get(sAddrTp).toString();              
+            }
             sAddrSt = oAddresses.getStringNull(2,i,"* N/A *");
             sAddrCt = oAddresses.getStringNull(3,i,"");
             sAddrEm = oAddresses.getStringNull(4,i,"");

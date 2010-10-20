@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/xml;charset=UTF-8" %>
+<%@ page import="com.knowgate.debug.StackTraceUtil,java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.Timestamp,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/xml;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <% 
 /*
@@ -36,7 +36,7 @@
 */
   /* Autenticate user cookie */
   
-  //if (autenticateSession(GlobalDBBind, request, response)<0) return;
+  if (autenticateSession(GlobalDBBind, request, response)<0) return;
 
   response.addHeader ("Pragma", "no-cache");
   response.addHeader ("cache-control", "no-store");
@@ -63,19 +63,21 @@
   String sWhere = "";
   if (nm_table.equals("v_prod_cat"))
     sWhere = DB.gu_category+"=? "; 
+  else if (nm_table.equals("v_prod_cat_on_sale"))
+    sWhere = DB.gu_category+"=? AND "+DB.dt_start+">? ORDER BY "+DB.dt_start; 
   else if (id_domain!=null && gu_workarea!=null)
     sWhere = "("+DB.id_domain+"=? AND "+DB.gu_workarea+"=?) ";
   else if (id_domain!=null)
     sWhere = DB.id_domain+"=? ";
   else if (gu_workarea!=null)
     sWhere = DB.gu_workarea+"=? ";
-  else
+  else if (!nm_table.equals(DB.k_products))
     throw new SQLException("Either id_domain or gu_workarea parameters are required");
-  if (tx_where!=null) if (tx_where.length()>0) sWhere += " AND ("+tx_where+") ";
+  if (tx_where!=null) if (tx_where.length()>0) sWhere += (sWhere.length()==0 ? "" : " AND ") + " ("+tx_where+") ";
   if (tx_order!=null) if (tx_order.length()>0) sWhere += " ORDER BY "+tx_order;
 
   JDCConnection oConn = null;  
-  DBSubset oSel = new DBSubset (nm_table, nm_value+","+nm_text, sWhere, iLimit);
+  DBSubset oSel = new DBSubset (nm_table.equals("v_prod_cat_on_sale") ? "v_prod_cat" : nm_table, nm_value+","+nm_text, sWhere, iLimit);
   int iSel = 0;
   
   try {
@@ -83,12 +85,16 @@
         
     if (null!=nu_limit) oSel.setMaxRows(iLimit);
 
-    if (id_domain!=null && gu_workarea!=null)
+    if (nm_table.equals("v_prod_cat_on_sale"))
+      iSel = oSel.load(oConn, new Object[]{gu_workarea, new Timestamp(new Date().getTime())}, iSkip);
+    else if (id_domain!=null && gu_workarea!=null)
       iSel = oSel.load(oConn, new Object[]{new Integer(id_domain),gu_workarea}, iSkip);
     else if (id_domain!=null)
       iSel = oSel.load(oConn, new Object[]{new Integer(id_domain)}, iSkip);    
-    else
+    else if (gu_workarea!=null)
       iSel = oSel.load(oConn, new Object[]{gu_workarea}, iSkip);
+    else
+      iSel = oSel.load(oConn, iSkip);
 
     oConn.close("select_xml");
   }
@@ -96,7 +102,7 @@
     if (oConn!=null)
       if (!oConn.isClosed()) oConn.close("select_xml");      
     oConn = null;
-    out.write("<selectxml><error>"+e.getClass().getName()+" "+e.getMessage()+"</error><name>"+nm_select+"</name><form>"+id_form+"</form><options></options></selectxml>");
+    out.write("<selectxml><error>"+e.getClass().getName()+" "+e.getMessage()+" "+StackTraceUtil.getStackTrace(e)+"</error><name>"+nm_select+"</name><form>"+id_form+"</form><options></options></selectxml>");
   }  
   if (null==oConn) return;    
   oConn = null;

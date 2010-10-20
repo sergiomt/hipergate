@@ -1,4 +1,4 @@
-<%@ page import="java.util.Properties,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.Connection,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.datacopy.*,com.knowgate.acl.*,com.knowgate.misc.*,com.knowgate.hipergate.Invoice,com.knowgate.hipergate.DespatchAdvice,com.knowgate.hipergate.Order" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Properties,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.Connection,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.datacopy.*,com.knowgate.acl.*,com.knowgate.misc.*,com.knowgate.crm.Company,com.knowgate.crm.Contact,com.knowgate.hipergate.Invoice,com.knowgate.hipergate.DespatchAdvice,com.knowgate.hipergate.Order" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -57,7 +57,7 @@
   short iClassId = Short.parseShort(request.getParameter("classid"));
   
   Properties oProps = new Properties();
-   
+  DataStruct oDS; 
   JDCConnection oConOr = null;  
   JDCConnection oConTr = null;  
   
@@ -87,6 +87,11 @@
       }
       
     switch (iClassId) {
+      case Company.ClassId:
+      case Contact.ClassId:
+        oProps.put("IdWorkArea", gu_workarea);
+        oProps.put("IdOwner", id_user);    		
+        break;
       case Invoice.ClassId:
         // Set number for new Invoice
         oProps.put("PgInvoice", String.valueOf(Invoice.nextVal(oConTr, gu_workarea)));
@@ -101,7 +106,7 @@
         break;
     } // end switch
 
-    DataStruct oDS = new DataStruct(sStorage + sSep + "datacopy" + sSep + sDBMS + sSep + request.getParameter("datastruct") + ".xml", oProps);
+    oDS = new DataStruct(sStorage + sSep + "datacopy" + sSep + sDBMS + sSep + request.getParameter("datastruct") + ".xml", oProps);
         
     if (oConOr.getDataBaseProduct()!=JDCConnection.DBMS_POSTGRESQL
      && oConOr.getDataBaseProduct()!=JDCConnection.DBMS_MYSQL

@@ -1,5 +1,4 @@
-<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/nullif.jspf" %><%
+<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -42,7 +41,8 @@
 
   if (null!=nm_coding) nm_coding = nm_coding.trim();
   
-  String sQryStr = "?nm_table="+ nm_table + "&id_language=" + id_language + "&id_section=" + id_section + "&tp_control=" + tp_control + "&nm_control=" + nm_control + (nm_coding==null ? "" : "&nm_coding=" + nm_coding) + "&id_form=" + id_form;
+  String sWorkArea = nullif(request.getParameter("gu_workarea"), getCookie(request,"workarea", request.getParameter("gu_workarea")));
+  String sQryStr = "?gu_workarea="+sWorkArea+"&nm_table="+ nm_table + "&id_language=" + id_language + "&id_section=" + id_section + "&tp_control=" + tp_control + "&nm_control=" + nm_control + (nm_coding==null ? "" : "&nm_coding=" + nm_coding) + "&id_form=" + id_form;
   
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//EN" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">

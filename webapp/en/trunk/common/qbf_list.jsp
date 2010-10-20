@@ -254,6 +254,35 @@
 	      window.open("/servlet/HttpQueryServlet?queryspec=projects&where=" + escape(project)+"&orderby=e.od_level&showas"+(frm.showas[0].checked ? "XLS" : "CSV")+"&columnlist="+escape("b.nm_project,<%=sSchema%>k_sp_prj_cost(b.gu_project),b.dt_start,b.dt_end,b.de_project"));
       }
 
+      // ----------------------------------------------------------------------
+
+<%    if ((iAppMask & (1<<WebBuilder))!=0) { %>
+
+      function newsletters() {
+	      var frm = document.forms[0];
+
+        if (!isDate(frm.dt_nlfrom.value,"d") && frm.dt_nlfrom.value.length>0) {
+	  			alert ("Invalid Date");
+	  			frm.dt_nlfrom.setFocus();
+	  			return false;
+				}
+
+        if (!isDate(frm.dt_nlto.value,"d") && frm.dt_nlto.value.length>0) {
+	  			alert ("Invalid Date");
+	  			frm.dt_nlto.setFocus();
+	  			return false;
+				}
+      	
+      	if (window.opener.closed) {
+      		window.open("../jobs/jobs_followup_stats.jsp?selected=5&subselected=4&dt_from="+frm.dt_nlfrom.value+"&dt_to="+frm.dt_nlto.value);
+      	} else {
+      	  window.opener.document.location = "../jobs/jobs_followup_stats.jsp?selected=5&subselected=4&dt_from="+frm.dt_nlfrom.value+"&dt_to="+frm.dt_nlto.value;
+      	}
+				self.close();
+      }
+
+<% } %>
+
     //-->
     </SCRIPT>
   </HEAD>
@@ -305,10 +334,19 @@
       </TR>
 <% } %>
     </TABLE>
-
+<% }
+   if ((iAppMask & (1<<WebBuilder))!=0) { %>
     <HR>
+    <FONT CLASS="textplain"><B>Marketing</B></FONT>
+    <BR>
+    <A CLASS="linkplain" HREF="#" onclick="newsletters()">Newsletters</A>
+    <TABLE SUMMARY="Newsletters">
+      <TR>
+        <TD><FONT CLASS="textsmall">from</A>&nbsp;<INPUT TYPE="text" NAME="dt_nlfrom" CLASS="combomini" SIZE="12" MAXLENGTH="10">&nbsp;&nbsp;&nbsp;until&nbsp;<INPUT TYPE="text" NAME="dt_nlto" CLASS="combomini" SIZE="12" MAXLENGTH="10" VALUE="<%=sToday%>">&nbsp;<A HREF="javascript:showCalendar('dt_dayn')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A></TD>
+      </TR>
+    </TABLE>
 <% } %>
-
+    <HR>
 <% if ((iAppMask & (1<<ProjectManager))!=0) { %>
     <FONT CLASS="textplain"><B>Project Management</B></FONT>
     <BR>

@@ -43,6 +43,7 @@
   oMap.put("com.knowgate.http.portlets.RecentPostsTab","home_posts.xsl");
   oMap.put("com.knowgate.http.portlets.NewMail","home_email.xsl");
   oMap.put("com.knowgate.http.portlets.Favorites","home_favorites.xsl");
+  oMap.put("com.knowgate.http.portlets.Invoicing","home_invoicing.xsl");
   
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
   

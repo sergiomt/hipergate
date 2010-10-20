@@ -1,4 +1,4 @@
-<%@ page import="java.util.Properties,java.io.IOException,java.io.File,javax.portlet.GenericPortlet,javax.portlet.PortletException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.ResultSet,java.sql.CallableStatement,java.sql.Types,org.jibx.runtime.JiBXException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.debug.StackTraceUtil,com.knowgate.debug.DebugFile,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipermail.MailAccount,com.knowgate.dataxslt.StylesheetCache,com.knowgate.acl.*,com.knowgate.http.portlets.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Properties,java.io.IOException,java.io.File,javax.portlet.GenericPortlet,javax.portlet.PortletException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.ResultSet,java.sql.CallableStatement,java.sql.Types,org.jibx.runtime.JiBXException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.debug.StackTraceUtil,com.knowgate.debug.DebugFile,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipermail.MailAccount,com.knowgate.dataxslt.StylesheetCache,com.knowgate.acl.*,com.knowgate.http.portlets.*,com.knowgate.dfs.HttpRequest" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -48,6 +48,9 @@
 
     if (sPortletName.endsWith("NewMail"))
       return ((iAppMask & (1<<Hipermail))!=0);
+
+    //if (sPortletName.endsWith("Invoicing"))
+    //  return ((iAppMask & (1<<Shop))!=0);
     
     return true;
   }
@@ -183,17 +186,46 @@
   }
   
   if (null==oConn) return;
-  oConn = null;  
+  oConn = null;
 
-%><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<HTML LANG="<% out.write(sLanguage); %>">
+  sendUsageStats(request, "desktop");
+
+%><HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <META NAME="robots" CONTENT="noindex,nofollow">
   <TITLE>hipergate :: Main Menu</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/registration.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
   <!--
+
+    // ------------------------------------------------------
+
+		function showRegistration() {
+			 var pag = document.getElementById("wholepage");
+    	 if (navigator.appCodeName=="Mozilla")
+         pag.style.opacity=0.40;
+    	 else if (navigator.appName=="Microsoft Internet Explorer")
+         pag.style.filter="alpha(opacity=40)";
+		  document.getElementById("registration").style.display="block";
+    }
+    		
+    // ------------------------------------------------------
+
+    function skipRegistration() {
+			var pag = document.getElementById("wholepage");
+    	if (window.confirm("Are you sure that you want to skip product registration?")) {
+    	 if (navigator.appCodeName=="Mozilla")
+         pag.style.opacity=1;
+    	 else if (navigator.appName=="Microsoft Internet Explorer")
+         pag.style.filter="alpha(opacity=100)";
+    	 document.getElementById("registration").style.display="none";
+      }
+    }
 
     // ------------------------------------------------------
       
@@ -235,7 +267,7 @@
 <%    if (bIsGuest) { %>
         alert("Your credential level as Guest does not allow you to perform this action");
 <%    } else { %>
-	  self.open ("oportunity_new.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>", "newoportunity", "directories=no,toolbar=no,scrollbars=yes,menubar=no,width=660,height=" + (screen.height<=600 ? "520" : "660"));	  
+	  self.open ("../crm/oportunity_new.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>", "newoportunity", "directories=no,toolbar=no,scrollbars=yes,menubar=no,width=660,height=" + (screen.height<=600 ? "520" : "660"));	  
 <%    } %>
     } // newOportunity()
 
@@ -280,16 +312,39 @@
     }
 
     // ----------------------------------------------------
+        	
+	  function createOrder() {	  	  	  
+	    open ("../shop/order_edit_f.jsp?id_domain=<%=id_domain%>" + "&gu_workarea=<%=gu_workarea%>", "editorder", "directories=no,scrollbars=yes,toolbar=no,menubar=no,width=760,height=" + String(Math.floor((520*screen.height)/600)));
+	  } // createOrder()
 
-    setCookie ("apps", "<%=sApps%>", null);
+    // ----------------------------------------------------
+        	
+	  function createInvoice() {	  	  	  
+	    open ("../shop/invoice_edit_f.jsp?id_domain=<%=id_domain%>" + "&gu_workarea=<%=gu_workarea%>", "editinvoice", "directories=no,scrollbars=yes,toolbar=no,menubar=no,width=760,height=" + String(Math.floor((520*screen.height)/600)));
+	  } // createInvoice()
+
+    // ----------------------------------------------------
+
+	  function createPayment() {
+	    open ("../shop/payment_edit_f.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>", "editpayment", "directories=no,toolbar=no,menubar=no,width=560,height=600");	  
+	  } // createPayment()
+
+    // ----------------------------------------------------
+
+    function setCombos() {
+      var frm = document.forms[1];
+      setCookie ("apps", "<%=sApps%>", null);
+      setCombo(frm.id_country, "<%=getNavigatorLanguage(request).equals("en") ? "us" : getNavigatorLanguage(request)%>");
+    }
   //-->
   </SCRIPT>
 </HEAD>
-<BODY TOPMARGIN="0" MARGINHEIGHT="0">
+<BODY TOPMARGIN="0" MARGINHEIGHT="0" onload="setCombos()">
+<DIV ID="wholepage">
 <%@ include file="tabmenu.jspf" %>
 <FORM>
   <TABLE SUMMARY="Page Title Strip"><TR><TD WIDTH="<% out.write(String.valueOf(iTabWidth*iActive)); %>" CLASS="striptitle"><FONT CLASS="title1">Main Page</FONT></TD></TR></TABLE>
-  <TABLE>
+  <TABLE SUMMARY="Portlets Columns">
     <TR>
 <% if (bShowPortlets) {
      
@@ -311,7 +366,7 @@
      	    sRealPath = sRealPath.substring(0, sRealPath.lastIndexOf(File.separator));
             sRealPath = sRealPath.substring(0, sRealPath.lastIndexOf(File.separator)+1);
      
-     HipergateRenderRequest  portletRequest = new com.knowgate.http.portlets.HipergateRenderRequest(request);
+     HipergateRenderRequest  portletRequest = new HipergateRenderRequest(request);
 
      portletRequest.setProperties (EnvPros);
 
@@ -413,9 +468,16 @@
   <TABLE>
     <TR><TD WIDTH="<%=iTabWidth*iActive%>" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
   </TABLE>
-<% if (!id_domain.equals("1024")) { %>  
+  <DIV ID="reglink">
+<% if (getCookie(request, "registration", "-1").equals("0")) { %> 
+  <A HREF="#" onclick="showRegistration()" CLASS="linkplain">Register your hipergate copy for free</A>
+<% } %>
+  </DIV>
+<% if (!id_domain.equals("1024")) { %> 
   <A HREF="desktop_custom.jsp" CLASS="linkplain">Customize this page</A>
 <% } %>
   </FORM>
+</DIV>
+<%@ include file="../common/registration.jspf" %>
 </BODY>
 </HTML>

@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.CallableStatement,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.workareas.WorkArea,com.knowgate.billing.Account,com.knowgate.cache.DistributedCachePeer,com.knowgate.misc.Environment,com.knowgate.misc.MD5" language="java" session="false" buffer="8kb" autoFlush="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.ResultSetMetaData,java.sql.CallableStatement,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.workareas.WorkArea,com.knowgate.billing.Account,com.knowgate.cache.DistributedCachePeer,com.knowgate.misc.Environment,com.knowgate.misc.MD5" language="java" session="false" buffer="8kb" autoFlush="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -53,28 +53,6 @@
     } // fi
   } // logLoginAttempt
 %><%
-/*
-  // This is what include file="../methods/dbbind.jsp" does.
-  // This code is unrolled for debugging purposes only,
-  // if something bizarre fails whilst instantiating DBBind
-  // then remome the include directive and uncomment this code.
-  
-  DBBind GlobalDBBind = null;
-
-  synchronized (application) {
-    GlobalDBBind = (DBBind) pageContext.getAttribute("GlobalDBBind", PageContext.APPLICATION_SCOPE);
-    if (GlobalDBBind == null){
-      try {
-        GlobalDBBind = (DBBind) java.beans.Beans.instantiate(this.getClass().getClassLoader(), "com.knowgate.dataobjs.DBBind");
-      } catch (ClassNotFoundException exc) {
-        throw new InstantiationException(exc.getMessage());
-      } catch (Exception exc) {
-        throw new ServletException("Cannot create bean of class com.knowgate.dataobjs.DBBind " + exc.getMessage(), exc);
-      }
-      pageContext.setAttribute("GlobalDBBind", GlobalDBBind, PageContext.APPLICATION_SCOPE);
-    } // fi (GlobalDBBind)
-  } // synchronized (application)
-*/
   
   // **********************************************
   // Instantiate distributed cache application bean
@@ -107,6 +85,9 @@
   String sContext = nullif(request.getParameter("context"));
   String sCaptchaText = nullif(request.getParameter("captcha_text"));
   String sFace = nullif(request.getParameter("face"),"");
+  String sGuSupport = null;
+  boolean bSuggestRegistration = false;
+  boolean bSendUsageStats = false;  
   long lCaptchaTimestamp;
   
   try {
@@ -142,6 +123,11 @@
   if (null==GlobalDBBind) {
     response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Error Bean&desc=GlobalDBBind.getConnection() - Impossible to reference bean for connecting to database&resume=_back"));
     return;
+  }
+
+  if (GlobalDBBind.getProperties().size()==0) {
+    response.sendRedirect (response.encodeRedirectUrl ("../admin/setup.htm"));
+    return;  
   }
 
   String sAuthMethod = Environment.getProfileVar(GlobalDBBind.getProfileName(), "authmethod", "native").trim().toLowerCase();
@@ -208,6 +194,12 @@
     }
   }
 
+  if (!GlobalDBBind.exists(oConn, DB.k_version, "U")) {
+    oConn.close("login");
+    response.sendRedirect (response.encodeRedirectUrl ("../admin/setup.htm"));
+    return;
+  }
+  
   // End Database Connection Pool
   // ************************************************************************
   
@@ -267,7 +259,7 @@
             guWorkArea = WorkArea.getIdFromName(oConn, idDomain, nmWorkArea);        
           else {
             guWorkArea = oUser.getStringNull(DB.gu_workarea, null);
-	    nmWorkArea = new WorkArea(oConn, guWorkArea).getString(DB.nm_workarea);
+	          nmWorkArea = new WorkArea(oConn, guWorkArea).getString(DB.nm_workarea);
           }
 
           if (DebugFile.trace) DebugFile.writeln("<JSP:workarea=" + guWorkArea);
@@ -306,7 +298,7 @@
         // Get Domain Id from User e-mail
       
         if (DebugFile.trace) DebugFile.writeln("<JSP:ACLUser.getIdFromEmail([Connection]," + sNickName + ")");	
-	
+					
 	      sUserId = ACLUser.getIdFromEmail(oConn, sNickName);
         sTxMainEMail = sNickName;
         
@@ -493,6 +485,28 @@
         }
       } // fi ()
 
+      // ********************************************************************
+      // Check whether registration must be shown and statistics must be sent
+      
+      oStmt = oConn.prepareStatement("SELECT * FROM " + DB.k_version);
+      oRSet = oStmt.executeQuery();
+      if (oRSet.next()) {
+        ResultSetMetaData oMDat = oRSet.getMetaData();
+        for (int c=1; c<=oMDat.getColumnCount(); c++) {
+          if (oMDat.getColumnName(c).equalsIgnoreCase(DB.bo_register)) {
+            short iRegister = oRSet.getShort(c);
+            if (!oRSet.wasNull()) bSuggestRegistration = (iRegister==0);
+          } else if (oMDat.getColumnName(c).equalsIgnoreCase(DB.bo_allow_stats)) {
+            short iStats = oRSet.getShort(c);
+            if (!oRSet.wasNull()) bSendUsageStats = (iStats!=0);
+          } else if (oMDat.getColumnName(c).equalsIgnoreCase(DB.gu_support)) {
+            sGuSupport = oRSet.getString(c);
+          }
+        } // next
+      } // fi
+      oRSet.close();
+      oStmt.close();
+
       oConn.setAutoCommit (true); 
       
       // *******************************************
@@ -600,7 +614,7 @@
       <!--
         // status = <% out.write(String.valueOf(iStatus)); %>
 
-        var dtInf = new Date(2020, 11, 30, 0, 0, 0, 0);
+        var dtInf = new Date(2030, 11, 30, 0, 0, 0, 0);
                           
         setCookie ("profilenm","<%=GlobalDBBind.getProfileName()%>",dtInf);
         setCookie ("domainid","<%=String.valueOf(idDomain)%>",dtInf);
@@ -611,7 +625,14 @@
         setCookie ("authstr","<%=ACL.encript(sAuthStr,ENCRYPT_ALGORITHM)%>");
         setCookie ("appmask","<%=iAppMask%>"); 
         setCookie ("idaccount","<%=sIdAccount%>");
-<%
+<%      if (bSuggestRegistration) { %>
+          setCookie ("registration","0");
+<% }
+         if (bSendUsageStats && (sGuSupport!=null)) { %>
+           setCookie ("stats","<%=sGuSupport%>");
+<% }     else { %>
+           setCookie ("stats","");
+<% }	
         // Escribir las cookies que indican en qué área de trabajo se está
         if (oUser!=null) {
           out.write ("        setCookie (\"usernm\",\"" + oUser.getStringNull(DB.tx_nickname,"") + "\");\n");

@@ -1,9 +1,8 @@
-<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%
+<%@ page import="com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/reqload.jspf" %><%
 request.setCharacterEncoding("UTF-8");
 /*
-  Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+  Copyright (C) 2003-2010  Know Gate S.L. All rights reserved.
+                           C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -33,9 +32,14 @@ request.setCharacterEncoding("UTF-8");
   if not, visit http://www.hipergate.org or mail to info@hipergate.org
 */
 
-  String sTitle = request.getParameter("title")!=null ? request.getParameter("title") : "";
-  String sDesc = request.getParameter("desc")!=null ? request.getParameter("desc") : "";
-  String sResume = request.getParameter("resume")!=null ? request.getParameter("resume") : "";
+  String sTitle = safeXssGetParameter(request,"title","");
+  String sDesc = safeXssGetParameter(request,"desc","");
+  String sResume = safeXssGetParameter(request,"resume","");
+
+  int iQuest = sDesc.indexOf('?');
+  if (iQuest>0) sDesc = sDesc.substring(0,iQuest);
+  sDesc = Gadgets.replace(sDesc,"null","");
+
 %>
 <HTML>
 <HEAD>
@@ -63,7 +67,7 @@ request.setCharacterEncoding("UTF-8");
 <BODY  SCROLL="no" TOPMARGIN="16" MARGINHEIGHT="16">
   <TABLE ALIGN="CENTER" WIDTH="90%" BGCOLOR="#000080">
     <TR><TD>
-      <FONT FACE="Arial,Helvetica,sans-serif" COLOR="white" SIZE="2"><B><%=sTitle%></B></FONT>
+      <FONT FACE="Arial,Helvetica,sans-serif" COLOR="white" SIZE="2"><B><%=Gadgets.HTMLEncode(sTitle)%></B></FONT>
     </TD></TR>
     <TR><TD>
       <TABLE WIDTH="100%" BGCOLOR="#FFFFFF">
@@ -71,7 +75,7 @@ request.setCharacterEncoding("UTF-8");
           <TABLE BGCOLOR="#FFFFFF" BORDER="0" CELLSPACING="8" CELLPADDING="8">
             <TR VALIGN="middle">
               <TD><IMG SRC="../images/images/yield.gif" BORDER="0"></TD>
-              <TD><FONT CLASS="textplain"><%=sDesc%></FONT></TD>
+              <TD><FONT CLASS="textplain"><%=Gadgets.HTMLEncode(sDesc)%></FONT></TD>
 	    </TR>
 	  </TABLE>
         </TD></TR>
