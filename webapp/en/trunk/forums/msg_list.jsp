@@ -275,9 +275,10 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=" + e.getMessage() + "&resume=../common/blank.htm"));
   }
 
-  if (null==oConn) return;
-  
+  if (null==oConn) return;  
   oConn = null;  
+
+	sendUsageStats(request, "msg_list");
 
 %><HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>

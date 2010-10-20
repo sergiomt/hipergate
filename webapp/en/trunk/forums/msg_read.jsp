@@ -72,7 +72,7 @@
     out.write("    <TR><TD><FONT CLASS=\"textplain\"><B>Publishing Date</B>: " + oMsg.getDateFormated(DB.dt_published, "yyy-MM-dd hh:mm:ss") + "</TD></TR>\n");
     if (!oMsg.isNull(DB.dt_start) ) out.write("    <TR><TD><FONT CLASS=\"textplain\"><B>Start been visible at date:</B>: " + oMsg.getDateFormated(DB.dt_start, "yyy-MM-dd") + "</TD></TR>\n");
     if (!oMsg.isNull(DB.dt_expire)) out.write("    <TR><TD><FONT CLASS=\"textplain\"><B>Expiration Date:</B>: " + oMsg.getDateFormated(DB.dt_expire, "yyy-MM-dd") + "</TD></TR>\n");
-    out.write("    <TR><TD><FONT CLASS=\"textplain\">There are&nbsp;" + String.valueOf(oMsg.getInt(DB.nu_thread_msgs)) + (oMsg.getInt(DB.nu_thread_msgs)==1 ? " message" : " messages") + " on this thread&nbsp;&nbsp;&nbsp;<A CLASS=\"linkplain\" HREF=\"msg_thread.jsp?gu_thread_msg=" + oMsg.getStringNull(DB.gu_thread_msg,"") + "\">View complete thread</A></TD></TR>\n");
+    out.write("    <TR><TD><FONT CLASS=\"textplain\">There are&nbsp;" + String.valueOf(oMsg.getInt(DB.nu_thread_msgs)) + (oMsg.getInt(DB.nu_thread_msgs)==1 ? " message" : " messages") + " on this thread&nbsp;&nbsp;&nbsp;<A CLASS=\"linkplain\" HREF=\"msg_thread.jsp?id_domain="+id_domain+"&gu_workarea="+gu_workarea+"&gu_newsgrp="+gu_newsgrp+"&nm_newsgrp="+Gadgets.URLEncode(nm_newsgrp)+"&gu_thread_msg=" + oMsg.getStringNull(DB.gu_thread_msg,"") + "\">View complete thread</A></TD></TR>\n");
     
     if (bIsGuest)
       out.write("    <TR><TD><IMG SRC=\"../images/images/forums/replytoall.gif\" ALT=\"Reply to All\">&nbsp;<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"alert('Your credential level as Guest does not allow you to perform this action')\">Reply to All</A></TD></TR>\n");

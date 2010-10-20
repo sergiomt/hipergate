@@ -117,7 +117,9 @@
       if (!oConn.isClosed()) oConn.close("msg_edit");
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_close"));  
   }
-  oConn = null;  
+  oConn = null;
+
+	sendUsageStats(request, "msg_edit");  
 %>
 
 <HTML LANG="<% out.write(sLanguage); %>">
@@ -131,7 +133,7 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
       function showCalendar(ctrl) {       
         var dtnw = new Date();
