@@ -266,7 +266,9 @@ _bsn.AutoSuggest.prototype.setSuggestions = function (req)
 	{
 
 		var xml = req.responseXML;
-			
+	  
+	  if (null==xml) alert (req.responseText);
+
 		// traverse xml
 		//
 		var results = xml.getElementsByTagName('results')[0].childNodes;

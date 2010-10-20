@@ -15,8 +15,11 @@ function setCombo (objCombo, idValue) {
   
   for (var i=0;i<len;i++)
     if (opt[i].value == idValue || opt[i].text == idValue) {
-	opt.selectedIndex = i;
-	break;
+	    if (objCombo.type=="select-one")
+	      opt.selectedIndex = i;
+	    else
+	      opt[i].selected = true;
+	    break;
     } // fi()    
 } // setCombo
 
@@ -56,6 +59,10 @@ function comboPush (objCombo, txValue, idValue, defSel, curSel) {
 
 /**
   * Get Selected Value for a ComboBox
+  * If ComboBox type is select-one then
+  * the value of the selectedIndex option is returned.
+  * If ComboBox type is select-multiple then
+  * a list of comma separated selected values is returned.
   * @param objCombo HTML <SELECT> Object
   * @return Value for selected option or
   *         null if no option is selected
@@ -63,11 +70,20 @@ function comboPush (objCombo, txValue, idValue, defSel, curSel) {
 
 function getCombo (objCombo) {
 
-  if (objCombo.selectedIndex == -1)
-    return null;
-  else
-    return objCombo[objCombo.selectedIndex].value;
-}
+  if (objCombo.type=="select-one") {
+    if (objCombo.selectedIndex == -1)
+      return null;
+    else
+      return objCombo[objCombo.selectedIndex].value;
+  } else if (objCombo.type=="select-multiple") {
+    var opts = objCombo.options;
+    var vals = "";
+    for (var o=0; o<opts.length; o++) {
+      if (opts[o].selected) vals += (vals.length==0 ? "" : ",") + opts[o].value;
+    } // next
+    return vals;
+  } // fi
+} // getCombo
 
 //---------------------------------------------------------
 
@@ -149,3 +165,18 @@ function setCheckedValue(objRadio,idValue) {
     objRadio.checked = (objRadio.value==idValue);
   }
 } // setCheckedValue
+
+// ----------------------------------------------------------------------------
+
+function getValueOf(obj) {
+	var tp = obj.type;
+	if (tp=="text" || tp=="hidden") {
+	  return obj.value;
+	} else if (tp=="select-one") {
+	  return getCombo(obj);
+	} else if (obj.length) {
+	  return getCheckedValue(obj);
+	} else {
+		return obj.checked ? obj.value : "";
+	}
+} // getValueOf

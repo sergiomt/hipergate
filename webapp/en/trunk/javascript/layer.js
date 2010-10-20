@@ -27,6 +27,18 @@ function hideLayer(capaID) {
   eval(c);
 }
 
+function isVisibleLayer(capaID) {  
+  if ((navigator.appCodeName=="Mozilla") && (navigator.appName!="Microsoft Internet Explorer")) {
+    return document.getElementById(capaID).style.visibility=="visible";
+  }	
+  else if (document.layers) { // Netscape Navigator
+    return document[capaID].visibility=="visible";
+  }
+  else {
+    return document.all[capaID].style.visibility=="visible";
+  }
+}
+
 function setInnerHTML(capaID,sHTML) {
 	
   if ((navigator.appCodeName=="Mozilla") && (navigator.appName!="Microsoft Internet Explorer")) {

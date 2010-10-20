@@ -35,8 +35,9 @@
   /**
     * Verify that a string represents a valid date
     * @param Input string
-    * @param Date format. "d" for dates with format "YYYY-MM-DD"
-                          "s" for dates with format "DD/MM/YYYY"
+    * @param Date format. "d"  for dates with format "yyyy-MM-dd"
+                          "s"  for dates with format "dd/MM/yyyy"
+                          "ts" for dates with format "yyyy-MM-dd HH:mm:ss"
   */
   function isDate (dtexpr, dtformat) {
     var exp;
@@ -86,8 +87,14 @@
       else {
         ret = false;
       }
-    }
-    else {
+    } else if (dtformat=="ts") {
+      exp = new RegExp("[0-9]{4}-[0-9]{2}-[0-9]{2}.[0-9]{2}:[0-9]{2}:[0-9]{2}");
+      if (exp.test(dtexpr)) {
+        ret = isDate(dtexpr.substr(0,10), "d");
+      } else {
+        ret = false;
+      }      
+    } else {
       ret = false;
     }
     

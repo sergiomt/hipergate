@@ -1,3 +1,11 @@
+// ----------------------------------------------------------------------------
+
+function check_url(the_url) {
+  return the_url.match(new RegExp("((https?|ftp|gopher|telnet|file|notes|ms-help):((//)|(\\\\))+[\w\d:#@%/;$()~_?\+-=\\\.&]*)"));
+}
+
+// ----------------------------------------------------------------------------
+
 function check_nick(nick) {
   var nlen = nick.length;
   var ccod;

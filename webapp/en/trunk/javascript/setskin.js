@@ -8,3 +8,5 @@
     } else {
       document.write ('<LINK REL="stylesheet" TYPE="text/css" HREF="../skins/xp/styles.css">');
     }
+
+    document.write ('<LINK REL="shortcut icon" HREF="../images/images/squarelogo.ico">');
