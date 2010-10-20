@@ -67,6 +67,7 @@
   ACLUser oLastCalled = null;
   Contact oCont = null;
   String sTlBug = null;
+  String sTxPhone = "";
 
   try {
     
@@ -120,6 +121,14 @@
       oCont = new Contact(oConn, gu_contact);
       if (oCall.isNull(DB.tp_phonecall))
         oCall.replace(DB.tp_phonecall, "R");
+      sTxPhone = DBCommand.queryStr(oConn, "SELECT tx_phone FROM "+DB.k_phone_calls+" WHERE "+DB.gu_contact+"='"+gu_contact+"'");
+      if (null==sTxPhone) {
+        String[] aTxPhones = DBCommand.queryStrs(oConn, "SELECT a."+DB.work_phone+",a."+DB.home_phone+",a."+DB.mov_phone+" FROM "+DB.k_member_address+" a,"+DB.k_x_contact_addr+" x WHERE a."+DB.gu_contact+"=x."+DB.gu_contact+" AND x."+DB.gu_contact+"='"+gu_contact+"'");
+        if (aTxPhones[0]!=null) sTxPhone = aTxPhones[0];
+        else if (aTxPhones[1]!=null) sTxPhone = aTxPhones[1];
+        else if (aTxPhones[2]!=null) sTxPhone = aTxPhones[2];
+        else sTxPhone = "";
+      }
     }
     
     oConn.close("phonecall_edit");
@@ -169,8 +178,10 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/autosuggest20.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
 
       function showCalendar(ctrl) {       
@@ -246,6 +257,18 @@
       function createProject() {	  
           window.open("../projtrack/prj_new.jsp?standalone=1", "newproject", "menubar=no,toolbar=no,width=780,height=520");       
       } // createProject()
+
+      // ------------------------------------------------------
+
+      function setFromTo(ft) {
+        if (ft=="R") {
+          document.getElementById("from").innerHTML = "From";
+          document.getElementById("to").innerHTML = "To";
+        } else {
+          document.getElementById("from").innerHTML = "To";
+          document.getElementById("to").innerHTML = "From";        
+        }
+      } // setFromTo()
 
       // ------------------------------------------------------
 	
@@ -325,7 +348,7 @@
       } // validate;
     //-->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript">
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
       function setCombos() {
         var frm = document.forms[0];
@@ -354,9 +377,14 @@
 	if (sTlBug!=null) {
 	  out.write ("        comboPush (frm.sel_bugs, \"" + sTlBug + "\",\"" + oCall.getString(DB.gu_bug) + "\", true, true);\n");
 	}
+
+	if (oCall.getStringNull(DB.tp_phonecall, "").equals("S")) {
+	  out.write ("        document.getElementById(\"from\").innerHTML = \"To\";\n");
+	  out.write ("        document.getElementById(\"to\").innerHTML = \"From\";\n");
+	}
+
 %>        
-        return true;
-      } // validate;
+      } // setCombos;
     //-->
   </SCRIPT>    
 </HEAD>
@@ -366,7 +394,7 @@
     <TR><TD CLASS="striptitle"><FONT CLASS="title1"><%=(null==gu_phonecall ? "New Call" : "Edit Call") %></FONT></TD></TR>
   </TABLE>  
   <FORM METHOD="post" ACTION="phonecall_edit_store.jsp" onSubmit="return validate()">
-  	<INPUT TYPE="hidden" NAME="gu_phonecall" VALUE="<%=gu_phonecall%>">
+  	<INPUT TYPE="hidden" NAME="gu_phonecall" VALUE="<%=nullif(gu_phonecall)%>">
     <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
     <INPUT TYPE="hidden" NAME="id_status" VALUE="<% out.write(String.valueOf(oCall.getShort(DB.id_status))); %>">
     <INPUT TYPE="hidden" NAME="gu_project" VALUE="">
@@ -378,7 +406,7 @@
           <TR>
             <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Type</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
-              <INPUT TYPE="radio" NAME="tp_phonecall" VALUE="R" <% out.write(oCall.getStringNull(DB.tp_phonecall, "").equals("R") ? "CHECKED" : ""); %>>&nbsp;<FONT CLASS="formplain">Received</FONT>&nbsp;&nbsp;&nbsp;<INPUT TYPE="radio" NAME="tp_phonecall" VALUE="S" <% out.write(oCall.getStringNull(DB.tp_phonecall, "").equals("S") ? "CHECKED" : ""); %>>&nbsp;<FONT CLASS="formplain">Sent</FONT>
+              <INPUT TYPE="radio" NAME="tp_phonecall" VALUE="R" <% out.write(oCall.getStringNull(DB.tp_phonecall, "").equals("R") ? "CHECKED" : ""); %> onclick="setFromTo('R')">&nbsp;<FONT CLASS="formplain">Received</FONT>&nbsp;&nbsp;&nbsp;<INPUT TYPE="radio" NAME="tp_phonecall" VALUE="S" <% out.write(oCall.getStringNull(DB.tp_phonecall, "").equals("S") ? "CHECKED" : ""); %> onclick="setFromTo('S')">&nbsp;<FONT CLASS="formplain">Sent</FONT>
             </TD>
 	  </TR>
           <TR>
@@ -392,14 +420,14 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">To</FONT></TD>
+            <TD ALIGN="right" WIDTH="90" CLASS="formstrong"><DIV ID="to">To</DIV></TD>
             <TD ALIGN="left" WIDTH="370">
 	      <INPUT TYPE="hidden" NAME="gu_user" VALUE="<% out.write(oCall.getStringNull(DB.gu_user, "")); %>">
               <SELECT NAME="sel_recipients" STYLE="width:360px" onchange="<% if (bBugTrackerEnabled) { out.write("loadProjects();"); } %>"><OPTION VALUE=""></OPTION><% out.write(sUsersCombo); %></SELECT>
 	    </TD>
 	  </TR>
           <TR>
-            <TD VALIGN="top" ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">From</FONT></TD>
+            <TD VALIGN="top" ALIGN="right" WIDTH="90" CLASS="formstrong"><DIV ID="from">From</DIV></TD>
             <TD ALIGN="left" WIDTH="370">
               <INPUT TYPE="hidden" NAME="gu_contact" VALUE="<% out.write(oCall.getStringNull(DB.gu_contact, "")); %>">
               <TABLE><TR><TD><INPUT TYPE="text" NAME="contact_person" SIZE="35" MAXLENGTH="200" VALUE="<% out.write(oCall.getStringNull(DB.contact_person, "")); %>" onkeypress="clearCombo(document.forms[0].sel_users)"></TD><TD><IMG SRC="../images/images/search16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0"></TD><TD><A HREF="#" CLASS="linkplain" onclick="loadContacts()">Search</A></TD></TR></TABLE>
@@ -409,7 +437,7 @@
           <TR>
             <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Phone</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
-	      <INPUT TYPE="text" MAXLENGTH="16" NAME="tx_phone" SIZE="20" VALUE="<% out.write(oCall.getStringNull(DB.tx_phone, "")); %>">
+	          <INPUT TYPE="text" MAXLENGTH="16" NAME="tx_phone" SIZE="20" VALUE="<% out.write(oCall.getStringNull(DB.tx_phone, sTxPhone)); %>">
 	    </TD>
 	  </TR>
           <TR>
@@ -453,5 +481,14 @@
     </TABLE>                 
   </FORM>
 </BODY>
+<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <!--  
+      
+      var AutoSuggestOptions = { script:"String('../common/autocomplete.jsp?nm_table=k_contact_telephone&gu_workarea=<%=gu_workarea%>&tx_where=')+getCombo(document.forms[0].sel_recipients)", varname:"tx_like",minchars:1,form:0, callback: function (obj) { } };
+      
+      var AutoSuggestPhone = new AutoSuggest("tx_phone", AutoSuggestOptions);
+    //-->
+</SCRIPT>
+
 </HTML>
 <%@ include file="../methods/page_epilog.jspf" %>

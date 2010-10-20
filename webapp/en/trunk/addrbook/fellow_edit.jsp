@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.addrbook.Fellow,com.knowgate.hipergate.DBLanguages" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.addrbook.Fellow,com.knowgate.hipergate.DBLanguages,com.knowgate.workareas.WorkArea" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
@@ -64,13 +64,15 @@
   
   boolean bIsGuest = true;
   boolean bIsAdmin = false;
-    
+  boolean bIsPwUsr = false;
+  
   try {
   
     oConn = GlobalDBBind.getConnection("fellowedit");
     
     bIsGuest = isDomainGuest (GlobalCacheClient, GlobalDBBind, request, response);
-    bIsAdmin = isDomainAdmin (GlobalCacheClient, GlobalDBBind, request, response);
+    bIsPwUsr = WorkArea.isPowerUser(oConn, gu_workarea, id_user);
+    bIsAdmin = WorkArea.isAdmin(oConn, gu_workarea, id_user)  || isDomainAdmin (GlobalCacheClient, GlobalDBBind, request, response);
     
     if (gu_fellow.length()>0) {
       
@@ -124,7 +126,7 @@
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/email.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
       
       // ------------------------------------------------------
@@ -365,7 +367,7 @@
           </TR>
           <TR>
     	    <TD COLSPAN="3" ALIGN="center">
-<% if (!bIsAdmin) { %>
+<% if (!bIsAdmin && !bIsPwUsr) { %>
               <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('Your priviledge level as guest does not allow you to perform this action')">&nbsp;
 <% } else { %>
               <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;

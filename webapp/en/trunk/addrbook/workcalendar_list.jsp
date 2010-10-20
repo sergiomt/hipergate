@@ -37,7 +37,7 @@
       oCalendars = new DBSubset(DB.k_working_calendar,
   				DB.gu_calendar+","+DB.nm_calendar+","+DB.dt_from+","+DB.dt_to+","+DB.gu_user+","+DB.gu_acl_group+","+DB.id_country+","+DB.id_state,
     				DB.id_domain+"=? AND "+DB.gu_workarea+"=? ORDER BY 2", 50);
-      nCalendars = oCalendars.load(oConn, new Object[]{id_domain});
+      nCalendars = oCalendars.load(oConn, new Object[]{id_domain,gu_workarea});
     } // fi
 
     if (nCalendars>0) {
