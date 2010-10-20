@@ -112,12 +112,14 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--      
       var sections = new Array(null,
+      			       new Array("tx_dept","tx_email_from","nm_from"),
       			       new Array("tp_location","tp_street"),
       			       new Array("id_sector","id_status","tp_company"),
       			       new Array("de_title","id_status","tp_passport"),
       			       new Array("de_title","tp_passport"),
       			       new Array("id_objective","tp_oportunity","tp_origin"),
-      			       new Array("tp_room"));
+      			       new Array("tp_room")
+      			       );
 
       function displaySections(i) {
         var frm = document.forms[0];
@@ -240,6 +242,7 @@
         <TD>
           <SELECT NAME="sel_table" onchange="displaySections(this.selectedIndex)">
           	<OPTION VALUE=""></OPTION>
+          	<OPTION VALUE="k_activity_audience_lookup">k_activity_audience_lookup</OPTION>
           	<OPTION VALUE="k_addresses_lookup">k_addresses_lookup</OPTION>
           	<OPTION VALUE="k_companies_lookup">k_companies_lookup</OPTION>
           	<OPTION VALUE="k_contacts_lookup">k_contacts_lookup</OPTION>

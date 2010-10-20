@@ -1,4 +1,4 @@
-<%@ page import="java.util.Date,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.misc.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.ByteArrayOutputStream,java.net.URL,java.util.Date,java.sql.SQLException,javax.activation.DataHandler,com.knowgate.jdc.*,com.knowgate.misc.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %>
 <%
   response.addHeader ("Pragma", "no-cache");
@@ -34,6 +34,26 @@
     
       out.write(Gadgets.replace(oConnPool.dumpStatistics(), "\n", "<BR>"));
     }
+
+    URL oUrl = new URL(Gadgets.chomp(GlobalDBBind.getProperty("webserver"),"/")+"servlet/HttpSchedulerServlet?action=info");
+    ByteArrayOutputStream oStrm = new ByteArrayOutputStream();
+    DataHandler oHndlr = new DataHandler(oUrl);
+    oHndlr.writeTo(oStrm);
+    String sRetVal = Gadgets.substrBetween(oStrm.toString(),"<status>","</status>");
+    oStrm.close();
+    
+    if (sRetVal.equals("running")) {
+      out.write("<BR/><B>Job Scheduler Pool</B><BR>");
+      oUrl = new URL(Gadgets.chomp(GlobalDBBind.getProperty("webserver"),"/")+"servlet/HttpSchedulerServlet?action=stats");
+      oStrm = new ByteArrayOutputStream();
+      oHndlr = new DataHandler(oUrl);
+      oHndlr.writeTo(oStrm);
+      out.write(Gadgets.replace(Gadgets.substrBetween(oStrm.toString(),"<stats><![CDATA[","]]></stats>"), "\n", "<BR>"));
+    oStrm.close();    
+  } else {
+    out.write("<BR/>Job Scheduler is "+sRetVal+"<BR>");
+  }
+
   %>
   </FONT>
 </BODY>

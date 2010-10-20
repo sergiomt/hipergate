@@ -206,23 +206,17 @@
   }
 
 %>
-
 <HTML>
 <HEAD>
   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
-  <!--
-    function setErrorLevel() {
-      window.parent.frames[0].document.forms[0].errorlevel.value = "<%=iErrorLevel%>";
-    }
-  //-->
-  </SCRIPT>  
 </HEAD>
-<BODY  onload="setErrorLevel()">
-<FONT CLASS="textplain">
-<%= (sErrors.length()==0 ? "<BR><B>Every requiered library was successfully found</B>" : sErrors) %>
-</FONT>
+<BODY CLASS="textplain">
+<% if (sErrors.length()>0) { %>
+<FONT COLOR="red">Warning about libraries not found</FONT>
+<BR/>
+<%=sErrors%>
+<% } %>
 </BODY>
 </HTML>

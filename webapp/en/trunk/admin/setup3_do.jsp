@@ -1,11 +1,10 @@
 <%@ page import="java.io.*,java.sql.*,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.datamodel.ModelManager" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<% 
+<%@ include file="../methods/dbbind.jsp" %><% 
   response.addHeader ("Pragma", "no-cache");
   response.addHeader ("cache-control", "no-store");
 
 /*
-  Copyright (C) 2004  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+  Copyright (C) 2004-2010  Know Gate S.L. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -108,8 +107,21 @@ try {
       }
     }
     else {
-      if (request.getParameter("version").startsWith("2")) oMan.upgrade("210", "300", Environment.getProfile("sCnf"));
-      oMan.upgrade("300", "400", Environment.getProfile("sCnf"));
+      if (request.getParameter("version").startsWith("2")) {
+        oMan.upgrade("210", "300", Environment.getProfile("sCnf"));
+        oMan.upgrade("300", "400", Environment.getProfile("sCnf"));
+        oMan.upgrade("400", "500", Environment.getProfile("sCnf"));
+        oMan.upgrade("500", "550", Environment.getProfile("sCnf"));
+      } else if (request.getParameter("version").startsWith("3")) {
+        oMan.upgrade("300", "400", Environment.getProfile("sCnf"));
+        oMan.upgrade("400", "500", Environment.getProfile("sCnf"));
+        oMan.upgrade("500", "550", Environment.getProfile("sCnf"));
+      } else if (request.getParameter("version").startsWith("4")) {
+        oMan.upgrade("400", "500", Environment.getProfile("sCnf"));
+        oMan.upgrade("500", "550", Environment.getProfile("sCnf"));
+      } else if (request.getParameter("version").startsWith("5") && !request.getParameter("version").startsWith("55")) {
+        oMan.upgrade("500", "550", Environment.getProfile("sCnf"));
+      }      
     }
   }
 }
@@ -139,13 +151,15 @@ try {
   oMan.disconnect();
 }
 catch (SQLException ignore) { }
-%>
 
-<HTML>
+GlobalDBBind.restart();
+
+%><HTML>
 <HEAD>
+	<TITLE>DONE</TITLE>
   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
   <!--
     function setErrorLevel() {
@@ -155,7 +169,7 @@ catch (SQLException ignore) { }
             out.write("top.document.location.href=\"setup.htm\";");        
           }
           else {
-            out.write("top.document.location.href=\"../login.html\";");        
+            out.write("if (parent.frames[0].document.getElementById(\"registration\").style.visibility!=\"visible\") top.document.location.href=\"../login.html\";");        
           }
         }
       %>

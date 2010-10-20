@@ -1,8 +1,7 @@
 <%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <% 
 /*
-  Copyright (C) 2004  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+  Copyright (C) 2004-2010  Know Gate S.L. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -32,40 +31,37 @@
   if not, visit http://www.hipergate.org or mail to info@hipergate.org
 */
 %>
-
 <HTML>
 <HEAD>
   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
 </HEAD>
 <BODY >
-<TABLE WIDTH="98%"><TR><TD CLASS="striptitle"><FONT CLASS="title1">Setup Wizard</FONT></TD></TR></TABLE> 
-<BR>
-<TABLE>
-  <TR>
-    <TD><IMG SRC="../images/images/setup/setup.gif" WIDTH="134" HEIGHT="134" ALT="" BORDER="0"></TD>
-    <TD>
-      <FONT CLASS="textplain">
-      Welcome to hipergate Setup Wizard
-      <BR>
-      The setup wizard will guide you over the following steps:
-      <BR><BR>
-      <B>1.</B>&nbsp;Base libraries verification
-      <BR>
+<FORM ACTION="setup2.jsp">
+<BR/>
+<TABLE SUMMARY="Setup Welcome Box" WIDTH="480" HEIGHT="320" ALIGN="center" BORDER="0" CELLSPACING="0" CELLPADDING="0" BACKGROUND="../images/images/setup/setup.gif">
+	<TR HEIGHT="80">
+		<TD WIDTH="40" ROWSPAN="7"></TD>
+		<TD WIDTH="180" ROWSPAN="2"></TD>
+		<TD></TD>
+  </TR>
+	<TR><TD CLASS="title1">Setup Wizard</TD></TR>
+	<TR><TD COLSPAN="2" HEIGHT="20"></TD></TR>
+	<TR><TD COLSPAN="2" CLASS="textplain">Welcome to hipergate Setup Wizard</TD></TR>
+	<TR><TD COLSPAN="2" CLASS="textplain">The setup wizard will guide you over the following steps:</TD></TR>
+	<TR>
+		<TD COLSPAN="2" CLASS="textplain"><B>1.</B>&nbsp;Base libraries verification
+      <BR/>
       <B>2.</B>&nbsp;hipergate.cnf file configuration
-      <BR>
+      <BR/>
       <B>3.</B>&nbsp;Database connection test
-      <BR>
-      <B>4.</B>&nbsp;Datamodel creation
-      <BR>
-      </FONT>
-    </TD>
+      <BR/>
+      <B>4.</B>&nbsp;Datamodel creation</TD>
   </TR>
-  <TR>
-    <TD></TD>
-    <TD><FORM ACTION="setup1.jsp"><INPUT TYPE="submit" CLASS="pushbutton" VALUE="Start"></FORM></TD>
-  </TR>
+	<TR><TD WIDTH="180"></TD><TD VALIGN="top"><INPUT TYPE="submit" CLASS="pushbutton" VALUE="Start" onclick="window.parent.frames[1].document.location='setup1_do.jsp'"></TD></TR>
 </TABLE>
+<CENTER><FONT CLASS="textsmall">&copy; Know Gate S.L. 2003-2010</FONT></CENTER> 
+</FORM>
 </BODY>
 </HTML>

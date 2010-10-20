@@ -64,7 +64,8 @@
     
     while (oVars.hasNext()) {
       sVarName = oVars.next().toString();
-      out.write ("<TR><TD><B>" + sVarName + "</B></TD><TD>" + Environment.getProfileVar(sProfileName, sVarName) + "</TD></TR>");
+			if (!sVarName.equals("dbpassword") && !sVarName.equals("mail.password") && !sVarName.equals("filepassword"))
+        out.write ("<TR><TD><B>" + sVarName + "</B></TD><TD>" + Environment.getProfileVar(sProfileName, sVarName) + "</TD></TR>");
 
     } // wend
     out.write ("</TABLE><BR>");

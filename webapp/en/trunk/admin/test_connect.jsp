@@ -31,8 +31,9 @@
   <TITLE>hipergate :: JDBC Connection test</TITLE>
   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
   <META NAME="robots" CONTENT="noindex,nofollow">
+  <LINK REL="stylesheet" TYPE="text/css" HREF="../skins/xp/styles.css">
 </HEAD>
-<BODY>
+<BODY CLASS="textplain">
 <%
   String sDriver = "";
   Class oDriver;
@@ -46,7 +47,7 @@
   String TableTypes[] = new String[1];
   int iTableCount;
 
-  out.write("Begin hipergate Connection Test<BR><BR>");
+  out.write("<B>Begin hipergate Connection Test</B><BR><BR>");
   
   try {
     
@@ -111,7 +112,7 @@
     oConn.close();
     oConn = null;
     
-    oBind = new DBBind();
+    oBind = new DBBind(sCnf);
 
     out.write ("DBBind successfully created<BR>");
     
@@ -125,6 +126,7 @@
     else {
       out.write ("DBBind.getConnection() was successfull<BR>");
     
+      /*
       // Check that k_users table exists at database
     
       if (DBBind.exists(oJCon, "k_users", "U")) {
@@ -147,6 +149,8 @@
           else
             throw new SQLException("Primary key for k_users not found");
       }
+      */
+
       oJCon.close("test_connect");
     }
 	  oBind.close();
@@ -187,7 +191,7 @@
     
     End JNDI JDBC Resource Test --------------------------- */
 
-    out.write ("<BR> Connection test finished " + "<BR>");
+    out.write ("<BR> <B>Connection test finished</B> " + "<BR>");
 
   }
   catch (NullPointerException npe) {

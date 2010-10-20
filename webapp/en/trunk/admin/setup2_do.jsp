@@ -1,11 +1,10 @@
-<%@ page import="java.util.Properties,java.io.*,java.sql.*,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<% 
+<%@ page import="java.util.Properties,java.io.*,java.sql.*,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %><%
+
   response.addHeader ("Pragma", "no-cache");
   response.addHeader ("cache-control", "no-store");
 
 /*
-  Copyright (C) 2004  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+  Copyright (C) 2004-2010  Know Gate S.L. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -77,11 +76,18 @@ try {
   oProfile.setProperty("dbpassword", request.getParameter("dbpassword"));
   oProfile.setProperty("schema", request.getParameter("schema"));
 
+  oProfile.setProperty("fileprotocol", "file://");
+  oProfile.setProperty("fileserver", "localhost");
+
   oProfile.setProperty("temp", request.getParameter("temp"));
   oProfile.setProperty("storage", request.getParameter("storage"));
+  oProfile.setProperty("maxfileupload", request.getParameter("maxfileupload"));
+
   oProfile.setProperty("workareasget", request.getParameter("workareasget"));
   oProfile.setProperty("workareasput", request.getParameter("workareasput"));
-  oProfile.setProperty("maxfileupload", request.getParameter("maxfileupload"));
+
+  oProfile.setProperty("webserver", request.getParameter("webserver"));
+  oProfile.setProperty("imageserver", Gadgets.chomp(request.getParameter("webserver"),"/")+"images");
 
   oProfile.setProperty("mail.store.protocol", request.getParameter("store"));
   oProfile.setProperty("mail.transport.protocol", request.getParameter("transport"));
@@ -90,6 +96,15 @@ try {
   oProfile.setProperty("mail.outgoing", request.getParameter("outgoing"));
 
   oProfile.setProperty("authmethod", request.getParameter("authmethod"));
+
+  oProfile.setProperty("luceneindex", Gadgets.chomp(request.getParameter("storage"),File.separator)+"luceneindex");
+  oProfile.setProperty("analyzer", "org.apache.lucene.analysis.WhitespaceAnalyzer");
+
+  oProfile.setProperty("googlemapskey", request.getParameter("googlemapskey"));
+  oProfile.setProperty("yahoobosskey", request.getParameter("yahoobosskey"));
+
+  oProfile.setProperty("face", "crm");
+  oProfile.setProperty("skin", "xp");
   
   oFileStream.close();
 
@@ -189,8 +204,8 @@ catch (SQLException sql) {
 <HTML>
 <HEAD>
   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
   <!--
     function setErrorLevel() {
