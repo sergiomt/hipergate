@@ -2,9 +2,11 @@
   <tr>
     <td><img src="../../../../../../skins/xp/hglogopeq.jpg" border="0" align="middle"></img></td>
     <td align="middle" valign="middle"><a style="color:#0066cc" href="javascript:mostrarInt()"><font face="Verdana,Arial,Helvetica,sans-serif" size="1" color="#0066cc" bgcolor="#ffffff"><b>Edit Panel</b></font></a></td>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+    <td align="middle" valign="middle"><a style="color:#0066cc" href="javascript:document.location='../../../../../../webbuilder/list_choose.jsp?gu_pageset='+frmLstBlocks.gu_pageset.value+'&id_command=MAIL'"><font face="Verdana,Arial,Helvetica,sans-serif" size="1" color="#0066cc" bgcolor="#ffffff"><b>Schedule Batch</b></font></a></td>
   </tr>
 </table>
-<script language="JavaScript">
+<script language="JavaScript" type="text/javascript">
 var background = "";
 var wNewBlock = null;
 function setNull() {
@@ -41,7 +43,7 @@ function changeStyles()
 function addNewBlock()
 {
 	var sPage = new String("../../../../../../webbuilder/wb_metablocklist.jsp?gu_microsite=" + frmLstBlocks.gu_microsite.value + "&gu_workarea=" + frmLstBlocks.gu_workarea.value + "&gu_pageset=" + frmLstBlocks.gu_pageset.value + "&gu_page=" + frmLstBlocks.gu_page.value + "&file_pageset=" + frmLstBlocks.file_pageset.value + "&doctype=" + frmLstBlocks.doctype.value);
-	wNewBlock = window.open(sPage,"wNewBlock","top=100,left=100,height=320,width=200");
+	wNewBlock = window.open(sPage,"wNewBlock","top=100,left=100,height=520,width=200");
 	self.setTimeout('setFocus()', 1000);
 }
 

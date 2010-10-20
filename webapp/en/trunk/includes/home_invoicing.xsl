@@ -23,13 +23,13 @@
       	      <TABLE CELLSPACING="0" CELLPADDING="0" BORDER="0"><TR CLASS="subtitle" VALIGN="middle">
       	          <TD>
 	          <xsl:if test="$param_windowstate='NORMAL'">
-      	            <A HREF="windowstate.jsp?gu_user={$param_user}&amp;nm_page=desktop.jsp&amp;nm_portlet=com.knowgate.http.portlets.OportunitiesTab&amp;gu_workarea={$param_workarea}&amp;nm_zone={$param_zone}&amp;id_state=MINIMIZED"><IMG SRC="../skins/{$param_skin}/tab/minimize12.gif" WIDTH="16" HEIGHT="16" BORDER="0" HSPACE="4" VSPACE="2"/></A>
+      	            <A HREF="windowstate.jsp?gu_user={$param_user}&amp;nm_page=desktop.jsp&amp;nm_portlet=com.knowgate.http.portlets.Invoicing&amp;gu_workarea={$param_workarea}&amp;nm_zone={$param_zone}&amp;id_state=MINIMIZED"><IMG SRC="../skins/{$param_skin}/tab/minimize12.gif" WIDTH="16" HEIGHT="16" BORDER="0" HSPACE="4" VSPACE="2"/></A>
 	          </xsl:if>
 	          <xsl:if test="$param_windowstate='MINIMIZED'">
-      	            <A HREF="windowstate.jsp?gu_user={$param_user}&amp;nm_page=desktop.jsp&amp;nm_portlet=com.knowgate.http.portlets.OportunitiesTab&amp;gu_workarea={$param_workarea}&amp;nm_zone={$param_zone}&amp;id_state=NORMAL"><IMG SRC="../skins/{$param_skin}/tab/maximize12.gif" WIDTH="16" HEIGHT="16" BORDER="0" HSPACE="4" VSPACE="2"/></A>
+      	            <A HREF="windowstate.jsp?gu_user={$param_user}&amp;nm_page=desktop.jsp&amp;nm_portlet=com.knowgate.http.portlets.Invoicing&amp;gu_workarea={$param_workarea}&amp;nm_zone={$param_zone}&amp;id_state=NORMAL"><IMG SRC="../skins/{$param_skin}/tab/maximize12.gif" WIDTH="16" HEIGHT="16" BORDER="0" HSPACE="4" VSPACE="2"/></A>
 	          </xsl:if>
 	          </TD>
-	          <TD BACKGROUND="../skins/{$param_skin}/tab/tabbackflat.gif" CLASS="subtitle">Oportunities</TD>	          
+	          <TD BACKGROUND="../skins/{$param_skin}/tab/tabbackflat.gif" CLASS="subtitle">[~Facturaci�n~]</TD>	          
 	        </TR></TABLE>
       	    </TD>
           </TR>
@@ -40,23 +40,32 @@
     <TR>
       <TD WIDTH="2px" CLASS="subtitle" BACKGROUND="../images/images/graylineleft.gif"><IMG SRC="../images/images/spacer.gif" WIDTH="2" HEIGHT="1" BORDER="0"/></TD>
       <TD CLASS="menu1">
-	<xsl:if test="$param_windowstate='NORMAL'">
+	    <xsl:if test="$param_windowstate='NORMAL'">
         <TABLE CELLSPACING="8" BORDER="0">
-	  <TR>
-	    <TD COLSPAN="2">
-	      <A HREF="#" CLASS="linkplain" onclick="newOportunity()">[~Nueva Oportunidad~]</A>
-	      <TABLE CELLSPACING="0" CELLPADDING="2" BORDER="0">
-	      <xsl:for-each select="oportunities/oportunity">
-	      <TR><TD COLSPAN="3"><A CLASS="linkplain" HREF="../crm/oportunity_listing_f.jsp?id_domain={$param_domain}&amp;n_domain=null&amp;gu_contact={gu_contact}&amp;where={where}&amp;field=tx_contact&amp;find={tx_contact_esc}&amp;show=oportunities&amp;skip=0&amp;selected=2&amp;subselected=2"><xsl:value-of select="tl_oportunity"/></A></TD></TR>	
-	      <xsl:if test="tx_contact!=''">
-	      <TR><TD COLSPAN="3"><FONT CLASS="textsmall"><I>(<xsl:value-of select="tx_contact"/>)</I></FONT></TD></TR>
-	      </xsl:if>
-	      </xsl:for-each>
-	      </TABLE>
+          <TR>
+            <TD ALIGN="middle">
+              <IMG SRC="../images/images/shop/invoicing.gif" BORDER="0" ALT=""/>
+            </TD>
+            <TD ALIGN="left" VALIGN="middle">
+              <TABLE>
+                <TR>
+                  <TD VALIGN="middle">
+                    <A HREF="#" onclick="createOrder()" CLASS="linkplain">New Order</A>
+                    <BR/>
+                    <A HREF="#" onclick="createInvoice()" CLASS="linkplain">New Invoice</A>
+                    <BR/>
+                    <A HREF="#" onclick="createPayment()" CLASS="linkplain">New Payment</A>
+                  </TD>
+                </TR>
+              </TABLE>
+	          </TD>
+	        </TR>        
+	        <TR>
+	          <TD COLSPAN="2">
             </TD>
           </TR>
         </TABLE>
-        </xsl:if>
+      </xsl:if>
       </TD>
       <TD WIDTH="3px" ALIGN="right" BACKGROUND="../images/images/graylineright.gif"><IMG style="display:block" SRC="../images/images/spacer.gif" WIDTH="3" BORDER="0"/></TD>
     </TR>
