@@ -141,6 +141,7 @@
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
@@ -240,7 +241,7 @@
 	var opt = frm.id_country0.options;
 	var len = opt.length; 
 	var cnt;
-	for (var r=1; r<nrows; r++) {
+	for (var r=0; r<nrows; r++) {
 	  cnt = frm.elements["id_country"+String(r)].options;
 	  for (var o=0; o<len; o++) {
 	    cnt[o] = new Option(opt[o].text, opt[o].value, false, false);
@@ -249,21 +250,21 @@
 <%
 	if (oCsv==null) {
 	  if (sLanguage.equals("es"))
-	    for (int r=1; r<=iRows; r++) out.write("        setCombo(frm.id_country"+String.valueOf(r)+",\"es\");\n");
+	    for (int r=0; r<iRows; r++) out.write("        setCombo(frm.id_country"+String.valueOf(r)+",\"es\");\n");
 	  else if (sLanguage.equals("en"))
-	    for (int r=1; r<=iRows; r++) out.write("        setCombo(frm.id_country"+String.valueOf(r)+",\"us\");\n");
+	    for (int r=0; r<iRows; r++) out.write("        setCombo(frm.id_country"+String.valueOf(r)+",\"us\");\n");
 	  else if (sLanguage.equals("en")  || sLanguage.equalsIgnoreCase("en_GB"))
-	    for (int r=1; r<=iRows; r++) out.write("        setCombo(frm.id_country"+String.valueOf(r)+",\"gb\");\n");
+	    for (int r=0; r<iRows; r++) out.write("        setCombo(frm.id_country"+String.valueOf(r)+",\"gb\");\n");
 	  else if (sLanguage.equals("fr"))
-	    for (int r=1; r<=iRows; r++) out.write("        setCombo(frm.id_country"+String.valueOf(r)+",\"fr\");\n");
+	    for (int r=0; r<iRows; r++) out.write("        setCombo(frm.id_country"+String.valueOf(r)+",\"fr\");\n");
 	  else if (sLanguage.equals("de"))
-	    for (int r=1; r<=iRows; r++) out.write("        setCombo(frm.id_country"+String.valueOf(r)+",\"de\");\n");
+	    for (int r=0; r<iRows; r++) out.write("        setCombo(frm.id_country"+String.valueOf(r)+",\"de\");\n");
 	  else if (sLanguage.equals("it"))
-	    for (int r=1; r<=iRows; r++) out.write("        setCombo(frm.id_country"+String.valueOf(r)+",\"it\");\n");
+	    for (int r=0; r<iRows; r++) out.write("        setCombo(frm.id_country"+String.valueOf(r)+",\"it\");\n");
 	  else if (sLanguage.equals("cn") || sLanguage.equalsIgnoreCase("zh_CN"))
-	    for (int r=1; r<=iRows; r++) out.write("        setCombo(frm.id_country"+String.valueOf(r)+",\"cn\");\n");
+	    for (int r=0; r<iRows; r++) out.write("        setCombo(frm.id_country"+String.valueOf(r)+",\"cn\");\n");
 	  else if (sLanguage.equals("tw") || sLanguage.equalsIgnoreCase("zh_TW"))
-	    for (int r=1; r<=iRows; r++) out.write("        setCombo(frm.id_country"+String.valueOf(r)+",\"tw\");\n");
+	    for (int r=0; r<iRows; r++) out.write("        setCombo(frm.id_country"+String.valueOf(r)+",\"tw\");\n");
 	} else {
 	  for (int r=0; r<iRows; r++) {
 	    sRow = String.valueOf(r);

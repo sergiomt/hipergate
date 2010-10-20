@@ -2,10 +2,11 @@
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/customattrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
 <%@ include file="contact_edit.jspf" %>
-<BODY  TOPMARGIN="8" MARGINHEIGHT="8" onload="setCombos()">
+<BODY TOPMARGIN="8" MARGINHEIGHT="8" onClick="hideRightMenu()">
 <FORM NAME="fixedAttrs" METHOD="post" ACTION="contact_edit_store.jsp" onSubmit="return validate()">
-  <DIV class="cxMnu1" style="width:<%=(gu_contact.length()>0 && bIsAdmin ? "5" : "4")%>80px"><DIV class="cxMnu2">
+  <DIV class="cxMnu1" style="width:<%=(gu_contact.length()>0 && bIsAdmin ? "6" : bIsGuest ? "4" : "5")%>80px"><DIV class="cxMnu2">
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
+    <% if (!bIsGuest) { %><SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'; showRightMenu(event);" onMouseOut="this.className='hmMnuOff'"><IMG src="../images/images/new16x16.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Nuevo~]"> [~Nuevo~]</SPAN><% } %>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Refresh"> Refresh</SPAN>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
 <% if (gu_contact.length()>0) { %>
@@ -19,7 +20,7 @@
     <TR><TD COLSPAN="12"><IMG SRC="../images/images/spacer.gif" HEIGHT="4"></TD></TR>
     <TR><TD COLSPAN="12" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
     <TR>
-      <TD VALIGN="middle"><IMG SRC="../images/images/theworld16.gif" WIDTH="16" HEIGHT="16" BORDER="0"></TD>
+      <TD VALIGN="middle"><IMG SRC="../images/images/theworld16.gif" WIDTH="16" HEIGHT="16" BORDER="0" onMouseOver="quickViewAddrs(event)" onMouseOut="hideDiv()"></TD>
       <TD VALIGN="middle"><A HREF="#" onclick="viewAddrs()" CLASS="linkplain">Addresses</A></TD>
       <TD VALIGN="middle"><IMG SRC="../images/images/note16x16.gif" WIDTH="15" HEIGHT="18" BORDER="0"></TD>
       <TD VALIGN="middle"><A HREF="#" onclick="viewNotes()" CLASS="linkplain">Notes</A></TD>
@@ -228,6 +229,22 @@
   <DIV onclick="selectTab(1)" id="p1tab1" class="tab" style="width:240px; background-color:#ddd; height:26px; left:180px; top:0px; z-index:1"><SPAN onmouseover="this.style.cursor='hand';" onmouseout="this.style.cursor='auto';">Defined by User</SPAN></DIV>
   </DIV>  
 </FORM>
+    <IFRAME name="addrIFrame" src="../common/blank.htm" width="0" height="0" border="0" frameborder="0"></IFRAME>
+    <SCRIPT language="JavaScript" type="text/javascript">
+      <!--
+      addMenuOption("[~Direcci&oacute;n~]","createAddress()",0);
+      addMenuOption("[~Oportunidad~]","createOportunity()",0);
+      addMenuOption("[~Nota~]","createNote()",0);
+      addMenuOption("[~Archivo~]","createAttachment()",0);
+<% if ((iAppMask & (1<<CollaborativeTools))!=0) { %>
+      addMenuOption("[~Llamada~]","createPhoneCall()",0);
+      addMenuOption("[~Actividad~]","createActivity()",0);
+<% } %>
+<% if ((iAppMask & (1<<ProjectManager))!=0) { %>
+      addMenuOption("[~Proyecto~]","createProject()",0);
+<% } %>
+      //-->
+    </SCRIPT>
 </BODY>
 </HTML>
 <%

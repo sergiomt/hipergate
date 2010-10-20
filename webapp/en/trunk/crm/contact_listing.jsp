@@ -104,9 +104,9 @@
   else
     sOrderBy = "0";   
 
-  iOrderBy = Integer.parseInt(sOrderBy);
+  iOrderBy = Integer.parseInt(sOrderBy.endsWith(" DESC") ? sOrderBy.substring(0,sOrderBy.length()-5) : sOrderBy);
   
-  if (8==iOrderBy) sOrderBy += " DESC";
+  if (8==iOrderBy && !sOrderBy.endsWith(" DESC")) sOrderBy += " DESC";
   
   JDCConnection oConn = null;  
   
@@ -485,9 +485,9 @@
 	function sortBy(fld) {
 	  var frm = document.forms[0];
 <% if (bIsAdmin) { %>
-	  document.location = "contact_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=" + fld + "&field=<%=sField%>&find=<%=sFind%>&query=<%=sQuery%>&where=<%=Gadgets.URLEncode(sWhere)%>" + "&salesman=" + getCombo(frm.salesman) + "&face=<%=sFace%>&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
+	  document.location = "contact_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=" + fld + "&field=<%=sField%>&find=<%=sFind%>&query=<%=sQuery%>&where=<%=Gadgets.URLEncode(sWhere)%>" + "&salesman=" + getCombo(frm.salesman) + "&private=" + (frm.private[0].checked ? "1" : "0") + "&face=<%=sFace%>&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
 <% } else { %>
-	  document.location = "contact_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=" + fld + "&field=<%=sField%>&find=<%=sFind%>&query=<%=sQuery%>&where=<%=Gadgets.URLEncode(sWhere)%>" + "&private=" + (frm.private[0].checked ? "1" : "0") + "&face=<%=sFace%>&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
+	  document.location = "contact_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=" + fld + "&field=<%=sField%>&find=<%=sFind%>&query=<%=sQuery%>&where=<%=Gadgets.URLEncode(sWhere)%>" + "&private=" + (frm.private[0].checked ? "0" : "1") + "&face=<%=sFace%>&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
 <% } %>
 	}
 				
@@ -645,7 +645,7 @@
         else
           disableRightMenuOption(12);
 
-	var iProjOption = (parseInt(getCookie("appmask")) & 131072)!=0 ? 16 : 14;
+	      var iProjOption = (parseInt(getCookie("appmask")) & 131072)!=0 ? 16 : 14;
 	 
         if ((parseInt(getCookie("appmask")) & 4096)!=0)
           if (jsCompanyId.length>0)
@@ -771,7 +771,7 @@
         </TR>
 	<TR>
           <TD>&nbsp;&nbsp;<IMG SRC="../images/images/fastedit.gif" WIDTH="20" HEIGHT="16" BORDER="0" ALT="Fast Edit"></TD>
-          <TD COLSPAN="4"><A HREF="contact_fastedit_f.jsp" TARGET="_top" CLASS="linkplain">Fast Edit</A></TD>
+          <TD COLSPAN="4"><A HREF="<%= face.equals("edu") ? "../training/alumni_fastedit_f.jsp" : "contact_fastedit_f.jsp" %>" TARGET="_top" CLASS="linkplain">Fast Edit</A></TD>
 	        <TD COLSPAN="3" ALIGN="left" CLASS="textplain">
 <% if (bIsAdmin) { %>
 					  <SELECT NAME="salesman" CLASS="combomini"><OPTION VALUE="">All individuals</OPTION><OPTGROUP LABEL="Only individuals assigned to salesman"><% for (int s=0; s<iSalesMen; s++) out.write ("<OPTION VALUE=\""+oSalesMen.getString(0,s)+"\">"+oSalesMen.getStringNull(1,s,"")+" "+oSalesMen.getStringNull(2,s,"")+" "+oSalesMen.getStringNull(3,s,"")+"</OPTION>"); %></SELECT>
@@ -780,7 +780,7 @@
 	          &nbsp;&nbsp;
             <INPUT TYPE="radio" NAME="private" VALUE="1" onclick="if (document.forms[0].sel_query.selectedIndex>0) runQuery(); else findContact();" <% if (bPrivate) out.write("CHECKED"); %>>&nbsp;<FONT CLASS="textplain">Private Contacts Only</FONT>
 <% } %>
-			<A HREF="#" TARGET="_top" CLASS="linkplain" onclick="searchCandidate();return false;">Search Applicants</A>
+			    <% if (!face.equals("edu")) { %> <A HREF="#" TARGET="_top" CLASS="linkplain" onclick="searchCandidate();return false;">Search Applicants</A><% } %>
 	        </TD>
 	</TR>
         <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
@@ -825,11 +825,10 @@
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;</TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(2);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by Surname"></A>&nbsp;<B>Surname, Name</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="<%=String.valueOf(floor(150f*fScreenRatio))%>">&nbsp;&nbsp;<A HREF="javascript:sortBy(3)"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by position"></A>&nbsp;<B><%=(face.equals("edu") ? "Type" : "Position")%></B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="<%=String.valueOf(floor(200f*fScreenRatio))%>">&nbsp;<A HREF="javascript:sortBy(5)"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by company name"></A><B>&nbsp;<%=(face.equals("edu") ? "Academic Course" : "Company")%></B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(5)"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by company name"></A><B>&nbsp;<%=(face.equals("edu") ? "Academic Course" : "Company")%></B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="110">&nbsp;<A HREF="javascript:sortBy(8)"><IMG SRC="../skins/<%=sSkin + (iOrderBy==8 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by last modified"></A><B>&nbsp;Date Modified</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" ALIGN="center"><A HREF="#" onclick="selectAll()" TITLE="Seleccionar todos"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select all"></A></TD>
         </TR>
-<% out.flush(); %>      
 	<%
 
   	  String sContactId = "";

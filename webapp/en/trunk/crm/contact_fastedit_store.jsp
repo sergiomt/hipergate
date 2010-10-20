@@ -49,10 +49,11 @@
     return;
   }
 
-  final int iDefaultFlags = iMode|ContactLoader.WRITE_CONTACTS|ContactLoader.NO_DUPLICATED_MAILS|(nullif(request.getParameter("chk_dup_names")).equals("1") ? ContactLoader.NO_DUPLICATED_NAMES : 0)|(nullif(request.getParameter("chk_dup_emails")).equals("1") ? ContactLoader.NO_DUPLICATED_MAILS : 0);
+  final int iDefaultFlags = iMode|ContactLoader.WRITE_CONTACTS|(nullif(request.getParameter("chk_dup_names")).equals("1") ? ContactLoader.NO_DUPLICATED_NAMES : 0)|(nullif(request.getParameter("chk_dup_emails")).equals("1") ? ContactLoader.NO_DUPLICATED_MAILS : 0);
 
   int r=0;
   String s, v;
+  int nStored = 0;
   int nRows = Integer.parseInt(request.getParameter("nu_rows"));
   String[] aDesc = Gadgets.split(request.getParameter("tx_descriptor"), new char[]{'\t','|',',',';'});
   int iDesc = aDesc.length;
@@ -78,12 +79,14 @@
         
         iFlags = iDefaultFlags;        
         if (nullif(request.getParameter("nm_legal"+s)).length()>0)
-	  iFlags |= ContactLoader.WRITE_COMPANIES;
+	        iFlags |= ContactLoader.WRITE_COMPANIES;
         if (nullif(request.getParameter("nm_street"+s)).length()>0 || nullif(request.getParameter("zipcode"+s)).length()>0 || nullif(request.getParameter("id_country"+s)).length()>0 || nullif(request.getParameter("direct_phone"+s)).length()>0 || nullif(request.getParameter("tx_email"+s)).length()>0)
-	  iFlags |= ContactLoader.WRITE_ADDRESSES;
+	        iFlags |= ContactLoader.WRITE_ADDRESSES;
 
         oLoader.store(oConn, gu_workarea, iFlags);        
 
+				nStored++;
+				
         oLoader.setAllColumnsToNull();
       } // fi (tx_name!="" || tx_surname!="")
       r++;
@@ -107,13 +110,11 @@
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=ArrayIndexOutOfBoundsException&desc=Row " + String.valueOf(r+1) + " " + e.getMessage() + "&resume=_back"));
   }
-  /*
   catch (NullPointerException e) {  
     disposeConnection(oConn,"contact_fastedit_store");
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=Row " + String.valueOf(r+1) + e.getMessage() + "&resume=_back"));
   }
-  */
   catch (ClassCastException e) {  
     disposeConnection(oConn,"contact_fastedit_store");
     oConn = null;
@@ -132,7 +133,7 @@
 <BODY TOPMARGIN="32" MARGINHEIGHT="32">
   <TABLE ALIGN="CENTER" WIDTH="90%" BGCOLOR="#000080">
     <TR><TD>
-      <FONT FACE="Arial,Helvetica,sans-serif" COLOR="white" SIZE="2"><B><% out.write("Operación Completada"); %></B></FONT>
+      <FONT FACE="Arial,Helvetica,sans-serif" COLOR="white" SIZE="2"><B><% out.write("[~Operaci&oacute;n Completada~]"); %></B></FONT>
     </TD></TR>
     <TR><TD>
       <TABLE WIDTH="100%" BGCOLOR="#FFFFFF">
@@ -140,7 +141,7 @@
           <TABLE BGCOLOR="#FFFFFF" BORDER="0" CELLSPACING="8" CELLPADDING="8">
             <TR VALIGN="middle">
               <TD><IMG SRC="../images/images/chequeredflag.gif" WIDTH="40" HEIGHT="38" BORDER="0" ALT="Chequered Flag"></TD>
-              <TD><FONT CLASS="textplain"><% out.write(String.valueOf(nRows)+" Rows successfully saved"); %></FONT></TD>
+              <TD><FONT CLASS="textplain"><% out.write(String.valueOf(nStored)+" Rows successfully saved"); %></FONT></TD>
 	    </TR>
 	  </TABLE>
         </TD></TR>

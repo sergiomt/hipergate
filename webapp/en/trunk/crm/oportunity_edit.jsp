@@ -524,20 +524,23 @@
 <% if (0==gu_oportunity.length() || oOprt.getStringNull(DB.gu_writer,"").equals(id_user)) { %>
           <TR>            
             <TD ALIGN="right" WIDTH="175"><FONT CLASS="formstrong">Private:</FONT></TD>            
-            <TD ALIGN="left" WIDTH="420"><INPUT TYPE="hidden" NAME="bo_private" VALUE="<%=(sPrivate.length()>0 ? "1" : "0")%>"><INPUT TYPE="checkbox" NAME="chk_private" VALUE="1" <%=sPrivate%> ></TD>
-          </TR>
+            <TD ALIGN="left" WIDTH="420">
+            	<INPUT TYPE="hidden" NAME="bo_private" VALUE="<%=(sPrivate.length()>0 ? "1" : "0")%>"><INPUT TYPE="checkbox" NAME="chk_private" VALUE="1" <%=sPrivate%> >
+<%            if (!oOprt.getStringNull(DB.gu_writer,"").equals(id_user)) {
+                oUser = new ACLUser(oConn,oCont.getStringNull(DB.gu_writer, id_user));
+                out.write("&nbsp;Owner:&nbsp;"+oUser.getStringNull(DB.nm_user,"") + " " + oUser.getStringNull(DB.tx_surname1,"") + " " + oUser.getStringNull(DB.tx_surname2,""));
+              }
+%>          </TD>
 <% } else { %>
           <TR>            
             <TD ALIGN="right" WIDTH="175"><FONT CLASS="formplain">Private:</FONT></TD>            
-            <TD ALIGN="left" WIDTH="420"><INPUT TYPE="hidden" NAME="bo_private" VALUE="<%=(sPrivate.length()>0 ? "1" : "0")%>"><INPUT TYPE="checkbox" NAME="chk_private" VALUE="1" onClick="return false;" <%=sPrivate%>></TD>
-          </TR>
-<% } %>
-<% if (!oOprt.getStringNull(DB.gu_writer,"").equals(id_user)) {
-          oUser = new ACLUser(oConn,oCont.getStringNull(DB.gu_writer, id_user));
-%>
-          <TR>            
-            <TD ALIGN="right" WIDTH="175"><FONT CLASS="formplain">Owner:</FONT></TD>            
-            <TD ALIGN="left" WIDTH="420"><FONT CLASS="formplain"><%=oUser.getStringNull(DB.nm_user,"") + " " + oUser.getStringNull(DB.tx_surname1,"") + " " + oUser.getStringNull(DB.tx_surname2,"")%></FONT></TD>
+            <TD ALIGN="left" WIDTH="420">
+            	<INPUT TYPE="hidden" NAME="bo_private" VALUE="<%=(sPrivate.length()>0 ? "1" : "0")%>"><INPUT TYPE="checkbox" NAME="chk_private" VALUE="1" onClick="return false;" <%=sPrivate%>>
+<%            if (!oOprt.getStringNull(DB.gu_writer,"").equals(id_user)) {
+                oUser = new ACLUser(oConn,oCont.getStringNull(DB.gu_writer, id_user));
+                out.write("&nbsp;Owner:&nbsp;"+oUser.getStringNull(DB.nm_user,"") + " " + oUser.getStringNull(DB.tx_surname1,"") + " " + oUser.getStringNull(DB.tx_surname2,""));
+              }
+%>          </TD>
           </TR>
 <% } %>
           <TR>
@@ -618,7 +621,7 @@
 <% } %>
           <TR>
             <TD ALIGN="right" WIDTH="175"><FONT CLASS="formplain">Comments:</FONT></TD>
-            <TD ALIGN="left" WIDTH="420"><TEXTAREA NAME="tx_note" ROWS="3" COLS="40"><%=oOprt.getStringNull(DB.tx_note,"")%></TEXTAREA></TD>
+            <TD ALIGN="left" WIDTH="420"><TEXTAREA NAME="tx_note" ROWS="2" COLS="40"><%=oOprt.getStringNull(DB.tx_note,"")%></TEXTAREA></TD>
           </TR>          
           <TR>
     	    <TD COLSPAN="2"><HR></TD>

@@ -30,7 +30,8 @@
   
   Contact oCont = new Contact();
   Term oTerm = new Term();
-  
+
+  String sToday = DBBind.escape(new java.util.Date(), "shortDate");  
   String sCreationdate = "";
   String sPrivate = "";
   String sFullName = "";
@@ -101,7 +102,7 @@
       if (bOk) {
 			  sCreationdate = oCont.getCreationDate(oConn).toString();
         sFullName = oCont.getStringNull(DB.tx_name, "") + " " + oCont.getStringNull(DB.tx_surname, "");
-        sFullName = sFullName.trim();
+        sFullName = sFullName.replace('\"',' ').replace((char)39, '´').replace('\n',' ').trim();
       }    
     } // fi (gu_contact!="")
     
@@ -173,16 +174,21 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML LANG="<%=sLanguage.toUpperCase()%>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/datefuncs.js"></SCRIPT>      
   <TITLE>hipergate :: Edit Individual</TITLE>
 
-    <SCRIPT LANGUAGE="JavaScript1.3" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" >
+    dynapi.library.setPath('../javascript/dynapi3/');
+    dynapi.library.include('dynapi.api.DynLayer');
+  </SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
       <!--
 
 				var zone_salesman = new Object();
@@ -209,7 +215,7 @@
         switch(parseInt(odctrl)) {
           case 1:
             if (frm.nm_company.value.indexOf("'")>=0)
-              alert("[~El nombre de la compaï¿½ï¿½a contiene caracteres no permitidos~]");
+              alert("The company name contains forbidden characters");
             else
               window.open("../common/reference.jsp?nm_table=k_companies&tp_control=1&nm_control=nm_legal AS nm_company&nm_coding=gu_company" + 
                           (frm.nm_company.value.length==0 || frm.gu_company.value.length==32 ? "" : "&where=" + escape(" <%=DB.nm_legal%> LIKE '"+frm.nm_company.value+"%' ")),
@@ -245,21 +251,49 @@
       }
       
       // ------------------------------------------------------
+        	
+	    function createAddress() {
+<% if (bIsGuest) { %>
+        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+<% } else { %>
+        self.open("../common/addr_edit_f.jsp?nm_company=" + escape(frm.tx_surname.value + ", " + frm.tx_name.value) + "&linktable=k_x_contact_addr&linkfield=gu_contact&linkvalue="+getURLParam("gu_contact"), "editcontaddr", "toolbar=no,directories=no,menubar=no,resizable=no,width=700,height=" + (screen.height<=600 ? "520" : "640"));
+<% } %>
+	    } // createAddress()
+
+      // ------------------------------------------------------
 
       function viewAddrs() {
         var frm = window.document.forms["fixedAttrs"];
       
-        document.location.href = "../common/addr_list.jsp?nm_company=" + escape(frm.tx_surname.value + ", " + frm.tx_name.value) + "&linktable=k_x_contact_addr&linkfield=gu_contact&linkvalue=" + getURLParam("gu_contact");
+        document.location = "../common/addr_list.jsp?nm_company=" + escape(frm.tx_surname.value + ", " + frm.tx_name.value) + "&linktable=k_x_contact_addr&linkfield=gu_contact&linkvalue=" + getURLParam("gu_contact");
 
-	return true;
+	      return true;
+      }
+
+      // ----------------------------------------------------
+
+      function quickViewAddrs(ev) {
+       	var frm = window.document.forms[0];
+        addrLayer.setZIndex(200);
+        showDiv(ev,"../common/addr_layer.jsp?nm_company=" + escape(frm.tx_surname.value + ", " + frm.tx_name.value) + "&linktable=k_x_contact_addr&linkfield=gu_contact&linkvalue=" + getURLParam("gu_contact"));
       }
 
       // ------------------------------------------------------
 
       function viewWelcomePack() {
-        document.location.href = "welcomepack_edit.jsp?gu_workarea="+getCookie("workarea")+"&gu_contact=" + getURLParam("gu_contact") + "&linktable=k_x_contact_addr&linkfield=gu_contact&linkvalue=" + getURLParam("gu_contact");
+        document.location = "welcomepack_edit.jsp?gu_workarea="+getCookie("workarea")+"&gu_contact=" + getURLParam("gu_contact") + "&linktable=k_x_contact_addr&linkfield=gu_contact&linkvalue=" + getURLParam("gu_contact");
 	      return true;
       }
+
+      // ----------------------------------------------------
+        	
+	    function createOportunity () {	  
+<% if (bIsGuest) { %>
+        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+<% } else { %>
+	      self.open ("oportunity_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>&gu_contact=" + getURLParam("gu_contact") + "&gu_company=<%=oCont.getStringNull(DB.gu_company,"")%>", "createoportunity", "directories=no,toolbar=no,menubar=no,width=640,height=600");	  
+<% } %>
+	    } // createOportunity()
 
       // ----------------------------------------------------
 	
@@ -271,6 +305,16 @@
 		    //Fin I2E
 
 	      return true;
+      }
+
+      // ------------------------------------------------------
+
+      function createNote() {
+<% if (bIsGuest) { %>
+        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+<% } else { %>
+        self.open ("note_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_contact="+getURLParam("gu_contact")+"&nm_contact=" + escape("<%=sFullName%>"), "addnote", "directories=no,toolbar=no,menubar=no,width=610,height=400");
+<% } %>
       }
 
       // ------------------------------------------------------
@@ -290,6 +334,16 @@
 
       // ------------------------------------------------------
 
+      function createAttachment() {
+<% if (bIsGuest) { %>
+        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+<% } else { %>
+        window.open("attach_edit.jsp?gu_contact="+getURLParam("gu_contact"), "addattachment", "directories=no,toolbar=no,menubar=no,width=480,height=360");          
+<% } %>
+      }
+
+      // ------------------------------------------------------
+
       function viewAttachments() {
         var frm = document.forms["fixedAttrs"];
         document.location.href = "attach_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_contact=" + frm.gu_contact.value;
@@ -299,15 +353,46 @@
 
       // ------------------------------------------------------
 
+      function createPhoneCall() {
+<% if (bIsGuest) { %>
+        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+<% } else { %>
+        window.open("../addrbook/phonecall_edit_f.jsp?gu_workarea=<%=gu_workarea%>&gu_contact=" + getURLParam("gu_contact"), "addphonecall", "directories=no,toolbar=no,menubar=no,width=500,height=400");       
+<% } %>        
+      } // addPhoneCall
+
+      // ------------------------------------------------------
+
+      function createActivity(gu) {
+<% if (bIsGuest) { %>
+        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+<% } else { %>
+        var activity_edition_page = "<% out.write(sFace.equalsIgnoreCase("healthcare") ? "appointment_edit_f.htm" : "meeting_edit_f.htm"); %>";
+        window.open("../addrbook/"+activity_edition_page+"?id_domain=" + getCookie("domainid") + "&n_domain=" + escape(getCookie("domainnm")) + "&gu_workarea=" + getCookie("workarea") + "&gu_fellow=" + getCookie("userid") + "&gu_contact=" + getURLParam("gu_contact") + "&date=<%=sToday%>", "", "toolbar=no,directories=no,menubar=no,resizable=no,width=500,height=580");
+<% } %>        
+      } // addActivity
+
+      // ------------------------------------------------------
+
+      function createProject() {
+<% if (bIsGuest) { %>
+        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+<% } else { %>
+        window.open("prj_create.jsp?gu_workarea=<%=gu_workarea%>&gu_contact=" + getURLParam("gu_contact") + "&gu_company=<%=oCont.getStringNull(DB.gu_company,"")%>", "addproject", "directories=no,toolbar=no,menubar=no,width=540,height=280");       
+<% } %>
+      } // addProject
+
+      // ------------------------------------------------------
+
       function viewSalesHistory() {
 
-	var w = window.opener;
-		
-	if (typeof(w)=="undefined")
-	  window.open("../shop/order_list.jsp?contact=<% out.write(gu_contact); %>&selected=7&subselected=1");
-	else {
-	  w.document.location.href = "../shop/order_list.jsp?contact=<% out.write(gu_contact); %>&selected=7&subselected=1";
-	  w.focus();
+	      var w = window.opener;
+	      	
+	      if (typeof(w)=="undefined")
+	        window.open("../shop/order_list.jsp?contact=<% out.write(gu_contact); %>&selected=7&subselected=1");
+	      else {
+	        w.document.location.href = "../shop/order_list.jsp?contact=<% out.write(gu_contact); %>&selected=7&subselected=1";
+	        w.focus();
         }
       }
 
@@ -315,13 +400,13 @@
 
       function viewProjects() {
 
-	var w = window.opener;
-		
-	if (typeof(w)=="undefined")
-	  window.open("../projtrack/project_listing.jsp?where=" +  escape(" AND b.gu_contact='<% out.write(gu_contact); %>'") + "&find=<%=Gadgets.URLEncode(sFullName)%>&field=full_name&selected=4&subselected=0");
-	else {
-	  w.document.location.href = "../projtrack/project_listing.jsp?where=" +  escape(" AND b.gu_contact='<% out.write(gu_contact); %>'") + "&find=<%=Gadgets.URLEncode(sFullName)%>&field=full_name&selected=4&subselected=0";
-	  w.focus();
+	      var w = window.opener;
+	      	
+	      if (typeof(w)=="undefined")
+	        window.open("../projtrack/project_listing.jsp?where=" +  escape(" AND b.gu_contact='<% out.write(gu_contact); %>'") + "&find=<%=Gadgets.URLEncode(sFullName)%>&field=full_name&selected=4&subselected=0");
+	      else {
+	        w.document.location.href = "../projtrack/project_listing.jsp?where=" +  escape(" AND b.gu_contact='<% out.write(gu_contact); %>'") + "&find=<%=Gadgets.URLEncode(sFullName)%>&field=full_name&selected=4&subselected=0";
+	        w.focus();
         }
       }
 
@@ -332,7 +417,7 @@
             
         document.location.href = "../training/acourses_assign.jsp?field=gu_alumni&find=" + getURLParam("gu_contact")+"&fullname="+escape(frm.tx_name.value+" "+frm.tx_surname.value);
 
-	return true;
+	      return true;
       }
       
       // ------------------------------------------------------
@@ -346,17 +431,17 @@
        	}
        
        	if (frm.ny_age.value.indexOf("+")>=0 || frm.ny_age.value.indexOf("-")>=0 || frm.ny_age.value.indexOf(".")>=0 || frm.ny_age.value.indexOf(",")>=0) {
-       	  alert ("[~La edad no es vï¿½lida~]");
+       	  alert ("Age is not valid");
        	  return false;	  
        	}
        
        	if (isNaN(frm.ny_age.value)) {
-       	  alert ("[~La edad no es vï¿½lida~]");
+       	  alert ("Age is not valid");
        	  return false;	  
        	}
        	
        	if (!isDate(frm.dt_birth.value, "d") && frm.dt_birth.value.length>0) {
-       	  alert ("[~La fecha de nacimiento no es vï¿½lida~]");
+       	  alert ("Birth Date is not valid");
        	  return false;	  
        	}
        	
@@ -377,8 +462,11 @@
       } // validate()
       //-->
     </SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/floatdiv.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
       <!--
+
         function setCombos() {
           var frm = document.forms[0];
           
@@ -394,8 +482,23 @@
           setCombo(frm.id_nationality,"<%=oCont.getStringNull(DB.id_nationality,"")%>");
         } // setCombos()
         
-      //-->     
-    </SCRIPT>    
+        var menuLayer,addrLayer;
+
+        dynapi.onLoad(init);
+
+		    function init() { 
+          setCombos();
+          menuLayer = new DynLayer();
+          menuLayer.setWidth(160);
+          menuLayer.setHTML(rightMenuHTML);
+          
+          addrLayer = new DynLayer();
+          addrLayer.setWidth(300);
+          addrLayer.setHeight(160);
+        }
+      
+      // -->
+    </SCRIPT>
     <!--
     tabbed panel by Jamie Jaworski taken from builder.com
     http://builder.cnet.com/webbuilding/0-7701-8-5056260-1.html?tag=st.bl.3882.dir1.7701-8-5056260-1
