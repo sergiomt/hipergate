@@ -1,4 +1,4 @@
-<%@ page import="java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.misc.Environment,com.knowgate.scheduler.Job,com.knowgate.dataxslt.db.PageSetDB,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.Statement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.misc.Environment,com.knowgate.scheduler.Job,com.knowgate.scheduler.Atom,com.knowgate.dataxslt.db.PageSetDB,com.knowgate.crm.DistributionList" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -57,17 +57,39 @@
   DistributionList oLst = null;
   String s1StPage = null;
   String sTxCmmd = null;
-  int nInterrupted=0, nArchived=0;
+  int nAborted=0,nPending=0,nSuspended=0,nInterruptedRecoverable=0,nInterruptedArchived=0,nArchived=0,nNotArchived=0,nSent=0,nBlackListed=0;
 
-  JDCConnection oConn = GlobalDBBind.getConnection("jobmodify");  
+  JDCConnection oConn = GlobalDBBind.getConnection("jobmodify");
   DBSubset oCounts = new DBSubset(DB.k_job_atoms, "COUNT(*) AS nu_atoms,"+DB.id_status, DB.gu_job+"=? GROUP BY "+DB.id_status, 10);
+  DBSubset oCounta = new DBSubset(DB.k_job_atoms_archived, "COUNT(*) AS nu_atoms,"+DB.id_status, DB.gu_job+"=? GROUP BY "+DB.id_status, 10);
+  DBSubset oBlackL = new DBSubset(DB.k_job_atoms+" a", DB.pg_atom,
+  																DB.gu_job+"=? AND "+DB.id_status+"="+String.valueOf(Atom.STATUS_INTERRUPTED)+" AND "+
+  												 				"EXISTS (SELECT b."+DB.tx_email+" FROM "+DB.k_global_black_list+" b WHERE b."+DB.gu_workarea+"=? AND a."+DB.tx_email+"=b."+DB.tx_email+")", 1000);
+  												 				// "EXISTS (SELECT g."+DB.tx_email+" FROM k_grey_list g WHERE g."+DB.tx_email+"=a."+DB.tx_email+") OR "+
+
   int nCounts = 0;
   
   try {
-    oJob = Job.instantiate(oConn, gu_job, Environment.getProfile(GlobalDBBind.getProfileName()));
-    
+    oJob = Job.instantiate(oConn, gu_job, Environment.getProfile(GlobalDBBind.getProfileName()));		
+		
     if (null==oJob) throw new InstantiationException("Could not instantiate job "+gu_job);
 
+		// Archive all interrumpted atoms because they are black-listed before collecting totals
+		int nBlackL = oBlackL.load(oConn, new Object[]{gu_job,oJob.getString(DB.gu_workarea)});
+		Atom oAtm = new Atom();
+		oAtm.put(DB.gu_job, gu_job);
+		oConn.setAutoCommit(false);
+		for (int b=0; b<nBlackL; b++) {
+		  oAtm.put(DB.pg_atom, oBlackL.getInt(0,b));
+		  oAtm.archive(oConn);
+		}
+		oConn.commit();
+		
+		nBlackListed = DBCommand.queryCount(oConn, "*", DB.k_job_atoms_archived+" a",
+									 DB.gu_job+"='"+gu_job+"' AND "+DB.id_status+"="+String.valueOf(Atom.STATUS_INTERRUPTED)+" AND "+
+  								 "EXISTS (SELECT b."+DB.tx_email+" FROM "+DB.k_global_black_list+" b WHERE b."+DB.gu_workarea+"='"+oJob.getString(DB.gu_workarea)+"' AND a."+DB.tx_email+"=b."+DB.tx_email+")");
+  							// "EXISTS (SELECT g."+DB.tx_email+" FROM k_grey_list g WHERE g."+DB.tx_email+"=a."+DB.tx_email+") OR "+
+		
     oJobCmd = new DBSubset (DB.k_lu_job_commands, DB.tx_command, DB.id_command + "='" + oJob.getString(DB.id_command) + "'", 10);      				 
     oJobCmd.load (oConn);
     sTxCmmd = oJobCmd.getString(0,0);
@@ -83,8 +105,44 @@
     }
 
 		nCounts = oCounts.load(oConn, new Object[]{gu_job});
+    for (int c=0; c<nCounts; c++) {
+      switch (oCounts.getShort(1,c)) {
+        case Job.STATUS_ABORTED:
+          nAborted = oCounts.getInt(0,c);
+          break;
+        case Job.STATUS_PENDING:
+          nPending = oCounts.getInt(0,c);
+          break;
+        case Job.STATUS_SUSPENDED:
+          nSuspended = oCounts.getInt(0,c);
+          break;
+        case Job.STATUS_INTERRUPTED:
+          nInterruptedRecoverable = oCounts.getInt(0,c);
+          break;
+      }
+    } // next
+		
+		nCounts = oCounta.load(oConn, new Object[]{gu_job});
+    for (int c=0; c<nCounts; c++) {
+      switch (oCounta.getShort(1,c)) {
+        case Job.STATUS_ABORTED:
+          nAborted += oCounta.getInt(0,c);
+          break;
+        case Job.STATUS_PENDING:
+          nPending += oCounta.getInt(0,c);
+          break;
+        case Job.STATUS_SUSPENDED:
+          nSuspended += oCounta.getInt(0,c);
+          break;
+        case Job.STATUS_INTERRUPTED:
+          nInterruptedArchived = oCounta.getInt(0,c)-nBlackListed;
+          break;
+      }
+    } // next
 
+    nNotArchived = DBCommand.queryCount(oConn, "*", DB.k_job_atoms, DB.gu_job+"='"+gu_job+"'");
     nArchived = DBCommand.queryCount(oConn, "*", DB.k_job_atoms_archived, DB.gu_job+"='"+gu_job+"'");
+    nSent = DBCommand.queryCount(oConn, "*", DB.k_job_atoms_archived, DB.gu_job+"='"+gu_job+"' AND "+DB.id_status+" IN (0,3)");
 
     oConn.close("jobmodify");
     
@@ -245,29 +303,25 @@
           <TR>
             <TD ALIGN="right" WIDTH="160"></TD>
             <TD ALIGN="left" WIDTH="390" CLASS="textsmall"><TABLE><%
-              for (int c=0; c<nCounts; c++) {
-                switch (oCounts.getShort(1,c)) {
-                  case Job.STATUS_ABORTED:
-                    out.write("<TR><TD CLASS=\"textsmall\">Aborted</TD><TD>"+String.valueOf(oCounts.getInt(0,c))+"</TD></TR>\n");
-                    break;
-                  case Job.STATUS_PENDING:
-                    out.write("<TR><TD CLASS=\"textsmall\">Pending</TD><TD>"+String.valueOf(oCounts.getInt(0,c))+"</TD></TR>\n");
-                    break;
-                  case Job.STATUS_SUSPENDED:
-                    out.write("<TR><TD CLASS=\"textsmall\">Suspended</TD><TD>"+String.valueOf(oCounts.getInt(0,c))+"</TD></TR>\n");
-                    break;
-                  case Job.STATUS_INTERRUPTED:
-                    out.write("<TR><TD CLASS=\"textsmall\">Failed/Interrupted</TD><TD>"+String.valueOf(oCounts.getInt(0,c))+"</TD></TR>\n");
-                    break;
-                }
-              } // next
-              out.write("<TR><TD CLASS=\"textsmall\">Completed&nbsp;"+String.valueOf(nArchived)+"</TD></TR></TABLE>");
-            %></TD>
+              out.write("<TR><TD CLASS=\"textsmall\"><B>[~Total Lote~]</B></TD><TD CLASS=\"textsmall\"><B>"+String.valueOf(nArchived+nNotArchived)+"</B></TD></TR>");
+              out.write("<TR><TD CLASS=\"textsmall\">[~Enviados~]</TD><TD CLASS=\"textsmall\">"+String.valueOf(nSent)+"</TD></TR>");
+              if (nBlackListed>0) out.write("<TR><TD CLASS=\"textsmall\">[~Bloqueados~]</TD><TD CLASS=\"textsmall\">"+String.valueOf(nBlackListed)+"</TD></TR>\n");
+              out.write("<TR><TD CLASS=\"textsmall\">Pending</TD><TD CLASS=\"textsmall\">"+String.valueOf(nPending)+"</TD></TR>");
+							if (nAborted>0) out.write("<TR><TD CLASS=\"textsmall\">Aborted</TD><TD CLASS=\"textsmall\">"+String.valueOf(nAborted)+"</TD></TR>\n");
+              if (nSuspended>0) out.write("<TR><TD CLASS=\"textsmall\">Suspended</TD><TD CLASS=\"textsmall\">"+String.valueOf(nSuspended)+"</TD></TR>\n");
+              if (nInterruptedRecoverable==0 && nInterruptedArchived==0) {
+                out.write("<TR><TD CLASS=\"textsmall\">[~Fallidos~]</TD><TD CLASS=\"textsmall\">0</TD></TR>\n");
+              } else {
+                if (nInterruptedRecoverable>0) out.write("<TR><TD CLASS=\"textsmall\">[~Fallidos recuperables~]</TD><TD CLASS=\"textsmall\">"+String.valueOf(nInterruptedRecoverable)+"</TD></TR>\n");
+                if (nInterruptedArchived>0) out.write("<TR><TD CLASS=\"textsmall\">[~Fallidos irrecuperables~]</TD><TD CLASS=\"textsmall\">"+String.valueOf(nInterruptedArchived)+"</TD></TR>\n");
+              }
+
+            %></TABLE></TD>
           </TR>
-<% if (nInterrupted>0 || true) { %>
+<% if (nInterruptedRecoverable>0) { %>
           <TR>
             <TD ALIGN="right" WIDTH="160"><IMG SRC="../images/images/jobs/recycleatoms16.gif" WIDTH="24" HEIGHT="16" BORDER="0" ALT="Recycle Atoms"></TD>
-            <TD ALIGN="left" WIDTH="390"><A HREF="job_recycle.jsp?gu_job=<%=gu_job%>" CLASS="linkplain">Retry failed atoms</A></TD>
+            <TD ALIGN="left" WIDTH="390"><A HREF="job_recycle.jsp?gu_job=<%=gu_job%>" CLASS="linkplain">[~Re-lanzar átomos fallidos~]</A></TD>
           </TR>
 <% } %>
 <% if (oJobLog.exists()) { %>

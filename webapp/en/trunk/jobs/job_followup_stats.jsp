@@ -1,189 +1,12 @@
-<%@ page import="java.text.NumberFormat,java.util.Arrays,java.util.TreeMap,java.util.Iterator,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.scheduler.Atom" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.text.NumberFormat,java.util.Arrays,java.util.Comparator,java.util.ArrayList,java.util.HashMap,java.util.Collections,java.util.ArrayList,java.util.HashMap,java.util.TreeMap,java.util.Iterator,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.scheduler.Atom" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
-<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%!
-
-  public static String indentifyUserAgent(String sUserAgent) {
-    if (sUserAgent==null) {
-      return "Unknown";
-    } else if (sUserAgent.length()==0) {
-      return "Unknown";    
-    } else if (sUserAgent.startsWith("Mozilla/4.0 (compatible; MSIE 6.0;")) {
-		  return "Internet Explorer 6.0";    
-    } else if (sUserAgent.startsWith("Mozilla/4.0 (compatible; MSIE 7.0;")) {
-		  return "Internet Explorer 7.0";    
-    } else if (sUserAgent.startsWith("Mozilla/4.0 (compatible; MSIE 8.0;")) {
-		  return "Internet Explorer 8.0";    
-    } else if (sUserAgent.indexOf("Firefox/2.0")>0) {
-		  return "Firefox 2.0";    
-    } else if (sUserAgent.indexOf("Firefox/3.0")>0) {
-		  return "Firefox 3.0";    
-    } else if (sUserAgent.indexOf("Firefox/3.5")>0) {
-		  return "Firefox 3.5";    
-    } else if (sUserAgent.indexOf("iPhone")>0) {
-		  return "iPhone";    
-    } else if (sUserAgent.indexOf("Lotus-Notes")>0) {
-		  return "Lotus Notes";    
-    } else if (sUserAgent.indexOf("Thunderbird")>0) {
-		  return "Thunderbird";    
-    } else if (sUserAgent.indexOf("Safari")>0) {
-		  return "Safari";    
-    } else if (sUserAgent.indexOf("Chrome")>0) {
-		  return "Google Chrome"; 
-    } else if (sUserAgent.indexOf("OutlookConnector")>0) {
-		  return "Outlook";    
-    } else if (sUserAgent.indexOf("Evolution")>0) {
-		  return "Evolution";
-    } else if (sUserAgent.indexOf("Gecko")>0) {
-		  return "Other Gecko";
-    } else {
-		  return "Other";
-    }    
-  }
-%><% 
-/*
-  Copyright (C) 2003-2009  Know Gate S.L. All rights reserved.
-                           C/Oña, 107 1º2 28050 Madrid (Spain)
-
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions
-  are met:
-
-  1. Redistributions of source code must retain the above copyright
-     notice, this list of conditions and the following disclaimer.
-
-  2. The end-user documentation included with the redistribution,
-     if any, must include the following acknowledgment:
-     "This product includes software parts from hipergate
-     (http://www.hipergate.org/)."
-     Alternately, this acknowledgment may appear in the software itself,
-     if and wherever such third-party acknowledgments normally appear.
-
-  3. The name hipergate must not be used to endorse or promote products
-     derived from this software without prior written permission.
-     Products derived from this software may not be called hipergate,
-     nor may hipergate appear in their name, without prior written
-     permission.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-  You should have received a copy of hipergate License with this code;
-  if not, visit http://www.hipergate.org or mail to info@hipergate.org
-*/
-
-  if (autenticateSession(GlobalDBBind, request, response)<0) return;
-  
-  response.addHeader ("Pragma", "no-cache");
-  response.addHeader ("cache-control", "no-store");
-  response.setIntHeader("Expires", 0);
-
-  final String PAGE_NAME = "job_followup_stats";
-  
-  String sSkin = getCookie(request, "skin", "xp");
-  String sLanguage = getNavigatorLanguage(request);
-  TreeMap<String,Float> oAgents = new TreeMap<String,Float>();
-
-  String gu_job = request.getParameter("gu_job");
-  String gu_workarea = getCookie(request,"workarea","");
-    
-  JDCConnection oConn = null;
-	DBSubset oAtoms = new DBSubset(DB.k_job_atoms, DB.tx_email+","+DB.dt_execution+","+DB.id_status+","+DB.tx_log, DB.gu_job+"=?", 100);
-	DBSubset oArchived = new DBSubset(DB.k_job_atoms_archived, DB.tx_email+","+DB.dt_execution+","+DB.id_status+","+DB.tx_log, DB.gu_job+"=?",100);
-	DBSubset oWebBeacons = new DBSubset(DB.k_job_atoms_tracking, DB.tx_email+","+DB.dt_action+","+DB.user_agent+","+DB.pg_atom, DB.gu_job+"=? ORDER BY "+DB.pg_atom+","+DB.dt_action, 100);
-  DBSubset oEmailAddrs = null;
-  int iAtoms=0, iWebBeacons=0, iWebBeaconsUnique=0;
-  float nAgents = 0f;
-  int nAborted=0, nFinished=0, nPending=0, nSuspended=0, nRunning=0, nInterrupted=0;
-	int iMinAtom = -1, iMaxAtom = -1;
-	int[] aPgAtoms = null;
-	int nPgAtoms = 0;
-  int iIxMbr;
-  String sTxSubject = null;  
-  String sUserAgent;
-  String sDisplayName;
-  Integer oPgAtom;
-    
-  try {
-
-    oConn = GlobalDBBind.getConnection(PAGE_NAME);  
-		
-		sTxSubject = DBCommand.queryStr(oConn, "SELECT "+DB.tl_job+" FROM "+DB.k_jobs+" WHERE "+DB.gu_job+"='"+gu_job+"'");
-
-		oPgAtom = DBCommand.queryMinInt(oConn, DB.pg_atom, DB.k_job_atoms_tracking, DB.gu_job+"='"+gu_job+"'");
-		if (null!=oPgAtom) iMinAtom = oPgAtom.intValue();
-		oPgAtom = DBCommand.queryMaxInt(oConn, DB.pg_atom, DB.k_job_atoms_tracking, DB.gu_job+"='"+gu_job+"'");
-		if (null!=oPgAtom) iMaxAtom = oPgAtom.intValue();
-		if (iMinAtom!=-1 && iMaxAtom!=-1) {
-		    nPgAtoms = iMaxAtom-iMinAtom+1;
-		    aPgAtoms = new int[nPgAtoms];
-		    Arrays.fill(aPgAtoms, 0);
-		}
-		oAtoms.load(oConn, new Object[]{gu_job});
-		oArchived.load(oConn, new Object[]{gu_job});
-		oAtoms.union(oArchived);
-		iAtoms = oAtoms.getRowCount();
-		iWebBeacons = oWebBeacons.load(oConn, new Object[]{gu_job});
-    oEmailAddrs = new DBSubset(DB.k_member_address, DB.tx_email+","+DB.gu_contact+","+DB.gu_company+","+DB.tx_name+","+DB.tx_surname+","+DB.nm_legal, DB.gu_workarea+"=? AND "+
-  														 DB.tx_email+" IN (SELECT "+DB.tx_email+" FROM "+DB.k_job_atoms_tracking+" WHERE "+DB.gu_job+"=?) ORDER BY 1", 100);
-		oEmailAddrs.load(oConn, new Object[]{gu_workarea, gu_job});
-
-    oConn.close(PAGE_NAME);
-  }
-  catch (SQLException e) {  
-    if (oConn!=null)
-      if (!oConn.isClosed()) oConn.close(PAGE_NAME);
-    oConn = null;
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_close"));  
-  }
-  
-  if (null==oConn) return;  
-  oConn = null;  
-
-	for (int a=0; a<iAtoms; a++) {
-	  switch (oAtoms.getShort(2,a)) {
-		  case Atom.STATUS_ABORTED:
-		    nAborted++;
-		    break;
-		  case Atom.STATUS_FINISHED:
-		    nFinished++;
-		    break;
-		  case Atom.STATUS_SUSPENDED:
-		    nSuspended++;
-		    break;
-		  case Atom.STATUS_RUNNING:
-		    nRunning++;
-		    break;
-		  case Atom.STATUS_INTERRUPTED:
-		    nInterrupted++;
-		    break;	  
-	  }
-	} // next
-	
-	for (int b=0; b<iWebBeacons; b++) {
-	  int iIxAtom = oWebBeacons.getInt(3,b)-iMinAtom;
-	  int nReads = aPgAtoms[iIxAtom];
-	  if (nReads==0) iWebBeaconsUnique++;
-	  aPgAtoms[iIxAtom] = ++nReads;
-	  if (!oWebBeacons.isNull(2,b)) {
-      nAgents++;
-      sUserAgent = indentifyUserAgent(oWebBeacons.getString(2,b));
-      if (oAgents.containsKey(sUserAgent)) {
-        Float oCount = oAgents.get(sUserAgent);
-        oAgents.remove(sUserAgent);
-        oAgents.put(sUserAgent, new Float(oCount.floatValue()+1f));
-      } else {
-        oAgents.put(sUserAgent, new Float(1f));
-      } // fi
-    } // fi
-  } // next
-
-%><HTML LANG="<% out.write(sLanguage); %>">
+<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
+<%@ include file="job_followup_stats.jspf" %>
+<HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Newsletter follow-up statistics</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
 
@@ -218,7 +41,8 @@
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
     <TR><TD CLASS="striptitle"><FONT CLASS="title1">Newsletter follow-up statistics</FONT></TD></TR>
   </TABLE>  
-
+    <IMG SRC="../images/images/excel16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Excel">&nbsp;<A CLASS="linkplain" HREF="job_followup_stats_xls.jsp?gu_job=<%=gu_job%>">Show as Excel</A>
+    
     <TABLE CLASS="formback">
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">

@@ -1,0 +1,201 @@
+<%
+  final int MailwireApp=13;
+  final int WebBuilderApp=14;
+  final int HipermailApp=21;
+  final int SurveysApp=23;
+
+  if (autenticateSession(GlobalDBBind, request, response)<0) return;
+
+  response.addHeader ("Pragma", "no-cache");
+  response.addHeader ("cache-control", "no-store");
+  response.setIntHeader("Expires", 0);
+
+  SimpleDateFormat oFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+  SimpleDateFormat oDay = new SimpleDateFormat("EEE dd");
+  SimpleDateFormat oYmd = new SimpleDateFormat("yyyy-MM-dd");
+  //SimpleDateFormat oDay = new SimpleDateFormat("dd/MM/yyyy");
+
+  final String sel = request.getParameter("selected");
+  final String sub = request.getParameter("subselected");
+  
+  String sLanguage = getNavigatorLanguage(request);  
+  String sSkin = getCookie(request, "skin", "xp");
+
+  String id_domain = getCookie(request,"domainid","");
+  String gu_workarea = getCookie(request,"workarea","");
+  
+  boolean bRefresh = nullif(request.getParameter("refresh")).equals("1");
+  String dt_from = nullif(request.getParameter("dt_from"),oYmd.format(new Date(new Date().getTime()-(86400000l*30l))));
+  String dt_to = nullif(request.getParameter("dt_to"),oYmd.format(new Date()));
+
+  if (dt_from.length()==0) dt_from = "1980-01-01";
+  if (dt_to.length()==0) dt_to = "2050-12-31";
+
+  Date dtFrom = oFmt.parse(dt_from+" 00:00:00");
+  Date dtTo = oFmt.parse(dt_to+" 23:59:59");
+
+  Timestamp tsFrom = new Timestamp(dtFrom.getTime());
+  Timestamp tsTo = new Timestamp(dtTo.getTime());
+
+  long nLastDays = (long) Calendar.DaysBetween(dtFrom,dtTo);
+	if (nLastDays>31l) nLastDays = 31l;
+	
+  Timestamp tsFrom31 = new Timestamp(dtTo.getTime()-nLastDays*86400000l);
+
+  int nDocCount = 0;
+  int nReadedByHour = 0;
+  int nMsgsByJob = 0;
+  int nUserAgents = 0;
+  int nClicks = 0;
+  int nUrls = 0;
+  int[] aClicks = null;
+  int[] aVisits = null;
+  int nClickDays = 0;
+  String[] aCDates = null;
+  ArrayList<NameValuePair> aTopReferers = new ArrayList<NameValuePair>();
+  int nOtherReferers = 100;
+
+  final String PAGE_NAME = "jobs_followup_stats";
+
+  JDCConnection oConn = null;  
+
+  DBSubset oMailings = new DBSubset(DB.k_adhoc_mailings,
+																		DB.gu_mailing+","+DB.pg_mailing+","+DB.nm_mailing+","+DB.tx_subject+",0 AS nu_messages"+",0 AS nu_opened,"+DB.dt_execution+",0 AS nu_clicks, 0 AS pct_populatity",
+																		DB.gu_mailing+" IN (SELECT "+DB.gu_job_group+" FROM "+DB.k_jobs+" WHERE "+DB.gu_workarea+"=? AND ("+DB.dt_execution+" BETWEEN ? AND ? OR "+DB.dt_finished+" BETWEEN ? AND ?)) ", 500);
+
+  DBSubset oPagesets = new DBSubset(DB.k_pagesets,
+																		DB.gu_pageset+" AS "+DB.gu_mailing+",-1 AS "+DB.pg_mailing+","+DB.nm_pageset+" AS "+DB.nm_mailing+",'' AS "+DB.tx_subject+",0 AS nu_messages"+",0 AS nu_opened,"+DB.dt_created+" AS "+DB.dt_execution+",0 AS nu_clicks, 0 AS pct_populatity",
+																		DB.gu_pageset+" IN (SELECT "+DB.gu_job_group+" FROM "+DB.k_jobs+" WHERE "+DB.gu_workarea+"=? AND ("+DB.dt_execution+" BETWEEN ? AND ? OR "+DB.dt_finished+" BETWEEN ? AND ?)) ", 500);
+  
+  DBSubset oReadedByHour = new DBSubset(DB.k_jobs+" j,"+DB.k_jobs_atoms_by_hour+" h",
+    																	  "SUM(h."+DB.nu_msgs+"),h."+DB.dt_hour,
+  																	    "j."+DB.gu_job+"=h."+DB.gu_job+" AND "+
+																			  "(j."+DB.dt_execution+" BETWEEN ? AND ? OR j."+DB.dt_finished+" BETWEEN ? AND ?) AND "+
+																			  "j."+DB.gu_job+" IN (SELECT "+DB.gu_job+" FROM "+DB.k_jobs+" WHERE "+DB.gu_workarea+"=?) GROUP BY 2 ORDER BY 2", 24);
+  
+  DBSubset oUserAgents = new DBSubset(DB.k_jobs+" j,"+DB.k_jobs_atoms_by_agent+" a", "a."+DB.id_agent+",SUM(a."+DB.nu_msgs+")",
+																			"(j."+DB.dt_execution+" BETWEEN ? AND ? OR j."+DB.dt_finished+" BETWEEN ? AND ?) AND "+
+  																		"j."+DB.gu_job+" IN (SELECT "+DB.gu_job+" FROM "+DB.k_jobs+" WHERE "+DB.gu_workarea+"=?) GROUP BY 1", 50);
+
+  DBSubset oClicks = new DBSubset ("k_job_atoms_clicks c, k_urls u, k_jobs j",
+                                   "c.tx_email,c.dt_action,c.ip_addr,c.gu_url,u.url_addr,u.tx_title",
+                                   "u.gu_workarea=? AND c."+DB.dt_action+" BETWEEN ? AND ? AND "+
+                                   "c.gu_url=u.gu_url AND c.gu_job=j.gu_job ORDER BY 2", 1000);
+
+  DBSubset oReferers1 = new DBSubset ("k_job_atoms_clicks c, k_jobs j, k_adhoc_mailings m",
+                                     "COUNT(m.gu_mailing),m.gu_mailing",
+                                     "j.gu_workarea=? AND c."+DB.dt_action+" BETWEEN ? AND ? AND "+
+                                     "m.gu_mailing=j.gu_job_group AND c.gu_job=j.gu_job GROUP BY m.gu_mailing", 100);
+
+  DBSubset oReferers2 = new DBSubset ("k_job_atoms_clicks c, k_jobs j, k_pagesets p",
+                                      "COUNT(p.gu_pageset),p.gu_pageset",
+                                      "j.gu_workarea=? AND c."+DB.dt_action+" BETWEEN ? AND ? AND "+
+                                      "p.gu_pageset=j.gu_job_group AND c.gu_job=j.gu_job GROUP BY p.gu_pageset", 100);
+
+  DBSubset oUrls = new DBSubset ("k_urls b", "b.gu_url,b.url_addr,b.tx_title,b.nu_clicks,b.dt_last_visit,b.de_url",
+      				                   "b."+DB.nu_clicks+" IS NOT NULL AND b."+DB.nu_clicks+">10 AND b." + DB.gu_workarea+ "=? AND b."+DB.dt_last_visit+" BETWEEN ? AND ? ORDER BY 4 DESC", 10);      				 
+
+  oUrls.setMaxRows(10);
+
+  try {
+    oConn = GlobalDBBind.getConnection(PAGE_NAME,true);
+
+		oMailings.load(oConn, new Object[]{gu_workarea,tsFrom,tsTo,tsFrom,tsTo});		  	
+		oPagesets.load(oConn, new Object[]{gu_workarea,tsFrom,tsTo,tsFrom,tsTo});
+		oMailings.union(oPagesets);
+		oMailings.sortBy(6);
+
+	  float fMaxInt = 0f;
+	  float fTotInt = 0f;
+
+		nDocCount = oMailings.getRowCount();
+		PreparedStatement oPcnt = oConn.prepareStatement("SELECT SUM("+DB.nu_sent+"),SUM("+DB.nu_opened+"),SUM("+DB.nu_clicks+") FROM "+DB.k_jobs+" WHERE "+DB.gu_job_group+"=?");
+		for (int d=0; d<nDocCount; d++) {
+		  oPcnt.setString(1, oMailings.getString(0,d));
+		  ResultSet oRcnt = oPcnt.executeQuery();
+		  oRcnt.next();
+		  oMailings.setElementAt(oRcnt.getInt(1), 4, d);
+		  if (oRcnt.wasNull()) oMailings.setElementAt(new Integer(0), 4, d);
+		  oMailings.setElementAt(oRcnt.getInt(2), 5, d);
+		  if (oRcnt.wasNull()) oMailings.setElementAt(new Integer(0), 5, d);
+		  oMailings.setElementAt(oRcnt.getInt(3), 7, d);
+		  if (oRcnt.wasNull()) oMailings.setElementAt(new Integer(0), 7, d);
+
+	    float fInt = (100f*oMailings.getInt(5,d)) / (float) oMailings.getInt(4,d);
+	    fTotInt += fInt;
+	    if (fInt>fMaxInt) fMaxInt = fInt;
+					  
+		  oRcnt.close();
+		}
+		oPcnt.close();
+
+		for (int d=0; d<nDocCount; d++) {
+			oMailings.setElementAt(new Float(((100f*oMailings.getInt(5,d))/(float)oMailings.getInt(4,d)/fMaxInt)*100f), 8, d);
+		}
+
+    if (oConn.getDataBaseProduct()==JDCConnection.DBMS_POSTGRESQL) {
+      nReadedByHour = oReadedByHour.load(oConn, new Object[]{tsFrom,tsTo,tsFrom,tsTo,gu_workarea});
+    }
+    
+		if (null==GlobalCacheClient.getDBSubset("UserAgents["+gu_workarea+","+tsFrom.toString()+","+tsTo.toString())) {
+      nUserAgents = oUserAgents.load(oConn, new Object[]{tsFrom,tsTo,tsFrom,tsTo,gu_workarea});
+  	  GlobalCacheClient.putDBSubset("k_user_gents_by_workarea","UserAgents["+gu_workarea+","+tsFrom.toString()+","+tsTo.toString(),oUserAgents);
+    } else {
+      oUserAgents = GlobalCacheClient.getDBSubset("UserAgents["+gu_workarea+","+tsFrom.toString()+","+tsTo.toString());
+      nUserAgents = oUserAgents.getRowCount();
+    }
+
+		nClicks = oClicks.load(oConn, new Object[]{gu_workarea,tsFrom,tsTo});
+		if (nClicks>0) {
+		  oReferers1.load(oConn, new Object[]{gu_workarea,tsFrom,tsTo});
+		  oReferers2.load(oConn, new Object[]{gu_workarea,tsFrom,tsTo});
+		  oReferers1.union(oReferers2);
+		  
+		  for (int r=0; r<oReferers1.getRowCount(); r++) {
+		    int rPct = (100*oReferers1.getInt(0,r))/nClicks;
+		    if (rPct>=4) {		      
+		      int iRef = oMailings.find(0,oReferers1.getString(1,r));
+		      if (iRef>=0)
+		        aTopReferers.add(new NameValuePair(oMailings.getString(2,iRef), String.valueOf(rPct)));
+		    }
+		    nOtherReferers -= rPct;
+		  }
+		  
+		  nClickDays = Calendar.DaysBetween(oClicks.getDate(1,0),oClicks.getDate(1,nClicks-1));
+		  if (nClickDays>0) {
+		    String sPrevDay = "";
+		    SimpleDateFormat oDdMmm = new SimpleDateFormat("dd MMM"); 		    
+		    aClicks = new int[nClickDays+1];
+		    aVisits = new int[nClickDays+1];
+		    aCDates = new String[nClickDays+1];
+		    Arrays.fill(aClicks,0);
+		    Arrays.fill(aVisits,0);
+		    int iDay = -1;
+		    TreeSet<String> oUniqueEMails = null;
+		    for (int c=0; c<nClicks; c++) {
+		      if (!oClicks.getDateFormated(1,c,oDdMmm).equals(sPrevDay)) {
+		        sPrevDay = oClicks.getDateFormated(1,c,oDdMmm);
+		        aCDates[++iDay] = sPrevDay;
+		        oUniqueEMails = new TreeSet<String>();
+		      }
+		      aClicks[iDay] = aClicks[iDay]+1;
+					if (!oUniqueEMails.contains(oClicks.getString(0,c))) {
+					  oUniqueEMails.add(oClicks.getString(0,c));
+		      	aVisits[iDay] = aVisits[iDay]+1;
+					}
+		    }
+		  }
+		}	    
+
+    nUrls = oUrls.load (oConn, new Object[]{gu_workarea,tsFrom,tsTo});
+
+    oConn.close(PAGE_NAME);
+  }
+  catch (SQLException e) {  
+    if (oConn!=null) if (!oConn.isClosed()) oConn.close(PAGE_NAME);
+    oConn = null;
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title="+e.getClass().getName()+"&desc=" + e.getMessage() + "&resume=_close"));  
+  }
+  if (null==oConn) return;    
+  oConn = null;
+%>

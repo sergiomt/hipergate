@@ -47,7 +47,7 @@
   String id_domain = getCookie(request,"domainid","");   
   String gu_workarea = getCookie(request,"workarea",""); 
   String screen_width = request.getParameter("screen_width");
-  String sFilter = "";
+  String sFilter = nullif(request.getParameter("filter"));
   String id_command = request.getParameter("id_command");
   
   //if (id_command!=null)
@@ -64,7 +64,8 @@
   if (fScreenRatio<1) fScreenRatio=1;
   
   int iInstanceCount = 0;
-  DBSubset oInstances = null;        
+  DBSubset oJobs = null;
+  DBSubset oWarn = null;
   String sOrderBy;
   int iOrderBy;  
   int iMaxRows;
@@ -113,25 +114,33 @@
   else
     iOrderBy = 0;
 
-  JDCConnection oConn = GlobalDBBind.getConnection("joblisting");  
+  JDCConnection oConn = GlobalDBBind.getConnection("joblisting",true);  
     
   try {
-      oInstances = new DBSubset (DB.v_jobs, 
+      oJobs = new DBSubset (DB.v_jobs, 
       				 DB.gu_job + "," + DB.gu_job_group + "," + DB.id_command + "," + DB.tr_ + sLanguage + "," + DB.dt_execution + "," + DB.dt_created + "," + DB.id_command + "," + DB.tx_parameters + "," + DB.id_status + "," + DB.tl_job,
       				 DB.gu_workarea+ "='" + gu_workarea + "' " + sFilter + (iOrderBy>0 ? " ORDER BY " + sOrderBy + (iOrderBy==5 || iOrderBy==6 ? " DESC" : "") : ""), iMaxRows);      				 
-      oInstances.setMaxRows(iMaxRows);
-      iInstanceCount = oInstances.load (oConn, iSkip);
-    oConn.close("joblisting"); 
+      oJobs.setMaxRows(iMaxRows);
+      iInstanceCount = oJobs.load (oConn, iSkip);
+  		oWarn = new DBSubset(DB.k_jobs+" j,"+DB.k_job_atoms+" a", "DISTINCT(j."+DB.gu_job+")",
+  												 "j."+DB.gu_job+" IN ('"+Gadgets.join(oJobs.getColumnAsList(0),"','")+"') AND "+
+  												 "j."+DB.gu_job+"=a."+DB.gu_job+" AND "+
+  												 "a."+DB.id_status+" IN (-1,2,3,4) AND "+
+  												 "NOT EXISTS (SELECT b."+DB.tx_email+" FROM "+DB.k_global_black_list+" b WHERE b."+DB.gu_workarea+"=j."+DB.gu_workarea+" AND a."+DB.tx_email+"=b."+DB.tx_email+") "+
+  												 "ORDER BY 1", 1000);
+      if (iInstanceCount>0) oWarn.load(oConn);
+      oConn.close("joblisting"); 
   }
   catch (SQLException e) {  
-    oInstances = null;
+    oJobs = null;
     oConn.close("joblisting");
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }
   oConn = null;  
-%>
 
-<HTML LANG="<% out.write(sLanguage); %>">
+  if (null==oJobs) return;
+
+%><HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
@@ -147,11 +156,11 @@
           boolean bFirst = true;
           out.write("var jsInstances = new Array(");
             for (int i=0; i<iInstanceCount; i++) {
-              if ((iShow==0 && (oInstances.getShort(8,i)==Job.STATUS_PENDING || oInstances.getShort(8,i)==Job.STATUS_RUNNING)) ||
-                  (iShow==1 && (oInstances.getShort(8,i)==Job.STATUS_ABORTED || oInstances.getShort(8,i)==Job.STATUS_FINISHED || oInstances.getShort(8,i)==Job.STATUS_INTERRUPTED)))
+              if ((iShow==0 && (oJobs.getShort(8,i)==Job.STATUS_PENDING || oJobs.getShort(8,i)==Job.STATUS_RUNNING)) ||
+                  (iShow==1 && (oJobs.getShort(8,i)==Job.STATUS_ABORTED || oJobs.getShort(8,i)==Job.STATUS_FINISHED || oJobs.getShort(8,i)==Job.STATUS_INTERRUPTED)))
               {
                 if (bFirst) bFirst=false; else out.write(",");
-                out.write("\"" + oInstances.getString(0,i) + "\"");
+                out.write("\"" + oJobs.getString(0,i) + "\"");
               }
             }
           out.write(");\n        ");
@@ -284,10 +293,6 @@
 	     return(false);
 	    }
 	    
-   	    if (counter>1) {
-	     alert("Must check only one task");
-	     return(false);
-	    }
 	    document.location = "job_delete.jsp?id_command="+getURLParam("id_command")+"&checkeditems="+chi.value+"&selected="+getURLParam("selected")+"&subselected="+getURLParam("subselected");
 	}
 
@@ -295,6 +300,12 @@
         
         function viewJob(id) {
           window.open("job_modify_f.jsp?gu_job=" + id, "modifyjob_"+ id, "width=700,height=500,menubar=no,toolbar=no,directories=no,scrollbars=yes");          
+        }
+
+        // ----------------------------------------------------
+        
+        function viewAtoms(id) {
+          window.open("job_viewatoms.jsp?gu_job=" + id, "viewatoms_"+ id, "width=700,height=500,menubar=no,toolbar=no,directories=no,scrollbars=yes");          
         }
 
         // ----------------------------------------------------
@@ -422,7 +433,7 @@
       </TR>
       <TR>
         <TD COLSPAN="8">
-          <FONT CLASS="textplain"><B>View Tasks</B>&nbsp;<INPUT TYPE="radio" NAME="viewonly" onclick="viewOnly(0)" VALUE="0">Pending&nbsp;&nbsp;<INPUT TYPE="radio" NAME="viewonly" onclick="viewOnly(1)" VALUE="1">finished/cancelled&nbsp;&nbsp;<INPUT TYPE="radio" NAME="viewonly" onclick="viewOnly(2)">all</FONT>
+          <FONT CLASS="textplain"><B>View Tasks</B>&nbsp;<INPUT TYPE="radio" NAME="viewonly" onclick="viewOnly(0)" VALUE="0">Pending&nbsp;&nbsp;<INPUT TYPE="radio" NAME="viewonly" onclick="viewOnly(1)" VALUE="1">finished/cancelled&nbsp;&nbsp;<INPUT TYPE="radio" NAME="viewonly" onclick="viewOnly(2)" VALUE="2">all</FONT>
         </TD>
       </TR>
       <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
@@ -434,13 +445,14 @@
           if (iSkip>0)
             out.write("            <A HREF=\"job_list.jsp?list_title=:Batches&id_domain=" + id_domain + (id_command!=null ? "&id_command="+id_command : "") + "&viewonly="+String.valueOf(iShow)+"&skip=" + String.valueOf(iSkip-iMaxRows) + "&orderby=" + sOrderBy + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
     
-          if (!oInstances.eof())
+          if (!oJobs.eof())
             out.write("            <A HREF=\"job_list.jsp?list_title=:Batches&id_domain=" + id_domain + (id_command!=null ? "&id_command="+id_command : "") + "&viewonly="+String.valueOf(iShow)+"&skip=" + String.valueOf(iSkip+iMaxRows) + "&orderby=" + sOrderBy + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
 %>
           </TD>
         </TR>
         <TR>
-          <TD CLASS="tableheader"  BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;&nbsp;<B>Task</B></TD>
+        	<TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;&nbsp;<B>Task</B></TD>
           <TD CLASS="tableheader" WIDTH="90px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>Status</B></TD>
           <TD CLASS="tableheader" WIDTH="110px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(6);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==6 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>New</B></TD>
           <TD CLASS="tableheader" WIDTH="160px" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(5);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>Execution</B></TD>
@@ -453,15 +465,16 @@
 	  sStrip = String.valueOf((i%2)+1);
 %>            
             <TR HEIGHT="14">
-              <TD VALIGN="CENTER" WIDTH="320" CLASS="strip<% out.write(sStrip); %>"><% out.write("<A HREF=\"#\" CLASS=\"linknodecor\" oncontextmenu=\"return false;\" onclick=\"viewJob('" + oInstances.getString(0,i) + "')\" TITLE=\"View details\"><B>" + oInstances.getString(9,i)); %></B></TD>
-              <TD VALIGN="CENTER" WIDTH="100" CLASS="strip<% out.write(sStrip); %>">&nbsp;<%=oInstances.getStringNull(3,i,"")%></TD>
-              <TD ALIGN="center" VALIGN="CENTER" CLASS="strip<% out.write(sStrip); %>">&nbsp;<%=Gadgets.split(oInstances.getStringNull(5,i,"")," ")[0]%></TD>
-              <TD VALIGN="CENTER" CLASS="strip<% out.write(sStrip); %>">&nbsp;<%=oInstances.getStringNull(4,i,"").equals("")?"As soon as possible":Gadgets.split(oInstances.getString(4,i)," ")[0]%></TD>
+            <TD VALIGN="CENTER" WIDTH="12" CLASS="strip<% out.write(sStrip); %>"><% if (oWarn.binaryFind(0,oJobs.getString(0,i))>=0) out.write("<A HREF=\"#\" oncontextmenu=\"return false;\" onclick=\"viewAtoms('" + oJobs.getString(0,i) + "')\" TITLE=\"Show atoms\"><IMG SRC=\"../images/images/highimp.gif\" WIDTH=\"12\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"!\"></A></TD>"); %></TD>
+              <TD VALIGN="CENTER" WIDTH="320" CLASS="strip<% out.write(sStrip); %>"><% out.write("<A HREF=\"#\" CLASS=\"linknodecor\" oncontextmenu=\"return false;\" onclick=\"viewJob('" + oJobs.getString(0,i) + "')\" TITLE=\"View details\"><B>" + oJobs.getString(9,i)); %></B></TD>
+              <TD VALIGN="CENTER" WIDTH="100" CLASS="strip<% out.write(sStrip); %>">&nbsp;<%=oJobs.getStringNull(3,i,"")%></TD>
+              <TD ALIGN="center" VALIGN="CENTER" CLASS="strip<% out.write(sStrip); %>">&nbsp;<%=Gadgets.split(oJobs.getStringNull(5,i,"")," ")[0]%></TD>
+              <TD VALIGN="CENTER" CLASS="strip<% out.write(sStrip); %>">&nbsp;<%=oJobs.getStringNull(4,i,"").equals("")?"As soon as possible":Gadgets.split(oJobs.getString(4,i)," ")[0]%></TD>
               <TD VALIGN="CENTER" CLASS="strip<% out.write(sStrip); %>">
-<% if (iShow==0 && (oInstances.getShort(8,i)==Job.STATUS_PENDING || oInstances.getShort(8,i)==Job.STATUS_RUNNING)) {
-     out.write("                <INPUT TYPE=\"checkbox\" NAME=\"chk-" + oInstances.getStringNull(0,i,"") +"\" ID=\"chk-" + oInstances.getStringNull(0,i,"") + "\">");
-   } else if (iShow==1 && (oInstances.getShort(8,i)==Job.STATUS_FINISHED || oInstances.getShort(8,i)==Job.STATUS_ABORTED || oInstances.getShort(8,i)==Job.STATUS_INTERRUPTED)) {
-     out.write("                <INPUT TYPE=\"checkbox\" NAME=\"chk-" + oInstances.getStringNull(0,i,"") +"\" ID=\"chk-" + oInstances.getStringNull(0,i,"") + "\">");   
+<% if (iShow==0 && (oJobs.getShort(8,i)==Job.STATUS_PENDING || oJobs.getShort(8,i)==Job.STATUS_RUNNING)) {
+     out.write("                <INPUT TYPE=\"checkbox\" NAME=\"chk-" + oJobs.getStringNull(0,i,"") +"\" ID=\"chk-" + oJobs.getStringNull(0,i,"") + "\">");
+   } else if (iShow==1 && (oJobs.getShort(8,i)==Job.STATUS_FINISHED || oJobs.getShort(8,i)==Job.STATUS_ABORTED || oJobs.getShort(8,i)==Job.STATUS_INTERRUPTED)) {
+     out.write("                <INPUT TYPE=\"checkbox\" NAME=\"chk-" + oJobs.getStringNull(0,i,"") +"\" ID=\"chk-" + oJobs.getStringNull(0,i,"") + "\">");   
    }
 %>
               </TD>
