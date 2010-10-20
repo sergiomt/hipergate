@@ -159,6 +159,8 @@
   
   if (null==oConn) return;
   oConn = null;
+  
+  sendUsageStats(request, "folder_listing_local"); 
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>

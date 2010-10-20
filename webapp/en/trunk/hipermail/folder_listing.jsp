@@ -71,6 +71,11 @@
       } // next
     }
 %><%
+
+  if (oMacc==null) {
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Account not found&desc=There is no mail account configured for current user&resume=../hipermail/account_list.jsp"));
+    return;
+  }
   if (oMacc.isNull(DB.gu_account)) {
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Account not found&desc=There is no mail account configured for current user&resume=../hipermail/account_list.jsp"));
     return;
@@ -163,6 +168,8 @@
   }
   if (null==oConn) return;
   oConn=null;  
+
+  sendUsageStats(request, "folder_listing"); 
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>

@@ -163,6 +163,8 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title="+e.getClass().getName()+"&desc=" + e.getMessage() + "&resume=_topclose"));
     return;
   }
+  
+  sendUsageStats(request, "msg_new"); 
 %>
 <HTML>
 <HEAD>
