@@ -56,6 +56,8 @@ import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 
+import java.nio.charset.Charset;
+
 import java.math.BigDecimal;
 
 import java.util.ArrayList;
@@ -1488,7 +1490,7 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
     int iWebBeaconStart, iWebBeaconEnd, iSrcTagStart, iSrcTagEnd;
 
     if (DebugFile.trace) {
-      DebugFile.writeln("Begin DBMimeMessage.composeFinalMessage([Session],"+sSubject+",...,"+sId+","+sContentType+")");
+      DebugFile.writeln("Begin DBMimeMessage.composeFinalMessage([Session],"+sSubject+",...,"+sId+","+sContentType+","+sEncoding+")");
     }
 
     if (!"html".equalsIgnoreCase(sContentType) && !"plain".equalsIgnoreCase(sContentType))
@@ -1502,7 +1504,10 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
       sContentType = "plain";
     } else if (sBody.length()==0) {
       sContentType = "plain";
+
     }
+
+	if (sEncoding==null) sEncoding="ASCII";
 
     SMTPMessage oSentMessage = new SMTPMessage(oMailSession);
 
@@ -1555,7 +1560,7 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
         // Set plain text alternative part
 
         oMsgPlainText.setDisposition("inline");
-        oMsgPlainText.setText(sText,sEncoding);        
+        oMsgPlainText.setText(sText,Charset.forName(sEncoding).name(),"plain");
         if (DebugFile.trace) DebugFile.writeln("MimeBodyPart(multipart/alternative).addBodyPart(text/plain)");
         oTextHtmlAlt.addBodyPart(oMsgPlainText);
 
@@ -1618,7 +1623,7 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
 	  	    if (DebugFile.trace) DebugFile.writeln("Malformed Web Beacon");
 	      } 
           
-          oMsgHtml.setText(sBody,sEncoding,"html");
+          oMsgHtml.setText(sBody,Charset.forName(sEncoding).name(),"html");
           oTextHtmlAlt.addBodyPart(oMsgHtml);
           
       } else {
@@ -1645,7 +1650,7 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
 	  	    if (DebugFile.trace) DebugFile.writeln("Malformed Web Beacon");
 	    } 
         
-        oMsgHtmlText.setText(sBody,sEncoding,"html");
+        oMsgHtmlText.setText(sBody,Charset.forName(sEncoding).name(),"html");
         if (DebugFile.trace) DebugFile.writeln("MimeBodyPart(multipart/related).addBodyPart(text/html)");
         oHtmlRelated.addBodyPart(oMsgHtmlText);
 
@@ -1703,10 +1708,10 @@ public class DBMimeMessage extends MimeMessage implements MimePart,Part {
       // If this is a plain text message just add the text
 
       if (0==iDraftParts) {
-        oSentMessage.setText(sBody, sEncoding);
+        oSentMessage.setText(sBody, Charset.forName(sEncoding).name(), "plain");
       } else {
         oMsgPlainText.setDisposition("inline");
-        oMsgPlainText.setText(sBody,sEncoding);
+        oMsgPlainText.setText(sBody,Charset.forName(sEncoding).name(),"plain");
         if (DebugFile.trace) DebugFile.writeln("MimeBodyPart(multipart/mixed).addBodyPart(text/plain)");
         oSentMsgParts.addBodyPart(oMsgPlainText);
       }

@@ -43,8 +43,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.security.Security;
-
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.BodyPart;
@@ -882,6 +882,9 @@ public class SessionHandler {
     DebugFile.incIdent();
   }
 
+  if (sEncoding==null) sEncoding = "ASCII";
+  String sCharEnc = Charset.forName(sEncoding).name();
+  	
   SMTPMessage oSentMessage = new SMTPMessage(getSmtpSession());
 
   MimeBodyPart oMsgPlainText = new MimeBodyPart();
@@ -927,7 +930,8 @@ public class SessionHandler {
       // Set plain text alternative part
 
       oMsgPlainText.setDisposition("inline");
-      oMsgPlainText.setContent(sTextBody, "text/plain; charset="+sEncoding);
+      oMsgPlainText.setText(sTextBody, sCharEnc, "plain");
+      // oMsgPlainText.setContent(sTextBody, "text/plain; charset="+sCharEnc);
       if (DebugFile.trace) DebugFile.writeln("MimeBodyPart(multipart/alternative).addBodyPart(text/plain)");
       oTextHtmlAlt.addBodyPart(oMsgPlainText);
 
@@ -994,7 +998,8 @@ public class SessionHandler {
         // Set HTML part
         MimeBodyPart oMsgHtml = new MimeBodyPart();
         oMsgHtml.setDisposition("inline");
-        oMsgHtml.setContent(sHtmlBody, "text/html; charset="+sEncoding);
+        oMsgHtml.setText(sHtmlBody, sCharEnc, "html");
+        // oMsgHtml.setContent(sHtmlBody, "text/html; charset="+sCharEnc);
         oTextHtmlAlt.addBodyPart(oMsgHtml);
     } else {
 
@@ -1002,7 +1007,8 @@ public class SessionHandler {
 
       MimeBodyPart oMsgHtmlText = new MimeBodyPart();
       oMsgHtmlText.setDisposition("inline");
-      oMsgHtmlText.setContent(sHtmlBody, "text/html; charset="+sEncoding);
+      oMsgHtmlText.setText(sHtmlBody, sCharEnc, "html");
+      // oMsgHtmlText.setContent(sHtmlBody, "text/html; charset="+sCharEnc);
       if (DebugFile.trace) DebugFile.writeln("MimeBodyPart(multipart/related).addBodyPart(text/html)");
       oHtmlRelated.addBodyPart(oMsgHtmlText);
 
@@ -1059,10 +1065,11 @@ public class SessionHandler {
     // If this is a plain text message just add the text
 
     if (aAttachmentsPath==null) {
-      oSentMessage.setText(sTextBody, sEncoding);
+      oSentMessage.setText(sTextBody, sCharEnc);
     } else {
       oMsgPlainText.setDisposition("inline");
-      oMsgPlainText.setContent(sTextBody, "text/plain; charset="+sEncoding);
+      oMsgPlainText.setText(sTextBody, sCharEnc, "plain");
+      //oMsgPlainText.setContent(sTextBody, "text/plain; charset="+sCharEnc);
       if (DebugFile.trace) DebugFile.writeln("MimeBodyPart(multipart/mixed).addBodyPart(text/plain)");
       oSentMsgParts.addBodyPart(oMsgPlainText);
     }
