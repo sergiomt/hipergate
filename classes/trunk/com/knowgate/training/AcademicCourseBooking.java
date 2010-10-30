@@ -137,7 +137,7 @@ public class AcademicCourseBooking extends DBPersist {
     if (!isNull(DB.tp_register))
       oAlmn.put(DB.tp_register, get(DB.tp_register));
     if (!isNull(DB.id_classroom))
-    oAlmn.put(DB.id_classroom, get(DB.id_classroom));
+      oAlmn.put(DB.id_classroom, get(DB.id_classroom));
     oAlmn.store(oConn);
     return oAlmn;
   } // createAlumni
