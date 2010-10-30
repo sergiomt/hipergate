@@ -122,7 +122,7 @@ public final class ACL {
       throws SQLException, UnsupportedOperationException {
     short iStatus;
     CallableStatement oCall;
-    Statement oStmt;
+    PreparedStatement oStmt;
     ResultSet oRSet;
     String sPassword;
 
@@ -171,11 +171,13 @@ public final class ACL {
         break;
 
         case JDCConnection.DBMS_POSTGRESQL:
-          oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+          oStmt = oConn.prepareStatement("SELECT k_sp_autenticate(?,?)", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
           if (DebugFile.trace) DebugFile.writeln("  Statement.executeQuery(SELECT k_sp_autenticate('" + sUserId + "', '" + sPassword + "', ...))");
 
-          oRSet = oStmt.executeQuery("SELECT k_sp_autenticate('" + sUserId + "','" + sPassword + "')");
+		  oStmt.setString(1, sUserId);
+		  oStmt.setString(2, sPassword);		  
+          oRSet = oStmt.executeQuery();
           oRSet.next();
           iStatus = oRSet.getShort(1);
           oRSet.close();

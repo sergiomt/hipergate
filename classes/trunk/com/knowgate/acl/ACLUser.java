@@ -1263,7 +1263,21 @@ public final class ACLUser extends DBPersist {
       oStmt.close();
     }
 
-    // End new for v2.2
+    // End new for v3.0
+    // ****************
+
+    // ************
+    // New for v6.0
+
+    /* Eliminar los permisos sobre cursos */
+    if (DBBind.exists(oConn, DB.k_x_user_acourse, "U")) {
+      oStmt = oConn.createStatement();
+      if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(DELETE FROM " + DB.k_x_user_acourse + " WHERE " + DB.gu_user + "='" + sUserGUID + "')");
+      oStmt.executeUpdate("DELETE FROM " + DB.k_x_user_acourse + " WHERE " + DB.gu_user + "='" + sUserGUID + "'");
+      oStmt.close();
+    }
+
+    // End new for v6.0
     // ****************
 
     // ************
@@ -1552,16 +1566,18 @@ public final class ACLUser extends DBPersist {
   // ----------------------------------------------------------
 
   /**
-   * <p>Shortcut for creating a new user</p>
+   * <p>Shortcut for creating a new user with a given GUID</p>
    * @param oConn Database Connection
+   * @param sGuid GUID of new user
    * @param Values User fields, all required, must be in this order { (Integer)id_domain, (String)tx_nickname, (String)tx_pwd, (Short)bo_active, (Short)bo_searchable, (Short)bo_change_pwd, (String)tx_main_email, (String)tx_alt_email, (String)nm_user, (String)tx_surname1, (String)tx_surname2, (String)tx_challenge, (String)tx_reply, (String)nm_company, (String)de_title, (String)gu_workarea, (String)tx_comments, (Date)dt_pwd_expires }<br>
    * Values up to and including tx_surname1 must be NOT NULL, values from tx_surname2 are required but may be null.
    * @return New User Unique Identifier
-   * @throws SQLException
+   * @throws SQLException If another user with the same GUID already exists
    * @throws ClassCastException
    * @throws NullPointerException
+   * @since 6.0
    */
-  public static String create(JDCConnection oConn, Object[] Values)
+  public static String create(JDCConnection oConn, String sGuid, Object[] Values)
     throws SQLException,ClassCastException,NullPointerException {
 
     if (DebugFile.trace) {
@@ -1570,7 +1586,7 @@ public final class ACLUser extends DBPersist {
     }
 
       ACLUser oUsr = new ACLUser();
-
+      	  
       if (null==Values[0]) {
         if (DebugFile.trace) DebugFile.decIdent();
         throw new NullPointerException("ACLUSer.create() a domain identifier is required");
@@ -1579,6 +1595,14 @@ public final class ACLUser extends DBPersist {
         if (DebugFile.trace) DebugFile.decIdent();
         throw new ClassCastException("ACLUSer.create() the domain identifier must be an object of type Integer");
       }
+
+	  if (null!=sGuid) {
+	  	oUsr.put(DB.gu_user,sGuid);
+	  	if (oUsr.exists(oConn)) {
+          if (DebugFile.trace) DebugFile.decIdent();
+	  	  throw new SQLException("User "+sGuid+" already exists");
+	  	}
+	  } // fi
 
       oUsr.put(DB.id_domain, Values[0]);
       oUsr.put(DB.tx_nickname, Values[1]);
@@ -1635,6 +1659,23 @@ public final class ACLUser extends DBPersist {
       return sRetVal;
   } // create()
 
+  // ----------------------------------------------------------
+
+  /**
+   * <p>Shortcut for creating a new user</p>
+   * @param oConn Database Connection
+   * @param Values User fields, all required, must be in this order { (Integer)id_domain, (String)tx_nickname, (String)tx_pwd, (Short)bo_active, (Short)bo_searchable, (Short)bo_change_pwd, (String)tx_main_email, (String)tx_alt_email, (String)nm_user, (String)tx_surname1, (String)tx_surname2, (String)tx_challenge, (String)tx_reply, (String)nm_company, (String)de_title, (String)gu_workarea, (String)tx_comments, (Date)dt_pwd_expires }<br>
+   * Values up to and including tx_surname1 must be NOT NULL, values from tx_surname2 are required but may be null.
+   * @return New User Unique Identifier
+   * @throws SQLException
+   * @throws ClassCastException
+   * @throws NullPointerException
+   */
+  public static String create(JDCConnection oConn, Object[] Values)
+    throws SQLException,ClassCastException,NullPointerException {
+    return create(oConn, null, Values);
+  }
+    
   // ----------------------------------------------------------
 
   /**
