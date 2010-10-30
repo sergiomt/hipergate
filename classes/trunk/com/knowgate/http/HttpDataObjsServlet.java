@@ -64,7 +64,7 @@ import com.knowgate.workareas.WorkArea;
 
 /**
  * @author Sergio Montoro Ten
- * @version 3.0
+ * @version 6.0
  */
 
 public class HttpDataObjsServlet extends HttpServlet {
@@ -76,6 +76,21 @@ public class HttpDataObjsServlet extends HttpServlet {
     oBindings = new HashMap();
     oWorkAreas = new HashMap();
   }
+
+  // ---------------------------------------------------------------------------
+
+  private boolean hasSqlSignature(String s) {
+    boolean bRetVal = false;
+    try {
+      bRetVal = Gadgets.matches(s, "(\\%27)|(\\')|(\\-\\-)|(\\%23)|(#)") ||
+                Gadgets.matches(s, "((\\%3D)|(=))[^\\n]*((\\%27)|(\\')|(\\-\\-)|(\\%3B)|(;))") ||
+                Gadgets.matches(s, "\\w*((\\%27)|(\\'))((\\%6F)|o|(\\%4F))((\\%72)|r|(\\%52))") ||
+                Gadgets.matches(s, "((\\%27)|(\\'))union");
+    } catch (org.apache.oro.text.regex.MalformedPatternException ignore) {
+      // never thrown
+    }
+    return bRetVal;
+  } // hasSqlSignature
 
   // ---------------------------------------------------------------------------
 
@@ -115,6 +130,11 @@ public class HttpDataObjsServlet extends HttpServlet {
     throws IOException, ServletException {
 
     String sCmd = request.getParameter("command");
+
+    if (null==sCmd) {
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter command is requiered");
+      return;
+    }
 
 	/*
     if (sCmd.equalsIgnoreCase("update")) {
@@ -182,10 +202,24 @@ public class HttpDataObjsServlet extends HttpServlet {
        if (DebugFile.trace) DebugFile.decIdent();
        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter command is requiered");
        return;
+     } else if (sCmd.equalsIgnoreCase("query")) {
+       if (null==sFld) {
+         if (DebugFile.trace) DebugFile.decIdent();
+         response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter fields is requiered");
+         return;
+       } else if (hasSqlSignature(sFld)) {
+         if (DebugFile.trace) DebugFile.decIdent();
+         response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter fields has an invalid syntax");
+         return;
+       }
      }
      if (null==sTbl) {
        if (DebugFile.trace) DebugFile.decIdent();
        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter table is requiered");
+       return;
+     } else if (hasSqlSignature(sTbl)) {
+       if (DebugFile.trace) DebugFile.decIdent();
+       response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter table has an invalid syntax");
        return;
      }
 
@@ -254,28 +288,14 @@ public class HttpDataObjsServlet extends HttpServlet {
          } else {
            iAuth = 0;
          } // fi (exists k_users)
-         switch (iAuth) {
-             case ACL.ACCOUNT_CANCELLED:
-               response.sendError(HttpServletResponse.SC_FORBIDDEN, "Account cancelled");
-               break;
-             case ACL.ACCOUNT_DEACTIVATED:
-               response.sendError(HttpServletResponse.SC_FORBIDDEN, "Account deactivated");
-               break;
-             case ACL.INVALID_PASSWORD:
-               response.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid password");
-               break;
-             case ACL.PASSWORD_EXPIRED:
-               response.sendError(HttpServletResponse.SC_FORBIDDEN, "Password expired");
-               break;
-             case ACL.USER_NOT_FOUND:
-               response.sendError(HttpServletResponse.SC_FORBIDDEN, "User not found");
-               break;
-             default:
-               oDbs.load(oCon, iSkp);
-               response.setContentType("text/plain");
-               response.setCharacterEncoding("UTF-8");
-               response.getOutputStream().write(oDbs.toString().getBytes("UTF-8"));
-         } // end switch
+         if (iAuth<0) {
+           response.sendError(HttpServletResponse.SC_FORBIDDEN, ACL.getErrorMessage(iAuth));
+         } else {
+           oDbs.load(oCon, iSkp);
+           response.setContentType("text/plain");
+           response.setCharacterEncoding("UTF-8");
+           response.getOutputStream().write(oDbs.toString().getBytes("UTF-8"));         	 	
+         }
          oCon.close("HttpDataObjsServlet");
          oCon = null;
        } catch (SQLException sqle) {
@@ -405,28 +425,14 @@ public class HttpDataObjsServlet extends HttpServlet {
          } else {
            iAuth = 0;
          } // fi (exists(DBk_users))
-         switch (iAuth) {
-           case ACL.ACCOUNT_CANCELLED:
-             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Account cancelled");
-             break;
-           case ACL.ACCOUNT_DEACTIVATED:
-             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Account deactivated");
-             break;
-           case ACL.INVALID_PASSWORD:
-             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid password");
-             break;
-           case ACL.PASSWORD_EXPIRED:
-             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Password expired");
-             break;
-           case ACL.USER_NOT_FOUND:
-             response.sendError(HttpServletResponse.SC_FORBIDDEN, "User not found");
-             break;
-           default:
-             if (oDbp.isNull(DB.gu_workarea))
-               bAllowed = true;
-             else
-               bAllowed = isUserAllowed(oCon, sUsr, oDbp.getString(DB.gu_workarea));
-             if (bAllowed) {
+         if (iAuth<0) {
+           response.sendError(HttpServletResponse.SC_FORBIDDEN, ACL.getErrorMessage(iAuth));
+         } else {
+           if (oDbp.isNull(DB.gu_workarea))
+             bAllowed = true;
+           else
+             bAllowed = isUserAllowed(oCon, sUsr, oDbp.getString(DB.gu_workarea));
+           if (bAllowed) {
                oCon.setAutoCommit(true);
                if (null==sCls) {
                  oDbp.store(oCon);
@@ -437,10 +443,10 @@ public class HttpDataObjsServlet extends HttpServlet {
                response.setContentType("text/plain");
                response.setCharacterEncoding("UTF-8");
                response.getOutputStream().print("SUCCESS");
-             } else {
+           } else {
                response.sendError(HttpServletResponse.SC_FORBIDDEN, "User does not have write permissions on target WorkArea");
-             } // fi (bAllowed)
-         } // end switch
+           } // fi (bAllowed)
+         }
          oCon.close("HttpDataObjsServlet");
          oCon = null;
        } catch (InvocationTargetException ite) {

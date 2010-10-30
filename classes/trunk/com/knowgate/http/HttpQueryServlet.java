@@ -45,6 +45,7 @@ import java.sql.SQLException;
 import java.sql.Connection;
 
 import com.knowgate.debug.DebugFile;
+import com.knowgate.misc.Gadgets;
 import com.knowgate.misc.Environment;
 import com.knowgate.hipergate.QueryByForm;
 
@@ -65,6 +66,19 @@ public class HttpQueryServlet extends HttpServlet {
     else
       return (sParam.length()==0);
   }
+
+  private boolean hasSqlSignature(String s) {
+    boolean bRetVal = false;
+    try {
+      bRetVal = Gadgets.matches(s, "(\\%27)|(\\')|(\\-\\-)|(\\%23)|(#)") ||
+                Gadgets.matches(s, "((\\%3D)|(=))[^\\n]*((\\%27)|(\\')|(\\-\\-)|(\\%3B)|(;))") ||
+                Gadgets.matches(s, "\\w*((\\%27)|(\\'))((\\%6F)|o|(\\%4F))((\\%72)|r|(\\%52))") ||
+                Gadgets.matches(s, "((\\%27)|(\\'))union");
+    } catch (org.apache.oro.text.regex.MalformedPatternException ignore) {
+      // never thrown
+    }
+    return bRetVal;
+  } // hasSqlSignature
 
   /**
    * <p>Initialize Servlet Parameters</p>
@@ -154,9 +168,6 @@ public class HttpQueryServlet extends HttpServlet {
      if (null==oDriver) return;
 
      try {
-       if (DebugFile.trace) DebugFile.writeln("DriverManager.getConnection(" + jdbcURL + ",...)");
-
-       oConn = DriverManager.getConnection(jdbcURL,dbUserName,dbUserPassword);
 
        sQuerySpec = request.getParameter("queryspec");
        sColumnList = request.getParameter("columnlist");
@@ -172,7 +183,15 @@ public class HttpQueryServlet extends HttpServlet {
        if (DebugFile.trace) DebugFile.writeln("where=" + sWhere);
        if (DebugFile.trace) DebugFile.writeln("orderby=" + sOrderBy);
 
+	   if (hasSqlSignature(sColumnList)) {
+         response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Column List Syntax");
+		 return;
+	   }
+
        oQBF = new QueryByForm("file://" + sStorage + "/qbf/" + sQuerySpec + ".xml");
+
+       if (DebugFile.trace) DebugFile.writeln("DriverManager.getConnection(" + jdbcURL + ",...)");
+       oConn = DriverManager.getConnection(jdbcURL,dbUserName,dbUserPassword);
 
        // Send some basic http headers to support binary d/l.
        if (sShowAs.equalsIgnoreCase("XLS")) {
