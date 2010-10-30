@@ -1654,7 +1654,7 @@ public final class DBSubset {
       return oDateTime.format(oDt);
     else
       return null;
-  } // getDateShort()
+  } // getDateTime()
 
   // ----------------------------------------------------------
 

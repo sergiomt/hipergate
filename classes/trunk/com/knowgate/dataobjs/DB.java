@@ -259,6 +259,7 @@ public final class DB {
   public static final String k_courses_lookup = "k_courses_lookup";
   public static final String k_subjects = "k_subjects";
   public static final String k_subjects_lookup = "k_subjects_lookup";
+  public static final String k_x_user_acourse = "k_x_user_acourse";
   public static final String k_x_course_alumni = "k_x_course_alumni";
   public static final String k_x_course_subject = "k_x_course_subject";
   public static final String k_x_course_bookings = "k_x_course_bookings";
@@ -413,6 +414,8 @@ public final class DB {
   public static final String tx_pwd_sign = "tx_pwd_sign";
   public static final String dt_pwd_expires = "dt_pwd_expires";
   public static final String nu_login_attempts = "nu_login_attempts";
+  public static final String bo_admin = "bo_admin";
+  public static final String bo_user = "bo_user";
 
   // k_user_mail
   public static final String gu_account = "gu_account";

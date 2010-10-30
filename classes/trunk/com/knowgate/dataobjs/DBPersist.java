@@ -508,6 +508,16 @@ public class DBPersist implements Map,Serializable {
    * @since 5.5
    */
 
+  private String escapeHtmlEntites(String sHtml)
+  	throws org.apache.oro.text.regex.MalformedPatternException {
+  	if (null==sHtml) return null;
+  	if (sHtml.length()==0) return "";
+  	
+  	String sEscHtml = Gadgets.XHTMLEncode(Gadgets.replace(sHtml,"&","&amp;"));
+  		
+    return Gadgets.replace(Gadgets.replace(Gadgets.replace(Gadgets.replace(sEscHtml,"\"", "&#34;"),"'", "&#39;"),"<","&lt;"),">","&gt;");
+  }
+
   public String getStringHtml(String sKey, String sDefault) {
     Object oVal;
     try {
@@ -517,15 +527,15 @@ public class DBPersist implements Map,Serializable {
           if (null==sDefault)
             return sDefault;
           else
-            return Gadgets.replace(Gadgets.replace(Gadgets.replace(Gadgets.replace(Gadgets.XHTMLEncode(sDefault),"\"", "&#34;"),"'", "&#39;"),"<","&lt;"),">","&gt;");
+            return escapeHtmlEntites(sDefault);
         else
-          return Gadgets.replace(Gadgets.replace(Gadgets.replace(Gadgets.replace(Gadgets.XHTMLEncode(oVal.toString()),"\"", "&#34;"),"'", "&#39;"),"<","&lt;"),">","&gt;");
+          return escapeHtmlEntites(oVal.toString());
       }
       else {
         if (null==sDefault)
           return sDefault;
        else
-      	  return Gadgets.replace(Gadgets.replace(Gadgets.replace(Gadgets.replace(Gadgets.XHTMLEncode(sDefault),"\"", "&#34;"),"'", "&#39;"),"<","&lt;"),">","&gt;");
+      	  return escapeHtmlEntites(sDefault);
       }
     } catch (org.apache.oro.text.regex.MalformedPatternException neverthrown) { }
     return null;
