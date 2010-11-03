@@ -143,17 +143,18 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }
   
-  if (null==oConn) return;
-  
+  if (null==oConn) return;  
   oConn = null;  
-%>
+  
+  sendUsageStats(request, "campaign_list"); 
 
-<HTML LANG="<% out.write(sLanguage); %>">
+%><HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
@@ -279,6 +280,12 @@
 	function findCampaign() {
 	  	  
 	  var frm = document.forms[0];
+
+	  if (hasForbiddenChars(frm.find.value)) {
+		  alert ("String sought contains invalid characters");
+			frm.find.focus();
+			return false;
+		}
 	  
 	  if (frm.find.value.length>0)
 	    window.location = "campaign_list.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=<%=sOrderBy%>&field=" + getCombo(frm.sel_searched) + "&find=" + escape(frm.find.value) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&screen_width=" + String(screen.width);
@@ -392,10 +399,10 @@
 	      String sInstId, sInstNm;
 	      for (int i=0; i<iCampaignCount; i++) {
             sInstId = oCampaigns.getString(0,i);
-            sInstNm = oCampaigns.getString(1,i);
+            sInstNm = oCampaigns.getStringHtml(1,i,"");
             
 %>          <TR HEIGHT="14">
-              <TD CLASS="strip2" WIDTH="400">&nbsp;<A HREF="#" oncontextmenu="jsCampaignId='<%=sInstId%>'; jsCampaignNm='<%=sInstNm%>'; return showRightMenu(event);" onclick="modifyCampaign('<%=sInstId%>','<%=oCampaigns.getString(1,i)%>')" TITLE="Click right mouse button to see the context menu"><%=oCampaigns.getString(1,i)%></A></TD>
+              <TD CLASS="strip2" WIDTH="400">&nbsp;<A HREF="#" oncontextmenu="jsCampaignId='<%=sInstId%>'; jsCampaignNm='<%=sInstNm%>'; return showRightMenu(event);" onclick="modifyCampaign('<%=sInstId%>','<%=sInstNm%>')" TITLE="Click right mouse button to see the context menu"><%=sInstNm%></A></TD>
               <TD CLASS="strip2" WIDTH="150">&nbsp;<%=oCampaigns.getDateShort(2,i)%></TD>
               <TD CLASS="strip2" ALIGN="center"><INPUT VALUE="1" TYPE="checkbox" NAME="<% out.write (sInstId); %>"></TD>
             </TR>

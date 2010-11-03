@@ -77,8 +77,9 @@
   <TITLE>hipergate :: Edit Campaign</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
             
       // ------------------------------------------------------
@@ -88,6 +89,12 @@
 
 			  if (frm.nm_campaign.value.length==0) {
 			    alert ("Campaign name is required");
+				  frm.nm_campaign.focus();
+				  return false;
+			  }
+
+			  if (hasForbiddenChars(frm.nm_campaign.value)) {
+			    alert ("Campaign name contains invalid characters");
 				  frm.nm_campaign.focus();
 				  return false;
 			  }
@@ -112,7 +119,7 @@
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
             <TD ALIGN="right" WIDTH="90" CLASS="formstrong">Name:</TD>
-            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="nm_campaign" MAXLENGTH="70" SIZE="40" VALUE="<%=oCamp.getStringNull(DB.nm_campaign,"")%>"></TD>
+            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="nm_campaign" MAXLENGTH="70" SIZE="40" VALUE="<%=oCamp.getStringHtml(DB.nm_campaign,"")%>"></TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="90" CLASS="formstrong">Active</TD>

@@ -1,9 +1,9 @@
-<%@ page import="java.net.URLDecoder,java.io.File,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.QueryByForm" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.text.SimpleDateFormat,java.net.URLDecoder,java.io.File,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.QueryByForm" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 
 /*
-  Copyright (C) 2003-2008  Know Gate S.L. All rights reserved.
+  Copyright (C) 2003-2010  Know Gate S.L. All rights reserved.
                            C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
@@ -67,6 +67,8 @@
   String sWhere = nullif(request.getParameter("where"));
   String sQuery = nullif(request.getParameter("query"));
 
+  SimpleDateFormat oDtFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
   String sStorage = Environment.getProfilePath(GlobalDBBind.getProfileName(), "storage");
 
   // **********************************************
@@ -99,13 +101,8 @@
 
   // 07. Order by column
 
-  sOrderBy = nullif(request.getParameter("orderby"));
-    
-  if (sOrderBy.length()>0)
-    iOrderBy = Integer.parseInt(sOrderBy);
-  else
-    iOrderBy = 0;
-
+  sOrderBy = nullif(request.getParameter("orderby"),"10");    
+  iOrderBy = Integer.parseInt(sOrderBy);
   if (10==iOrderBy) sOrderBy += " DESC";
 
   // **********************************************
@@ -170,13 +167,13 @@
   
   oConn = null;  
 %>
-
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
@@ -219,12 +216,10 @@
 <% if (!bIsGuest) { %>
         
 	      function createActivity() {	  
-	        open ("activity_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>", "editactivity", "directories=no,toolbar=no,menubar=no,width=500,height=460");	  
+	        open ("activity_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>", "editactivity", "scrollbars=yes,directories=no,toolbar=no,menubar=no,width=700,height=670");	  
 	      } // createActivity()
 
         // ----------------------------------------------------
-
-        // 13. Delete checked instances
 	
 	      function deleteActivities() {
 	  
@@ -232,10 +227,10 @@
 	        var frm = document.forms[0];
 	        var chi = frm.checkeditems;
 	  	  
-	        if (window.confirm("Are you sure you wish to delete the selected instances?")) {
+	        if (window.confirm("Are you sure that you want to delete the selected activities?")) {
 	  	  
 	          chi.value = "";	  	  
-	          frm.action = "form_delete.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
+	          frm.action = "activity_delete.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
 	  	  
 	          for (var i=0;i<jsActivities.length; i++) {
               while (frm.elements[offset].type!="checkbox") offset++;
@@ -254,7 +249,13 @@
         // ----------------------------------------------------
 
 	      function modifyActivity(id) {
-	        open ("activity_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>" + "&gu_activity=" + id, "editactivity", "scrollbars=yes,directories=no,toolbar=no,menubar=no,width=520,height=480");
+	        open ("activity_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>" + "&gu_activity=" + id, "editactivity", "scrollbars=yes,directories=no,toolbar=no,menubar=no,width=700,height=670");
+	      } // modifyActivity
+
+        // ----------------------------------------------------
+
+	      function showAttendants(id) {
+	        open ("activity_audience.jsp?gu_activity=" + id, "editactivity", "scrollbars=yes,directories=no,toolbar=no,menubar=no,width=1000,height=700");
 	      } // modifyActivity
 
         // ----------------------------------------------------
@@ -265,7 +266,7 @@
 	  
 	        var frm = document.forms[0];
 	  
-	          window.location = "listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=" + fld + "&where=" + escape("<%=sWhere%>") + "&find=" + escape(frm.find.value) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&screen_width=" + String(screen.width);
+	          window.location = "activity_list.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=" + fld + "&where=" + escape("<%=sWhere%>") + "&find=" + escape(frm.find.value) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&screen_width=" + String(screen.width);
 	      } // sortBy		
 
         // ----------------------------------------------------
@@ -287,12 +288,19 @@
 	      function findActivity() {
 	  	  
 	        var frm = document.forms[0];
+
+			    if (hasForbiddenChars(frm.find.value)) {
+			      alert ("String sought contains invalid characters");
+				    frm.find.focus();
+				    return false;
+			    }
 	  
 	        if (frm.find.value.length>0)
 	          window.location = "activity_list.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&queryspec=activities&skip=0&orderby=<%=sOrderBy%>&find=" + escape(frm.find.value) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&screen_width=" + String(screen.width);
 	        else
 	          window.location = "activity_list.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&queryspec=activities&skip=0&orderby=<%=sOrderBy%>&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&screen_width=" + String(screen.width);
 	  
+	  			return true;
 	      } // findActivity()
 
         // ----------------------------------------------------
@@ -397,7 +405,7 @@
             if (oActivities.isNull(9,i))
               sActivityDtStart = "";
             else
-              sActivityDtStart = oActivities.getDateTime(9,i);
+              sActivityDtStart = oActivities.getDateFormated(9,i,oDtFmt);
             
             sStrip = String.valueOf((i%2)+1);
 %>            
@@ -414,7 +422,7 @@
       addMenuOption("Open","modifyActivity(jsActivityId)",1);
       addMenuOption("Clone","clone()",0);
       addMenuSeparator();
-      addMenuOption("Show audience","modifyActivity(jsActivityId)",1);	      
+      addMenuOption("Show audience","showAttendants(jsActivityId)",1);	      
       //-->
     </SCRIPT>
     <!-- /RightMenuBody -->    
