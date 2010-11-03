@@ -265,7 +265,7 @@
       dojo.addOnLoad(function() {
       	showClickthrough();
       	showReferers();
-      	showPopularUrls();
+        <% if (nUrls>0) { %> showPopularUrls(); <% } else { %> document.getElementById("urlsChart").style.height="80px"; document.getElementById("urlsChart").innerHTML="<FONT class=textplain>[~No existen datos en la BB.DD. para esta gr&aacute;fica~]</FONT>"; <% } %>
       	showPopularNewsletters();
       	showUnpopularNewsletters();
       	showByHour();

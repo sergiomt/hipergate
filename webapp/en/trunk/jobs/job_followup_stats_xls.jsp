@@ -262,6 +262,7 @@
 		  oCel.setCellValue(sTxEmail);
 			c = 4;
 			while (oWebBeacons.getInt(3,iIxAtm)==iPgAtm) {
+			  if (c>=255) break;
 			  nTimes++;
     	  oCel = oRow.createCell(c++);
     	  oCel.setCellStyle(oDateFmt);
