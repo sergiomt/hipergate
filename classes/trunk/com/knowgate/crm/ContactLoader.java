@@ -59,7 +59,7 @@ import com.knowgate.hipergate.datamodel.ImportLoader;
  * Contact loader creates or updates simultaneously registers at k_companies,
  * k_contacts and k_addresses tables and the links between them k_x_contact_addr.
  * @author Sergio Montoro Ten
- * @version 5.0
+ * @version 6.0
  */
 public final class ContactLoader implements ImportLoader {
 
@@ -70,7 +70,7 @@ public final class ContactLoader implements ImportLoader {
   private PreparedStatement oCompInst, oContInst, oAddrInst, oContAddr, oCompAddr;
   private PreparedStatement oCompLook, oContLook, oAddrLook;
   private PreparedStatement oCompWook, oContWook, oAddrWook;
-  private PreparedStatement oCompName, oContPort;
+  private PreparedStatement oCompName, oContPort, oContMail;
   private PreparedStatement oAddrComp, oAddrCont;
   private HashMap<String,DistributionList> oListsMap;
   private HashMap<String,String> oCompSectorsMap, oCompStatusMap, oCompTypesMap;
@@ -305,6 +305,8 @@ public final class ContactLoader implements ImportLoader {
     oContAddr = oConn.prepareStatement("INSERT INTO k_x_contact_addr (gu_contact,gu_address) VALUES(?,?)");
     oCompAddr = oConn.prepareStatement("INSERT INTO k_x_company_addr (gu_company,gu_address) VALUES(?,?)");
 
+	oContMail = oConn.prepareStatement("SELECT gu_contact FROM k_member_address WHERE gu_workarea=? AND tx_email=?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+		
     if (DebugFile.trace) {
       DebugFile.decIdent();
       DebugFile.writeln("End ContactLoader.prepare()");
@@ -332,6 +334,8 @@ public final class ContactLoader implements ImportLoader {
     oAddrLocsMap.clear();
     oAddrTypesMap.clear();
     oAddrSalutMap.clear();
+
+	if (oContMail!=null) { oContMail.close(); oContMail=null; }
 
     if (oAddrComp!=null) { oAddrComp.close(); oAddrComp=null; }
     if (oAddrCont!=null) { oAddrCont.close(); oAddrCont=null; }
@@ -448,6 +452,22 @@ public final class ContactLoader implements ImportLoader {
       sContGuid = Gadgets.generateUUID();
     return sContGuid;
   } // getContactGuid
+
+  // ---------------------------------------------------------------------------
+
+  private String getContactForEmail(Connection oConn, Object sEmail, Object sWorkArea)
+    throws SQLException {
+    String sContGuid;
+    oContMail.setObject(1, sWorkArea, Types.VARCHAR);
+    oContMail.setObject(2, sEmail, Types.VARCHAR);
+    ResultSet oRSet = oContMail.executeQuery();
+    if (oRSet.next())
+      sContGuid = oRSet.getString(1);
+    else
+      sContGuid = null;
+    oRSet.close();
+    return sContGuid;
+  } // getContactForEmail
 
   // ---------------------------------------------------------------------------
 
@@ -628,10 +648,17 @@ public final class ContactLoader implements ImportLoader {
       put(gu_company, getCompanyGuid(oConn, aValues[nm_legal], get(gu_workarea)));
 
     if (test(iFlags,WRITE_CONTACTS) && getColNull(gu_contact)==null) {
-      if (test(iFlags,ALLOW_DUPLICATED_PASSPORTS))
+      if (test(iFlags,ALLOW_DUPLICATED_PASSPORTS) && !test(iFlags,NO_DUPLICATED_MAILS)) {
         put(gu_contact, Gadgets.generateUUID());
-      else
+      } else if (test(iFlags,NO_DUPLICATED_MAILS)) {
+        put(gu_contact, getContactForEmail(oConn, aValues[tx_email], get(gu_workarea)));
+        if (getColNull(gu_contact)==null && !test(iFlags,ALLOW_DUPLICATED_PASSPORTS))
+          put(gu_contact, getContactGuid(oConn, aValues[sn_passport], get(gu_workarea)));
+      } else if (!test(iFlags,ALLOW_DUPLICATED_PASSPORTS)) {
         put(gu_contact, getContactGuid(oConn, aValues[sn_passport], get(gu_workarea)));
+      } else {
+        put(gu_contact, Gadgets.generateUUID());
+      }
     }
 
     if (test(iFlags,WRITE_ADDRESSES) && aValues[gu_address]==null)
