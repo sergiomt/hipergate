@@ -59,7 +59,7 @@ public class AcademicCourseAlumni extends DBPersist implements Comparator {
   public AcademicCourseAlumni(String sAcademicCourseId, String sContactId) {
     super(DB.k_x_course_alumni, "AcademicCourseAlumni");
     put (DB.gu_acourse, sAcademicCourseId);
-    put (DB.gu_contact, sContactId);
+    put (DB.gu_alumni, sContactId);
   }
 
   // ---------------------------------------------------------------------------
