@@ -14,6 +14,7 @@
       </ACTION>
       <MAPPINGS>
         <MAPPING TRANSFORM="REFERENCED">gu_company,gu_company</MAPPING>
+        <MAPPING>'{#IdWorkArea}',gu_workarea</MAPPING>
         <MAPPING>CURRENT_TIMESTAMP,dt_created</MAPPING>
         <MAPPING>CURRENT_TIMESTAMP,dt_modified</MAPPING>
         <MAPPING>nm_legal || ' (' || CAST((SELECT COUNT(gu_company) FROM k_companies) AS VARCHAR(11)) || ')',nm_legal</MAPPING>
@@ -45,6 +46,7 @@
         <MAPPING>CURRENT_TIMESTAMP,dt_created</MAPPING>
         <MAPPING>CURRENT_TIMESTAMP,dt_modified</MAPPING>
         <MAPPING TRANSFORM="NEWGUID">gu_address,gu_address</MAPPING>
+        <MAPPING>'{#IdWorkArea}',gu_workarea</MAPPING>
       </MAPPINGS>
     </ROWSET>
     <ROWSET>
