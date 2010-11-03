@@ -333,7 +333,6 @@
         <td width="24" background="../images/images/tabmenu/opcion1.gif"><img style="display:block" src="../images/images/spacer.gif" height="3" width="3"></td>
         <td width="70" background="../images/images/tabmenu/opcion1.gif"><img style="display:block" src="../images/images/spacer.gif" height="3" width="3"></td>
         <td width="5"><img style="display:block" src="../images/images/tabmenu/opcion_med.gif" width="5" height="3" border="0"></td>
-        <!-- col 2 -->
         <td width="24" background="../images/images/tabmenu/opcion1.gif"><img style="display:block" src="../images/images/spacer.gif" height="3" width="3"></td>
         <td width="70" background="../images/images/tabmenu/opcion1.gif"><img style="display:block" src="../images/images/spacer.gif" height="3" width="3"></td>
         <td width="5"><img style="display:block" src="../images/images/tabmenu/opcion_med.gif" width="5" height="3" border="0"></td>
@@ -345,12 +344,11 @@
       <!-- Linea del medio menu superior derecho -->
       <tr>
         <!-- linea izquierda -->
-        <td width="3" background="../images/images/tabmenu/opcion_a.gif" class="menu1"><img style="display:block" src="../images/images/tabmenu/transp.gif" width="3" height="1"></td>
         <!-- col 1 -->
+        <td width="3" background="../images/images/tabmenu/opcion_a.gif" class="menu1"><img style="display:block" src="../images/images/tabmenu/transp.gif" width="3" height="1"></td>
         <td width="24" align="top" class="menu1"><img src="../images/images/tabmenu/query.gif" width="24" height="22" border="0"></td>
         <td background="../images/images/tabmenu/menubtnback.gif" width="70" align="center" class="menu1">&nbsp;<a href="javascript:void(0)" onclick="window.open('../common/qbf_list.jsp','qbflist','directories=no,toolbar=no,menubar=no,width=420,height=560,scrollbars=yes');" class="opcion">Queries</a>&nbsp;</td>
         <td width="5" background="../images/images/tabmenu/opcion_ab.gif" class="menu1"></td>
-        <!-- col 2 -->
         <td width="24" align="top" class="menu1"><img src="../images/images/tabmenu/help.gif" width="24" height="22" border="0"></td>
         <td background="../images/images/tabmenu/menubtnback.gif" width="70" align="center" class="menu1">&nbsp;<a href="../help/index_en.html" class="opcion" target="_top">Help</a>&nbsp;</td>
         <td width="5" background="../images/images/tabmenu/opcion_ab.gif" class="menu1"></td>
@@ -367,11 +365,9 @@
         <td width="24" class="opcion" background="../images/images/tabmenu/opcion2.gif"><img style="display:block" src="../images/images/spacer.gif" height="3" width="3"></td>
         <td width="70" class="opcion" background="../images/images/tabmenu/opcion2.gif"><img style="display:block" src="../images/images/spacer.gif" height="3" width="3"></td>
         <td width="5"><img style="display:block" src="../images/images/tabmenu/opcion_medb.gif" width="5" height="3" border="0"></td>
-        <!-- col 2 -->
         <td width="24" class="opcion" background="../images/images/tabmenu/opcion2.gif"><img style="display:block" src="../images/images/spacer.gif" height="3" width="3"></td>
         <td width="70" class="opcion" background="../images/images/tabmenu/opcion2.gif"><img style="display:block" src="../images/images/spacer.gif" height="3" width="3"></td>
         <td width="5"><img style="display:block" src="../images/images/tabmenu/opcion_medb.gif" width="5" height="3" border="0"></td>
-        <!-- col 3 -->
         <td width="24" class="opcion" background="../images/images/tabmenu/opcion2.gif"><img style="display:block" src="../images/images/spacer.gif" height="3" width="3"></td>
         <td width="100" class="opcion" background="../images/images/tabmenu/opcion2.gif"><img style="display:block" src="../images/images/spacer.gif" height="3" width="3"></td>
         <td width="3"><img style="display:block" src="../images/images/tabmenu/esq4.gif" width="3" height="3" border="0"></td>
