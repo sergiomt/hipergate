@@ -80,9 +80,10 @@
     DBSubset oSupervisors = new DBSubset(DB.k_users, DB.gu_user+","+DB.nm_user+","+DB.tx_surname1+","+DB.tx_surname2,
     																		 DB.gu_workarea+"=? AND (" + DB.gu_user + "=? OR " + DB.gu_user + " IN (SELECT " + DB.vl_lookup + " FROM " + DB.k_duties_lookup + " WHERE " + DB.id_section + "='nm_resource' AND " + DB.gu_owner + "=?)) ORDER BY 2,3,4", 100);
     int iSupervisors = oSupervisors.load(oCon1, new Object[]{sWorkArea,sUserId,sWorkArea});
-    
-%>
-<HTML>
+
+	  sendUsageStats(request, "duty_edit");
+
+%><HTML>
   <HEAD>
     <TITLE>hipergate :: Edit Duty</TITLE>
     <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>

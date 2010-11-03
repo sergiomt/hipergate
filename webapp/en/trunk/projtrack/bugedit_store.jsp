@@ -61,7 +61,7 @@
     com.knowgate.dataobjs.DBAudit.log ((short)0, "OJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, "", "", "");
   }
 
-  MultipartRequest oReq = new MultipartRequest(request, sTmpDir, "UTF-8");
+  MultipartRequest oReq = new MultipartRequest(request, sTmpDir, Integer.parseInt(Environment.getProfileVar(GlobalDBBind.getProfileName(), "maxfileupload", "10485760")), "UTF-8");
   
   int iPgBug = 0;
   String sOpCode = Integer.parseInt(oReq.getParameter("is_new"))==1 ? "NBUG" : "MBUG";

@@ -256,8 +256,10 @@
   
   if (null==oCon1) return;
   oCon1 = null;
-%>
-<HTML>
+  
+	sendUsageStats(request, "bug_list");
+
+%><HTML>
   <HEAD>
     <TITLE>hipergate :: Incident Listing</TITLE>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>

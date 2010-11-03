@@ -99,7 +99,9 @@
     sVsFoundLookUp = DBLanguages.getHTMLSelectLookUp (oCon1, DB.k_bugs_lookup, sWorkArea, DB.vs_found, sLanguage);
     sVsClosedLookUp = DBLanguages.getHTMLSelectLookUp (oCon1, DB.k_bugs_lookup, sWorkArea, DB.vs_closed, sLanguage);
   
-    iPrjRoot = oPrjRoots.load(oCon1);      
+    iPrjRoot = oPrjRoots.load(oCon1);
+
+	  sendUsageStats(request, "bug_edit");
 %>    
 <HTML LANG="<%=sLanguage%>">
   <HEAD>

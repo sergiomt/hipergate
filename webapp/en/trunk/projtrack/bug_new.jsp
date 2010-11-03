@@ -72,7 +72,9 @@
     sTypeLookUp = DBLanguages.getHTMLSelectLookUp (oCon1, DB.k_bugs_lookup, sWorkArea, DB.tp_bug, sLanguage);
     sVersionLookUp = DBLanguages.getHTMLSelectLookUp (oCon1, DB.k_bugs_lookup, sWorkArea, DB.vs_found, sLanguage);
 
-    iPrjRoot = oPrjRoots.load(oCon1);    
+    iPrjRoot = oPrjRoots.load(oCon1);
+    
+	  sendUsageStats(request, "bug_new");    
 %>
 <HTML>
   <HEAD>
