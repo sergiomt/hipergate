@@ -81,7 +81,8 @@
     sStatusLookUp = DBLanguages.getHTMLSelectLookUp (oCon1, DB.k_projects_lookup, sWorkArea, DB.id_status, sLanguage);
             
     oTopLevel.load(oCon1);
-    
+
+	  sendUsageStats(request, "prj_new");    
 %>
 <HTML>
   <HEAD>

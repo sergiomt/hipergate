@@ -182,9 +182,10 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }
   
-  if (null==oConn) return;
-  
+  if (null==oConn) return;  
   oConn = null;  
+
+	sendUsageStats(request, "project_listing");
 
 %><HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>

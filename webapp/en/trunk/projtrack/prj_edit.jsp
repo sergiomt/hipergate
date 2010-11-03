@@ -136,9 +136,10 @@
   }
   
   if (null==oCon1) return;
-  
-%>
-<HTML>
+
+	sendUsageStats(request, "prj_edit");
+
+%><HTML>
   <HEAD>
     <TITLE>hipergate :: Edit Project<%=oPrj.getString(DB.nm_project)%></TITLE>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
