@@ -47,7 +47,7 @@
   String sShellDir = Environment.getProfileVar(GlobalDBBind.getProfileName(), "shelldir", sStorage + File.separator + "shell");
   
   String sDocType = request.getParameter("doctype");
-  String sUrl = "pageset_listing.jsp?selected="+request.getParameter("selected")+"&subselected="+request.getParameter("subselected")+"&doctype=" + sDocType;  
+  String sUrl = nullif(request.getParameter("redirect"),"pageset_listing.jsp?selected="+request.getParameter("selected")+"&subselected="+request.getParameter("subselected")+"&doctype=" + sDocType);  
   String nm_pageset;
   String sXMLFilePage;
   String sHTMLDirPage;

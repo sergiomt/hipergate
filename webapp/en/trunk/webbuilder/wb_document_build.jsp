@@ -67,7 +67,7 @@
   sDefWrkArPut = sDefWrkArPut.substring(0,sDefWrkArPut.lastIndexOf(java.io.File.separator));
   sDefWrkArPut = sDefWrkArPut + java.io.File.separator + "workareas";
 
-  String sEnvWorkPut	 = Environment.getProfileVar(GlobalDBBind.getProfileName(),"workareasput",sDefWrkArPut);
+  String sEnvWorkPut	 = Gadgets.dechomp(Environment.getProfileVar(GlobalDBBind.getProfileName(),"workareasput",sDefWrkArPut),java.io.File.separator);
   String sStorageRoot	 = Environment.getProfilePath(GlobalDBBind.getProfileName(),"storage");
   String sOutputPathHtml = sEnvWorkPut + File.separator + gu_workarea + File.separator + "apps" + File.separator + sAppDir + File.separator + "html" + File.separator + gu_pageset + File.separator;
 

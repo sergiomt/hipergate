@@ -58,12 +58,21 @@
   sDefImgSrv = sDefImgSrv.substring(0,sDefImgSrv.lastIndexOf("/"));
   sDefImgSrv = sDefImgSrv + "/images";
   
+  String sDefWrkArPut = request.getRealPath(request.getServletPath());
+  sDefWrkArPut = sDefWrkArPut.substring(0,sDefWrkArPut.lastIndexOf(java.io.File.separator));
+  sDefWrkArPut = sDefWrkArPut.substring(0,sDefWrkArPut.lastIndexOf(java.io.File.separator));
+  sDefWrkArPut = sDefWrkArPut + sSep + "workareas";
+
   String sImageServer = Environment.getProfileVar(GlobalDBBind.getProfileName(), "imageserver", sDefImgSrv);
+
+  String sEnvWorkPut	= Environment.getProfileVar(GlobalDBBind.getProfileName(),"workareasput", sDefWrkArPut);
   
   final String id_domain = request.getParameter("id_domain");
   final String gu_workarea = request.getParameter("gu_workarea");
   final String gu_microsite = request.getParameter("gu_microsite");
   String nm_microsite = "";
+
+  String sOutputPathEdit = sEnvWorkPut + sSep + gu_workarea + sSep + "apps" + sSep + "Mailwire" + sSep + "html" + sSep + gu_microsite + sSep;
   
   File oFl;
   
@@ -97,19 +106,17 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Edit Microsite</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
       
       // ------------------------------------------------------
-
-      // 09. Fields values validation.
 
       function validate() {
         var frm = window.document.forms[0];
@@ -155,11 +162,10 @@
       function setCombos() {
         var frm = document.forms[0];
         
-<% if (!oMSite.isNull(DB.tp_microsite)) { %>
+<% if (!oMSite.isNull(DB.tp_microsite)) { 
 	out.write ("        frm.id_app.value =\""+String.valueOf(oMSite.getInt(DB.id_app))+"\";\n");
 	out.write ("        frm.tp_microsite.value =\""+String.valueOf(oMSite.getShort(DB.tp_microsite))+"\";\n");
-<% } %>
-
+  } %>
         return true;
       } // setCombos
     //-->

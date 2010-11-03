@@ -89,7 +89,8 @@
   String sCurrentItemHeight = "";
   String sCurrentItemAlt = "";
   String sCurrentItemPath = "";
-  
+  int iCurrentItemURLLen = 0;
+
   Set oSet = oMap.entrySet();
   Iterator iSet = oSet.iterator();
   
@@ -132,13 +133,33 @@
        sCurrentItemURL = sValue.trim();
        if ((!(sCurrentItemURL.startsWith("javascript:"))))
        {
-        sCurrentItemURL = sValue.trim().toLowerCase();
-        if (!(sCurrentItemURL.startsWith("http://"))&&(!sCurrentItemURL.equals("")))
+        sCurrentItemURL = "";
+        // Replace & by &amp;
+        iCurrentItemURLLen = sValue.length();
+        for (int a=0; a<iCurrentItemURLLen; a++) {
+          if (sValue.charAt(a)=='&') {
+            if (a>iCurrentItemURLLen-5) {
+              sCurrentItemURL += "&amp;";
+            } else {
+              if (sValue.substring(a,a+5).equals("&amp;")) {
+                sCurrentItemURL += sValue.charAt(a);
+              } else {
+                sCurrentItemURL += "&amp;";            	
+              }               
+            }
+          } else {
+            sCurrentItemURL += sValue.charAt(a);
+          }
+        } // next
+        sCurrentItemURL = sCurrentItemURL.trim();
+        if (!((sCurrentItemURL.startsWith("http://")) || (sCurrentItemURL.startsWith("https://")))&& sCurrentItemURL.length()>0)
         sCurrentItemURL = "http://" + sCurrentItemURL;
+       } else {
+       	 sCurrentItemURL = sValue.trim();
        }
-       
-       // Ultimo field, modificar XMLDocument y grabar
-        if (!sCurrentItemText.equals(""))
+
+        // Ultimo field, modificar XMLDocument y grabar
+				if (sCurrentItemText.length()>0 || sCurrentItemURL.length()>0)
         {
           oXMLDocument.addNode("pageset/pages/page[@guid=\"" + gu_page + "\"]/blocks/block[@id=\"" + sBlockId + "\"]/paragraphs/paragraph[@id=\"REMOVABLE\"]",
                                "<paragraph id=\"" + sCurrentItemId + "\">\n\t    <url>" + sCurrentItemURL + "</url>\n\t    <text><![CDATA[" + sCurrentItemText + "]]></text>\n\t</paragraph>");
@@ -170,11 +191,30 @@
        sCurrentItemURL = sValue.trim();
        if ((!(sCurrentItemURL.startsWith("javascript:"))))
        {
-        sCurrentItemURL = sValue.trim().toLowerCase();
-        if (!(sCurrentItemURL.startsWith("http://"))&&(!sCurrentItemURL.equals("")))
+        sCurrentItemURL = "";
+        // Replace & by &amp;
+        iCurrentItemURLLen = sValue.length();
+        for (int a=0; a<iCurrentItemURLLen; a++) {
+          if (sValue.charAt(a)=='&') {
+            if (a>iCurrentItemURLLen-5) {
+              sCurrentItemURL += "&amp;";
+            } else {
+              if (sValue.substring(a,a+5).equals("&amp;")) {
+                sCurrentItemURL += sValue.charAt(a);
+              } else {
+                sCurrentItemURL += "&amp;";            	
+              }               
+            }
+          } else {
+            sCurrentItemURL += sValue.charAt(a);
+          }
+        } // next
+        sCurrentItemURL = sCurrentItemURL.trim();
+        if (!((sCurrentItemURL.startsWith("http://")) || (sCurrentItemURL.startsWith("https://")))&& sCurrentItemURL.length()>0)
         sCurrentItemURL = "http://" + sCurrentItemURL;
+       } else {
+       	 sCurrentItemURL = sValue.trim();
        }
-       
       }
        if (sField.indexOf("width")!=-1)
       {
@@ -199,10 +239,8 @@
 <head> 
   <TITLE>Wait...</TITLE>
   <script language="JavaScript" type="text/javascript">
-  <!--   
-    window.open ("wb_document.jsp?id_domain=<%=id_domain%>&doctype=<%=sDocType%>&gu_workarea=<%=gu_workarea%>&gu_pageset=<%=gu_pageset%>&page=<%=sPage%>", "editPageSet");
-
-    self.close();
+  <!--
+    document.location = "wb_document.jsp?id_domain=<%=id_domain%>&doctype=<%=sDocType%>&gu_workarea=<%=gu_workarea%>&gu_pageset=<%=gu_pageset%>&page=<%=sPage%>";    
   //-->
   </script>
 </head>

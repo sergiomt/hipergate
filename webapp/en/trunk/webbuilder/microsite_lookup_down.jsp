@@ -21,9 +21,9 @@
 <% if (bIsGuest) { %>
       <INPUT TYPE="button" CLASS="pushbutton" VALUE="Next >>" onClick="alert('Your current priviledges level as Guest does not allow you to perform this action')">
 <% } else { %>
-      <INPUT TYPE="button" CLASS="pushbutton" VALUE="Next >>" onClick="window.top.frames[1].choose()">
+      <INPUT TYPE="button" CLASS="pushbutton" VALUE="Next >>" onClick="window.parent.frames[1].choose()">
 <% } %>
-      &nbsp;&nbsp;&nbsp;<INPUT TYPE="button" CLASS="closebutton" VALUE="Cancel" onClick="window.parent.close()">
+      &nbsp;&nbsp;&nbsp;<INPUT TYPE="button" CLASS="closebutton" VALUE="Cancel" onClick="if (window.parent) if (window.parent.opener) window.parent.close(); else document.location = '../common/blank.htm'; else document.location = '../common/blank.htm';">
     </CENTER>
     </FORM>
   </BODY>

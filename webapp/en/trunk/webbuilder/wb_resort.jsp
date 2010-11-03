@@ -1,8 +1,5 @@
 <%@ page import="org.w3c.dom.DOMException,java.util.Vector,java.io.FileNotFoundException,java.io.IOException,java.net.URLDecoder,com.knowgate.dataxslt.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/page_prolog.jspf" %>
-<%@ include file="../methods/cookies.jspf" %>
-<%@ include file="../methods/nullif.jspf" %>
-<% 
+<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><% 
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -72,7 +69,7 @@
       iMin = 2147483647;
       
       for (int b=0; b<iBlocks; b++) {
-	if (null!=oBlocks.get(b)) {
+	      if (null!=oBlocks.get(b)) {
           iId = Integer.parseInt(((Block)oBlocks.get(b)).id()); 
           if (iId<iMin) {
             iMin = iId;
@@ -142,13 +139,13 @@
           var nm = frm.elements["name-"+sa].value;
           var tx = frm.elements["text-"+sa].value;
 
-	  frm.elements["block-"+sa].value = frm.elements["block-"+sb].value;
-	  frm.elements["name-"+sa].value = frm.elements["name-"+sb].value;
-	  frm.elements["text-"+sa].value = frm.elements["text-"+sb].value;
-
-	  frm.elements["block-"+sb].value = id;
-	  frm.elements["name-"+sb].value = nm;
-	  frm.elements["text-"+sb].value = tx;          
+      	  frm.elements["block-"+sa].value = frm.elements["block-"+sb].value;
+      	  frm.elements["name-"+sa].value = frm.elements["name-"+sb].value;
+      	  frm.elements["text-"+sa].value = frm.elements["text-"+sb].value;
+      
+      	  frm.elements["block-"+sb].value = id;
+      	  frm.elements["name-"+sb].value = nm;
+      	  frm.elements["text-"+sb].value = tx;          
         }
         
         // --------------------------------------------------------------------
@@ -217,21 +214,23 @@
     out.write ("<INPUT TYPE=\"hidden\" NAME=\"block-" + oBlk.id() + "\" VALUE=\"" + oBlk.id() + "\">");
     out.write ("<INPUT CLASS=\"flat" + String.valueOf((b%2)+1) + "\" NAME=\"name-" + oBlk.id() + "\" TABINDEX=\"-1\" SIZE=\"30\" TYPE=\"text\" VALUE=\"" + nm_metablock + " (" + String.valueOf(b+1) + ")\">&nbsp;");
 
-    oParagraphs = oBlk.paragraphs();
+
+    out.write ("<INPUT CLASS=\"flat" + String.valueOf((b%2)+1) + "\" NAME=\"text-" + oBlk.id() + "\" TABINDEX=\"-1\" SIZE=\"60\" TYPE=\"text\" VALUE=\"");
     
+    oParagraphs = oBlk.paragraphs();
+
     if (oParagraphs.size()>1) {
-      out.write ("<INPUT CLASS=\"flat" + String.valueOf((b%2)+1) + "\" NAME=\"text-" + oBlk.id() + "\" TABINDEX=\"-1\" SIZE=\"60\" TYPE=\"text\" VALUE=\"");
       
       if (((Paragraph)oParagraphs.get(0)).id().equals("REMOVABLE"))
         out.write (Gadgets.left(((Paragraph)oParagraphs.get(1)).text(), 40));
       else
         out.write (Gadgets.left(((Paragraph)oParagraphs.get(0)).text(), 40));
 
-      out.write ("\">");
-    } // fi
+    }
 
+    out.write ("\">");
     out.write ("        </TD></TR>\n");
-    
+
   } // next (b)
 %>
       </TABLE>

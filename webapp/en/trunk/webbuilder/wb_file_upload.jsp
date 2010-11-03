@@ -212,7 +212,7 @@
 </table>
 <% } %>
 <!-- The form tag must contain correct action and onsubmit attributes -->
-<form action="<%=gu_microsite.equals("adhoc") ? "adhoc_file_upload_store.jsp?gu_pageset="+gu_pageset+(request.getParameter("caller")==null ? "" : "&caller="+request.getParameter("caller")) : "wb_file_upload_store.jsp" %>" method="post" name="form1" id="form1" onsubmit="return processUpload(this)">
+<form action="<%=gu_microsite.equals("adhoc") ? "adhoc_file_upload_store.jsp?pg_mailing="+nullif(request.getParameter("pg_mailing"))+"&gu_pageset="+gu_pageset+(request.getParameter("caller")==null ? "" : "&caller="+request.getParameter("caller")) : "wb_file_upload_store.jsp?gu_pageset="+gu_pageset %>" method="post" name="form1" id="form1" onsubmit="return processUpload(this)">
   <input type="hidden" name="gu_microsite" value="<%=gu_microsite%>">
   <input type="hidden" name="doctype" value="<%=request.getParameter("doctype")%>">
   <SELECT name="f_list" class="sBox" size="8" multiple="multiple"></SELECT>

@@ -97,6 +97,7 @@
   String sEnvWorkPut	= Environment.getProfileVar(GlobalDBBind.getProfileName(),"workareasput", sDefWrkArPut);
   String sImagesUrl 	= sEnvWorkPut + File.separator + gu_workarea + File.separator + "apps" + File.separator + "Mailwire" + File.separator + "data" + File.separator + "images";
   
+  boolean bAllowHTML = false;
   int bAddBlock = 0;
   PageSetDB oPageSetDB = new PageSetDB();
   MicrositeDB oMicrositeDB = new MicrositeDB();
@@ -202,120 +203,134 @@
     } // fi (Containers.elementAt(i).guid()==ThisPage.container())
   } // next (Container)
   
-  MetaBlock oCurMetaBlock = (MetaBlock)(oMetablocks.elementAt(0));
-  int iMetaBlocks = oMetablocks.size();
-  
-  for (int i=0; i<iMetaBlocks; i++) {
-  
-     oCurMetaBlock = (MetaBlock)(oMetablocks.elementAt(i));
-     if (oBlock.metablock().equals(oCurMetaBlock.id())) break;
-  }
-  
-  String[] sObjects = oCurMetaBlock.objects();
-  
   Vector vParagraphs = new Vector();
   Vector vImages = new Vector();
   Vector vParagraphsState = new Vector();
   Vector vImagesState = new Vector();
   
   Integer iMenosUno = new Integer(-1);
-  
-  for (int i=0;i<sObjects.length;i++)
-  {
-    String sItems = sObjects[i];
-    String aSplittedItems[] = Gadgets.split2(sItems,':');
-    String sType = aSplittedItems[0];
-    if (aSplittedItems[1].indexOf("..")!=-1)
-    {
-      String sFullIdentifier = aSplittedItems[1];
-      
-      int iPosCardinality = sFullIdentifier.indexOf("[");
-      int iStartMaxOccurrences = iPosCardinality + 4;
-      int iFinishMaxOccurrences = sFullIdentifier.indexOf("]");
-      int iMaxDigits = iFinishMaxOccurrences - iStartMaxOccurrences;
-      String sNumOccurrences = sFullIdentifier.substring(iStartMaxOccurrences,iFinishMaxOccurrences);
-      String sIdentifier = sFullIdentifier.substring(0,iPosCardinality);
-      
-      Integer iCounter = new Integer(sNumOccurrences);
 
-      for (int j=0; j<iCounter.intValue(); j++)
-      {
-      	String sItemIndex = (new Integer(j+1)).toString();
-      	
-      	//Aplicar padding de ceros
-      	while (sItemIndex.length()<iMaxDigits) sItemIndex = "0" + sItemIndex;
-      	
-      	String sFinalIdentifier = sIdentifier + sItemIndex;
-      	if (sType.indexOf("p")==0)
-      	{
-         	vParagraphs.add(sFinalIdentifier);
-         	vParagraphsState.add(iMenosUno);
-       	}
-       	else
-       	{
-         	vImages.add(sFinalIdentifier);
-         	vImagesState.add(iMenosUno);
-        }
+  int iMetaBlocks = oMetablocks.size();
+
+  if (oMetablocks.size()>0) {
+    MetaBlock oCurMetaBlock = (MetaBlock)(oMetablocks.elementAt(0));
+    for (int i=0; i<iMetaBlocks; i++) {
+  
+       oCurMetaBlock = (MetaBlock)(oMetablocks.elementAt(i));
+       if (oBlock.metablock().equals(oCurMetaBlock.id())) {
+         bAllowHTML = oCurMetaBlock.allowHTML();
+         break;
        }
     }
-    else
-       if (sType.indexOf("p")==0)
-       {
-                vParagraphs.add(aSplittedItems[1]);
-                vParagraphsState.add(iMenosUno);
-       }
-       else
-       {
-         	vImages.add(aSplittedItems[1]);
-         	vImagesState.add(iMenosUno);
-       }
-   }
+  
+    String[] sObjects = oCurMetaBlock.objects();
+    
+    for (int i=0;i<sObjects.length;i++) {
+      String sItems = sObjects[i];
+      String aSplittedItems[] = Gadgets.split2(sItems,':');
+      String sType = aSplittedItems[0];
+      if (aSplittedItems[1].indexOf("..")!=-1)
+      {
+        String sFullIdentifier = aSplittedItems[1];
+      
+        int iPosCardinality = sFullIdentifier.indexOf("[");
+        int iStartMaxOccurrences = iPosCardinality + 4;
+        int iFinishMaxOccurrences = sFullIdentifier.indexOf("]");
+        int iMaxDigits = iFinishMaxOccurrences - iStartMaxOccurrences;
+        String sNumOccurrences = sFullIdentifier.substring(iStartMaxOccurrences,iFinishMaxOccurrences);
+        String sIdentifier = sFullIdentifier.substring(0,iPosCardinality);
+      
+        Integer iCounter = new Integer(sNumOccurrences);
 
-  // Marcar los parrafos presentes
-  try {
-    int iParagraphs = vParagraphs.size();
-    for (int j=0; j<iParagraphs; j++)
-      for (int i=0; i<oBlock.paragraphs().size(); i++)
-        if (((Paragraph) oBlock.paragraphs().elementAt(i)).id().equals((String)vParagraphs.elementAt(j)))
-    vParagraphsState.add(j,(new Integer(i)));
-  } catch (java.lang.NullPointerException e) {}
+        for (int j=0; j<iCounter.intValue(); j++)
+        {
+      	  String sItemIndex = (new Integer(j+1)).toString();
+      	
+      	  //Aplicar padding de ceros
+      	  while (sItemIndex.length()<iMaxDigits) sItemIndex = "0" + sItemIndex;
+      	
+        	String sFinalIdentifier = sIdentifier + sItemIndex;
+        	if (sType.indexOf("p")==0)
+        	{
+           	vParagraphs.add(sFinalIdentifier);
+           	vParagraphsState.add(iMenosUno);
+         	}
+         	else
+         	{
+           	vImages.add(sFinalIdentifier);
+           	vImagesState.add(iMenosUno);
+          }
+         }
+      }
+      else
+         if (sType.indexOf("p")==0)
+         {
+                  vParagraphs.add(aSplittedItems[1]);
+                  vParagraphsState.add(iMenosUno);
+         }
+         else
+         {
+           	vImages.add(aSplittedItems[1]);
+           	vImagesState.add(iMenosUno);
+         }
+     }
 
-  // Marcar las imagenes presentes
-  try {
-    if (oBlock.images()!=null)
-      for (int j=0; j<vImages.size(); j++)
-        for (int i=0; i<oBlock.images().size(); i++)
-          if (((Image)oBlock.images().elementAt(i)).id().compareTo((String)vImages.elementAt(j))==0)
-            vImagesState.add(j,(new Integer(i)));
-  } catch (java.lang.NullPointerException e) {}
+     // Marcar los parrafos presentes
+     try {
+       int iParagraphs = vParagraphs.size();
+       for (int j=0; j<iParagraphs; j++)
+         for (int i=0; i<oBlock.paragraphs().size(); i++)
+           if (((Paragraph) oBlock.paragraphs().elementAt(i)).id().equals((String)vParagraphs.elementAt(j)))
+       vParagraphsState.add(j,(new Integer(i)));
+     } catch (java.lang.NullPointerException e) {}
+     
+     // Marcar las imagenes presentes
+     try {
+       if (oBlock.images()!=null)
+         for (int j=0; j<vImages.size(); j++)
+           for (int i=0; i<oBlock.images().size(); i++)
+             if (((Image)oBlock.images().elementAt(i)).id().compareTo((String)vImages.elementAt(j))==0)
+               vImagesState.add(j,(new Integer(i)));
+     } catch (java.lang.NullPointerException e) {}
+
+   } // fi
 %>
 <html lang="<%=sLanguage%>">
 <head>
-  <TITLE>hipergate :: Edit block</TITLE>
+  <META HTTP-EQUIV="content-type" CONTENT="text/html; charset=UTF-8">
+  <TITLE>hipergate :: Editar bloque</TITLE>
+  <SCRIPT LANGUAGE="Javascript" TYPE="text/javascript">
+    <!--
+    var htmlAreaEnabled = true;
+  	_editor_url = "../javascript/htmlarea/";
+    _editor_lang = "<%=sLanguage%>";
+    _editors = new Object();
+    // -->
+  </SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT> 
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/htmlarea/htmlarea.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/htmlarea/lang/<%=sLanguage%>.js"></SCRIPT>
   <SCRIPT LANGUAGE="Javascript" TYPE="text/javascript">
-    <!-- // load htmlarea
-    var htmlAreaEnabled = false;
-    _editor_url = "../javascript/"; // URL to htmlarea files
+    <!--
+    HTMLArea.init();
     
-    var win_ie_ver = parseFloat(navigator.appVersion.split("MSIE")[1]);
-    if (navigator.userAgent.indexOf('Mac') >= 0) { win_ie_ver = 0; }
-    if (navigator.userAgent.indexOf('Windows CE') >= 0) { win_ie_ver = 0; }
-    if (navigator.userAgent.indexOf('Opera') >= 0) { win_ie_ver = 0; }
-
-    if (win_ie_ver >= 5.5) {
-      document.write('<scr' + 'ipt src="' +_editor_url+ 'htmlarea.js"');
-      document.write(' language="Javascript1.2"></scr' + 'ipt>');  
-    }
-    else {
-      document.write('<scr'+'ipt>function editor_generate() { return false; }</scr'+'ipt>');
-    }
+    var config = new HTMLArea.Config();
+    
+    config.width = "100%";
+    config.height = "70px";
+    config.bodyStyle = 'background-color: white; font-family: "Verdana"; font-size: x-small;';
+    config.debug = 0;
+        
+    config.toolbar = [
+    [ 
+      "bold", "italic", "underline", "strikethrough", "subscript", "superscript", "separator", "createlink", "separator",
+      "copy", "cut", "paste", "space", "undo", "redo"],
+    ];
     // -->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/htmlarea_config.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
      <!--
       
@@ -329,12 +344,12 @@
 
      // -------------------------------------------------------
           
-     function insertVariable (objItem,val) {
-       if (objItem.name.indexOf(".text")!=-1 && htmlAreaEnabled) {
-         editor_insertHTML(objItem.name,val);
+     function insertVariable (id,val) {
+       if (id.indexOf(".text")!=-1 && htmlAreaEnabled) {
+		     _editors[id].insertHTML(val);
        } else {
-         objItem.focus();
-         insertAtCaret(objItem,val);
+         document.getElementById(id).focus();
+         insertAtCaret(document.getElementById(id),val);
        }
      } // insertVariable
 
@@ -360,7 +375,7 @@
        for (i=0; i<document.forms[0].length; i++)
          if (document.forms[0].elements[i].name==itemName) {
            if (itemName.indexOf(".text")!=-1 && htmlAreaEnabled) {
-             editor_setHTML(itemName,itemValue);
+             _editors[itemName].setHTML(itemName,itemValue);
            } else {
              document.forms[0].elements[i].value = itemValue;
            }
@@ -409,7 +424,7 @@
       	w2.document.write("<html>"); w2.document.write("\n");
       	w2.document.write("<head>"); w2.document.write("\n");
       	w2.document.write("<title>"); w2.document.write("\n");
-      	w2.document.write("hipergate :: View image(" + pictureName + ")"); w2.document.write("\n");
+      	w2.document.write("hipergate :: View image (" + pictureName + ")"); w2.document.write("\n");
       	w2.document.write("</title>"); w2.document.write("\n");
       	w2.document.write("</head>"); w2.document.write("\n");
       	w2.document.write("<body topmargin=0 marginheight=0 leftmargin=0>"); w2.document.write("\n");
@@ -444,7 +459,7 @@
     -->
   </SCRIPT>
 </head>
-<body  TOPMARGIN="0" MARGINHEIGHT="0">
+<body topmargin="0" marginheight="0" onload="scroll(0,0);">
 <table cellspacing="0" cellpadding="0" border="0" width="99%">
   <tr>
     <td valign="top" bgcolor="#ffffff">
@@ -453,7 +468,7 @@
   </tr>
   <tr>
     <td valign="center" bgcolor="#cccccc">
-      <span class="title1">&nbsp;Block:&nbsp;<%=oBlock.tag()%></span>
+      <span class="title1">&nbsp;[~Bloque:~]&nbsp;<%=oBlock.tag()%></span>
     </td>
   </tr>
   <tr>
@@ -461,12 +476,11 @@
       <hr size="1">
       <img src="../images/images/floppy.gif" border="0" align="middle">&nbsp;
 <% if (bIsGuest) { %>
-      <a class="linkplain" href="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')">Save</a>
+      <a class="linkplain" href="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')">Guardar</a>
 <% } else { %>
       <a class="linkplain" href="javascript:document.forms[0].submit()">Save</a>
 <% } %>
-      &nbsp;&nbsp;<img src="../images/images/back.gif" border="0" align="middle">&nbsp;<a class="linkplain" href="#" onclick="if (window.confirm('Are you sure?Changes will be lost and original data wil be restored. ')) document.location.reload();">Restore</a>
-      &nbsp;&nbsp;<img src="../images/images/closewindow.gif" border="0" align="middle">&nbsp;<a class="linkplain" href="#" onclick="if (window.confirm('If you do not click Save, changes will be lost. Do you want to continue?')) window.close();">Close</a>
+      &nbsp;&nbsp;<img src="../images/images/back.gif" border="0" align="middle">&nbsp;<a class="linkplain" href="#" onclick="if (window.confirm('Are you sure?Changes will be lost and original data wil be restored. ')) document.location = 'wb_document.jsp?id_domain=<%=id_domain%>&doctype=<%=sDocType%>&gu_workarea=<%=gu_workarea%>&gu_pageset=<%=gu_pageset%>&page=<%=sPage%>';">Back</a>
       &nbsp;&nbsp;<img src="../images/images/resort.gif" border="0" align="middle">&nbsp;<a class="linkplain" href="javascript:reSort()">Reorder</a>
 
       <hr size="1">
@@ -485,7 +499,6 @@
 <input type="hidden" name="file_template" value="<%=sFileTemplate%>">
 <input type="hidden" name="file_pageset" value="<%=sFilePageSet%>">
 <input type="hidden" name="id_metablock" value="<%=id_metablock%>">
-<input type="hidden" name="nm_metablock" value="<%=nm_metablock%>">
 <input type="hidden" name="id_block" value="<%=id_block%>">
 <input type="hidden" name="Block.<%=id_block%>.id" value="<%=id_block%>">
 <%
@@ -494,8 +507,16 @@
 %>
 <table cellspacing="0" cellpadding="0" border="0" width="95%">
 <tr>
+<td valign="center" width="32"></td>
+<td valign="center">
+<span class="title1">NOMBRE DEL BLOQUE</span><br>
+<input type="text" name="nm_metablock" size="70" maxlength="100" value="<%=nullif(nm_metablock).length()==0 ? oBlock.tag() : nm_metablock%>">
+<br>
+</td>
+</tr>
+<tr>
 <td valign="center" width="32">
-<img width="32" height="32" align="middle" border="0" src="../images/images/webbuilder/text.jpg">
+<!--<img width="32" height="32" align="middle" border="0" src="../images/images/webbuilder/text.jpg">-->
 </td>
 <td valign="center">
 <span class="title1">TEXTOS</span>
@@ -509,7 +530,7 @@
       String sCurId = "";
       String sCurUrl = "";
       String sCurText = "";
-      
+       
       if (iPosition<0)
         sCurId = (String)(vParagraphs.elementAt(i));
       else
@@ -521,18 +542,18 @@
       }
 %>
 <center>
-<table cellspacing="0" cellpadding="0" class="formfront" border="1" width="95%">
+<table cellspacing="0" class="formfront" cellpadding="3" style="border-style:dashed;border-width:1px;border-color:dimgray" width="95%">
   <tr>
-    <td colspan="2" class="formstrong"><% out.write(sCurId); %></td>
+    <td colspan="2" class="formstrong"><% out.write(sCurId.replace('_',' ')); %></td>
     <td align="right">
-      <img src="../images/images/webbuilder/cleanup.gif" width="16" height="16" border="0" align="middle">&nbsp;<a class="linkplain" href="javascript:void(0)" onclick="javascript:cleanParagraph('<%=sCurId%>');">Clear contents</a>
+      <img src="../images/images/webbuilder/cleanup.gif" width="16" height="16" border="0" align="middle">&nbsp;<a class="linkplain" href="javascript:void(0)" onclick="javascript:cleanParagraph('<%=sCurId%>');">Limpiar contenido</a>
     </td>
   </tr>
   <tr>
     <td colspan="3" class="formplain">
       <input type="hidden" name="Paragraph.<%=sCurId%>.id" value="<%=sCurId%>"> 
-      <textarea rows="5" cols="88" name="Paragraph.<%=sCurId%>.text" WRAP="soft" ONSELECT="storeCaret(this);" ONCLICK="storeCaret(this);" ONKEYUP="storeCaret(this);"><%=sCurText%></textarea>
-      <!--<SCRIPT language="JavaScript1.2">editor_generate('Paragraph.<%=sCurId%>.text',config);</SCRIPT>-->
+      <textarea rows="<%=bAllowHTML ? "7" : "5"%>" cols="88" id="Paragraph.<%=sCurId%>.text" name="Paragraph.<%=sCurId%>.text" WRAP="soft" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);"><%=sCurText%></textarea>
+      <script language="JavaScript" type="text/javascript">if (htmlAreaEnabled && <%=String.valueOf(bAllowHTML)%>) { var e = new HTMLArea(HTMLArea.getElementById("textarea","Paragraph.<%=sCurId%>.text"), config); e.generate(); _editors["Paragraph.<%=sCurId%>.text"]=e; } </script>
     </td>
   </tr>
   <tr>
@@ -545,11 +566,11 @@
   else
     sUrl = "";
 %>
-      <input type="text" name="Paragraph.<% out.write(sCurId); %>.url" value="<% out.write(sUrl); %>">
+      <input type="text" name="Paragraph.<% out.write(sCurId); %>.url" value="<% out.write(sUrl); %>" size="50">
 <%
  if (sDocType.equals("website")) {
 %>
-      <a href="javascript:void(0)" onclick="window.open('wb_addlink.jsp?itemid=Paragraph.<% out.write(sCurId); %>.url&file_pageset=<%=sFilePageSet%>&file_template=<%=sFileTemplate%>','wAddLink','top=' + (screen.height-320)/2 + ',left=' + (screen.width-200)/2 + ',height=320,width=200')">Special link</a>
+      <a href="javascript:void(0)" onclick="window.open('wb_addlink.jsp?itemid=Paragraph.<% out.write(sCurId); %>.url&file_pageset=<%=sFilePageSet%>&file_template=<%=sFileTemplate%>','wAddLink','top=' + (screen.height-320)/2 + ',left=' + (screen.width-200)/2 + ',height=320,width=200')">Enlace especial</a>
 <% } %>
     </td>
     <td class="formplain" valign="middle" align="right">
@@ -560,8 +581,8 @@
           </td>
           <td class="formplain" valign="middle" align="left">
             Insert variable field&nbsp;
-            <select name="Mailmerge_<%=sCurId%>"><option value="{#Data.Name}">Name<option value="{#Data.Surname}">Surname<option value="{#Data.Email}">e-mail<option value="{#System.Hour}">Hour<option value="{#System.Date}">Date</select>&nbsp;
-            <a href="javascript:void(0)" onclick="insertVariable(document.frmEditBlock.elements['Paragraph.<%=sCurId%>.text'],document.frmEditBlock.elements['Mailmerge_<%=sCurId%>'].options[document.frmEditBlock.elements['Mailmerge_<%=sCurId%>'].selectedIndex].value)">Insert</a>
+            <select name="Mailmerge_<%=sCurId%>"><option value="{#Datos.Nombre}">Name<option value="{#Datos.Apellidos}">Surname<option value="{#Datos.Email}">e-mail<option value="{#Sistema.Hora}">Hour<option value="{#Sistema.Fecha}">Date</select>&nbsp;
+            <a class="linkplain" href="javascript:void(0)" onclick="insertVariable('Paragraph.<%=sCurId%>.text',document.frmEditBlock.elements['Mailmerge_<%=sCurId%>'].options[document.frmEditBlock.elements['Mailmerge_<%=sCurId%>'].selectedIndex].value)">Insert</a>
           </td>
         </tr>
       </table>
@@ -623,7 +644,7 @@
       <table cellspacing="0" cellpadding="0" class="formfront" border="0" width="100%">
         <tr>
           <td align="left" class="formstrong"><%=sCurId%></td>
-          <td align="right"><img src="../images/images/webbuilder/cleanup.gif" width="16" height="16" border="0" align="middle">&nbsp;<a class="linkplain" href="javascript:void(0)" onclick="javascript:cleanImage('<%=sCurId%>')">Clear contents</a>&nbsp;&nbsp;<img border="0" name="Image.<%=sCurId%>.view" align="middle" border="0" src="../images/images/viewtxt.gif" alt="View current image">&nbsp;<a href="javascript:void(0)" onclick="javascript:openPicture(document.forms[0].elements['Image.<%=sCurId%>.path'].value);" class="linkplain">View image</a></td>
+          <td align="right"><img src="../images/images/webbuilder/cleanup.gif" width="16" height="16" border="0" align="middle">&nbsp;<a class="linkplain" href="javascript:void(0)" onclick="javascript:cleanImage('<%=sCurId%>')">Limpiar contenido</a>&nbsp;&nbsp;<img border="0" name="Image.<%=sCurId%>.view" align="middle" border="0" src="../images/images/viewtxt.gif" alt="Ver imagen actual">&nbsp;<a href="javascript:void(0)" onclick="javascript:openPicture(document.forms[0].elements['Image.<%=sCurId%>.path'].value);" class="linkplain">View image</a></td>
         </tr>
       </table>
       <input type="hidden" name="Image.<%=sCurId%>.id" value="<%=sCurId%>">
@@ -632,7 +653,7 @@
   </tr>
   <tr>
     <td class="formplain">
-    <b>Description:</b></td>
+    <b>Descripci&oacute;n:</b></td>
     <td>
       <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>

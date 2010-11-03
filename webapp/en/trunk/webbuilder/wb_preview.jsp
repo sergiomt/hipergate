@@ -1,8 +1,5 @@
 <%@ page import="com.knowgate.debug.DebugFile,java.lang.System,java.util.Vector,java.io.IOException,java.io.File,java.util.Properties,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.misc.Environment,com.knowgate.acl.*,com.knowgate.dataxslt.*,com.knowgate.dataxslt.db.*,javax.xml.transform.TransformerException,javax.xml.transform.TransformerConfigurationException" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
-<%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %>
-<%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
-<%
+<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -89,7 +86,7 @@
  
   String sMenuPath = sURLRoot + "/webbuilder/wb_mnuintegrador.jsp?id_domain=" + id_domain + "&gu_workarea=" + gu_workarea + "&gu_pageset=" + gu_pageset + "&doctype=" + sDocType + "&page=" + sPage;
   String sOutputPathEdit = sEnvWorkPut + sSep + gu_workarea + sSep + "apps" + sSep + sAppDir + sSep + "html" + sSep + gu_pageset + sSep;
-  String sURLEdit 	 = sEnvWorkGet + "/" + gu_workarea + "/apps/" + sAppDir + "/html/" + gu_pageset + "/";
+  String sURLEdit = sEnvWorkGet + "/" + gu_workarea + "/apps/" + sAppDir + "/html/" + gu_pageset + "/";
 
   // Declaración de instancias
   String sFilePageSet=null, sFileTemplate=null, sCompanyGUID=null;

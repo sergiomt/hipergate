@@ -69,10 +69,15 @@
     
     oConn = GlobalDBBind.getConnection("pageset_change");  
      
-    oPagSet = new PageSetDB(oConn, gu_pageset);
-    oMSite = new MicrositeDB(oConn, oPagSet.getString(DB.gu_microsite));
-	  
-	  if (oMSite.getShort(DB.tp_microsite)==MicrositeDB.TYPE_XSL) {
+    oPagSet = new PageSetDB();
+    if (!oPagSet.load(oConn, new Object[]{gu_pageset})) throw new SQLException("PageSet "+gu_pageset+" not found");
+    
+    oMSite = new MicrositeDB();
+	  if (!oMSite.load(oConn, new Object[]{oPagSet.getString(DB.gu_microsite)})) throw new SQLException("Microsite "+oPagSet.getString(DB.gu_microsite)+" not found");
+
+		if (oMSite.isNull(DB.tp_microsite)) {
+	    oPage = oPagSet.getFirstPage(oConn);
+	  } else if (oMSite.getShort(DB.tp_microsite)==MicrositeDB.TYPE_XSL) {
 	    oPage = oPagSet.getFirstPage(oConn);
 	    if (null!=oPage) sPathPublish = oPage.getStringNull(DB.path_publish,"");
 	  } else if (oMSite.getShort(DB.tp_microsite)==MicrositeDB.TYPE_HTML) {
@@ -141,12 +146,14 @@
       	  alert ("Los comentarios no pueden superar los 254 caracteres");
       	  return false;
       	}
-	        
+	      
+	      frm.id_status.value = getCombo(frm.sel_status);
+
         return true;
       } // validate;
     //-->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript">
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
       function setCombos() {
         var frm = document.forms[0];
@@ -160,7 +167,7 @@
   </SCRIPT>    
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()">
-  <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
+  <DIV class="cxMnu1" style="width:300px"><DIV class="cxMnu2">
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
@@ -170,6 +177,8 @@
     <TR><TD CLASS="striptitle"><FONT CLASS="title1">Edit Document Properties</FONT></TD></TR>
   </TABLE>  
   <FORM NAME="" METHOD="post" ACTION="pageset_change_store.jsp" onSubmit="return validate()">
+    <INPUT TYPE="hidden" NAME="bo_edit" VALUE="0">
+    <INPUT TYPE="hidden" NAME="bo_send" VALUE="0">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
     <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
     <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
@@ -208,7 +217,14 @@
               <SELECT NAME="sel_language"><% out.write(sSelLang); %></SELECT>
             </TD>
           </TR>
-<% if (oMSite.getShort(DB.tp_microsite)==MicrositeDB.TYPE_XSL) { %>
+<% if (oMSite.isNull(DB.tp_microsite)) { %>
+          <TR>
+            <TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">Publish to:</FONT></TD>
+            <TD ALIGN="left" WIDTH="400">
+              <INPUT TYPE="text" NAME="path_publish" SIZE="50" MAXLENGTH="254" VALUE="<%=sPathPublish%>">
+            </TD>
+          </TR>
+<% } else if (oMSite.getShort(DB.tp_microsite)==MicrositeDB.TYPE_XSL) { %>
           <TR>
             <TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">Publish to:</FONT></TD>
             <TD ALIGN="left" WIDTH="400">
@@ -230,9 +246,17 @@
           <TR>
             <TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">Description:</FONT></TD>
             <TD ALIGN="left" WIDTH="400">
-              <TEXTAREA ROWS="4" COLS="30" NAME="tx_comments"><% if (!oPagSet.isNull(DB.tx_comments)) out.write(oPagSet.getString(DB.tx_comments)); %></TEXTAREA>
+              <TEXTAREA ROWS="4" COLS="38" NAME="tx_comments"><% if (!oPagSet.isNull(DB.tx_comments)) out.write(oPagSet.getString(DB.tx_comments)); %></TEXTAREA>
             </TD>
           </TR>
+          <TR>
+				    <TD ALIGN="right"><IMG SRC="../images/images/downzip18x22.gif" WIDTH="18" HEIGHT="22" BORDER="0" ALT="Download ZIP"></TD>
+					  <TD><A HREF="wb_zipfile_download.jsp?gu_microsite=<%=oMSite.getString(DB.gu_microsite)%>&gu_pageset=<%=gu_pageset%>" TARGET="_blank" CLASS="linkplain">Download files as ZIP</A></TD>
+          </TR>
+          <TR>
+				    <TD ALIGN="right"><IMG SRC="../images/images/convert18x22.gif" WIDTH="18" HEIGHT="22" BORDER="0" ALT="Convert to Ad Hoc"></TD>
+					  <TD><A HREF="wb_pageset_to_adhoc.jsp?gu_microsite=<%=oMSite.getString(DB.gu_microsite)%>&gu_pageset=<%=gu_pageset%>" CLASS="linkplain">Convert into ad hoc mailing</A></TD>
+          </TR>          
           <TR>
             <TD COLSPAN="2"><HR></TD>
           </TR>
@@ -240,8 +264,12 @@
     	    <TD COLSPAN="2" ALIGN="center">
 <% if (bIsGuest) { %>
               <INPUT TYPE="button" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s" onclick="alert('Your credential level as Guest does not allow you to perform this action')">
-<% } else { %>
+<% } else { %>              
               <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">
+              &nbsp;&nbsp;&nbsp;
+              <INPUT TYPE="submit" ACCESSKEY="e" VALUE="Edit" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+e" onclick="document.forms[0].bo_edit.value='1'">
+              &nbsp;&nbsp;&nbsp;
+              <INPUT TYPE="submit" ACCESSKEY="m" VALUE="Send" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+m" onclick="document.forms[0].bo_send.value='1'">
 <% } %>
     	      &nbsp;&nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>

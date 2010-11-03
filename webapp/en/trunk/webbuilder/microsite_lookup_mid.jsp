@@ -92,6 +92,7 @@
   String nm_coding = request.getParameter("nm_coding");
   String sDocType = request.getParameter("doctype");
   String gu_workarea = request.getParameter("gu_workarea");
+  String tipo_msite = request.getParameter("tipo_msite");
   
   String sProtocol = Environment.getProfileVar(GlobalDBBind.getProfileName(),"fileprotocol", "file://");
   
@@ -189,6 +190,7 @@
                   
       function choose() {               
         var frm = document.forms[0];
+				var myString;
 
         if (counter==1) 
          myString = frm.tipo_msite.value;
@@ -281,6 +283,13 @@
         var s = "<%=sImageServer%>/images/webbuilder/pixeltrans.gif";
         var q = document.forms[0].tipo_msite;
 
+        setCombo(document.forms[0].sel_language, "<%=id_language%>");
+
+<% if (tipo_msite!=null) { %>
+        setCheckedValue(q,"<%=tipo_msite%>");
+        choose();
+<% } else { %>
+
         if (q.length)
          r = q[0].value;
         else
@@ -294,9 +303,9 @@
         }
 
         document.getElementById('imgThumb').src = s;
-        setCombo(document.forms[0].sel_language, "<%=id_language%>");
 
 				document.getElementById("mailing_name").style.display = (q.checked ? "block" : "none");
+<% } %>
       }
 
       //-----------------------------------------------------------------------
@@ -395,12 +404,12 @@
     sSelLang = GlobalDBLang.toHTMLSelect(oConn, sLanguage);
   
     if (sDocType.equals("newsletter"))
-     oStmt = oConn.prepareStatement("SELECT " + DB.nm_microsite + "," + DB.gu_microsite  +", " + DB.path_metadata + " FROM " + nm_table + " WHERE id_app=13");
+     oStmt = oConn.prepareStatement("SELECT " + DB.nm_microsite + "," + DB.gu_microsite  +", " + DB.path_metadata + " FROM " + nm_table + " WHERE id_app=13 AND ("+DB.gu_workarea+" IS NULL OR "+DB.gu_workarea+"=?)");
     else if (sDocType.equals("survey"))
-     oStmt = oConn.prepareStatement("SELECT " + DB.nm_microsite + "," + DB.gu_microsite  +", " + DB.path_metadata + " FROM " + nm_table + " WHERE id_app=23");
+     oStmt = oConn.prepareStatement("SELECT " + DB.nm_microsite + "," + DB.gu_microsite  +", " + DB.path_metadata + " FROM " + nm_table + " WHERE id_app=23 AND ("+DB.gu_workarea+" IS NULL OR "+DB.gu_workarea+"=?)");
     else
-     oStmt = oConn.prepareStatement("SELECT " + DB.nm_microsite + "," + DB.gu_microsite  +", " + DB.path_metadata + " FROM " + nm_table + " WHERE id_app=14");
-
+     oStmt = oConn.prepareStatement("SELECT " + DB.nm_microsite + "," + DB.gu_microsite  +", " + DB.path_metadata + " FROM " + nm_table + " WHERE id_app=14 AND ("+DB.gu_workarea+" IS NULL OR "+DB.gu_workarea+"=?)");
+		oStmt.setString(1, sWorkArea);
     oRSet = oStmt.executeQuery(); 
     
     iOdPos = 0;       
@@ -419,7 +428,7 @@
       counter++;
     } // wend
 
-    out.write ("<SCRIPT LANGUAGE=\"JavaScript\" TYPE=\"text/javascript\"> counter=" + String.valueOf(counter) + "; </SCRIPT>\n");
+    out.write ("<SCRIPT LANGUAGE=\"JavaScript\" TYPE=\"text/javascript\"> counter=" + String.valueOf(counter+1) + "; </SCRIPT>\n");
    
     oRSet.close();
     oRSet = null;

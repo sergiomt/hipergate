@@ -1,5 +1,5 @@
 <%@ page import="java.lang.StringBuffer,java.util.Vector,com.knowgate.misc.*,java.io.File,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.debug.DebugFile,com.knowgate.misc.*,com.knowgate.dataxslt.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.db.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%!
+<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%!
 
   static String esc (String sPath) {
     String sRetVal;
@@ -133,7 +133,7 @@
   integraOut.append("<input type=\"hidden\" name=\"gu_microsite\" value=\"" + gu_microsite + "\">");
   integraOut.append("<input type=\"hidden\" name=\"file_pageset\" value=\"" + esc(sFilePageSet) + "\">");
   integraOut.append("<input type=\"hidden\" name=\"id_domain\" value=\"" + id_domain + "\">");  
-  integraOut.append("<input type=\"hidden\" name=\"file_template\" value=\"" + esc(sFileTemplate) + "\">)");
+  integraOut.append("<input type=\"hidden\" name=\"file_template\" value=\"" + esc(sFileTemplate) + "\">");
 
   integraOut.append("<font face=\"Arial\" size=\"2\" color=\"#ffffff\"><b>" + sPageSetTitle + "</b></font>");
 
@@ -152,7 +152,7 @@
   integraOut.append("<tr><td colspan=\"3\" background=\"" + sImagesRoot + "/images/spacer.gif\" height=\"3\"></td></tr>");  
   integraOut.append("</table>");
 
-  integraOut.append("<div style=\"width:100%;height:285px;overflow-y:scroll;scrollbar-arrow-color:blue;scrollbar-face-color:#e7e7e7;scrollbar-3dlight-color:#a0a0a0;scrollbar-darkshadow-color:#888888\">");
+  integraOut.append("<div style=\"width:100%;height:480px;overflow-y:scroll;scrollbar-arrow-color:blue;scrollbar-face-color:#e7e7e7;scrollbar-3dlight-color:#a0a0a0;scrollbar-darkshadow-color:#888888\">");
   integraOut.append("<table width=\"100%\" border=\"0\" cellpadding=\"1\" cellspacing=\"1\" style=\"font-family:verdana; font-size:11px; color:#ffffff\">");
 
   java.util.Vector vBlocks = oPage.blocks();
@@ -169,19 +169,23 @@
   for (int i = 0; i<iBlocks; i++) {
     oBlk = ((Block)vBlocks.get(i));
     
-    sURLEditBlock  = sURLRoot + "/webbuilder/wb_editblock.jsp" + sURLWrkPage + "&gu_page=" + oPage.guid() + "&doctype=" + sDocType + "&page=" + sPage + "&id_block=" + oBlk.id() + "&id_metablock=" + oBlk.metablock()+ "&nm_metablock=" + Gadgets.URLEncode(oBlk.tag());
+		if (oBlk!=null) {
+      String sTag = nullif(oBlk.tag()).length()==0 ? oBlk.metablock().toLowerCase() : oBlk.tag();
+
+      sURLEditBlock  = sURLRoot + "/webbuilder/wb_editblock.jsp" + sURLWrkPage + "&gu_page=" + oPage.guid() + "&doctype=" + sDocType + "&page=" + sPage + "&id_block=" + oBlk.id() + "&id_metablock=" + oBlk.metablock()+ "&nm_metablock=" + Gadgets.URLEncode(sTag);
     
-    if (oBlk.tag().equals(lastTag))
-     tagCounter++;
-    else
-     tagCounter = 1;
+      if (sTag.equals(lastTag))
+       tagCounter++;
+      else
+       tagCounter = 1;
     
-    lastTag = oBlk.tag();
+      lastTag = sTag;
     
-    integraOut.append("<tr>");
-    integraOut.append("<td onmouseover=activateBlock(\"" + oBlk.metablock() + "_" + tagCounter + "\") onmouseout=deactivateBlock(\"" + oBlk.metablock() + "_" + tagCounter + "\") align=\"left\" valign=\"middle\"><font class=\"formplain\" face=\"Verdana\" color=\"white\">&nbsp;&#149;&nbsp;<a class=\"formplain\" style=\"color:white\" href=\"javascript:void(0)\" onclick=window.open(\"" + sURLEditBlock + "\",\"wEditBlock\",\"menubar=no,top=50,left=50,width=770,height=540,scrollbars=yes\")>" + lastTag + " (" + tagCounter + ")</a></font></td>");
-    integraOut.append("<td valign=\"middle\" align=\"right\" ><font size=\"1\"><input name=\"" + oBlk.id() + "\" type=\"checkbox\"></font></td>");
-    integraOut.append("</tr>");
+      integraOut.append("<tr>");
+      integraOut.append("<td onmouseover=activateBlock(\"" + oBlk.metablock() + "_" + tagCounter + "\") onmouseout=deactivateBlock(\"" + oBlk.metablock() + "_" + tagCounter + "\") align=\"left\" valign=\"middle\"><font class=\"formplain\" face=\"Verdana\" color=\"white\">&nbsp;&#149;&nbsp;<a class=\"formplain\" style=\"color:white\" href=\"" + sURLEditBlock + "\">" + lastTag + " (" + tagCounter + ")</a></font></td>");
+      integraOut.append("<td valign=\"middle\" align=\"right\" ><font size=\"1\"><input name=\"" + oBlk.id() + "\" type=\"checkbox\"></font></td>");
+      integraOut.append("</tr>");
+    }
     
   } // next (i)
   

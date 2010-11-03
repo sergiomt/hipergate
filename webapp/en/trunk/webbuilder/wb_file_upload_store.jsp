@@ -71,6 +71,7 @@
     oReq = new MultipartRequest(request, sImagesDir, iMaxUpload, "UTF-8");
   }
   catch (IOException e) {
+
     oReq = null;
     if (request.getContentLength()>=iMaxUpload) {
       if (com.knowgate.debug.DebugFile.trace) {
@@ -79,6 +80,9 @@
 
       response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=File too big&desc=File length exceed maximum allowed " + String.valueOf(iMaxUpload/1024) + "Kb&resume=_back"));
       return;
+    }
+    else if (nullif(e.getMessage()).equals("Posted content type isn't multipart/form-data")) {
+      oReq = null;
     }
     else {
       if (com.knowgate.debug.DebugFile.trace) {
@@ -90,96 +94,112 @@
     }
   }  
   
+  if (oReq!=null) {
+    oFileNames = oReq.getFileNames();
   
-  oFileNames = oReq.getFileNames();
-  
-  oCon1 = GlobalDBBind.getConnection("fileupload_store");
+    oCon1 = GlobalDBBind.getConnection("fileupload_store");
      
-  try { 
-    oCon1.setAutoCommit (false);
+    try { 
+      oCon1.setAutoCommit (false);
 
-    while (oFileNames.hasMoreElements()) {
+      while (oFileNames.hasMoreElements()) {
 
-      // Get original file name as uploaded from client and store it in sFile
-      sFile = oReq.getOriginalFileName(oFileNames.nextElement().toString());
+        // Get original file name as uploaded from client and store it in sFile
+        sFile = oReq.getOriginalFileName(oFileNames.nextElement().toString());
     
-      oFile = new File(sImagesDir + sSep + sFile);
-      if (oFile.exists()) lTotalBytes += oFile.length();
+        oFile = new File(sImagesDir + sSep + sFile);
+        if (oFile.exists()) lTotalBytes += oFile.length();
     
-      oImg = new Image(oCon1, oFile, sImagesDir + sSep + sFile);
-      
-      oImg.setImagingLibrary(Image.USE_JAI);
-      
-      oImg.put(DB.gu_writer, id_user);
-      oImg.put(DB.gu_workarea, gu_workarea);
-      oImg.put(DB.nm_image, sFile);
-      
-      oImg.put(DB.tp_image, "webbuilder");
-      oImg.put(DB.len_file, new Long(lTotalBytes).intValue());
-      
-      try {      
-        if (!oImg.dimensions())
-          com.knowgate.debug.DebugFile.writeln("Image.dimensions() Unrecognized graphic file format " + sImagesDir + sSep + sFile);
-      }
-      catch (Exception e) {
-        com.knowgate.debug.DebugFile.writeln(e.getClass().getName() + " " + e.getMessage());
-      }
+        oImg = new Image(oCon1, oFile, sImagesDir + sSep + sFile);
+        oImg.setImagingLibrary(Image.USE_JAI);      
+        oImg.put(DB.gu_writer, id_user);
+        oImg.put(DB.gu_workarea, gu_workarea);
+        oImg.put(DB.nm_image, sFile);      
+        oImg.put(DB.tp_image, "webbuilder");
+        oImg.put(DB.len_file, new Long(lTotalBytes).intValue());
 
-      oImg.store(oCon1);
+        try {      
+          if (!oImg.dimensions())
+            com.knowgate.debug.DebugFile.writeln("Image.dimensions() Unrecognized graphic file format " + sImagesDir + sSep + sFile);
+        }
+        catch (Exception e) {
+          com.knowgate.debug.DebugFile.writeln(e.getClass().getName() + " " + e.getMessage());
+        }
+
+        oImg.store(oCon1);
         
-      oFile = null;
+        oFile = null;
                             
-    } // wend (oFileNames.hasMoreElements())
-      
-    oStmt = oCon1.createStatement();
-    oStmt.execute("UPDATE " + DB.k_users + " SET " + DB.len_quota + "=" + DB.len_quota + "+" + String.valueOf(lTotalBytes) + " WHERE " + DB.gu_user + "='" + id_user + "'");
-    oStmt.close();
-    oStmt = null;
+      } // wend (oFileNames.hasMoreElements())
+
+      oStmt = oCon1.createStatement();
+      oStmt.execute("UPDATE " + DB.k_users + " SET " + DB.len_quota + "=" + DB.len_quota + "+" + String.valueOf(lTotalBytes) + " WHERE " + DB.gu_user + "='" + id_user + "'");
+      oStmt.close();
+      oStmt = null;
     
-    oCon1.commit();
-    oCon1.close("fileupload_store");
-  }
-  catch (SQLException sqle) {
-    if (oStmt!=null) { oStmt.close(); oStmt = null; }
+      oCon1.commit();
+      oCon1.close("fileupload_store");
+    }
+    catch (SQLException sqle) {
+
+      if (oStmt!=null) { oStmt.close(); oStmt = null; }
       
-    if (oCon1!=null)
-      if (!oCon1.isClosed()) {
-        oCon1.rollback();
-        oCon1.close("fileupload_store");      
+      if (oCon1!=null)
+        if (!oCon1.isClosed()) {
+          oCon1.rollback();
+          oCon1.close("fileupload_store");      
+        }
+
+      oCon1 = null;
+
+      if (com.knowgate.debug.DebugFile.trace) {
+        com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "SQLException", sqle.getMessage());
       }
 
-    oCon1 = null;
-
-    if (com.knowgate.debug.DebugFile.trace) {
-      com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "SQLException", sqle.getMessage());
+      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + sqle.getMessage() + "&resume=_close"));
     }
+    catch (NullPointerException npe) {
 
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + sqle.getMessage() + "&resume=_close"));
-  }
-  catch (NullPointerException npe) {
-    if (oStmt!=null) { oStmt.close(); oStmt = null; }
+      if (oStmt!=null) { oStmt.close(); oStmt = null; }
       
-    if (oCon1!=null)
-      if (!oCon1.isClosed()) {
-        oCon1.rollback();
-        oCon1.close("fileupload_store");      
+      if (oCon1!=null)
+        if (!oCon1.isClosed()) {
+          oCon1.rollback();
+          oCon1.close("fileupload_store");      
+        }
+
+      oCon1 = null;
+
+      if (com.knowgate.debug.DebugFile.trace) {
+        com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "NullPointerException", npe.getMessage());
       }
 
-    oCon1 = null;
-
-    if (com.knowgate.debug.DebugFile.trace) {
-      com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "NullPointerException", npe.getMessage());
+      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=Archive Format invalid&resume=_close"));
     }
+		catch (Exception xcp) {
 
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=Archive Format invalid&resume=_close"));
-  }
+      if (oStmt!=null) { oStmt.close(); oStmt = null; }
+      
+      if (oCon1!=null)
+        if (!oCon1.isClosed()) {
+          oCon1.rollback();
+          oCon1.close("fileupload_store");      
+        }
 
+      oCon1 = null;
+
+      if (com.knowgate.debug.DebugFile.trace) {
+        com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), xcp.getClass().getName(), xcp.getMessage());
+      }
+
+      response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title="+xcp.getClass().getName()+"&desc=&resume=_close"));
+    }    
+  } // fi
   
-  if (null==oCon1) return;
-  
+  if (null==oCon1) return;  
   oCon1 = null;
-%>
-<HTML>
+
+%><HTML>
 <HEAD>
 <TITLE>Wait...</TITLE>
 <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
@@ -212,13 +232,17 @@
 	      h="560";
 	  }
 
-    window.opener.document.location.reload();
+    if (window.opener) {
+    	window.opener.document.location.reload();
 
 <% if (!nullif(request.getParameter("gu_pageset"),"null").equals("null")) { %>
-	  window.open ("wb_document.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_pageset=<%=request.getParameter("gu_pageset")%>&doctype=<%=request.getParameter("doctype")%>",
+	    window.open ("wb_document.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_pageset=<%=request.getParameter("gu_pageset")%>&doctype=<%=request.getParameter("doctype")%>",
 	               "editPageSet", "top=" + (screen.height-parseInt(h))/2 + ",left=" + (screen.width-parseInt(w))/2 + ",scrollbars=yes,directories=no,toolbar=no,menubar=no,status=yes,resizable=yes,width=" + w + ",height=" + h);
 <% } %>
-    window.close();
+      window.close();
+    } else {
+      document.location = "wb_document.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_pageset=<%=request.getParameter("gu_pageset")%>&doctype=<%=request.getParameter("doctype")%>";
+    }
   //-->
 </SCRIPT>
 </HEAD>

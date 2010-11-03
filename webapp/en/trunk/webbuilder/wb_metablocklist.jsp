@@ -102,8 +102,8 @@
 <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
   <!--
     function openEdit(id,nm) { 
-	window.open("<%=sURLEditBlock%>&nm_metablock=" + escape(nm) + "&doctype=<%=sDocType%>&page=<%=sPage%>&id_domain=<%=id_domain%>&n_domain=<%=n_domain%>&id_metablock="+id,"wEditBlock","menubar=no,top=" + (screen.height-600)/2 + ",left=" + (screen.width-800)/2 + ",width=800,height=600,scrollbars=yes"); 
-        self.close();
+	    window.opener.document.location = "<%=sURLEditBlock%>&nm_metablock=" + escape(nm) + "&doctype=<%=sDocType%>&page=<%=sPage%>&id_domain=<%=id_domain%>&n_domain=<%=n_domain%>&id_metablock="+id;
+      self.close();
     }
   //-->
 </SCRIPT>

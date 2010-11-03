@@ -90,7 +90,7 @@
   UserProperties.put("pageset",  gu_pageset);
     
   // Rutas y parámetros
-
+  
   String sDefWrkArGet = request.getRequestURI();
   sDefWrkArGet = sDefWrkArGet.substring(0,sDefWrkArGet.lastIndexOf("/"));
   sDefWrkArGet = sDefWrkArGet.substring(0,sDefWrkArGet.lastIndexOf("/"));

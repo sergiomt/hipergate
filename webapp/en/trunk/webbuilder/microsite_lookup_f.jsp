@@ -39,13 +39,14 @@
   String id_domain = getCookie(request,"domainid","");
   String tp_control = request.getParameter("tp_control");
   String nm_control = request.getParameter("nm_control");
-  String nm_coding = request.getParameter("nm_coding");  
+  String nm_coding = request.getParameter("nm_coding");
+  String tipo_msite = request.getParameter("tipo_msite");  
   String sDocType = request.getParameter("doctype");
   String sTitle = "Web Site";
   if (sDocType.equals("newsletter"))
     sTitle = "NewsLetter";
   String workarea = request.getParameter("gu_workarea");
-  String sQryStr = "?id_domain=" + id_domain + "&gu_workarea=" + workarea + "&nm_table="+ nm_table + "&doctype=" + sDocType + "&id_language=" + id_language + "&id_section=" + id_section + "&tp_control=" + tp_control + "&nm_control=" + nm_control + "&nm_coding=" + nm_coding;
+  String sQryStr = "?id_domain=" + id_domain + "&gu_workarea=" + workarea + "&nm_table="+ nm_table + "&doctype=" + sDocType + "&id_language=" + id_language + "&id_section=" + id_section + "&tp_control=" + tp_control + "&nm_control=" + nm_control + "&nm_coding=" + nm_coding + (tipo_msite==null ? "" : "&tipo_msite="+tipo_msite);
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//EN" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">
 <HTML>

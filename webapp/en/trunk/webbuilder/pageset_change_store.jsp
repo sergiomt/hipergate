@@ -1,6 +1,5 @@
-<%@ page import="com.knowgate.dataxslt.db.PageSetDB,com.knowgate.dataxslt.db.PageDB,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %>
-<%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%
+<%@ page import="com.knowgate.dataxslt.db.PageSetDB,com.knowgate.dataxslt.db.PageDB,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/reqload.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -98,8 +97,18 @@
   
   oConn = null;
   
-  // Refrescar el padre y cerrar la ventana
-  out.write ("<HTML><HEAD><TITLE>Wait...</TITLE><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>window.opener.location.reload(true); self.close();<" + "/SCRIPT" +"></HEAD></HTML>");
+  out.write ("<HTML><HEAD><TITLE>Wait...</TITLE><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>window.opener.location.reload(true); ");
+  if (nullif(request.getParameter("bo_edit")).equals("1")) {
+	  out.write ("window.moveTo(8,8); ");
+	  out.write ("window.resizeTo(screen.width-24,screen.height-80); ");
+    out.write ("document.documentElement.style.overflow = \"auto\"; ");
+	  out.write ("document.location = \"wb_document.jsp?id_domain="+id_domain+"&gu_workarea="+gu_workarea+"&gu_pageset="+gu_pageset+"&doctype=newsletter\"; ");
+  } else if (nullif(request.getParameter("bo_send")).equals("1")) {
+    out.write ("document.location = \"list_choose.jsp?gu_pageset="+gu_pageset+"&id_command=MAIL\"; ");
+  } else {
+    out.write ("self.close();");
+  }
+  out.write ("<" + "/SCRIPT" +"></HEAD></HTML>");
 
 %>
 <%@ include file="../methods/page_epilog.jspf" %>

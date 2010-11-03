@@ -50,83 +50,26 @@
                 
   String[] aOldOrder = Gadgets.split(request.getParameter("old_order"), ',');
   String[] aNewOrder = Gadgets.split(request.getParameter("new_order"), ',');
+  final int iOrder = aNewOrder.length;
 
-  int iOrder = aNewOrder.length;
-       
+  int[] aPermute = new int[iOrder];
+    
+  for (int b=0; b<iOrder; b++) {
+    aPermute[b] = Gadgets.search(aOldOrder,aNewOrder[b]);
+  }
+      
   PageSet oPageSet = null;
-  String sId;
-  int iTmp;
     
   try {
     oPageSet = new PageSet(file_template,file_pageset);
     
     Page oPage = oPageSet.page(gu_page);
-    
-    Vector oBlocks = oPage.blocks(null, null, null);
-    int iBlocks = oBlocks.size();
-    
-    int[] aPermute = new int[iBlocks];
-          
-    int[] aOldPos = new int[iOrder];
-    int[] aNewPos = new int[iOrder];
-    
-    for (int b=0; b<iBlocks; b++) {
-      aPermute[b] = b+1;
 
-      for (int p=0; p<iOrder; p++) {    
-        if (aOldOrder[p].equals(((Block) oBlocks.get(b)).id())) {
-	  aOldPos[p] = b+1;
-	  break;
-        }
-      }
-      for (int p=0; p<iOrder; p++) {    
-        if (aNewOrder[p].equals(((Block) oBlocks.get(b)).id())) {
-	  aNewPos[p] = b+1;
-	  break;
-        }
-      }
-    }
-    
-    if (DebugFile.trace) {
-      DebugFile.write("old positions ");
-      for (int p=0; p<iOrder; p++)
-        DebugFile.write(String.valueOf(aOldPos[p]));
-      DebugFile.write("\n");
-      DebugFile.write("new positions ");
-      for (int p=0; p<iOrder; p++)
-        DebugFile.write(String.valueOf(aNewPos[p]));
-      DebugFile.write("\n");
-    }
-    
-    for (int b=0; b<iBlocks; b++) {
-      for (int p=0; p<iOrder; p++) {
-        if (aPermute[b]==aOldPos[p]) {
-          aPermute[b]=aNewPos[p];
-          break;
-        }
-      }
-    }
-
-    if (DebugFile.trace) {
-      DebugFile.write("permute ");
-      for (int b=0; b<iBlocks; b++)
-        DebugFile.write(String.valueOf(aPermute[b]));
-      DebugFile.write("\n");
-    }
-        
-    oBlocks = null;
-    
-    oPage.permute(aPermute);
+    oPage.permute(id_metablock, aPermute);
     
     oPage = null;
     
     oPageSet.save(file_pageset);
-  }
-  catch (DOMException e) {
-    oPageSet = null;
-    if (com.knowgate.debug.DebugFile.trace)
-      com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "DOMException", e.getMessage());
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=DOMException&desc=" + e.getMessage() + "&resume=_back"));
   }
   catch (NullPointerException e) {
     oPageSet = null;
@@ -134,6 +77,12 @@
       com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "NullPointerException", e.getMessage());
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=" + e.getMessage() + "&resume=_back"));
   } 
+  catch (DOMException e) {
+    oPageSet = null;
+    if (com.knowgate.debug.DebugFile.trace)
+      com.knowgate.dataobjs.DBAudit.log ((short)0, "CJSP", sUserIdCookiePrologValue, request.getServletPath(), "", 0, request.getRemoteAddr(), "DOMException", e.getMessage());
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=DOMException&desc=" + e.getMessage() + "&resume=_back"));
+  }
   catch (ClassNotFoundException e) {
     oPageSet = null;
     if (com.knowgate.debug.DebugFile.trace)
@@ -166,5 +115,5 @@
   }
   if (null==oPageSet) return;  
 %>
-<HTML><BODY onload="window.opener.location.href='wb_document.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_pageset=<%=gu_pageset%>&doctype=<%=doctype%>'; window.close();"></BODY></HTML>
+<HTML><BODY onload="document.location='wb_document.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_pageset=<%=gu_pageset%>&doctype=<%=doctype%>'; window.close();"></BODY></HTML>
 <%@ include file="../methods/page_epilog.jspf" %>

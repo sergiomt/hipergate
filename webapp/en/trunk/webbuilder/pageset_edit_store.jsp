@@ -87,11 +87,13 @@
 
     oConn = GlobalDBBind.getConnection("pageset_edit_store");  
 
+    oConn.setAutoCommit (false);
+
 		if (gu_microsite.equals("adhoc")) {
 		  String sGuMailing = Gadgets.generateUUID();
 				
       oAdHoc.put(DB.gu_mailing, Gadgets.generateUUID());
-      oAdHoc.put(DB.pg_mailing, GlobalDBBind.nextVal(oConn, "seq_k_adhoc_mailings"));
+      oAdHoc.put(DB.pg_mailing, GlobalDBBind.nextVal(oConn, oConn.getDataBaseProduct()==JDCConnection.DBMS_MYSQL || oConn.getDataBaseProduct()==JDCConnection.DBMS_MSSQL ? "seq_k_adhoc_mail" : "seq_k_adhoc_mailings"));
       oAdHoc.put(DB.gu_workarea, gu_workarea);
       oAdHoc.put(DB.gu_writer, getCookie(request, "userid", ""));
       if (nm_pageset==null)
@@ -111,8 +113,6 @@
       if (gu_pageset.length()>0) oPgSt.put("gu_pageset", gu_pageset);
 
       loadRequest(oConn, request, oPgSt);
-
-      oConn.setAutoCommit (false);
 
       oPgSt.store(oConn);
 
@@ -223,15 +223,14 @@
   if (null==oConn) return;
   oConn = null;
   
-  //Refrescar el padre y cerrar la ventana
 %>
 <html>
 <head>
   <TITLE>Wait...</TITLE>
   <script>
     <!--
-      window.top.opener.location = "<%=sUrl%>";
-      window.top.location="wb_file_upload.jsp?caller=newdocument&gu_microsite=<%=gu_microsite%>&gu_pageset=<%=(gu_microsite.equals("adhoc") ? sPaddedNuMailing : oPgSt.getString(DB.gu_pageset))%>&doctype=<%=sDocType%>&title=" + escape("<%=sTitle%>") + "&dir=";
+      if (window.parent.opener) window.parent.opener.location = "<%=sUrl%>";
+      window.parent.location="wb_file_upload.jsp?caller=newdocument&gu_microsite=<%=gu_microsite%>&gu_pageset=<%=(gu_microsite.equals("adhoc") ? sPaddedNuMailing : oPgSt.getString(DB.gu_pageset))%>&doctype=<%=sDocType%>&title=" + escape("<%=sTitle%>") + "&dir=";
     //-->
   </script>
 </head>

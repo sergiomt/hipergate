@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Date,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.dataxslt.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
@@ -75,6 +75,11 @@
   
   int iPageSetCount = 0;
   DBSubset oPageSets = null;
+  int nReminders = 0;
+  DBSubset oReminders = new DBSubset(DB.k_adhoc_mailings+" m,"+DB.k_activities+" a",
+                                     "a."+DB.gu_activity+",a."+DB.dt_start+",a."+DB.tl_activity+",m."+DB.gu_mailing+",m."+DB.pg_mailing+",m."+DB.nm_mailing,
+                                     "a."+DB.gu_mailing+"=m."+DB.gu_mailing+" AND a."+DB.gu_workarea+"=? AND m.bo_reminder=1 AND "+
+                                     "a."+DB.dt_start+" BETWEEN CURRENT_TIMESTAMP-interval '2 days' AND CURRENT_TIMESTAMP", 10);
   DBSubset oLanguages = new DBSubset(DB.k_lu_languages+" l",
   											"l."+DB.id_language+","+(GlobalDBBind.getDBTable(DB.k_lu_languages).getColumnByName(DB.tr_lang_+sLanguage)==null ? "l."+DB.tr_lang_en : DBBind.Functions.ISNULL+"(l."+DB.tr_lang_+sLanguage+",l."+DB.tr_lang_en+")"),
                         "EXISTS (SELECT NULL FROM "+DB.k_pagesets+" p WHERE p."+DB.gu_workarea+"=? AND p."+DB.id_language+"=l."+DB.id_language+") ORDER BY 2", 50);
@@ -83,7 +88,8 @@
   int iMaxRows;
   int iSkip;
   String sOrderBy;
-  int iOrderBy;  
+  int iOrderBy;
+  boolean bShowSendColumn = false;
 
   if (request.getParameter("orderby")!=null)
     sOrderBy = request.getParameter("orderby");
@@ -116,14 +122,14 @@
     
     if (sFind.length()==0) {
       oPageSets = new DBSubset ("v_pagesets_mailings p ", 
-      				"p." + DB.gu_pageset + ",p." + DB.nm_pageset + ",p." + DB.tx_comments + ",p." + DB.path_data + ",p." + DB.dt_created + ",p." + DB.nm_microsite + ",p." + DB.id_status + ",p." + DB.id_app,
+      				"p." + DB.gu_pageset + ",p." + DB.nm_pageset + ",p." + DB.tx_comments + ",p." + DB.path_data + ",p." + DB.dt_created + ",p." + DB.nm_microsite + ",p." + DB.id_status + ",p." + DB.id_app + ",p." + DB.bo_urgent + ",p." + DB.dt_execution,
       				sDocTypeFilter + sLangFilter + "p.gu_workarea='" + gu_workarea + "' ORDER BY " + sOrderBy, iMaxRows);
       oPageSets.setMaxRows(iMaxRows);
       iPageSetCount = oPageSets.load (oConn, iSkip);
     }
     else {
       oPageSets = new DBSubset ("v_pagesets_mailings p", 
-      				"p." + DB.gu_pageset + ",p." + DB.nm_pageset + ",p." + DB.tx_comments + ",p." + DB.path_data + ",p." + DB.dt_created + ",p." + DB.nm_microsite + ",p." + DB.id_status + ",p." + DB.id_app,
+      				"p." + DB.gu_pageset + ",p." + DB.nm_pageset + ",p." + DB.tx_comments + ",p." + DB.path_data + ",p." + DB.dt_created + ",p." + DB.nm_microsite + ",p." + DB.id_status + ",p." + DB.id_app + ",p." + DB.bo_urgent + ",p." + DB.dt_execution,
       				sDocTypeFilter + sLangFilter + "p.gu_workarea='" + gu_workarea + "' " + sFind + " ORDER BY " + sOrderBy, iMaxRows);
       oPageSets.setMaxRows(iMaxRows);
       iPageSetCount = oPageSets.load (oConn, iSkip);    
@@ -138,7 +144,10 @@
         aStatus[ps] = DBLanguages.getLookUpTranslation((java.sql.Connection) oConn, DB.k_adhoc_mailings_lookup, gu_workarea , "id_status", sLanguage, oPageSets.getString(6,ps));
       else
         aStatus[ps] = DBLanguages.getLookUpTranslation((java.sql.Connection) oConn, DB.k_pagesets_lookup, gu_workarea , "id_status", sLanguage, oPageSets.getString(6,ps));
+      if (!oPageSets.isNull(9,ps)) bShowSendColumn = true;
     } // next
+    
+    // nReminders = oReminders.load(oConn, new Object[]{gu_workarea});
     
     oConn.close("pageset_listing"); 
   }
@@ -155,7 +164,9 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=../blank.htm"));
     return;
   }
-  oConn = null;  
+  oConn = null;
+
+  sendUsageStats(request, "pageset_listing");  
 %>
 
 <HTML LANG="<% out.write(sLanguage); %>">
@@ -273,7 +284,7 @@
 	// ----------------------------------------------------
 	
 	function sortBy(fld) {
-	  document.location = "pageset_listing.jsp?doctype=<%=sDocType%>&id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&orderby=" + fld + "&find=<%=sFind%>&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&maxrows=<%=iMaxRows%>&skip=<%=iSkip%>";
+	  document.location = "pageset_listing.jsp?doctype=<%=sDocType%>&id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&orderby=" + String(fld) + (fld==5 ? " DESC" : "") + "&find=<%=sFind%>&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&maxrows=<%=iMaxRows%>&skip=<%=iSkip%>";
 	}
 
         // ----------------------------------------------------
@@ -371,13 +382,25 @@
 	    window.open ("wb_preview.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_pageset=" + id + "&doctype=<%=sDocType%>", "previewPageSet", "top=" + (screen.height-parseInt(h))/2 + ",left=" + (screen.width-parseInt(w))/2 + ",scrollbars=yes,directories=no,toolbar=no,menubar=yes,width=" + w + ",height=" + h);
 	} // modifyPageSet
 
-        // ----------------------------------------------------
+  // ----------------------------------------------------
+
+  function listJobs(gu_pageset,nm_pageset,tp_doc) {
+	  document.location = "../jobs/job_list.jsp?id_domain=<%=id_domain%>&viewonly=2&selected=5&subselected=2&id_command="+(tp_doc==<%=String.valueOf(HipermailApp)%> ? "SEND" : "MAIL")+"&list_title="+escape(nm_pageset)+"&filter="+escape(" AND gu_job_group='"+gu_pageset+"'");
+	} // listJobs
+
+  // ----------------------------------------------------
+
+  function listStats(gu_pageset) {
+	  document.location = "../jobs/job_followup_stats_xls.jsp?gu_job_group="+gu_pageset;
+	} // listStats
+
+  // ----------------------------------------------------
 
 	function selectList(gu_pageset,tp_doc) {
 	  var wEnvio = window.open("list_choose.jsp?gu_pageset=" +gu_pageset+"&id_command="+(tp_doc==<%=String.valueOf(HipermailApp)%> ? "SEND" : "MAIL"),"wEnvio","top=" + (screen.height-500)/2 + ",left=" + (screen.width-640)/2 + ",height=500,width=640,scrollbars=yes");
 	} // selectList
 
-        // ----------------------------------------------------
+  // ----------------------------------------------------
 	
 	function schedule()
 	{
@@ -555,6 +578,14 @@
       <TR>
     </TABLE>
     <%
+
+	  if (nReminders>0) {
+      out.write("<FONT CLASS=\"textstrong\">Reminders</FONT><BR/>");
+      for (int r=0; r<nReminders; r++) {      
+        out.write("<FONT CLASS=\"textplain\">"+String.valueOf(oReminders.getInt(4,r))+"&nbsp;("+oReminders.getStringNull(5,r,"")+")&nbsp;"+oReminders.getDateTime24(1,r)+"&nbsp;"+oReminders.getStringNull(2,r,"n/a")+"</FONT><BR/>");
+      }
+    }
+
     // Pintar los enlaces de siguiente y anterior
     
     String sTabIndicators = "selected=5&subselected=0&";
@@ -565,16 +596,23 @@
     if (!oPageSets.eof())
       out.write("<A HREF=\"pageset_listing.jsp?" + sTabIndicators + "doctype=" + sDocType + "&id_domain=" + id_domain + "&n_domain=" + n_domain + "&maxrows=" + String.valueOf(iMaxRows) + "&skip=" + String.valueOf(iSkip+iMaxRows)+ "\" CLASS=\"linkplain\">Next " + String.valueOf(iMaxRows) + "&nbsp;&gt;&gt;</A>");
     %>
+
     <TABLE CELLSPACING="2" CELLPADDING="2">
         <TR>
          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="200px"><A HREF="javascript:sortBy(2);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;&nbsp;<B>Name</B></TD>
          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="300px"><A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;<B>&nbsp;Description</B></TD>
          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="96px"><A HREF="javascript:sortBy(5);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;<B>&nbsp;Create</B></TD>
+<% if (bShowSendColumn) { %>
+         <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="96px"><A HREF="javascript:sortBy(10);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==10 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;<B>&nbsp;Sent</B></TD>
+<% } %>
          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="100px">&nbsp;<B>&nbsp;Status</B></TD>
          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;</TD>
         </TR>
 <%
 	  String sCompId;
+	  String sTdClass;
+    boolean bUrgent;
+
 	  for (int i=0; i<iPageSetCount; i++) {
 
             // Recupero la ruta al archivo
@@ -588,27 +626,52 @@
               // Si en la ruta aparece WebBuilder es multipagina
               matchdoctype = sPathData.indexOf("WebBuilder");
             
+						if (oPageSets.isNull(8,i)) {
+						  bUrgent = false;
+						} else {
+						  bUrgent = (oPageSets.getShort(8,i)!=0);
+						}
+						
+						if (!bUrgent) {
+						  if (!oPageSets.isNull(9,i)) {
+						    Date dtToday = new Date();
+						    dtToday.setHours(23);
+						    dtToday.setMinutes(59);
+						    dtToday.setSeconds(59);
+						    bUrgent = (oPageSets.getDate(9,i).compareTo(dtToday)<=0);
+						  }
+						}
+            
+            if (oPageSets.getStringNull(6,i,"").equals("ENVIADO")) bUrgent = false;
+            
             // Si el registro corresponde a un documento que estoy listando
             if (matchdoctype!=-1)
             {
              int counter = (i%2)+1;
              sCompId = oPageSets.getString(0,i);
+             sTdClass = bUrgent ? "CLASS=\"stripr\"" : "CLASS=\"strip" + counter + "\"";
              out.write ("<TR HEIGHT=\"14\">");
-             out.write ("<TD CLASS=\"strip" + counter + "\">");
+             out.write ("<TD "+sTdClass+">");
              out.write ("&nbsp;<A HREF=\"#\" oncontextmenu=\"jsPageSetId='" + sCompId + "'; jsPageSetName = '" + oPageSets.getString(1,i) + "'; jsType = " + String.valueOf(oPageSets.getInt(7,i)) + "; return showRightMenu(event);\" onclick=\""+ (oPageSets.getInt(7,i)==HipermailApp ? "changePageSet('"+sCompId+"','"+String.valueOf(HipermailApp)+"')" : "modifyPageSet('"+sCompId+"','"+oPageSets.getString(1,i)+"', "+String.valueOf(oPageSets.getInt(7,i))+")") + "\" TITLE=\"Right click to see context menu\">");
              out.write (oPageSets.getString(1,i));
              out.write ("</A>");
              out.write ("</TD>");
-             out.write ("<TD CLASS=\"strip" + counter + "\">");
+             out.write ("<TD "+sTdClass+">");
              out.write ("&nbsp;" + Gadgets.left(oPageSets.getStringNull(2,i,""), 60));
              out.write ("</TD>");
-             out.write ("<TD ALIGN=\"middle\" CLASS=\"strip" + counter + "\">");
+             out.write ("<TD ALIGN=\"middle\" "+sTdClass+">");
              out.write ("&nbsp;" + oPageSets.getDateShort(4,i));
              out.write ("</TD>");
-             out.write ("<TD CLASS=\"strip" + counter + "\">");
+             if (bShowSendColumn) {
+               out.write ("<TD ALIGN=\"middle\" "+sTdClass+">");
+               if (!oPageSets.isNull(9,i))
+                 out.write ("&nbsp;" + oPageSets.getDateShort(9,i));
+               out.write ("</TD>");
+             }
+             out.write ("<TD "+sTdClass+">");
              out.write ("&nbsp;" + aStatus[i]);
              out.write ("</TD>");
-             out.write ("<TD CLASS=\"strip" + counter + "\" ALIGN=\"center\">");
+             out.write ("<TD "+sTdClass+" ALIGN=\"center\">");
              out.write ("<INPUT VALUE=\"1\" TYPE=\"checkbox\" NAME=\"" + sCompId + "\">");
              out.write ("</TD>");
              out.write ("</TR>\n");
@@ -631,6 +694,9 @@
       <% if (sDocType.equals("newsletter")) { %>
       addMenuSeparator();
       addMenuOption("Schedule","selectList(jsPageSetId,jsType)",0);
+      addMenuOption("Show Sent Messages","listJobs(jsPageSetId,jsPageSetName,jsType)",0);
+      addMenuOption("Show Statistics","listStats(jsPageSetId)",0);
+      
       <% } %>
     </SCRIPT>
 </BODY>
