@@ -10,7 +10,64 @@ public static String utf8(String sInput) {
   return sOutput;
 }
 
-public static void loadRequest(com.knowgate.jdc.JDCConnection j, HttpServletRequest r, DBPersist p)
+public boolean hasXssSignature(String s) {
+  boolean bRetVal = false;
+  try {
+    bRetVal = com.knowgate.misc.Gadgets.matches(s, "((\\%3C)|<)((\\%2F)|\\/)*[a-z0-9A-Z\\%]+((\\%3E)|>)") ||
+              com.knowgate.misc.Gadgets.matches(s, "((\\%3C)|<)((\\%69)|(i|I)|(\\%49))((\\%6D)|(m|M)|(\\%4D))((\\%67)|(g|G)|(\\%47))[^\\n]+((\\%3E)|>)");
+  } catch (org.apache.oro.text.regex.MalformedPatternException ignore) {
+    // never thrown
+  }
+  return bRetVal;
+}
+
+public String safeXssGetParameter(HttpServletRequest r, String n)
+   {
+
+  String s = r.getParameter(n);
+    
+  if (s!=null) {
+    if (hasXssSignature(s)) throw new java.lang.SecurityException("XSS intrusion signature");
+  }
+  return s;  
+}
+
+public String safeXssGetParameter(HttpServletRequest r, String n, String d)
+  {
+  String s = safeXssGetParameter(r,n);
+  return s==null ? d : s;
+}
+
+public boolean hasSqlSignature(String s) {
+  boolean bRetVal = false;
+  try {
+    bRetVal = com.knowgate.misc.Gadgets.matches(s, "(\\%27)|(\\')|(\\-\\-)|(\\%23)|(#)") ||
+              com.knowgate.misc.Gadgets.matches(s, "((\\%3D)|(=))[^\\n]*((\\%27)|(\\')|(\\-\\-)|(\\%3B)|(;))") ||
+              com.knowgate.misc.Gadgets.matches(s, "\\w*((\\%27)|(\\'))((\\%6F)|o|(\\%4F))((\\%72)|r|(\\%52))") ||
+              com.knowgate.misc.Gadgets.matches(s, "((\\%27)|(\\'))union");
+  } catch (org.apache.oro.text.regex.MalformedPatternException ignore) {
+    // never thrown
+  }
+  return bRetVal;
+}
+
+public String safeSqlGetParameter(HttpServletRequest r, String n)
+  throws java.lang.SecurityException {
+
+  String s = r.getParameter(n);
+
+  if (s!=null) {
+    if (hasSqlSignature(s)) throw new java.lang.SecurityException("SQL injection signature");
+  }
+  return s;
+}
+
+public String safeSqlGetParameter(HttpServletRequest r, String n, String d) {
+  String s = safeSqlGetParameter(r,n);
+  return s==null ? d : s;
+}
+
+public static void loadRequest(com.knowgate.jdc.JDCConnection j, HttpServletRequest r, com.knowgate.dataobjs.DBPersist p)
   throws java.text.ParseException, java.lang.NullPointerException, java.sql.SQLException,
          org.apache.oro.text.regex.MalformedPatternException
   {
@@ -144,4 +201,5 @@ public static void loadRequest(com.knowgate.jdc.JDCConnection j, HttpServletRequ
       } // fi (s!=null)
     } // wend
   }
+  
 %>

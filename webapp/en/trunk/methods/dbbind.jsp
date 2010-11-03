@@ -1,5 +1,7 @@
 <jsp:useBean id="GlobalDBBind" scope="application" class="com.knowgate.dataobjs.DBBind"/><% request.setCharacterEncoding("UTF-8"); %><%!
 
+  // Always save this file as UNIX-ASCII or else some XML retrieval pages may raise de exception: declaraci�n de texto o XML en un lugar distinto del principio de la entidad
+	
   public static void disposeConnection(com.knowgate.jdc.JDCConnection oConn, String sConnectionName)
     throws java.io.IOException {
     if (oConn!=null) {

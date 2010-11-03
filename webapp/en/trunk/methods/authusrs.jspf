@@ -1,7 +1,6 @@
 <%!
   /*
-     Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                         C/Oña, 107 1º2 28050 Madrid (Spain)
+     Copyright (C) 2003-2010  Know Gate S.L. All rights reserved.
 
      Redistribution and use in source and binary forms, with or without
      modification, are permitted provided that the following conditions
@@ -597,5 +596,15 @@
   }
 
   // --------------------------------------------------------------------------
+
+  public void sendUsageStats(HttpServletRequest req, String pag) {
+    String sGuSupport = getCookie(req, "stats", "");
+    if (sGuSupport.length()>0) {
+      try {
+        com.knowgate.dfs.HttpRequest oStats = new com.knowgate.dfs.HttpRequest("http://www.hipergate.org/login/usage_stats.jsp?gu="+sGuSupport+"&pg="+pag);
+        oStats.start();
+      } catch (Exception ignore) { }
+    }
+  }
 
 %>

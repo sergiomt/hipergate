@@ -134,6 +134,11 @@
     return sAttrs;    
   } // paintAttributes()
 
+  
+  
+  
+  
+  
   // -------------------------------------------------------------------------------------------------------
 
   /**
@@ -273,4 +278,103 @@
     
     oStmt.close();
   } // storeAttributes     
+
+  // -------------------------------------------------------------------------------------------------------
+	//Inicio I2E 2009-12-08
+  /**
+    * Store user defined attributes for a register at database
+    * @param oReq ServletRequest containing parameters for atributes and a parameter named custom_attributes
+    *             containing the list of attribute named separated by commas.
+    * @param oConn Database Connection
+    * @param sTable Attributes table name
+    * @param sWrkA WorkArea GUID
+    * @param sObjPK Base Object Primary Key GUID
+  */  
+  static void storeInterest ( javax.servlet.ServletRequest oReq,
+                                com.knowgate.jdc.JDCConnection oConn,
+                                String sTable, String sObjPK ) throws java.sql.SQLException {
+    
+    String sAttrSet = oReq.getParameter("areas_interes");
+
+    java.sql.PreparedStatement oStmt;
+    int iAttrs;
+    String aAttrSet[];
+    String sValue;
+
+    // Delete atributes prevously present at database
+    
+    oStmt = oConn.prepareStatement("DELETE FROM " + sTable + " WHERE gu_object=? AND vl_attr=?");
+    oStmt.setString(1, sObjPK);
+    oStmt.setString(2, "area_interes");
+    oStmt.execute();
+    oStmt.close();
+
+    // Store new attributes
+
+    if (null!=sAttrSet) {
+      aAttrSet = com.knowgate.misc.Gadgets.split(sAttrSet,',');
+      if (null!=aAttrSet)
+        iAttrs = aAttrSet.length;
+      else
+        iAttrs = 0;
+    }
+    else {
+      aAttrSet = null;
+      iAttrs = 0;
+    }
+    
+    oStmt = oConn.prepareStatement("INSERT INTO " + sTable + " (gu_object,nm_attr,vl_attr) VALUES(?,?,?)");
+    
+
+    for (int a=0; a<iAttrs; a++) {
+/*      sValue = oReq.getParameter(aAttrSet[a]);
+      if (null==sValue) sValue = "";
+      if (sValue.length()>0) {*/
+        oStmt.setString(1, sObjPK);
+        oStmt.setString(2, aAttrSet[a]);
+        oStmt.setString(3, "area_interes");
+        oStmt.execute();
+      //} // fi()      
+    } // next()
+    
+    oStmt.close();
+  } // storeAttributes     
+
+  
+  //-------------------------------------------------------------------
+  /**
+   * Store user defined attributes for a register at database
+   * @param oReq ServletRequest containing parameters for atributes and a parameter named custom_attributes
+   *             containing the list of attribute named separated by commas.
+   * @param oConn Database Connection
+   * @param sTable Attributes table name
+   * @param sWrkA WorkArea GUID
+   * @param sObjPK Base Object Primary Key GUID
+ */  
+ static String loadInterest ( com.knowgate.jdc.JDCConnection oConn,
+                               String sTable, String sObjPK ) throws java.sql.SQLException {
+   
+
+   java.sql.PreparedStatement oStmt;
+   java.sql.ResultSet oRSet;
+
+   oStmt = oConn.prepareStatement("SELECT nm_attr FROM " + sTable + " WHERE gu_object=? AND vl_attr=?");
+   oStmt.setString(1, sObjPK);
+   oStmt.setString(2, "area_interes");
+   oRSet = oStmt.executeQuery();
+
+   String datos = "";
+   if(oRSet.next())  datos = oRSet.getString(1).trim();
+    
+   while(oRSet.next()){
+		datos += ","+oRSet.getString(1).trim(); 	   
+   }
+   oRSet.close();
+   oStmt.close();
+
+   return datos;
+ } // storeAttributes   
+  
+  
+  // Fin I2E
 %>
