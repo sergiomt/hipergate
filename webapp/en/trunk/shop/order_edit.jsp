@@ -96,6 +96,8 @@
     sCardsLookUp   = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_orders_lookup, gu_workarea, DB.tp_card, sLanguage);
         
     oConn.close("order_edit");
+    
+    sendUsageStats(request, "order_edit");  
   }
   catch (SQLException e) {  
     if (oConn!=null)

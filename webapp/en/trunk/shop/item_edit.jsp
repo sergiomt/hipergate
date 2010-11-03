@@ -180,9 +180,10 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_close"));  
   }
   
-  if (null==oConn) return;
-  
+  if (null==oConn) return;  
   oConn = null;
+  
+  sendUsageStats(request, "item_edit"); 
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <!--<%=sFace%>--><HEAD>
@@ -199,7 +200,7 @@
 <% if (bIsBundle) { %>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/autosuggest20.js"></SCRIPT>
 <% } %>
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
 
       // ----------------------------------------------------
@@ -1016,10 +1017,10 @@
             <TD ALIGN="left">                            
               <INPUT TYPE="text" NAME="pr_sale" MAXLENGTH="12" SIZE="9" CLASS="combomini" VALUE="<% if (!oItm.isNull(DB.pr_sale)) out.write(String.valueOf(oItm.getFloat(DB.pr_sale))); %>">
               &nbsp;&nbsp;<FONT CLASS="formplain">Bargain Start:</FONT>
-              <INPUT TYPE="text" NAME="dt_start" MAXLENGTH="10" SIZE="9" CLASS="combomini" VALUE="<% out.write(oItm.isNull(DB.dt_start) ? "" : oItm.getDateFormated(DB.dt_start,"yyyy-MM-dd")); %>">
+              <INPUT TYPE="text" NAME="dt_start" MAXLENGTH="10" SIZE="12" CLASS="combomini" VALUE="<% out.write(oItm.isNull(DB.dt_start) ? "" : oItm.getDateFormated(DB.dt_start,"yyyy-MM-dd")); %>">
               <A HREF="javascript:showCalendar('dt_start')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
 	      &nbsp;&nbsp;&nbsp;<FONT CLASS="formplain">Bargain End:</FONT>
-              <INPUT TYPE="text" NAME="dt_end" MAXLENGTH="10" SIZE="9" CLASS="combomini" VALUE="<% out.write(oItm.isNull(DB.dt_end) ? "" : oItm.getDateFormated(DB.dt_end,"yyyy-MM-dd")); %>">
+              <INPUT TYPE="text" NAME="dt_end" MAXLENGTH="10" SIZE="12" CLASS="combomini" VALUE="<% out.write(oItm.isNull(DB.dt_end) ? "" : oItm.getDateFormated(DB.dt_end,"yyyy-MM-dd")); %>">
               <A HREF="javascript:showCalendar('dt_end')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>	      
             </TD>            
           </TR>

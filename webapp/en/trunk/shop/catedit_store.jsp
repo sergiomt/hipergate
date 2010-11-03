@@ -76,11 +76,7 @@
     out.write ("<HTML><HEAD><TITLE>Wait...</TITLE><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>window.opener.parent.document.location.reload(true); self.close();<" + "/SCRIPT" +"></HEAD></HTML>");
   }
   catch (SQLException d) {
-    if (null!=oCon1)
-      if (!oCon1.isClosed()) {
-        oCon1.rollback();
-        oCon1 = null;
-      }
+    disposeConnection(oCon1,"shopcatedit_store");
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + d.getMessage() + "&resume=_back"));    
   }      
 %>

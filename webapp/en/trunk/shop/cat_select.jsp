@@ -1,6 +1,5 @@
 <%@ page import="java.util.Iterator,java.util.Vector,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/dbbind.jsp" %>
-<%@ include file="../methods/cookies.jspf" %>
+<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <%!
   
   public static void listChilds(StringBuffer oOptions, PreparedStatement oStmt, String sThisCategory, String sParent, int iLevel) throws SQLException {
@@ -33,7 +32,11 @@
   } // listChilds
 %>
 <%
+
+  if (autenticateSession(GlobalDBBind, request, response)<0) return;
+
   String top_parent = request.getParameter("top_parent");
+  String id_form = nullif(request.getParameter("id_form"),"0");;
   
   String sLanguage = getNavigatorLanguage(request);
   StringBuffer oSelCategories = new StringBuffer();
@@ -62,19 +65,31 @@
 <HTML>
 <HEAD>
 <TITLE>Wait...</TITLE>
+<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
 <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
 <!--
   function setCombo() {
+ 	  	
     var opt;
     var doc = parent.msgslist.document;
-    var cat = doc.forms[0].sel_target.options;
+    var cat = doc.forms[<%=id_form%>].sel_target.options;
   
     <% out.write(oSelCategories.toString()); %>
   
     cat[0] = null;
     cat.selectedIndex = 0;
   
-    self.document.location = "../blank.htm";
+  	if (cat.length>0 && doc.forms[<%=id_form%>].sel_product) {
+	    var rxml = httpRequestXML("../common/select_xml.jsp?gu_workarea="+cat[0].value+"&nu_limit=1000&nu_skip=0&nm_select=Products&id_form=<%=id_form%>&nm_table=v_prod_cat_on_sale&nm_value=gu_product&nm_text=nm_product");
+      clearCombo (doc.forms[<%=id_form%>].sel_product);
+    	var prods = rxml.getElementsByTagName("option");
+    	for (var p = 0; p < prods.length; p++) {
+        comboPush (doc.forms[<%=id_form%>].sel_product, getElementValue(prods[p]), prods[p].attributes.item(0).value, false, false);
+      } // next
+	  } // fi
+
+    document.location = "../blank.htm";
   } // setCombo()    
 //-->
 </SCRIPT>

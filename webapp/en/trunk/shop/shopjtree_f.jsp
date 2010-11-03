@@ -1,12 +1,23 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Gadgets,com.knowgate.hipergate.*,com.knowgate.workareas.WorkArea" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.JDCConnection,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Gadgets,com.knowgate.hipergate.*,com.knowgate.workareas.WorkArea,com.knowgate.debug.DebugFile" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <jsp:useBean id="GlobalCategories" scope="application" class="com.knowgate.hipergate.Categories"/><%!
 
-  static void addChilds (Categories oCatBean, JDCConnection oConn, String sLang, StringBuffer oBuffer, String sParentCat, int iParentNode, String sChildCatId, String sQryStr) throws SQLException {
+  static void addChilds (Categories oCatBean, JDCConnection oConn, String sLang, StringBuffer oBuffer,
+                         String sParentCat, int iParentNode, String sChildCatId, String sQryStr) throws SQLException {
     DBSubset oChlds;
     int iChlds;
     int iChld;
     String sSubCat;
+    String sJs = "";
+
+	  /*
+	  if (DebugFile.trace) {
+	    if (sParentCat.startsWith("C_"))
+	      DebugFile.write("<JSP:    addChilds("+DBCommand.queryStr(oConn, "SELECT nm_category FROM k_categories WHERE gu_category='"+sParentCat.substring(2)+"'")+","+String.valueOf(iParentNode)+","+DBCommand.queryStr(oConn, "SELECT nm_category FROM k_categories WHERE gu_category='"+sChildCatId+"'")+")\n");
+	    else
+	      DebugFile.write("<JSP:    addChilds("+sParentCat+","+String.valueOf(iParentNode)+","+DBCommand.queryStr(oConn, "SELECT nm_category FROM k_categories WHERE gu_category='"+sChildCatId+"'")+")\n");
+    }
+    */
     
     oChlds = oCatBean.getChildsNamed(oConn, sChildCatId, sLang, oCatBean.ORDER_BY_NONE);
     iChlds = oChlds.getRowCount();
@@ -14,25 +25,34 @@
     if (iChlds>0) {
       if (iParentNode>=0) {
         sSubCat = "C_" + sChildCatId;
-        oBuffer.append ("    var " + sSubCat + " = new TreeMenu();\n");
+        sJs = "    var " + sSubCat + " = new TreeMenu();\n";
+        oBuffer.append (sJs);
+			  // if (DebugFile.trace) DebugFile.write("<JSP:    var " + DBCommand.queryStr(oConn, "SELECT nm_category FROM k_categories WHERE gu_category='"+sChildCatId+"'") + " = new TreeMenu();\n");
       }
-      else
+      else {
         sSubCat = "treeMenu";
-        
+      }
+
+      if (iParentNode>=0) {
+        if (sParentCat.equals("treeMenu")) {
+          sJs = "    " + sParentCat + ".items["+ String.valueOf(iParentNode+1)+"].makeSubmenu(" + sSubCat + ");\n";
+			    // if (DebugFile.trace) { try { DebugFile.write("<JSP:"+Gadgets.replace(sJs,sSubCat,DBCommand.queryStr(oConn, "SELECT nm_category FROM k_categories WHERE gu_category='"+sChildCatId+"'"))); } catch (org.apache.oro.text.regex.MalformedPatternException ignore) {} };
+			  } else {
+          sJs = "    " + sParentCat + ".items[" + String.valueOf(iParentNode) + "].makeSubmenu(" + sSubCat + ");\n";
+			    // if (DebugFile.trace) { try { DebugFile.write("<JSP:"+Gadgets.replace(Gadgets.replace(sJs,sSubCat,DBCommand.queryStr(oConn, "SELECT nm_category FROM k_categories WHERE gu_category='"+sChildCatId+"'")),sParentCat,DBCommand.queryStr(oConn, "SELECT nm_category FROM k_categories WHERE gu_category='"+sParentCat.substring(2)+"'"))); } catch (org.apache.oro.text.regex.MalformedPatternException ignore) {} };
+        }
+        oBuffer.append (sJs);
+      } // fi
+      
       for (int c=0; c<iChlds; c++) {
         if (oChlds.isNull(3,c))
-          oBuffer.append ("    " + sSubCat + ".addItem(new TreeMenuItem('" + oChlds.getString(2,c) + "', 'item_list_f.htm?" + sQryStr + "&gu_category=" + oChlds.getString(0,c) + "&tr_category=" + Gadgets.URLEncode(Gadgets.HTMLEncode(oChlds.getStringNull(2,c,oChlds.getString(1,c)))) + "', 'parent.selectNode(\"" + oChlds.getString(0,c) + "\",\"" + Gadgets.HTMLEncode(oChlds.getStringNull(2,c,oChlds.getString(1,c))) + "\")'));\n");
+          sJs = "    " + sSubCat + ".addItem(new TreeMenuItem('" + oChlds.getString(2,c) + "', 'item_list_f.htm?" + sQryStr + "&gu_category=" + oChlds.getString(0,c) + "&tr_category=" + Gadgets.URLEncode(Gadgets.HTMLEncode(oChlds.getStringNull(2,c,oChlds.getString(1,c)))) + "', 'parent.selectNode(\"" + oChlds.getString(0,c) + "\",\"" + Gadgets.HTMLEncode(oChlds.getStringNull(2,c,oChlds.getString(1,c))) + "\")'));\n";
 	      else
-          oBuffer.append ("    " + sSubCat + ".addItem(new TreeMenuItem('" + oChlds.getString(2,c) + "', 'item_list_f.htm?" + sQryStr + "&gu_category=" + oChlds.getString(0,c) + "&tr_category=" + Gadgets.URLEncode(Gadgets.HTMLEncode(oChlds.getStringNull(2,c,oChlds.getString(1,c)))) + "','parent.selectNode(\"" + oChlds.getString(0,c) + "\",\"" + Gadgets.HTMLEncode(oChlds.getStringNull(2,c,oChlds.getString(1,c))) + "\")','" + oChlds.getString(3,c) + "'));\n");	
-        }
-      
-      if (iParentNode>=0) {
-        if (sParentCat.equals("treeMenu"))
-          oBuffer.append ("    " + sParentCat + ".items[1].makeSubmenu(" + sSubCat + ");\n");
-			  else
-          oBuffer.append ("    " + sParentCat + ".items[" + String.valueOf(iParentNode) + "].makeSubmenu(" + sSubCat + ");\n");
-      }
-	      
+          sJs = "    " + sSubCat + ".addItem(new TreeMenuItem('" + oChlds.getString(2,c) + "', 'item_list_f.htm?" + sQryStr + "&gu_category=" + oChlds.getString(0,c) + "&tr_category=" + Gadgets.URLEncode(Gadgets.HTMLEncode(oChlds.getStringNull(2,c,oChlds.getString(1,c)))) + "','parent.selectNode(\"" + oChlds.getString(0,c) + "\",\"" + Gadgets.HTMLEncode(oChlds.getStringNull(2,c,oChlds.getString(1,c))) + "\")','" + oChlds.getString(3,c) + "'));\n";
+		    oBuffer.append (sJs);
+			  // if (DebugFile.trace) { try { DebugFile.write("<JSP:"+Gadgets.replace(sJs,sSubCat,DBCommand.queryStr(oConn, "SELECT nm_category FROM k_categories WHERE gu_category='"+sChildCatId+"'"))); } catch (org.apache.oro.text.regex.MalformedPatternException ignore) {} };
+      } // next
+      	      
       for (int c=0; c<iChlds; c++) {
         addChilds (oCatBean, oConn, sLang, oBuffer, sSubCat, c, oChlds.getString(0,c), sQryStr);
       }
@@ -74,8 +94,7 @@
          response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));    
        }
        
-%>	 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//EN" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">
+%><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//EN" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
@@ -121,23 +140,18 @@
       out.write ("    treeMenu.addItem(new TreeMenuItem('Packages', 'item_list_f.htm?" + sQryStr + "&gu_category=" + oShp.getString(DB.gu_bundles_cat) + "&tr_category=" + Gadgets.URLEncode(Gadgets.HTMLEncode("Packages")) + "', 'parent.selectNode(\"" + oShp.getString(DB.gu_bundles_cat) + "\",\"Packages\")','package16.gif'));\n");	
 
     out.write(oBuffer.toString());
-        
     %>
   //-->
   </SCRIPT>
 </HEAD>
-
 <FRAMESET ROWS="70,*,0" BORDER=0 FRAMEBORDER="0">
   <FRAME NAME="scroll" FRAMEBORDER=0 MARGINWIDTH=8 MARGINHEIGHT=0 SRC="tree_scroll.htm<% out.write(sQryStr); %>" SCROLLING="no">
   <FRAME NAME="tree" FRAMEBORDER=0 MARGINWIDTH=8 SRC="tree_nodes.htm" SCROLLING="yes">
   <FRAME NAME="cmds" FRAMEBORDER=0 MARGINWIDTH=8 SRC="tree_cmds.htm<% out.write(sQryStr); %>" SCROLLING="no">
-  
 </FRAMESET>
 <NOFRAMES>
   <BODY>
     <P>This page use frames, but your web browser does not handle them</P>
   </BODY>
 </NOFRAMES>
-
-
 <HTML>

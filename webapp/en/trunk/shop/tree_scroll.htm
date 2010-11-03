@@ -35,7 +35,7 @@
         alert ("You must first select a Category to be deleted");
       } else if (id_cat==getURLParam("gu_bundles_cat")) {
         alert ("It is not allowed to remove packages category");
-      } else if (window.confirm("Are you sure you want to delete category&nbsp;" + parent.cmds.document.forms[0].ctrl.value + " and all the products it contains?")) {
+      } else if (window.confirm("Are you sure you want to delete category&nbsp; " + parent.cmds.document.forms[0].ctrl.value + "  and all the products it contains?")) {
         parent.parent.msgsadmin.location = "../common/blank.htm";
         parent.parent.msgsexec.location = "catedit_del.jsp?id_domain=" + getURLParam("id_domain") + "&checkeditems=" + id_cat + "&id_user=" + getURLParam("id_user") + "&top_parent_cat=" + getURLParam("top_parent_cat");
       }

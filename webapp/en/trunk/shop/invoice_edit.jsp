@@ -71,7 +71,9 @@
       if (!oConn.isClosed()) oConn.close("invoice_edit");
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_close"));  
   }
-  oConn = null;  
+  oConn = null;
+  
+  sendUsageStats(request, "invoice_edit");
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML LANG="<% out.write(sLanguage); %>">

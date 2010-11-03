@@ -70,9 +70,10 @@
     oConn=null;    
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_close"));  
   }
-  if (null==oConn) return;
-  
+  if (null==oConn) return;  
   oConn = null;
+  
+  sendUsageStats(request, "shophome");  
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
