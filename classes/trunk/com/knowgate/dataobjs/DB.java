@@ -1001,6 +1001,7 @@ public final class DB {
   public static final String tp_meeting = "tp_meeting";
   public static final String tx_meeting = "tx_meeting";
   public static final String de_meeting = "de_meeting";
+  public static final String id_icalendar = "id_icalendar";
 
   // k_phone_calls
   public static final String gu_phonecall = "gu_phonecall";
