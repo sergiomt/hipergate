@@ -1,45 +1,74 @@
-UPDATE k_version SET vs_stamp='5.5.0';
+UPDATE k_version SET vs_stamp='5.5.0'
+GO;
 
-ALTER TABLE k_version ADD bo_allow_stats SMALLINT DEFAULT 0;
+ALTER TABLE k_version ADD bo_allow_stats SMALLINT DEFAULT 0
+GO;
 
 CREATE SEQUENCE seq_k_adhoc_mailings INCREMENT 1 START 1
 GO;
 
-ALTER TABLE k_meetings_lookup ADD tr_ko VARCHAR(50) NULL;
+ALTER TABLE k_meetings_lookup ADD tr_ko VARCHAR(50) NULL
+GO;
 
-ALTER TABLE k_activities ADD gu_address CHAR(32) NULL;
-ALTER TABLE k_activities ADD gu_campaign CHAR(32) NULL;
-ALTER TABLE k_activities ADD gu_list CHAR(32) NULL;
-ALTER TABLE k_activities ADD gu_writer CHAR(32) NULL;
-ALTER TABLE k_activities ADD gu_meeting CHAR(32) NULL;
-ALTER TABLE k_activities ADD gu_pageset CHAR(32) NULL;
-ALTER TABLE k_activities ADD gu_mailing CHAR(32) NULL;
-ALTER TABLE k_activities ADD dt_mailing TIMESTAMP NULL;
-ALTER TABLE k_activities ADD tx_subject VARCHAR(254) NULL;
-ALTER TABLE k_activities ADD tx_email_from VARCHAR(254) NULL;
-ALTER TABLE k_activities ADD nm_from VARCHAR(254) NULL;
-ALTER TABLE k_activities ADD url_activity VARCHAR(254) NULL;
-ALTER TABLE k_activities ADD nm_author VARCHAR(200) NULL;
-ALTER TABLE k_activities ADD pg_activity INTEGER NULL;
-ALTER TABLE k_activities ADD id_language CHAR(2) NULL;
+ALTER TABLE k_activities ADD gu_address CHAR(32) NULL
+GO;
+ALTER TABLE k_activities ADD gu_campaign CHAR(32) NULL
+GO;
+ALTER TABLE k_activities ADD gu_list CHAR(32) NULL
+GO;
+ALTER TABLE k_activities ADD gu_writer CHAR(32) NULL
+GO;
+ALTER TABLE k_activities ADD gu_meeting CHAR(32) NULL
+GO;
+ALTER TABLE k_activities ADD gu_pageset CHAR(32) NULL
+GO;
+ALTER TABLE k_activities ADD gu_mailing CHAR(32) NULL
+GO;
+ALTER TABLE k_activities ADD dt_mailing TIMESTAMP NULL
+GO;
+ALTER TABLE k_activities ADD tx_subject VARCHAR(254) NULL
+GO;
+ALTER TABLE k_activities ADD tx_email_from VARCHAR(254) NULL
+GO;
+ALTER TABLE k_activities ADD nm_from VARCHAR(254) NULL
+GO;
+ALTER TABLE k_activities ADD url_activity VARCHAR(254) NULL
+GO;
+ALTER TABLE k_activities ADD nm_author VARCHAR(200) NULL
+GO;
+ALTER TABLE k_activities ADD pg_activity INTEGER NULL
+GO;
+ALTER TABLE k_activities ADD id_language CHAR(2) NULL
+GO;
 
-ALTER TABLE k_adhoc_mailings ADD bo_urgent SMALLINT DEFAULT 0;
-ALTER TABLE k_adhoc_mailings ADD bo_reminder SMALLINT DEFAULT 0;
+ALTER TABLE k_adhoc_mailings ADD bo_urgent SMALLINT DEFAULT 0
+GO;
+ALTER TABLE k_adhoc_mailings ADD bo_reminder SMALLINT DEFAULT 0
+GO;
 
-ALTER TABLE k_pagesets ADD bo_urgent SMALLINT DEFAULT 0;
+ALTER TABLE k_pagesets ADD bo_urgent SMALLINT DEFAULT 0
+GO;
 
-ALTER TABLE k_contacts ADD url_linkedin VARCHAR(254) NULL;
-ALTER TABLE k_contacts ADD url_facebook VARCHAR(254) NULL;
+ALTER TABLE k_contacts ADD url_linkedin VARCHAR(254) NULL
+GO;
+ALTER TABLE k_contacts ADD url_facebook VARCHAR(254) NULL
+GO;
 
-INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('NOPO','NEW OPORTUNITY','com.knowgate.scheduler.events.DoNothing');
+INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('NOPO','NEW OPORTUNITY','com.knowgate.scheduler.events.DoNothing')
+GO;
 
-INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('MOPO','MODIFY OPORTUNITY','com.knowgate.scheduler.events.DoNothing');
+INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('MOPO','MODIFY OPORTUNITY','com.knowgate.scheduler.events.DoNothing')
+GO;
 
-ALTER TABLE k_prod_attr ADD format VARCHAR(50) NULL;
+ALTER TABLE k_prod_attr ADD format VARCHAR(50) NULL
+GO;
 
-ALTER TABLE k_education_degree ADD id_country CHAR(3) NULL;
-ALTER TABLE k_contact_education ADD pg_product INTEGER NULL;
-ALTER TABLE k_contact_education ADD gu_product CHAR(32);
+ALTER TABLE k_education_degree ADD id_country CHAR(3) NULL
+GO;
+ALTER TABLE k_contact_education ADD pg_product INTEGER NULL
+GO;
+ALTER TABLE k_contact_education ADD gu_product CHAR(32)
+GO;
 
 CREATE TABLE k_oportunities_attachs
 (
