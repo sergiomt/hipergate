@@ -1,5 +1,6 @@
 GMail
 user|$|[~User~]
 pwd|*|[~Password~]
+cal|$|[~Calendar~]
 
 
