@@ -139,14 +139,14 @@ public class Meeting extends DBPersist {
    * <p>Get Fellows attending to this Meeting</p>
    * <p>Retrieves Fellows from k_x_meeting_fellow table.</p>
    * @param oConn Database Connection
-   * @return {@link DBSubset} with 4 columns {gu_fellow,tx_name,tx_surname,de_title}
+   * @return {@link DBSubset} with 5 columns {gu_fellow,tx_name,tx_surname,de_title,tx_email}
    * @throws SQLException
    * @see {@link Fellow}
    */
   public DBSubset getFellows(JDCConnection oConn) throws SQLException {
 
     DBSubset oFellows = new DBSubset(DB.k_fellows + " f," + DB.k_x_meeting_fellow + " x",
-                                     " f." + DB.gu_fellow + ",f." + DB.tx_name + ",f." + DB.tx_surname + ",f." + DB.de_title,
+                                     " f." + DB.gu_fellow + ",f." + DB.tx_name + ",f." + DB.tx_surname + ",f." + DB.de_title + ",f." + DB.tx_email,
                                      "f." + DB.gu_fellow + "=x." + DB.gu_fellow  + " AND x." + DB.gu_meeting + "=?", 4);
 
     oFellows.load(oConn, new Object[] { getString(DB.gu_meeting) });
