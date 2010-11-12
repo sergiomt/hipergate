@@ -75,6 +75,20 @@ CREATE TABLE k_academic_courses (
 )
 GO;
 
+CREATE TABLE k_x_user_acourse
+(
+gu_acourse   CHAR(32) NOT NULL,
+gu_user      CHAR(32) NOT NULL,
+dt_created   DATETIME DEFAULT CURRENT_TIMESTAMP,
+bo_admin     SMALLINT DEFAULT 0,
+bo_user      SMALLINT DEFAULT 1,
+
+CONSTRAINT pk_x_user_acourse PRIMARY KEY (gu_acourse,gu_user),
+CONSTRAINT f1_x_user_acourse FOREIGN KEY (gu_acourse) REFERENCES k_academic_courses(gu_acourse),
+CONSTRAINT f2_x_user_acourse FOREIGN KEY (gu_user) REFERENCES k_users(gu_user)
+)
+GO;
+
 CREATE TABLE k_subjects (
   gu_subject     CHAR(32)     NOT NULL,
   gu_workarea    CHAR(32)     NOT NULL,
