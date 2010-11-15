@@ -12,6 +12,7 @@ CREATE OR REPLACE PROCEDURE k_sp_del_acourse (CourseId CHAR) IS
   GuAddress CHAR(32);
 BEGIN
   SELECT gu_address INTO GuAddress FROM k_academic_courses WHERE gu_acourse=CourseId;
+  DELETE FROM k_x_user_acourse WHERE gu_acourse=CourseId;
   DELETE FROM k_x_course_alumni WHERE gu_acourse=CourseId;
   DELETE FROM k_x_course_bookings WHERE gu_acourse=CourseId;
   DELETE FROM k_evaluations WHERE gu_acourse=CourseId;
