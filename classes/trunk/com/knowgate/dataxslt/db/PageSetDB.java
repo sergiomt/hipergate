@@ -47,6 +47,10 @@ import java.sql.Types;
 import java.text.SimpleDateFormat;
 
 import java.util.Vector;
+import java.util.Arrays;
+import java.util.ArrayList;
+
+import org.apache.oro.text.regex.MalformedPatternException;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
@@ -74,12 +78,19 @@ import com.knowgate.dataxslt.PageSet;
 
 public class PageSetDB extends DBPersist {
 
+  private String[] aRecipients;
+  private String[] aBlackList;
+
   public PageSetDB() {
     super(DB.k_pagesets, "PageSetDB");
+  	aBlackList = null;
+  	aRecipients = null;
   }
 
   public PageSetDB(JDCConnection oConn,String sPageSetGUID) throws SQLException {
     super(DB.k_pagesets, "PageSetDB");
+  	aBlackList = null;
+  	aRecipients = null;
     Object aPageSet[] = {sPageSetGUID};
     if (!load(oConn,aPageSet))
       throw new SQLException ("Could not find PageSet " + sPageSetGUID + " at " + DB.k_pagesets);
@@ -118,7 +129,7 @@ public class PageSetDB extends DBPersist {
       if (DebugFile.trace)
         DebugFile.writeln("Connection.prepareCall({ call k_sp_read_pageset ('" + aPK[0] + "',?,?,?,?,?,?,?,?,?,?,?,?,?) }");
 
-      oCall = oConn.prepareCall("{ call k_sp_read_pageset (?,?,?,?,?,?,?,?,?,?,?,?,?,?) }");
+      oCall = oConn.prepareCall("{ call k_sp_read_pageset (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) }");
 
       clear();
 
@@ -136,6 +147,10 @@ public class PageSetDB extends DBPersist {
       oCall.registerOutParameter(12, Types.VARCHAR); // tx_comments
       oCall.registerOutParameter(13, Types.CHAR);    // gu_company
       oCall.registerOutParameter(14, Types.CHAR);    // gu_project
+      oCall.registerOutParameter(15, Types.VARCHAR); // tx_email_from
+      oCall.registerOutParameter(16, Types.VARCHAR); // tx_email_reply
+      oCall.registerOutParameter(17, Types.VARCHAR); // nm_from
+      oCall.registerOutParameter(18, Types.VARCHAR); // tx_subject
 
       if (DebugFile.trace) DebugFile.writeln("CallableStatement.execute()");
 
@@ -178,6 +193,18 @@ public class PageSetDB extends DBPersist {
 
         sField = oCall.getObject(14);
         if (!oCall.wasNull()) put(DB.gu_project, sField.toString().trim());
+
+        sField = oCall.getObject(15);
+        if (!oCall.wasNull()) put(DB.tx_email_from, sField.toString().trim());
+
+        sField = oCall.getObject(16);
+        if (!oCall.wasNull()) put(DB.tx_email_reply, sField.toString().trim());
+
+        sField = oCall.getObject(17);
+        if (!oCall.wasNull()) put(DB.nm_from, sField.toString().trim());
+
+        sField = oCall.getObject(18);
+        if (!oCall.wasNull()) put(DB.tx_subject, sField.toString().trim());
       } // fi (bRetVal)
 
       oCall.close();
@@ -189,7 +216,8 @@ public class PageSetDB extends DBPersist {
                                      ",p." + DB.gu_workarea + ",p." + DB.nm_pageset + ",p." + DB.vs_stamp +
                                      ",p." + DB.id_language + ",p." + DB.dt_modified + ",p." + DB.path_data +
                                      ",p." + DB.id_status + ",m." + DB.path_metadata + ",p." + DB.tx_comments +
-                                     ",p." + DB.gu_company + ",p." + DB.gu_project +
+                                     ",p." + DB.gu_company + ",p." + DB.gu_project + ",p." + DB.tx_email_from +
+                                     ",p." + DB.tx_email_reply + ",p." + DB.nm_from + ",p." + DB.tx_subject +
                                      " FROM " + DB.k_pagesets + " p LEFT OUTER JOIN " + DB.k_microsites +
                                      " m ON p." + DB.gu_microsite + "=m." + DB.gu_microsite + " WHERE p." + DB.gu_pageset + "=" + aPK[0] + ")");
 
@@ -197,7 +225,8 @@ public class PageSetDB extends DBPersist {
                                      ",p." + DB.gu_workarea + ",p." + DB.nm_pageset + ",p." + DB.vs_stamp +
                                      ",p." + DB.id_language + ",p." + DB.dt_modified + ",p." + DB.path_data +
                                      ",p." + DB.id_status + ",m." + DB.path_metadata + ",p." + DB.tx_comments +
-                                     ",p." + DB.gu_company + ",p." + DB.gu_project +
+                                     ",p." + DB.gu_company + ",p." + DB.gu_project + ",p." + DB.tx_email_from +
+                                     ",p." + DB.tx_email_reply + ",p." + DB.nm_from + ",p." + DB.tx_subject +
                                      " FROM " + DB.k_pagesets+ " p LEFT OUTER JOIN " + DB.k_microsites +
                                      " m ON p." + DB.gu_microsite + "=m." + DB.gu_microsite + " WHERE p." + DB.gu_pageset + "=?",
                                      ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -241,6 +270,18 @@ public class PageSetDB extends DBPersist {
 
         sField = oRSet.getObject(13);
         if (!oRSet.wasNull()) put(DB.gu_project, (String) sField);
+
+        sField = oRSet.getObject(14);
+        if (!oRSet.wasNull()) put(DB.tx_email_from, (String) sField);
+
+        sField = oRSet.getObject(15);
+        if (!oRSet.wasNull()) put(DB.tx_email_reply, (String) sField);
+
+        sField = oRSet.getObject(16);
+        if (!oRSet.wasNull()) put(DB.nm_from, (String) sField);
+
+        sField = oRSet.getObject(17);
+        if (!oRSet.wasNull()) put(DB.tx_subject, (String) sField);
       }
       oRSet.close();
       oStmt.close();
@@ -607,6 +648,148 @@ public class PageSetDB extends DBPersist {
     }
 
   } // clone
+
+  // ----------------------------------------------------------
+
+  private String[] concatArrays(String[] a1, String a2[]) {
+	final int l1 = a1.length;
+	final int l2 = a2.length;
+	final int ll = l1+l2;
+	String[] aRetVal = Arrays.copyOf(a1, ll);
+    for (int e=0; e<l2; e++) aRetVal[e+l1] = a2[e];
+    return aRetVal;
+  } // concatArrays
+
+  // ----------------------------------------------------------
+
+  public String[] getBlackList() {
+    return aBlackList;
+  }
+
+  // ----------------------------------------------------------
+
+  public void addBlackList(String[] aEMails)
+  	throws MalformedPatternException {
+    if (aEMails!=null) {
+      if (aEMails.length>0) {
+      	if (aBlackList==null) {
+      	  aBlackList = aEMails;
+      	} else {
+      	  aBlackList = concatArrays(aBlackList, aEMails);
+      	} // fi (aRecipients!=null)
+      	final int nBlackList = aBlackList.length;
+      	Arrays.sort(aBlackList, String.CASE_INSENSITIVE_ORDER);
+      }
+    }
+  } // addBlackList
+
+  // ----------------------------------------------------------
+
+  public void clearRecipients() {
+    aRecipients = null;
+  }
+
+  // ----------------------------------------------------------
+
+  public String[] getRecipients() {
+    return aRecipients;
+  }
+
+  // ----------------------------------------------------------
+
+  public String getAllowPattern() {
+  	return getStringNull(DB.tx_allow_regexp, "");
+  }
+
+  // ----------------------------------------------------------
+
+  public void setAllowPattern(String sAllowPattern) {
+  	replace(DB.tx_allow_regexp, sAllowPattern);
+  }
+
+  // ----------------------------------------------------------
+
+  public String getDenyPattern() {
+  	return getStringNull(DB.tx_deny_regexp, "");
+  }
+
+  // ----------------------------------------------------------
+
+  public void setDenyPattern(String sDenyPattern) {
+  	replace(DB.tx_deny_regexp, sDenyPattern);
+  }
+
+  // ----------------------------------------------------------
+
+  public void addRecipients(String[] aEMails)
+  	throws ArrayIndexOutOfBoundsException,MalformedPatternException {
+	String sAllowPattern, sDenyPattern;
+    ArrayList<String> oRecipientsWithoutDuplicates;
+    boolean bAllowed;
+
+    if (aEMails!=null) {
+      if (aEMails.length>0) {
+      	if (aRecipients==null) {
+      	  aRecipients = aEMails;
+      	} else {
+      	  aRecipients = concatArrays(aRecipients, aEMails);
+      	} // fi (aRecipients!=null)
+      	final int nRecipients = aRecipients.length;
+      	Arrays.sort(aRecipients, String.CASE_INSENSITIVE_ORDER);
+		
+		oRecipientsWithoutDuplicates = new ArrayList<String>(nRecipients);
+
+	  	sAllowPattern = getAllowPattern();
+	  	sDenyPattern = getDenyPattern();
+	  	  	  
+	    for (int r=0; r<nRecipients-1; r++) {
+		  bAllowed = true;
+		  try {
+		    if (sAllowPattern.length()>0) bAllowed &= Gadgets.matches(aRecipients[r], sAllowPattern);
+		  } catch (ArrayIndexOutOfBoundsException aiob) {
+		  	throw new ArrayIndexOutOfBoundsException("Gadgets.matches("+aRecipients[r]+","+sAllowPattern+")");
+		  }
+		  try {
+		  if (sDenyPattern.length()>0) bAllowed &= !Gadgets.matches(aRecipients[r], sDenyPattern);
+		  } catch (ArrayIndexOutOfBoundsException aiob) {
+		  	throw new ArrayIndexOutOfBoundsException("Gadgets.matches("+aRecipients[r]+","+sDenyPattern+")");
+		  }
+		  if (bAllowed) {
+	  	    if (!aRecipients[r].equalsIgnoreCase(aRecipients[r+1])) {
+	  	      if (aBlackList==null) {
+	  	        if (aRecipients[r].trim().length()>0) oRecipientsWithoutDuplicates.add(aRecipients[r].trim());
+	  	      } else if (Arrays.binarySearch(aBlackList, aRecipients[r].toLowerCase(), String.CASE_INSENSITIVE_ORDER)<0) {
+	  	        if (aRecipients[r].trim().length()>0) oRecipientsWithoutDuplicates.add(aRecipients[r].trim());
+	  	      } // fi
+	  	    } // fi
+	  	  } // fi bAllowed
+	    } // next      
+
+	    bAllowed=true;
+		try {
+	      if (sAllowPattern.length()>0) bAllowed &= Gadgets.matches(aRecipients[nRecipients-1], sAllowPattern);
+		} catch (ArrayIndexOutOfBoundsException aiob) {
+		  throw new ArrayIndexOutOfBoundsException("Gadgets.matches("+aRecipients[nRecipients-1]+","+sAllowPattern+")");
+		}
+		try {
+	      if (sDenyPattern.length()>0) bAllowed &= !Gadgets.matches(aRecipients[nRecipients-1], sDenyPattern);
+		} catch (ArrayIndexOutOfBoundsException aiob) {
+		  throw new ArrayIndexOutOfBoundsException("Gadgets.matches("+aRecipients[nRecipients-1]+","+sDenyPattern+")");
+		}
+	    if (bAllowed) {
+	      if (aBlackList==null) {
+	        if (aRecipients[nRecipients-1].trim().length()>0) oRecipientsWithoutDuplicates.add(aRecipients[nRecipients-1].trim());
+	      } else if (Arrays.binarySearch(aBlackList, aRecipients[nRecipients-1].toLowerCase(), String.CASE_INSENSITIVE_ORDER)<0) {
+	  	    if (aRecipients[nRecipients-1].trim().length()>0) oRecipientsWithoutDuplicates.add(aRecipients[nRecipients-1].trim());
+	      }
+	    } // fi (bAllowed)
+
+	    aRecipients = oRecipientsWithoutDuplicates.toArray(new String[oRecipientsWithoutDuplicates.size()]);
+	    	  
+      } // fi (aEMails != {})
+    } // fi (aEMails != null)
+
+  } // addRecipients
 
   // ----------------------------------------------------------
   
