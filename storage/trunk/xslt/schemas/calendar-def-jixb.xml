@@ -1,0 +1,44 @@
+<binding forwards="false">
+  <mapping class="com.knowgate.addrbook.client.CalendarRoom" name="room">
+    <value name="type" field="rtype" style="attribute" usage="optional" />
+    <value name="name" field="name" style="element" usage="required" />
+    <value name="active" field="active" style="element" usage="optional" format="int.default" default="1" />
+    <value name="comments" field="comments" style="element" usage="optional" />
+  </mapping>
+  <mapping class="com.knowgate.addrbook.client.CalendarAttendant" name="attendant">
+    <value name="id" field="id" style="element" usage="optional" />
+    <value name="gu" field="gu" style="element" usage="optional" />
+    <value name="email" field="email" style="element" usage="required" />
+    <value name="name" field="name" style="element" usage="optional" />
+    <value name="surname" field="surname" style="element" usage="optional" />
+    <value name="timezone" field="timezone" style="element" usage="optional" />
+  </mapping>
+  <mapping class="com.knowgate.addrbook.client.CalendarMeeting" name="meeting">
+   <value name="type" field="tp" style="attribute" usage="optional" />
+   <value name="id" field="id" style="element" usage="required" />
+   <value name="gu" field="gu" style="element" usage="required" />
+   <value name="startdate" field="startdate" style="element" usage="optional" />
+   <value name="enddate" field="enddate" style="element" usage="optional" />
+   <value name="privacy" field="privacy" usage="optional" format="int.default" default="0" />
+   <value name="title" field="title" style="element" usage="optional" />
+   <value name="description" field="description" style="element" usage="optional" />
+   <structure name="organizer" usage="optional" field="organizer" type="com.knowgate.addrbook.client.CalendarAttendant">
+     <value name="id" field="id" style="element" usage="optional" />
+     <value name="gu" field="gu" style="element" usage="optional" />
+     <value name="email" field="email" style="element" usage="required" />
+     <value name="name" field="name" style="element" usage="optional" />
+     <value name="surname" field="surname" style="element" usage="optional" />
+     <value name="timezone" field="timezone" style="element" usage="optional" />
+   </structure>    
+   <collection name="rooms" ordered="false" field="oRooms" usage="optional" />
+   <collection name="attendants" ordered="false" field="oAttendants" usage="optional" />
+  </mapping>
+  <mapping class="com.knowgate.addrbook.client.CalendarResponse" name="calendarresponse">
+   <value name="command" field="command" style="attribute" usage="required" />
+   <value name="code" field="code" style="attribute" usage="required" />
+   <value name="error" field="error" style="element" usage="required" />
+   <value name="value" field="value" style="element" usage="required" />
+   <collection name="meetings" ordered="false" field="oMeetings" usage="optional" />
+   <collection name="rooms" ordered="false" field="oRooms" usage="optional" />
+  </mapping>
+</binding>
