@@ -434,7 +434,12 @@ public class DBLanguages {
 	  oStmt.setString(1, sCountryId);
 	  ResultSet oRSet = oStmt.executeQuery();
 	  while (oRSet.next()) {
-	    oHTML.append("<OPTION VALUE=\""+oRSet.getString(1)+"\">");
+	  	String sStCode = oRSet.getString(1);
+	  	if (oRSet.wasNull())
+	  	  sStCode = "";
+	  	else
+	  	  sStCode = sStCode.trim();
+	    oHTML.append("<OPTION VALUE=\""+sStCode+"\">");
 	    oHTML.append(Gadgets.HTMLEncode(oRSet.getString(2)));
 	    oHTML.append("</OPTION>");
 	  } // wend
