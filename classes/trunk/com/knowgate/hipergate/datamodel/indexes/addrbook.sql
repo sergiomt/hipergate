@@ -12,6 +12,8 @@ CREATE INDEX i2_meetings ON k_meetings(dt_start);
 
 CREATE INDEX i3_meetings ON k_meetings(dt_end);
 
+CREATE INDEX i4_meetings ON k_meetings(id_icalendar);
+
 CREATE INDEX i1_phone_calls ON k_phone_calls (gu_workarea);
 
 CREATE INDEX i2_phone_calls ON k_phone_calls (gu_user);

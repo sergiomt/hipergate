@@ -18,3 +18,6 @@ ALTER TABLE k_x_activity_audience ADD CONSTRAINT f3_x_activity_audience FOREIGN 
 ALTER TABLE k_x_activity_audience ADD CONSTRAINT f4_x_activity_audience FOREIGN KEY (gu_list) REFERENCES k_lists (gu_list);
 ALTER TABLE k_x_activity_audience ADD CONSTRAINT f5_x_activity_audience FOREIGN KEY (gu_writer) REFERENCES k_users (gu_user);
 
+ALTER TABLE k_syndentries ADD CONSTRAINT f1_syndentries FOREIGN KEY (id_domain) REFERENCES k_domain (id_domain);
+ALTER TABLE k_syndentries ADD CONSTRAINT f2_syndentries FOREIGN KEY (gu_workarea) REFERENCES k_workareas (gu_workarea);
+ALTER TABLE k_syndentries ADD CONSTRAINT f3_syndentries FOREIGN KEY (gu_contact) REFERENCES k_contacts (gu_contact);

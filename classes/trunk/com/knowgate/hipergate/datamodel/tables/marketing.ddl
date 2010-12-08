@@ -184,3 +184,24 @@ CONSTRAINT u1_activity_audience_lookup UNIQUE (gu_owner,id_section,vl_lookup)
 )
 GO;
 
+CREATE TABLE k_syndentries
+(
+id_domain    INTEGER      NOT NULL,
+gu_workarea  CHAR(32)      NULL,
+uri_entry    VARCHAR(200) NOT NULL,
+gu_feed      CHAR(32)      NULL,
+id_type      VARCHAR(50)   NULL,
+dt_published DATETIME      NULL,
+dt_modified  DATETIME      NULL,
+tx_query     CHARACTER VARYING(100)  NULL,
+gu_contact   CHAR(32)      NULL,
+nu_influence INTEGER       NULL,
+nm_author    CHARACTER VARYING(100)  NULL,
+tl_entry     CHARACTER VARYING(254)  NULL,
+de_entry     CHARACTER VARYING(1000) NULL,
+url_addr     VARCHAR(254)   NULL,
+bin_entry    LONGVARBINARY NULL,
+CONSTRAINT pk_syndentries PRIMARY KEY (id_domain,gu_workarea,uri_entry)
+)
+GO;
+

@@ -14,11 +14,11 @@ ALTER TABLE k_activities ADD gu_meeting CHAR(32) NULL;
 ALTER TABLE k_activities ADD gu_pageset CHAR(32) NULL;
 ALTER TABLE k_activities ADD gu_mailing CHAR(32) NULL;
 ALTER TABLE k_activities ADD dt_mailing DATETIME NULL;
-ALTER TABLE k_activities ADD tx_subject VARCHAR(254) NULL;
+ALTER TABLE k_activities ADD tx_subject NVARCHAR(254) NULL;
 ALTER TABLE k_activities ADD tx_email_from VARCHAR(254) NULL;
-ALTER TABLE k_activities ADD nm_from VARCHAR(254) NULL;
+ALTER TABLE k_activities ADD nm_from NVARCHAR(254) NULL;
 ALTER TABLE k_activities ADD url_activity VARCHAR(254) NULL;
-ALTER TABLE k_activities ADD nm_author VARCHAR(200) NULL;
+ALTER TABLE k_activities ADD nm_author NVARCHAR(200) NULL;
 ALTER TABLE k_activities ADD pg_activity INTEGER NULL;
 ALTER TABLE k_activities ADD id_language CHAR(2) NULL;
 

@@ -1469,6 +1469,7 @@ public class ModelManager {
     executeBulk("procedures/" + sDbms + "/marketing.ddl", BULK_PLSQL);
     executeBulk("views/marketing.sql", BULK_STATEMENTS);
     executeBulk("constraints/marketing.sql", BULK_STATEMENTS);
+    executeBulk("indexes/marketing.sql", BULK_STATEMENTS);
   }
   } catch (InterruptedException ie) {
     if (null!=oStrLog) oStrLog.append("STOP ON ERROR SET TO ON: SCRIPT INTERRUPTED\n");

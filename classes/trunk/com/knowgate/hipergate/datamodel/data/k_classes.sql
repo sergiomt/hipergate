@@ -69,7 +69,8 @@ INSERT INTO k_classes VALUES(103,'ContactEducation');
 INSERT INTO k_classes VALUES(104,'ContactComputerScience');
 INSERT INTO k_classes VALUES(105,'Admission');
 /** Fin i2e **/
-INSERT INTO k_classes VALUES(200,'Question');
+INSERT INTO k_classes VALUES(150,'Feed');
+INSERT INTO k_classes VALUES(151,'FeedEntry');
 INSERT INTO k_classes VALUES(201,'Choice');
 INSERT INTO k_classes VALUES(202,'MultiChoice');
 INSERT INTO k_classes VALUES(203,'ListChoice');

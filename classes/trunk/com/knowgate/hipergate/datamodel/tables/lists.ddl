@@ -46,7 +46,8 @@ tp_member      SMALLINT     DEFAULT 90,
 gu_company     CHAR(32)     NULL,
 gu_contact     CHAR(32)     NULL,
 id_format      VARCHAR(4)   DEFAULT 'TXT',
-dt_modified    DATETIME NULL,
+dt_modified    DATETIME     NULL,
+tx_info        VARCHAR(254) NULL,
 
 CONSTRAINT f1_x_list_members FOREIGN KEY (gu_list) REFERENCES k_lists(gu_list)
 )
