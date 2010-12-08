@@ -1,5 +1,5 @@
 <%@ page import="java.util.Enumeration,java.io.File,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.acl.PasswordRecord,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="true" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="pwdtemplates.jspf" %><%
+<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="pwdtemplates.jspf" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
   Copyright (C) 2003-2009  Know Gate S.L. All rights reserved.
                            C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -95,6 +95,8 @@
     oPwd.put(DB.gu_user, request.getParameter("gu_writer"));
 
     oPwd.store(oConn, gu_category);
+
+		GlobalCacheClient.expire(request.getParameter("gu_writer")+"["+oPwd.getStringNull(DB.id_pwd,"")+"]");
 
     DBAudit.log(oConn, PasswordRecord.ClassId, sOpCode, id_user, gu_pwd, null, 0, 0, null, null);
 

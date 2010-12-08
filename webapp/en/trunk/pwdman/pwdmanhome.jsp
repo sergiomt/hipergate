@@ -98,6 +98,8 @@
   
   if (null==oConn) return;
   oConn = null;
+
+	sendUsageStats(request, "pwdmanhome");
   
 %><HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
