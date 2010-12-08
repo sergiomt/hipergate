@@ -1,11 +1,43 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*" language="java" session="false" contentType="text/plain;charset=UTF-8" %>
-<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
-<% 
+<%@ page import="java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*" language="java" session="false" contentType="text/plain;charset=UTF-8" %>
+<%@ include file="../methods/dbbind.jsp" %><% 
+/*
+  Copyright (C) 2003-2010  Know Gate S.L. All rights reserved.
+                           C/Oña, 107 1º2 28050 Madrid (Spain)
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. The end-user documentation included with the redistribution,
+     if any, must include the following acknowledgment:
+     "This product includes software parts from hipergate
+     (http://www.hipergate.org/)."
+     Alternately, this acknowledgment may appear in the software itself,
+     if and wherever such third-party acknowledgments normally appear.
+
+  3. The name hipergate must not be used to endorse or promote products
+     derived from this software without prior written permission.
+     Products derived from this software may not be called hipergate,
+     nor may hipergate appear in their name, without prior written
+     permission.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+  You should have received a copy of hipergate License with this code;
+  if not, visit http://www.hipergate.org or mail to info@hipergate.org
+*/
+
+  final String PAGE_NAME = "void_name";
 
   JDCConnection oConn = null;  
     
   try {
-    oConn = GlobalDBBind.getConnection("poner_aqui_el_nombre_(cualquiera)_de_la_conexion");
+    oConn = GlobalDBBind.getConnection(PAGE_NAME);
     
     oConn.setAutoCommit(false);
     
@@ -13,17 +45,12 @@
     
     oConn.commit();
       
-    oConn.close("poner_aqui_el_nombre_(cualquiera)_de_la_conexion");
+    oConn.close(PAGE_NAME);
   }
-  catch (Exception e) {
-    // Si algo peta 
-    if (oConn!=null)
-      if (!oConn.isClosed()) {
-        if (!oConn.getAutoCommit()) oConn.rollback();
-        oConn.close("poner_aqui_el_nombre_(cualquiera)_de_la_conexion");
-      }
+  catch (Exception e) {  
+    disposeConnection(oConn,PAGE_NAME);
     oConn = null;
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=" + e.getClass().getName() + "&desc=" + e.getMessage() + "&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&"+e.getClass().getName()+"=" + e.getMessage() + "&resume=_close"));  
   }
   
   if (null==oConn) return;    

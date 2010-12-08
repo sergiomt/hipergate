@@ -1,7 +1,7 @@
 <%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.example.Example" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%
 /*
-  Copyright (C) 2003-2008  Know Gate S.L. All rights reserved.
+  Copyright (C) 2003-2010  Know Gate S.L. All rights reserved.
                            C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without

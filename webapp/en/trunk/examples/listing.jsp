@@ -35,7 +35,7 @@
   You should have received a copy of hipergate License with this code;
   if not, visit http://www.hipergate.org or mail to info@hipergate.org
 */ 
-  
+
   response.addHeader ("Pragma", "no-cache");
   response.addHeader ("cache-control", "no-store");
   response.setIntHeader("Expires", 0);
@@ -175,13 +175,13 @@
   
   oConn = null;  
 %>
-
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
@@ -300,6 +300,12 @@
 	      function findInstance() {
 	  	  
 	        var frm = document.forms[0];
+
+			    if (hasForbiddenChars(frm.find.value)) {
+			      alert ("The string sought contains invalid characters");
+				    frm.find.focus();
+				    return false;
+			    }
 	  
 	        if (frm.find.value.length>0)
 	          window.location = "instance_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=<%=sOrderBy%>&field=" + getCombo(frm.sel_searched) + "&find=" + escape(frm.find.value) + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&screen_width=" + String(screen.width);
@@ -412,9 +418,10 @@
     	    // 21. List rows
 
 	        String sInstId, sInstNm, sInstNu, sInstDt, sStrip;
+	    
 	        for (int i=0; i<iInstanceCount; i++) {
             sInstId = oInstances.getString(0,i);
-            sInstNm = oInstances.getStringNull(3,i,"");
+            sInstNm = oInstances.getStringHtml(3,i,"");
             if (oInstances.isNull(4,i))
               sInstNu = "";
             else
@@ -427,7 +434,7 @@
             	sInstDt = oInstances.getDateShort(6,i);
 %>            
             <TR HEIGHT="14">
-              <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<A HREF="#" oncontextmenu="jsInstanceId='<%=sInstId%>'; jsInstanceNm='<%=sInstNm.replace((char)39,'´')%>'; return showRightMenu(event);" onclick="modifyInstance('<%=sInstId%>','<%=sInstNm.replace((char)39,'´')%>')" TITLE="Right click to see context menu"><%=sInstNm%></A></TD>
+              <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<A HREF="#" oncontextmenu="jsInstanceId='<%=sInstId%>'; jsInstanceNm='<%=oInstances.getStringNull(3,i,"").replace((char)39,'´')%>'; return showRightMenu(event);" onclick="modifyInstance('<%=sInstId%>','<%=oInstances.getStringNull(3,i,"").replace((char)39,'´')%>')" TITLE="Right click to see context menu"><%=sInstNm%></A></TD>
               <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<%=oInstances.getStringNull(1,i,"")%></TD>
               <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<%=oInstances.getStringNull(1,i,"")%></TD>
               <TD CLASS="strip<% out.write (sStrip); %>" ALIGN="center"><INPUT VALUE="1" TYPE="checkbox" NAME="<% out.write (sInstId); %>"></TD>

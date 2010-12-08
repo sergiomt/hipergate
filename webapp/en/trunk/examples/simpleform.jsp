@@ -1,9 +1,11 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.example.Example" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*
-  Copyright (C) 2003-2010  Know Gate S.L. All rights reserved.
-                           C/Oña, 107 1º2 28050 Madrid (Spain)
+  Form for editing a DBPersist subclass object.
+  
+  Copyright (C) 2003  Know Gate S.L. All rights reserved.
+                      C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -33,11 +35,7 @@
   if not, visit http://www.hipergate.org or mail to info@hipergate.org
 */
 
-  // 01. Verify user credentials
-  
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
-
-  // 02. Avoid page caching
   
   response.addHeader ("Pragma", "no-cache");
   response.addHeader ("cache-control", "no-store");
@@ -45,41 +43,36 @@
 
   // 03. Get parameters
 
-  final String PAGE_NAME = "form_edit";
+  String sSkin = getCookie(request, "skin", "default");
+  String sLanguage = getNavigatorLanguage(request);
   
-  final String sLanguage = getNavigatorLanguage(request);
-  final String sSkin = getCookie(request, "skin", "xp");
-  final int iAppMask = Integer.parseInt(getCookie(request, "appmask", "0"));
-
-  final String id_user = getCookie(request, "userid", "");
-  final String id_domain = request.getParameter("id_domain");
-  final String gu_workarea = request.getParameter("gu_workarea");
-  final String gu_example = request.getParameter("gu_example");
+  String id_domain = request.getParameter("id_domain");
+  String n_domain = request.getParameter("n_domain");
+  String gu_workarea = request.getParameter("gu_workarea");
 
   // 04. Create proper DBPersist subclass
   
-  Example oObj = new Example();
-
-  String sTypeLookUp = "";
+  DBPersist oObj = null;
+  
+  String sStatusLookUp = "", sPaymentLookUp = "";
     
   JDCConnection oConn = null;
     
   try {
 
-    oConn = GlobalDBBind.getConnection(PAGE_NAME);  
-
-		oConn.setReadOnly(true);
-
-    if (null!=gu_example) oObj.load(oConn, new Object[]{gu_example});
-
-    sTypeLookUp  = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, "k_examples_lookup", gu_workarea, "tp_example", sLanguage);
+    oConn = GlobalDBBind.getConnection("...");  
     
-    oConn.close(PAGE_NAME);
+
+    sStatusLookUp  = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_yourtable_lookup, gu_workarea, DB.id_section1, sLanguage);
+    sPaymentLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_yourtable_lookup, gu_workarea, DB.id_section2, sLanguage);
+    
+    oConn.close("...");
   }
-  catch (Exception e) {  
-    disposeConnection(oConn,PAGE_NAME);
+  catch (SQLException e) {  
+    if (oConn!=null)
+      if (!oConn.isClosed()) oConn.close("...");
     oConn = null;
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&"+e.getClass().getName()+"=" + e.getMessage() + "&resume=_close"));  
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=_close"));  
   }
   
   if (null==oConn) return;
@@ -89,43 +82,40 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Example Form</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
     <!--
 
-      // ------------------------------------------------------
-
-      // 07. Generic pop up for lookup values.
-              
-      function lookup(odctrl) {
-	      var frm = window.document.forms[0];
-        
-        switch(parseInt(odctrl)) {
-          case 1:
-            window.open("../common/lookup_f.jsp?nm_table=k_examples_lookup&id_language=" + getUserLanguage() + "&id_section=tp_example&tp_control=2&nm_control=sel_type&nm_coding=tp_example", "", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
-            break;
-          case 2:
-	          // window.open("...
-            break;
-        } // end switch()
-      } // lookup()
-
-      // ------------------------------------------------------
-
-      // 08. Pop up for showing calendar.
+      // 07. Pop up for showing calendar.
 
       function showCalendar(ctrl) {
         var dtnw = new Date();
 
         window.open("../common/calendar.jsp?a=" + (dtnw.getFullYear()) + "&m=" + dtnw.getMonth() + "&c=" + ctrl, "", "toolbar=no,directories=no,menubar=no,resizable=no,width=171,height=195");
       } // showCalendar()
+      
+      // ------------------------------------------------------
+
+      // 08. Generic pop up for lookup values.
+              
+      function lookup(odctrl) {
+	var frm = window.document.forms[0];
+        
+        switch(parseInt(odctrl)) {
+          case 1:
+            window.open("../common/lookup_f.jsp?nm_table=k_table_lookup&id_language=" + getUserLanguage() + "&id_section=tx_field&tp_control=2&nm_control=sel_field&nm_coding=tx_field", "", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
+            break;
+          case 2:
+	    // window.open("...
+            break;
+        } // end switch()
+      } // lookup()
       
       // ------------------------------------------------------
 
@@ -165,66 +155,51 @@
     //-->
   </SCRIPT> 
 </HEAD>
-<BODY TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()">
+<BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()">
   <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Refresh"> Refresh</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
   </DIV></DIV>
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
     <TR><TD CLASS="striptitle"><FONT CLASS="title1">Example Form</FONT></TD></TR>
   </TABLE>  
-  <FORM NAME="" METHOD="post" ACTION="form_store.jsp" onSubmit="return validate()">
+  <FORM NAME="" METHOD="post" ACTION="" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
+    <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
     <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
-    <INPUT TYPE="hidden" NAME="gu_example" VALUE="<%=oObj.getStringNull("gu_example","")%>">
-    <INPUT TYPE="hidden" NAME="gu_writer" VALUE="<%=id_user%>">
 
     <TABLE CLASS="formback">
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
-          <!-- 11. Boolean Field -->
+          <!-- 11. Mandatory Field -->
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Active:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="checkbox" NAME="bo_active" VALUE="1" <% if (oObj.isNull("bo_active")) out.write("CHECKED"); else out.write(oObj.getShort("bo_active")!=0 ? "CHECKED" : ""); %>></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Mandatory Field:</FONT></TD>
+            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="mandatory_field_name" MAXLENGTH="32" SIZE="32" VALUE="<%="hola"%>"></TD>
           </TR>
-          <!-- 12. Mandatory Field -->
+          <!-- 12. Optional Field -->
           <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Name:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="nm_example" MAXLENGTH="50" SIZE="40" VALUE="<%=oObj.getStringHtml("nm_example","")%>"></TD>
+            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Optional Field:</FONT></TD>
+            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="optional_field_name" MAXLENGTH="32" SIZE="32" VALUE="<%="hola"%>"></TD>
           </TR>
-          <!-- 13. Optional Fields -->
-          <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Integer:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="nu_example" MAXLENGTH="9" SIZE="9" VALUE="<% if (!oObj.isNull("nu_example")) out.write(String.valueOf(oObj.getInt("nu_example"))); %>" onkeypress="return acceptOnlyNumbers();"></TD>
-          </TR>
-          <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Float:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="pr_example" MAXLENGTH="9" SIZE="9" VALUE="<% if (!oObj.isNull("pr_example")) out.write(String.valueOf(oObj.getFloat("pr_example"))); %>"></TD>
-          </TR>
-          <!-- 14. Lookup Field -->
+          <!-- 13. Lookup Field -->
           <TR>
             <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Lookup Field:</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
-              <INPUT TYPE="hidden" NAME="tp_example">
-              <SELECT NAME="sel_type"><OPTION VALUE=""></OPTION><%=sTypeLookUp%></SELECT>&nbsp;
-              <A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Types List"></A>
+              <INPUT TYPE="hidden" NAME="id_status">
+              <SELECT NAME="sel_status"><OPTION VALUE=""></OPTION><%=sStatusLookUp%></SELECT>&nbsp;
+              <A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Status List"></A>
             </TD>
-          </TR>
-          <!-- 15. Date Field -->
+          </TR>          
+          <!-- 14. Date Field -->
           <TR>
             <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Date:</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
-              <INPUT TYPE="text" NAME="dt_example" MAXLENGTH="10" SIZE="10" VALUE="<% out.write(oObj.isNull("dt_example") ? "" : oObj.getDateFormated("dt_example","yyyy-MM-dd")); %>">
-              <A HREF="javascript:showCalendar('dt_example')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="View Calendar"></A>
+              <INPUT TYPE="text" NAME="dt_xxxx" MAXLENGTH="10" SIZE="10" VALUE="<% /* out.write(oObj.get(DB.dt_xxxx)!=null ? oObj.getDateFormated(DB.dt_birth,"yyyy-MM-dd") : ""); */ %>">
+              <A HREF="javascript:showCalendar('dt_xxxx')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="View Calendar"></A>
             </TD>
           </TR>          
-          <!-- 16 Long Text Field -->
-          <TR>
-            <TD ALIGN="right" WIDTH="90"><FONT CLASS="formstrong">Description:</FONT></TD>
-            <TD ALIGN="left" WIDTH="370"><TEXTAREA NAME="de_example"><%=oObj.getStringHtml("de_example","")%></TEXTAREA></TD>
-          </TR>
           <TR>
             <TD COLSPAN="2"><HR></TD>
           </TR>
