@@ -34,6 +34,8 @@ package com.knowgate.scheduler.jobs;
 import java.io.File;
 import java.io.IOException;
 
+import java.net.MalformedURLException;
+
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -101,7 +103,7 @@ import com.oreilly.servlet.MailMessage;
 /**
  * <p>Send mime mail message from the outbox of an account to a recipients list</p>
  * @author Sergio Montoro Ten
- * @version 5.5
+ * @version 6.0
  */
 
 public class MimeSender extends Job {
@@ -110,6 +112,7 @@ public class MimeSender extends Job {
   private int iDomainId;
   private String sBody;
   private boolean bPersonalized;
+  private Boolean bHasCSSStyles;
   private Boolean oBeforeSend;
   private DBMimeMessage oDraft;
   private Properties oHeaders;
@@ -119,6 +122,10 @@ public class MimeSender extends Job {
   private String sProfile;
   private String sMBoxDir;
   private ACLUser oUser;
+  private Perl5Matcher oMatcher;
+  private Perl5Compiler oCompiler;
+  private Pattern oLinkCSS;
+  private HashMap<String,String> oLinksSrc;
 
   // ---------------------------------------------------------------------------
 
@@ -130,6 +137,11 @@ public class MimeSender extends Job {
     aBlackList = null;
     oUser = new ACLUser();
     oBeforeSend = null;
+    bHasCSSStyles = null;
+    oMatcher = null;
+    oCompiler= null;
+    oLinkCSS=null;
+    oLinksSrc=new HashMap<String,String>(13);
   }
 
   // ---------------------------------------------------------------------------
@@ -166,7 +178,67 @@ public class MimeSender extends Job {
 
 	return sRBody;
   } // redirectExternalLinks
-  
+
+  // ---------------------------------------------------------------------------
+
+  private String inlineStyles(String sSBody) {
+    String sInlinedBody;
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin MimeSender.inlineStyles()");
+      DebugFile.incIdent();
+    }
+    
+    if (null==oMatcher) oMatcher = new Perl5Matcher();
+    if (null==oCompiler) oCompiler = new Perl5Compiler();
+	try {
+      if (DebugFile.trace) DebugFile.writeln("Matching <LINK> Regular Expression <LINK\\s+(?:rel\\s*=\\s*\"stylesheet\"\\s+)?(?:type\\s*=\\s*\"text/css\"\\s+)?(?:rel\\s*=\\s*\"stylesheet\"\\s+)?href\\s*=\\s*[\"']{1}((?:[\\x20!#$%&]|[\\x28-~])+)[\"']{1}\\s*(?:rel\\s*=\\s*\"stylesheet\"\\s+)?(?:type\\s*=\\s*\"text/css\"\\s+)?(?:rel\\s*=\\s*\"stylesheet\"\\s+)?\\s*/?>(?:</LINK>)?");
+	  if (null==oLinkCSS) oLinkCSS = oCompiler.compile("<LINK\\s+(?:rel\\s*=\\s*\"stylesheet\"\\s+)?(?:type\\s*=\\s*\"text/css\"\\s+)?(?:rel\\s*=\\s*\"stylesheet\"\\s+)?href\\s*=\\s*[\"']{1}((?:[\\x20!#$%&]|[\\x28-~])+)[\"']{1}\\s*(?:rel\\s*=\\s*\"stylesheet\"\\s+)?(?:type\\s*=\\s*\"text/css\"\\s+)?(?:rel\\s*=\\s*\"stylesheet\"\\s+)?\\s*/?>(?:</LINK>)?",Perl5Compiler.CASE_INSENSITIVE_MASK);
+	} catch (MalformedPatternException mpe) {
+	  if (DebugFile.trace) DebugFile.writeln("MalformedPatternException "+mpe.getMessage());
+	}
+
+    if (oMatcher.contains(sSBody, oLinkCSS)) {
+      String sLinkCSS = oMatcher.getMatch().group(0);
+	  if (DebugFile.trace) DebugFile.writeln("Matched a CSS <link> regular expression "+sLinkCSS);
+      String sLinkHref = oMatcher.getMatch().group(1);
+      if (!oLinksSrc.containsKey(sLinkHref)) {
+        try {
+          FileSystem oFls = new FileSystem();
+          String sLinkSrc = oFls.readfilestr(sLinkHref,"ISO8859_1");
+          if (null!=sLinkSrc) {
+            oLinksSrc.put(sLinkHref,"<style type=\"text/css\">\n"+sLinkSrc+"\n</style>\n");
+            if (sLinkSrc.length()>0) {
+              sInlinedBody = Util.substitute(oMatcher, oLinkCSS, new Perl5Substitution(oLinksSrc.get(sLinkHref), Perl5Substitution.INTERPOLATE_ALL), sSBody, Util.SUBSTITUTE_ALL);
+            } else {
+          	  sInlinedBody = sSBody;
+            }
+          } else {
+            oLinksSrc.put(sLinkHref,"");
+            sInlinedBody = sSBody;
+          }
+        } catch (Exception xcpt) {
+    	  if (DebugFile.trace) DebugFile.writeln(xcpt.getClass().getName()+" "+xcpt.getMessage());
+          sInlinedBody = sSBody;
+        }
+      } else if (oLinksSrc.get(sLinkHref).length()>0) {
+        sInlinedBody = Util.substitute(oMatcher, oLinkCSS, new Perl5Substitution(oLinksSrc.get(sLinkHref), Perl5Substitution.INTERPOLATE_ALL), sSBody, Util.SUBSTITUTE_ALL);
+      } else {
+      	sInlinedBody = sSBody;
+      }
+    } else {
+	  if (DebugFile.trace) DebugFile.writeln("Did not find any CSS <link>");
+      sInlinedBody = sSBody;
+    }
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End MimeSender.inlineStyles()");
+    }
+
+    return sInlinedBody;
+  } // inlineStyles
+    
   // ---------------------------------------------------------------------------
 
   private static String personalizeBody(String sFBody, MimeSender oJob, Atom oAtm) throws NullPointerException {
@@ -174,7 +246,7 @@ public class MimeSender extends Job {
     PreparedStatement oStmt = null;
     ResultSet oRSet = null;
     String sPersonalizedBody;
-    String sNm, sSn, sSl, sCo, sEm, sCp, sCn;
+    String sNm, sSn, sSl, sCo, sEm, sCp, sCn, sIn;
 
     if (DebugFile.trace) {
       DebugFile.writeln("Begin MimeSender.personalizeBody([Atom])");
@@ -193,9 +265,9 @@ public class MimeSender extends Job {
     try {
       oConn = oJob.getDataBaseBind().getConnection("MimeSender", true);
       if (DebugFile.trace) {
-        DebugFile.writeln("Connection.prepareStatement(SELECT "+DB.tx_name+","+DB.tx_surname+","+DB.tx_salutation+","+DB.nm_commercial+" FROM "+DB.k_member_address+" WHERE "+DB.gu_workarea+"='"+oJob.getStringNull(DB.gu_workarea,"null")+"' AND "+DB.tx_email+"='"+sEm+"')");
+        DebugFile.writeln("Connection.prepareStatement(SELECT "+DB.tx_name+","+DB.tx_surname+","+DB.tx_salutation+","+DB.nm_commercial+","+DB.gu_company+","+DB.gu_contact+","+DB.url_addr+" FROM "+DB.k_member_address+" WHERE "+DB.gu_workarea+"='"+oJob.getStringNull(DB.gu_workarea,"null")+"' AND "+DB.tx_email+"='"+sEm+"')");
       }
-      oStmt = oConn.prepareStatement("SELECT "+DB.tx_name+","+DB.tx_surname+","+DB.tx_salutation+","+DB.nm_commercial+","+DB.gu_company+","+DB.gu_contact+" FROM "+DB.k_member_address+" WHERE "+DB.gu_workarea+"='"+oJob.getString(DB.gu_workarea)+"' AND "+DB.tx_email+"=?",
+      oStmt = oConn.prepareStatement("SELECT "+DB.tx_name+","+DB.tx_surname+","+DB.tx_salutation+","+DB.nm_commercial+","+DB.gu_company+","+DB.gu_contact+","+DB.url_addr+" FROM "+DB.k_member_address+" WHERE "+DB.gu_workarea+"='"+oJob.getString(DB.gu_workarea)+"' AND "+DB.tx_email+"=?",
                                      ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
       oStmt.setString(1, sEm);
       oRSet = oStmt.executeQuery();
@@ -206,8 +278,9 @@ public class MimeSender extends Job {
         sCo = oRSet.getString(4); if (oRSet.wasNull()) sCo = "";
         sCp = oRSet.getString(5); if (oRSet.wasNull()) sCp = "";
         sCn = oRSet.getString(6); if (oRSet.wasNull()) sCn = "";
+        sIn = oRSet.getString(7); if (oRSet.wasNull()) sIn = "";
       } else {
-        sCn=sCp=sNm=sSn=sSl=sCo="";
+        sIn=sCn=sCp=sNm=sSn=sSl=sCo="";
       }
       oRSet.close();
       oRSet=null;
@@ -220,10 +293,11 @@ public class MimeSender extends Job {
       FastStreamReplacer oRplcr = new FastStreamReplacer(sFBody.length()+256);
       try {
         sPersonalizedBody = oRplcr.replace(new StringBuffer(sFBody), FastStreamReplacer.createMap(
-                             new String[]{"Data.Name","Data.Surname","Data.Salutation","Data.Legal_Name","Address.EMail","Job.Guid","Job.Atom","Data.Company_Guid","Data.Contact_Guid",
-                                          "Datos.Nombre","Datos.Apellidos","Datos.Saludo","Datos.Razon_Social","Direccion.EMail","Lote.Guid","Lote.Atomo","Datos.Guid_Empresa","Datos.Guid_Contacto"},
-                             new String[]{sNm,sSn,sSl,sCo,sEm,oJob.getString(DB.gu_job),String.valueOf(oAtm.getInt(DB.pg_atom)),sCp,sCn,
-                                          sNm,sSn,sSl,sCo,sEm,oJob.getString(DB.gu_job),String.valueOf(oAtm.getInt(DB.pg_atom)),sCp,sCn}));
+                             new String[]{"Data.Name","Data.Surname","Data.Salutation","Data.Legal_Name","Address.EMail","Job.Guid","Job.Atom","Data.Company_Guid","Data.Contact_Guid","Address.URL",
+                                          "Datos.Nombre","Datos.Apellidos","Datos.Saludo","Datos.Razon_Social","Direccion.EMail","Lote.Guid","Lote.Atomo","Datos.Guid_Empresa","Datos.Guid_Contacto","Direccion.URL"},
+
+                             new String[]{sNm,sSn,sSl,sCo,sEm,oJob.getString(DB.gu_job),String.valueOf(oAtm.getInt(DB.pg_atom)),sCp,sCn,sIn,
+                                          sNm,sSn,sSl,sCo,sEm,oJob.getString(DB.gu_job),String.valueOf(oAtm.getInt(DB.pg_atom)),sCp,sCn,sIn}));
       } catch (IOException ioe) {
         if (DebugFile.trace) DebugFile.writeln("IOException " + ioe.getMessage() + " sending message "+oJob.getParameter("message") + " to " + sEm);
         oJob.log("IOException " + ioe.getMessage() + " sending message "+oJob.getParameter("message") + " to " + sEm);
@@ -580,13 +654,26 @@ public class MimeSender extends Job {
 	  if (sEncoding==null) sEncoding = "UTF-8";
 	  
 	  String sPBody;
-      	  	  
-      if (bPersonalized) {
-        sPBody = personalizeBody(sBody, this, oAtm);
-      }
-      else {
-      	sPBody = sBody;      	
-      }
+
+	  if (bHasCSSStyles==null) {
+	    bHasCSSStyles = new Boolean (!inlineStyles(sBody).equals(sBody));	    	
+	  }
+	  
+	  if (bHasCSSStyles.booleanValue()) {
+        if (DebugFile.trace)
+          DebugFile.writeln("Message body has linked CSS styles that have been inlined inside the HTML");
+        if (bPersonalized)
+          sPBody = personalizeBody(inlineStyles(sBody), this, oAtm);
+        else
+      	  sPBody = inlineStyles(sBody);
+	  } else {
+        if (DebugFile.trace)
+          DebugFile.writeln("Message body does not have linked CSS styles");
+        if (bPersonalized)
+          sPBody = personalizeBody(sBody, this, oAtm);
+        else
+      	  sPBody = sBody;
+	  }
 
 	  String sClickThrough = getParameter("clickthrough");
 	  if (sClickThrough==null) sClickThrough = No;

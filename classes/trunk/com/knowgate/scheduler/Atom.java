@@ -72,6 +72,7 @@ public class Atom extends DBPersist {
    * <tr><td>tx_surname</td><td>Data.Surname</td><td>Datos.Apellidos</td></tr>
    * <tr><td>tx_salutation</td><td>Data.Salutation</td><td>Datos.Saludo</td></tr>
    * <tr><td>nm_commercial</td><td>Data.Legal_Name</td><td>Datos.Razon_Social</td></tr>
+   * <tr><td>url_addr</td><td>Address.URL</td><td>Direccion.URL</td></tr>
    * <tr><td>tx_email</td><td>Address.EMail</td><td>Direccion.EMail</td></tr>
    * <tr><td>tp_street</td><td>Address.Street_Type</td><td>Direccion.Tipo_Via</td></tr>
    * <tr><td>nm_street</td><td>Address.Street_Name</td><td>Direccion.Nombre_Via</td></tr>
@@ -214,6 +215,12 @@ public class Atom extends DBPersist {
           put(DB.mov_phone, oRow.getString(c));
           put("Address.Mobile_Phone", oRow.getString(c));
           put("Direccion.Telf_Movil", oRow.getString(c));
+        }
+        else if (sCol.equalsIgnoreCase(DB.url_addr)) {
+
+          put(DB.url_addr, oRow.getString(c));
+          put("Address.URL", oRow.getString(c));
+          put("Direccion.URL", oRow.getString(c));
         }
         else if (sCol.equalsIgnoreCase(DB.tx_parameters))
 
