@@ -4,7 +4,7 @@
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <TITLE>hipergate :: [~Alta de asistente~]</TITLE>
+    <TITLE>hipergate :: Add Attendant</TITLE>
     <SCRIPT LANGUAGE="javascript" SRC="../javascript/getparam.js"></SCRIPT>
   </HEAD>
   <FRAMESET NAME="msgsframe" ROWS="*,1">
@@ -13,7 +13,7 @@
   </FRAMESET>
   <NOFRAMES>
     <BODY>
-      <P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
+      <P>This page uses frames but your browser does not support them</P>
     </BODY>
   </NOFRAMES>
 </HTML>

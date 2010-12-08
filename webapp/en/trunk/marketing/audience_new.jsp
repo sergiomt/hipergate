@@ -90,7 +90,7 @@
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: [~Agregar Asistente~]</TITLE>
+  <TITLE>hipergate :: Add Attendant</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
@@ -146,19 +146,19 @@
         var frm = window.document.forms[0];
 
 	      if (frm.tx_name.value.length<3) {
-	        alert ("[~El nombre del asistente es obligatorio~]");
+	        alert ("Attendant name is required");
 	        frm.tx_name.focus();
 	        return false;
 	      }
 	      
 	      if (frm.tx_surname.value.length<3) {
-	        alert ("[~El apellido del asistente es obligatorio~]");
+	        alert ("Attendant surname is required");
 	        frm.tx_surname.focus();
 	        return false;
 	      }
         
 	      if (!check_email(frm.tx_email.value) && frm.tx_email.value.length>0) {
-	        alert ("[~El e-mail no es válido~]");
+	        alert ("The e-mail is not valid");
 	        frm.tx_email.focus();
 	        return false;
 	      }
@@ -166,19 +166,19 @@
 				frm.tx_email.value = frm.tx_email.value.toLowerCase();
 
 	      if (!isDate(frm.dt_paid.value, "d") && frm.dt_paid.value.length>0) {
-	        alert ("[~La fecha de pago no es válida~]");
+	        alert ("The payment date is not valid");
 	        frm.dt_payment.focus();
 	        return false;
 	      }
 
 	      if (!isDate(frm.dt_confirmed.value, "d") && frm.dt_confirmed.value.length>0) {
-	        alert ("[~La fecha de confirmación no es válida~]");
+	        alert ("The confirmation date is not valid");
 	        frm.dt_payment.focus();
 	        return false;
 	      }
 
 	      if (!isFloatValue(frm.im_paid.value) && frm.im_paid.value.length>0) {
-	        alert ("[~El importe no es válido~]");
+	        alert ("The amount is not valid");
 	        frm.im_paid.focus();
 	        return false;
 	      }
@@ -199,11 +199,11 @@
 </HEAD>
 <BODY TOPMARGIN="8" MARGINHEIGHT="8">
   <DIV class="cxMnu1" style="width:100px"><DIV class="cxMnu2">
-    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> [~Atras~]</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
   </DIV></DIV>
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Alta de asistente~]</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">New Attendant</FONT></TD></TR>
   </TABLE>  
   <FORM TARGET="_top" METHOD="post" ACTION="audience_store.jsp" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
@@ -218,77 +218,77 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right" ><FONT CLASS="formstrong">[~Nombre~]</FONT></TD>
+            <TD ALIGN="right" ><FONT CLASS="formstrong">Name</FONT></TD>
             <TD ALIGN="left" ><INPUT TYPE="text" NAME="tx_name" MAXLENGTH="50" SIZE="50" onchange="document.forms[0].gu_contact.value=''"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" ><FONT CLASS="formstrong">[~Apellidos~]</FONT></TD>
+            <TD ALIGN="right" ><FONT CLASS="formstrong">Surname</FONT></TD>
             <TD ALIGN="left" ><INPUT TYPE="text" NAME="tx_surname" MAXLENGTH="50" SIZE="50" onchange="document.forms[0].gu_contact.value=''"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" ><FONT CLASS="formstrong">[~e-mail~]</FONT></TD>
+            <TD ALIGN="right" ><FONT CLASS="formstrong">e-mail</FONT></TD>
             <TD ALIGN="left" ><INPUT TYPE="text" STYLE="text-transform:lowercase" NAME="tx_email" MAXLENGTH="100" SIZE="50" onchange="document.forms[0].gu_address.value=''"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" ><FONT CLASS="formstrong">[~Tel&eacute;fono~]</FONT></TD>
+            <TD ALIGN="right" ><FONT CLASS="formstrong">Telephone</FONT></TD>
             <TD ALIGN="left" ><INPUT TYPE="text" NAME="work_phone" MAXLENGTH="16" SIZE="20"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" ><FONT CLASS="formstrong">[~M&oacute;vil~]</FONT></TD>
+            <TD ALIGN="right" ><FONT CLASS="formstrong">Mobile</FONT></TD>
             <TD ALIGN="left" ><INPUT TYPE="text" NAME="mov_phone" MAXLENGTH="16" SIZE="20"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" ><FONT CLASS="formstrong">[~Documento de Identificaci&oacute;n~]</FONT></TD>
+            <TD ALIGN="right" ><FONT CLASS="formstrong">Id. Doc.</FONT></TD>
             <TD ALIGN="left" ><INPUT TYPE="text" NAME="sn_passport" MAXLENGTH="16" SIZE="20" onchange="document.forms[0].gu_contact.value=''"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" ><FONT CLASS="formstrong">[~Compa&ntilde;&iacute;a~]</FONT></TD>
+            <TD ALIGN="right" ><FONT CLASS="formstrong">Company</FONT></TD>
             <TD ALIGN="left" ><INPUT TYPE="text" NAME="nm_legal" STYLE="text-transform:uppercase" MAXLENGTH="70" SIZE="50" VALUE="" onchange="document.forms[0].gu_company.value=''"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right"  CLASS="formplain">[~Vendedor~]</TD>
+            <TD ALIGN="right"  CLASS="formplain">Salesman</TD>
             <TD ALIGN="left" ><SELECT NAME="gu_sales_man" CLASS="combomini"><OPTION VALUE=""></OPTION><% for (int s=0; s<iSalesMen; s++) out.write ("<OPTION VALUE=\""+oSalesMen.getString(0,s)+"\">"+oSalesMen.getStringNull(1,s,"")+" "+oSalesMen.getStringNull(2,s,"")+" "+oSalesMen.getStringNull(3,s,"")+"</OPTION>"); %></SELECT></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" ><FONT CLASS="formplain">[~Origen~]</FONT></TD>
+            <TD ALIGN="right" ><FONT CLASS="formplain">Origin</FONT></TD>
             <TD ALIGN="left" >
               <INPUT TYPE="hidden" NAME="tp_origin">
               <SELECT NAME="sel_origin"><OPTION VALUE=""></OPTION><%=sOriginLookUp%></SELECT>&nbsp;
-              <A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Crear Origen~]"></A>
+              <A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Create Origin"></A>
             </TD>
           </TR>
           <TR>
             <TD ALIGN="right" ><INPUT TYPE="checkbox" NAME="bo_allows_ads" VALUE="1" CHECKED></TD>
-            <TD ALIGN="left"  CLASS="formplain">[~Autoriza comunicaciones comerciales~]</TD>
+            <TD ALIGN="left"  CLASS="formplain">Allows commercial messages</TD>
           </TR>
           <TR>
-            <TD ALIGN="right" CLASS="formplain" VALIGN="top">[~Pago~]</TD>
+            <TD ALIGN="right" CLASS="formplain" VALIGN="top">Payment</TD>
             <TD ALIGN="left" CLASS="formplain">
             	<TABLE CLASS="formback"><TR><TD CLASS="formplain">
-            	<INPUT TYPE="radio" NAME="bo_paid" VALUE="1" onclick="showLayer('payment_info'); if (getCheckedValue(document.forms[0].bo_confirmed)!='1') setCheckedValue(document.forms[0].bo_confirmed,'1')">&nbsp;[~Pagado~]&nbsp;&nbsp;&nbsp;<INPUT TYPE="radio" NAME="bo_paid" VALUE="0" onclick="hideLayer('payment_info'); document.forms[0].im_paid.value=document.forms[0].dt_paid.value=''" CHECKED>&nbsp;[~No Pagado~]
+            	<INPUT TYPE="radio" NAME="bo_paid" VALUE="1" onclick="showLayer('payment_info'); if (getCheckedValue(document.forms[0].bo_confirmed)!='1') setCheckedValue(document.forms[0].bo_confirmed,'1')">&nbsp;Paid&nbsp;&nbsp;&nbsp;<INPUT TYPE="radio" NAME="bo_paid" VALUE="0" onclick="hideLayer('payment_info'); document.forms[0].im_paid.value=document.forms[0].dt_paid.value=''" CHECKED>&nbsp;Not paid
             	<BR>
-            	<DIV ID="payment_info" STYLE="visibility:hidden">[~Importe pagado~]&nbsp;<INPUT TYPE="text" NAME="im_paid" MAXLENGTH="10" SIZE="10">&nbsp;&nbsp;&nbsp;
-            	[~Fecha de pago~]&nbsp;<INPUT TYPE="text" NAME="dt_paid" MAXLENGTH="10" SIZE="10">
-              <A HREF="javascript:showCalendar('dt_paid ')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Mostrar Calendario~]"></A></DIV></TD>
+            	<DIV ID="payment_info" STYLE="visibility:hidden">Paid amount&nbsp;<INPUT TYPE="text" NAME="im_paid" MAXLENGTH="10" SIZE="10">&nbsp;&nbsp;&nbsp;
+            	Payment date&nbsp;<INPUT TYPE="text" NAME="dt_paid" MAXLENGTH="10" SIZE="10">
+              <A HREF="javascript:showCalendar('dt_paid ')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A></DIV></TD>
               </TD></TR></TABLE>
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" CLASS="formplain" VALIGN="top">[~Confirmaci&oacute;n de asistencia~]</TD>
+            <TD ALIGN="right" CLASS="formplain" VALIGN="top">Attendance conformation</TD>
             <TD ALIGN="left" CLASS="formplain">
             	<TABLE CLASS="formback"><TR><TD CLASS="formplain">
-            	  <INPUT TYPE="radio" NAME="bo_confirmed" VALUE="1" onclick="if (document.forms[0].dt_confirmed.value.length==0) document.forms[0].dt_confirmed.value=dateToString(new Date(), 'd')">&nbsp;[~Confirmado~]&nbsp;&nbsp;&nbsp;<INPUT TYPE="radio" NAME="bo_confirmed" VALUE="0" CHECKED>&nbsp;[~No Confirmado~]
+            	  <INPUT TYPE="radio" NAME="bo_confirmed" VALUE="1" onclick="if (document.forms[0].dt_confirmed.value.length==0) document.forms[0].dt_confirmed.value=dateToString(new Date(), 'd')">&nbsp;Confirmed&nbsp;&nbsp;&nbsp;<INPUT TYPE="radio" NAME="bo_confirmed" VALUE="0" CHECKED>&nbsp;Not confirmed
             	  <BR>
-            	  [~Fecha de confirmaci&oacute;n~]&nbsp;<INPUT TYPE="text" NAME="dt_confirmed" MAXLENGTH="10" SIZE="10">
-                <A HREF="javascript:showCalendar('dt_confirmed')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Mostrar Calendario~]"></A>
+            	  Confirmation date&nbsp;<INPUT TYPE="text" NAME="dt_confirmed" MAXLENGTH="10" SIZE="10">
+                <A HREF="javascript:showCalendar('dt_confirmed')"><IMG SRC="../images/images/datetime16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Show Calendar"></A>
               </TD></TR></TABLE>
           </TR>
           <TR>
-            <TD ALIGN="right" ><FONT CLASS="formplain">[~Asistencia real~]</FONT></TD>
-            <TD ALIGN="left"  CLASS="formplain"><INPUT TYPE="radio" NAME="bo_went" VALUE="1">&nbsp;[~Asisti&oacute;~]&nbsp;&nbsp;&nbsp;<INPUT TYPE="radio" NAME="bo_went" VALUE="0">&nbsp;[~No Asisti&oacute;~]</TD>
+            <TD ALIGN="right" ><FONT CLASS="formplain">Actually attended</FONT></TD>
+            <TD ALIGN="left"  CLASS="formplain"><INPUT TYPE="radio" NAME="bo_went" VALUE="1">&nbsp;Attended&nbsp;&nbsp;&nbsp;<INPUT TYPE="radio" NAME="bo_went" VALUE="0">&nbsp;Did not attended</TD>
           </TR>
           <TR>
-            <TD ALIGN="right" FONT CLASS="formplain" VALIGN="top">[~Informaci&oacute;n adicional~]&nbsp;<A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT=""></A></TD>
+            <TD ALIGN="right" FONT CLASS="formplain" VALIGN="top">Additional information&nbsp;<A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT=""></A></TD>
             <TD ALIGN="left" CLASS="formplain">
             	<INPUT TYPE="hidden" NAME="id_data1"><INPUT TYPE="hidden" NAME="de_data1">
             	<SELECT NAME="sel_data1"><OPTION VALUE=""></OPTION><%=sDataLookUp%></SELECT>&nbsp;<INPUT TYPE="text" NAME="tx_data1" MAXLENGTH="100" SIZE="20">
@@ -305,8 +305,8 @@
           </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.history.back()">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.history.back()">
     	      <BR><BR>
     	    </TD>
     	  </TR>            
