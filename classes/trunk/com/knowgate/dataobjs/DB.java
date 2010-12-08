@@ -201,6 +201,8 @@ public final class DB {
   public static final String k_x_activity_audience = "k_x_activity_audience";
   public static final String k_activity_audience_lookup = "k_activity_audience_lookup";
   public static final String k_activity_attachs = "k_activity_attachs";
+  public static final String k_syndfeeds = "k_syndfeeds";
+  public static final String k_syndentries = "k_syndentries";
 
   public static final String k_microsites = "k_microsites";
   public static final String k_pagesets = "k_pagesets";
@@ -487,6 +489,7 @@ public final class DB {
   public static final String tp_member = "tp_member";
   public static final String gu_member = "gu_member";
   public static final String id_format = "id_format";
+  public static final String tx_info = "tx_info";
 
   // k_categories
   public static final String gu_category = "gu_category";
@@ -1254,6 +1257,14 @@ public final class DB {
   public static final String id_drop_cause = "id_drop_cause";
   /**fin i2e**/
 
-
+  // k_syndentries
+  public static final String nu_influence = "nu_influence";
+  public static final String gu_feed = "gu_feed";
+  public static final String tx_query = "tx_query";
+  public static final String uri_entry = "uri_entry";
+  public static final String tl_entry = "tl_entry";
+  public static final String de_entry = "de_entry";
+  public static final String bin_entry = "bin_entry";
+  
   
 }

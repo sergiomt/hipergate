@@ -36,6 +36,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.FileNotFoundException;
 import java.io.File;
+import java.io.ObjectOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 import java.sql.SQLException;
 import java.sql.CallableStatement;
@@ -1113,9 +1116,43 @@ public class DBPersist implements Map,Serializable {
    */
 
   public void put(String sKey, Object oObj) throws NullPointerException {
+
     if (sKey==null)
       throw new NullPointerException("DBPersist.put(String,Object) field name cannot be null");
-    AllVals.put(sKey, oObj);
+
+	if (null==oObj) {
+      AllVals.put(sKey, null);
+	} else {
+      DBColumn oCol = getTable().getColumnByName(sKey);
+      if (oCol!=null) {
+	    if (oCol.getSqlType()==java.sql.Types.BINARY || oCol.getSqlType()==java.sql.Types.VARBINARY || oCol.getSqlType()==java.sql.Types.LONGVARBINARY) {
+	      Class[] aInts = oObj.getClass().getInterfaces();
+	      if (null==aInts) {
+            AllVals.put(sKey, oObj);
+	      } else {
+	      	boolean bIsSerializable = false;
+	      	for (int i=0; i<aInts.length && !bIsSerializable; i++)
+	      	  bIsSerializable |= aInts[i].getName().equals("java.io.Serializable");
+	      	if (bIsSerializable) {
+	      	  try {
+                ByteArrayOutputStream oBOut = new ByteArrayOutputStream();
+			    ObjectOutputStream oOOut = new ObjectOutputStream(oBOut);
+			    oOOut.writeObject(oObj);
+			    put(sKey, oBOut.toByteArray());
+			    oOOut.close();
+			    oBOut.close();              
+	      	  } catch (IOException neverthrown) { }
+	      	} else {
+              AllVals.put(sKey, oObj);
+	      	}
+	      }
+	    } else {
+          AllVals.put(sKey, oObj);
+	    }
+      } else {
+        AllVals.put(sKey, oObj);
+      }
+	}
   }
 
   /**
@@ -1138,7 +1175,39 @@ public class DBPersist implements Map,Serializable {
     } else {
       oPrevious = null;
     }
-    AllVals.put(sKey, oObj);
+	if (null==oObj) {
+      AllVals.put(sKey, null);
+	} else {
+      DBColumn oCol = getTable().getColumnByName(sKey.toString());
+      if (oCol!=null) {
+	    if (oCol.getSqlType()==java.sql.Types.BINARY || oCol.getSqlType()==java.sql.Types.VARBINARY || oCol.getSqlType()==java.sql.Types.LONGVARBINARY) {
+	      Class[] aInts = oObj.getClass().getInterfaces();
+	      if (null==aInts) {
+            AllVals.put(sKey, oObj);
+	      } else {
+	      	boolean bIsSerializable = false;
+	      	for (int i=0; i<aInts.length && !bIsSerializable; i++)
+	      	  bIsSerializable |= aInts[i].getName().equals("java.io.Serializable");
+	      	if (bIsSerializable) {
+	      	  try {
+                ByteArrayOutputStream oBOut = new ByteArrayOutputStream();
+			    ObjectOutputStream oOOut = new ObjectOutputStream(oBOut);
+			    oOOut.writeObject(oObj);
+			    put(sKey, oBOut.toByteArray());
+			    oOOut.close();
+			    oBOut.close();              
+	      	  } catch (IOException neverthrown) { }
+	      	} else {
+              AllVals.put(sKey, oObj);
+	      	}
+	      }
+	    } else {
+          AllVals.put(sKey, oObj);
+	    }
+      } else {
+        AllVals.put(sKey, oObj);
+      }
+	}
     return oPrevious;
   }
 

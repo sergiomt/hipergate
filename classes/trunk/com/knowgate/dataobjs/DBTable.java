@@ -36,7 +36,10 @@ import java.io.IOException;
 import java.io.File;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.StringBufferInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
 import java.io.FileInputStream;
 
 import java.sql.SQLException;
@@ -490,8 +493,26 @@ public class DBTable {
                   oStream = new ByteArrayInputStream((byte[]) AllValues.get(sCol));
                 else if (sClassName.equals("[C"))
                   oStream = new StringBufferInputStream(new String((char[]) AllValues.get(sCol)));
-                else
-                  throw new SQLException ("Invalid object binding for column " + sCol);
+                else {
+                  Class[] aInts = AllValues.get(sCol).getClass().getInterfaces();
+                  if (aInts==null) {
+                    throw new SQLException ("Invalid object binding for column " + sCol);
+                  } else {
+                  	boolean bSerializable = false;
+                  	for (int i=0; i<aInts.length &!bSerializable; i++)
+                  	  bSerializable |= aInts[i].getName().equals("java.io.Serializable");
+                    if (bSerializable) {
+                      ByteArrayOutputStream oBOut = new ByteArrayOutputStream();
+                      ObjectOutputStream oOOut = new ObjectOutputStream(oBOut);
+                      oOOut.writeObject(AllValues.get(sCol));
+                      oOOut.close();
+                      ByteArrayInputStream oBin = new ByteArrayInputStream(oBOut.toByteArray());
+                      oStream = new ObjectInputStream(oBin);	                  
+                    } else {
+                      throw new SQLException ("Invalid object binding for column " + sCol);                      
+                    }
+                  } // fi
+                }
                 oStreams.addLast(oStream);
                 oStmt.setBinaryStream(c++, oStream, ((Long)BinaryLengths.get(sCol)).intValue());
               }
@@ -569,8 +590,26 @@ public class DBTable {
                   oStream = new ByteArrayInputStream((byte[]) AllValues.get(sCol));
                 else if (sClassName.equals("[C"))
                   oStream = new StringBufferInputStream(new String((char[]) AllValues.get(sCol)));
-                else
-                  throw new SQLException ("Invalid object binding for column " + sCol);
+                else {
+                  Class[] aInts = AllValues.get(sCol).getClass().getInterfaces();
+                  if (aInts==null) {
+                    throw new SQLException ("Invalid object binding for column " + sCol);
+                  } else {
+                  	boolean bSerializable = false;
+                  	for (int i=0; i<aInts.length &!bSerializable; i++)
+                  	  bSerializable |= aInts[i].getName().equals("java.io.Serializable");
+                    if (bSerializable) {
+                      ByteArrayOutputStream oBOut = new ByteArrayOutputStream();
+                      ObjectOutputStream oOOut = new ObjectOutputStream(oBOut);
+                      oOOut.writeObject(AllValues.get(sCol));
+                      oOOut.close();
+                      ByteArrayInputStream oBin = new ByteArrayInputStream(oBOut.toByteArray());
+                      oStream = new ObjectInputStream(oBin);	                  
+                    } else {
+                      throw new SQLException ("Invalid object binding for column " + sCol);                      
+                    }
+                  } // fi
+                }
                 oStreams.addLast(oStream);
                 oStmt.setBinaryStream(c++, oStream, ((Long) BinaryLengths.get(sCol)).intValue());
               }

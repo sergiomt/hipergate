@@ -65,7 +65,7 @@ import java.beans.Beans;
 /**
  * <p>Singleton object for database binding.</p>
  * @author Sergio Montoro Ten
- * @version 5.5
+ * @version 6.0
  */
 
 public class DBBind extends Beans implements DataSource {
