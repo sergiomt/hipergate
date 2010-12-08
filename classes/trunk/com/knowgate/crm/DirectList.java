@@ -41,6 +41,7 @@ import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 
 import com.knowgate.debug.DebugFile;
 import com.knowgate.jdc.JDCConnection;
@@ -52,9 +53,9 @@ import com.knowgate.dataobjs.DB;
  * <p>DirectList</p>
  * <p>A subclass of DistributionList with methods for loading List Members from
  * text files.</p>
- * <p>Copyright: Copyright (c) KnowGate 2003-2006</p>
+ * <p>Copyright: Copyright (c) KnowGate 2003-2010</p>
  * @author Sergio Montoro Ten
- * @version 3.0
+ * @version 6.0
  */
 
 public class DirectList extends DistributionList {
@@ -105,7 +106,7 @@ public class DirectList extends DistributionList {
 
   private int[] checkValues() throws IllegalStateException {
 
-    String sMail, sName, sSurN, sSalt, sFrmt;
+    String sMail, sName, sSurN, sSalt, sFrmt, sPhne, sInfo;
 
     if (DebugFile.trace) {
       DebugFile.writeln("Begin DirectList.checkValues()");
@@ -120,6 +121,8 @@ public class DirectList extends DistributionList {
     int iSurN = getColumnPosition(DB.tx_surname);
     int iSalt = getColumnPosition(DB.tx_salutation);
     int iFrmt = getColumnPosition(DB.id_format);
+    int iPhne = getColumnPosition(DB.mov_phone);
+    int iInfo = getColumnPosition(DB.tx_info);
 
     int CheckCodes[]  = new int[oCSV.getLineCount()];
 
@@ -168,6 +171,18 @@ public class DirectList extends DistributionList {
           CheckCodes[r] = CHECK_INVALID_SALUTATION;
       }
 
+      if (iPhne>=0) {
+        sPhne = getField(iPhne, r);
+        if (sPhne.length()>16)
+          CheckCodes[r] = CHECK_INVALID_MOBILE;
+      }
+
+      if (iInfo>=0) {
+        sInfo = getField(iInfo, r);
+        if (sInfo.length()>254)
+          CheckCodes[r] = CHECK_INVALID_INFO;
+      }
+
     } // next
 
     if (DebugFile.trace) {
@@ -184,7 +199,7 @@ public class DirectList extends DistributionList {
    * Parse a delimited text file
    * @param sFilePath File Path
    * @param sFileDescriptor Delimited Column List.<br>
-   * The only valid column names are { tx_email, tx_name, tx_surname, id_format, tx_salutation }.<br>
+   * The only valid column names are { tx_email, tx_name, tx_surname, id_format, tx_salutation, mov_phone, tx_info }.<br>
    * Column names may be delimited by ',' ';' or '\t'.
    * Columns names may be quoted.
    * @return Array of status for each parsed line.<br>
@@ -348,24 +363,42 @@ public class DirectList extends DistributionList {
     int iSurN = getColumnPosition(DB.tx_surname);
     int iSalt = getColumnPosition(DB.tx_salutation);
     int iFrmt = getColumnPosition(DB.id_format);
+    int iPhne = getColumnPosition(DB.mov_phone);
+    int iInfo = getColumnPosition(DB.tx_info);
 
     int ChkCods[] = checkValues();
 
+	boolean bHasPhone=false, bHasInfo=false;
+	Statement oMdt = oConn.createStatement();
+	ResultSet oRdt = oMdt.executeQuery("SELECT * FROM "+DB.k_x_list_members+" WHERE 1=0");
+	ResultSetMetaData oRmd = oRdt.getMetaData();
+	if (DebugFile.trace) DebugFile.writeln("Checking presence of columns "+DB.mov_phone+" and "+DB.tx_info);
+	for (int c=1; c<=oRmd.getColumnCount(); c++) {
+	  if (DebugFile.trace) DebugFile.writeln("  checking "+oRmd.getColumnName(c));
+	  if (oRmd.getColumnName(c).equalsIgnoreCase(DB.mov_phone)) bHasPhone=true;
+	  if (oRmd.getColumnName(c).equalsIgnoreCase(DB.tx_info)) bHasInfo=true;
+	}
+	oRdt.close();
+	oMdt.close();
+
 	PreparedStatement oMbr = oConn.prepareStatement("INSERT INTO "+DB.k_list_members+" (gu_member,tx_email,tx_name,tx_surname,tx_salutation) VALUES (?,?,?,?,?)");
 
-	String sSQL = "INSERT INTO "+DB.k_x_list_members+"("+DB.gu_list+","+DB.tp_member+","+DB.bo_active+","+DB.tx_email+","+DB.tx_name+","+DB.tx_surname+","+DB.tx_salutation+","+DB.id_format+") VALUES (?,?,?,?,?,?,?,?)";
+	String sSQL = "INSERT INTO "+DB.k_x_list_members+"("+DB.gu_list+","+DB.tp_member+","+DB.bo_active+","+DB.tx_email+","+DB.tx_name+","+DB.tx_surname+","+DB.tx_salutation+","+DB.id_format+(bHasPhone ? ","+DB.mov_phone : "")+(bHasInfo ? ","+DB.tx_info : "")+") VALUES (?,?,?,?,?,?,?,?"+(bHasPhone ? ",?": "")+(bHasInfo ? ",?" : "")+")";
+
+    if (DebugFile.trace) DebugFile.writeln("JDCConnection.prepareStatement("+sSQL+")");
+
 	PreparedStatement oIns = oConn.prepareStatement(sSQL);
 	
     int iLines = oCSV.getLineCount();
 
     for (int r=0; r<iLines; r++) {
-
       if (ChkCods[r] == CHECK_OK) {
 		oMbr.setString(1, Gadgets.generateUUID());
 		oMbr.setString(2, getField(iMail, r));
 		oMbr.setString(3, getField(iName, r));
 		oMbr.setString(4, getField(iSurN, r));
 		oMbr.setString(5, getField(iSalt, r));
+        
         try {
 		  oMbr.executeUpdate();
         }
@@ -377,19 +410,27 @@ public class DirectList extends DistributionList {
           oMbr = oConn.prepareStatement("INSERT INTO "+DB.k_list_members+" (gu_member,tx_email,tx_name,tx_surname,tx_salutation) VALUES (?,?,?,?,?)");
         }
 
-	    oIns.setString(1, sListId);
-	    oIns.setShort (2, DirectList.ClassId);
-	    oIns.setShort (3, iStatus);
-		oIns.setString(4, getField(iMail, r));
-		oIns.setString(5, getField(iName, r));
-		oIns.setString(6, getField(iSurN, r));
-		oIns.setString(7, getField(iSalt, r));
-
+		
+	  	int c = 0;
+	    oIns.setString(++c, sListId);
+	    oIns.setShort (++c, DirectList.ClassId);
+	    oIns.setShort (++c, iStatus);
+		oIns.setString(++c, getField(iMail, r));
+		oIns.setString(++c, getField(iName, r));
+		oIns.setString(++c, getField(iSurN, r));
+		oIns.setString(++c, getField(iSalt, r));
+	    
         if (iFrmt>=0)
-		  oIns.setString(8, getField(iFrmt, r).toUpperCase());
+		  oIns.setString(++c, getField(iFrmt, r).toUpperCase());
         else
-		  oIns.setString(8, "TXT");
+		  oIns.setString(++c, "TXT");
 
+		if (bHasPhone)
+		  oIns.setString(++c, getField(iPhne, r));
+
+		if (bHasInfo)
+		  oIns.setString(++c, getField(iInfo, r));
+			
         try {
 		  oIns.executeUpdate();
         }
@@ -496,6 +537,8 @@ public class DirectList extends DistributionList {
   public static final int CHECK_INVALID_NAME = 32;
   public static final int CHECK_INVALID_SURNAME = 64;
   public static final int CHECK_INVALID_SALUTATION = 128;
+  public static final int CHECK_INVALID_MOBILE = 256;
+  public static final int CHECK_INVALID_INFO = 512;
 
   // **********************************************************
   // Public Constants
