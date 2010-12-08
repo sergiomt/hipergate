@@ -55,7 +55,7 @@ public class CalendarMeeting {
   }
   
   public String getId() {
-  	return id==null ? generateUUID()+"@hipergate.org" : id;
+  	return id==null ? (id=generateUUID())+"@hipergate.org" : id;
   }
 
   public void setId(String sMeetingUniqueId) {
