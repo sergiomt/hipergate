@@ -177,6 +177,7 @@ public class WorkArea extends DBPersist {
    * <tr><td>k_x_activity_audience</td></tr>
    * <tr><td>DELETE k_sms_audit</td></tr>
    * <tr><td>DELETE k_sms_audit</td></tr>
+   * <tr><td>DELETE k_syndentries</td></tr>
    * <tr><td>DELETE k_x_portlet_user</td></tr>
    * <tr><td>QueryByForm.delete</td></tr>
    * <tr><td>MicrositeDB.delete</td></tr>
@@ -281,6 +282,19 @@ public class WorkArea extends DBPersist {
         DebugFile.writeln("End WorkArea.delete() : false");
       }
       return false;
+    }
+
+    // -----------------------------------------------------------------------------------
+    // Nuevo para v6.0
+    // Borrar las entradas de feeds RSS
+
+    if (DBBind.exists(oConn, DB.k_syndentries, "U")) {
+      oStmt = oConn.createStatement();
+      if (DebugFile.trace) DebugFile.writeln("Statement.executeUpdate(DELETE FROM " + DB.k_syndentries + " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "')");
+
+      oStmt.executeUpdate("DELETE FROM " + DB.k_syndentries + " WHERE " + DB.gu_workarea + "='" + sWrkAreaGUID + "'");
+    
+      oStmt.close();
     }
 
     // -----------------------------------------------------------------------------------

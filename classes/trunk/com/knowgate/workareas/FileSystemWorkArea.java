@@ -1,3 +1,34 @@
+/*
+  Copyright (C) 2010  Know Gate S.L. All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. The end-user documentation included with the redistribution,
+     if any, must include the following acknowledgment:
+     "This product includes software parts from hipergate
+     (http://www.hipergate.org/)."
+     Alternately, this acknowledgment may appear in the software itself,
+     if and wherever such third-party acknowledgments normally appear.
+
+  3. The name hipergate must not be used to endorse or promote products
+     derived from this software without prior written permission.
+     Products derived from this software may not be called hipergate,
+     nor may hipergate appear in their name, without prior written
+     permission.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+  You should have received a copy of hipergate License with this code;
+  if not, visit http://www.hipergate.org or mail to info@hipergate.org
+*/
+
 package com.knowgate.workareas;
 
 import java.lang.Exception;
@@ -369,6 +400,39 @@ public class FileSystemWorkArea extends FileSystem {
   // ---------------------------------------------------------------------------
 
   /**
+   * <p>Get base path for storage at given domain and work area</p>
+   * /$<i>storage</i>$/domains/<i>iDomain</i>/workareas/<i>sWorkArea</i>/
+   * @param oProps Properties collection containing storage property
+   * (typically readed from file hipergate.cnf)
+   * @param iDomain Domain Numeric Identifier
+   * @param sWorkArea WorkArea GUID
+   * @throws IllegalArgumentException If sWorkArea is <b>null</b>
+   * @since 6.0
+   */
+  public String getstorpath (Properties oProps, int iDomain, String sWorkArea)
+  	throws IllegalArgumentException {
+
+    if (sWorkArea==null)
+      throw new IllegalArgumentException("WorkArea GUID may not be null");
+
+    String sProtocol = oProps.getProperty("protocol", "file://");
+    String sWorkAreaPath = oProps.getProperty("storage");
+
+    if (sProtocol.equalsIgnoreCase("ftp://")) {
+      if (!sWorkAreaPath.endsWith("/")) sWorkAreaPath += "/";
+      sWorkAreaPath += "domains/" + String.valueOf(iDomain) + "/workareas/" + sWorkArea;
+    } else {
+      if (!sWorkAreaPath.endsWith(SLASH)) sWorkAreaPath += SLASH;
+
+      sWorkAreaPath += "domains" + SLASH + String.valueOf(iDomain) + SLASH + "workareas" + SLASH + sWorkArea;
+   } // fi (sProtocol)
+   
+   return sWorkAreaPath;
+  } // getstorpath
+
+  // ---------------------------------------------------------------------------
+
+  /**
    * <p>Create a complete directory branch under storage root directory</p>
    * The given path is appended to storage/domains/<i>iDomain</i>/workareas/<i>sWorkArea</i>/
    * and the full resulting path is created if it does not exist.
@@ -392,26 +456,16 @@ public class FileSystemWorkArea extends FileSystem {
       DebugFile.incIdent();
     }
 
-    if (sWorkArea==null)
-      throw new IllegalArgumentException("WorkArea GUID may not be null");
-
     String sProtocol = oProps.getProperty("protocol", "file://");
-    String sWorkAreaPath = oProps.getProperty("storage");
+    String sWorkAreaPath = getstorpath(oProps, iDomain, sWorkArea);
 
     if (sProtocol.equalsIgnoreCase("ftp://")) {
-      if (!sWorkAreaPath.endsWith("/")) sWorkAreaPath += "/";
-      sWorkAreaPath += "domains/" + String.valueOf(iDomain) + "/workareas/" + sWorkArea;
-
       if (null==sPath)
         bRetVal = mkdirs(sProtocol + oProps.getProperty("protocol", "localhost") + "/" + sWorkAreaPath);
       else
         bRetVal = mkdirs(sProtocol + oProps.getProperty("protocol", "localhost") + "/" + sWorkAreaPath + (sPath.startsWith("/") ? sPath : "/" + sPath));
     }
    else {
-      if (!sWorkAreaPath.endsWith(SLASH)) sWorkAreaPath += SLASH;
-
-      sWorkAreaPath += "domains" + SLASH + String.valueOf(iDomain) + SLASH + "workareas" + SLASH + sWorkArea;
-
       if (null==sPath)
         bRetVal = mkdirs(sProtocol + sWorkAreaPath);
       else
