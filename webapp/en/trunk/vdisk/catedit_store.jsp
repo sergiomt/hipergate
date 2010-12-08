@@ -108,23 +108,18 @@
     oCon1.close("catedit_store");
     oCon1 = null;        
   }
+  catch (SQLException d) {
+	  disposeConnection(oCon1,"catedit_store");
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + d.getMessage() + "&resume=_back"));    
+    return;
+  }
   catch (NullPointerException d) {
-    if (null!=oCon1)
-      if (!oCon1.isClosed()) {
-        if (!oCon1.getAutoCommit()) oCon1.rollback();
-        oCon1.close("catedit_store");
-        oCon1 = null;
-      }
+	  disposeConnection(oCon1,"catedit_store");
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + d.getMessage() + "&resume=_back"));    
     return;
   }
   catch (java.util.NoSuchElementException d) {
-    if (null!=oCon1)
-      if (!oCon1.isClosed()) {
-        oCon1.rollback();
-        oCon1.close();
-        oCon1 = null;
-      }
+	  disposeConnection(oCon1,"catedit_store");
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NoSuchElementException&desc=" + names_subset + "&resume=_back"));    
     return;
   }

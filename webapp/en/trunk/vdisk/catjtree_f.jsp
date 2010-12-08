@@ -17,7 +17,7 @@
       for (int c=0; c<iChlds; c++) {
         if (oChlds.isNull(3,c))
           oBuffer.append ("    " + sSubCat + ".addItem(new TreeMenuItem('" + oChlds.getString(2,c) + "', 'parent.selectNode(\"" + oChlds.getString(0,c) + "\",\"" + Gadgets.HTMLEncode(oChlds.getStringNull(2,c,oChlds.getString(1,c))) + "\")'));\n");
-	else
+	      else
           oBuffer.append ("    " + sSubCat + ".addItem(new TreeMenuItem('" + oChlds.getString(2,c) + "', 'parent.selectNode(\"" + oChlds.getString(0,c) + "\",\"" + Gadgets.HTMLEncode(oChlds.getStringNull(2,c,oChlds.getString(1,c))) + "\")','" + oChlds.getString(3,c) + "'));\n");	
       } // next
       
@@ -33,9 +33,7 @@
     
   } // addChilds()
   
-%>
-<%@ include file="../methods/cookies.jspf" %>
-<%@ include file="../methods/authusrs.jspf" %>
+%><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 FRAMESET//EN" "http://www.w3.org/TR/REC-html40/FRAMESET.dtd">
 <HTML>
   <HEAD>

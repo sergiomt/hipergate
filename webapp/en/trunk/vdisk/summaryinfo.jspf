@@ -8,6 +8,7 @@
     }
     catch (ClassNotFoundException cnf) {
       SummaryInfo = null;
+      if (com.knowgate.debug.DebugFile.trace) com.knowgate.debug.DebugFile.writeln("<JSP:summaryinfo.jspf ClassNotFoundException org.apache.poi.hpsf.SummaryInformation");
     }
     
     if (null==SummaryInfo) return;
@@ -20,6 +21,10 @@
       oInfo = oOLEDoc.getSummaryInformation();
     }
     catch (IOException ioe) {
+      oInfo = null;
+      if (com.knowgate.debug.DebugFile.trace) com.knowgate.debug.DebugFile.writeln("<JSP:summaryinfo.jspf IOException "+ioe.getMessage());
+    } catch (org.apache.poi.poifs.filesystem.OfficeXmlFileException poi) {
+      if (com.knowgate.debug.DebugFile.trace) com.knowgate.debug.DebugFile.writeln("<JSP:summaryinfo.jspf OfficeXmlFileException "+poi.getMessage());
       oInfo = null;
     }
     

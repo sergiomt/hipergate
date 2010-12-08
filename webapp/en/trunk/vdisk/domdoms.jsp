@@ -1,9 +1,5 @@
 <%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/dbbind.jsp" %>
-<%@ include file="../methods/cookies.jspf" %>
-<%@ include file="../methods/authusrs.jspf" %>
-<%@ include file="../methods/nullif.jspf" %>
-<% 
+<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><% 
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -118,9 +114,6 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
         <%
-          // [~//Escribir los nombres de dominios en Arrays JavaScript~]
-          // [~//Estos arrays se usan en las llamadas de borrado múltiple.~]
-
           boolean bFirst = true;          
           out.write("var jsDoms = new Array(");
             for (int i=0; i<iDomCount; i++) {

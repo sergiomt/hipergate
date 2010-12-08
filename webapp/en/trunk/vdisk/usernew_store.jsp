@@ -157,7 +157,7 @@
       // ******************************************
       // Crear el nuevo usuario
     
-      sUserId = ACLUser.create(oCon1, new Object[] {
+      sUserId = ACLUser.create(oCon1, sFlwId, new Object[] {
         new Integer(id_domain),
         request.getParameter("tx_nickname"),
         request.getParameter("tx_pwd"),

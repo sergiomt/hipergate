@@ -245,13 +245,14 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Error connecting to database&desc=" + e.getLocalizedMessage() + "&resume=_back"));
   }
   
-  if (null==oConn) return;
-  
+  if (null==oConn) return;  
   oConn = null;
 
   response.addHeader ("Pragma", "no-cache");
   response.addHeader ("cache-control", "no-store");
   response.setIntHeader("Expires", 0);
+
+	sendUsageStats(request, "catprods"); 
 
 %><!-- +---------------------------------------+ -->
   <!-- | Listado de productos de una categoria | -->
