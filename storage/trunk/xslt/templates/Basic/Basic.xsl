@@ -111,8 +111,8 @@
                     <br /><br />
                     <xsl:variable name="destacado" select="pageset/pages/page/blocks/block[metablock='DESTACADO']"/>
                     <xsl:for-each select="$destacado/paragraphs/paragraph[starts-with(@id,'ENLACE')]">
-                     <p><a style="COLOR: #000000" href="{text}"><font class="plaintext"><xsl:value-of select="text" disable-output-escaping="no"/></font></a></p>
-                    </xsl:for-each>                              
+                     <p><a style="COLOR: #000000" href="{url}"><font class="plaintext"><xsl:value-of select="text" disable-output-escaping="no"/></font></a></p>
+                    </xsl:for-each>
                     <br />
                    </span>
                    <xsl:comment> Principio del Formato de Articulos </xsl:comment>             
@@ -137,7 +137,6 @@
                      </xsl:for-each>
                     </font>  
                    </span>
-
                   </TD>
                  </TR>
                 </TBODY>
@@ -156,18 +155,13 @@
    </TBODY>
   </TABLE>
  </CENTER>
-
 </BODY>
-
 </HTML>
-
 </xsl:template>
 
 <xsl:template name="formatArticle">
-
 <xsl:param name="blkid"/>
 <xsl:variable name="titulo" select="paragraphs/paragraph[starts-with(@id,'TITULO')]"/>
-
 <a id="{$titulo/@url}" name="{$titulo/@url}"></a>
  <table cellspacing="0" cellpadding="0" width="100%" border="0">
   <tbody>
@@ -201,5 +195,4 @@
   </tbody>
  </table>
 </xsl:template>
-
 </xsl:stylesheet>
