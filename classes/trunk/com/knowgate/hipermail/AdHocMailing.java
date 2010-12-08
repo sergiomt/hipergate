@@ -42,6 +42,9 @@ import java.util.Date;
 import java.util.Arrays;
 import java.util.ArrayList;
 
+import org.apache.oro.text.regex.Pattern;
+import org.apache.oro.text.regex.Perl5Matcher;
+import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.MalformedPatternException;
 
 import com.knowgate.jdc.JDCConnection;
@@ -140,6 +143,10 @@ public class AdHocMailing extends DBPersist {
     ArrayList<String> oRecipientsWithoutDuplicates;
     boolean bAllowed;
 
+	Pattern oAllowPattern=null, oDenyPattern=null;
+	Perl5Matcher oMatcher = new Perl5Matcher();
+	Perl5Compiler oCompiler = new Perl5Compiler();
+		
     if (aEMails!=null) {
       if (aEMails.length>0) {
       	if (aRecipients==null) {
@@ -154,16 +161,24 @@ public class AdHocMailing extends DBPersist {
 
 	  	sAllowPattern = getAllowPattern();
 	  	sDenyPattern = getDenyPattern();
-	  	  	  
+	  	
+	  	if (sAllowPattern.length()>0) {
+	  	  oAllowPattern = oCompiler.compile(sAllowPattern, Perl5Compiler.CASE_INSENSITIVE_MASK);
+	  	}
+
+	  	if (sDenyPattern.length()>0) {
+	  	  oDenyPattern = oCompiler.compile(sDenyPattern, Perl5Compiler.CASE_INSENSITIVE_MASK);
+	  	}
+	  	  
 	    for (int r=0; r<nRecipients-1; r++) {
 		  bAllowed = true;
 		  try {
-		    if (sAllowPattern.length()>0) bAllowed &= Gadgets.matches(aRecipients[r], sAllowPattern);
+		    if (sAllowPattern.length()>0) bAllowed &= oMatcher.matches(aRecipients[r], oAllowPattern);
 		  } catch (ArrayIndexOutOfBoundsException aiob) {
 		  	throw new ArrayIndexOutOfBoundsException("Gadgets.matches("+aRecipients[r]+","+sAllowPattern+")");
 		  }
 		  try {
-		  if (sDenyPattern.length()>0) bAllowed &= !Gadgets.matches(aRecipients[r], sDenyPattern);
+		  if (sDenyPattern.length()>0) bAllowed &= !oMatcher.matches(aRecipients[r], oDenyPattern);
 		  } catch (ArrayIndexOutOfBoundsException aiob) {
 		  	throw new ArrayIndexOutOfBoundsException("Gadgets.matches("+aRecipients[r]+","+sDenyPattern+")");
 		  }
