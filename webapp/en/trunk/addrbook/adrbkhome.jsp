@@ -127,11 +127,11 @@
       }
 
       if (nmc.indexOf("'")>0 || nmc.indexOf('"')>0 || nmc.indexOf("?")>0 || nmc.indexOf("%")>0 || nmc.indexOf("*")>0 || nmc.indexOf("&")>0 || nmc.indexOf("/")>0) {
-	alert ("The name contains invalid characters");
-	return false;
+	      alert ("The name contains invalid characters");
+	      return false;
       }
       else
-        window.location = "fellow_listing.jsp?selected=1&subselected=3&queryspec=fellows&where=" + escape(" AND <%=DB.tx_name%> <%=DBBind.Functions.ILIKE%> '" + nmc + "%' OR <%=DB.tx_surname%> LIKE '%" + nmc + "%'");
+        window.location = "fellow_listing.jsp?selected=1&subselected=3&queryspec=fellows&where=" + escape(" AND (<%=DB.tx_name%> <%=DBBind.Functions.ILIKE%> '" + nmc + "%' OR <%=DB.tx_surname%> LIKE '%" + nmc + "%') ");
     }
 
     // ------------------------------------------------------

@@ -1,4 +1,4 @@
-<%@ page import="java.util.HashMap,java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.addrbook.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Calendar,com.knowgate.crm.SalesMan,com.knowgate.billing.Account" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.HashMap,java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.addrbook.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Calendar,com.knowgate.crm.SalesMan,com.knowgate.billing.Account,com.knowgate.gdata.GCalendarSynchronizer" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
 /*
@@ -133,6 +133,15 @@
       GlobalCacheClient.expire("k_fellows.gu_workarea[" + sWrkAId + "]");
     } // fi (!oFlw.exists())
     oFlw = null;
+    
+    // Read meetings from Google Calendar if synchronization is activated and a valid email+password+calendar name is found at k_user_pwd table
+    final String sGDataSync = GlobalDBBind.getProperty("gdatasync", "1");
+    if (sGDataSync.equals("1") || sGDataSync.equalsIgnoreCase("true") || sGDataSync.equalsIgnoreCase("yes")) {
+      GCalendarSynchronizer oGSync = new GCalendarSynchronizer();
+      if (oGSync.connect(oConn, sFellow, sWrkAId, GlobalCacheClient)) {
+        oGSync.readMeetingsFromGoogle(oConn, new Date(year, month, day, 0, 0, 0), new Date(year, month, day,23,59,59));
+      } // fi
+    } // fi
     
     oPlan.load(oConn, sFellow, dtToday);
     

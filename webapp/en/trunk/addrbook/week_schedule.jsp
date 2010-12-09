@@ -1,4 +1,4 @@
-<%@ page import="java.util.Date,java.util.GregorianCalendar,java.text.SimpleDateFormat,java.net.URLDecoder,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Calendar,com.knowgate.misc.Environment,com.knowgate.hipergate.DBLanguages,com.knowgate.hipergate.Address,com.knowgate.billing.Account,com.knowgate.addrbook.Fellow,com.knowgate.addrbook.Meeting,com.knowgate.addrbook.Room,com.knowgate.addrbook.WeekPlan,com.knowgate.addrbook.WorkingCalendar,com.knowgate.crm.Company" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Date,java.util.GregorianCalendar,java.text.SimpleDateFormat,java.net.URLDecoder,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Calendar,com.knowgate.misc.Environment,com.knowgate.hipergate.DBLanguages,com.knowgate.hipergate.Address,com.knowgate.billing.Account,com.knowgate.addrbook.Fellow,com.knowgate.addrbook.Meeting,com.knowgate.addrbook.Room,com.knowgate.addrbook.WeekPlan,com.knowgate.addrbook.WorkingCalendar,com.knowgate.crm.Company,com.knowgate.misc.Gadgets,com.knowgate.gdata.GCalendarSynchronizer" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
 /*
@@ -129,6 +129,15 @@
 
     bIsGuest = isDomainGuest (GlobalCacheClient, GlobalDBBind, request, response);
 
+    // Read meetings from Google Calendar if synchronization is activated and a valid email+password+calendar name is found at k_user_pwd table
+    final String sGDataSync = GlobalDBBind.getProperty("gdatasync", "1");
+    if (sGDataSync.equals("1") || sGDataSync.equalsIgnoreCase("true") || sGDataSync.equalsIgnoreCase("yes")) {
+      GCalendarSynchronizer oGSync = new GCalendarSynchronizer();
+      if (oGSync.connect(oConn, sFellow, gu_workarea, GlobalCacheClient)) {
+        oGSync.readMeetingsFromGoogle(oConn, dtFirstWeekDay, dtNextWeek);
+      } // fi
+    } // fi
+
     if (sCorporateAccount.equals(Account.getUserAccountType(oConn, getCookie(request, "userid", "")))) {
       oWeekPlan = new WeekPlan(iIdDomain, dtFirstWeekDay);
     } else {
@@ -189,30 +198,10 @@
     <!--
       var activity_edition_page = "<% out.write(sFace.equalsIgnoreCase("healthcare") ? "appointment_edit_f.htm" : "meeting_edit_f.htm"); %>";
 
-      var intervalId;
-      var wincalendar;
-
-      function findCalendar() {
-        var dt;
-        
-        if (wincalendar.closed) {
-          clearInterval(intervalId);
-          dt = document.forms[0].newdate.value.split("-");
-          window.location = "room_schedule.jsp?id_domain=" + getURLParam("id_domain") + "&gu_workarea=" + getURLParam("gu_workarea") + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&year=" + String(parseInt(dt[0])-1900) + "&month=" + String(parseInt(dt[1])-1) + "&day=" + dt[2];
-        }
-      } // findCalendar() 
-           
-      function showCalendar(ctrl) {       
-        var dtnw = new Date();
-
-        wincalendar = window.open("../common/calendar.jsp?a=" + (dtnw.getFullYear()) + "&m=" + dtnw.getMonth() + "&c=" + ctrl, "schedulecalendar", "toolbar=no,directories=no,menubar=no,resizable=no,width=171,height=195");
-        intervalId = setInterval ("findCalendar()", 100);
-      } // showCalendar()
-
       // ------------------------------------------------------
       
-      function createMeeting() {
-        window.open(activity_edition_page+"?id_domain=" + getCookie("domainid") + "&n_domain=" + escape(getCookie("domainnm")) + "&gu_workarea=" + getCookie("workarea") + "&gu_fellow=" + getCookie("userid"), "", "toolbar=no,directories=no,menubar=no,resizable=no,width=500,height=580");
+      function createMeeting(day) {
+        window.open(activity_edition_page+"?id_domain=" + getCookie("domainid") + "&n_domain=" + escape(getCookie("domainnm")) + "&gu_workarea=" + getCookie("workarea") + "&gu_fellow=" + getCookie("userid") + (day.length>0 ? "&date="+day : ""), "", "toolbar=no,directories=no,menubar=no,resizable=no,width=500,height=580");
       }
 
       // ------------------------------------------------------
@@ -351,7 +340,7 @@
 <% if (bIsGuest)        
      out.write("              <A HREF=\"#\" onClick=\"alert('Your priviledge level as Guest does not allow you to perform this action')\" CLASS=\"linkplain\" TITLE=\"New Activity\">New</A>");
    else
-     out.write("              <A HREF=\"#\" onClick=\"createMeeting();return false\" CLASS=\"linkplain\" TITLE=\"New Activity\">New</A>");
+     out.write("              <A HREF=\"#\" onClick=\"createMeeting('');return false\" CLASS=\"linkplain\" TITLE=\"New Activity\">New</A>");
 %>
           </TD>
           <TD>
@@ -387,7 +376,7 @@
 	      	iMonthDay = com.knowgate.misc.Calendar.LastDay(month-1, year+1900);
 	    }	  
 	    if (iMonthDay>com.knowgate.misc.Calendar.LastDay(month, year+1900)) iMonthDay = 1;	  
-	    out.write("<TD CLASS=\"" + aHolidays[d] + "textstrong\" ALIGN=\"center\">"+Calendar.WeekDayName(((d+iFirstDayOfWeek)%7)+1,sLanguage)+" "+String.valueOf(iMonthDay++)+"</TD>");
+	    out.write("<TD CLASS=\"" + aHolidays[d] + "textstrong\" ALIGN=\"center\"><A HREF=\"\" CLASS=\"linknodecor\" onclick=\"createMeeting('"+String.valueOf(year+1900)+"-"+Gadgets.leftPad(String.valueOf(month),'0',2)+"-"+Gadgets.leftPad(String.valueOf(iMonthDay),'0',2)+"')\">"+Calendar.WeekDayName(((d+iFirstDayOfWeek)%7)+1,sLanguage)+" "+String.valueOf(iMonthDay++)+"</A></TD>");
 	  }
 %>
         </TR>

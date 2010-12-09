@@ -1,5 +1,5 @@
-<%@ page import="java.util.Date,com.knowgate.addrbook.Meeting,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" %>
-<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%
+<%@ page import="java.util.Date,com.knowgate.addrbook.Meeting,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.gdata.GCalendarSynchronizer" language="java" session="false" %>
+<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -46,8 +46,21 @@
 		String sGuFellow = DBCommand.queryStr(oCon, "SELECT "+DB.gu_fellow+" FROM "+DB.k_meetings+" WHERE "+DB.gu_meeting+"='"+gu_meeting+"'");
 
     oCon.setAutoCommit (false);
+
+    // Delete meeting from Google Calendar if synchronization is activated and a valid email+password+calendar name is found at k_user_pwd table
+    final String sGDataSync = GlobalDBBind.getProperty("gdatasync", "1");
+    if (sGDataSync.equals("1") || sGDataSync.equalsIgnoreCase("true") || sGDataSync.equalsIgnoreCase("yes")) {
+      GCalendarSynchronizer oGSync = new GCalendarSynchronizer();
+      Meeting oMeet = new Meeting(oCon, gu_meeting);
+      if (oGSync.connect(oCon, oMeet.getString(DB.gu_fellow), oMeet.getString(DB.gu_workarea), GlobalCacheClient)) {
+        oGSync.deleteMeetingFromGoogle(oCon, oMeet);
+      } // fi
+    } // fi
+
     Meeting.delete(oCon, gu_meeting);
+
     DBAudit.log(oCon, Meeting.ClassId, "DMET", id_user, gu_meeting, sGuFellow, 0, getClientIP(request), sTxMeeting, dtMeeting.toString());
+
     oCon.commit();
 
     oCon.setAutoCommit (true);

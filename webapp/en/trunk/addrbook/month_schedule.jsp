@@ -1,4 +1,4 @@
-<%@ page import="java.util.Date,java.text.SimpleDateFormat,java.net.URLDecoder,java.sql.SQLException,java.sql.Timestamp,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Calendar,com.knowgate.billing.Account,com.knowgate.addrbook.WorkingCalendar" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.Date,java.text.SimpleDateFormat,java.net.URLDecoder,java.sql.SQLException,java.sql.Timestamp,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Calendar,com.knowgate.billing.Account,com.knowgate.addrbook.WorkingCalendar,com.knowgate.gdata.GCalendarSynchronizer" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
 /*
@@ -111,6 +111,15 @@
 
     bIsGuest = isDomainGuest (GlobalCacheClient, GlobalDBBind, request, response);
     bIsAdmin = isDomainAdmin (GlobalCacheClient, GlobalDBBind, request, response);
+
+    // Read meetings from Google Calendar if synchronization is activated and a valid email+password+calendar name is found at k_user_pwd table
+    final String sGDataSync = GlobalDBBind.getProperty("gdatasync", "1");
+    if (sGDataSync.equals("1") || sGDataSync.equalsIgnoreCase("true") || sGDataSync.equalsIgnoreCase("yes")) {
+      GCalendarSynchronizer oGSync = new GCalendarSynchronizer();
+      if (oGSync.connect(oConn, sFellow, gu_workarea, GlobalCacheClient)) {
+        oGSync.readMeetingsFromGoogle(oConn, dtToday, dtNextM);
+      } // fi
+    } // fi
 
     oMeetings = new DBSubset(DB.k_meetings + " m," + DB.k_x_meeting_fellow + " f",
     			     "m." + DB.gu_meeting + ",m." + DB.dt_start + ",m." + DB.bo_private + ",m." + DB.tx_meeting + ",m." + DB.de_meeting,

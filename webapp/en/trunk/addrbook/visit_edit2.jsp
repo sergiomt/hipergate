@@ -149,7 +149,7 @@
             if (frm.sel_country.options.selectedIndex>0)
               window.open("../common/lookup_f.jsp?nm_table=k_addresses_lookup&id_language=" + getUserLanguage() + "&id_section=" + getCombo(frm.sel_country) + "&tp_control=2&nm_control=sel_state&nm_coding=id_state", "lookupaddrstate", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
             else
-              alert ("[~Debe seleccionar un Pais antes de poA country must be selected before picking up state or province");
+              alert ("A country must be selected before picking up state or province");
             break;
         }
       } // lookup()
@@ -157,7 +157,7 @@
       // ------------------------------------------------------
       
       function loadstates(setval) {
-	var frm = window.document.forms[0];
+	      var frm = window.document.forms[0];
 
         clearCombo(frm.sel_state);
         

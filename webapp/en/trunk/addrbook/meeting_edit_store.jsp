@@ -1,4 +1,4 @@
-<%@ page import="java.util.HashMap,java.util.StringTokenizer,java.io.IOException,java.net.URLDecoder,java.sql.Statement,java.sql.PreparedStatement,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.addrbook.Meeting,com.knowgate.addrbook.Fellow" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.HashMap,java.util.StringTokenizer,java.io.IOException,java.net.URLDecoder,java.sql.Statement,java.sql.PreparedStatement,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.addrbook.Meeting,com.knowgate.addrbook.Fellow,com.knowgate.gdata.GCalendarSynchronizer" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -153,9 +153,9 @@
       oStmt.close();      
     }
 
-    oMee = new Meeting(oConn, gu_meeting);
+		oMee = new Meeting(oConn, gu_meeting);
 
-    if (!bIsNew) {
+    if (!bIsNew) {      
       oUpdt = oConn.createStatement();
       oUpdt.executeUpdate("DELETE FROM " + DB.k_x_meeting_fellow + " WHERE " + DB.gu_meeting + "='" + oMee.getString(DB.gu_meeting) + "'");
       oUpdt.executeUpdate("DELETE FROM " + DB.k_x_meeting_contact + " WHERE " + DB.gu_meeting + "='" + oMee.getString(DB.gu_meeting) + "'");
@@ -193,6 +193,15 @@
     oColTok = null;
 
     oMee = null;
+
+    // Write meeting to Google Calendar if synchronization is activated and a valid email+password+calendar name is found at k_user_pwd table
+    final String sGDataSync = GlobalDBBind.getProperty("gdatasync", "1");
+    if (sGDataSync.equals("1") || sGDataSync.equalsIgnoreCase("true") || sGDataSync.equalsIgnoreCase("yes")) {
+      GCalendarSynchronizer oGSync = new GCalendarSynchronizer();
+      if (oGSync.connect(oConn, gu_fellow, gu_workarea, GlobalCacheClient)) {
+        oGSync.writeMeetingToGoogle(oConn, new Meeting(oConn, gu_meeting));
+      } // fi
+    } // fi
     
     DBAudit.log(oConn, Meeting.ClassId, sOpCode, id_user, gu_meeting, null, 0, 0, null, null);
 
