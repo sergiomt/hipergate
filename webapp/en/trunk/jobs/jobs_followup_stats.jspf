@@ -77,7 +77,7 @@
 																		 "j."+DB.gu_job+" IN (SELECT "+DB.gu_job+" FROM "+DB.k_jobs+" WHERE "+DB.gu_workarea+"=?) "+
 																		 "GROUP BY 2 ORDER BY 2 DESC", 100);
 
-  DBSubset oDistinctRecipients = new DBSubset(DB.k_jobs+" j", "SUM(j."+DB.nu_unique+")",
+  DBSubset oDistinctRecipients = new DBSubset(DB.k_jobs+" j", DBBind.Functions.ISNULL+"(SUM(j."+DB.nu_unique+"),0)",
     																	        "j."+DB.id_status+" IN ("+String.valueOf(Atom.STATUS_FINISHED)+","+String.valueOf(Atom.STATUS_RUNNING)+") AND "+
 																			        "(j."+DB.dt_execution+" BETWEEN ? AND ? OR j."+DB.dt_finished+" BETWEEN ? AND ?) AND "+
 																			        "j."+DB.gu_job+" IN (SELECT "+DB.gu_job+" FROM "+DB.k_jobs+" WHERE "+DB.gu_workarea+"=?)", 1);
@@ -252,7 +252,7 @@
     	    
     oConn.close(PAGE_NAME);
   }
-  catch (Exception e) {  
+  catch (SQLException e) {  
     if (oConn!=null) if (!oConn.isClosed()) oConn.close(PAGE_NAME);
     oConn = null;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title="+e.getClass().getName()+"&desc=" + e.getMessage() + "&resume=_close"));  
