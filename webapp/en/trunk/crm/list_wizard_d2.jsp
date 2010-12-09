@@ -62,10 +62,10 @@
 
 <HTML>
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
       function q(str) {
@@ -93,32 +93,34 @@
       function validate() {
         var frm = document.forms[0];
 	
-	if (frm.emails.value.length==0) {
-	  alert ("Must specify file to be uploaded");
-	  return false;
-	}
-	
-	if (getCombo(frm.sel_column1)=="") {
-	  alert ("La columna 1 es obligatoria");
-	  return false;
-	}
-	 
-	if (getCombo(frm.sel_column1)!="tx_email" && getCombo(frm.sel_column2)!="tx_email" && getCombo(frm.sel_column3)!="tx_email" && getCombo(frm.sel_column4)!="tx_email") {
-	  alert ("At least one column must be the e-mail to be loaded");
-	  return false;
-	}
+      	if (frm.emails.value.length==0) {
+      	  alert ("Must specify file to be uploaded");
+      	  return false;
+      	}
+      	
+      	if (getCombo(frm.sel_column1)=="") {
+      	  alert ("La columna 1 es obligatoria");
+      	  return false;
+      	}
+      	 
+      	if (getCombo(frm.sel_column1)!="tx_email" && getCombo(frm.sel_column2)!="tx_email" && getCombo(frm.sel_column3)!="tx_email" && getCombo(frm.sel_column4)!="tx_email") {
+      	  alert ("At least one column must be the e-mail to be loaded");
+      	  return false;
+      	}
 
         var delim = getCombo(frm.sel_delimiter);
         
         if (delim=="tab") delim = "\t";
         
-	frm.desc_file.value = q(getCombo(frm.sel_column1));
-	if (getCombo(frm.sel_column2)!="")
-	  frm.desc_file.value += delim + q(getCombo(frm.sel_column2));
-	if (getCombo(frm.sel_column3)!="")
-	  frm.desc_file.value += delim + q(getCombo(frm.sel_column3));
-	if (getCombo(frm.sel_column4)!="")
-	  frm.desc_file.value += delim + q(getCombo(frm.sel_column4));
+	      frm.desc_file.value = q(getCombo(frm.sel_column1));
+	      if (getCombo(frm.sel_column2)!="")
+	        frm.desc_file.value += delim + q(getCombo(frm.sel_column2));
+	      if (getCombo(frm.sel_column3)!="")
+	        frm.desc_file.value += delim + q(getCombo(frm.sel_column3));
+	      if (getCombo(frm.sel_column4)!="")
+	        frm.desc_file.value += delim + q(getCombo(frm.sel_column4));
+	      if (getCombo(frm.sel_column5)!="")
+	        frm.desc_file.value += delim + q(getCombo(frm.sel_column5));
 
         return true;
       }
@@ -149,7 +151,7 @@
               <TABLE>
                 <TR>
                   <TD><FONT CLASS="textsmall">Delimiter</FONT></TD>
-                  <TD ALIGN="right"><SELECT CLASS="combomini" NAME="sel_delimiter"><OPTION VALUE="," SELECTED>Comma (,)</OPTION><OPTION VALUE=";">Semi colon (;)</OPTION><OPTION VALUE="tab">Tab</OPTION><OPTION VALUE="|">Pipe (|)</OPTION></SELECT></TD>
+                  <TD ALIGN="right"><SELECT CLASS="combomini" NAME="sel_delimiter"><OPTION VALUE=",">Comma (,)</OPTION><OPTION VALUE=";">Semi colon (;)</OPTION><OPTION VALUE="tab" SELECTED="selected">Tab</OPTION><OPTION VALUE="|">Pipe (|)</OPTION></SELECT></TD>
                 </TR>
                 <TR>
                   <TD COLSPAN="2">
@@ -195,6 +197,7 @@
                       <OPTION VALUE="tx_name">Name</OPTION>
                       <OPTION VALUE="tx_surname">Surname</OPTION>
                       <OPTION VALUE="tx_salutation">Salutation</OPTION>
+                      <OPTION VALUE="tx_info">URL</OPTION>
                       <OPTION VALUE="unnamed">Other</OPTION>
                     </SELECT>
                   </TD>
@@ -207,6 +210,7 @@
                       <OPTION VALUE="tx_name" SELECTED>Name</OPTION>
                       <OPTION VALUE="tx_surname">Surname</OPTION>
                       <OPTION VALUE="tx_salutation">Salutation</OPTION>
+                      <OPTION VALUE="tx_info">URL</OPTION>
                       <OPTION VALUE="unnamed">Other</OPTION>
                     </SELECT>
                   </TD>
@@ -220,6 +224,7 @@
                       <OPTION VALUE="tx_name">Name</OPTION>
                       <OPTION VALUE="tx_surname" SELECTED>Surname</OPTION>
                       <OPTION VALUE="tx_salutation">Salutation</OPTION>
+                      <OPTION VALUE="tx_info">URL</OPTION>
                       <OPTION VALUE="unnamed">Otro</OPTION>
                     </SELECT>
                   </TD>
@@ -233,6 +238,21 @@
                       <OPTION VALUE="tx_name">Name</OPTION>
                       <OPTION VALUE="tx_surname">Surname</OPTION>
                       <OPTION VALUE="tx_salutation">Salutation</OPTION>
+                      <OPTION VALUE="tx_info">URL</OPTION>
+                      <OPTION VALUE="unnamed">Other</OPTION>
+                    </SELECT>
+                  </TD>
+                </TR>
+                <TR>
+                  <TD><FONT CLASS="textsmall">Column 5</FONT></TD>
+                  <TD>
+                    <SELECT CLASS="combomini" NAME="sel_column5">
+                      <OPTION VALUE="" SELECTED></OPTION>
+                      <OPTION VALUE="tx_email">e-mail</OPTION>
+                      <OPTION VALUE="tx_name">Name</OPTION>
+                      <OPTION VALUE="tx_surname">Surname</OPTION>
+                      <OPTION VALUE="tx_salutation">Salutation</OPTION>
+                      <OPTION VALUE="tx_info">URL</OPTION>
                       <OPTION VALUE="unnamed">Other</OPTION>
                     </SELECT>
                   </TD>

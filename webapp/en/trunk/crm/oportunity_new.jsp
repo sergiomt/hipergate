@@ -369,7 +369,7 @@
               &nbsp;<A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Status List"></A>
               <INPUT TYPE="hidden" NAME="id_status">
               &nbsp;&nbsp;
-              <FONT CLASS="formplain">[~Medio:~]</FONT>&nbsp;
+              <FONT CLASS="formplain">Media:</FONT>&nbsp;
               <SELECT NAME="sel_origin"><OPTION VALUE=""></OPTION><%=sOriginLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(5)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Origins List"></A>
               <INPUT TYPE="hidden" NAME="tp_origin">
             </TD>

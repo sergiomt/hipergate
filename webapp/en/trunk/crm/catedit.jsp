@@ -112,12 +112,12 @@
     oPrnt = oCatg.getParents(oConn);
     id_parent = oPrnt.getString(0,0);
 
-    sHeadStrip = "[~Editar Categor&iacute;a~] "+oCatg.getLabel(oConn, sLanguage);
+    sHeadStrip = "Edit Category "+oCatg.getLabel(oConn, sLanguage);
     
     oCatg = null;
   }
   else {
-    sHeadStrip = "[~Nueva Categor&iacute;a~]";
+    sHeadStrip = "New Category";
 
     n_category = new String("");
     is_active = new Short((short)1);
@@ -151,7 +151,7 @@
       var frm = document.forms[0];
 
 			if (frm.tr_category.length==0) {
-        alert ("[~El nombre de la categoría es obligatorio~]");
+        alert ("The category name is required");
         frm.tr_category.focus();
         return false;        
 			}   
@@ -159,7 +159,7 @@
       frm.id_parent_cat.value = getCombo(frm.sel_parent_cat);
 
       if (frm.id_parent_cat.value=="<%=id_category%>") {
-          alert ("[~La categoría no puede ser padre de sí misma~]");
+          alert ("The category cannot be parent of itself");
           return false;        
       }
    
@@ -191,18 +191,18 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">	      
           <TR>
-            <TD ALIGN="right" CLASS="formstrong">[~Padre:~]</TD>
-            <TD ALIGN="left"><SELECT NAME="sel_parent_cat"><OPTION VALUE="<% out.write (top_parent);%>">[~RAIZ~]</OPTION><% out.write(oSelParents.toString()); %></SELECT></TD>
+            <TD ALIGN="right" CLASS="formstrong">Parent</TD>
+            <TD ALIGN="left"><SELECT NAME="sel_parent_cat"><OPTION VALUE="<% out.write (top_parent);%>">ROOT</OPTION><% out.write(oSelParents.toString()); %></SELECT></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" CLASS="formstrong">[~Visible:~]</TD>
+            <TD ALIGN="right" CLASS="formstrong">Visible:</TD>
             <TD ALIGN="left" WIDTH="290">
               <INPUT TYPE="checkbox" NAME="is_active" VALUE="1" <% if (is_active.intValue()!=0) out.write(" CHECKED=\"true\" "); %>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <INPUT TYPE="hidden" NAME="id_doc_status" VALUE="1">
             </TD>
           </TR>
           <TR>
-          	<TD CLASS="formstrong">[~Nombre:~]</TD>
+          	<TD CLASS="formstrong">Name:</TD>
           	<TD><INPUT TYPE="text" NAME="tr_category" MAXLENGTH="30" SIZE="34" VALUE="<%=tr_category%>"></TD>
           </TR>
           <TR>
@@ -211,8 +211,8 @@
           <TR>
     	    <TD>&nbsp;</TD>
     	    <TD>
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>
     	    </TD>	    
           </TR>           

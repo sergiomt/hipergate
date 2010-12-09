@@ -46,7 +46,7 @@
   String sDtStart = request.getParameter("dt_start");
   String sStatus;
     
-  JDCConnection oConn = null;
+  JDCConnection oConn = GlobalDBBind.getConnection("rp_saleswinlost");
 
   DBSubset oSales;
   
@@ -76,17 +76,6 @@
   oSales.setRowDelimiter("\n");
   oSales.setColumnDelimiter("\t");
   oSales.setTextQualifier("");
-   
-  try {
-    oConn = GlobalDBBind.getConnection("rp_saleswinlost");
-  }
-  catch (SQLException e) {  
-    disposeConnection(oConn,"rp_saleswinlost");
-    oConn = null;
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));
-  }
-
-  if (null==oConn) return;
 
   try {      
     oSales.print (oConn, response.getOutputStream());

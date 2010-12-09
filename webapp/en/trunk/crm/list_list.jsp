@@ -192,7 +192,7 @@
 	        var frm = document.forms[0];
 	        var chi = frm.checkeditems;
 	        	  
-	        if (window.confirm("[~¿Está seguro de que desea eliminar las listas seleccionadas?~]")) {
+	        if (window.confirm("Are you sure that you want to delete the seledted lists?")) {
 	        	  
 	          chi.value = "";	  	  
 	          
@@ -270,7 +270,7 @@
         	
 	    function createOportunity (id,de) {	  
 <% if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your priviledge level as guest does not allow you to perform this action");
 <% } else { %>
 	      self.open ("oportunity_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>&gu_list=" + id + "&de_list=" + escape(de), "createoportunity", "directories=no,toolbar=no,menubar=no,width=640,height=560");	  
 <% } %>
@@ -280,7 +280,7 @@
 
       function createProject(gu,de) {
 <% if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your priviledge level as guest does not allow you to perform this action");
 <% } else { %>
         window.open("prj_create.jsp?gu_workarea=<%=gu_workarea%>&gu_list=" + gu + "&de_list=" + escape(de), "addproject", "directories=no,toolbar=no,menubar=no,width=540,height=280");       
 <% } %>
@@ -291,7 +291,7 @@
 <% if (bHasAccounts) { %>
       function sendEmail(gu,de) {
 <% if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your priviledge level as guest does not allow you to perform this action");
 <% } else { %>
         window.open("../hipermail/msg_new_f.jsp?folder=drafts&to={"+escape(de)+"}", "sendmailtolist");       
 <% } %>
@@ -303,9 +303,9 @@
 <% if (!bHasAccounts) { %>
       function configEmail() {
 <% if (bIsGuest) { %>
-        alert("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert("Your priviledge level as guest does not allow you to perform this action");
 <% } else { %>
-	alert ("[~Debe configurar previamente el servidor de correo para enviar e-mails~]");
+	alert ("You must specify an SMTP server before sending mails");
 	top.document.location.href="../hipermail/mail_config_f.htm?selected=1&subselected=0"
 <% } %>
       } // configEmail
@@ -340,7 +340,7 @@
       
       function clone() {        
 <% if (bIsGuest) { %>
-        alert ("[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]");
+        alert ("Your priviledge level as guest does not allow you to perform this action");
 <% } else { %>
         winclone = window.open ("list_clone.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_instance=" + jsListId + "&opcode=CLST&classid=96", "clonelist", "directories=no,toolbar=no,menubar=no,top=" + (screen.height-200)/2 + ",left=" + (screen.width-320)/2 + ",width=320,height=200");                
         intervalId = setInterval ("findCloned()", 100);
@@ -349,11 +349,11 @@
       
     //-->    
   </SCRIPT>
-  <TITLE>hipergate :: [~Listas de distribución~]</TITLE>
+  <TITLE>hipergate :: Distribution lists</TITLE>
 </HEAD>
 <BODY TOPMARGIN="8" MARGINHEIGHT="8" onClick="hideRightMenu()">
     <FORM METHOD="post" onSubmit="findList();return false;">
-      <TABLE><TR><TD WIDTH="98%" CLASS="striptitle"><FONT CLASS="title1">[~Listas de Distribuci&oacute;n~]</FONT></TD></TR></TABLE>      
+      <TABLE><TR><TD WIDTH="98%" CLASS="striptitle"><FONT CLASS="title1">Distribution Lists</FONT></TD></TR></TABLE>      
       <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
       <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
       <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
@@ -362,25 +362,25 @@
       <TABLE CELLSPACING="2" CELLPADDING="2">
         <TR>
           <TD>&nbsp;&nbsp;<IMG SRC="../images/images/back.gif" WIDTH="16" HEIGHT="16" BORDER="0"></TD>
-          <TD><A HREF="list_listing.jsp?selected=2&subselected=3" TARGET="_top" CLASS="linkplain">[~Listado~]</A></TD>
+          <TD><A HREF="list_listing.jsp?selected=2&subselected=3" TARGET="_top" CLASS="linkplain">Listing</A></TD>
           <TD COLSPAN="2"></TD>
         </TR>
         <TR><TD COLSPAN="4" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
         <TR>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nueva~]"></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
         <TD VALIGN="middle">
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Nueva~]</A>
+          <A HREF="#" onclick="alert ('Your priviledge level as guest does not allow you to perform this action')" CLASS="linkplain">New</A>
 <% } else { %>
-          <A HREF="#" onclick="createList();return false;" CLASS="linkplain">[~Nueva~]</A>
+          <A HREF="#" onclick="createList();return false;" CLASS="linkplain">New</A>
 <% } %>
         </TD>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar~]"></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
         <TD>
 <% if (bIsGuest) { %>
-          <A HREF="#" onclick="alert ('[~Su nivel de privilegio como Invitado no le permite efectuar esta acción~]')" CLASS="linkplain">[~Eliminar~]</A>
+          <A HREF="#" onclick="alert ('Your priviledge level as guest does not allow you to perform this action')" CLASS="linkplain">Delete</A>
 <% } else { %>
-          <A HREF="#" onclick="deleteLists();return false;" CLASS="linkplain">[~Eliminar~]</A>
+          <A HREF="#" onclick="deleteLists();return false;" CLASS="linkplain">Delete</A>
 <% } %>
         </TD>
         </TR>
@@ -402,9 +402,9 @@
       </TABLE>
       <TABLE CELLSPACING="1" CELLPADDING="0">
         <TR>
-          <!--<TD CLASS="tableheader" WIDTH="<%=String.valueOf(floor(300f*fScreenRatio))%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(4)" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==4 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este campo~]"></A>&nbsp;<B>[~Asunto~]</B></TD>-->
-          <TD CLASS="tableheader" WIDTH="<%=String.valueOf(floor(400f*fScreenRatio))%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(5)" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este campo~]"></A>&nbsp;<B>[~Descripci&oacute;n~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Seleccionar todos"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="[~Seleccionar todos~]"></A></TD></TR>
+          <!--<TD CLASS="tableheader" WIDTH="<%=String.valueOf(floor(300f*fScreenRatio))%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(4)" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==4 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>Subject</B></TD>-->
+          <TD CLASS="tableheader" WIDTH="<%=String.valueOf(floor(400f*fScreenRatio))%>" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(5)" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>Description</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Seleccionar todos"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select All"></A></TD></TR>
 <%
 	  String sInstId, sInstQr, sInstTp, sInstNm, sInstDe;
 	  for (int i=0; i<iListCount; i++) {
@@ -415,8 +415,8 @@
             sInstDe = oLists.getStringNull(4,i,"");            
 %>
             <TR HEIGHT="14">
-              <!--<TD CLASS="strip<%=(i%2)+1%>" VALIGN="middle">&nbsp;<A HREF="#" oncontextmenu="jsListId='<%=sInstId%>'; jsListTp=<%=sInstTp%>; jsListQr='<%=sInstQr%>'; jsListNm='<%=sInstNm%>'; jsListDe='<%=sInstDe%>'; configureMenu(); return showRightMenu(event);" onmouseover="window.status='[~Editar Lista~]'; return true;" onmouseout="window.status='';" onclick="modifyList('<%=sInstId%>','<%=sInstNm%>')" TITLE="[~Bot&oacute;n Derecho para Ver el Men&uacute; Contextual~]"><%=oLists.getStringNull(3,i,"([~sin asunto~])")%></A></TD>-->
-              <TD CLASS="strip<%=(i%2)+1%>">&nbsp;<A HREF="#" CLASS="linkplain" oncontextmenu="jsListId='<%=sInstId%>'; jsListTp=<%=sInstTp%>; jsListQr='<%=sInstQr%>'; jsListNm='<%=sInstNm%>'; jsListDe='<%=sInstDe%>'; configureMenu(); return showRightMenu(event);" onmouseover="window.status='[~Editar Lista~]'; return true;" onmouseout="window.status='';" onclick="modifyList('<%=sInstId%>','<%=sInstNm%>')" TITLE="[~Bot&oacute;n Derecho para Ver el Men&uacute; Contextual~]"><%=oLists.getStringNull(4,i,"")%></A></TD>
+              <!--<TD CLASS="strip<%=(i%2)+1%>" VALIGN="middle">&nbsp;<A HREF="#" oncontextmenu="jsListId='<%=sInstId%>'; jsListTp=<%=sInstTp%>; jsListQr='<%=sInstQr%>'; jsListNm='<%=sInstNm%>'; jsListDe='<%=sInstDe%>'; configureMenu(); return showRightMenu(event);" onmouseover="window.status='Edit List'; return true;" onmouseout="window.status='';" onclick="modifyList('<%=sInstId%>','<%=sInstNm%>')" TITLE="Click right mouse button to show context menu"><%=oLists.getStringNull(3,i,"(no subject)")%></A></TD>-->
+              <TD CLASS="strip<%=(i%2)+1%>">&nbsp;<A HREF="#" CLASS="linkplain" oncontextmenu="jsListId='<%=sInstId%>'; jsListTp=<%=sInstTp%>; jsListQr='<%=sInstQr%>'; jsListNm='<%=sInstNm%>'; jsListDe='<%=sInstDe%>'; configureMenu(); return showRightMenu(event);" onmouseover="window.status='Edit List'; return true;" onmouseout="window.status='';" onclick="modifyList('<%=sInstId%>','<%=sInstNm%>')" TITLE="Click right mouse button to show context menu"><%=oLists.getStringNull(4,i,"")%></A></TD>
               <TD CLASS="strip<%=(i%2)+1%>" ALIGN="center"><INPUT VALUE="1" TYPE="checkbox" NAME="<%=sInstId%>">
             </TR>
 <%        } // next(i) %>          	  
@@ -424,23 +424,23 @@
     </FORM>
 
     <SCRIPT language="JavaScript" type="text/javascript">
-      addMenuOption("[~Abrir~]","modifyList(jsListId,jsListNm)",1);
-      addMenuOption("[~Duplicar~]","clone()",0);
-      addMenuOption("[~Combinar~]","mergeMembers(jsListId,jsListDe)",0);
+      addMenuOption("Open","modifyList(jsListId,jsListNm)",1);
+      addMenuOption("Clone","clone()",0);
+      addMenuOption("Merge","mergeMembers(jsListId,jsListDe)",0);
       addMenuSeparator();
-      addMenuOption("[~Editar Miembros~]","editMembers(jsListId,jsListDe)",0);
-      addMenuOption("[~Editar Consulta~]","editQuery(jsListId,jsListDe)",2);
-      addMenuOption("[~Exportar Miembros~]","exportMembers(jsListId)",0);
+      addMenuOption("Edit Members","editMembers(jsListId,jsListDe)",0);
+      addMenuOption("Edit Query","editQuery(jsListId,jsListDe)",2);
+      addMenuOption("Export members","exportMembers(jsListId)",0);
       addMenuSeparator();
-      addMenuOption("[~Nueva Oportunidad~]","createOportunity(jsListId,jsListDe)",0);
+      addMenuOption("New Opportunity","createOportunity(jsListId,jsListDe)",0);
 <% if (((iAppMask & (1<<ProjectManager))!=0)) { %>
-      addMenuOption("[~Nuevo Proyecto~]","createProject(jsListId,jsListDe)",0);
+      addMenuOption("New Project","createProject(jsListId,jsListDe)",0);
 <% } %>
 <% if (((iAppMask & (1<<Hipermail))!=0)) {
       if (bHasAccounts) { %>
-      addMenuOption("[~Enviar e-mail~]","sendEmail(jsListId,jsListDe)",0);
+      addMenuOption("Send e-mail","sendEmail(jsListId,jsListDe)",0);
 <%    } else { %>
-      addMenuOption("[~Enviar e-mail~]","configEmail()",0);
+      addMenuOption("Send e-mail","configEmail()",0);
 <% }  } %>
     </SCRIPT>
 </BODY>

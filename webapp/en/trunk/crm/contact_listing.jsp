@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.util.Date,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.hipergate.QueryByForm,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.util.Date,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.misc.Environment,com.knowgate.hipergate.QueryByForm,com.knowgate.misc.Gadgets,com.knowgate.workareas.WorkArea" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/reqload.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -116,9 +116,9 @@
   try {
     bIsGuest = isDomainGuest (GlobalCacheClient, GlobalDBBind, request, response);
     bIsAdmin = isDomainAdmin (GlobalCacheClient, GlobalDBBind, request, response);
-  
-    oConn = GlobalDBBind.getConnection("contact_listing");
 
+    oConn = GlobalDBBind.getConnection("contact_listing");
+		
     if (bIsAdmin) {
       sSecurityFilter = sSalesMan.length()==0 ? "" : " AND ("+DB.gu_writer+"='"+sSalesMan+"' OR "+DB.gu_sales_man+"='"+sSalesMan+"') ";
 
@@ -148,10 +148,19 @@
     }
 
     if (face.equals("edu")) {
-      oACourses = new DBSubset(DB.k_academic_courses+" a",
-      			       DB.gu_acourse+","+DB.nm_course+","+DB.id_course,
-      			       DB.bo_active+"=1 AND EXISTS (SELECT "+DB.gu_course+" FROM "+DB.k_courses+" c WHERE a."+DB.gu_course+"=c."+DB.gu_course+" AND c."+DB.gu_workarea+"=?) ORDER BY 2", 50);
-      iACourses = oACourses.load(oConn, new Object[]{gu_workarea});
+      if (WorkArea.isAdmin(oConn, gu_workarea, id_user)) {
+        oACourses = new DBSubset(DB.k_academic_courses+" a",
+      			         DB.gu_acourse+","+DB.nm_course+","+DB.id_course,
+      			         DB.bo_active+"=1 AND EXISTS (SELECT "+DB.gu_course+" FROM "+DB.k_courses+" c WHERE a."+DB.gu_course+"=c."+DB.gu_course+" AND c."+DB.gu_workarea+"=?) ORDER BY 2", 50);
+        iACourses = oACourses.load(oConn, new Object[]{gu_workarea});
+      } else {
+        oACourses = new DBSubset(DB.k_academic_courses+" a",
+      			         DB.gu_acourse+","+DB.nm_course+","+DB.id_course,
+      							 " (  EXISTS (SELECT u."+DB.gu_acourse+" FROM "+DB.k_x_user_acourse+" u WHERE u."+DB.gu_acourse+"=a."+DB.gu_acourse+" AND u."+DB.gu_user+"=? AND u."+DB.bo_user+"<>0) OR "+
+                     "NOT EXISTS (SELECT u."+DB.gu_acourse+" FROM "+DB.k_x_user_acourse+" u WHERE u."+DB.gu_acourse+"=a."+DB.gu_acourse+" AND u."+DB.gu_user+"=?)) AND "+
+      			         DB.bo_active+"=1 AND EXISTS (SELECT "+DB.gu_course+" FROM "+DB.k_courses+" c WHERE a."+DB.gu_course+"=c."+DB.gu_course+" AND c."+DB.gu_workarea+"=?) ORDER BY 2", 50);
+        iACourses = oACourses.load(oConn, new Object[]{id_user,id_user,gu_workarea});      
+      }
     }
     
     oQueries = GlobalCacheClient.getDBSubset("k_queries.contacts[" + gu_workarea + "]");
@@ -450,7 +459,7 @@
 	  if (window.confirm("Are you sure you want to delete selected individuals?")) {
 	    chi.value = "";
 
-	    frm.action = "contact_edit_delete.jsp?face=<%=sFace%>selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
+	    frm.action = "contact_edit_delete.jsp?face=<%=sFace%>&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
          
             while (frm.elements[offset].type!="checkbox") offset++;
                  
@@ -469,7 +478,7 @@
         // ----------------------------------------------------
 
 	function modifyContact(id) {
-	  self.open ("contact_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_contact=" + id, "editcontact", "directories=no,toolbar=no,scrollbars=yes,menubar=no,width=760,height=660");
+	  self.open ("contact_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_contact=" + id + "&face=<%=sFace%>", "editcontact", "directories=no,toolbar=no,scrollbars=yes,menubar=no,width=760,height=660");
 	}	
 
 	
@@ -765,7 +774,7 @@
         </TD>
         <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard Find Filter"></TD>
         <TD VALIGN="bottom">
-          <A HREF="#" onclick="document.forms[0].salesman.selectedIndex=0;document.forms[0].find.value='';findContact();return false;" CLASS="linkplain" TITLE="Discard Find Filter">Discard</A>
+          <A HREF="#" onclick="<% if (bIsAdmin) { %>document.forms[0].salesman.selectedIndex=0;<% } %>document.forms[0].find.value='';findContact();return false;" CLASS="linkplain" TITLE="Discard Find Filter">Discard</A>
           <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;Show&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;results&nbsp;</FONT>
         </TD>
         </TR>

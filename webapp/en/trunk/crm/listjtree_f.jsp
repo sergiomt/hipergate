@@ -85,7 +85,7 @@
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <TITLE>hipergate :: [~&Aacute;rbol de Categor&iacute;as~]</TITLE>
+    <TITLE>hipergate :: Category Tree</TITLE>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>    
@@ -104,7 +104,7 @@
     var treeMenuHiFg       = "#FFFF00";         // Color for selected item text.
     var treeMenuFont       = "Arial,Helvetica"; // Text font face.
     var treeMenuFontSize   = 1;                 // Text font size.
-    var treeMenuRoot       = "[~CATEGOR&Iacute;AS~]"; // Text for the menu root.
+    var treeMenuRoot       = "CATEGORIES"; // Text for the menu root.
     var treeMenuFolders    = 1;                 // Sets display of '+' and '-' icons.
     var treeMenuAltText    = false;             // Use menu item text for icon image ALT text.
 
@@ -135,7 +135,7 @@
 </FRAMESET>
 <NOFRAMES>
   <BODY>
-    <P>[~Esta p&aacute;gina usa marcos, pero su explorador no los admite.~]</P>
+    <P>This page uses frames but your browser does not support them</P>
   </BODY>
 </NOFRAMES>
 <HTML>

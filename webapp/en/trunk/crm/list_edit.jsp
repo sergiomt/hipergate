@@ -243,7 +243,7 @@
             <TD ALIGN="left"><FONT CLASS="formplain"><I>(<% out.write (String.valueOf(nu_members)); %>&nbsp;members)</I></FONT></TD>
           </TR>
 					<TR>
-				    <TD CLASS="formstrong" ALIGN="right">[~Categor&iacute;a~]</TD>
+				    <TD CLASS="formstrong" ALIGN="right">Category</TD>
 				    <TD><SELECT name="gu_category" class="combomini"><%
     		      out.write ("<OPTION VALUE=\"" + sGuRootCategory + "\"></OPTION>");
     			    for (int c=0; c<iCatgs; c++) {		    

@@ -482,7 +482,7 @@
         </TR>
         <TR>
         <TD>&nbsp;&nbsp;<IMG SRC="../images/images/tree/menu_root.gif" WIDTH="18" HEIGHT="18" BORDER="0"></TD>
-        <TD><A HREF="list_tree_f.htm?selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>&top_parent_cat=<%=sGuRootCategory%>" TARGET="_top" CLASS="linkplain">[~&Aacute;rbol~]</A></TD>
+        <TD><A HREF="list_tree_f.htm?selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>&top_parent_cat=<%=sGuRootCategory%>" TARGET="_top" CLASS="linkplain">Tree</A></TD>
 				<TD COLSPAN="6"><SELECT name="sel_category" class="combomini" onchange="document.location='list_listing.jsp?selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>&find=<%=Gadgets.URLEncode(sFind)%>&field=<%=sField%>&screen_width='+String(screen.width)+'&categ='+(this.selectedIndex<=0 ? '' : this.options[this.selectedIndex].value)"><%
 
     		  out.write ("<OPTION VALUE=\"" + sGuRootCategory + "\"></OPTION>");

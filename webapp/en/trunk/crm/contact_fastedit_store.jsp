@@ -133,7 +133,7 @@
 <BODY TOPMARGIN="32" MARGINHEIGHT="32">
   <TABLE ALIGN="CENTER" WIDTH="90%" BGCOLOR="#000080">
     <TR><TD>
-      <FONT FACE="Arial,Helvetica,sans-serif" COLOR="white" SIZE="2"><B><% out.write("[~Operaci&oacute;n Completada~]"); %></B></FONT>
+      <FONT FACE="Arial,Helvetica,sans-serif" COLOR="white" SIZE="2"><B><% out.write("Operation Completed"); %></B></FONT>
     </TD></TR>
     <TR><TD>
       <TABLE WIDTH="100%" BGCOLOR="#FFFFFF">

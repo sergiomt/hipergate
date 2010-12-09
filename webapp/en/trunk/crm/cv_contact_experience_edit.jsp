@@ -9,7 +9,7 @@
     			<TR><TD>
         			<TABLE WIDTH="100%" >
         				<TR>
-            	            <TD ALIGN="right" WIDTH="90" CLASS="formplain">[~Compa�ia~]</TD>
+            	            <TD ALIGN="right" WIDTH="90" CLASS="formplain">Company</TD>
 				            <TD ALIGN="left" WIDTH="480"><INPUT TYPE="text" NAME="nm_company" MAXLENGTH="50" SIZE="40" VALUE="<%= oContactEx.getStringNull("nm_company","")%>"></TD>
           				</TR>
           				<TR>
@@ -19,11 +19,11 @@
             				</TD>
           				</TR>
           				<TR>
-            				<TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">[~Actividad de la compa�ia~]</FONT></TD>
+            				<TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Company Activity</FONT></TD>
             				<TD ALIGN="left" WIDTH="460">
               					<INPUT TYPE="hidden" NAME="id_sector" VALUE="<%=oContactEx.getStringNull(DB.id_sector,"")%>">&nbsp;
               					<SELECT NAME="sel_id_sector"><OPTION VALUE=""></OPTION><% out.write(sIdSectorLookUp); %></SELECT>&nbsp;
-              					<A HREF="javascript:lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver actividades de compa�ias~]"></A>
+              					<A HREF="javascript:lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Show companies activities"></A>
             				</TD>
           				</TR>
           				<TR>
@@ -60,7 +60,7 @@
           			<TABLE SUMMARY="Languages" CELLSPACING="1" CELLPADDING="0" width="100%">
         			<TR>
 						<TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"></TD>
-			          	<TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>[~Compa�ia~]</B></TD>
+			          	<TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>Company</B></TD>
 			          	<TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>Position</B></TD>
 			          	<TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>Dates</B></TD>
 						<% if (!bIsGuest) { %>

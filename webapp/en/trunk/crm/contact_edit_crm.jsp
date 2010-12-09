@@ -6,7 +6,7 @@
 <FORM NAME="fixedAttrs" METHOD="post" ACTION="contact_edit_store.jsp" onSubmit="return validate()">
   <DIV class="cxMnu1" style="width:<%=(gu_contact.length()>0 && bIsAdmin ? "6" : bIsGuest ? "4" : "5")%>80px"><DIV class="cxMnu2">
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
-    <% if (!bIsGuest) { %><SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'; showRightMenu(event);" onMouseOut="this.className='hmMnuOff'"><IMG src="../images/images/new16x16.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Nuevo~]"> [~Nuevo~]</SPAN><% } %>
+    <% if (!bIsGuest) { %><SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'; showRightMenu(event);" onMouseOut="this.className='hmMnuOff'"><IMG src="../images/images/new16x16.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="New"> New</SPAN><% } %>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Refresh"> Refresh</SPAN>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
 <% if (gu_contact.length()>0) { %>
@@ -26,10 +26,14 @@
       <TD VALIGN="middle"><A HREF="#" onclick="viewNotes()" CLASS="linkplain">Notes</A></TD>
       <TD VALIGN="middle"><IMG SRC="../images/images/attachedfile16x16.gif" WIDTH="21" HEIGHT="17" BORDER="0"></TD>
       <TD VALIGN="middle"><A HREF="#" onclick="viewAttachments()" CLASS="linkplain">Attached Files</A></TD>
+<% if ((iAppMask & (1<<Sales))!=0) { %>
       <TD VALIGN="middle"><IMG SRC="../images/images/loan16x16.gif" WIDTH="26" HEIGHT="16" BORDER="0"></TD>
       <TD VALIGN="middle"><A HREF="#" onclick="viewOportunities()" CLASS="linkplain">Leads</A></TD>
       <TD VALIGN="middle"><IMG SRC="../images/images/crm/welcomepack.gif" WIDTH="20" HEIGHT="18" BORDER="0"></TD>
       <TD VALIGN="middle"><A HREF="#" onclick="viewWelcomePack()" CLASS="linkplain">Welcome Pack</A></TD>
+<% } else { %>
+      <TD COLSPAN="4"></TD>
+<% } %>
     </TR>
     <TR>
    <% /* Inicio i2e 2009-11-30 */ %>
@@ -232,16 +236,16 @@
     <IFRAME name="addrIFrame" src="../common/blank.htm" width="0" height="0" border="0" frameborder="0"></IFRAME>
     <SCRIPT language="JavaScript" type="text/javascript">
       <!--
-      addMenuOption("[~Direcci&oacute;n~]","createAddress()",0);
-      addMenuOption("[~Oportunidad~]","createOportunity()",0);
-      addMenuOption("[~Nota~]","createNote()",0);
-      addMenuOption("[~Archivo~]","createAttachment()",0);
+      addMenuOption("Address","createAddress()",0);
+      addMenuOption("Opportunity","createOportunity()",0);
+      addMenuOption("Note","createNote()",0);
+      addMenuOption("File","createAttachment()",0);
 <% if ((iAppMask & (1<<CollaborativeTools))!=0) { %>
-      addMenuOption("[~Llamada~]","createPhoneCall()",0);
-      addMenuOption("[~Actividad~]","createActivity()",0);
+      addMenuOption("Call","createPhoneCall()",0);
+      addMenuOption("Meeting","createActivity()",0);
 <% } %>
 <% if ((iAppMask & (1<<ProjectManager))!=0) { %>
-      addMenuOption("[~Proyecto~]","createProject()",0);
+      addMenuOption("Project","createProject()",0);
 <% } %>
       //-->
     </SCRIPT>

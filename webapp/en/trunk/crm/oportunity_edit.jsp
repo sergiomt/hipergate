@@ -459,6 +459,7 @@
         </TR>
 <% } %>
 	<%/** Inicio I2E 20-01-2010 **/ %>
+	<!--
 	    <TR HEIGHT="18">
         	  <TD><IMG SRC="../images/images/training/diploma16.gif" HEIGHT="16" WIDTH="16" BORDER="0" ALT="View Admission"></TD>
         	  <TD><A HREF="admission_edit.jsp?id_domain=<%=id_domain%>&n_domain=<%=Gadgets.URLEncode(n_domain)%>&gu_workarea=<%=gu_workarea%>&gu_contact=<%=gu_contact%>&gu_oportunity=<%=gu_oportunity%>" CLASS="linkplain">Show Admission</A></TD>
@@ -468,7 +469,8 @@
         	  <TD><A HREF="../training/registration_edit.jsp?id_domain=<%=id_domain%>&n_domain=<%=Gadgets.URLEncode(n_domain)%>&gu_workarea=<%=gu_workarea%>&gu_contact=<%=gu_contact%>&gu_oportunity=<%=gu_oportunity%>" CLASS="linkplain">Show Enrollment</A></TD>
         	  <%/** Fin I2E **/ %>
         </TR>
-      <%/** Fin I2E **/ %>
+  -->
+  <%/** Fin I2E **/ %>
       </TABLE>
   <DIV style="background-color:transparent; position: relative;width:600px;height:496px">
   <DIV id="p1panel0" class="panel" style="background-color:#eee;z-index:2">
@@ -514,7 +516,7 @@
 	          	<TR>
 		          	<TD ALIGN="right" WIDTH="175"><FONT CLASS="formplain">Responsible</FONT></TD>
 		            <TD ALIGN="left" WIDTH="420" CLASS="formplain"><%=tx_nickname%></TD>
-		            <TD ALIGN="right" WIDTH="175"><FONT CLASS="formplain">[~Fecha~]</FONT></TD>
+		            <TD ALIGN="right" WIDTH="175"><FONT CLASS="formplain">Date</FONT></TD>
 		            <TD ALIGN="left" WIDTH="420" CLASS="formplain"><%=sDtCreated%></TD>
 	            </TR>
 	            </TABLE>
@@ -545,7 +547,7 @@
 <% } %>
           <TR>
           <!-- Inicio I2E 2009-12-15 -->
-            <TD ALIGN="right" WIDTH="175"><FONT CLASS="formstrong">Interest Programme</FONT></TD>
+            <TD ALIGN="right" WIDTH="175"><FONT CLASS="formstrong">Objective:</FONT></TD>
             <!-- Fin I2E -->
             <TD ALIGN="left" WIDTH="420">
               <SELECT NAME="sel_objetive" onChange="if (document.forms[0].tl_oportunity.value.length==0) document.forms[0].tl_oportunity.value=getComboText(document.forms[0].sel_objetive);"><OPTION VALUE=""></OPTION><%=sObjectiveLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Objectives List"></A>
@@ -603,7 +605,7 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="175"><FONT CLASS="formplain">Last Call:</FONT></TD>
+            <TD ALIGN="right" WIDTH="175"><FONT CLASS="formplain">Last Call</FONT></TD>
             <TD ALIGN="left" WIDTH="420"><FONT CLASS="formplain"><% if (!oOprt.isNull("dt_last_call")) out.write(oOprt.getDateFormated("dt_last_call", "yyyy-MM-dd HH:mm")); else out.write("No llamado nunca"); %></FONT></TD>
           </TR>
           <TR>

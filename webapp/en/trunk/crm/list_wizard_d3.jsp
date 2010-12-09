@@ -89,10 +89,10 @@
 
 <HTML>
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/email.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     <!--
       function setInputs() {
@@ -160,7 +160,7 @@
     <INPUT TYPE="hidden" NAME="tp_list">
     <INPUT TYPE="hidden" NAME="gu_query" VALUE="<% out.write(sFileId); %>">
     <INPUT TYPE="hidden" NAME="sel_encoding" VALUE="<% out.write(oReq.getParameter("sel_encoding")); %>">
-    <INPUT TYPE="hidden" NAME="desc_file" VALUE="<% out.write(oReq.getParameter("desc_file")); %>"">
+    <INPUT TYPE="hidden" NAME="desc_file" VALUE="<% out.write(oReq.getParameter("desc_file")); %>">
     <CENTER>
     <TABLE>
       <TR><TD WIDTH="310px" CLASS="striptitle"><FONT CLASS="title1">Create List - Step 2 of 4</FONT></TD></TR>
