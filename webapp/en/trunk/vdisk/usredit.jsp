@@ -517,7 +517,7 @@
 <%    if ((iAppMask & (1<<HiperMail))!=0) { %>
 	        <TR>
             <TD></TD>
-            <TD ALIGN="left" WIDTH="470"><A CLASS="linkplain" HREF="../hipermail/account_edit.jsp?id_user=<%=gu_user%>&bo_popup=true">[~Crear una cuenta de WebMail para este usuario</A></TD>
+            <TD ALIGN="left" WIDTH="470"><A CLASS="linkplain" HREF="../hipermail/account_edit.jsp?id_user=<%=gu_user%>&bo_popup=true">Create a WebMail account for this user</A></TD>
 				  </TR>
 <%    } %>
 <%  } %>

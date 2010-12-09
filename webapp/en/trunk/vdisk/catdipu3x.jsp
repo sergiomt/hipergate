@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.sql.SQLException,java.sql.ResultSet,java.sql.PreparedStatement,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.misc.Gadgets,com.knowgate.debug.DebugFile" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+﻿<%@ page import="java.net.URLDecoder,java.sql.SQLException,java.sql.ResultSet,java.sql.PreparedStatement,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.misc.Gadgets,com.knowgate.debug.DebugFile" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %>
 <%
 /*
@@ -43,7 +43,7 @@
   String sDomainShared;
   
   if (sUserId.length()==0 || sDomainId.length()==0) {
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=[~Domain or User Cookies not set~]&resume=_back"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=NullPointerException&desc=Domain or User Cookies not set&resume=_back"));
   }
   boolean bIsGuest = isDomainGuest (GlobalDBBind, request, response);
 
@@ -121,7 +121,7 @@
     var treeMenuHiFg       = "#FFFF00";         // Color for selected item text.
     var treeMenuFont       = "Arial,Helvetica"; // Text font face.
     var treeMenuFontSize   = 1;                 // Text font size.
-    var treeMenuRoot       = "[~CATEGOR&Iacute;AS~]"; // Text for the menu root.
+    var treeMenuRoot       = "CATEGORIES";      // Text for the menu root.
     var treeMenuFolders    = 1;                 // Sets display of '+' and '-' icons.
     var treeMenuAltText    = false;             // Use menu item text for icon image ALT text.
 
@@ -162,10 +162,10 @@
       var diputree = window.document.diputree;
                     
       if (currentCategoryGuid=="000000000000000000000000000000000") {
-	      alert ("[~Debe seleccionar primero una categoria padre para poder crear otra nueva categoria.~]");        
+	      alert ("You must select a parent category first");        
       } else {
         if (currentCategoryGuid=="<%=sParentId%>") {
-          alert ("[~No esta permitido crear categorias raiz~]");
+          alert ("It is not allowed to create root categories");
       	  return false;
       	}
 
@@ -189,7 +189,7 @@
       var diputree = window.document.diputree;
             	
       if (currentCategoryGuid=="000000000000000000000000000000000") {
-        alert ("[~Debe seleccionar una categoría en el árbol antes de poder editarla~]");
+        alert ("Select a category to be edited at the tree below");
       } else {
         self.open ("catedit.jsp?id_domain=" + getCookie("domainid") + "&id_category=" + currentCategoryGuid + "&id_parent_cat=" + currentCategoryGuid, "", "directories=no,toolbar=no,menubar=no,width=480,height=460");
       }
@@ -201,11 +201,11 @@
       var diputree = window.document.diputree;
 
       if (currentCategoryGuid=="000000000000000000000000000000000") {
-        alert ("[~Para eliminar una Categoria debe seleccionarla primero en el arbol de navegacion~]");
+        alert ("Select the category to be deleted at the tree below");
       } else {                   
         if (currentCategoryGuid=="<%=sParentId%>") {
 	        alert ("[~No esta permitido eliminar categorias raiz~]");	  
-        } else if (window.confirm("[~Esta seguro de que desea eliminar la categoria seleccionada?~]")) {
+        } else if (window.confirm("Are you sure that you want to delete the selected category")) {
           self.open ("catedit_del.jsp?checkeditems=" + currentCategoryGuid, "", "directories=no,toolbar=no,menubar=no,width=400,height=300");
         }
       }
@@ -225,7 +225,7 @@
     
     function searchFile () {
       var cad = window.parent.parent.catadmin;
-      var sought = window.prompt("[~Introduzca el nombre de archivo, enlace o categoría a buscar~]","");
+      var sought = window.prompt("Enter name of file, link or category searched","");
       
       if (null!=sought)
         if (sought.length>0)
@@ -245,20 +245,20 @@
 <BODY ID="pagebody"  LEFTMARGIN="4" RIGHTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="4" MARGINHEIGHT="0" SCROLL="no" onload="loadChilds(treeMenu,getChildsCollection('<%=sUri%>'));treeMenuDisplay();">
   <TABLE CELLSPACING="2" CELLPADDING="0" BORDER="0">
     <TR VALIGN="middle">
-      <TD ALIGN="center" VALIGN="middle"><IMG SRC="../images/images/newfolder16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nueva Categor&iacute;a~]"><BR><A HREF="#" onclick="createCategory()" CLASS="linkplain">[~Nueva~]</A></TD>
+      <TD ALIGN="center" VALIGN="middle"><IMG SRC="../images/images/newfolder16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New category"><BR><A HREF="#" onclick="createCategory()" CLASS="linkplain">New</A></TD>
       <TD WIDTH="8"></TD>
       <TD ALIGN="center" VALIGN="middle">
-        <IMG SRC="../images/images/deletefolder.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar Categor&iacute;a~]"><BR>
+        <IMG SRC="../images/images/deletefolder.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete category"><BR>
 <% if (bIsGuest) { %>
-        <A HREF="#" onclick="alert('Your current priviledges level as Guest does not allow you to perform this action')" CLASS="linkplain">[~Eliminar~]</A>
+        <A HREF="#" onclick="alert('Your privilege level as guest does not allow you to perform this action')" CLASS="linkplain">Delete</A>
 <% } else { %>
-        <A HREF="#" onclick="deleteCategory()" CLASS="linkplain">[~Eliminar~]</A>
+        <A HREF="#" onclick="deleteCategory()" CLASS="linkplain">Delete</A>
 <% } %>
       </TD>
       <TD WIDTH="8"></TD>
-      <TD ALIGN="center" VALIGN="middle"><IMG SRC="../images/images/folderoptions.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Editar Categor&iacute;a~]"><BR><A HREF="#" onclick="modifyCategory()" CLASS="linkplain">[~Editar~]</A></TD>
+      <TD ALIGN="center" VALIGN="middle"><IMG SRC="../images/images/folderoptions.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Edit Category"><BR><A HREF="#" onclick="modifyCategory()" CLASS="linkplain">[~Editar~]</A></TD>
       <TD WIDTH="8"></TD>
-      <TD ALIGN="center" VALIGN="middle"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Buscar Categor&iacute;~]"><BR><A HREF="#" onclick="searchFile()" CLASS="linkplain">[~Buscar~]</A></TD>
+      <TD ALIGN="center" VALIGN="middle"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Search Category"><BR><A HREF="#" onclick="searchFile()" CLASS="linkplain">Search</A></TD>
     </TR>
   </TABLE>  
 </BODY>
