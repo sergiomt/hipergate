@@ -468,7 +468,7 @@
   </tr>
   <tr>
     <td valign="center" bgcolor="#cccccc">
-      <span class="title1">&nbsp;[~Bloque:~]&nbsp;<%=oBlock.tag()%></span>
+      <span class="title1">&nbsp;Block:&nbsp;<%=oBlock.tag()%></span>
     </td>
   </tr>
   <tr>

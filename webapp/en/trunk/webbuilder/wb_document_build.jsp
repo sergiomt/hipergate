@@ -181,7 +181,8 @@
 <HTML>
 <HEAD><TITLE>Wait...</TITLE></HEAD>
 <BODY onLoad="document.forms[0].submit()">
-  <FORM METHOD="post" ACTION="../jobs/job_store.jsp" TARGET="_top">
+  <FORM METHOD="post" ACTION="../jobs/job_confirm.jsp" TARGET="_top">
+    <INPUT TYPE="hidden" NAME="target_dir" VALUE="<%=sOutputPathHtml%>">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=nullif(request.getParameter("id_domain"))%>">
     <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=nullif(request.getParameter("gu_workarea"))%>">
     <INPUT TYPE="hidden" NAME="gu_pageset" VALUE="<%=nullif(request.getParameter("gu_pageset"))%>">    
@@ -195,6 +196,8 @@
     <INPUT TYPE="hidden" NAME="tl_job" VALUE="<%=nullif(request.getParameter("tl_job"))%>">
     <INPUT TYPE="hidden" NAME="attachimages" VALUE="<%=nullif(request.getParameter("attachimages"),"0")%>">
     <INPUT TYPE="hidden" NAME="dt_execution" VALUE="<%=nullif(request.getParameter("dt_execution"))%>">
+    <INPUT TYPE="hidden" NAME="webbeacon" VALUE="<%=nullif(request.getParameter("webbeacon"),"0")%>">
+    <INPUT TYPE="hidden" NAME="clickthrough" VALUE="<%=nullif(request.getParameter("clickthrough"),"0")%>">
   </FORM>
 </BODY>
 </HTML>

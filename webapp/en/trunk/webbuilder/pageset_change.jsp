@@ -1,9 +1,5 @@
 <%@ page import="com.knowgate.dataxslt.db.*,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Environment" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %>
-<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
-<jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
-<%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %>
-<% 
+<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><% 
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -45,6 +41,7 @@
   String sSkin = getCookie(request, "skin", "default");
   String sLanguage = getNavigatorLanguage(request);
   int iAppMask = Integer.parseInt(getCookie(request, "appmask", "0"));
+  int iIdApp = 0;
   
   String id_domain = request.getParameter("id_domain");
   String n_domain = request.getParameter("n_domain");
@@ -71,9 +68,11 @@
      
     oPagSet = new PageSetDB();
     if (!oPagSet.load(oConn, new Object[]{gu_pageset})) throw new SQLException("PageSet "+gu_pageset+" not found");
-    
+        
     oMSite = new MicrositeDB();
 	  if (!oMSite.load(oConn, new Object[]{oPagSet.getString(DB.gu_microsite)})) throw new SQLException("Microsite "+oPagSet.getString(DB.gu_microsite)+" not found");
+
+    if (!oMSite.isNull(DB.id_app)) iIdApp = oMSite.getInt(DB.id_app);
 
 		if (oMSite.isNull(DB.tp_microsite)) {
 	    oPage = oPagSet.getFirstPage(oConn);
@@ -111,14 +110,14 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Edit Document Properties</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/datefuncs.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>  
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
     <!--
 
       // ------------------------------------------------------
@@ -186,7 +185,12 @@
     <INPUT TYPE="hidden" NAME="gu_page" VALUE="<%=(oPage==null ? "" : oPage.getString(DB.gu_page))%>">
     <INPUT TYPE="hidden" NAME="gu_microsite" VALUE="<%=oMSite.getString(DB.gu_microsite)%>">
     <INPUT TYPE="hidden" NAME="path_data" VALUE="<%=oPagSet.getString(DB.path_data)%>">
-
+<% if (iIdApp!=13) { %>
+    <INPUT TYPE="hidden" NAME="tx_email_from" VALUE="<%=oPagSet.getStringNull(DB.tx_email_from,"")%>">
+    <INPUT TYPE="hidden" NAME="tx_email_reply" VALUE="<%=oPagSet.getStringNull(DB.tx_email_reply,"")%>">
+    <INPUT TYPE="hidden" NAME="nm_from" VALUE="<%=oPagSet.getStringNull(DB.nm_from,"")%>">
+    <INPUT TYPE="hidden" NAME="tx_subject" VALUE="<%=oPagSet.getStringNull(DB.tx_subject,"")%>">
+<% } %>
     <TABLE CLASS="formback">
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
@@ -206,6 +210,24 @@
               <A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Status List"></A>
             </TD>
           </TR>                    
+<% if (iIdApp==13) { %>
+          <TR>
+            <TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">Sender:</FONT></TD>
+            <TD ALIGN="left" WIDTH="400"><INPUT TYPE="text" NAME="tx_email_from" MAXLENGTH="254" SIZE="50" STYLE="text-transform:lowercase" VALUE="<%=oPagSet.getStringNull(DB.tx_email_from,"")%>"></TD>
+          </TR>
+          <TR>
+            <TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">Reply-to:</FONT></TD>
+            <TD ALIGN="left" WIDTH="400"><INPUT TYPE="text" NAME="tx_email_reply" MAXLENGTH="254" SIZE="50" STYLE="text-transform:lowercase" VALUE="<%=oPagSet.getStringNull(DB.tx_email_reply,"")%>"></TD>
+          </TR>
+          <TR>
+            <TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">Display-name:</FONT></TD>
+            <TD ALIGN="left" WIDTH="400"><INPUT TYPE="text" NAME="nm_from" MAXLENGTH="254" SIZE="50" VALUE="<%=oPagSet.getStringNull(DB.nm_from,"")%>"></TD>
+          </TR>
+          <TR>
+            <TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">Subject:</FONT></TD>
+            <TD ALIGN="left" WIDTH="400"><INPUT TYPE="text" NAME="tx_subject" MAXLENGTH="254" SIZE="50" VALUE="<%=oPagSet.getStringHtml(DB.tx_subject,"")%>"></TD>
+          </TR>
+<% } %>
           <TR>
             <TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">Version:</FONT></TD>
             <TD ALIGN="left" WIDTH="400"><INPUT TYPE="text" NAME="vs_stamp" MAXLENGTH="16" SIZE="16" VALUE="<%=oPagSet.getStringNull(DB.vs_stamp,"")%>"></TD>
@@ -246,7 +268,7 @@
           <TR>
             <TD ALIGN="right" WIDTH="150"><FONT CLASS="formplain">Description:</FONT></TD>
             <TD ALIGN="left" WIDTH="400">
-              <TEXTAREA ROWS="4" COLS="38" NAME="tx_comments"><% if (!oPagSet.isNull(DB.tx_comments)) out.write(oPagSet.getString(DB.tx_comments)); %></TEXTAREA>
+              <TEXTAREA ROWS="2" COLS="38" NAME="tx_comments"><% if (!oPagSet.isNull(DB.tx_comments)) out.write(oPagSet.getString(DB.tx_comments)); %></TEXTAREA>
             </TD>
           </TR>
           <TR>

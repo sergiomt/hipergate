@@ -433,8 +433,16 @@
 							    <TD ALIGN="center"><A HREF="wb_file_upload.jsp?gu_microsite=adhoc&gu_pageset=<%=gu_mailing%>&caller=adhoc_mailing_edit.jsp&title=Newsletter" CLASS="linkplain"><IMG SRC="../images/images/up18x22.gif" WIDTH="18" HEIGHT="22" BORDER="0" ALT="Upload"></A></TD>
 							  	<TD><A HREF="wb_file_upload.jsp?gu_microsite=adhoc&gu_pageset=<%=gu_mailing%>&pg_mailing=<% if (!oObj.isNull(DB.pg_mailing)) out.write(String.valueOf(oObj.getInt(DB.pg_mailing))); %>&doctype=newsletter&caller=adhoc_mailing_edit.jsp&title=Newsletter" CLASS="linkplain">Upload files</A></TD>
 							    <TD>&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-							    <TD ALIGN="center"><A HREF="wb_zipfile_download.jsp?gu_microsite=adhoc&gu_pageset=<%=gu_mailing%>" TARGET="_blank" CLASS="linkplain"><IMG SRC="../images/images/downzip18x22.gif" WIDTH="18" HEIGHT="22" BORDER="0" ALT="Download ZIP"></A></TD>
-							  	<TD><A HREF="wb_zipfile_download.jsp?gu_microsite=adhoc&gu_pageset=<%=gu_mailing%>" TARGET="_blank" CLASS="linkplain">Download files inside a ZIP</A></TD>
+							    <TD ALIGN="center">
+<% if (aFiles!=null) { if (aFiles.length>0) { %>
+							    	<A HREF="wb_zipfile_download.jsp?gu_microsite=adhoc&gu_pageset=<%=gu_mailing%>" TARGET="_blank" CLASS="linkplain"><IMG SRC="../images/images/downzip18x22.gif" WIDTH="18" HEIGHT="22" BORDER="0" ALT="Download ZIP"></A>
+<% } } %>
+							    </TD>
+							  	<TD>
+<% if (aFiles!=null) { if (aFiles.length>0) { %>
+							  		<A HREF="wb_zipfile_download.jsp?gu_microsite=adhoc&gu_pageset=<%=gu_mailing%>" TARGET="_blank" CLASS="linkplain">Download files inside a ZIP</A>
+<% } } %>
+							  	</TD>
 							  </TR>
               </TABLE>
               <TABLE BORDER="0">

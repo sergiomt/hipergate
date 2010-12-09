@@ -173,7 +173,7 @@
     var treeMenuHiFg       = "#FFFF00";         // Color for selected item text.
     var treeMenuFont       = "Arial,Helvetica"; // Text font face.
     var treeMenuFontSize   = 1;                 // Text font size.
-    var treeMenuRoot       = "[~CATEGOR&Iacute;AS~]"; // Text for the menu root.
+    var treeMenuRoot       = "CATEGORIES"; // Text for the menu root.
     var treeMenuFolders    = 1;                 // Sets display of '+' and '-' icons.
     var treeMenuAltText    = false;             // Use menu item text for icon image ALT text.
     
@@ -189,7 +189,7 @@
         }
         document.getElementById("listingLayer").innerHTML = html;
       } else {
-        document.getElementById("listingLayer").innerHTML = "<FONT CLASS=\"textplain\">[~No existe ninguna lista en la categor&iacute;a~] "+name+"</FONT>";      
+        document.getElementById("listingLayer").innerHTML = "<FONT CLASS=\"textplain\">There is no list at category "+name+"</FONT>";      
       }
     }
 
@@ -207,11 +207,6 @@
 
           if (0==ele) {
             alert ("Must select a List to witch send documents");
-            return false;
-          }
-
-          if (ele>1 && getURLParam("id_command")=="MAIL") {
-            alert ("Must select only one List to witch send documents");
             return false;
           }
 	            
@@ -276,7 +271,7 @@
 				  var html = "";
 				  var llen = jsSelectedLists.length;
 				  for (var l=0; l<llen; l++) {
-				    html += "<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"modifyList('"+jsSelectedLists[l][0]+"',escape('"+jsSelectedLists[l][1]+"'))\" TITLE=\"Edit List\">"+jsSelectedLists[l][1]+"</A><A HREF=\"#\" onclick=\"if (document.getElementById('chk_"+jsSelectedLists[l][0]+"')) document.getElementById('chk_"+jsSelectedLists[l][0]+"').checked=false; jsSelectedLists.splice("+String(l)+",1); paintSelectedLists();\" TITLE=\"[~Eliminar lista~]\"><IMG SRC=\"../images/images/webbuilder/x_11x11.gif\" WIDTH=\"13\" HEIGHT=\"13\" ALT=\"X\" BORDER=\"0\" onmouseover=\"this.src='../images/images/webbuilder/x2_11x11.gif'\" onmouseout=\"this.src='../images/images/webbuilder/x_11x11.gif'\"></A>";
+				    html += "<A CLASS=\"linkplain\" HREF=\"#\" onclick=\"modifyList('"+jsSelectedLists[l][0]+"',escape('"+jsSelectedLists[l][1]+"'))\" TITLE=\"Edit List\">"+jsSelectedLists[l][1]+"</A><A HREF=\"#\" onclick=\"if (document.getElementById('chk_"+jsSelectedLists[l][0]+"')) document.getElementById('chk_"+jsSelectedLists[l][0]+"').checked=false; jsSelectedLists.splice("+String(l)+",1); paintSelectedLists();\" TITLE=\"Delete list\"><IMG SRC=\"../images/images/webbuilder/x_11x11.gif\" WIDTH=\"13\" HEIGHT=\"13\" ALT=\"X\" BORDER=\"0\" onmouseover=\"this.src='../images/images/webbuilder/x2_11x11.gif'\" onmouseout=\"this.src='../images/images/webbuilder/x_11x11.gif'\"></A>";
 				    if (l<llen-1) html += ",&nbsp;";
 				  } // next
 				  document.getElementById("selectedLists").innerHTML = html;
@@ -303,7 +298,7 @@
         </TR>
         <TR><TD COLSPAN="2" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
         <TR>
-        	<TD COLSPAN="2" CLASS="textplain">[~Listas selecionadas~]
+        	<TD COLSPAN="2" CLASS="textplain">Seledted lists
         		<DIV ID="selectedLists" STYLE="text-align:left"></DIV>
           </TD>
         </TR>

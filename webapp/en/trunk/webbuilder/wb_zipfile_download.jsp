@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.io.File,java.net.URL,java.net.URLDecoder,java.util.zip.ZipOutputStream,java.util.zip.ZipEntry,com.knowgate.dfs.FileSystem,com.knowgate.dfs.StreamPipe,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBCommand,com.knowgate.dataxslt.db.PageSetDB,com.knowgate.hipermail.AdHocMailing,com.knowgate.misc.Gadgets" language="java" session="false" contentType="application/zip" %>
+<%@ page import="java.io.IOException,java.io.File,java.net.URL,java.net.URLDecoder,java.util.zip.ZipException,java.util.zip.ZipOutputStream,java.util.zip.ZipEntry,com.knowgate.dfs.FileSystem,com.knowgate.dfs.StreamPipe,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBCommand,com.knowgate.dataxslt.db.PageSetDB,com.knowgate.hipermail.AdHocMailing,com.knowgate.misc.Gadgets" language="java" session="false" contentType="application/zip" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%
 
   final String gu_pageset = request.getParameter("gu_pageset");
@@ -32,6 +32,12 @@
       response.setHeader("Content-Disposition","attachment; filename=\"" + oAdhm.getString(DB.nm_mailing) + ".zip\"");
 
 		  String[] lst = new File (sBasePath).list();
+
+		  if (lst==null)
+		    throw new ZipException("There is no file to be downloaded");
+		  else if (lst.length==0)
+		    throw new ZipException("There is no file to be downloaded");
+
       ZipOutputStream zos = new ZipOutputStream(response.getOutputStream());
     
       if (null!=lst) {
@@ -55,8 +61,8 @@
       response.setHeader("Content-Disposition","attachment; filename=\"" + sFileName.substring(0,sFileName.lastIndexOf(".")) + ".zip\"");
 
       FileSystem oFs = new FileSystem();
-      //oFs.downloadhtmlpage(sBasePath, sFileName, response.getOutputStream());
-      oFs.downloadhtmlpage("http://localhost/", Gadgets.chomp(sWrkAGet,"/") + oPgDb.getString(DB.gu_workarea) + "/apps/" + (iApp.intValue()==13 ? "Mailwire" : "WebBuilder") + "/html/" + gu_pageset + "/" + sFileName, response.getOutputStream());
+      oFs.downloadhtmlpage(sBasePath, sFileName, response.getOutputStream());
+      //oFs.downloadhtmlpage("http://localhost/", Gadgets.chomp(sWrkAGet,"/") + oPgDb.getString(DB.gu_workarea) + "/apps/" + (iApp.intValue()==13 ? "Mailwire" : "WebBuilder") + "/html/" + gu_pageset + "/" + sFileName, response.getOutputStream());
     }
 
   }
