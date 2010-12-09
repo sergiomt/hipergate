@@ -44,7 +44,7 @@
         <TABLE CELLSPACING="8" BORDER="0">
 	  <TR>
 	    <TD COLSPAN="2">
-	      <A HREF="#" CLASS="linkplain" onclick="newOportunity()">[~Nueva Oportunidad~]</A>
+	      <A HREF="#" CLASS="linkplain" onclick="newOportunity()">New Opportunity</A>
 	      <TABLE CELLSPACING="0" CELLPADDING="2" BORDER="0">
 	      <xsl:for-each select="oportunities/oportunity">
 	      <TR><TD COLSPAN="3"><A CLASS="linkplain" HREF="../crm/oportunity_listing_f.jsp?id_domain={$param_domain}&amp;n_domain=null&amp;gu_contact={gu_contact}&amp;where={where}&amp;field=tx_contact&amp;find={tx_contact_esc}&amp;show=oportunities&amp;skip=0&amp;selected=2&amp;subselected=2"><xsl:value-of select="tl_oportunity"/></A></TD></TR>	
