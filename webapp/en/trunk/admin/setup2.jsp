@@ -402,18 +402,21 @@
 	</TR>
 </TABLE>
 <DIV ID="google" STYLE="display:none">
-  <TABLE SUMMARY="Google Maps Key">
+  <TABLE SUMMARY="Google Keys">
     <TR CLASS="strip2">
       <TD CLASS="formplain">Google Maps Key</TD><TD><INPUT TYPE="text" NAME="googlemapskey" VALUE="" SIZE="120" CLASS="combomini"></TD>
     </TR>
     <TR CLASS="strip2">
       <TD></TD><TD><A HREF="http://code.google.com/intl/en/apis/maps/signup.html" CLASS="linksmall" TARGET="_blank">Get a keyf or Google Maps</A></TD>
     </TR>  
+    <TR CLASS="strip2">
+      <TD CLASS="formplain"><INPUT NAME="gdatasync" TYPE="checkbox" VALUE="1"></TD><TD>Enable synchronization with Google Calendar</TD>
+    </TR>
   </TABLE>
 </DIV>
 <TABLE SUMMARY="Yahoo!">
   <TR>
-    <TD><IMG SRC="../images/images/setup/yahoo16.gif" ALT="Yahoo!" WIDTH="16" HEIGHT="16" HSPACE="2" BORDER="0"></TD>
+    <TD><IMG SRC="../images/images/setup/yahoo16.gif" ALT="Yahoo!" WIDTH="22" HEIGHT="22" HSPACE="2" BORDER="0"></TD>
 		<TD><A HREF="#" CLASS="linknodecor" STYLE="border-bottom:1px dotted" onclick="document.getElementById('yahoo').style.display=(document.getElementById('yahoo').style.display=='block' ? 'none' : 'block')">Yahoo!</A></TD>
 	</TR>
 </TABLE>
@@ -424,6 +427,22 @@
     </TR>
     <TR CLASS="strip2">
       <TD></TD><TD><A HREF="https://developer.apps.yahoo.com/wsregapp/" CLASS="linksmall" TARGET="_blank">get a key for Yahoo! Search BOSS</A></TD>
+    </TR>
+</TABLE>
+</DIV>
+<TABLE SUMMARY="BackType">
+  <TR>
+    <TD><IMG SRC="../images/images/setup/twitter20.gif" ALT="BackType" WIDTH="20" HEIGHT="20" HSPACE="2" BORDER="0"></TD>
+		<TD><A HREF="#" CLASS="linknodecor" STYLE="border-bottom:1px dotted" onclick="document.getElementById('backtype').style.display=(document.getElementById('backtype').style.display=='block' ? 'none' : 'block')">BackType</A></TD>
+	</TR>
+</TABLE>
+<DIV ID="backtype" STYLE="display:none">
+<TABLE SUMMARY="BackType Key">
+    <TR CLASS="strip2">
+      <TD CLASS="formplain">BackType key</TD><TD><INPUT TYPE="text" NAME="backtypekey" VALUE="" SIZE="40" CLASS="combomini"></TD>
+    </TR>
+    <TR CLASS="strip2">
+      <TD></TD><TD><A HREF="http://www.backtype.com/developers" CLASS="linksmall" TARGET="_blank">Get a new key for BackType</A></TD>
     </TR>
 </TABLE>
 </DIV>

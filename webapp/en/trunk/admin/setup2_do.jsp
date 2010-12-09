@@ -101,7 +101,11 @@ try {
   oProfile.setProperty("analyzer", "org.apache.lucene.analysis.WhitespaceAnalyzer");
 
   oProfile.setProperty("googlemapskey", request.getParameter("googlemapskey"));
+  oProfile.setProperty("gdatasync", request.getParameter("gdatasync")==null ? "0" : request.getParameter("gdatasync"));
+
   oProfile.setProperty("yahoobosskey", request.getParameter("yahoobosskey"));
+
+  oProfile.setProperty("backtypekey", request.getParameter("backtypekey"));
 
   oProfile.setProperty("face", "crm");
   oProfile.setProperty("skin", "xp");
