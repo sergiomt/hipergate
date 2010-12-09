@@ -217,7 +217,7 @@
 
 	      function createInstance() {
 <% if (nShops==0) { %>
-          alert ("[~No es posible generar cobros porque no existe ningún catálogo");
+          alert ("It is not possible to create payments because no catalog exists");
 <%   if (bIsAdmin) { %>
           open ("shop_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>", "editshop", "directories=no,scrollbars=yes,toolbar=no,menubar=no,width=600,height=400");          
 <% } } else { %>

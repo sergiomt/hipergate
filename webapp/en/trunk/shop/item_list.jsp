@@ -449,7 +449,7 @@
         <TD ALIGN="center"><IMG SRC="../images/images/copyfiles.gif" WIDTH="24" HEIGHT="16" BORDER="0" ALT="Copy Products"></TD>
         <TD><A HREF="#" onclick="copyProducts()" CLASS="linkplain">Copy</A></TD>
 	      -->
-        <TD COLSPAN="4"><FONT CLASS="textplain">&nbsp;to category&nbsp;</FONT><SELECT CLASS="combomini" onclick="if (!jsCategoriesLoaded) { jsCategoriesLoaded=true; this.options[0] = new Option('Cargando...', ''); parent.msgsexec.document.location='cat_select.jsp?top_parent=' + getURLParam('top_parent_cat'); }" STYLE="width:260px"NAME="sel_target"></SELECT></TD> 
+        <TD COLSPAN="4"><FONT CLASS="textplain">&nbsp;to category&nbsp;</FONT><SELECT CLASS="combomini" onclick="if (!jsCategoriesLoaded) { jsCategoriesLoaded=true; this.options[0] = new Option('Loading...', ''); parent.msgsexec.document.location='cat_select.jsp?top_parent=' + getURLParam('top_parent_cat'); }" STYLE="width:260px"NAME="sel_target"></SELECT></TD> 
         <TD ALIGN="right"><IMG SRC="../images/images/resort.gif" WIDTH="22" HEIGHT="16" BORDER="0" ALT="Reorder Manually"></TD>
         <TD><A HREF="#" onclick="reorderProducts();" CLASS="linkplain" TITLE="Reorder Manually">Reorder</A></TD>
       </TR>
