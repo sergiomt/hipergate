@@ -65,12 +65,15 @@
   String sStreetLookUp = null;
   
   boolean bIsGuest = true;
+  boolean bGoogleMapsEnabled = false;
    
   try {
     oConn = GlobalDBBind.getConnection("addr_edit");
     
     bIsGuest = isDomainGuest (GlobalDBBind, request, response);
     
+    bGoogleMapsEnabled = (GlobalDBBind.getProperty("googlemapskey","").length()>0);
+
     if (gu_address.length()>0) {
       oAddr = new Address();
       if (oAddr.load(oConn,new Object[]{gu_address})) {
@@ -337,14 +340,13 @@
               <SELECT CLASS="combomini" NAME="sel_street"><OPTION VALUE=""></OPTION><%=sStreetLookUp%></SELECT>
             </TD>
             <TD ALIGN="left" WIDTH="460">
-              <INPUT TYPE="hidden" NAME="tp_street" VALUE="<%=oAddr.getStringNull(DB.tp_street,"")%>">
-              <INPUT TYPE="text" NAME="nm_street" MAXLENGTH="100" SIZE="30" VALUE="<%=oAddr.getStringNull(DB.nm_street,"")%>">             
-              &nbsp;&nbsp;
-              <FONT CLASS="formplain">Num.</FONT>&nbsp;<INPUT TYPE="text" NAME="nu_street" MAXLENGTH="16" SIZE="4" VALUE="<%=oAddr.getStringNull(DB.nu_street,"")%>">
+              <INPUT TYPE="hidden" NAME="tp_street" VALUE="<%=oAddr.getStringNull(DB.tp_street,"")%>">            
 <% if (!oAddr.isNull(DB.nm_street) && !oAddr.isNull(DB.mn_city)) { %>
-							&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="showGoogleMap()">Map</A>
+						<TABLE><TR><TD><INPUT TYPE="text" NAME="nm_street" MAXLENGTH="100" SIZE="30" VALUE="<%=oAddr.getStringNull(DB.nm_street,"")%>"> &nbsp;&nbsp;<FONT CLASS="formplain">Num.</FONT>&nbsp;<INPUT TYPE="text" NAME="nu_street" MAXLENGTH="16" SIZE="4" VALUE="<%=oAddr.getStringNull(DB.nu_street,"")%>"></TD><TD><IMG SRC="../images/images/gmaps16.gif" WIDTH="20" HEIGHT="20" ALT="Map"></TD><% if (bGoogleMapsEnabled) { %><TD VALING="middle"><A HREF="#" CLASS="linkplain" onclick="showGoogleMap()">Map</A></TD><% } %></TR></TABLE>
             </TD>
           </TR>
+<% } else { %>
+              <INPUT TYPE="text" NAME="nm_street" MAXLENGTH="100" SIZE="30" VALUE="<%=oAddr.getStringNull(DB.nm_street,"")%>"> &nbsp;&nbsp;<FONT CLASS="formplain">Num.</FONT>&nbsp;<INPUT TYPE="text" NAME="nu_street" MAXLENGTH="16" SIZE="4" VALUE="<%=oAddr.getStringNull(DB.nu_street,"")%>">
 <% } %>
             </TD>
           </TR>
@@ -359,11 +361,11 @@
               <INPUT TYPE="text" NAME="nu_street" MAXLENGTH="16" SIZE="4" VALUE="<%=oAddr.getStringNull(DB.nu_street,"")%>">
               <SELECT CLASS="combomini" NAME="sel_street"><OPTION VALUE=""></OPTION><%=sStreetLookUp%></SELECT>
               <INPUT TYPE="text" NAME="nm_street" MAXLENGTH="100" SIZE="40" VALUE="<%=oAddr.getStringNull(DB.nm_street,"")%>">
-<% if (!oAddr.isNull(DB.nm_street) && !oAddr.isNull(DB.mn_city)) { %>
+<% if (bGoogleMapsEnabled && !oAddr.isNull(DB.nm_street) && !oAddr.isNull(DB.mn_city)) { %>
 							&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="showGoogleMap()">Map</A>
+<% } %>
             </TD>
           </TR>
-<% } %>
 <% } else { %>
           <TR>
             <TD ALIGN="right" WIDTH="160">
@@ -375,10 +377,8 @@
               <INPUT TYPE="hidden" NAME="tp_street" VALUE="<%=oAddr.getStringNull(DB.tp_street,"")%>">
               <SELECT CLASS="combomini" NAME="sel_street"><OPTION VALUE=""></OPTION><%=sStreetLookUp%></SELECT>
               <A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View street types"></A>              
-<% if (!oAddr.isNull(DB.nm_street) && !oAddr.isNull(DB.mn_city)) { %>
+<% if (bGoogleMapsEnabled && !oAddr.isNull(DB.nm_street) && !oAddr.isNull(DB.mn_city)) { %>
 							&nbsp;&nbsp;<A HREF="#" CLASS="linkplain" onclick="showGoogleMap()">Map</A>
-            </TD>
-          </TR>
 <% } %>
             </TD>
           </TR>

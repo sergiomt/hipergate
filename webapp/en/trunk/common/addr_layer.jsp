@@ -181,7 +181,7 @@
 			sResult += Gadgets.HTMLEncode(oAddr.toLocaleString()) + "<BR>";
 
       if (!oAddresses.isNull(3,i) && GlobalDBBind.getProperty("googlemapskey","").length()>0) {
-			  sResult += "<A HREF=\"#\" onclick=\"addrIFrame.showGoogleMap("+String.valueOf(i)+")\">Show Map</A>&nbsp;";
+			  sResult += "<A HREF=\"#\" onclick=\"addrIFrame.showGoogleMap("+String.valueOf(i)+")\">Map</A>&nbsp;";
       }
 
       sResult += sAddrEm+"<BR>";
