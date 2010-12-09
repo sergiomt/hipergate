@@ -57,7 +57,7 @@
 %>
 <html>
 <head>
-  <TITLE>hipergate :: [~Cargar Im&aacute;genes~]</TITLE>
+  <TITLE>hipergate :: Upload images</TITLE>
   <style type="text/css">
       .sBox {
         width:300px;
@@ -200,8 +200,8 @@
 <body  TOPMARGIN="0" MARGINHEIGHT="0" onLoad="fu_poll()">
 <% if (request.getParameter("caller")!=null) { %>
     <TABLE width="100%"BORDER="0" CELLSPACING="0" CELLPADDING="2">
-      <TR width="100%" VALIGN="middle"><TD align="left" CLASS="striptitle"><FONT CLASS="title1">[~Creaci&oacute;n de ~]<%=sTitle%></FONT></TD><TD ALIGN="right" CLASS="striptitle"><FONT CLASS="title1">[~Paso 2 de 2~]</font></TD></TR>
-      <TR><TD colspan="2" class="formplain"><p ALIGN="justify">[~Esta pantalla le permite subir imagenes al servidor. Para seleccionarlas pulse sobre Añadir. Cuando no quiera subir más pulse Terminar. Si no desea cargar imagenes en el servidor pulse directamente Terminar.~]</p></TD></TR>
+      <TR width="100%" VALIGN="middle"><TD align="left" CLASS="striptitle"><FONT CLASS="title1">Creation of <%=sTitle%></FONT></TD><TD ALIGN="right" CLASS="striptitle"><FONT CLASS="title1">Step 2 of 2</font></TD></TR>
+      <TR><TD colspan="2" class="formplain"><p ALIGN="justify">This form allows you to upload images. Add the images that you want tu put into the image gallery and click Finish when you are done.</p></TD></TR>
     </TABLE>
 <% }
    else 
@@ -211,7 +211,7 @@
 <table cellspacing="0" cellpadding="0" border="0" width="99%">
 <tr>
 <td class="striptitle">
-<span class="title1">[~Cargar Im&aacute;genes en el Servidor~]</span>
+<span class="title1">Upload images to gallery on server</span>
 </td>
 </tr>
 </table>  
@@ -220,17 +220,17 @@
 <form action="image_upload_store.jsp" name="form1" id="form1" onsubmit="return processUpload(this)">
   <SELECT name="f_list" class="sBox" size="8" multiple="multiple"></SELECT>
   <BR>
-  <SPAN class="cmdDiv"><A class="actLink" href="javascript:;" onClick="fu_add()">[~Añadir~]</A></SPAN>
-  <SPAN class="cmdDiv"><A class="actLink" href="javascript:;" onClick="fu_rem()">[~Quitar~]</A></SPAN>
-  <SPAN class="cmdDiv"><A class="actLink" href="javascript:;" onClick="fu_remAll()">[~Borrar Todos~]</A></SPAN>
+  <SPAN class="cmdDiv"><A class="actLink" href="javascript:;" onClick="fu_add()">Add</A></SPAN>
+  <SPAN class="cmdDiv"><A class="actLink" href="javascript:;" onClick="fu_rem()">Remove</A></SPAN>
+  <SPAN class="cmdDiv"><A class="actLink" href="javascript:;" onClick="fu_remAll()">Clear All</A></SPAN>
 <p>
-<span class="strip1">[~Comentarios:~]</span>
+<span class="strip1">Comments:</span>
 <br>
 <textarea name="TEXTAREA1" rows="4" cols="50"></textarea>
 <br>
 <br>
 <center>
-<input class="pushbutton" type="submit" value="[~Terminar~]">
+<input class="pushbutton" type="submit" value="Finish">
 </center>
 </p>
 </form>
@@ -240,7 +240,7 @@
 
 <applet code="com/infomentum/appletfile/FileUpload.class" archive="../../../../applets/FileUpload.jar" codebase="../../../../applets" width="1" height="1" name="FileUpload" MAYSCRIPT VIEWASTEXT id="Applet1">
   <PARAM name="bgColor"	  	  value="#FF0000">
-  <PARAM name="browseTitle"	  value="[~Seleccione sus archivos~]">
+  <PARAM name="browseTitle"	  value="Select files">
   <PARAM name="cabbase" 	  value="../applets/FileUpload.cab">
   <PARAM name="fileMask"          value="*.gif,*.png,*.jpg,*.jpeg">
   <PARAM name="errorLimit"	  value="0">

@@ -109,7 +109,7 @@
       	w2.document.write("<html>"); w2.document.write("\n");
       	w2.document.write("<head>"); w2.document.write("\n");
       	w2.document.write("<TITLE>"); w2.document.write("\n");
-      	w2.document.write("[~Ver imagen ~](" + pictureName + ")"); w2.document.write("\n");
+      	w2.document.write("View image (" + pictureName + ")"); w2.document.write("\n");
       	w2.document.write("</TITLE>"); w2.document.write("\n");
       	w2.document.write("</head>"); w2.document.write("\n");
       	w2.document.write("<body topmargin=0 marginheight=0 leftmargin=0>"); w2.document.write("\n");
@@ -165,7 +165,7 @@
               }
               
            if (contador==0)
-             alert("[~Debe seleccionar al menos una imagen~]");
+             alert("You must choose at least one image");
            else {
              document.forms[0].checkeditems.value = lista;
              document.forms[0].submit();
@@ -188,22 +188,22 @@
       
     //-->    
   </SCRIPT> 
-  <TITLE>hipergate :: [~Imágenes disponibles~]</TITLE>
+  <TITLE>hipergate :: Image Gallery</TITLE>
 </head>
 <body  onLoad="paintThumbs()">
 <form name="frmDeleteImages" id="frmDeleteImages" method="post" action="../../../../webbuilder/images_delete.jsp">
 <input type="hidden" name="checkeditems">
 <br>
-<table cellspacing="0" cellpadding="0" border="0" width="99%"><tr><td colspan="2" valign="center" class="striptitle"><font class="title1">[~Im&aacute;genes disponibles~]</font></td></tr></table>
+<table cellspacing="0" cellpadding="0" border="0" width="99%"><tr><td colspan="2" valign="center" class="striptitle"><font class="title1">Image Gallery</font></td></tr></table>
 <TABLE CELLSPACING="2" CELLPADDING="2">
 <TR>
 <TR><TD COLSPAN="6" BACKGROUND="../../../../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
-<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../../../../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nueva imagen~]"></TD>
-<TD ALIGN="LEFT" VALIGN="middle"><A HREF="#" onclick="uploadImage()" CLASS="linkplain">[~Nueva imagen~]</A></TD>
-<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../../../../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar imágenes~]"></TD>
-<TD  ALIGN="LEFT"VALIGN="middle"><A HREF="javascript:if (window.confirm('[~Cuando elimina imagenes, estas dejaran de aparecer en los mensajes que las utilicen. ¿Esta seguro?~]')) deleteImages()" CLASS="linkplain">[~Eliminar imágenes~]</A></TD>
-<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../../../../images/images/selall16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Seleccionar todas~]"></TD>
-<TD  ALIGN="LEFT"VALIGN="middle"><A HREF="#" onclick="selectAll()" CLASS="linkplain">[~Seleccionar todas~]</A></TD>
+<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../../../../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New image"></TD>
+<TD ALIGN="LEFT" VALIGN="middle"><A HREF="#" onclick="uploadImage()" CLASS="linkplain">New image</A></TD>
+<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../../../../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete images"></TD>
+<TD  ALIGN="LEFT"VALIGN="middle"><A HREF="javascript:if (window.confirm('When an image is deleted it is no longer shown at messages that use it. Are you sure that you stil want to delete image/s?')) deleteImages()" CLASS="linkplain">Delete images</A></TD>
+<TD ALIGN="LEFT" WIDTH="18"><IMG SRC="../../../../images/images/selall16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Select All"></TD>
+<TD  ALIGN="LEFT"VALIGN="middle"><A HREF="#" onclick="selectAll()" CLASS="linkplain">Select All</A></TD>
 <TR><TD COLSPAN="6" BACKGROUND="../../../../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
 </TR>
 </TABLE>
@@ -225,7 +225,7 @@
   </tr>
   <tr>
     <td height="20" colspan="2" align="center" valign="middle">
-    <a href="#" onclick="openPicture('<%=aFiles[i].getName()%>')" title="[~Ver a tama&ntilde;o real~]"><img src="../../../../images/images/viewtxt.gif" HEIGHT="16" WIDTH="16" BORDER="0" ALT="[~Ver a tama&ntilde;o real~]"></a>
+    <a href="#" onclick="openPicture('<%=aFiles[i].getName()%>')" title="View actual size"><img src="../../../../images/images/viewtxt.gif" HEIGHT="16" WIDTH="16" BORDER="0" ALT="View actual size"></a>
     <input type="checkbox" name="chk.<%=aFiles[i].getName()%>" value="<%=aFiles[i].getName()%>"><a href="javascript:void(0)" onclick="openPicture('<%=aFiles[i].getName()%>')"><font face="verdana" style="text-decoration:none;color:000080" size="-2"><%=aFiles[i].getName()%></font></a></td>
   </tr>
 </table>

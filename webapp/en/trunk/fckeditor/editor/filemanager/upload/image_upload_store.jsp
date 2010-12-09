@@ -165,7 +165,7 @@
 %>
 <HTML>
 <HEAD>
-<TITLE>[~Espere~]...</TITLE>
+<TITLE>Wait...</TITLE>
 <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
   <!--
   window.opener.document.location.reload();

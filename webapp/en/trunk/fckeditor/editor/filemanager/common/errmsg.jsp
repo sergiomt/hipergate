@@ -84,7 +84,7 @@ request.setCharacterEncoding("UTF-8");
 <% if (!sResume.equals("_none")) { %>
         <TR><TD ALIGN="center">
           <FORM>
-            <INPUT TYPE="button" CLASS="pushbutton" VALUE="[~Aceptar~]" onclick="resume()">
+            <INPUT TYPE="button" CLASS="pushbutton" VALUE="OK" onclick="resume()">
           </FORM>
         </TD></TR>
 <% } %>
