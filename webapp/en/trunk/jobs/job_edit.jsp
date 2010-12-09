@@ -63,6 +63,7 @@
   sDefWrkArPut = sDefWrkArPut + File.separator + "workareas/";
   String sWrkAPut = GlobalDBBind.getPropertyPath("workareasput");
 	if (null==sWrkAPut) sWrkAPut = sDefWrkArPut;
+  String sTargetDir = null;
 
   boolean bIsGuest = true;
   boolean bHasHtmlPart = false;
@@ -79,34 +80,36 @@
       oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
       oRSet = oStmt.executeQuery("SELECT " + DB.nm_pageset + " FROM " + DB.k_pagesets + " WHERE " + DB.gu_pageset + "='" + gu_pageset + "'");
       oRSet.next();
-      tl_job = oRSet.getString(1);
+      tl_job = Gadgets.ASCIIEncode(oRSet.getString(1)).toLowerCase();
       oRSet.close();
       oStmt.close();
+
+  		sTargetDir = Gadgets.chomp(GlobalDBBind.getProperty("workareasput",sDefWrkArPut),File.separator) + gu_workarea + File.separator + "apps" + File.separator + "Mailwire" + File.separator + "html" + File.separator + gu_pageset + File.separator;
 
     } else if (id_command.equals("SEND")) {
 
       oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
       oRSet = oStmt.executeQuery("SELECT " + DB.nm_mailing + "," + DB.bo_attachments + "," + DB.pg_mailing + " FROM " + DB.k_adhoc_mailings + " WHERE " + DB.gu_mailing + "='" + gu_pageset + "'");
       oRSet.next();
-      tl_job = oRSet.getString(1);
+      tl_job = Gadgets.ASCIIEncode(oRSet.getString(1)).toLowerCase();
       bo_attachments = (oRSet.getShort(2)!=(short) 0);
       pg_mailing = oRSet.getInt(3);
       oRSet.close();
       oStmt.close();    
 
-      String sTargetDir = sWrkAPut + gu_workarea + File.separator + "apps" + File.separator + "Hipermail" + File.separator + "html" + File.separator + Gadgets.leftPad(String.valueOf(DB.pg_mailing), '0', 5);
-      String[] aFiles = new File(sTargetDir).list();
-      if (aFiles!=null) {
-        for (int f=0; f<aFiles.length; f++) {
-          String sFileName = aFiles[f].toLowerCase();
-          if (sFileName.endsWith(".htm") || sFileName.endsWith(".html"))
-            bHasHtmlPart = true;   
-          if (sFileName.endsWith(".txt"))
-            bHasPlainPart = true;               
-        } // next
-      } // fi
-      
+      sTargetDir = sWrkAPut + gu_workarea + File.separator + "apps" + File.separator + "Hipermail" + File.separator + "html" + File.separator + Gadgets.leftPad(String.valueOf(pg_mailing), '0', 5);
     } // fi (id_command)
+
+    String[] aFiles = new File(sTargetDir).list();
+    if (aFiles!=null) {
+      for (int f=0; f<aFiles.length; f++) {
+        String sFileName = aFiles[f].toLowerCase();
+        if (sFileName.endsWith(".htm") || sFileName.endsWith(".html"))
+          bHasHtmlPart = true;   
+        if (sFileName.endsWith(".txt"))
+          bHasPlainPart = true;               
+      } // next
+    } // fi
 
     oConn.close("jobedit");
 
@@ -175,7 +178,7 @@
         if (cmd=="MAIL" || cmd=="FAX" || cmd=="FTP")
           frm.action = "../webbuilder/wb_document_build_f.jsp";
         else
-          frm.action = "job_store.jsp";
+          frm.action = "job_confirm.jsp";
     
     	  frm.tx_parameters.value += ",bo_attachimages:" + (frm.attachimages[0].checked ? "1" : "0");
 
@@ -205,6 +208,7 @@
     <INPUT TYPE="hidden" NAME="tx_parameters" VALUE="<% out.write(request.getParameter("parameters")); %>">
     <INPUT TYPE="hidden" NAME="id_status" VALUE="<% out.write(String.valueOf(Job.STATUS_PENDING)); %>">
     <INPUT TYPE="hidden" NAME="tx_job" VALUE="<% out.write(oJobs.getString(0,0)); %>">
+    <INPUT TYPE="hidden" NAME="target_dir" VALUE="<%=sTargetDir%>">
     <BR/>
     <INPUT TYPE="hidden" NAME="doctype" VALUE="newsletter">
     <TABLE CLASS="formback">
@@ -237,12 +241,10 @@
               <INPUT TYPE="radio" NAME="attachimages" VALUE="0" <%=(bo_attachments || !bHasHtmlPart ? "" : "CHECKED")%> <%=(bHasHtmlPart ? "" : "DISABLED")%>><FONT CLASS="formplain">&nbsp;images will be links to the web server.</FONT>              
               <BR>
               <FONT CLASS="textsmall"><I>with this option, messages will be sent faster but they will take longer to display at recipient</I></FONT>
-<% if (id_command.equals("SEND")) { %>
               <BR>
               <INPUT TYPE="radio" NAME="attachimages" VALUE="2" <%=(bHasHtmlPart ? "" : "DISABLED")%>><FONT CLASS="formplain">&nbsp;attached files for thick e-mail clients and server online for common WebMails</FONT>              
               <BR>
               <FONT CLASS="textsmall"><I>this option is a mixture of the two previous ones optimizing the e-mail format for each user-agent</I></FONT>
-<% } %>
             </TD>
           </TR>
           <TR>

@@ -303,17 +303,17 @@
           <TR>
             <TD ALIGN="right" WIDTH="160"></TD>
             <TD ALIGN="left" WIDTH="390" CLASS="textsmall"><TABLE><%
-              out.write("<TR><TD CLASS=\"textsmall\"><B>[~Total Lote~]</B></TD><TD CLASS=\"textsmall\"><B>"+String.valueOf(nArchived+nNotArchived)+"</B></TD></TR>");
-              out.write("<TR><TD CLASS=\"textsmall\">[~Enviados~]</TD><TD CLASS=\"textsmall\">"+String.valueOf(nSent)+"</TD></TR>");
-              if (nBlackListed>0) out.write("<TR><TD CLASS=\"textsmall\">[~Bloqueados~]</TD><TD CLASS=\"textsmall\">"+String.valueOf(nBlackListed)+"</TD></TR>\n");
+              out.write("<TR><TD CLASS=\"textsmall\"><B>Batch Total</B></TD><TD CLASS=\"textsmall\"><B>"+String.valueOf(nArchived+nNotArchived)+"</B></TD></TR>");
+              out.write("<TR><TD CLASS=\"textsmall\">Sent</TD><TD CLASS=\"textsmall\">"+String.valueOf(nSent)+"</TD></TR>");
+              if (nBlackListed>0) out.write("<TR><TD CLASS=\"textsmall\">Blocked</TD><TD CLASS=\"textsmall\">"+String.valueOf(nBlackListed)+"</TD></TR>\n");
               out.write("<TR><TD CLASS=\"textsmall\">Pending</TD><TD CLASS=\"textsmall\">"+String.valueOf(nPending)+"</TD></TR>");
 							if (nAborted>0) out.write("<TR><TD CLASS=\"textsmall\">Aborted</TD><TD CLASS=\"textsmall\">"+String.valueOf(nAborted)+"</TD></TR>\n");
               if (nSuspended>0) out.write("<TR><TD CLASS=\"textsmall\">Suspended</TD><TD CLASS=\"textsmall\">"+String.valueOf(nSuspended)+"</TD></TR>\n");
               if (nInterruptedRecoverable==0 && nInterruptedArchived==0) {
-                out.write("<TR><TD CLASS=\"textsmall\">[~Fallidos~]</TD><TD CLASS=\"textsmall\">0</TD></TR>\n");
+                out.write("<TR><TD CLASS=\"textsmall\">Failed</TD><TD CLASS=\"textsmall\">0</TD></TR>\n");
               } else {
-                if (nInterruptedRecoverable>0) out.write("<TR><TD CLASS=\"textsmall\">[~Fallidos recuperables~]</TD><TD CLASS=\"textsmall\">"+String.valueOf(nInterruptedRecoverable)+"</TD></TR>\n");
-                if (nInterruptedArchived>0) out.write("<TR><TD CLASS=\"textsmall\">[~Fallidos irrecuperables~]</TD><TD CLASS=\"textsmall\">"+String.valueOf(nInterruptedArchived)+"</TD></TR>\n");
+                if (nInterruptedRecoverable>0) out.write("<TR><TD CLASS=\"textsmall\">Recoverable</TD><TD CLASS=\"textsmall\">"+String.valueOf(nInterruptedRecoverable)+"</TD></TR>\n");
+                if (nInterruptedArchived>0) out.write("<TR><TD CLASS=\"textsmall\">Unrecoverable</TD><TD CLASS=\"textsmall\">"+String.valueOf(nInterruptedArchived)+"</TD></TR>\n");
               }
 
             %></TABLE></TD>
@@ -321,7 +321,7 @@
 <% if (nInterruptedRecoverable>0) { %>
           <TR>
             <TD ALIGN="right" WIDTH="160"><IMG SRC="../images/images/jobs/recycleatoms16.gif" WIDTH="24" HEIGHT="16" BORDER="0" ALT="Recycle Atoms"></TD>
-            <TD ALIGN="left" WIDTH="390"><A HREF="job_recycle.jsp?gu_job=<%=gu_job%>" CLASS="linkplain">[~Re-lanzar átomos fallidos~]</A></TD>
+            <TD ALIGN="left" WIDTH="390"><A HREF="job_recycle.jsp?gu_job=<%=gu_job%>" CLASS="linkplain">Re-try failed atoms</A></TD>
           </TR>
 <% } %>
 <% if (oJobLog.exists()) { %>

@@ -34,13 +34,13 @@
 
   oRow = oTotals.createRow(r++);
   oCel = oRow.createCell(0);
-  oCel.setCellValue("[~Sumario~]");
+  oCel.setCellValue("Summery");
 	oCel.setCellStyle(oHeader);
 
   if (oAdHoc.getRowCount()>0) {
     oRow = oTotals.createRow(r++);
     oCel = oRow.createCell(0);
-    oCel.setCellValue("[~Referencia~]");
+    oCel.setCellValue("Reference");
     oCel = oRow.createCell(1);
     if (oAdHoc.isNull(0,0))
       oCel.setCellValue(oAdHoc.getString(1,0));
@@ -50,7 +50,7 @@
 
   oRow = oTotals.createRow(r++);
   oCel = oRow.createCell(0);
-  oCel.setCellValue("[~Título~]");
+  oCel.setCellValue("Title");
   oCel = oRow.createCell(1);
   if (oActiv.getRowCount()>0)
     oCel.setCellValue(oActiv.getStringNull(0,0,""));
@@ -59,13 +59,13 @@
 
   oRow = oTotals.createRow(r++);
   oCel = oRow.createCell(0);
-  oCel.setCellValue("[~Fecha Envío~]");
+  oCel.setCellValue("Sent date");
   oCel = oRow.createCell(1);
   oCel.setCellValue(oDateRange.getDateShort(0,0));
 
   oRow = oTotals.createRow(r++);
   oCel = oRow.createCell(0);
-  oCel.setCellValue("[~Destinatarios~]");
+  oCel.setCellValue("Recipients");
   oCel = oRow.createCell(1);
   oCel.setCellValue(Gadgets.join(oLists.getColumnAsList(0),","));
   
@@ -77,14 +77,14 @@
 
   oRow = oTotals.createRow(r++);
   oCel = oRow.createCell(0);
-  oCel.setCellValue("[~Correos enviados~]");
+  oCel.setCellValue("Sent emails");
   oCel = oRow.createCell(1);
   oCel.setCellValue(nFinished+nRunning);
 
   if (nBlackListed>0) {
     oRow = oTotals.createRow(r++);
     oCel = oRow.createCell(0);
-    oCel.setCellValue("[~Black List~]");
+    oCel.setCellValue("Black List");
     oCel = oRow.createCell(1);
     oCel.setCellValue(nBlackListed);
   }
@@ -92,44 +92,44 @@
   if (nGreyListed>0) {
     oRow = oTotals.createRow(r++);
     oCel = oRow.createCell(0);
-    oCel.setCellValue("[~Grey List~]");
+    oCel.setCellValue("Grey List");
     oCel = oRow.createCell(1);
     oCel.setCellValue(nGreyListed);
   }
   
   oRow = oTotals.createRow(r++);
   oCel = oRow.createCell(0);
-  oCel.setCellValue("[~Webmails (GMail, Yahoo! etc.)~]");
+  oCel.setCellValue("Webmails (GMail, Yahoo!, etc.)");
   oCel = oRow.createCell(1);
   oCel.setCellValue(nWebmails);
 
   oRow = oTotals.createRow(r++);
   oCel = oRow.createCell(0);
-  oCel.setCellValue("[~Clientes pesados (Outlook, Thunderbird, etc.)~]");
+  oCel.setCellValue("Thick clients (Outlook, Thunderbird, etc.)");
   oCel = oRow.createCell(1);
   oCel.setCellValue(nThickClients);
 
   oRow = oTotals.createRow(r++);
   oCel = oRow.createCell(0);
-  oCel.setCellValue("[~Aperturas antes de 24h~]");
+  oCel.setCellValue("Opened before 24h");
   oCel = oRow.createCell(1);
   oCel.setCellValue(nOpen24);
 
   oRow = oTotals.createRow(r++);
   oCel = oRow.createCell(0);
-  oCel.setCellValue("[~Aperturas antes de 72h~]");
+  oCel.setCellValue("Openings before 72h");
   oCel = oRow.createCell(1);
   oCel.setCellValue(nOpen72);
 
   oRow = oTotals.createRow(r++);
   oCel = oRow.createCell(0);
-  oCel.setCellValue("[~Aperturas Únicas~]");
+  oCel.setCellValue("Unique Openings");
   oCel = oRow.createCell(1);
   oCel.setCellValue(iWebBeaconsUnique);
 
   oRow = oTotals.createRow(r++);
   oCel = oRow.createCell(0);
-  oCel.setCellValue("[~Aperturas Totales~]");
+  oCel.setCellValue("Total Openings");
   oCel = oRow.createCell(1);
   oCel.setCellValue(oWebBeacons.getRowCount());
 
@@ -152,15 +152,15 @@
   oRow = oClicth.createRow(r++);
 
   oCel = oRow.createCell(0);
-  oCel.setCellValue("[~URL~]");
+  oCel.setCellValue("URL");
 	oCel.setCellStyle(oHeader);
 
   oCel = oRow.createCell(1);
-  oCel.setCellValue("[~Titulo~]");
+  oCel.setCellValue("Title");
 	oCel.setCellStyle(oHeader);
 
   oCel = oRow.createCell(2);
-  oCel.setCellValue("[~Clicks~]");
+  oCel.setCellValue("Clicks");
 	oCel.setCellStyle(oHeader);
 	
   for (java.util.Map.Entry<String, Integer> k : aKeys) {
@@ -195,19 +195,19 @@
   oRow = oClicth.createRow(r++);
 
   oCel = oRow.createCell(0);
-  oCel.setCellValue("[~URL~]");
+  oCel.setCellValue("URL");
 	oCel.setCellStyle(oHeader);
   oCel = oRow.createCell(1);
-  oCel.setCellValue("[~Titulo~]");
+  oCel.setCellValue("Title");
 	oCel.setCellStyle(oHeader);
   oCel = oRow.createCell(2);
-  oCel.setCellValue("[~Fecha~]");
+  oCel.setCellValue("Date");
 	oCel.setCellStyle(oHeader);
   oCel = oRow.createCell(3);
-  oCel.setCellValue("[~Hora~]");
+  oCel.setCellValue("Hour");
 	oCel.setCellStyle(oHeader);
   oCel = oRow.createCell(4);
-  oCel.setCellValue("[~e-mail~]");
+  oCel.setCellValue("e-mail");
 	oCel.setCellStyle(oHeader);
 
   oClicks.sortByDesc(1);
@@ -228,19 +228,19 @@
   r = 0;
   oRow = oDetail.createRow(r++);
   oCel = oRow.createCell(0);
-  oCel.setCellValue("[~Nombre Completo~]");
+  oCel.setCellValue("Full Name");
 	oCel.setCellStyle(oHeader);
   oCel = oRow.createCell(1);
-  oCel.setCellValue("[~e-mail~]");
+  oCel.setCellValue("e-mail");
 	oCel.setCellStyle(oHeader);
   oCel = oRow.createCell(2);
-  oCel.setCellValue("[~Aperturas~]");
+  oCel.setCellValue("Openings");
 	oCel.setCellStyle(oHeader);
   oCel = oRow.createCell(3);
-  oCel.setCellValue("[~Clicks~]");
+  oCel.setCellValue("Clicks");
 	oCel.setCellStyle(oHeader);
   oCel = oRow.createCell(4);
-  oCel.setCellValue("[~Fechas~]");
+  oCel.setCellValue("Dates");
 	oCel.setCellStyle(oHeader);
 	
   for (int p=0; p<nPgAtoms; p++) {

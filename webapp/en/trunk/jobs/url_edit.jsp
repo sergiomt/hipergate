@@ -91,31 +91,31 @@
         var frm = window.document.forms[0];
 
 	      if (frm.url_addr.value.length==0) {
-	        alert ("[~La dirección web es obligatoria~]");
+	        alert ("The web address is required");
 	        frm.url_addr.focus();
 	        return false;
 	      }
 
 	      if (frm.url_addr.value.length>2000) {
-	        alert ("[~La dirección no puede exceder de 2000 caracteres~]");
+	        alert ("The address may not be longer than 2000 characters");
 	        frm.url_addr.focus();
 	        return false;
 	      }
 
 	      if (! /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/.test(frm.url_addr.value)) {
-	        alert ("[~La dirección web no es sintácticamente válida~]");
+	        alert ("The address is not valid");
 	        frm.url_addr.focus();
 	        return false;
 	      }
 
 	      if (frm.tx_title.value.length>2000) {
-	        alert ("[~El título no puede exceder de 2000 caracteres~]");
+	        alert ("The title may not be longer than 2000 characters");
 	        frm.tx_title.focus();
 	        return false;
 	      }
 
 	      if (frm.de_url.value.length>2000) {
-	        alert ("[~La descripción no puede exceder de 2000 caracteres~]");
+	        alert ("The description may not be longer than 2000 characters");
 	        frm.de_url.focus();
 	        return false;
 	      }
@@ -128,7 +128,7 @@
 <BODY TOPMARGIN="8" MARGINHEIGHT="8">
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
-    <TR><TD CLASS="striptitle"><FONT CLASS="title1">[~Editar URL~]</FONT></TD></TR>
+    <TR><TD CLASS="striptitle"><FONT CLASS="title1">Edit URL</FONT></TD></TR>
   </TABLE>  
   <FORM NAME="" METHOD="post" ACTION="url_store.jsp" onSubmit="return validate()">
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
@@ -141,24 +141,24 @@
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
-            <TD ALIGN="right" WIDTH="110" CLASS="formstrong">[~Direcci&oacute;n~]</TD>
+            <TD ALIGN="right" WIDTH="110" CLASS="formstrong">Address</TD>
             <TD ALIGN="left" WIDTH="570"><INPUT TYPE="text" NAME="url_addr" MAXLENGTH="2000" SIZE="80" VALUE="<%=oObj.getStringHtml("url_addr","")%>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="110" CLASS="formplain">[~T&iacute;tulo~]</TD>
+            <TD ALIGN="right" WIDTH="110" CLASS="formplain">Title</TD>
             <TD ALIGN="left" WIDTH="570"><INPUT TYPE="text" NAME="tx_title" MAXLENGTH="2000" SIZE="80" VALUE="<%=oObj.getStringHtml("tx_title","")%>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">[~Descripci&oacute;n~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formstrong">Description</FONT></TD>
             <TD ALIGN="left" WIDTH="570"><TEXTAREA ROWS="3" COLS="60" NAME="de_url"><%=oObj.getStringHtml("de_url","")%></TEXTAREA></TD>
           </TR>
 <% if (null!=gu_url) { %>
           <TR>
-            <TD ALIGN="right" WIDTH="110" CLASS="formplain">[~Clicks~]</TD>
+            <TD ALIGN="right" WIDTH="110" CLASS="formplain">Clicks</TD>
             <TD ALIGN="left" WIDTH="570"><% if (oObj.isNull("nu_clicks")) out.write("0"); else out.write(String.valueOf(oObj.getInt("nu_clicks"))); %></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="110" CLASS="formplain">[~&Uacute;lt. Visita~]</TD>
+            <TD ALIGN="right" WIDTH="110" CLASS="formplain">Last Visit</TD>
             <TD ALIGN="left" WIDTH="570"><% if (!oObj.isNull("dt_last_visit")) out.write(oObj.getDateTime24("dt_last_visit")); %></TD>
           </TR>
 <% } %>
@@ -167,8 +167,8 @@
           </TR>
           <TR>
     	    <TD COLSPAN="2" ALIGN="center">
-              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="[~Guardar~]" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
-    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="[~Cancelar~]" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
+              <INPUT TYPE="submit" ACCESSKEY="s" VALUE="Save" CLASS="pushbutton" STYLE="width:80" TITLE="ALT+s">&nbsp;
+    	      &nbsp;&nbsp;<INPUT TYPE="button" ACCESSKEY="c" VALUE="Cancel" CLASS="closebutton" STYLE="width:80" TITLE="ALT+c" onclick="window.close()">
     	      <BR><BR>
     	    </TD>
     	  </TR>            

@@ -109,22 +109,22 @@
 	  }	
 	  //-->
   </SCRIPT>
-  <TITLE>hipergate :: [~Detalle de Clicks~]</TITLE>
+  <TITLE>hipergate :: Clicks detail</TITLE>
 </HEAD>
 <BODY TOPMARGIN="8" MARGINHEIGHT="8">
     <%@ include file="../common/tabmenu.jspf" %>
     <FORM METHOD="post" ACTION="url_delete.jsp">
-      <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Detalle de Clicks~]</FONT></TD></TR></TABLE>  
+      <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">Clicks detail</FONT></TD></TR></TABLE>  
       <A HREF="<%=aInfo[1]%>" TARGET="_blank" CLASS="linkplain"><BIG><%=aInfo[0]%></BIG></A><BR>
       <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
       <INPUT TYPE="hidden" NAME="selected" VALUE="<%=request.getParameter("selected")%>">      
       <INPUT TYPE="hidden" NAME="subselected" VALUE="<%=request.getParameter("subselected")%>">      
       <TABLE SUMMARY="Data" CELLSPACING="1" CELLPADDING="0">
         <TR>        	
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~N&ordm; mensaje~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~e-mail~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Fecha~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Origen~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Message Num.</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>e-mail</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Date</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Origin</B></TD>
 <%
 
 	        String sClkPg, sClkEm, sClkDt, sClkJb, sStrip;

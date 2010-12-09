@@ -57,7 +57,7 @@
 	    var frm = document.forms[0];
 
 	    if (!check_email(frm.tx_email.value)) {
-	      alert ("[~La direccion de e-mail no es valida~]");
+	      alert ("The e-mail address is not valid");
 	      frm.tx_email.focus();
 	      return false;
 	    }
@@ -79,9 +79,9 @@
         <TR>
         	<TD>&nbsp;&nbsp;<IMG SRC="../images/images/wlink.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="URL"></TD>
           <TD COLSPAN="7">
-          	<A HREF="urls_followup_list.jsp?selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>" CLASS="linkplain">[~Listado por URL~]</A>
+          	<A HREF="urls_followup_list.jsp?selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>" CLASS="linkplain">Listingb y URL</A>
           	&nbsp;&nbsp;&nbsp;&nbsp;
-          	<IMG SRC="../images/images/jobs/statistics16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Graficas">&nbsp;<A HREF="jobs_followup_graphs.jsp?selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>" CLASS="linkplain">[~Gr&aacute;ficas~]</A>
+          	<IMG SRC="../images/images/jobs/statistics16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Graficas">&nbsp;<A HREF="jobs_followup_graphs.jsp?selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>" CLASS="linkplain">Charts</A>
           </TD>
         </TR>
         <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
@@ -102,10 +102,10 @@
         </TR>
         <TR>
         	<TD></TD>
-        	<TD CLASS="textplain">[~Buscar e-mail~]</TD>
+        	<TD CLASS="textplain">Search email</TD>
         	<TD></TD>
         	<TD CLASS="textplain" colspan="3"><INPUT TYPE="text" SIZE="40" NAME="tx_email"></TD>
-        	<TD><A HREF="#" CLASS="linkplain" onclick="inspectEmail()">[~Buscar~]</A></TD>
+        	<TD><A HREF="#" CLASS="linkplain" onclick="inspectEmail()">Search</A></TD>
         </TR>
         <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       </TABLE>
@@ -218,11 +218,11 @@
         </TR>
         <TR>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Num</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Fecha*~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Date*</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Name</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Subject</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Sent</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Abiertos**~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Opened**</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Clicks</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Interest</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Popularity</B></TD>

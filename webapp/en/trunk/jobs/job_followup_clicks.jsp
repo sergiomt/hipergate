@@ -80,7 +80,7 @@
         String sUrl = oClicks.getString(4,oClicks.find(3,k.getKey()));
         out.write("<TR><TD CLASS=\"strip"+sStrip+"\">"+sUrl+"</TD><TD ALIGN=\"right\" CLASS=\"strip"+sStrip+"\">"+k.getValue()+"</TD></TR>\n");
       }
-        out.write("<TR><TD CLASS=\"textplain\" ALIGN=\"right\"><B>[~Total~]</B></TD><TD CLASS=\"textplain\" ALIGN=\"right\"><B>"+String.valueOf(nClicks)+"</B></TD></TR>\n");
+        out.write("<TR><TD CLASS=\"textplain\" ALIGN=\"right\"><B>Total</B></TD><TD CLASS=\"textplain\" ALIGN=\"right\"><B>"+String.valueOf(nClicks)+"</B></TD></TR>\n");
 %>
 		  </TABLE>
 		  <BR>

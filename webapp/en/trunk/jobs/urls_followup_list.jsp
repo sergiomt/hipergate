@@ -175,7 +175,7 @@
 	        var frm = document.forms[0];
 	        var chi = frm.checkeditems;
 	  	  
-	        if (window.confirm("[~¿Está seguro de que desea eliminar las URLs seleccionadas?~]")) {
+	        if (window.confirm("Are you sure that you want to delete the selected URLs?")) {
 	  	  
 	          chi.value = "";	  	  
 	  	  
@@ -253,12 +253,12 @@
 	    } // setCombos()
     //-->    
   </SCRIPT>
-  <TITLE>hipergate :: [~Listado de URLs~]</TITLE>
+  <TITLE>hipergate :: URLs listing</TITLE>
 </HEAD>
 <BODY TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()">
     <%@ include file="../common/tabmenu.jspf" %>
     <FORM METHOD="post" ACTION="url_delete.jsp">
-      <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">[~Listado de URLs~]</FONT></TD></TR></TABLE>  
+      <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">URLs listing</FONT></TD></TR></TABLE>  
       <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
       <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
       <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
@@ -270,27 +270,27 @@
       <TABLE SUMMARY="Top controls and filters" CELLSPACING="2" CELLPADDING="2">
         <TR>
         	<TD>&nbsp;&nbsp;<IMG SRC="../images/images/forums/emoticons/opentopic.gif" WIDTH="18" HEIGHT="12" BORDER="0" ALT="Newsletter"></TD>
-          <TD COLSPAN="7"><A HREF="jobs_followup_stats.jsp?selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>" CLASS="linkplain">[~Listado por Newsletter~]</A></TD>
+          <TD COLSPAN="7"><A HREF="jobs_followup_stats.jsp?selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>" CLASS="linkplain">Listing target URL</A></TD>
         </TR>
       <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       <TR>
 <% if (bIsGuest) { %>      
         <TD COLSPAN="4"></TD>
 <% } else { %>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Nueva~]"></TD>
-        <TD VALIGN="middle"><A HREF="#" onclick="createUrl()" CLASS="linkplain">[~Nueva~]</A></TD>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Eliminar~]"></TD>
-        <TD><A HREF="#" onclick="deleteUrls()" CLASS="linkplain">[~Eliminar~]</A></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
+        <TD VALIGN="middle"><A HREF="#" onclick="createUrl()" CLASS="linkplain">New</A></TD>
+        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
+        <TD><A HREF="#" onclick="deleteUrls()" CLASS="linkplain">Delete</A></TD>
 <% } %>
-        <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Buscar~]"></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Search"></TD>
         <TD VALIGN="middle">
           <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>">
-	        &nbsp;<A HREF="javascript:findUrl();" CLASS="linkplain" TITLE="[~Buscar~]">[~Buscar~]</A>	  
+	        &nbsp;<A HREF="javascript:findUrl();" CLASS="linkplain" TITLE="Search">Search</A>	  
         </TD>
-        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="[~Descartar~]"></TD>
+        <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard"></TD>
         <TD VALIGN="bottom">
-          <A HREF="javascript:document.forms[0].find.value='';findInstance();" CLASS="linkplain" TITLE="[~Descartar~]">[~Descartar~]</A>
-          <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;[~Mostrar~]&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;[~resultados~]&nbsp;</FONT>
+          <A HREF="javascript:document.forms[0].find.value='';findInstance();" CLASS="linkplain" TITLE="Discard">Discard</A>
+          <FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;Show&nbsp;</FONT><SELECT CLASS="combomini" NAME="maxresults" onchange="setCookie('maxrows',getCombo(document.forms[0].maxresults));"><OPTION VALUE="10">10<OPTION VALUE="20">20<OPTION VALUE="50">50<OPTION VALUE="100">100<OPTION VALUE="200">200<OPTION VALUE="500">500</SELECT><FONT CLASS="textplain">&nbsp;&nbsp;&nbsp;results&nbsp;</FONT>
         </TD>
       </TR>
       <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
@@ -304,20 +304,20 @@
     
     	  if (iUrlCount>0) {
             if (iSkip>0) // If iSkip>0 then we have prev items
-              out.write("            <A HREF=\"urls_followup_list.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&orderby=" + sOrderBy + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;[~Anteriores~]" + "</A>&nbsp;&nbsp;&nbsp;");
+              out.write("            <A HREF=\"urls_followup_list.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip-iMaxRows) + "&orderby=" + sOrderBy + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">&lt;&lt;&nbsp;Previous" + "</A>&nbsp;&nbsp;&nbsp;");
     
             if (!oUrls.eof())
-              out.write("            <A HREF=\"urls_followup_list.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&orderby=" + sOrderBy + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">[~Siguientes~]&nbsp;&gt;&gt;</A>");
+              out.write("            <A HREF=\"urls_followup_list.jsp?id_domain=" + id_domain + "&n_domain=" + n_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&orderby=" + sOrderBy + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
 	  } // fi (iUrlCount)
 %>
           </TD>
         </TR>
         <TR>        	
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este campo~]"></A>&nbsp;<B>[~T&iacute;tulo~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(4);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==4 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este campo~]"></A>&nbsp;<B>[~Clicks~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(5);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="[~Ordenar por este campo~]"></A>&nbsp;<B>[~&Uacute;ltima visita~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Detalle~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;<B>Title</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(4);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==4 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;<B>Clicks</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(5);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==5 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;<B>Last visit</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Detail</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Select All"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select All"></A></TD></TR>
 <%
 
@@ -343,17 +343,17 @@
             	sUrlDt = oUrls.getDateShort(4,i);
 %>            
             <TR HEIGHT="14">
-              <TD CLASS="strip<% out.write (sStrip); %>" ALIGN="right"><A HREF="<%=sUrlAd%>" TARGET="<%=sUrlGu%>"><IMG SRC="../images/images/viewlink.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="[~Abrir URL de destino~]"></A></TD>
+              <TD CLASS="strip<% out.write (sStrip); %>" ALIGN="right"><A HREF="<%=sUrlAd%>" TARGET="<%=sUrlGu%>"><IMG SRC="../images/images/viewlink.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Open target URL"></A></TD>
               <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<A HREF="#" onclick="modifyUrl('<%=sUrlGu%>','<%=oUrls.getStringNull(2,i,"").replace((char)39,'´')%>')" ><%=sUrlTl.length()==0 ? sUrlAd : sUrlTl%></A></TD>
               <TD CLASS="strip<% out.write (sStrip); %>" ALIGN="right">&nbsp;<%=sUrlNu%></TD>
               <TD CLASS="strip<% out.write (sStrip); %>" ALIGN="center">&nbsp;<%=sUrlDt%></TD>
-              <TD CLASS="strip<% out.write (sStrip); %>" ALIGN="center">&nbsp;<A HREF="url_followup_list.jsp?gu_url=<%=sUrlGu%>&gu_workarea=<%=gu_workarea%>&selected=<%=request.getParameter("selected")%>&selected=<%=request.getParameter("subselected")%>">[~Detalle~]</TD>
+              <TD CLASS="strip<% out.write (sStrip); %>" ALIGN="center">&nbsp;<A HREF="url_followup_list.jsp?gu_url=<%=sUrlGu%>&gu_workarea=<%=gu_workarea%>&selected=<%=request.getParameter("selected")%>&selected=<%=request.getParameter("subselected")%>">Detail</TD>
               <TD CLASS="strip<% out.write (sStrip); %>" ALIGN="center"><INPUT VALUE="1" TYPE="checkbox" NAME="<% out.write (sUrlGu); %>"></TD>
             </TR>
 <%        } // next(i) %>
             <TR>
               <TD CLASS="strip<% out.write (String.valueOf((iUrlCount%2)+1)); %>"></TD>
-              <TD CLASS="strip<% out.write (String.valueOf((iUrlCount%2)+1)); %>" ALIGN="right"><B>[~Total~]</B></TD>
+              <TD CLASS="strip<% out.write (String.valueOf((iUrlCount%2)+1)); %>" ALIGN="right"><B>Total</B></TD>
               <TD CLASS="strip<% out.write (String.valueOf((iUrlCount%2)+1)); %>" ALIGN="right"><B><%=String.valueOf(nTotal)%></B></TD>
               <TD CLASS="strip<% out.write (String.valueOf((iUrlCount%2)+1)); %>" COLSPAN="3"></TD>
             </TR>

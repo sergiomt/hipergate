@@ -170,20 +170,26 @@
 
         function viewOnly(flag) {
           var url = window.document.location.href;
-          var flg = url.indexOf("&viewonly=");
-                    
-          if (url.charAt(url.length-1)=='#')
-            url = url.substr(0,url.length-1);
+          var a = "&";
+          var flg = url.indexOf(a+"viewonly=");
+          if (flg==-1) { a="?"; flg = url.indexOf(a+"viewonly="); }
+
+					if (flg==-1) {
+              url += "&viewonly=" + String(flag);
+				  } else {
+            if (url.charAt(url.length-1)=='#')
+              url = url.substr(0,url.length-1);
                       
-          if (flg>0) {
-            if (flg+11<url.length)
-              url = url.substring(0, flg+10) + String(flag) + url.substr(flg+11);            
+            if (flg>0) {
+              if (flg+11<url.length)
+                url = url.substring(0, flg+10) + String(flag) + url.substr(flg+11);            
+              else
+                url = url.substring(0, flg+10) + String(flag);
+            }
             else
-              url = url.substring(0, flg+10) + String(flag);
+              url += a+"viewonly=" + String(flag);
           }
-          else
-            url += "&viewonly=" + String(flag);
-                          
+                      
           window.document.location = url;
         } // viewOnly        
 

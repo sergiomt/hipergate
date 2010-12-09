@@ -73,7 +73,7 @@
 %>
 <HTML>
 <HEAD>
-  <TITLE>hipergate :: [~Mensajes enviados a una cuenta de correo~]</TITLE>
+  <TITLE>hipergate :: Messages sent to the email account</TITLE>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
@@ -87,21 +87,21 @@
 <BODY TOPMARGIN="8" MARGINHEIGHT="8">
 	  <%@ include file="../common/tabmenu.jspf" %>
     <FORM METHOD="post">
-      <TABLE><TR><TD WIDTH="98%" CLASS="striptitle"><FONT CLASS="title1">[~Mensajes enviados a la cuenta de correo~] <%=tx_email%></FONT></TD></TR></TABLE>
+      <TABLE><TR><TD WIDTH="98%" CLASS="striptitle"><FONT CLASS="title1">Messages sent to the email account <%=tx_email%></FONT></TD></TR></TABLE>
       <DIV class="cxMnu1" style="width:100px"><DIV class="cxMnu2">
-        <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="[~Atras~]"> <A CLASS="linkplain" HREF="jobs_followup_stats.jsp?selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>">[~Atras~]</A></SPAN>
+        <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> <A CLASS="linkplain" HREF="jobs_followup_stats.jsp?selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>">Back</A></SPAN>
       </DIV></DIV>
       <TABLE SUMMARY="Totals">
-      	<TR><TD><FONT CLASS="textstrong">[~Mensajes enviados:~]</FONT></TD><TD><FONT CLASS="textplain"><%=String.valueOf(iSent)%></FONT></TD></TR>
-        <TR><TD><FONT CLASS="textstrong">[~Confirmaciones de apertura:~]</FONT></TD><TD><FONT CLASS="textplain"><%=String.valueOf(iTrack)%></FONT></TD></TR>
-        <TR><TD><FONT CLASS="textstrong">[~Clicks:~]</FONT></TD><TD><FONT CLASS="textplain"><%=String.valueOf(iClicks)%></FONT></TD></TR>
-        <TR><TD><FONT CLASS="textstrong">[~&iquest;Est&aacute; en la black-list?~]</FONT></TD><TD><FONT CLASS="textplain"><% if (iBlck>0) out.write("[~Si~] [~desde~] "+oFmt.format(oBlack.getDate(0,0))); else out.write("[~No~]"); %></FONT></TD></TR>
-        <TR><TD><FONT CLASS="textstrong">[~&iquest;Est&aacute; en la grey-list?~]</FONT></TD><TD><FONT CLASS="textplain"><% if (iGrey>0) out.write("[~Si~]"); else out.write("[~No~]"); %></FONT></TD></TR>
+      	<TR><TD><FONT CLASS="textstrong">Sent messages:</FONT></TD><TD><FONT CLASS="textplain"><%=String.valueOf(iSent)%></FONT></TD></TR>
+        <TR><TD><FONT CLASS="textstrong">Opening confirmations:</FONT></TD><TD><FONT CLASS="textplain"><%=String.valueOf(iTrack)%></FONT></TD></TR>
+        <TR><TD><FONT CLASS="textstrong">Clicks:</FONT></TD><TD><FONT CLASS="textplain"><%=String.valueOf(iClicks)%></FONT></TD></TR>
+        <TR><TD><FONT CLASS="textstrong">Is it at black-list?</FONT></TD><TD><FONT CLASS="textplain"><% if (iBlck>0) out.write("Yes from "+oFmt.format(oBlack.getDate(0,0))); else out.write("No"); %></FONT></TD></TR>
+        <TR><TD><FONT CLASS="textstrong">Is it at grey list?</FONT></TD><TD><FONT CLASS="textplain"><% if (iGrey>0) out.write("Yes"); else out.write("No"); %></FONT></TD></TR>
         <TR><TD COLSPAN="2" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       </TABLE>
       <TABLE SUMMARY="Lists" CELLSPACING="1" CELLPADDING="1">
         <TR>
-          <TD CLASS="tableheader" COLSPAN="4">&nbsp;<B>[~Listas a las que pertenece~] (<%=iLists%>)</B></TD>
+          <TD CLASS="tableheader" COLSPAN="4">&nbsp;<B>Lists to which it belongs (<%=iLists%>)</B></TD>
         </TR>
 <% 
 try {
@@ -112,18 +112,18 @@ for (int l=0; l<iLists; l++) {
      	    <TD CLASS="strip<% out.write (sStrip); %>"><%
      	    	if (oBlckl.find(2,oLists.getString(0,l))<0) {
      	        if (oLists.isNull(2,l))
-     	          out.write("[~Activo~]");
+     	          out.write("Active");
      	        else if (oLists.getShort(2,l)!=0)
-     	          out.write("[~Activo~]");
+     	          out.write("Active");
      	        else 
-     	          out.write("[~Inactivo~]");
+     	          out.write("Inactive");
      	      } else {
      	        if (oLists.isNull(2,l))
-     	          out.write("[~Bloqueado~]");
+     	          out.write("Blocked");
      	        else if (oLists.getShort(2,l)!=0)
-     	          out.write("[~Bloqueado~]");
+     	          out.write("Blocked");
      	        else 
-     	          out.write("[~Inactivo y Bloqueado~]");
+     	          out.write("Inactive and blocked");
      	      }
      	    %></TD>
         </TR>
@@ -131,13 +131,13 @@ for (int l=0; l<iLists; l++) {
       </TABLE>
       <TABLE SUMMARY="Sent Newsletters" CELLSPACING="1" CELLPADDING="1">
         <TR>
-          <TD CLASS="tableheader" COLSPAN="4">&nbsp;<B>[~Listado de newsletters enviadas~]</B></TD>
+          <TD CLASS="tableheader" COLSPAN="4">&nbsp;<B>Sent newsletters</B></TD>
         </TR>
         <TR>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="240">&nbsp;<B>[~Nombre~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="96">&nbsp;<B>[~Estado~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="140">&nbsp;<B>[~Fecha~]</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>[~Avisos~]</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="240">&nbsp;<B>Name</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="96">&nbsp;<B>Status</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif" WIDTH="140">&nbsp;<B>Date</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Warnings</B></TD>
 				</TR>
 <%				for (int i=0; i<iSent; i++) { %>
             <TR HEIGHT="14">
@@ -150,16 +150,16 @@ for (int l=0; l<iLists; l++) {
 		   case Atom.STATUS_FINISHED:
 		   case Atom.STATUS_RUNNING:
 		   case Atom.STATUS_PENDING:
-		     out.write("[~Enviado~]");
+		     out.write("Sent");
 				 break;
 		   case Atom.STATUS_SUSPENDED:
-		     out.write("[~Suspendido~]");
+		     out.write("Suspended");
 				 break;
 		   case Atom.STATUS_ABORTED:
-		     out.write("[~Abortado~]");
+		     out.write("Aborted");
 				 break;
 		   case Atom.STATUS_INTERRUPTED:
-		     out.write("[~Interrumpido~]");
+		     out.write("Interrumpted");
 				 break;
 	   }
    } %></TD>
@@ -172,7 +172,7 @@ int iOpened = 0;
      if (oTrack.getString(0,k).equals(oSent.getString(0,i))) { %>
             <TR HEIGHT="14">
               <TD CLASS="strip1"></TD>
-              <TD CLASS="strip1" VALIGN="top" ALIGN="center"><%=++iOpened==1 ? "[~Aperturas~]" : ""%></TD>
+              <TD CLASS="strip1" VALIGN="top" ALIGN="center"><%=++iOpened==1 ? "Openings" : ""%></TD>
               <TD CLASS="strip1" VALIGN="top" ALIGN="right"><% if (!oTrack.isNull(2,k)) out.write(oFmt.format(oTrack.getDate(2,k))); %></TD>
               <TD CLASS="strip1">&nbsp;<%=oTrack.getStringNull(4,k,"")%></TD>
             </TR>
@@ -182,7 +182,7 @@ int iOpened = 0;
      if (oClicks.getString(0,c).equals(oSent.getString(0,i))) { %>
             <TR HEIGHT="14">
               <TD CLASS="strip1"></TD>
-              <TD CLASS="strip1" VALIGN="top" ALIGN="center"><%=++iClicked==1 ? "[~Clicks~]" : ""%></TD>
+              <TD CLASS="strip1" VALIGN="top" ALIGN="center"><%=++iClicked==1 ? "Clicks" : ""%></TD>
               <TD CLASS="strip1" VALIGN="top" ALIGN="right"><% if (!oClicks.isNull(1,c)) out.write(oFmt.format(oClicks.getDate(1,c))); %></TD>
               <TD CLASS="strip1"><A CLASS="linkplain" HREF="<%=oClicks.getStringNull(2,c,"")%>"><%=oClicks.getStringNull(3,c,"")%></A></TD>
             </TR>
