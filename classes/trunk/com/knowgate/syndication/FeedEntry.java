@@ -49,6 +49,11 @@ import com.knowgate.dataobjs.DBPersist;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndEntryImpl;
 
+/**
+ * Store a SyndEntry object at the database
+ * @author Sergio Montoro Ten
+ * @version 6.0
+ */
 public class FeedEntry extends DBPersist {
       
   public FeedEntry() {
@@ -73,6 +78,17 @@ public class FeedEntry extends DBPersist {
   	put(DB.bin_entry, oEntry);
   }
 
+  /**
+   * Store a new SyndEntry object at k_syndentries table
+   * @param oConn JDCConnection Opened JDBC database connection
+   * @param iIdDomain int Domain unique Id. to which the SyndEntry will be associated
+   * @param sGuWorkArea String Work Area GUID to which the SyndEntry will be associated, may be <b>null</b>
+   * @param sIdType String Entry type or source "backtype" "twingly" etc.
+   * @param sTxQuery String Optional query string passed when generating the feed
+   * @param oInfluence Integer Optional user influence
+   * @param oEntry SyndEntryImpl SyndEntry object to be stored
+   * @throws SQLException
+   */
   public static FeedEntry store(JDCConnection oConn, int iIdDomain, String sGuWorkArea,
   							  String sIdType, String sGuFeed, String sTxQuery, Integer oInfluence,
   							  SyndEntryImpl oEntry) throws SQLException {    
