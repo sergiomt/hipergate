@@ -291,8 +291,8 @@ public final class ContactLoader implements ImportLoader {
     oCompLook = oConn.prepareStatement("SELECT NULL FROM k_companies_lookup WHERE gu_owner=? AND id_section=? AND vl_lookup=?",ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
     oCompName = oConn.prepareStatement("SELECT gu_company FROM k_companies WHERE nm_legal=? AND gu_workarea=?",ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
-    oContUpdt = oConn.prepareStatement("UPDATE k_contacts SET gu_workarea=?,tx_nickname=?,tx_pwd=?,tx_challenge=?,tx_reply=?,dt_pwd_expires=?,dt_modified=?,gu_writer=?,gu_company=?,id_status=?,id_ref=?,tx_name=?,tx_surname=?,de_title=?,id_gender=?,dt_birth=?,ny_age=?,sn_passport=?,tp_passport=?,sn_drivelic=?,dt_drivelic=?,tx_dept=?,tx_division=?,gu_geozone=?,id_nationality=?,tx_comments=? WHERE gu_contact=? OR (tx_name=? AND tx_surname=? AND gu_workarea=?)");
-    oContInst = oConn.prepareStatement("INSERT INTO k_contacts (gu_workarea,tx_nickname,tx_pwd,tx_challenge,tx_reply,dt_pwd_expires,dt_modified,gu_writer,gu_company,id_status,id_ref,tx_name,tx_surname,de_title,id_gender,dt_birth,ny_age,sn_passport,tp_passport,sn_drivelic,dt_drivelic,tx_dept,tx_division,gu_geozone,id_nationality,tx_comments,gu_contact) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+    oContUpdt = oConn.prepareStatement("UPDATE k_contacts SET gu_workarea=?,tx_nickname=?,tx_pwd=?,tx_challenge=?,tx_reply=?,dt_pwd_expires=?,dt_modified=?,gu_writer=?,gu_company=?,id_status=?,id_ref=?,tx_name=?,tx_surname=?,de_title=?,id_gender=?,dt_birth=?,ny_age=?,sn_passport=?,tp_passport=?,sn_drivelic=?,dt_drivelic=?,tx_dept=?,tx_division=?,gu_geozone=?,id_nationality=?,tx_comments=?,id_batch=? WHERE gu_contact=? OR (tx_name=? AND tx_surname=? AND gu_workarea=?)");
+    oContInst = oConn.prepareStatement("INSERT INTO k_contacts (gu_workarea,tx_nickname,tx_pwd,tx_challenge,tx_reply,dt_pwd_expires,dt_modified,gu_writer,gu_company,id_status,id_ref,tx_name,tx_surname,de_title,id_gender,dt_birth,ny_age,sn_passport,tp_passport,sn_drivelic,dt_drivelic,tx_dept,tx_division,gu_geozone,id_nationality,tx_comments,id_batch,gu_contact) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
     oContLook = oConn.prepareStatement("SELECT NULL FROM k_contacts_lookup WHERE gu_owner=? AND id_section=? AND vl_lookup=?",ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
     oContPort = oConn.prepareStatement("SELECT gu_contact FROM k_contacts WHERE sn_passport=? AND gu_workarea=?",ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
@@ -822,21 +822,28 @@ public final class ContactLoader implements ImportLoader {
           oContUpdt.setNull(25, Types.CHAR);
 		else
           oContUpdt.setString(25, getColNull(id_nationality));
+
         if (getColNull(tx_comments)==null) {
           oContUpdt.setNull(26, Types.VARCHAR);
         } else {
           oContUpdt.setString(26, Gadgets.left((String) aValues[tx_comments], 254));
         }
-        if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setString(27,"+aValues[gu_contact]+")");
-        oContUpdt.setString(27, (String) aValues[gu_contact]);
-        if (test(iFlags,NO_DUPLICATED_NAMES)) {
-          oContUpdt.setString(28, getColNull(tx_name));
-          oContUpdt.setString(29, getColNull(tx_surname));
-          oContUpdt.setString(30, (String) aValues[gu_workarea]);
+        if (getColNull(id_batch)==null) {
+          oContUpdt.setNull(27, Types.VARCHAR);
         } else {
-          oContUpdt.setNull(28, Types.VARCHAR);
+          oContUpdt.setString(27, Gadgets.left((String) aValues[id_batch], 32));
+        }
+        if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setString(28,"+aValues[gu_contact]+")");
+
+        oContUpdt.setString(28, (String) aValues[gu_contact]);
+        if (test(iFlags,NO_DUPLICATED_NAMES)) {
+          oContUpdt.setString(29, getColNull(tx_name));
+          oContUpdt.setString(30, getColNull(tx_surname));
+          oContUpdt.setString(31, (String) aValues[gu_workarea]);
+        } else {
           oContUpdt.setNull(29, Types.VARCHAR);
-          oContUpdt.setNull(30, Types.CHAR);
+          oContUpdt.setNull(30, Types.VARCHAR);
+          oContUpdt.setNull(31, Types.CHAR);
         }
         if (DebugFile.trace) DebugFile.writeln("PreparedStatement.executeUpdate(oContUpdt)");
           iAffected = oContUpdt.executeUpdate();
@@ -885,17 +892,22 @@ public final class ContactLoader implements ImportLoader {
             oContInst.setNull(25, Types.CHAR);
 		  else
             oContInst.setString(25, getColNull(id_nationality));
+
           if (getColNull(tx_comments)==null) {
             oContInst.setNull(26, Types.VARCHAR);
           } else {
             oContInst.setString(26, Gadgets.left((String) aValues[tx_comments], 254));
           }
-          if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setString(27,"+aValues[gu_contact]+")");
-          oContInst.setString(27, (String) aValues[gu_contact]);
+          if (getColNull(id_batch)==null) {
+            oContInst.setNull(27, Types.VARCHAR);
+          } else {
+            oContInst.setString(27, Gadgets.left((String) aValues[id_batch], 32));
+          }          
+          if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setString(28,"+aValues[gu_contact]+")");
+          oContInst.setString(28, (String) aValues[gu_contact]);
           if (DebugFile.trace) DebugFile.writeln("PreparedStatement.executeUpdate(oContInst)");
           iAffected = oContInst.executeUpdate();
           if (DebugFile.trace) DebugFile.writeln("affected="+String.valueOf(iAffected));
-        
         } // fi (iAffected==0)
       } // fi (MODE_APPEND)
     } // fi (WRITE_CONTACTS)
