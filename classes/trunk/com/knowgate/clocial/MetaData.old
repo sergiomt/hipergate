@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<MetaData>
+  <Schema name="clocial">
+  	<Record type="UserAccount">
+  	  <Column name="PrimaryKey" type="CHAR" maxlength="32" nullable="false"></Column>
+  	  <Column name="CreationDate" type="TIMESTAMP" nullable="false"></Column>
+  	  <Column name="LastAccessDate" type="TIMESTAMP" nullable="true"></Column>
+  	  <Column name="LastModificationDate" type="TIMESTAMP" nullable="true"></Column>
+  	  <Column name="Email" type="VARCHAR" maxlength="100" nullable="false" indexed="true" check="[\w\x2E_-]+@[\w\x2E_-]+\x2E\D{2,4}"></Column>
+  	  <Column name="Password" type="VARCHAR" maxlength="50" nullable="false"></Column>
+  	  <Column name="Name" type="VARCHAR" maxlength="100" nullable="true"></Column>
+  	  <Column name="SurName" type="VARCHAR" maxlength="100" nullable="true"></Column>
+  	  <Column name="NmASCII" type="VARCHAR" maxlength="200" nullable="true" indexed="true"></Column>
+  	  <Column name="Active" type="BOOLEAN" nullable="false" default="true"></Column>
+  	  <Column name="IdCountry" type="VARCHAR" maxlength="3" nullable="true"></Column>
+  	  <Column name="IdDomain" type="INTEGER" nullable="false"></Column>
+  	</Record>
+  	<Record type="WorkArea">
+  	  <Column name="PrimaryKey" type="CHAR" maxlength="32" nullable="false"></Column>
+  	  <Column name="CreationDate" type="TIMESTAMP" nullable="false"></Column>
+  	  <Column name="LastModificationDate" type="TIMESTAMP" nullable="true"></Column>
+  	  <Column name="DomainKey" type="INTEGER" nullable="false"></Column>
+  	  <Column name="Name" type="VARCHAR" maxlength="100" nullable="false"></Column>
+  	  <Column name="CallbackURL" type="VARCHAR" maxlength="256" nullable="true"></Column>
+  	</Record>
+  	<Record type="UserAccount_x_WorkArea">
+  	  <Column name="PrimaryKey" type="CHAR" maxlength="32" nullable="false"></Column>
+  	  <Column name="CreationDate" type="TIMESTAMP" nullable="false"></Column>
+  	  <Column name="WorkAreaKey" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+  	  <Column name="UserAccountKey" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+  	</Record>
+  	<Record type="UserAccountDomain">
+  	  <Column name="PrimaryKey" type="INTEGER" nullable="false"></Column>
+  	  <Column name="Active" type="BOOLEAN" nullable="false" default="true"></Column>
+  	  <Column name="NmASCII" type="VARCHAR" maxlength="70" nullable="false" indexed="true"></Column>
+  	  <Column name="NmASCIILocale" type="VARCHAR" maxlength="74" nullable="false" indexed="true"></Column>
+  	  <Column name="Owner" type="CHAR" maxlength="32" nullable="true"></Column>
+  	  <Column name="CreationDate" type="TIMESTAMP" nullable="false"></Column>
+  	  <Column name="LastModificationDate" type="TIMESTAMP" nullable="true"></Column>
+  	  <Column name="NmLegal" type="VARCHAR" maxlength="70" nullable="false"></Column>
+  	  <Column name="NmCommercial" type="CHAR" maxlength="70" nullable="true"></Column>
+  	  <Column name="IdStatus" type="VARCHAR" maxlength="30" nullable="true"></Column>
+  	  <Column name="IdLegal" type="VARCHAR" maxlength="16" nullable="true"></Column>
+  	  <Column name="IdRef" type="VARCHAR" maxlength="16" nullable="true"></Column>
+  	  <Column name="IdSector" type="VARCHAR" maxlength="30" nullable="true"></Column>
+  	  <Column name="IdCountry" type="VARCHAR" maxlength="3" nullable="true"></Column>
+  	  <Column name="UrlAddr" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  	  <Column name="Email" type="VARCHAR" maxlength="100" nullable="true" check="[\w\x2E_-]+@[\w\x2E_-]+\x2E\D{2,4}"></Column>
+  	  <Column name="ServiceEndpoint" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  	</Record>
+  	<Record type="Post">
+  	  <Column name="PrimaryKey" type="CHAR" maxlength="32" nullable="false"></Column>
+  	  <Column name="Writer" type="CHAR" maxlength="32" nullable="false"></Column>
+  	  <Column name="WriterName" type="VARCHAR" maxlength="200" nullable="true"></Column>
+  	  <Column name="CreationDate" type="TIMESTAMP" nullable="false"></Column>
+  	  <Column name="TypeOfPost" type="INTEGER" nullable="false"></Column>
+  	  <Column name="Subject" type="VARCHAR" maxlength="100" nullable="true"></Column>
+  	  <Column name="Text" type="VARCHAR" maxlength="8000" nullable="true"></Column>
+  	  <Column name="Thumbnail" type="LONGVARBINARY" nullable="true"></Column>
+  	  <Column name="InlineImage" type="LONGVARBINARY" nullable="true"></Column>
+  	</Record>
+  	<Record type="Attachment_x_Post">
+  	  <Column name="PrimaryKey" type="CHAR" maxlength="32" nullable="false"></Column>
+  	  <Column name="CreationDate" type="TIMESTAMP" nullable="false"></Column>
+  	  <Column name="PostKey" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+  	  <Column name="AttachmentKey" type="CHAR" maxlength="32" nullable="false"></Column>
+  	  <Column name="FileName" type="VARCHAR" maxlength="256" nullable="false"></Column>
+  	</Record>
+  	<Record type="Channel">
+  	  <Column name="PrimaryKey" type="CHAR" maxlength="32" nullable="false"></Column>
+  	  <Column name="CreationDate" type="TIMESTAMP" nullable="false"></Column>
+  	  <Column name="LastModificationDate" type="TIMESTAMP" nullable="true"></Column>
+  	  <Column name="Writer" type="CHAR" maxlength="32" nullable="false"></Column>
+  	  <Column name="Name" type="VARCHAR" maxlength="50" nullable="false"></Column>
+  	  <Column name="Description" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  	</Record>
+  	<Record type="Post_x_Channel">
+  	  <Column name="PrimaryKey" type="CHAR" maxlength="32" nullable="false"></Column>
+  	  <Column name="CreationDate" type="TIMESTAMP" nullable="false"></Column>
+  	  <Column name="PostKey" type="CHAR" maxlength="32" nullable="false"></Column>
+  	  <Column name="ChannelKey" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+  	</Record>
+  	<Record type="UserAccount_x_Channel">
+  	  <Column name="PrimaryKey" type="CHAR" maxlength="32" nullable="false"></Column>
+  	  <Column name="CreationDate" type="TIMESTAMP" nullable="false"></Column>
+  	  <Column name="UserAccountKey" type="CHAR" maxlength="32" nullable="false"></Column>
+  	  <Column name="ChannelKey" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+  	</Record>
+  	<Record type="Wall">
+  	  <Column name="PrimaryKey" type="CHAR" maxlength="32" nullable="false"></Column>
+  	  <Column name="CreationDate" type="TIMESTAMP" nullable="false"></Column>
+  	  <Column name="LastModificationDate" type="TIMESTAMP" nullable="true"></Column>
+  	  <Column name="PostsPerPage" type="INTEGER" nullable="false"></Column>
+  	  <Column name="FrontPageXML" type="LONGVARCHAR" nullable="true"></Column>
+  	</Record>
+  	<Record type="Post_x_Wall">
+  	  <Column name="PrimaryKey" type="CHAR" maxlength="32" nullable="false"></Column>
+  	  <Column name="Writer" type="CHAR" maxlength="32" nullable="false"></Column>
+  	  <Column name="WriterName" type="VARCHAR" maxlength="200" nullable="true"></Column>
+  	  <Column name="CreationDate" type="TIMESTAMP" nullable="false"></Column>
+  	  <Column name="PostKey" type="CHAR" maxlength="32" nullable="false"></Column>
+  	  <Column name="WallKey" type="CHAR" maxlength="32" nullable="false"></Column>
+  	</Record>
+  </Schema>
+</MetaData>

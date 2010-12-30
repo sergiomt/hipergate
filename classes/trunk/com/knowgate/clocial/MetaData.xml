@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<MetaData>
+<Schema name="clocial" package="com.knowgate.clocial"> 
+  <Record table="k_errors_log" pojo="ErrorLog">
+    <Column name="gu_error" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true" default="GUID"></Column>
+    <Column name="gu_account" type="VARCHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="tx_main_email" type="VARCHAR" maxlength="100" nullable="true" indexed="true"></Column>
+    <Column name="dt_created" type="TIMESTAMP" nullable="false"></Column>
+    <Column name="co_error" type="INT" nullable="false" default="666"></Column>
+    <Column name="bo_acknowledged" type="BOOLEAN" nullable="false" default="FALSE"></Column>
+    <Column name="tx_message" type="VARCHAR" maxlength="4000" nullable="true"></Column>
+    <Column name="jv_exception" type="JAVA_OBJECT" nullable="true"></Column>
+    <Column name="jv_cause" type="JAVA_OBJECT" nullable="true"></Column>
+    <Column name="jv_message" type="JAVA_OBJECT" nullable="true"></Column>
+  </Record>
+  <Record table="k_ip_info" pojo="IPInfo">
+    <Column name="ip_addr" type="VARCHAR" maxlength="100" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="id_country" type="CHAR" maxlength="2" nullable="true" indexed="false"></Column>
+    <Column name="nm_city" type="VARCHAR" maxlength="254" nullable="true" indexed="false"></Column>
+    <Column name="nm_point" type="VARCHAR" maxlength="254" nullable="true" indexed="false"></Column>
+    <Column name="nu_coord1" type="FLOAT" nullable="true" indexed="false"></Column>
+    <Column name="nu_coord2" type="FLOAT" nullable="true" indexed="false"></Column>
+  </Record>
+  <Record table="k_domains" pojo="Domain">
+    <Column name="id_domain" type="INT" maxlength="11" nullable="false" constraint="primary key" indexed="true" default="SERIAL"></Column>
+    <Column name="bo_active" type="BOOLEAN" nullable="false" default="TRUE"></Column>
+    <Column name="nm_domain" type="VARCHAR" maxlength="70" nullable="false" indexed="true"></Column>
+    <Column name="gu_owner" type="CHAR" maxlength="32" nullable="true" indexed="false"></Column>
+    <Column name="gu_admins" type="CHAR" maxlength="32" nullable="true" indexed="false"></Column>
+    <Column name="dt_created" type="TIMESTAMP" nullable="false"></Column>
+    <Column name="dt_expire" type="TIMESTAMP" nullable="true"></Column>
+  </Record>
+  <Record table="k_images" pojo="">
+    <Column name="id_domain" type="INT" maxlength="11" nullable="false" indexed="true" foreignkey="k_domains"></Column>
+    <Column name="gu_image" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true" default="GUID"></Column>
+    <Column name="nm_image" type="VARCHAR" maxlength="254" nullable="true" indexed="false"></Column>
+    <Column name="tp_image" type="VARCHAR" maxlength="32" nullable="true" indexed="false"></Column>
+    <Column name="tx_alt" type="VARCHAR" maxlength="254" nullable="true" indexed="false"></Column>
+    <Column name="dm_width" type="INT" nullable="true" indexed="false"></Column>
+    <Column name="dm_height" type="INT" nullable="true" indexed="false"></Column>
+    <Column name="bin_icon" type="VARBINARY" nullable="true" indexed="false"></Column>
+    <Column name="bin_thumb" type="VARBINARY" nullable="true" indexed="false"></Column>
+    <Column name="bin_file" type="VARBINARY" nullable="true" indexed="false"></Column>
+  </Record>
+  <Record table="k_companies" pojo="Company">
+    <Column name="gu_company" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true" default="GUID"></Column>
+    <Column name="id_domain" type="INT" maxlength="11" nullable="false" indexed="true" foreignkey="k_domains"></Column>
+    <Column name="nm_ascii" type="VARCHAR" maxlength="70" indexed="true" nullable="false"></Column>
+    <Column name="nm_ascii_locale" type="VARCHAR" maxlength="73" indexed="true" nullable="true"></Column>
+    <Column name="nm_legal" type="VARCHAR" maxlength="70" nullable="false"></Column>
+    <Column name="nm_commercial" type="VARCHAR" maxlength="70" nullable="true"></Column>
+    <Column name="dt_created" type="TIMESTAMP" nullable="false"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" nullable="true"></Column>
+    <Column name="dt_founded" type="TIMESTAMP" nullable="true"></Column>
+    <Column name="id_legal" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="id_sector" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="id_status" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="id_ref" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="tp_company" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="id_country" type="CHAR" maxlength="2" nullable="true" indexed="true"></Column>
+    <Column name="nu_employees" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="im_revenue" type="FLOAT" maxlength="12" nullable="true"></Column>
+    <Column name="tx_franchise" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="de_company" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="gu_image" type="CHAR" maxlength="32" nullable="true" foreignkey="k_images"></Column>
+  </Record>
+  <Record table="k_user_accounts" pojo="UserAccount">
+    <Column name="gu_account" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true" default="GUID"></Column>
+    <Column name="id_domain" type="INT" maxlength="11" nullable="false" indexed="true" foreignkey="k_domains"></Column>
+    <Column name="tx_nickname" type="VARCHAR" maxlength="32" nullable="false"></Column>
+    <Column name="tx_pwd" type="VARCHAR" maxlength="50" nullable="false"></Column>
+    <Column name="tx_pwd_sign" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="bo_change_pwd" type="SMALLINT" maxlength="6" nullable="false" default="TRUE"></Column>
+    <Column name="bo_searchable" type="SMALLINT" maxlength="6" nullable="false" default="TRUE"></Column>
+    <Column name="bo_active" type="BOOLEAN" nullable="false" default="true"></Column>
+    <Column name="nu_login_attempts" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="len_quota" type="DECIMAL" maxlength="28" nullable="true"></Column>
+    <Column name="max_quota" type="DECIMAL" maxlength="28" nullable="true"></Column>
+    <Column name="tp_account" type="CHAR" maxlength="1" nullable="true"></Column>
+    <Column name="id_account" type="CHAR" maxlength="10" nullable="true"></Column>
+    <Column name="dt_last_update" type="TIMESTAMP" nullable="true"></Column>
+    <Column name="dt_last_visit" type="TIMESTAMP" nullable="true"></Column>
+    <Column name="dt_cancel" type="TIMESTAMP" nullable="true"></Column>
+    <Column name="tx_main_email" type="VARCHAR" maxlength="100" nullable="false" indexed="true" check="[\w\x2E_-]+@[\w\x2E_-]+\x2E\D{2,4}"></Column>
+    <Column name="tx_alt_email" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="nm_user" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_surname1" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_surname2" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="nm_ascii" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="tx_challenge" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_reply" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="dt_pwd_expires" type="TIMESTAMP" nullable="true"></Column>
+    <Column name="gu_company" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="nm_company" type="VARCHAR" maxlength="70" nullable="true"></Column>
+    <Column name="de_title" type="VARCHAR" maxlength="70" nullable="true"></Column>
+    <Column name="id_country" type="CHAR" maxlength="2" nullable="true"></Column>
+    <Column name="id_gender" type="CHAR" maxlength="1" nullable="true"></Column>
+    <Column name="dt_birth" type="TIMESTAMP" nullable="true"></Column>
+    <Column name="ny_age" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="marital_status" type="CHAR" maxlength="1" nullable="true"></Column>
+    <Column name="tx_education" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="icq_id" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="sn_passport" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="tp_passport" type="CHAR" maxlength="1" nullable="true"></Column>
+    <Column name="mov_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="tx_comments" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="gu_image" type="CHAR" maxlength="32" nullable="true" foreignkey="k_images"></Column>
+  </Record>
+  <Record table="k_workareas" pojo="">
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true" default="GUID"></Column>
+    <Column name="nm_workarea" type="VARCHAR" maxlength="50" nullable="false" indexed="false"></Column>
+    <Column name="id_domain" type="INT" maxlength="11" nullable="false" indexed="true" foreignkey="k_domains"></Column>
+    <Column name="gu_owner" type="CHAR" maxlength="32" nullable="false"></Column>
+    <Column name="bo_active" type="SMALLINT" maxlength="6" nullable="true" default="TRUE"></Column>
+    <Column name="gu_image" type="VARCHAR" maxlength="254" nullable="true" foreignkey="k_images"></Column>
+    <Column name="url_service" type="VARCHAR" maxlength="254" nullable="true" default="false"></Column>
+  </Record>
+  <Record table="k_users" pojo="">
+    <Column name="gu_user" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true" default="GUID"></Column>
+    <Column name="gu_account" type="CHAR" maxlength="32" nullable="false" indexed="true" foreignkey="k_accounts"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" indexed="true" foreignkey="k_workareas"></Column>
+    <Column name="tx_main_email" type="VARCHAR" maxlength="100" nullable="false" indexed="true" check="[\w\x2E_-]+@[\w\x2E_-]+\x2E\D{2,4}"></Column>
+  </Record>
+</Schema>
+</MetaData>

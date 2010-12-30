@@ -1,0 +1,1261 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<MetaData>
+<Schema name="clocial"> 
+  <Table name="k_project_snapshots">
+    <Column name="gu_snapshot" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_project" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="gu_writer" type="CHAR" maxlength="32" nullable="false"></Column>
+    <Column name="tl_snapshot" type="VARCHAR" maxlength="100" nullable="false"></Column>
+    <Column name="tx_snapshot" type="VARCHAR" maxlength="5592405" nullable="false"></Column>
+  </Table>
+  <Table name="k_companies">
+    <Column name="gu_company" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="nm_legal" type="VARCHAR" maxlength="70" nullable="false"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="bo_restricted" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="nm_commercial" type="VARCHAR" maxlength="70" nullable="true"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_founded" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="id_batch" type="VARCHAR" maxlength="32" nullable="true"></Column>
+    <Column name="id_legal" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="id_sector" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="id_status" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="id_ref" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="id_fare" type="VARCHAR" maxlength="32" nullable="true"></Column>
+    <Column name="id_bpartner" type="VARCHAR" maxlength="32" nullable="true"></Column>
+    <Column name="tp_company" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="gu_geozone" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="nu_employees" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="im_revenue" type="FLOAT" maxlength="12" nullable="true"></Column>
+    <Column name="gu_sales_man" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="tx_franchise" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="de_company" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  </Table>
+  <Table name="k_activities">
+    <Column name="gu_activity" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="tl_activity" type="VARCHAR" maxlength="100" nullable="false"></Column>
+    <Column name="pg_activity" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="bo_active" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_start" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_end" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="gu_address" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_campaign" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_list" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_writer" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_meeting" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="gu_pageset" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="gu_mailing" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="dt_mailing" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="tx_subject" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="tx_email_from" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="nm_from" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="url_activity" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="nm_author" type="VARCHAR" maxlength="200" nullable="true"></Column>
+    <Column name="nu_capacity" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="pr_sale" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="pr_discount" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="id_language" type="CHAR" maxlength="2" nullable="true"></Column>
+    <Column name="id_ref" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="tx_dept" type="VARCHAR" maxlength="70" nullable="true"></Column>
+    <Column name="de_activity" type="VARCHAR" maxlength="1000" nullable="true"></Column>
+    <Column name="tx_comments" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  </Table>
+  <Table name="k_prod_attr">
+    <Column name="gu_product" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="adult_rated" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="alturl" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="author" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="availability" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="brand" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="client" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="color" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="contact_person" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="country_code" type="CHAR" maxlength="3" nullable="true"></Column>
+    <Column name="country" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="cover" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="days_to_deliver" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="department" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="disk_space" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="display" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="doc_no" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="dt_acknowledge" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_expire" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_out" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="email" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="fax" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="format" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="forward_to" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="icq_id" type="VARCHAR" maxlength="32" nullable="true"></Column>
+    <Column name="ip_addr" type="VARCHAR" maxlength="20" nullable="true"></Column>
+    <Column name="isbn" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="nu_lines" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="memory" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="mobilephone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="office" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="ordinal" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="organization" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="pages" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="paragraphs" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="phone1" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="phone2" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="power" type="VARCHAR" maxlength="32" nullable="true"></Column>
+    <Column name="project" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="product_group" type="VARCHAR" maxlength="32" nullable="true"></Column>
+    <Column name="rank" type="FLOAT" maxlength="12" nullable="true"></Column>
+    <Column name="reference_id" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="revised_by" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="rooms" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="scope" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="signature" type="VARCHAR" maxlength="128" nullable="true"></Column>
+    <Column name="size_x" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="size_y" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="size_z" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="speed" type="VARCHAR" maxlength="32" nullable="true"></Column>
+    <Column name="state_code" type="CHAR" maxlength="9" nullable="true"></Column>
+    <Column name="state" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="subject" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="target" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="template" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="typeof" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="upload_by" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="weight" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="words" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="zip_code" type="VARCHAR" maxlength="16" nullable="true"></Column>
+  </Table>
+  <Table name="k_acl_groups">
+    <Column name="gu_acl_group" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="id_domain" type="INT" maxlength="11" nullable="false" indexed="true"></Column>
+    <Column name="bo_active" type="SMALLINT" maxlength="6" nullable="false"></Column>
+    <Column name="nm_acl_group" type="VARCHAR" maxlength="30" nullable="false" indexed="true"></Column>
+    <Column name="de_acl_group" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  </Table>
+  <Table name="k_orders">
+    <Column name="gu_order" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="pg_order" type="INT" maxlength="11" nullable="false"></Column>
+    <Column name="gu_shop" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="id_currency" type="CHAR" maxlength="3" nullable="false"></Column>
+    <Column name="bo_active" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="bo_approved" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="bo_credit_ok" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="id_priority" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="gu_sales_man" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="gu_sale_point" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_warehouse" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_invoiced" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_delivered" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_printed" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_promised" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_payment" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_cancel" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="de_order" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_location" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="gu_company" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_contact" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="nm_client" type="VARCHAR" maxlength="200" nullable="true"></Column>
+    <Column name="id_legal" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="gu_ship_addr" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_bill_addr" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="id_ref" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="id_status" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="id_pay_status" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="id_ship_method" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="im_subtotal" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="im_taxes" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="im_shipping" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="im_discount" type="VARCHAR" maxlength="10" nullable="true"></Column>
+    <Column name="im_total" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="tp_billing" type="CHAR" maxlength="1" nullable="true"></Column>
+    <Column name="nu_bank" type="CHAR" maxlength="28" nullable="true"></Column>
+    <Column name="nm_cardholder" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="nu_card" type="CHAR" maxlength="16" nullable="true"></Column>
+    <Column name="tp_card" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="tx_expire" type="VARCHAR" maxlength="10" nullable="true"></Column>
+    <Column name="nu_pin" type="VARCHAR" maxlength="7" nullable="true"></Column>
+    <Column name="nu_cvv2" type="VARCHAR" maxlength="4" nullable="true"></Column>
+    <Column name="tx_ship_notes" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="tx_email_to" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_comments" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  </Table>
+  <Table name="k_duties_dependencies">
+    <Column name="gu_previous" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_next" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="ti_gap" type="DECIMAL" maxlength="20" nullable="true"></Column>
+  </Table>
+  <Table name="k_x_group_user">
+    <Column name="gu_acl_group" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_user" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+  </Table>
+  <Table name="k_users">
+    <Column name="gu_user" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="id_domain" type="INT" maxlength="11" nullable="false" indexed="true"></Column>
+    <Column name="tx_nickname" type="VARCHAR" maxlength="32" nullable="false"></Column>
+    <Column name="tx_pwd" type="VARCHAR" maxlength="50" nullable="false"></Column>
+    <Column name="tx_pwd_sign" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="bo_change_pwd" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="bo_searchable" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="bo_active" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="nu_login_attempts" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="len_quota" type="DECIMAL" maxlength="28" nullable="true"></Column>
+    <Column name="max_quota" type="DECIMAL" maxlength="28" nullable="true"></Column>
+    <Column name="tp_account" type="CHAR" maxlength="1" nullable="true"></Column>
+    <Column name="id_account" type="CHAR" maxlength="10" nullable="true"></Column>
+    <Column name="dt_last_update" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_last_visit" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_cancel" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="tx_main_email" type="VARCHAR" maxlength="100" nullable="true" indexed="true" check="[\w\x2E_-]+@[\w\x2E_-]+\x2E\D{2,4}"></Column>
+    <Column name="tx_alt_email" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="nm_user" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_surname1" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_surname2" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_challenge" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_reply" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="dt_pwd_expires" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="gu_category" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="nm_company" type="VARCHAR" maxlength="70" nullable="true"></Column>
+    <Column name="de_title" type="VARCHAR" maxlength="70" nullable="true"></Column>
+    <Column name="id_gender" type="CHAR" maxlength="1" nullable="true"></Column>
+    <Column name="dt_birth" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="ny_age" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="marital_status" type="CHAR" maxlength="1" nullable="true"></Column>
+    <Column name="tx_education" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="icq_id" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="sn_passport" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="tp_passport" type="CHAR" maxlength="1" nullable="true"></Column>
+    <Column name="mov_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="tx_comments" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  </Table>
+  <Table name="k_version">
+    <Column name="vs_stamp" type="VARCHAR" maxlength="16" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="bo_register" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="bo_allow_stats" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="gu_support" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="gu_contact" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="tx_name" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_surname" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="nu_employees" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="nm_company" type="VARCHAR" maxlength="70" nullable="true"></Column>
+    <Column name="id_sector" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="id_country" type="CHAR" maxlength="3" nullable="true"></Column>
+    <Column name="nm_state" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="mn_city" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="zipcode" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="work_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="tx_email" type="VARCHAR" maxlength="70" nullable="true"></Column>
+  </Table>
+  <Table name="k_rooms">
+    <Column name="nm_room" type="VARCHAR" maxlength="50" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="id_domain" type="INT" maxlength="11" nullable="false" indexed="true"></Column>
+    <Column name="bo_available" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="tp_room" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="nu_capacity" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="tx_company" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="tx_location" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="tx_comments" type="VARCHAR" maxlength="255" nullable="true"></Column>
+  </Table>
+  <Table name="k_projects">
+    <Column name="gu_project" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="nm_project" type="VARCHAR" maxlength="50" nullable="false" indexed="true"></Column>
+    <Column name="gu_owner" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="id_parent" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="id_dept" type="VARCHAR" maxlength="32" nullable="true"></Column>
+    <Column name="id_status" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="dt_start" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_scheduled" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_end" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="pr_cost" type="FLOAT" maxlength="12" nullable="true"></Column>
+    <Column name="gu_company" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_contact" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_user" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="id_ref" type="VARCHAR" maxlength="50" nullable="true" indexed="true"></Column>
+    <Column name="de_project" type="VARCHAR" maxlength="1000" nullable="true"></Column>
+  </Table>
+  <Table name="k_prod_attrs">
+    <Column name="gu_object" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="nm_attr" type="VARCHAR" maxlength="30" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="vl_attr" type="VARCHAR" maxlength="255" nullable="true"></Column>
+  </Table>
+  <Table name="k_x_meeting_fellow">
+    <Column name="gu_meeting" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_fellow" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="dt_start" type="TIMESTAMP" maxlength="19" nullable="false"></Column>
+    <Column name="dt_end" type="TIMESTAMP" maxlength="19" nullable="false"></Column>
+  </Table>
+  <Table name="k_newsmsgs">
+    <Column name="gu_msg" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="nm_author" type="VARCHAR" maxlength="200" nullable="false" indexed="true"></Column>
+    <Column name="gu_writer" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_published" type="TIMESTAMP" maxlength="19" nullable="false"></Column>
+    <Column name="dt_start" type="TIMESTAMP" maxlength="19" nullable="true" indexed="true"></Column>
+    <Column name="id_language" type="CHAR" maxlength="2" nullable="true"></Column>
+    <Column name="id_status" type="SMALLINT" maxlength="6" nullable="true" indexed="true"></Column>
+    <Column name="id_msg_type" type="CHAR" maxlength="5" nullable="true"></Column>
+    <Column name="nu_thread_msgs" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="gu_thread_msg" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="gu_parent_msg" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="nu_votes" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="tx_email" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_subject" type="VARCHAR" maxlength="254" nullable="true" indexed="true"></Column>
+    <Column name="dt_expire" type="TIMESTAMP" maxlength="19" nullable="true" indexed="true"></Column>
+    <Column name="dt_validated" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="gu_validator" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_product" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="tx_msg" type="VARCHAR" maxlength="5592405" nullable="true"></Column>
+  </Table>
+  <Table name="k_x_orders_despatch">
+    <Column name="gu_order" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_despatch" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+  </Table>
+  <Table name="k_prod_locats">
+    <Column name="gu_location" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_product" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="gu_owner" type="CHAR" maxlength="32" nullable="false"></Column>
+    <Column name="pg_prod_locat" type="INT" maxlength="11" nullable="false"></Column>
+    <Column name="id_cont_type" type="INT" maxlength="11" nullable="false" indexed="true"></Column>
+    <Column name="id_prod_type" type="VARCHAR" maxlength="5" nullable="false" indexed="true"></Column>
+    <Column name="len_file" type="INT" maxlength="11" nullable="false"></Column>
+    <Column name="xprotocol" type="VARCHAR" maxlength="8" nullable="true"></Column>
+    <Column name="xhost" type="VARCHAR" maxlength="64" nullable="true" indexed="true"></Column>
+    <Column name="xport" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="xpath" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="xfile" type="VARCHAR" maxlength="128" nullable="true"></Column>
+    <Column name="xanchor" type="VARCHAR" maxlength="128" nullable="true"></Column>
+    <Column name="xoriginalfile" type="VARCHAR" maxlength="128" nullable="true"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_uploaded" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="de_prod_locat" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="status" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="nu_current_stock" type="FLOAT" maxlength="12" nullable="true"></Column>
+    <Column name="nu_reserved_stock" type="FLOAT" maxlength="12" nullable="true"></Column>
+    <Column name="nu_min_stock" type="FLOAT" maxlength="12" nullable="true"></Column>
+    <Column name="vs_stamp" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="tx_email" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tag_prod_locat" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  </Table>
+  <Table name="k_x_quotations_orders">
+    <Column name="gu_order" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_quotation" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+  </Table>
+  <Table name="k_addresses">
+    <Column name="gu_address" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="ix_address" type="INT" maxlength="11" nullable="false"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="bo_active" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="gu_user" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="tp_location" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="nm_company" type="VARCHAR" maxlength="70" nullable="true"></Column>
+    <Column name="tp_street" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="nm_street" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="nu_street" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="tx_addr1" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_addr2" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="id_country" type="CHAR" maxlength="3" nullable="true" indexed="true"></Column>
+    <Column name="nm_country" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="id_state" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="nm_state" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="mn_city" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="zipcode" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="work_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="direct_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="home_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="mov_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="fax_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="other_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="po_box" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="tx_email" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_email_alt" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="url_addr" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="coord_x" type="FLOAT" maxlength="12" nullable="true"></Column>
+    <Column name="coord_y" type="FLOAT" maxlength="12" nullable="true"></Column>
+    <Column name="contact_person" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_salutation" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="id_ref" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="tx_remarks" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  </Table>
+  <Table name="k_x_company_addr">
+    <Column name="gu_company" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_address" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+  </Table>
+  <Table name="k_contacts_attrs">
+    <Column name="gu_object" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="nm_attr" type="VARCHAR" maxlength="30" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="vl_attr" type="VARCHAR" maxlength="255" nullable="true"></Column>
+  </Table>
+  <Table name="k_contacts_recent">
+    <Column name="gu_contact" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_user" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="dt_last_visit" type="TIMESTAMP" maxlength="19" nullable="false"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="full_name" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="nm_company" type="VARCHAR" maxlength="70" nullable="true"></Column>
+    <Column name="work_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="tx_email" type="VARCHAR" maxlength="100" nullable="true"></Column>
+  </Table>
+  <Table name="k_returned_invoices">
+    <Column name="gu_returned" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_invoice" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="pg_returned" type="INT" maxlength="11" nullable="false"></Column>
+    <Column name="gu_shop" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="id_currency" type="CHAR" maxlength="3" nullable="false"></Column>
+    <Column name="id_legal" type="VARCHAR" maxlength="16" nullable="false"></Column>
+    <Column name="bo_active" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="bo_approved" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_returned" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_printed" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="de_returned" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="gu_company" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_contact" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="nm_client" type="VARCHAR" maxlength="200" nullable="true"></Column>
+    <Column name="gu_bill_addr" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="id_ref" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="id_status" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="id_pay_status" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="im_subtotal" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="im_taxes" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="im_shipping" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="im_discount" type="VARCHAR" maxlength="10" nullable="true"></Column>
+    <Column name="im_total" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="tp_billing" type="CHAR" maxlength="1" nullable="true"></Column>
+    <Column name="nu_bank" type="CHAR" maxlength="28" nullable="true"></Column>
+    <Column name="tx_email_to" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_comments" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  </Table>
+  <Table name="k_fellows">
+    <Column name="gu_fellow" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="id_domain" type="INT" maxlength="11" nullable="false" indexed="true"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="tx_company" type="VARCHAR" maxlength="70" nullable="true"></Column>
+    <Column name="id_ref" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="tx_name" type="VARCHAR" maxlength="100" nullable="true" indexed="true"></Column>
+    <Column name="tx_surname" type="VARCHAR" maxlength="100" nullable="true" indexed="true"></Column>
+    <Column name="de_title" type="VARCHAR" maxlength="50" nullable="true" indexed="true"></Column>
+    <Column name="id_gender" type="CHAR" maxlength="1" nullable="true"></Column>
+    <Column name="sn_passport" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="tp_passport" type="CHAR" maxlength="1" nullable="true"></Column>
+    <Column name="tx_dept" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="tx_division" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="tx_location" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="tx_email" type="VARCHAR" maxlength="100" nullable="true" indexed="true"></Column>
+    <Column name="work_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="home_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="mov_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="ext_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="tx_timezone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="tx_comments" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  </Table>
+  <Table name="k_prod_fares">
+    <Column name="gu_product" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="id_fare" type="VARCHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="pr_sale" type="DECIMAL" maxlength="14" nullable="false"></Column>
+    <Column name="tp_fare" type="VARCHAR" maxlength="32" nullable="true"></Column>
+    <Column name="id_currency" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="pct_tax_rate" type="FLOAT" maxlength="12" nullable="true"></Column>
+    <Column name="is_tax_included" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="dt_start" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_end" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+  </Table>
+  <Table name="k_prod_keywords">
+    <Column name="gu_product" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="false"></Column>
+    <Column name="tx_keywords" type="VARCHAR" maxlength="2000" nullable="true"></Column>
+  </Table>
+  <Table name="k_project_expand">
+    <Column name="gu_rootprj" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="gu_project" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="nm_project" type="VARCHAR" maxlength="50" nullable="false"></Column>
+    <Column name="od_level" type="INT" maxlength="11" nullable="false" indexed="true"></Column>
+    <Column name="od_walk" type="INT" maxlength="11" nullable="false"></Column>
+    <Column name="gu_parent" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+  </Table>
+  <Table name="k_member_address">
+    <Column name="gu_address" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="ix_address" type="INT" maxlength="11" nullable="false"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="gu_company" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_contact" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="bo_private" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="gu_writer" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="tx_name" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_surname" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="nm_commercial" type="VARCHAR" maxlength="70" nullable="true"></Column>
+    <Column name="nm_legal" type="VARCHAR" maxlength="70" nullable="true"></Column>
+    <Column name="id_legal" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="id_sector" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="de_title" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="tr_title" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="id_status" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="id_ref" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="dt_birth" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="sn_passport" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="tx_comments" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="id_gender" type="CHAR" maxlength="1" nullable="true"></Column>
+    <Column name="tp_company" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="nu_employees" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="im_revenue" type="FLOAT" maxlength="12" nullable="true"></Column>
+    <Column name="gu_sales_man" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="tx_franchise" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="gu_geozone" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="ny_age" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="tx_dept" type="VARCHAR" maxlength="70" nullable="true"></Column>
+    <Column name="tx_division" type="VARCHAR" maxlength="70" nullable="true"></Column>
+    <Column name="tp_location" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="tp_street" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="nm_street" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="nu_street" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="tx_addr1" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_addr2" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="full_addr" type="VARCHAR" maxlength="200" nullable="true"></Column>
+    <Column name="id_country" type="CHAR" maxlength="3" nullable="true" indexed="true"></Column>
+    <Column name="nm_country" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="id_state" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="nm_state" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="mn_city" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="zipcode" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="work_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="direct_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="home_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="mov_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="fax_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="other_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="po_box" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="tx_email" type="VARCHAR" maxlength="100" nullable="true" indexed="true"></Column>
+    <Column name="url_addr" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="contact_person" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_salutation" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="tx_remarks" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  </Table>
+  <Table name="k_x_cat_group_acl">
+    <Column name="gu_category" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_acl_group" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="acl_mask" type="INT" maxlength="11" nullable="false"></Column>
+  </Table>
+  <Table name="k_invoices">
+    <Column name="gu_invoice" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="pg_invoice" type="INT" maxlength="11" nullable="false"></Column>
+    <Column name="gu_shop" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="id_currency" type="CHAR" maxlength="3" nullable="false"></Column>
+    <Column name="id_legal" type="VARCHAR" maxlength="16" nullable="false"></Column>
+    <Column name="bo_active" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="bo_approved" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="bo_template" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="gu_schedule" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_sales_man" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="gu_sale_point" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_warehouse" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_invoiced" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_printed" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_payment" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_paid" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_cancel" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="de_order" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_location" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="gu_company" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_contact" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="nm_client" type="VARCHAR" maxlength="200" nullable="true"></Column>
+    <Column name="gu_ship_addr" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_bill_addr" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="id_ref" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="id_status" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="id_pay_status" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="id_ship_method" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="im_subtotal" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="im_taxes" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="im_shipping" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="im_discount" type="VARCHAR" maxlength="10" nullable="true"></Column>
+    <Column name="im_total" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="im_paid" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="tp_billing" type="CHAR" maxlength="1" nullable="true"></Column>
+    <Column name="nu_bank" type="CHAR" maxlength="28" nullable="true"></Column>
+    <Column name="nm_cardholder" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="nu_card" type="CHAR" maxlength="16" nullable="true"></Column>
+    <Column name="tp_card" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="tx_expire" type="VARCHAR" maxlength="10" nullable="true"></Column>
+    <Column name="nu_pin" type="VARCHAR" maxlength="7" nullable="true"></Column>
+    <Column name="nu_cvv2" type="VARCHAR" maxlength="4" nullable="true"></Column>
+    <Column name="tx_ship_notes" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="tx_email_to" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_comments" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  </Table>
+  <Table name="k_products">
+    <Column name="gu_product" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_owner" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="nm_product" type="VARCHAR" maxlength="128" nullable="false" indexed="true"></Column>
+    <Column name="id_status" type="SMALLINT" maxlength="6" nullable="true" indexed="true"></Column>
+    <Column name="is_compound" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="gu_blockedby" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_uploaded" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="id_language" type="CHAR" maxlength="2" nullable="true" indexed="true"></Column>
+    <Column name="de_product" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="pr_list" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="pr_sale" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="pr_discount" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="pr_purchase" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="id_currency" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="pct_tax_rate" type="FLOAT" maxlength="12" nullable="true"></Column>
+    <Column name="is_tax_included" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="dt_start" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_end" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="tag_product" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="id_ref" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="gu_address" type="CHAR" maxlength="32" nullable="true"></Column>
+  </Table>
+  <Table name="k_domains">
+    <Column name="id_domain" type="INT" maxlength="11" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="bo_active" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="nm_domain" type="VARCHAR" maxlength="30" nullable="false" indexed="true"></Column>
+    <Column name="gu_owner" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_admins" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="dt_expire" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+  </Table>
+  <Table name="k_x_orders_invoices">
+    <Column name="gu_order" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_invoice" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+  </Table>
+  <Table name="k_duties">
+    <Column name="gu_duty" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="nm_duty" type="VARCHAR" maxlength="50" nullable="false" indexed="true"></Column>
+    <Column name="gu_project" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="gu_writer" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_start" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_scheduled" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_end" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="ti_duration" type="DECIMAL" maxlength="20" nullable="true"></Column>
+    <Column name="od_priority" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="gu_contact" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="tx_status" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="pct_complete" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="pr_cost" type="FLOAT" maxlength="12" nullable="true"></Column>
+    <Column name="tp_duty" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="de_duty" type="VARCHAR" maxlength="2000" nullable="true"></Column>
+    <Column name="tx_comments" type="VARCHAR" maxlength="1000" nullable="true"></Column>
+  </Table>
+  <Table name="k_fellows_attach">
+    <Column name="gu_fellow" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="tx_file" type="VARCHAR" maxlength="250" nullable="false"></Column>
+    <Column name="len_file" type="INT" maxlength="11" nullable="false"></Column>
+    <Column name="bin_file" type="MEDIUMBLOB" maxlength="16777215" nullable="false"></Column>
+  </Table>
+  <Table name="k_user_pwd">
+    <Column name="gu_pwd" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_user" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="tl_pwd" type="VARCHAR" maxlength="50" nullable="false"></Column>
+    <Column name="id_enc_method" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="id_pwd" type="VARCHAR" maxlength="12" nullable="true"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="tx_comments" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="tx_lines" type="VARCHAR" maxlength="4000" nullable="true"></Column>
+  </Table>
+  <Table name="k_contact_attachs">
+    <Column name="gu_contact" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="pg_product" type="INT" maxlength="11" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_product" type="CHAR" maxlength="32" nullable="false"></Column>
+    <Column name="gu_writer" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+  </Table>
+  <Table name="k_x_duty_resource">
+    <Column name="gu_duty" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="nm_resource" type="VARCHAR" maxlength="50" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="pct_time" type="SMALLINT" maxlength="6" nullable="true"></Column>
+  </Table>
+  <Table name="k_x_contact_addr">
+    <Column name="gu_contact" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_address" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+  </Table>
+  <Table name="k_x_meeting_room">
+    <Column name="gu_meeting" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="nm_room" type="VARCHAR" maxlength="50" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="dt_start" type="TIMESTAMP" maxlength="19" nullable="false"></Column>
+    <Column name="dt_end" type="TIMESTAMP" maxlength="19" nullable="false"></Column>
+  </Table>
+  <Table name="k_x_cat_user_acl">
+    <Column name="gu_category" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_user" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="acl_mask" type="INT" maxlength="11" nullable="false"></Column>
+  </Table>
+  <Table name="k_project_costs">
+    <Column name="gu_cost" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_project" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="gu_writer" type="CHAR" maxlength="32" nullable="false"></Column>
+    <Column name="gu_user" type="CHAR" maxlength="32" nullable="false"></Column>
+    <Column name="tl_cost" type="VARCHAR" maxlength="100" nullable="false"></Column>
+    <Column name="pr_cost" type="FLOAT" maxlength="12" nullable="false"></Column>
+    <Column name="tp_cost" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="dt_cost" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="de_cost" type="VARCHAR" maxlength="1000" nullable="true"></Column>
+  </Table>
+  <Table name="k_x_app_workarea">
+    <Column name="id_app" type="INT" maxlength="11" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_admins" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_powusers" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_users" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_guests" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_other" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="path_files" type="VARCHAR" maxlength="255" nullable="true"></Column>
+  </Table>
+  <Table name="k_thesauri_root">
+    <Column name="gu_rootterm" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="tx_term" type="VARCHAR" maxlength="100" nullable="false" indexed="true"></Column>
+    <Column name="id_scope" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="id_domain" type="INT" maxlength="11" nullable="true" indexed="true"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+  </Table>
+  <Table name="k_cat_root">
+    <Column name="gu_category" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+  </Table>
+  <Table name="k_companies_attrs">
+    <Column name="gu_object" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="nm_attr" type="VARCHAR" maxlength="30" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="vl_attr" type="VARCHAR" maxlength="255" nullable="true"></Column>
+  </Table>
+  <Table name="k_newsgroup_subscriptions">
+    <Column name="gu_newsgrp" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_user" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="id_status" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="id_msg_type" type="CHAR" maxlength="5" nullable="true"></Column>
+    <Column name="tp_subscrip" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="tx_email" type="VARCHAR" maxlength="100" nullable="true"></Column>
+  </Table>
+  <Table name="k_cat_tree">
+    <Column name="gu_parent_cat" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_child_cat" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+  </Table>
+  <Table name="k_prod_suppliers">
+    <Column name="gu_product" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_supplier" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+  </Table>
+  <Table name="k_quotations">
+    <Column name="gu_quotation" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="pg_quotation" type="INT" maxlength="11" nullable="false"></Column>
+    <Column name="gu_shop" type="CHAR" maxlength="32" nullable="false"></Column>
+    <Column name="id_currency" type="CHAR" maxlength="3" nullable="false"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_sent" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_promised" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_delivered" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="de_quotation" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="gu_pageset" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="gu_sales_man" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="gu_company" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="gu_contact" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="gu_supplier" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="gu_base_quotation" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="nm_client" type="VARCHAR" maxlength="200" nullable="true"></Column>
+    <Column name="gu_bill_addr" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="id_ref" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="im_subtotal" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="im_taxes" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="im_shipping" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="im_discount" type="VARCHAR" maxlength="10" nullable="true"></Column>
+    <Column name="im_total" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="tp_billing" type="CHAR" maxlength="1" nullable="true"></Column>
+    <Column name="tx_email_to" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_comments" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  </Table>
+  <Table name="k_companies_recent">
+    <Column name="gu_company" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_user" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="dt_last_visit" type="TIMESTAMP" maxlength="19" nullable="false"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="nm_company" type="VARCHAR" maxlength="70" nullable="false"></Column>
+    <Column name="work_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="tx_email" type="VARCHAR" maxlength="100" nullable="true"></Column>
+  </Table>
+  <Table name="k_contacts">
+    <Column name="gu_contact" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="bo_restricted" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="bo_private" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="nu_notes" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="nu_attachs" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="bo_change_pwd" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="tx_nickname" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_pwd" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="tx_challenge" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_reply" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="dt_pwd_expires" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="gu_writer" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_company" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="id_batch" type="VARCHAR" maxlength="32" nullable="true"></Column>
+    <Column name="id_status" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="id_ref" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="id_fare" type="VARCHAR" maxlength="32" nullable="true"></Column>
+    <Column name="id_bpartner" type="VARCHAR" maxlength="32" nullable="true"></Column>
+    <Column name="tx_name" type="VARCHAR" maxlength="100" nullable="true" indexed="true"></Column>
+    <Column name="tx_surname" type="VARCHAR" maxlength="100" nullable="true" indexed="true"></Column>
+    <Column name="de_title" type="VARCHAR" maxlength="70" nullable="true"></Column>
+    <Column name="id_gender" type="CHAR" maxlength="1" nullable="true"></Column>
+    <Column name="dt_birth" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="ny_age" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="id_nationality" type="CHAR" maxlength="3" nullable="true" indexed="true"></Column>
+    <Column name="sn_passport" type="VARCHAR" maxlength="16" nullable="true" indexed="true"></Column>
+    <Column name="tp_passport" type="CHAR" maxlength="1" nullable="true"></Column>
+    <Column name="sn_drivelic" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="dt_drivelic" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="tx_dept" type="VARCHAR" maxlength="70" nullable="true"></Column>
+    <Column name="tx_division" type="VARCHAR" maxlength="70" nullable="true"></Column>
+    <Column name="gu_geozone" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_sales_man" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="tx_comments" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="url_linkedin" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="url_facebook" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  </Table>
+  <Table name="k_accounts">
+    <Column name="id_account" type="CHAR" maxlength="10" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="tp_account" type="CHAR" maxlength="1" nullable="false"></Column>
+    <Column name="id_domain" type="INT" maxlength="11" nullable="false" indexed="true"></Column>
+    <Column name="bo_active" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="max_users" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="sn_passport" type="VARCHAR" maxlength="16" nullable="false"></Column>
+    <Column name="tp_passport" type="CHAR" maxlength="1" nullable="false"></Column>
+    <Column name="tp_billing" type="CHAR" maxlength="1" nullable="false"></Column>
+    <Column name="gu_billing_addr" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_cancel" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="gu_contact_addr" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="gu_user" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="tx_name" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_surname1" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_surname2" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="nm_company" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="de_title" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="id_gender" type="CHAR" maxlength="1" nullable="true"></Column>
+    <Column name="dt_birth" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="nu_bank" type="CHAR" maxlength="20" nullable="true"></Column>
+    <Column name="nu_card" type="CHAR" maxlength="16" nullable="true"></Column>
+    <Column name="tp_card" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="tx_expire" type="VARCHAR" maxlength="10" nullable="true"></Column>
+    <Column name="nu_pin" type="VARCHAR" maxlength="7" nullable="true"></Column>
+    <Column name="id_ref" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="tx_comments" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="bo_trial" type="SMALLINT" maxlength="6" nullable="true"></Column>
+  </Table>
+  <Table name="k_user_mail">
+    <Column name="gu_account" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_user" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="tl_account" type="VARCHAR" maxlength="50" nullable="false"></Column>
+    <Column name="bo_default" type="SMALLINT" maxlength="6" nullable="false"></Column>
+    <Column name="bo_synchronize" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="tx_main_email" type="VARCHAR" maxlength="100" nullable="false"></Column>
+    <Column name="tx_reply_email" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="incoming_protocol" type="VARCHAR" maxlength="6" nullable="true"></Column>
+    <Column name="incoming_account" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="incoming_password" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="incoming_server" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="incoming_spa" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="incoming_ssl" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="incoming_port" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="outgoing_protocol" type="VARCHAR" maxlength="6" nullable="true"></Column>
+    <Column name="outgoing_account" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="outgoing_password" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="outgoing_server" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="outgoing_spa" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="outgoing_ssl" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="outgoing_port" type="SMALLINT" maxlength="6" nullable="true"></Column>
+  </Table>
+  <Table name="k_x_company_prods">
+    <Column name="gu_company" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_category" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+  </Table>
+  <Table name="k_x_meeting_contact">
+    <Column name="gu_meeting" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_contact" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="dt_start" type="TIMESTAMP" maxlength="19" nullable="false"></Column>
+    <Column name="dt_end" type="TIMESTAMP" maxlength="19" nullable="false"></Column>
+  </Table>
+  <Table name="k_despatch_advices">
+    <Column name="gu_despatch" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="pg_despatch" type="INT" maxlength="11" nullable="false"></Column>
+    <Column name="gu_shop" type="CHAR" maxlength="32" nullable="false"></Column>
+    <Column name="id_currency" type="CHAR" maxlength="3" nullable="false"></Column>
+    <Column name="bo_approved" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="bo_credit_ok" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="id_priority" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="gu_warehouse" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_delivered" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_printed" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_promised" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_payment" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_cancel" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="de_despatch" type="VARCHAR" maxlength="255" nullable="true"></Column>
+    <Column name="tx_location" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="gu_company" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="gu_contact" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="nm_client" type="VARCHAR" maxlength="200" nullable="true"></Column>
+    <Column name="id_legal" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="gu_ship_addr" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="gu_bill_addr" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="id_ref" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="id_status" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="id_pay_status" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="id_ship_method" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="im_subtotal" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="im_taxes" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="im_shipping" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="im_discount" type="VARCHAR" maxlength="10" nullable="true"></Column>
+    <Column name="im_total" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="tx_ship_notes" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="tx_email_to" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_comments" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  </Table>
+  <Table name="k_despatch_lines">
+    <Column name="gu_despatch" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="pg_line" type="INT" maxlength="11" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="pr_sale" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="nu_quantity" type="FLOAT" maxlength="12" nullable="true"></Column>
+    <Column name="id_unit" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="pr_total" type="DECIMAL" maxlength="14" nullable="true"></Column>
+    <Column name="pct_tax_rate" type="FLOAT" maxlength="12" nullable="true"></Column>
+    <Column name="is_tax_included" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="nm_product" type="VARCHAR" maxlength="128" nullable="false"></Column>
+    <Column name="gu_product" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="gu_item" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="id_status" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="tx_promotion" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_options" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  </Table>
+  <Table name="k_bugs_track">
+    <Column name="gu_bug" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="pg_bug" type="INT" maxlength="11" nullable="false"></Column>
+    <Column name="pg_bug_track" type="INT" maxlength="11" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="nm_reporter" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="tx_rep_mail" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="gu_writer" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="tx_bug_track" type="VARCHAR" maxlength="2000" nullable="true"></Column>
+  </Table>
+  <Table name="k_newsmsg_vote">
+    <Column name="gu_msg" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="pg_vote" type="INT" maxlength="11" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="dt_published" type="TIMESTAMP" maxlength="19" nullable="false"></Column>
+    <Column name="od_score" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="ip_addr" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="nm_author" type="VARCHAR" maxlength="200" nullable="true"></Column>
+    <Column name="gu_writer" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="tx_email" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_vote" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  </Table>
+  <Table name="k_login_audit">
+    <Column name="bo_success" type="CHAR" maxlength="1" nullable="false"></Column>
+    <Column name="nu_error" type="SMALLINT" maxlength="6" nullable="false"></Column>
+    <Column name="dt_login" type="TIMESTAMP" maxlength="19" nullable="false"></Column>
+    <Column name="gu_user" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="tx_email" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_pwd" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="ip_addr" type="VARCHAR" maxlength="15" nullable="true"></Column>
+  </Table>
+  <Table name="k_shops">
+    <Column name="gu_shop" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="nm_shop" type="VARCHAR" maxlength="100" nullable="false" indexed="true"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="id_domain" type="INT" maxlength="11" nullable="false" indexed="true"></Column>
+    <Column name="gu_root_cat" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="gu_bundles_cat" type="CHAR" maxlength="32" nullable="false"></Column>
+    <Column name="bo_active" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="id_business" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="id_legal" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="nm_company" type="VARCHAR" maxlength="70" nullable="true"></Column>
+    <Column name="tp_street" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="nm_street" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="nu_street" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="tx_addr1" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_addr2" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="id_country" type="CHAR" maxlength="3" nullable="true"></Column>
+    <Column name="nm_country" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="id_state" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="nm_state" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="mn_city" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="zipcode" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="work_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="direct_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="fax_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="tx_email" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="url_addr" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="contact_person" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_salutation" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="nm_bank" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="nu_bank_acc" type="CHAR" maxlength="28" nullable="true"></Column>
+  </Table>
+  <Table name="k_order_lines">
+    <Column name="gu_order" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="pg_line" type="INT" maxlength="11" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="pr_sale" type="DECIMAL" maxlength="14" nullable="false"></Column>
+    <Column name="nu_quantity" type="FLOAT" maxlength="12" nullable="false"></Column>
+    <Column name="id_unit" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="pr_total" type="DECIMAL" maxlength="14" nullable="false"></Column>
+    <Column name="pct_tax_rate" type="FLOAT" maxlength="12" nullable="false"></Column>
+    <Column name="is_tax_included" type="SMALLINT" maxlength="6" nullable="false"></Column>
+    <Column name="nm_product" type="VARCHAR" maxlength="128" nullable="false"></Column>
+    <Column name="id_status" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="gu_product" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="gu_item" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="tx_promotion" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_options" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  </Table>
+  <Table name="k_to_do">
+    <Column name="gu_to_do" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="gu_user" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="tl_to_do" type="VARCHAR" maxlength="100" nullable="false" indexed="true"></Column>
+    <Column name="od_priority" type="SMALLINT" maxlength="6" nullable="true" indexed="true"></Column>
+    <Column name="dt_end" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="tp_to_do" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="tx_status" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="tx_to_do" type="VARCHAR" maxlength="2000" nullable="true"></Column>
+  </Table>
+  <Table name="k_x_group_company">
+    <Column name="gu_acl_group" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_company" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+  </Table>
+  <Table name="k_auditing">
+    <Column name="id_entity" type="SMALLINT" maxlength="6" nullable="false"></Column>
+    <Column name="co_op" type="CHAR" maxlength="4" nullable="false"></Column>
+    <Column name="gu_user" type="CHAR" maxlength="32" nullable="false"></Column>
+    <Column name="dt_op" type="TIMESTAMP" maxlength="19" nullable="false"></Column>
+    <Column name="gu_entity1" type="CHAR" maxlength="32" nullable="false"></Column>
+    <Column name="gu_entity2" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="id_transact" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="ip_addr" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="tx_params1" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_params2" type="VARCHAR" maxlength="100" nullable="true"></Column>
+  </Table>
+  <Table name="k_bugs">
+    <Column name="gu_bug" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="pg_bug" type="INT" maxlength="11" nullable="false" indexed="true"></Column>
+    <Column name="tl_bug" type="VARCHAR" maxlength="250" nullable="false" indexed="true"></Column>
+    <Column name="gu_project" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="gu_bug_ref" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_since" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_closed" type="TIMESTAMP" maxlength="19" nullable="true" indexed="true"></Column>
+    <Column name="dt_verified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="vs_found" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="vs_closed" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="od_severity" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="od_priority" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="tx_status" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="nu_times" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="tp_bug" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="nm_reporter" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="tx_rep_mail" type="VARCHAR" maxlength="100" nullable="true" indexed="true"></Column>
+    <Column name="nm_assigned" type="VARCHAR" maxlength="255" nullable="true" indexed="true"></Column>
+    <Column name="nm_inspector" type="VARCHAR" maxlength="255" nullable="true"></Column>
+    <Column name="id_ref" type="VARCHAR" maxlength="50" nullable="true" indexed="true"></Column>
+    <Column name="id_client" type="VARCHAR" maxlength="50" nullable="true" indexed="true"></Column>
+    <Column name="gu_writer" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="tx_bug_brief" type="VARCHAR" maxlength="2000" nullable="true"></Column>
+    <Column name="tx_bug_info" type="VARCHAR" maxlength="1000" nullable="true"></Column>
+    <Column name="tx_comments" type="VARCHAR" maxlength="1000" nullable="true"></Column>
+  </Table>
+  <Table name="k_duties_workreports">
+    <Column name="gu_workreport" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="tl_workreport" type="VARCHAR" maxlength="200" nullable="false"></Column>
+    <Column name="gu_writer" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="gu_project" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="de_workreport" type="VARCHAR" maxlength="2000" nullable="true"></Column>
+    <Column name="tx_workreport" type="VARCHAR" maxlength="5592405" nullable="false"></Column>
+  </Table>
+  <Table name="k_suppliers">
+    <Column name="gu_supplier" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="nm_legal" type="VARCHAR" maxlength="70" nullable="false"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="nm_commercial" type="VARCHAR" maxlength="70" nullable="true"></Column>
+    <Column name="gu_address" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="id_legal" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="id_status" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="id_ref" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="id_bpartner" type="VARCHAR" maxlength="32" nullable="true"></Column>
+    <Column name="tp_supplier" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="gu_geozone" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="de_supplier" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  </Table>
+  <Table name="k_categories">
+    <Column name="gu_category" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_owner" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="nm_category" type="VARCHAR" maxlength="100" nullable="false" indexed="true"></Column>
+    <Column name="bo_active" type="SMALLINT" maxlength="6" nullable="false"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="nm_icon" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="nm_icon2" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="id_doc_status" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="len_size" type="DECIMAL" maxlength="28" nullable="true"></Column>
+  </Table>
+  <Table name="k_duties_attach">
+    <Column name="gu_duty" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="tx_file" type="VARCHAR" maxlength="254" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="len_file" type="INT" maxlength="11" nullable="false"></Column>
+    <Column name="bin_file" type="MEDIUMBLOB" maxlength="16777215" nullable="false"></Column>
+  </Table>
+  <Table name="k_invoice_payments">
+    <Column name="gu_invoice" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="pg_payment" type="INT" maxlength="11" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="bo_active" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="dt_payment" type="TIMESTAMP" maxlength="19" nullable="false"></Column>
+    <Column name="dt_paid" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_expire" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="id_currency" type="CHAR" maxlength="3" nullable="false"></Column>
+    <Column name="im_paid" type="DECIMAL" maxlength="14" nullable="false"></Column>
+    <Column name="tp_billing" type="CHAR" maxlength="1" nullable="true"></Column>
+    <Column name="id_ref" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="id_transact" type="VARCHAR" maxlength="32" nullable="true"></Column>
+    <Column name="id_country" type="CHAR" maxlength="3" nullable="true"></Column>
+    <Column name="id_authcode" type="VARCHAR" maxlength="6" nullable="true"></Column>
+    <Column name="nm_client" type="VARCHAR" maxlength="200" nullable="true"></Column>
+    <Column name="tx_comments" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  </Table>
+  <Table name="k_workareas">
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="nm_workarea" type="VARCHAR" maxlength="50" nullable="false" indexed="true"></Column>
+    <Column name="id_domain" type="INT" maxlength="11" nullable="false" indexed="true"></Column>
+    <Column name="gu_owner" type="CHAR" maxlength="32" nullable="false"></Column>
+    <Column name="bo_active" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="len_quota" type="DECIMAL" maxlength="28" nullable="true"></Column>
+    <Column name="max_quota" type="DECIMAL" maxlength="28" nullable="true"></Column>
+    <Column name="path_logo" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="id_locale" type="VARCHAR" maxlength="5" nullable="true"></Column>
+    <Column name="tx_date_format" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="tx_number_format" type="VARCHAR" maxlength="30" nullable="true"></Column>
+    <Column name="bo_allcaps" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="bo_dup_id_docs" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="bo_cnt_autoref" type="SMALLINT" maxlength="6" nullable="true"></Column>
+  </Table>
+  <Table name="k_bugs_changelog">
+    <Column name="gu_bug" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="pg_bug" type="INT" maxlength="11" nullable="false"></Column>
+    <Column name="nm_column" type="VARCHAR" maxlength="18" nullable="false"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="false"></Column>
+    <Column name="gu_writer" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="tx_oldvalue" type="VARCHAR" maxlength="2000" nullable="true"></Column>
+  </Table>
+  <Table name="k_x_group_contact">
+    <Column name="gu_acl_group" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_contact" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+  </Table>
+  <Table name="k_contact_notes">
+    <Column name="gu_contact" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="pg_note" type="INT" maxlength="11" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_writer" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="tl_note" type="VARCHAR" maxlength="128" nullable="true"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="tx_fullname" type="VARCHAR" maxlength="200" nullable="true"></Column>
+    <Column name="tx_main_email" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_note" type="VARCHAR" maxlength="2000" nullable="true"></Column>
+  </Table>
+  <Table name="k_x_cat_objs">
+    <Column name="gu_category" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_object" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="id_class" type="INT" maxlength="11" nullable="false" indexed="true"></Column>
+    <Column name="bi_attribs" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="od_position" type="INT" maxlength="11" nullable="true"></Column>
+  </Table>
+  <Table name="k_invoice_lines">
+    <Column name="gu_invoice" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="pg_line" type="INT" maxlength="11" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="pr_sale" type="DECIMAL" maxlength="14" nullable="false"></Column>
+    <Column name="nu_quantity" type="FLOAT" maxlength="12" nullable="false"></Column>
+    <Column name="id_unit" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="pr_total" type="DECIMAL" maxlength="14" nullable="false"></Column>
+    <Column name="pct_tax_rate" type="FLOAT" maxlength="12" nullable="false"></Column>
+    <Column name="is_tax_included" type="SMALLINT" maxlength="6" nullable="false"></Column>
+    <Column name="nm_product" type="VARCHAR" maxlength="128" nullable="false"></Column>
+    <Column name="gu_product" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="gu_item" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="tx_promotion" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_options" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  </Table>
+  <Table name="k_meetings">
+    <Column name="gu_meeting" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="id_domain" type="INT" maxlength="11" nullable="false" indexed="true"></Column>
+    <Column name="gu_fellow" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="bo_private" type="SMALLINT" maxlength="6" nullable="false"></Column>
+    <Column name="dt_start" type="TIMESTAMP" maxlength="19" nullable="true" indexed="true"></Column>
+    <Column name="dt_end" type="TIMESTAMP" maxlength="19" nullable="true" indexed="true"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="gu_writer" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="gu_address" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="df_before" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="pr_cost" type="FLOAT" maxlength="12" nullable="true"></Column>
+    <Column name="tx_status" type="VARCHAR" maxlength="50" nullable="true"></Column>
+    <Column name="tp_meeting" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="tx_meeting" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="de_meeting" type="VARCHAR" maxlength="1000" nullable="true"></Column>
+  </Table>
+  <Table name="k_bugs_attach">
+    <Column name="gu_bug" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="tx_file" type="VARCHAR" maxlength="250" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="len_file" type="INT" maxlength="11" nullable="false"></Column>
+    <Column name="pg_bug_track" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="bin_file" type="MEDIUMBLOB" maxlength="16777215" nullable="false"></Column>
+  </Table>
+  <Table name="k_cat_labels">
+    <Column name="gu_category" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="id_language" type="CHAR" maxlength="2" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="tr_category" type="VARCHAR" maxlength="30" nullable="false" indexed="true"></Column>
+    <Column name="url_category" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="de_category" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  </Table>
+  <Table name="k_invoice_schedules">
+    <Column name="gu_schedule" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false"></Column>
+    <Column name="gu_template" type="CHAR" maxlength="32" nullable="false"></Column>
+    <Column name="bo_active" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="nu_max_rebills" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="gu_company" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="gu_contact" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="dt_1st_invoice" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="nd_next_invoice" type="SMALLINT" maxlength="6" nullable="true"></Column>
+  </Table>
+  <Table name="k_quotation_lines">
+    <Column name="gu_quotation" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="pg_line" type="INT" maxlength="11" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="pr_sale" type="DECIMAL" maxlength="14" nullable="false"></Column>
+    <Column name="nu_quantity" type="FLOAT" maxlength="12" nullable="false"></Column>
+    <Column name="id_unit" type="VARCHAR" maxlength="16" nullable="true"></Column>
+    <Column name="pr_total" type="DECIMAL" maxlength="14" nullable="false"></Column>
+    <Column name="pct_tax_rate" type="FLOAT" maxlength="12" nullable="false"></Column>
+    <Column name="is_tax_included" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="nm_product" type="VARCHAR" maxlength="128" nullable="false"></Column>
+    <Column name="gu_product" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="gu_item" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="tx_promotion" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="tx_options" type="VARCHAR" maxlength="254" nullable="true"></Column>
+  </Table>
+  <Table name="k_x_contact_prods">
+    <Column name="gu_contact" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="gu_category" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+  </Table>
+  <Table name="k_newsgroups">
+    <Column name="gu_newsgrp" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="id_domain" type="INT" maxlength="11" nullable="false" indexed="true"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" indexed="true"></Column>
+    <Column name="bo_binaries" type="SMALLINT" maxlength="6" nullable="true"></Column>
+    <Column name="dt_last_update" type="TIMESTAMP" maxlength="19" nullable="true"></Column>
+    <Column name="dt_expire" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="de_newsgrp" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="tx_journal" type="VARCHAR" maxlength="4000" nullable="true"></Column>
+  </Table>
+</Schema>
+</MetaData>
