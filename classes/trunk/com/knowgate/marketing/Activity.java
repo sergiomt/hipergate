@@ -46,9 +46,9 @@ import com.knowgate.debug.DebugFile;
 import com.knowgate.acl.ACLDomain;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.misc.Environment;
+import com.knowgate.storage.Column;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBBind;
-import com.knowgate.dataobjs.DBColumn;
 import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.dataobjs.DBSubset;
 import com.knowgate.dataobjs.DBPersist;
@@ -58,11 +58,12 @@ import com.knowgate.hipergate.ProductLocation;
 import com.knowgate.workareas.FileSystemWorkArea;
 import com.knowgate.marketing.ActivityAttachment;
 
+
 /**
  * <p>Marketing Activity</p>
  * <p>Copyright: Copyright (c) KnowGate 2009</p>
  * @author Sergio Montoro Ten
- * @version 5.5
+ * @version 7.0
  */
  
 public class Activity extends DBPersist {
@@ -169,7 +170,7 @@ public class Activity extends DBPersist {
 	if (bRetVal) {
 	  if (oAddr==null) oAddr = new Address();
 	  boolean bHasAnyAddressValue = false;
-	  ListIterator<DBColumn> oIter = oAddr.getTable(oConn).getColumns().listIterator();
+	  ListIterator<Column> oIter = oAddr.getTable(oConn).getColumns().listIterator();
 	  while (oIter.hasNext() && !bHasAnyAddressValue) {
 	  	String sColunmName = oIter.next().getName();
 	  	if (!sColunmName.equals(DB.gu_workarea))

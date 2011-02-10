@@ -40,8 +40,8 @@ import java.sql.SQLException;
 import com.knowgate.jdc.JDCConnection;
 
 import com.knowgate.dataobjs.DB;
-import com.knowgate.dataobjs.DBColumn;
 import com.knowgate.dataobjs.DBPersist;
+import com.knowgate.storage.Column;
 import com.knowgate.crm.Contact;
 import com.knowgate.hipergate.Address;
 import com.knowgate.misc.Gadgets;
@@ -98,7 +98,7 @@ public class ActivityAudience extends DBPersist {
 	
 	if (bRetVal) {
 	  String sColunmName;
-	  ListIterator<DBColumn> oIter;
+	  ListIterator<Column> oIter;
 
 	  if (oCont==null) oCont = new Contact();
 	  boolean bHasAnyContactValue = false;
