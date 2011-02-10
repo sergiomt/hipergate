@@ -34,8 +34,10 @@ package com.knowgate.jdc;
 
 import java.util.Map;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Iterator;
+import java.text.ParseException;
 
 import java.sql.*;
 
@@ -45,14 +47,28 @@ import javax.sql.StatementEventListener;
 import javax.sql.ConnectionEvent;
 
 import com.knowgate.debug.DebugFile;
+
+import com.knowgate.dataobjs.DBBind;
+import com.knowgate.dataobjs.DBTable;
 import com.knowgate.dataobjs.DBColumn;
+import com.knowgate.dataobjs.DBSubset;
+import com.knowgate.dataobjs.DBPersist;
+import com.knowgate.dataobjs.DBRecordSet;
+
+import com.knowgate.storage.Table;
+import com.knowgate.storage.Record;
+import com.knowgate.storage.RecordSet;
+import com.knowgate.storage.DataSource;
+import com.knowgate.storage.Transaction;
+import com.knowgate.storage.AbstractRecord;
+import com.knowgate.storage.StorageException;
 
 /**
  * JDBC Connection Wrapper
  * @author Sergio Montoro Ten
- * @version 6.0
+ * @version 7.0
  */
-public final class JDCConnection implements Connection,PooledConnection {
+public final class JDCConnection implements Connection,PooledConnection,Table {
 
     public static final short IdClass = 100;
 
@@ -734,16 +750,16 @@ public final class JDCConnection implements Connection,PooledConnection {
               oStmt.setDate(iParamIndex, new java.sql.Date(((java.util.Date)oParamValue).getTime()));
             }
             else {
-              if (DebugFile.trace) DebugFile.writeln("binding " + sParamClassName + " as SQL " + DBColumn.typeName(iSQLType));
+              if (DebugFile.trace) DebugFile.writeln("binding " + sParamClassName + " value "+ oParamValue +" as SQL " + DBColumn.typeName(iSQLType));
               oStmt.setObject(iParamIndex, oParamValue, iSQLType);
             }
           }
           else {
             if (oParamValue!=null) {
-              if (DebugFile.trace) DebugFile.writeln("binding " + sParamClassName + " as SQL " + DBColumn.typeName(iSQLType));
+              if (DebugFile.trace) DebugFile.writeln("binding parameter " + String.valueOf(iParamIndex)+ " " + sParamClassName + " value " + oParamValue + " as SQL " + DBColumn.typeName(iSQLType));
               oStmt.setObject(iParamIndex, oParamValue, iSQLType);
             } else {
-              if (DebugFile.trace) DebugFile.writeln("binding null as SQL " + DBColumn.typeName(iSQLType));
+              if (DebugFile.trace) DebugFile.writeln("binding parameter " + String.valueOf(iParamIndex) + " value null as SQL " + DBColumn.typeName(iSQLType));
               oStmt.setNull(iParamIndex, iSQLType);
             }
           }
@@ -774,4 +790,503 @@ public final class JDCConnection implements Connection,PooledConnection {
         oStmt.setObject(iParamIndex, oParamValue);
       }
     } // bindParameter
+    
+    
+    // ===========================================================================
+    // com.knowgate.storage.Table interface implementation
+    
+	public DataSource getDataSource() {
+	  return (DataSource) getPool();
+	}
+
+    // ---------------------------------------------------------------------------
+
+	/**
+	 * <p>Check whether a register with agiven primary key exists at the underlying table</p>
+	 * @param sKey Primary Key Value
+	 * @throws StorageException
+	 * @since 7.0
+	 */
+	public boolean exists(String sKey) throws StorageException {
+	  boolean bRetVal;
+	  DBBind oDbb = (com.knowgate.dataobjs.DBBind) getPool().getDatabaseBinding();
+	  DBTable oDbt = oDbb.getDBTable(getName());	  
+	  try {
+	    bRetVal = oDbt.existsRegister(this, oDbt.getPrimaryKey().getFirst()+"=?", new Object[]{sKey});
+	  } catch (SQLException sqle) {
+	  	throw new StorageException(sqle.getMessage(), sqle);
+	  }
+	  return bRetVal;
+	}
+
+    // ---------------------------------------------------------------------------
+
+	/**
+	 * <p>Load a register by its primary key</p>
+	 * @param sKey Primary Key Value
+	 * @throws StorageException
+	 * @return DBPersist instance or <b>null</b> if no register with given primary key was found
+	 * @since 7.0
+	 */
+	public Record load(String sKey) throws StorageException {
+      DBPersist oDbp = new DBPersist(getName(), getName());
+      try {
+        if (oDbp.load(this, sKey))
+      	  return oDbp;
+        else
+      	  return null;      
+      } catch (SQLException sqle) {
+      	throw new StorageException(sqle.getMessage(), sqle);
+      }
+	}
+
+	/**
+	 * <p>Store record at database</p>
+	 * @param oRec Instance of a DBPersist object to be stored
+	 * @throws StorageException
+	 * @since 7.0
+	 */
+	public void store(AbstractRecord oRec) throws StorageException {
+      try {
+	    ((DBPersist)oRec).store(this);
+      } catch (SQLException sqle) {
+      	throw new StorageException(sqle.getMessage(), sqle);
+      }
+	}
+
+	/**
+	 * <p>Store record at database</p>
+	 * @param oRec Instance of a DBPersist object
+	 * @throws StorageException
+	 * @since 7.0
+	 */
+	public void store(AbstractRecord oRec, Transaction oTrans) throws StorageException {
+	  if (oTrans==null)
+	  	store(oRec);
+	  else
+	    throw new StorageException("store(AbstractRecord, Transaction) method is not implemented for JDCConnection class");
+	}
+
+	/**
+	 * <p>Delete the given register from the underlying table</p>
+	 * @param oRec Instance of a DBPersist object to be deleted
+	 * @throws StorageException
+	 * @since 7.0
+	 */
+	public void delete(AbstractRecord oRec) throws StorageException {
+      try {
+	    ((DBPersist)oRec).delete(this);
+      } catch (SQLException sqle) {
+      	throw new StorageException(sqle.getMessage(), sqle);
+      }		
+	}
+
+	/**
+	 * <p>Delete registers from the underlying table</p>
+	 * @param sIndexColumn
+	 * @param sIndexValue
+	 * @throws StorageException
+	 * @since 7.0
+	 */
+	public void delete(String sIndexColumn, String sIndexValue) throws StorageException {
+	  PreparedStatement oStmt = null;
+	  ResultSet oRSet = null;
+	  try {
+	    DBPersist oDbp = new DBPersist(getName(), getName());
+	    DBTable oDbt = oDbp.getTable(this);
+	    DBColumn oDbc = oDbt.getColumnByName(sIndexColumn);
+	    String sPk = "";
+	    LinkedList<String> oDbk = oDbt.getPrimaryKey();
+	    for (String p : oDbk) {
+	      sPk += (sPk.length()==0 ? "" : ",") + p;
+	    }
+	    LinkedList<Object[]> oPkVals = new LinkedList<Object[]>();
+	    oStmt = prepareStatement("SELECT "+sPk+" FROM "+getName()+" WHERE "+sIndexColumn+"=?",
+	  											 ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+	    oStmt.setObject(1, oDbc.convert(sIndexValue), oDbc.getSqlType());
+	    oRSet = oStmt.executeQuery();
+	    while (oRSet.next()) {
+	  	  Object[] aPkVals = new Object[oDbk.size()];
+	  	  for (int k=0; k<aPkVals.length; k++) {
+	  	    aPkVals[k] = oRSet.getObject(k+1);
+	  	  }
+	  	  oPkVals.add(aPkVals);
+	    }
+	    oRSet.close();
+	    oRSet=null;
+	    oStmt.close();
+	    oStmt=null;
+	    for (Object[] o : oPkVals) {
+	  	  int n=0;
+	  	  for (String p : oDbk) {
+	        oDbp.replace(p, o[n++]);
+	      } // next
+	      oDbp.delete(this);
+	    } // next
+	  } catch (SQLException sqle) {
+	  	if (oRSet!=null) { try { oRSet.close(); } catch (Exception ignore) { } }
+	  	if (oStmt!=null) { try { oStmt.close(); } catch (Exception ignore) { } }
+      	throw new StorageException(sqle.getMessage(), sqle);
+	  } catch (ParseException prse) {
+	  	if (oRSet!=null) { try { oRSet.close(); } catch (Exception ignore) { } }
+	  	if (oStmt!=null) { try { oStmt.close(); } catch (Exception ignore) { } }
+      	throw new StorageException(prse.getMessage(), prse);
+	  }
+	}
+
+	/**
+	 * Method dropIndex
+	 *
+	 *
+	 * @param sIndexColumn
+	 *
+	 @throws StorageException
+	 *
+	 */
+	public void dropIndex(String sIndexColumn) throws StorageException {
+	  throw new StorageException("dropIndex(String) method is not implemented for JDCConnection class");
+	}
+
+	/**
+	 * Method fetch
+	 *
+	 *
+	 @throws StorageException
+	 *
+	 * @return
+	 *
+	 */
+	public RecordSet fetch(final int n, final int o) throws StorageException {
+	  DBRecordSet oRetVal = new DBRecordSet();
+	  Statement oStmt = null;
+	  ResultSet oRSet = null;
+	  ResultSetMetaData oMDat;
+	  int nCols;
+	  int iFetched = 0;
+	  int iAdded = 0;
+	  DBPersist oDbp;
+	  
+	  try {
+	    oStmt = createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+
+        switch (getDataBaseProduct()) {
+
+          case JDCConnection.DBMS_MSSQL:
+	        oRSet = oStmt.executeQuery("SELECT * FROM "+getName()+" OPTION FAST ("+String.valueOf(n)+")");
+	        oMDat = oRSet.getMetaData();
+	        nCols = oMDat.getColumnCount();
+	        while (oRSet.next() && iAdded<n) {
+	          if (++iFetched>o) {
+	            oDbp = new DBPersist(getName(), getName());
+	            for (int c=1; c<=nCols; c++)
+	              oDbp.put(oMDat.getColumnName(c).toLowerCase(), oRSet.getObject(c));
+	            oRetVal.add(oDbp);
+	            ++iAdded;
+	          }
+	        } // wend
+            break;
+
+          case JDCConnection.DBMS_POSTGRESQL:
+          case JDCConnection.DBMS_MYSQL:
+	        oRSet = oStmt.executeQuery("SELECT * FROM "+getName()+" LIMIT "+String.valueOf(n)+" OFFSET "+String.valueOf(o));
+	        oMDat = oRSet.getMetaData();
+	        nCols = oMDat.getColumnCount();
+	        while (oRSet.next()) {
+	          oDbp = new DBPersist(getName(), getName());
+	          for (int c=1; c<=nCols; c++)
+	            oDbp.put(oMDat.getColumnName(c).toLowerCase(), oRSet.getObject(c));
+	          oRetVal.add(oDbp);
+	        } // wend
+            break;
+
+		  default:
+	        oRSet = oStmt.executeQuery("SELECT * FROM "+getName());
+	        oMDat = oRSet.getMetaData();
+	        nCols = oMDat.getColumnCount();
+	        while (oRSet.next() && iAdded<n) {
+	          if (++iFetched>o) {
+	            oDbp = new DBPersist(getName(), getName());
+	            for (int c=1; c<=nCols; c++)
+	              oDbp.put(oMDat.getColumnName(c).toLowerCase(), oRSet.getObject(c));
+	            oRetVal.add(oDbp);
+	            ++iAdded;
+	          }
+	        } // wend
+        } // end switch
+
+	    oRSet.close();
+	    oStmt.close();
+	  } catch (SQLException sqle) {
+	  	if (oRSet!=null) { try { oRSet.close(); } catch (Exception ignore) { } }
+	  	if (oStmt!=null) { try { oStmt.close(); } catch (Exception ignore) { } }
+      	throw new StorageException(sqle.getMessage(), sqle);
+	  }
+	  return oRetVal;
+	}
+
+	/**
+	 * Method fetch
+	 *
+	 *
+	 @throws StorageException
+	 *
+	 * @return
+	 *
+	 */
+
+	public RecordSet fetch() throws StorageException {
+	  return fetch(2147483647,0);
+	}
+	
+	/**
+	 * Fetch all the rows matching an indexed value
+	 * @param sIndexColumn Index column name
+	 * @param sIndexValue Value for index column
+	 * @throws StorageException
+	 * @return RecordSet
+	 * @since 7.0
+	 */
+	public RecordSet fetch(String sIndexColumn, String sIndexValue) throws StorageException {
+	  return fetch(sIndexColumn, sIndexValue, 2147483647);
+	}
+
+	/**
+	 * Fetch all the rows which value for an indexed column is inside a range
+	 * @param sIndexColumn Index column name
+	 * @param sIndexValueMin Range lower bound
+	 * @param sIndexValueMin Range upper bound
+	 * @throws StorageException
+	 * @return RecordSet
+	 * @since 7.0
+	 */
+	public RecordSet fetch(String sIndexColumn, String sIndexValueMin, 
+					       String sIndexValueMax) throws StorageException {
+	  DBRecordSet oRetVal = new DBRecordSet();
+	  PreparedStatement oStmt = null;
+	  ResultSet oRSet = null;
+	  try {
+	    DBPersist oDbp = new DBPersist(getName(), getName());
+	    DBTable oDbt = oDbp.getTable(this);
+	    DBColumn oDbc = oDbt.getColumnByName(sIndexColumn);
+	    oStmt = prepareStatement("SELECT * FROM "+getName()+" WHERE "+sIndexColumn+" BETWEEN ? AND ?",
+	  							 ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+	    oStmt.setObject(1, oDbc.convert(sIndexValueMin), oDbc.getSqlType());
+	    oStmt.setObject(2, oDbc.convert(sIndexValueMax), oDbc.getSqlType());
+	    oRSet = oStmt.executeQuery();
+	    ResultSetMetaData oMDat = oRSet.getMetaData();
+	    final int nCols = oMDat.getColumnCount();
+	    int iFetched = 0;
+	    while (oRSet.next()) {
+	      oDbp = new DBPersist(getName(), getName());
+	      for (int c=1; c<=nCols; c++)
+	        oDbp.put(oMDat.getColumnName(c).toLowerCase(), oRSet.getObject(c));
+	      oRetVal.add(oDbp);
+	    } // wend
+	    oRSet.close();
+	    oStmt.close();
+	  } catch (SQLException sqle) {
+	  	if (oRSet!=null) { try { oRSet.close(); } catch (Exception ignore) { } }
+	  	if (oStmt!=null) { try { oStmt.close(); } catch (Exception ignore) { } }
+      	throw new StorageException(sqle.getMessage(), sqle);
+	  } catch (ParseException prse) {
+	  	if (oRSet!=null) { try { oRSet.close(); } catch (Exception ignore) { } }
+	  	if (oStmt!=null) { try { oStmt.close(); } catch (Exception ignore) { } }
+      	throw new StorageException(prse.getMessage(), prse);
+	  }
+	  return oRetVal;
+	}
+
+	/**
+	 * Fetch all the rows which value for an indexed column is between two dates
+	 * @param sIndexColumn Index column name
+	 * @param sIndexValueMin Start Date
+	 * @param sIndexValueMin End Date
+	 * @throws StorageException
+	 * @return RecordSet
+	 * @since 7.0
+	 */
+	public RecordSet fetch(String sIndexColumn, Date dtIndexValueMin, 
+					       Date dtIndexValueMax) throws StorageException {
+	  DBRecordSet oRetVal = new DBRecordSet();
+	  PreparedStatement oStmt = null;
+	  ResultSet oRSet = null;
+	  try {
+	    oStmt = prepareStatement("SELECT * FROM "+getName()+" WHERE "+sIndexColumn+" BETWEEN ? AND ?",
+	  											 ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+	    oStmt.setTimestamp(1, new Timestamp(dtIndexValueMin.getTime()));
+	    oStmt.setTimestamp(2, new Timestamp(dtIndexValueMax.getTime()));
+	    oRSet = oStmt.executeQuery();
+	    ResultSetMetaData oMDat = oRSet.getMetaData();
+	    final int nCols = oMDat.getColumnCount();
+	    int iFetched = 0;
+	    while (oRSet.next()) {
+	      DBPersist oDbp = new DBPersist(getName(), getName());
+	      for (int c=1; c<=nCols; c++)
+	        oDbp.put(oMDat.getColumnName(c).toLowerCase(), oRSet.getObject(c));
+	      oRetVal.add(oDbp);
+	    } // wend
+	    oRSet.close();
+	    oRSet=null;
+	    oStmt.close();
+	    oStmt=null;
+	  } catch (SQLException sqle) {
+	  	if (oRSet!=null) { try { oRSet.close(); } catch (Exception ignore) { } }
+	  	if (oStmt!=null) { try { oStmt.close(); } catch (Exception ignore) { } }
+      	throw new StorageException(sqle.getMessage(), sqle);
+	  }
+	  return oRetVal;
+	}
+
+	/**
+	 * Fetch the first n rows matching an indexed value
+	 * @param sIndexColumn Index column name
+	 * @param sIndexValue Value for index column
+	 * @param iMaxRows Maximum rows to be readed
+	 * @throws StorageException
+	 * @return RecordSet
+	 * @since 7.0
+	 */
+	public RecordSet fetch(String sIndexColumn, String sIndexValue, 
+					       int iMaxRows) throws StorageException {
+	  DBRecordSet oRetVal = new DBRecordSet();
+	  PreparedStatement oStmt = null;
+	  ResultSet oRSet = null;
+	  try {
+	    DBPersist oDbp = new DBPersist(getName(), getName());
+	    DBTable oDbt = oDbp.getTable(this);
+	    DBColumn oDbc = oDbt.getColumnByName(sIndexColumn);
+	    oStmt = prepareStatement("SELECT * FROM "+getName()+" WHERE "+sIndexColumn+"=?",
+	  				             ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+	    oStmt.setObject(1, oDbc.convert(sIndexValue), oDbc.getSqlType());
+	    oRSet = oStmt.executeQuery();
+	    ResultSetMetaData oMDat = oRSet.getMetaData();
+	    final int nCols = oMDat.getColumnCount();
+	    int iFetched = 0;
+	    while (oRSet.next()) {
+	      oDbp = new DBPersist(getName(), getName());
+	      for (int c=1; c<=nCols; c++)
+	        oDbp.put(oMDat.getColumnName(c).toLowerCase(), oRSet.getObject(c));
+	      oRetVal.add(oDbp);
+	      if (++iFetched>=iMaxRows) break;
+	    } // wend
+	    oRSet.close();
+	    oRSet=null;
+	    oStmt.close();
+	    oStmt=null;
+	  } catch (SQLException sqle) {
+	  	if (oRSet!=null) { try { oRSet.close(); } catch (Exception ignore) { } }
+	  	if (oStmt!=null) { try { oStmt.close(); } catch (Exception ignore) { } }
+      	throw new StorageException(sqle.getMessage(), sqle);
+	  } catch (ParseException prse) {
+	  	if (oRSet!=null) { try { oRSet.close(); } catch (Exception ignore) { } }
+	  	if (oStmt!=null) { try { oStmt.close(); } catch (Exception ignore) { } }
+      	throw new StorageException(prse.getMessage(), prse);
+	  }
+	  return oRetVal;
+	}
+
+	/**
+	 * <p>Get the last n rows from a table</p>
+	 * @param sOrderByColumn Column used for sorting results in descending order
+	 * @param n Maximum number of rows to be retrieved
+	 * @param o Offset
+	 * @throws StorageException
+	 * @return RecordSet
+	 * @since 7.0
+	 */
+	public RecordSet last(final String sOrderByColumn, int n, int o) throws StorageException {
+	  DBRecordSet oRetVal = new DBRecordSet();
+	  PreparedStatement oStmt = null;
+	  ResultSet oRSet = null;
+	  ResultSetMetaData oMDat;
+	  int nCols;
+	  
+	  try {
+	    DBPersist oDbp = new DBPersist(getName(), getName());
+	    int iFetched = 0;
+	    int iAdded = 0;
+
+        switch (getDataBaseProduct()) {
+
+          case JDCConnection.DBMS_MSSQL:
+	        oStmt = prepareStatement("SELECT * FROM "+getName()+" WHERE ORDER BY "+sOrderByColumn+" DESC OPTION FAST ("+String.valueOf(n)+")",
+	  				                 ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+	        oRSet = oStmt.executeQuery();
+	        oMDat = oRSet.getMetaData();
+	        nCols = oMDat.getColumnCount();
+	        while (oRSet.next() && iAdded<n) {
+	          if (++iFetched>o) {
+	            oDbp = new DBPersist(getName(), getName());
+	            for (int c=1; c<=nCols; c++)
+	              oDbp.put(oMDat.getColumnName(c).toLowerCase(), oRSet.getObject(c));
+	            oRetVal.add(oDbp);
+	            ++iAdded;
+	          }
+	        } // wend
+            break;
+
+          case JDCConnection.DBMS_POSTGRESQL:
+          case JDCConnection.DBMS_MYSQL:
+	        oStmt = prepareStatement("SELECT * FROM "+getName()+" WHERE ORDER BY "+sOrderByColumn+" DESC LIMIT "+String.valueOf(n)+" OFFSET "+String.valueOf(o),
+	  				                 ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+	        oRSet = oStmt.executeQuery();
+	        oMDat = oRSet.getMetaData();
+	        nCols = oMDat.getColumnCount();
+	        while (oRSet.next()) {
+	          oDbp = new DBPersist(getName(), getName());
+	          for (int c=1; c<=nCols; c++)
+	            oDbp.put(oMDat.getColumnName(c).toLowerCase(), oRSet.getObject(c));
+	          oRetVal.add(oDbp);
+	        } // wend
+            break;
+
+		  default:
+	        oStmt = prepareStatement("SELECT * FROM "+getName()+" WHERE ORDER BY "+sOrderByColumn+" DESC",
+	  				                 ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+	        oRSet = oStmt.executeQuery();
+	        oMDat = oRSet.getMetaData();
+	        nCols = oMDat.getColumnCount();
+	        while (oRSet.next() && iAdded<n) {
+	          if (++iFetched>o) {
+	            oDbp = new DBPersist(getName(), getName());
+	            for (int c=1; c<=nCols; c++)
+	              oDbp.put(oMDat.getColumnName(c).toLowerCase(), oRSet.getObject(c));
+	            oRetVal.add(oDbp);
+	            ++iAdded;
+	          }
+	        } // wend
+        } // end switch
+
+	    oRSet.close();
+	    oRSet=null;
+	    oStmt.close();
+	    oStmt=null;
+	  } catch (SQLException sqle) {
+	  	if (oRSet!=null) { try { oRSet.close(); } catch (Exception ignore) { } }
+	  	if (oStmt!=null) { try { oStmt.close(); } catch (Exception ignore) { } }
+      	throw new StorageException(sqle.getMessage(), sqle);
+	  }
+	  return oRetVal;
+	}
+
+	/**
+	 * Truncate table
+	 * @throws StorageException
+	 * @since 7.0
+	 */
+	public void truncate() throws StorageException {
+	  Statement oStmt = null;
+	  try {
+	  	oStmt = createStatement();
+	  	oStmt.execute("TRUNCATE TABLE "+getName());
+	  	oStmt.close();
+	  	oStmt = null;
+	  } catch (SQLException sqle) {
+	  	if (oStmt!=null) { try { oStmt.close(); } catch (Exception ignore) { } }
+      	throw new StorageException(sqle.getMessage(), sqle);
+	  } 
+	} // truncate	
+
+    // ===========================================================================
+    
 }

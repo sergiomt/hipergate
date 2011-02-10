@@ -56,6 +56,12 @@ import javax.sql.PooledConnection;
 import com.knowgate.debug.DebugFile;
 import com.knowgate.debug.StackTraceUtil;
 
+import com.knowgate.storage.Table;
+import com.knowgate.storage.Engine;
+import com.knowgate.storage.Record;
+import com.knowgate.storage.DataSource;
+import com.knowgate.storage.StorageException;
+
 /**
  * <p>Connection pool daemon thread</p>
  * This thread scans a ConnectionPool every given interval calling
@@ -137,10 +143,10 @@ final class ConnectionReaper extends Thread {
   /**
    * <p>JDBC Connection Pool</p>
    * <p>Implementation of a standard JDBC connection pool.</p>
-   * @version 5.0
+   * @version 7.0
    */
 
-public final class JDCConnectionPool implements ConnectionPoolDataSource {
+public final class JDCConnectionPool implements ConnectionPoolDataSource,DataSource {
 
    private Object binding;
    private Vector<JDCConnection> connections;
@@ -168,6 +174,16 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
 
    // ---------------------------------------------------------
 
+   public JDCConnectionPool() {
+     binding = null;
+     url = null;
+     user = null;
+     password = null;
+     openconns = 0;
+     connections = null;
+     reaper = null;
+   }
+
    /**
     * Constructor
     * By default, maximum pool size is set to 32,
@@ -179,30 +195,9 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
     * @param password Password for user
     */
 
-   public JDCConnectionPool(String url, String user, String password) {
-
-     binding = null;
-
-      if (null==url)
-        throw new IllegalArgumentException("JDCConnectionPool : url cannot be null");
-
-      if (url.length()==0)
-        throw new IllegalArgumentException("JDCConnectionPool : url value not set");
-
-      this.url = url;
-      this.user = user;
-      this.password = password;
-      this.openconns = 0;
-
-      DriverManager.setLoginTimeout(20); // default login timeout = 20 seconds
-
-      connections = new Vector<JDCConnection>(poolsize<=hardlimit ? poolsize : hardlimit);
-      reaper = new ConnectionReaper(this);
-      reaper.start();
-
-      if (DebugFile.trace) callers = new HashMap(1023);
-
-      errorlog = new LinkedList();
+   public JDCConnectionPool(String url, String user, String password)
+   	 throws StorageException {
+     open(url, user, password, false);
     }
 
    // ---------------------------------------------------------
@@ -357,8 +352,8 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
     * @param url JDBC URL string
     * @param user Database user
     * @param password Password for user
-    * @param maxpoolsize Maximum pool size (Default 32)
-    * @param maxconnections Maximum opened connections (Default 100)
+    * @param maxpoolsize Maximum pool size
+    * @param maxconnections Maximum opened connections
     */
 
    // ---------------------------------------------------------
@@ -394,6 +389,56 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
    // ---------------------------------------------------------
 
    /**
+    * @return Engine.JDBCRDBMS
+    * @since 6.0
+    */
+   public Engine getEngine() {
+   	 return Engine.JDBCRDBMS;
+   }
+
+   // ---------------------------------------------------------
+
+   /**
+    * <p>Open ConnectionPool</p>
+    * By default, maximum pool size is set to 32,
+    * maximum opened connections is 100,
+    * login timeout is 20 seconds,
+    * connection timeout is 5 minutes.
+    * @param url JDBC URL string
+    * @param user Database user
+    * @param password Password for user
+    */
+
+   public void open(String url, String user, String password, boolean readonly)
+   	 throws StorageException {
+
+     binding = null;
+
+      if (null==url)
+        throw new StorageException("JDCConnectionPool : url cannot be null");
+
+      if (url.length()==0)
+        throw new StorageException("JDCConnectionPool : url value not set");
+
+      this.url = url;
+      this.user = user;
+      this.password = password;
+      this.openconns = 0;
+
+      DriverManager.setLoginTimeout(20); // default login timeout = 20 seconds
+
+      connections = new Vector<JDCConnection>(poolsize<=hardlimit ? poolsize : hardlimit);
+      reaper = new ConnectionReaper(this);
+      reaper.start();
+
+      if (DebugFile.trace) callers = new HashMap(1023);
+
+      errorlog = new LinkedList();
+    }
+
+   // ---------------------------------------------------------
+
+   /**
     * Close all connections and stop connection reaper
     */
    public void close() {
@@ -413,6 +458,12 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
        DebugFile.writeln("End ConnectionPool.close()");
      }
    } // close
+
+   // ---------------------------------------------------------
+
+   public boolean isClosed() {
+     return (reaper==null);
+   }
 
    // ---------------------------------------------------------
 
@@ -1106,5 +1157,38 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource {
 
      return sDump;
    } // dumpStatistics
+
+    // ============================================================================
+    // com.knowgate.storage.DataSource interface implementation
+
+	public boolean isReadOnly() {
+	  return false;
+	}
+
+	public Table openTable(Record oRec) throws StorageException {
+	  try {
+	    return getConnection(oRec.getTableName());
+	  } catch (SQLException sqle) {
+	  	throw new StorageException(sqle.getMessage(), sqle);
+	  }
+	}
+
+	public Table openTable(String sName) throws StorageException {
+	  try {
+        return getConnection(sName);
+	  } catch (SQLException sqle) {
+	  	throw new StorageException(sqle.getMessage(), sqle);
+	  }
+	}
+
+	public Table openTable(String sName, String[] sIndexes) throws StorageException {
+	  try {
+	    return getConnection(sName);
+	  } catch (SQLException sqle) {
+	  	throw new StorageException(sqle.getMessage(), sqle);
+	  }
+	}
+
+    // ============================================================================
 
 } // JDCConnectionPool
