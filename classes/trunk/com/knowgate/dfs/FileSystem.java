@@ -2083,6 +2083,18 @@ public class FileSystem {
     try {
       String sHtml = readfilestr(sBasePath+sFilePath,"ASCII");
 
+	  if (null==sHtml) {
+	    if (DebugFile.trace) {
+	      DebugFile.writeln("Could not read file "+sBasePath+sFilePath);
+	      DebugFile.decIdent();
+	      throw new IOException("Could not read file "+sBasePath+sFilePath);
+	    }
+	  }
+
+	  if (DebugFile.trace) {
+	    DebugFile.writeln(String.valueOf(sHtml.length())+" characters readed from file "+sBasePath+sFilePath);
+	  }
+	  
       if (oMatcher.contains(sHtml, oCompiler.compile("<meta\\x20+http-equiv=(\"|')?Content-Type(\"|')?\\x20+content=(\"|')?text/html;\\x20+charset=(\\w|-){3,32}(\"|')?>",Perl5Compiler.CASE_INSENSITIVE_MASK))) {
         if (DebugFile.trace) DebugFile.writeln("<meta http-equiv> tag found");
         String sHttpEquiv = oMatcher.getMatch().toString();
