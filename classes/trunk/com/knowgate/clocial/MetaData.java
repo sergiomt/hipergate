@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Set;
@@ -27,6 +27,8 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.ParserAdapter;
 import org.xml.sax.helpers.ParserFactory;
 
+import com.knowgate.debug.DebugFile;
+import com.knowgate.debug.StackTraceUtil;
 import com.knowgate.storage.Column;
 import com.knowgate.storage.Record;
 
@@ -34,15 +36,15 @@ public final class MetaData extends DefaultHandler {
 
     private static MetaData Schema = new MetaData();
 
-    private HashMap<String,ArrayList<Column>> oColumnCatalog;
+    private HashMap<String,LinkedList<Column>> oColumnCatalog;
     private HashMap<String,Record> oRecordCatalog;
     private String sTableName,sPojoClass,sSchemaName,sPackageName;
-    private ArrayList<Column> oColDefs;
+    private LinkedList<Column> oColDefs;
     private int iColPos;
 	boolean bInitialized;
 
     public MetaData() {
-      oColumnCatalog = new HashMap<String,ArrayList<Column>>();
+      oColumnCatalog = new HashMap<String,LinkedList<Column>>();
       oRecordCatalog = new HashMap<String,Record>();
       bInitialized = false;
     }
@@ -51,7 +53,7 @@ public final class MetaData extends DefaultHandler {
 
 	  if (!bInitialized) {
 
-        System.out.println("MetaData.init()");
+        if (DebugFile.trace) DebugFile.writeln("Begin MetaData.init()");
 
         bInitialized = true;
 
@@ -70,27 +72,59 @@ public final class MetaData extends DefaultHandler {
 
           oParser.setContentHandler(this);
 
-	      InputStream oInStm = getClass().getResourceAsStream("MetaData.xml");
+		  InputStream oInStm;
+		  
+		  if (DebugFile.trace) {
+	        java.net.URL oResUrl = getClass().getResource("MetaData.xml");
+	        if (oResUrl==null)
+	          DebugFile.writeln("Could not get resource MetaData.xml");
+	        else
+	          DebugFile.writeln("Getting resource with URL "+oResUrl.toString());
+	        oInStm = getClass().getResourceAsStream("MetaData.xml");
+		    DebugFile.writeln("parsing");
+		    int i;
+		    char[] c = new char[1];
+		    while ((i=oInStm.read())!=-1) {
+		      c[0] = (char) i;
+		      DebugFile.write(c);
+		    } // wend
+		    DebugFile.writeln("\n");
+		  }
+		  
+	      oInStm = getClass().getResourceAsStream("MetaData.xml");
 	      InputSource oInSrc = new InputSource(oInStm);
 	      oParser.parse(oInSrc);
 	      oInStm.close();
 
         } catch (InstantiationException e) {
 	      bInitialized = false;
-          System.out.println("InstantiationException "+e.getMessage());
+	      try {
+          if (DebugFile.trace) DebugFile.writeln("InstantiationException "+e.getMessage()+"\n"+StackTraceUtil.getStackTrace(e));
+	      } catch (IOException ignore) {}
         } catch (ClassNotFoundException e) {
 	      bInitialized = false;
-          System.out.println("ClassNotFoundException "+e.getMessage());
+	      try {
+          if (DebugFile.trace) DebugFile.writeln("ClassNotFoundException "+e.getMessage()+"\n"+StackTraceUtil.getStackTrace(e));
+	      } catch (IOException ignore) {}
         } catch (IllegalAccessException e) {
 	      bInitialized = false;
-          System.out.println("IllegalAccessException "+e.getMessage());
+	      try {
+          if (DebugFile.trace) DebugFile.writeln("IllegalAccessException "+e.getMessage()+"\n"+StackTraceUtil.getStackTrace(e));
+	      } catch (IOException ignore) {}
         } catch (IOException e) {
 	      bInitialized = false;
-          System.out.println("IOException "+e.getMessage());
+	      try {
+          if (DebugFile.trace) DebugFile.writeln("IOException "+e.getMessage()+"\n"+StackTraceUtil.getStackTrace(e));
+	      } catch (IOException ignore) {}
         } catch (SAXException e) {
 	      bInitialized = false;
-          System.out.println("SAXException "+e.getMessage());
+	      try {
+          if (DebugFile.trace) DebugFile.writeln("SAXException "+e.getMessage()+"\n"+StackTraceUtil.getStackTrace(e));
+	      } catch (IOException ignore) {}
         }
+
+        if (DebugFile.trace) DebugFile.writeln("End MetaData.init()");
+
 	  } // fi
     }
 
@@ -117,7 +151,7 @@ public final class MetaData extends DefaultHandler {
 
     // -------------------------------------------------------------------------
 
-    public ArrayList<Column> getColumns(String sTableName)
+    public LinkedList<Column> getColumns(String sTableName)
       throws ArrayIndexOutOfBoundsException {
       init();
       if (oColumnCatalog.containsKey(sTableName))
@@ -144,21 +178,24 @@ public final class MetaData extends DefaultHandler {
     // -------------------------------------------------------------------------
 
     public void startElement(String uri, String local, String raw, Attributes attrs) throws SAXException {
-        String sDefVal;
+        String sDefVal,sName=null,sCheck=null,sForeignKey=null;
+        int iType = Types.NULL;
+        int iMaxLength = 0;
         Object oDefVal = null;
+        boolean bNullable=true,bIsPk=false,bIndexed=false;
 		
         if (local.equals("Record")) {
-          oColDefs = new ArrayList<Column>();
+          oColDefs = new LinkedList<Column>();
           sTableName = attrs.getValue("table");
           sPojoClass = attrs.getValue("pojo");
-          System.out.println("Reading definition for "+sTableName);
+          if (DebugFile.trace) DebugFile.writeln("Reading definition for "+sTableName);
           iColPos = 0;
           if (null==sTableName) throw new SAXException("Table name is required");
         } else if (local.equals("Column")) {
           try {
-          String sName = attrs.getValue("name");
+          sName = attrs.getValue("name");
           if (null==sName) throw new SAXException("Name for Column at "+sTableName+" is required");
-          int iType = Types.VARCHAR;
+          iType = Types.VARCHAR;
           String sType = attrs.getValue("type");
           if (sType==null) {
             iType = Types.VARCHAR;
@@ -166,20 +203,26 @@ public final class MetaData extends DefaultHandler {
             iType = Types.VARCHAR;
           } else if (sType.equalsIgnoreCase("INT") || sType.equalsIgnoreCase("INTEGER")) {
             iType = Types.INTEGER;
+          } else if (sType.equalsIgnoreCase("BIGINT")) {
+            iType = Types.BIGINT;
+          } else if (sType.equalsIgnoreCase("DECIMAL")) {
+            iType = Types.DECIMAL;
           } else if (sType.equalsIgnoreCase("DATETIME") || sType.equalsIgnoreCase("TIMESTAMP")) {
             iType = Types.TIMESTAMP;
           } else if (sType.equalsIgnoreCase("BOOLEAN")) {
             iType = Types.BOOLEAN;
-          } else if (sType.equalsIgnoreCase("JAVA_OBJECT")) {
-            iType = Types.JAVA_OBJECT;
 		  } else if (sType.equalsIgnoreCase("VARBINARY")) {
             iType = Types.LONGVARBINARY;
+		  } else if (sType.equalsIgnoreCase("LONGVARCHAR")) {
+            iType = Types.LONGVARCHAR;
 		  } else if (sType.equalsIgnoreCase("LONGVARBINARY")) {
             iType = Types.LONGVARBINARY;                        
+          } else if (sType.equalsIgnoreCase("JAVA_OBJECT")) {
+            iType = Types.JAVA_OBJECT;
           } else {
             iType = Types.VARCHAR;
           }
-          int iMaxLength = 0;
+          
           if (attrs.getValue("maxlength")==null) {
           	switch (iType) {
 			  case Types.BOOLEAN:
@@ -215,6 +258,15 @@ public final class MetaData extends DefaultHandler {
 				  else
 					oDefVal = new Integer(sDefVal);
 			  	iMaxLength = 11;
+			  	break;
+			  case Types.BIGINT:
+          		sDefVal = attrs.getValue("default");
+				if (sDefVal!=null)
+				  if (sDefVal.equalsIgnoreCase("SERIAL"))
+				    oDefVal = "SERIAL";
+				  else
+					oDefVal = new Long(sDefVal);
+			  	iMaxLength = 21;
 			  	break;
 			  case Types.DECIMAL:
 			  case Types.NUMERIC:
@@ -327,37 +379,36 @@ public final class MetaData extends DefaultHandler {
 			  	break;
           	}
           }
-          boolean bIsPk;
           if (attrs.getValue("constraint")==null) {
             bIsPk = false;
           } else {
           	bIsPk = attrs.getValue("constraint").equalsIgnoreCase("primary key") ||
           		    attrs.getValue("constraint").equalsIgnoreCase("primarykey"); 
           }
-          boolean bIndexed;
           if (attrs.getValue("indexed")==null) {
             bIndexed = false;
           } else {
             bIndexed = Boolean.parseBoolean(attrs.getValue("indexed"));
           }
-          boolean bNullable;
           if (attrs.getValue("nullable")==null) {
             bNullable = true;
           } else {
             bNullable = Boolean.parseBoolean(attrs.getValue("nullable"));
           }
-          String sForeignKey = attrs.getValue("foreignkey");
-
-          String sCheck = attrs.getValue("check");
+          sForeignKey = attrs.getValue("foreignkey");
+          sCheck = attrs.getValue("check");
           if (iType==Types.TIMESTAMP && sCheck==null)
             sCheck = "\\d\\d\\d\\d-[01]\\d-[0123]\\d [012]\\d:[012345]\\d:[012345]\\d";
       	  oColDefs.add(new Column(++iColPos, sName, iType, iMaxLength,
       	  						  bNullable, bIndexed, sCheck, sForeignKey, oDefVal, bIsPk));
           } catch (org.apache.oro.text.regex.MalformedPatternException mpe) {
+          	if (DebugFile.trace) DebugFile.writeln("MalformedPatternException "+attrs.getValue("check")+" for column "+attrs.getValue("name"));
           	throw new SAXException("Malformed pattern "+attrs.getValue("check")+" for column "+attrs.getValue("name"),mpe);
-          }          
+          }
+		  if (DebugFile.trace) DebugFile.writeln("readed definition for column "+sName+" "+Column.typeName(iType)+"("+String.valueOf(iMaxLength)+") "+(bNullable ? "NULL" : "NOT NULL")+" "+(bIsPk ? "PRIMARY KEY" : bIndexed ? "INDEXED" : "")+" DEFAULT "+oDefVal+" CHECK "+sCheck+" REFERENCES "+sForeignKey);
+		          
         } else if (local.equals("Schema")) {
-          System.out.println("Reading schema "+attrs.getValue("name")+" with package "+attrs.getValue("package"));
+          if (DebugFile.trace) DebugFile.writeln("Reading schema "+attrs.getValue("name")+" with package "+attrs.getValue("package"));
           sSchemaName = attrs.getValue("name");
           sPackageName = attrs.getValue("package");
         }
@@ -368,21 +419,31 @@ public final class MetaData extends DefaultHandler {
 	public void endElement(String uri, String local, String name) throws SAXException {
         if (local.equals("Record")) {
           try {
+            if (DebugFile.trace) {
+  	      	  String sColNames = "";
+  	      	  for (Column c : oColDefs) sColNames += " "+c.getName();
+              DebugFile.writeln("put "+sTableName+" table at columns catalog with columns"+sColNames);
+            }
             oColumnCatalog.put(sTableName, oColDefs);
-            if (sPojoClass!=null)
-              if (sPojoClass.length()>0)
-                oRecordCatalog.put(sPojoClass,
-                                  (Record) Class.forName(sPackageName+"."+sPojoClass).newInstance());
-            System.out.println("Definition for "+sTableName+" readed");
+            if (sPojoClass!=null) {
+              if (sPojoClass.length()>0) {
+              	String sCls = sPojoClass.indexOf('.')>0 ? sPojoClass : sPackageName+"."+sPojoClass;
+                if (DebugFile.trace) DebugFile.writeln("Getting Class.forName("+sCls+")");
+                Class oCls = Class.forName(sCls);
+                if (DebugFile.trace) DebugFile.writeln("Creating new instance of "+sCls+" with default constructor");
+                oRecordCatalog.put(sCls, (Record) oCls.newInstance());
+              }
+            }
+            if (DebugFile.trace) DebugFile.writeln("Definition for "+sTableName+" readed");
           } catch (ClassNotFoundException cnfe) {
-            System.out.println("ClassNotFoundException "+sPackageName+"."+sPojoClass);
-            throw new SAXException("Class not found "+sPackageName+"."+sTableName, cnfe);
+            if (DebugFile.trace) DebugFile.writeln("ClassNotFoundException "+sPojoClass);
+            throw new SAXException("Class not found "+sPojoClass, cnfe);
           } catch (InstantiationException inse) {
-            System.out.println("InstantiationException "+sPackageName+"."+sPojoClass);
-            throw new SAXException("Instantiation exception "+sPackageName+"."+sTableName, inse);
+            if (DebugFile.trace) DebugFile.writeln("InstantiationException "+sPojoClass);
+            throw new SAXException("Instantiation exception "+sPojoClass, inse);
           } catch (IllegalAccessException ilae) {
-            System.out.println("IllegalAccessException "+sPackageName+"."+sPojoClass);
-            throw new SAXException("Illegal access exception "+sPackageName+"."+sTableName, ilae);
+            if (DebugFile.trace) DebugFile.writeln("IllegalAccessException "+sPojoClass);
+            throw new SAXException("Illegal access exception "+sPojoClass, ilae);
           } finally {
             oColDefs = null;
             sTableName = null;

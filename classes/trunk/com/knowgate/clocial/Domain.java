@@ -13,12 +13,11 @@ public class Domain extends RecordDelegator {
   
   private static final String tableName = "k_domains";
 
-  public Domain() {
+  public Domain() throws InstantiationException {
   	super(Engine.DEFAULT, tableName,MetaData.getDefaultSchema().getColumns(tableName));
   }	
 
-  public Domain(Engine eEngine) {
+  public Domain(Engine eEngine) throws InstantiationException {
   	super(eEngine, tableName,MetaData.getDefaultSchema().getColumns(tableName));
-  }	
-
+  }
 }

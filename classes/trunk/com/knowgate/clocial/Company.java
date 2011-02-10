@@ -1,8 +1,11 @@
 package com.knowgate.clocial;
 
+import java.sql.SQLException;
+
 import java.util.Date;
 
 import com.knowgate.misc.Gadgets;
+import com.knowgate.debug.DebugFile;
 
 import com.knowgate.storage.*;
 
@@ -12,11 +15,11 @@ public class Company extends RecordDelegator {
 
   private static final long serialVersionUID = Serials.Company;
 
-  public Company() {
+  public Company() throws InstantiationException  {
   	super(Engine.DEFAULT, tableName,MetaData.getDefaultSchema().getColumns(tableName));
   }	
 
-  public Company(Engine eEngine) {
+  public Company(Engine eEngine) throws InstantiationException {
   	super(eEngine, tableName,MetaData.getDefaultSchema().getColumns(tableName));
   }	
 
@@ -27,8 +30,8 @@ public class Company extends RecordDelegator {
 	if (!containsKey("nm_commercial")) put("nm_commercial", get("nm_legal"));
 
 	if (containsKey("id_country") && !getString("nm_legal","").endsWith(" ("+getString("id_country","")+")")) {
-	  String sNmLegalLocale = getString("nm_legal","")+" ("+getString("id_country","")+")";
-	  replace("nm_ascii_locale", Gadgets.ASCIIEncode(sNmLegalLocale));
+	  String sNmLegalLocale = getString("id_country","").toUpperCase()+"-"+Gadgets.ASCIIEncode(getString("nm_legal",""));
+	  replace("nm_ascii_locale", sNmLegalLocale);
 	} else {
 	  replace("nm_ascii_locale", getString("nm_ascii"));
 	}
@@ -37,7 +40,7 @@ public class Company extends RecordDelegator {
   }
 
   public static Record byName(DataSource oDts, String sNmLegal) 
-    throws StorageException {
+    throws StorageException,SQLException {
     Record oRetVal = null;
     Table oCon = oDts.openTable(tableName,new String[]{"nm_legal"});
     try {
@@ -54,9 +57,13 @@ public class Company extends RecordDelegator {
   }
   
   public static RecordSet fetchLike(DataSource oDts, String sPartialNameStart, String sIdCountry, int nMaxRows)
-    throws StorageException {
+    throws StorageException,SQLException {
+
     RecordSet oRetSet = null;
     Table oCon = null;
+    
+	if (DebugFile.trace) DebugFile.writeln("Company.fetchLike([DataSource],"+sPartialNameStart+","+sIdCountry+","+String.valueOf(nMaxRows)+")");
+	
     try {
       if (sIdCountry==null) {
         oCon = oDts.openTable(tableName,new String[]{"nm_ascii"});

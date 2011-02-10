@@ -14,7 +14,7 @@
     <Column name="jv_message" type="JAVA_OBJECT" nullable="true"></Column>
   </Record>
   <Record table="k_ip_info" pojo="IPInfo">
-    <Column name="ip_addr" type="VARCHAR" maxlength="100" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="ip_addr" type="VARCHAR" maxlength="100" nullable="false" constraint="primary key" indexed="true" check="(\d{1,3}\x2E\d{1,3}\x2E\d{1,3}\x2E\d{1,3})|(\w{0,4}:\w{0,4}:\w{0,4}:\w{0,4}:\w{0,4}:\w{0,4}:\w{0,4}:\w{0,4})"></Column>
     <Column name="id_country" type="CHAR" maxlength="2" nullable="true" indexed="false"></Column>
     <Column name="nm_city" type="VARCHAR" maxlength="254" nullable="true" indexed="false"></Column>
     <Column name="nm_point" type="VARCHAR" maxlength="254" nullable="true" indexed="false"></Column>
@@ -105,6 +105,7 @@
     <Column name="mov_phone" type="VARCHAR" maxlength="16" nullable="true"></Column>
     <Column name="tx_comments" type="VARCHAR" maxlength="254" nullable="true"></Column>
     <Column name="gu_image" type="CHAR" maxlength="32" nullable="true" foreignkey="k_images"></Column>
+    <Column name="jv_recent_searches" type="JAVA_OBJECT" nullable="true"></Column>
   </Record>
   <Record table="k_workareas" pojo="">
     <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true" default="GUID"></Column>
@@ -120,6 +121,60 @@
     <Column name="gu_account" type="CHAR" maxlength="32" nullable="false" indexed="true" foreignkey="k_accounts"></Column>
     <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" indexed="true" foreignkey="k_workareas"></Column>
     <Column name="tx_main_email" type="VARCHAR" maxlength="100" nullable="false" indexed="true" check="[\w\x2E_-]+@[\w\x2E_-]+\x2E\D{2,4}"></Column>
+  </Record>
+  <Record table="k_syndsearches" pojo="com.knowgate.syndication.SyndSearch">
+    <Column name="tx_sought" type="VARCHAR" maxlength="254" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="dt_last_run" type="TIMESTAMP" nullable="false"></Column>
+    <Column name="nu_runs" type="INT" maxlength="11" nullable="false"></Column>
+    <Column name="dt_last_request" type="TIMESTAMP" nullable="true" indexed="true"></Column>
+    <Column name="nu_requests" type="INT" maxlength="11" nullable="false"></Column>
+    <Column name="nu_results" type="INT" maxlength="11" nullable="false"></Column>
+    <Column name="xml_recent" type="LONGVARCHAR" nullable="true"></Column>
+  </Record>
+  <Record table="k_syndsearch_request" pojo="com.knowgate.syndication.SyndSearchRequest">
+    <Column name="id_request" type="BIGINT" nullable="false" constraint="primary key" indexed="true" default="SERIAL"></Column>
+    <Column name="tx_sought" type="VARCHAR" maxlength="254" nullable="false" indexed="true" foreignkey="k_syndsearches"></Column>
+    <Column name="dt_request" type="TIMESTAMP" nullable="false"></Column>
+    <Column name="nu_milis" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="gu_user" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="gu_account" type="CHAR" maxlength="32" nullable="true"></Column>
+  </Record>
+  <Record table="k_syndsearch_run" pojo="com.knowgate.syndication.SyndSearchRun">
+    <Column name="id_run" type="BIGINT" nullable="false" constraint="primary key" indexed="true" default="SERIAL"></Column>
+    <Column name="tx_sought" type="VARCHAR" maxlength="254" nullable="false" indexed="true" foreignkey="k_syndsearches"></Column>
+    <Column name="dt_run" type="TIMESTAMP" nullable="false"></Column>
+    <Column name="nu_milis" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="nu_entries" type="INT" maxlength="11" nullable="true"></Column>
+  </Record>
+  <Record table="k_syndreferers" pojo="com.knowgate.syndication.SyndReferer">
+    <Column name="id_syndref" type="VARCHAR" maxlength="480" constraint="primary key" indexed="true" ></Column>
+    <Column name="tx_sought" type="VARCHAR" maxlength="254" nullable="false" indexed="true" ></Column>
+    <Column name="url_domain" type="VARCHAR" maxlength="100" nullable="false" indexed="true" ></Column>
+    <Column name="nu_entries" type="INT" maxlength="11" nullable="false"></Column>
+  </Record>
+  <Record table="k_syndentries" pojo="com.knowgate.syndication.FeedEntry">
+    <Column name="id_syndentry" type="BIGINT" nullable="false" constraint="primary key" indexed="true" default="SERIAL"></Column>
+    <Column name="uri_entry" type="VARCHAR" maxlength="200" indexed="true"></Column>
+    <Column name="tx_sought" type="VARCHAR" maxlength="254" indexed="true" foreignkey="k_syndsearches"></Column>
+    <Column name="tx_sought_by_date" type="VARCHAR" maxlength="276" indexed="true" nullable="false" default="tx_sought+dt_published"></Column>
+    <Column name="id_domain" type="INT" maxlength="11" nullable="true" indexed="false"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="true" indexed="false"></Column>
+    <Column name="gu_feed" type="CHAR" maxlength="32" nullable="true" indexed="false"></Column>
+    <Column name="id_type" type="VARCHAR" maxlength="50" nullable="true" indexed="false"></Column>
+    <Column name="dt_run" type="TIMESTAMP" nullable="false"></Column>
+    <Column name="dt_published" type="TIMESTAMP" nullable="false"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" nullable="true"></Column>
+    <Column name="gu_contact" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="nm_author" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="url_author" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="tl_entry" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="de_entry" type="VARCHAR" maxlength="1000" nullable="true"></Column>
+    <Column name="url_addr" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="url_domain" type="VARCHAR" maxlength="100" nullable="true"></Column>
+    <Column name="bin_entry" type="JAVA_OBJECT" nullable="true"></Column>    
+    <Column name="nu_influence" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="nu_relevance" type="INT" maxlength="11" nullable="true"></Column>    
+    <Column name="id_country" type="CHAR" maxlength="2" nullable="true" indexed="false"></Column>
   </Record>
 </Schema>
 </MetaData>
