@@ -1,3 +1,34 @@
+/*
+  Copyright (C) 2003-2011  Know Gate S.L. All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. The end-user documentation included with the redistribution,
+     if any, must include the following acknowledgment:
+     "This product includes software parts from hipergate
+     (http://www.hipergate.org/)."
+     Alternately, this acknowledgment may appear in the software itself,
+     if and wherever such third-party acknowledgments normally appear.
+
+  3. The name hipergate must not be used to endorse or promote products
+     derived from this software without prior written permission.
+     Products derived from this software may not be called hipergate,
+     nor may hipergate appear in their name, without prior written
+     permission.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+  You should have received a copy of hipergate License with this code;
+  if not, visit http://www.hipergate.org or mail to info@hipergate.org
+*/
+
 package com.knowgate.storage;
 
 import java.sql.SQLException;
@@ -76,6 +107,7 @@ public class RecordQueueListener implements MessageListener {
   	Table oCon = null;
     TemporaryQueue oRpl;
 	MessageProducer oRpr = null;
+	String sErr = null; 
 
   	if (DebugFile.trace) {
   	  DebugFile.writeln("Begin RecordQueueListener.onMessage([Message])");
@@ -130,6 +162,7 @@ public class RecordQueueListener implements MessageListener {
   	  	  	  } catch (Exception oXcpt) {
   	  			if (DebugFile.trace) DebugFile.writeln(oXcpt.getClass().getName()+" "+oXcpt.getMessage());
 		    	try { if (DebugFile.trace) DebugFile.writeln(com.knowgate.debug.StackTraceUtil.getStackTrace(oXcpt)); } catch (Exception ignore) {}
+  	  	  	  	sErr = oXcpt.getClass().getName()+" "+oXcpt.getMessage();
   	  	  	  	String sUserAcc = oMsg.getStringProperty("UserAccount");
   	  	  	  	if (sUserAcc!=null) {
 				  try {
@@ -163,6 +196,7 @@ public class RecordQueueListener implements MessageListener {
   	  			if (DebugFile.trace)
   	  	          DebugFile.writeln(sClsName+" "+oXcpt.getMessage());
 		    	try { if (DebugFile.trace) DebugFile.writeln(com.knowgate.debug.StackTraceUtil.getStackTrace(oXcpt)); } catch (Exception ignore) {}
+  	  	  	  	sErr = oXcpt.getClass().getName()+" "+oXcpt.getMessage();
   	  	  	  	String sUserAcc = oMsg.getStringProperty("UserAccount");
   	  	  	  	if (sUserAcc!=null) {
 				  // ErrorLog.log(sUserAcc, oXcpt, oMsg);
@@ -214,11 +248,12 @@ public class RecordQueueListener implements MessageListener {
 
   	  	oRpl = (TemporaryQueue) oMsg.getJMSReplyTo();
 
-		if (oRpl!=null) {
-		  if (DebugFile.trace) DebugFile.writeln("replying message "+oMsg.getJMSMessageID()+" to "+oRpl.getQueueName());
+		if (oRpl!=null && oSes!=null) {
+		  if (DebugFile.trace) DebugFile.writeln("replying message "+oMsg.getJMSMessageID()+" to "+oRpl.getQueueName()+(sErr==null ? "" : " with error "+sErr));
 		  oRpr = oSes.createProducer(oRpl);
 	      TextMessage oTxt = oSes.createTextMessage();
-	      oTxt.setText("Acknowledge");
+	      oTxt.setBooleanProperty("Error", sErr!=null);
+	      oTxt.setText(sErr==null ? "Acknowledge" : sErr);
 		  oTxt.setJMSCorrelationID(oMsg.getJMSMessageID());
 	      oRpr.send(oTxt);
 	      oRpr.close();
@@ -228,9 +263,28 @@ public class RecordQueueListener implements MessageListener {
 		}
 
   	} catch (Exception xcpt) {
+
   	  if (DebugFile.trace)
   	  	DebugFile.writeln(xcpt.getClass().getName()+" "+xcpt.getMessage());
   	  try { if (DebugFile.trace) DebugFile.writeln(com.knowgate.debug.StackTraceUtil.getStackTrace(xcpt)); } catch (Exception ignore) {}
+
+	  try {
+  	  	oRpl = (TemporaryQueue) oMsg.getJMSReplyTo();
+
+		if (oRpl!=null && oSes!=null) {
+		  if (DebugFile.trace) DebugFile.writeln("replying message "+oMsg.getJMSMessageID()+" to "+oRpl.getQueueName()+" with error "+xcpt.getClass().getName()+" "+xcpt.getMessage());
+		  oRpr = oSes.createProducer(oRpl);
+	      TextMessage oTxt = oSes.createTextMessage();
+	      oTxt.setBooleanProperty("Error", true);
+	      oTxt.setText(xcpt.getClass().getName()+" "+xcpt.getMessage());
+		  oTxt.setJMSCorrelationID(oMsg.getJMSMessageID());
+	      oRpr.send(oTxt);
+	      oRpr.close();
+		  oRpr=null;
+		}
+
+	  } catch (Exception ignore) { }
+
   	} finally {
   	  if (oRpr!=null) { try { oRpr.close(); } catch (Exception ignore) {} }
   	}

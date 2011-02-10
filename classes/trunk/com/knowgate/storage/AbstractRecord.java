@@ -1,3 +1,34 @@
+/*
+  Copyright (C) 2003-2011  Know Gate S.L. All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. The end-user documentation included with the redistribution,
+     if any, must include the following acknowledgment:
+     "This product includes software parts from hipergate
+     (http://www.hipergate.org/)."
+     Alternately, this acknowledgment may appear in the software itself,
+     if and wherever such third-party acknowledgments normally appear.
+
+  3. The name hipergate must not be used to endorse or promote products
+     derived from this software without prior written permission.
+     Products derived from this software may not be called hipergate,
+     nor may hipergate appear in their name, without prior written
+     permission.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+  You should have received a copy of hipergate License with this code;
+  if not, visit http://www.hipergate.org or mail to info@hipergate.org
+*/
+
 package com.knowgate.storage;
 
 import java.util.Date;
@@ -5,42 +36,56 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Iterator;
 import java.util.Calendar;
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+
+import com.knowgate.debug.DebugFile;
 
 import com.knowgate.storage.Table;
 import com.knowgate.storage.StorageException;
 
 public abstract class AbstractRecord extends HashMap implements Record {
 
-  private String sTableName;
-  private String sPkColumnName;
-  private ArrayList<Column> oColumns;
+  protected String sTableName;
+  protected String sPkColumnName;
+  private LinkedList<Column> oColumns;
   private static final long serialVersionUID = 600000101201000090l;
 
   public AbstractRecord() {
-  	ArrayList<Column> oColumns = new ArrayList<Column>();
+  	oColumns = null;
     sTableName=null;
+    sPkColumnName=null;
   }
 
-  public AbstractRecord(String sBaseTableName, ArrayList<Column> oColumnsList) {
+  public AbstractRecord(String sTblName) {
+  	oColumns = null;
+    sTableName=sTblName;
+    sPkColumnName=null;
+  }
+
+  public AbstractRecord(String sBaseTableName, LinkedList<Column> oColumnsList) {
   	sTableName=sBaseTableName;
   	setPrimaryKey(null);
   	oColumns = oColumnsList;
   	if (null!=oColumnsList) {
   	  for (Column c : oColumnsList) {
   	  	if (c.isPrimaryKey()) {
-  	  	  setPrimaryKey(c.getName());
+  	  	  sPkColumnName = c.getName();
   	  	  break;
   	  	} // fi
   	  } // next
   	} // fi
+    if (DebugFile.trace) {
+  	  String sColNames = "";
+  	  for (Column c : oColumnsList) sColNames += " "+c.getName();
+      DebugFile.writeln("created AbstractRecord for "+sBaseTableName+" with columns "+sColNames);
+    }
   }
 
-  public ArrayList<Column> columns() {
+  public LinkedList<Column> columns() {
   	return oColumns;
   }
 
@@ -60,7 +105,6 @@ public abstract class AbstractRecord extends HashMap implements Record {
   } // load
 
   public String store(Table oConn) throws StorageException {
-  	RecordXMLCache.expire(oConn.getName(), getPrimaryKey());
 	oConn.store(this);
 	return getPrimaryKey();
   }
@@ -87,10 +131,15 @@ public abstract class AbstractRecord extends HashMap implements Record {
   }
 
   public boolean isNull(String sKey) {
-    if (containsKey(sKey))
-      return (get(sKey)!=null);
-    else
+    if (containsKey(sKey)) {
+      Object oVal = get(sKey);
+      if (null==oVal)
+      	return true;
+      else
+        return oVal.equals("null") || oVal.equals("NULL");
+    } else {
       return true;
+    }
   }
 
   public boolean isEmpty(String sKey) {
@@ -128,6 +177,20 @@ public abstract class AbstractRecord extends HashMap implements Record {
     }
   }
 
+  public long getLong(String sKey) {
+    if (containsKey(sKey)) {
+      Object oLng = get(sKey);
+      if (oLng instanceof Long)
+        return ((Long) oLng).longValue();
+      else if (oLng instanceof String)
+      	return Long.parseLong((String) oLng);
+      else
+      	return Long.parseLong(oLng.toString());      
+    } else {
+      throw new NullPointerException("Column "+sKey+" is null");
+    }
+  }
+
   public abstract Date getDate(String sKey);
 
   public abstract Date getDate(String sKey, Date dtDefault);
@@ -151,6 +214,22 @@ public abstract class AbstractRecord extends HashMap implements Record {
       return ((Boolean) get(sKey)).booleanValue();
     else
       return bDefault;  	
+  }
+
+  public void put(String parm1, short parm2) {
+	  put(parm1,new Short(parm2));
+  }
+
+  public void put(String parm1, int parm2) {
+	  put(parm1,new Integer(parm2));
+  }
+
+  public void put(String parm1, float parm2) {
+	  put(parm1,new Float(parm2));
+  }
+
+  public void put(String parm1, double parm2) {
+	  put(parm1,new Double(parm2));
   }
 
   public String toXML(String sIdent, HashMap<String,String> oAttrs, Locale oLoc) {

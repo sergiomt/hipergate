@@ -1,6 +1,37 @@
+/*
+  Copyright (C) 2003-2011  Know Gate S.L. All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. The end-user documentation included with the redistribution,
+     if any, must include the following acknowledgment:
+     "This product includes software parts from hipergate
+     (http://www.hipergate.org/)."
+     Alternately, this acknowledgment may appear in the software itself,
+     if and wherever such third-party acknowledgments normally appear.
+
+  3. The name hipergate must not be used to endorse or promote products
+     derived from this software without prior written permission.
+     Products derived from this software may not be called hipergate,
+     nor may hipergate appear in their name, without prior written
+     permission.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+  You should have received a copy of hipergate License with this code;
+  if not, visit http://www.hipergate.org or mail to info@hipergate.org
+*/
+
 package com.knowgate.storage;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -17,20 +48,36 @@ import com.knowgate.storage.Record;
 import com.knowgate.storage.Factory;
 import com.knowgate.storage.StorageException;
 
+import com.knowgate.debug.DebugFile;
+import com.knowgate.dataobjs.DBPersist;
 import com.knowgate.berkeleydb.DBEntity;
 
 public class RecordDelegator implements Record {
 
 	private AbstractRecord impl;
 
-    public RecordDelegator(Engine eEngine, String sBaseTable, ArrayList<Column> oColumnsList) {
+    public RecordDelegator(Engine eEngine, String sBaseTable, LinkedList<Column> oColumnsList)
+      throws InstantiationException {
+      
+      if (DebugFile.trace) {
+  	    String sColNames = "";
+  	    for (Column c : oColumnsList) sColNames += " "+c.getName();
+      	DebugFile.writeln("Creating instance of "+eEngine+" for table "+sBaseTable+" with columns "+sColNames);
+      }
+      
       switch (eEngine) {
      	case BERKELYDB:
           impl = new DBEntity (sBaseTable,oColumnsList);
+          break;
+     	case JDBCRDBMS:
+          impl = new DBPersist (sBaseTable,sBaseTable);
+          break;
+        default:
+          throw new InstantiationException("RecordDelegator could not instantiate Record implementation for "+eEngine);
       }
     }		
     
-	public ArrayList columns() {
+	public LinkedList columns() {
       return impl.columns();
 	}
 
@@ -59,7 +106,7 @@ public class RecordDelegator implements Record {
 	}
 
 	public void setPrimaryKey(String sValue) throws NullPointerException {
-	  impl.getPrimaryKey();
+	  impl.setPrimaryKey(sValue);
 	}
 
 	public Column getColumn(String sColName) throws ArrayIndexOutOfBoundsException {
@@ -80,6 +127,10 @@ public class RecordDelegator implements Record {
 
 	public int getInt(String sKey) {
 	  return impl.getInt(sKey);
+	}
+
+	public long getLong(String sKey) {
+	  return impl.getLong(sKey);
 	}
 
 	public Date getDate(String sKey) {
@@ -131,8 +182,33 @@ public class RecordDelegator implements Record {
 	  return impl.get(parm1);
 	}
 
+	public Object put(String parm1, short parm2) {
+	  Short oRetVal = new Short(parm2);
+	  impl.put(parm1,oRetVal);
+	  return oRetVal;
+	}
+
+	public Object put(String parm1, int parm2) {
+	  Integer oRetVal = new Integer(parm2);
+	  impl.put(parm1,oRetVal);
+	  return oRetVal;
+	}
+
+	public Object put(String parm1, float parm2) {
+	  Float oRetVal = new Float(parm2);
+	  impl.put(parm1,oRetVal);
+	  return oRetVal;
+	}
+
+	public Object put(String parm1, double parm2) {
+	  Double oRetVal = new Double(parm2);
+	  impl.put(parm1,oRetVal);
+	  return oRetVal;
+	}
+
 	public Object put(Object parm1, Object parm2) {
-	  return impl.put(parm1,parm2);
+	  impl.put(parm1,parm2);
+	  return parm2;
 	}
 
 	public Object remove(Object parm1) {

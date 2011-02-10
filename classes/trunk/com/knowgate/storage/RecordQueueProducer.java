@@ -1,3 +1,34 @@
+/*
+  Copyright (C) 2003-2011  Know Gate S.L. All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. The end-user documentation included with the redistribution,
+     if any, must include the following acknowledgment:
+     "This product includes software parts from hipergate
+     (http://www.hipergate.org/)."
+     Alternately, this acknowledgment may appear in the software itself,
+     if and wherever such third-party acknowledgments normally appear.
+
+  3. The name hipergate must not be used to endorse or promote products
+     derived from this software without prior written permission.
+     Products derived from this software may not be called hipergate,
+     nor may hipergate appear in their name, without prior written
+     permission.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+  You should have received a copy of hipergate License with this code;
+  if not, visit http://www.hipergate.org or mail to info@hipergate.org
+*/
+
 package com.knowgate.storage;
 
 import javax.jms.Queue;
@@ -49,16 +80,16 @@ public class RecordQueueProducer {
   private Context oCtx;
   private ConnectionFactory oCnf;
   private Queue oQue;
-  private DataSource oDts;
+  private RecordQueueListener oRql;
   private Properties oDefaultProps = new Properties();
   
   public RecordQueueProducer()
-  	throws StorageException {
+  	throws StorageException, InstantiationException {
     oEnv = new Hashtable();
     oCtx = null;
     oCnf = null;
-    oQue = null;  	
-    oDts = new DBEnvironment(MetaData.getDefaultSchema().getSchemaName(), false);
+    oQue = null;  
+    oRql = new RecordQueueListener(Engine.DEFAULT, MetaData.getDefaultSchema().getSchemaName(), null);
   }
 
   public RecordQueueProducer(Properties oProps)
@@ -83,7 +114,7 @@ public class RecordQueueProducer {
       oCtx = new InitialContext(oEnv);
       oCnf = (ConnectionFactory) oCtx.lookup(sConnectionFactoryName);	
       oQue = (Queue) oCtx.lookup(sQueueName);
-      oDts = null;
+      oRql = null;
     } // fi
   }
 
@@ -92,7 +123,7 @@ public class RecordQueueProducer {
   }  
 
   public void close() throws StorageException {
-    if (null!=oDts) oDts.close();	
+    if (null!=oRql) oRql.close();	
   }
 
   private void setProperties(Session oSes, ObjectMessage oMsg, Properties oProps)
@@ -149,7 +180,7 @@ public class RecordQueueProducer {
 	
 	if (oQue==null) {
 
-  	  throw new JMSException("Queue lookup failed");
+	  // ObjectMessage oMsg = new ObjectMessage();
   	  	
 	} else {
 
@@ -173,7 +204,7 @@ public class RecordQueueProducer {
   	  	    DebugFile.writeln("Requested message "+oMsg.getJMSMessageID()+" with reply to "+oTqe.getQueueName());
 
     	  oQrr = (QueueReceiver) oSes.createConsumer(oTqe); // "JMSCorrelationID='"+oMsg.getJMSMessageID()+"'"
-		  Message oRpl = oQrr.receive(20000l);
+		  TextMessage oRpl = (TextMessage) oQrr.receive(20000l);
 		  oQrr.close();
 		  oQrr=null;
 	      oMpr.close();
@@ -183,11 +214,21 @@ public class RecordQueueProducer {
 	      oQcn.stop();
 
 		  if (oRpl==null) {
+
 		    if (DebugFile.trace) {
   	  	      DebugFile.writeln("Reply timed out");
 		      DebugFile.decIdent();
 		    }
   	  	    throw new JMSException("Message reply timed out");
+
+		  } else if (oRpl.getBooleanProperty("Error")) {
+
+		    if (DebugFile.trace) {
+  	  	      DebugFile.writeln(oRpl.getText());
+		      DebugFile.decIdent();
+		    }
+			throw new StorageException(oRpl.getText());
+
 		  }
 
 		} else {
@@ -223,11 +264,17 @@ public class RecordQueueProducer {
   } // store
 
   public void store(Record oRec) throws JMSException,StorageException {
+  	if (DebugFile.trace) {
+  	  DebugFile.writeln("RecordQueueProducer.store("+oRec.getTableName()+"."+oRec.getPrimaryKey()+")");
+  	}
     if (!oDefaultProps.containsKey("useraccount")) oDefaultProps.put("useraccount","anonymous");    
     sendMessage(oRec,COMMAND_STORE_RECORD,null);
   }
 
   public void store(Record oRec,Properties oProps) throws JMSException,StorageException {
+  	if (DebugFile.trace) {
+  	  DebugFile.writeln("RecordQueueProducer.store("+oRec.getTableName()+"."+oRec.getPrimaryKey()+","+oProps+")");
+  	}
     if (oProps==null) oProps = oDefaultProps;
     if (!oProps.containsKey("useraccount")) oProps.put("useraccount","anonymous");
     sendMessage(oRec,COMMAND_STORE_RECORD,oProps);

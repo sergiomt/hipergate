@@ -1,5 +1,7 @@
 package com.knowgate.storage;
 
+import java.sql.SQLException;
+
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 
@@ -16,7 +18,7 @@ public interface Table {
 
   public DataSource getDataSource();
   
-  public void close() throws StorageException;
+  public void close() throws SQLException,StorageException;
 
   public boolean exists(String sKey) throws StorageException;
 
@@ -34,6 +36,8 @@ public interface Table {
 
   public RecordSet fetch() throws StorageException;
 
+  public RecordSet fetch(final int iMaxRows, final int iOffset) throws StorageException;
+
   public RecordSet fetch(final String sIndexColumn, String sIndexValue) throws StorageException;
 
   public RecordSet fetch(final String sIndexColumn, String sIndexValueMin, String sIndexValueMax) throws StorageException;
@@ -42,7 +46,7 @@ public interface Table {
 
   public RecordSet fetch(final String sIndexColumn, String sIndexValue, final int iMaxRows) throws StorageException;
 
-  public RecordSet last(int iRows) throws StorageException;
+  public RecordSet last(final String sOrderByColumn, final int iMaxRows, final int iOffset) throws StorageException;
 
   public void truncate() throws StorageException;
 
