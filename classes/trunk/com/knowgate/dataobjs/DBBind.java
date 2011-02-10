@@ -57,6 +57,7 @@ import com.knowgate.debug.DebugFile;
 import com.knowgate.debug.StackTraceUtil;
 import com.knowgate.misc.Environment;
 import com.knowgate.misc.Gadgets;
+import com.knowgate.storage.Column;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.jdc.JDCConnectionPool;
 
@@ -65,7 +66,7 @@ import java.beans.Beans;
 /**
  * <p>Singleton object for database binding.</p>
  * @author Sergio Montoro Ten
- * @version 6.0
+ * @version 7.0
  */
 
 public class DBBind extends Beans implements DataSource {
@@ -1459,10 +1460,10 @@ public class DBBind extends Beans implements DataSource {
 	  LinkedList<String> oPk = oTbl.getPrimaryKey();
 	  LinkedList<DBIndex> oIx = oTbl.getIndexes();
   	  oXml.append("  <Table name=\""+oTbl.getName()+"\">\n");
-  	  ListIterator<DBColumn> oCols = oTbl.getColumns().listIterator();
+  	  ListIterator<Column> oCols = oTbl.getColumns().listIterator();
   	  while (oCols.hasNext()) {
-  	    DBColumn oCol = oCols.next();
-  	    oXml.append("    <Column name=\""+oCol.getName()+"\" type=\""+oCol.getSqlTypeName()+"\" ");
+  	    Column oCol = oCols.next();
+  	    oXml.append("    <Column name=\""+oCol.getName()+"\" type=\""+oCol.typeName(oCol.getType())+"\" ");
   	    oXml.append("maxlength=\""+oCol.getPrecision()+"\" nullable=\""+oCol.isNullable()+"\"");
   	    if (oPk!=null) {
   	      for (String p : oPk) {

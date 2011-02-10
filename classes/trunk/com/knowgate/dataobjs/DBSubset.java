@@ -66,6 +66,7 @@ import java.util.HashMap;
 import com.knowgate.debug.DebugFile;
 import com.knowgate.debug.StackTraceUtil;
 import com.knowgate.jdc.JDCConnection;
+import com.knowgate.storage.RecordSet;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.misc.CSVParser;
 import com.knowgate.math.Money;
@@ -82,10 +83,10 @@ import com.knowgate.math.Money;
  * Another reason for this "read fast and leave" tactic is that some JDBC drivers have problems
  * managing multiple open resultsets with pending results in a single connection.
  * @author Sergio Montoro Ten
- * @version 3.0
+ * @version 7.0
  */
 
-public final class DBSubset {
+public final class DBSubset extends Vector<Vector<Object>> {
 
   /**
    * </p>Contructs a DBSubset.</p>
@@ -122,7 +123,6 @@ public final class DBSubset {
 
     if (DebugFile.trace) DebugFile.writeln (sSelect);
 
-    oResults = null;
     sInsert = "";
     iFetch = iFetchSize;
     iColCount = 0;
@@ -169,8 +169,6 @@ public final class DBSubset {
       oStmt.close();
 
     // End SQLException
-
-    oResults = null;
     
     oSubRecords = null;
 
@@ -296,8 +294,6 @@ public final class DBSubset {
       lFetchTime = System.currentTimeMillis();
     }
 
-    oResults = new Vector(iFetch, iFetch);
-
     if (0!=iSkip) {
       oRSet.next();
 
@@ -321,7 +317,7 @@ public final class DBSubset {
           oRow.add (oFieldValue);
       } // next
 
-      oResults.add(oRow);
+      super.add(oRow);
 
       bHasNext = oRSet.next();
     } // wend
@@ -937,10 +933,10 @@ public final class DBSubset {
       DebugFile.incIdent();
     }
 
-    if (oResults!=null)
-      iRowCount = oResults.size();
-    else
+    if (super.isEmpty())
       iRowCount = -1;
+    else
+      iRowCount = super.size();
 
     if (DebugFile.trace)
       DebugFile.writeln("row count is " + String.valueOf(iRowCount));
@@ -999,10 +995,10 @@ public final class DBSubset {
       DebugFile.incIdent();
     }
 
-    if (oResults!=null)
-      iRowCount = oResults.size();
-    else
+    if (super.isEmpty())
       iRowCount = -1;
+    else
+      iRowCount = super.size();
 
     if (DebugFile.trace)
       DebugFile.writeln("row count is " + String.valueOf(iRowCount));
@@ -1275,10 +1271,10 @@ public final class DBSubset {
   public int getRowCount() {
     int iRows;
 
-    if (null==oResults)
+    if (super.isEmpty())
       iRows = 0;
     else
-      iRows = oResults.size();
+      iRows = super.size();
 
     return iRows;
 
@@ -1297,16 +1293,16 @@ public final class DBSubset {
     throws ArrayIndexOutOfBoundsException,IllegalStateException {
     Vector oRow, oCol;
     int iRowCount;
-    if (oResults==null)
+    if (super.isEmpty())
       throw new IllegalStateException("DBSubset.getColumnAsList("+String.valueOf(iCol)+") DBSubset not loaded");
     else
-      iRowCount = oResults.size();
+      iRowCount = super.size();
     if (0==iRowCount) {
       oCol = new Vector();
     } else {
       oCol = new Vector(iRowCount);
       for (int iRow=0; iRow<iRowCount; iRow++) {
-        oRow = (Vector) oResults.get(iRow);
+        oRow = (Vector) super.get(iRow);
         oCol.add(oRow.get(iCol));
       } // next
     }
@@ -1324,10 +1320,10 @@ public final class DBSubset {
    */
   public List getRowAsList (int iRow)
     throws ArrayIndexOutOfBoundsException,IllegalStateException {
-    if (oResults!=null)
-      return (List) oResults.get(iRow);
-    else
+    if (super.isEmpty())
       throw new IllegalStateException("DBSubset.getRowAsList("+String.valueOf(iRow)+") DBSubset not loaded");
+    else
+      return (List) super.get(iRow);
   } // getRowAsList
 
   // ----------------------------------------------------------
@@ -1341,10 +1337,10 @@ public final class DBSubset {
    */
   public Map getRowAsMap (int iRow)
     throws ArrayIndexOutOfBoundsException,IllegalStateException {
-    if (oResults==null)
+    if (super.isEmpty())
       throw new IllegalStateException("DBSubset.getRowAsMap("+String.valueOf(iRow)+") DBSubset not loaded");
 
-    Vector oRow = (Vector) oResults.get(iRow);
+    Vector oRow = (Vector) super.get(iRow);
     HashMap oRetVal = new HashMap(iColCount*2);
 
     for (int iCol=0; iCol<iColCount; iCol++) {
@@ -1366,10 +1362,10 @@ public final class DBSubset {
    */
   public Vector getRowAsVector (int iRow)
     throws ArrayIndexOutOfBoundsException,IllegalStateException {
-    if (oResults!=null)
-      return (Vector) oResults.get(iRow);
-    else
+    if (super.isEmpty())
       throw new IllegalStateException("DBSubset.getRowAsList("+String.valueOf(iRow)+") DBSubset not loaded");
+    else
+      return (Vector) super.get(iRow);
   } // getRowAsVector
 
   // ----------------------------------------------------------
@@ -1381,7 +1377,7 @@ public final class DBSubset {
    * @throws ArrayIndexOutOfBoundsException
    */
   public Object get (int iCol, int iRow) throws ArrayIndexOutOfBoundsException {
-    return ((Vector) oResults.get(iRow)).get(iCol);
+    return ((Vector) super.get(iRow)).get(iCol);
   }
 
   // ----------------------------------------------------------
@@ -1400,7 +1396,7 @@ public final class DBSubset {
     if (iCol==-1)
       throw new ArrayIndexOutOfBoundsException ("Column " + sCol + " not found");
 
-    return ((Vector) oResults.get(iRow)).get(iCol);
+    return ((Vector) super.get(iRow)).get(iCol);
   }
 
   // ----------------------------------------------------------
@@ -1446,7 +1442,7 @@ public final class DBSubset {
 
   public java.util.Date getDate(int iCol, int iRow)
     throws ClassCastException,ArrayIndexOutOfBoundsException {
-    Object oDt = ((Vector) oResults.get(iRow)).get(iCol);
+    Object oDt = ((Vector) super.get(iRow)).get(iCol);
 
     if (null!=oDt) {
       if (oDt.getClass().equals(ClassUtilDate))
@@ -1485,7 +1481,7 @@ public final class DBSubset {
 
   public java.sql.Date getSQLDate(int iCol, int iRow)
     throws ClassCastException,ArrayIndexOutOfBoundsException {
-    Object oDt = ((Vector) oResults.get(iRow)).get(iCol);
+    Object oDt = ((Vector) super.get(iRow)).get(iCol);
 
     if (null!=oDt) {
       if (oDt.getClass().equals(ClassSQLDate))
@@ -1532,7 +1528,7 @@ public final class DBSubset {
 
   public java.sql.Time getSQLTime(int iCol, int iRow)
     throws ClassCastException,ArrayIndexOutOfBoundsException {
-    Object oDt = ((Vector) oResults.get(iRow)).get(iCol);
+    Object oDt = ((Vector) super.get(iRow)).get(iCol);
 
     if (null!=oDt) {
       if (oDt.getClass().equals(ClassSQLTime))
@@ -1721,7 +1717,7 @@ public final class DBSubset {
   public short getShort (int iCol, int iRow)
     throws NullPointerException,ArrayIndexOutOfBoundsException {
 
-    Object oVal = (((Vector) oResults.get(iRow)).get(iCol));
+    Object oVal = (((Vector) super.get(iRow)).get(iCol));
     Class oCls;
     short iRetVal;
 
@@ -1779,7 +1775,7 @@ public final class DBSubset {
   public int getInt (int iCol, int iRow)
     throws NullPointerException,ArrayIndexOutOfBoundsException {
 
-    Object oVal = (((Vector) oResults.get(iRow)).get(iCol));
+    Object oVal = (((Vector) super.get(iRow)).get(iCol));
 
     if (oVal.getClass().equals(Integer.TYPE))
       return ((Integer)oVal).intValue();
@@ -1805,7 +1801,7 @@ public final class DBSubset {
     if (iCol==-1)
       throw new ArrayIndexOutOfBoundsException("Column " + sCol + " not found");
 
-    Object oVal = (((Vector) oResults.get(iRow)).get(iCol));
+    Object oVal = (((Vector) super.get(iRow)).get(iCol));
 
     if (oVal.getClass().equals(Integer.TYPE))
 
@@ -1830,7 +1826,7 @@ public final class DBSubset {
   public double getDouble (int iCol, int iRow)
     throws NullPointerException,ArrayIndexOutOfBoundsException {
 
-    Object oVal = (((Vector) oResults.get(iRow)).get(iCol));
+    Object oVal = (((Vector) super.get(iRow)).get(iCol));
     Class oCls;
     double dRetVal;
 
@@ -1867,7 +1863,7 @@ public final class DBSubset {
   public float getFloat (int iCol, int iRow)
     throws NullPointerException,ArrayIndexOutOfBoundsException {
 
-    Object oVal = (((Vector) oResults.get(iRow)).get(iCol));
+    Object oVal = (((Vector) super.get(iRow)).get(iCol));
     Class oCls;
     float fRetVal;
 
@@ -1977,7 +1973,7 @@ public final class DBSubset {
   public Integer getInteger (int iCol, int iRow)
     throws ArrayIndexOutOfBoundsException {
 
-    Object oVal = (((Vector) oResults.get(iRow)).get(iCol));
+    Object oVal = (((Vector) super.get(iRow)).get(iCol));
     Class oCls;
     Integer iRetVal;
 
@@ -2017,7 +2013,7 @@ public final class DBSubset {
   public Long getLong (int iCol, int iRow)
     throws ArrayIndexOutOfBoundsException {
 
-    Object oVal = (((Vector) oResults.get(iRow)).get(iCol));
+    Object oVal = (((Vector) super.get(iRow)).get(iCol));
     Class oCls;
     Long iRetVal;
 
@@ -2085,7 +2081,7 @@ public final class DBSubset {
 
   public BigDecimal getDecimal (int iCol, int iRow)
     throws java.lang.ClassCastException, java.lang.NumberFormatException {
-    Object oVal = (((Vector) oResults.get(iRow)).get(iCol));
+    Object oVal = (((Vector) super.get(iRow)).get(iCol));
     Class oCls;
     BigDecimal oDecVal;
 
@@ -2211,7 +2207,7 @@ public final class DBSubset {
    */
   public Money getMoney(int iCol, int iRow)
     throws ArrayIndexOutOfBoundsException,NumberFormatException {
-    Object obj = (((Vector) oResults.get(iRow)).get(iCol));
+    Object obj = (((Vector) super.get(iRow)).get(iCol));
 
     if (null!=obj)
       if (obj.toString().length()>0)
@@ -2257,7 +2253,7 @@ public final class DBSubset {
   public String getString (int iCol, int iRow)
     throws ArrayIndexOutOfBoundsException {
 
-    Object obj = (((Vector) oResults.get(iRow)).get(iCol));
+    Object obj = (((Vector) super.get(iRow)).get(iCol));
 
     if (null!=obj)
       return obj.toString();
@@ -2301,7 +2297,7 @@ public final class DBSubset {
     if (iCol==-1)
       throw new ArrayIndexOutOfBoundsException ("Column " + sCol + " not found");
 
-    Object obj = (((Vector) oResults.get(iRow)).get(iCol));
+    Object obj = (((Vector) super.get(iRow)).get(iCol));
 
     if (null!=obj)
       return obj.toString();
@@ -2369,7 +2365,7 @@ public final class DBSubset {
   public Time getTimeOfDay (int iCol, int iRow)
     throws ArrayIndexOutOfBoundsException, ClassCastException {
 
-    Object obj = (((Vector) oResults.get(iRow)).get(iCol));
+    Object obj = (((Vector) super.get(iRow)).get(iCol));
 
     if (null!=obj)
       return (Time) obj;
@@ -2390,7 +2386,7 @@ public final class DBSubset {
    */
   public Timestamp getTimestamp(int iCol, int iRow)
     throws ArrayIndexOutOfBoundsException,ClassCastException {
-    Object obj = (((Vector) oResults.get(iRow)).get(iCol));
+    Object obj = (((Vector) super.get(iRow)).get(iCol));
 
     if (null!=obj) {
       if (obj instanceof Timestamp)
@@ -2417,7 +2413,7 @@ public final class DBSubset {
    */
   public long getTimeMilis(int iCol, int iRow)
     throws ArrayIndexOutOfBoundsException,ClassCastException {
-    Object obj = (((Vector) oResults.get(iRow)).get(iCol));
+    Object obj = (((Vector) super.get(iRow)).get(iCol));
 
     if (null!=obj) {
       if (obj instanceof Timestamp)
@@ -2447,7 +2443,7 @@ public final class DBSubset {
    */
   public long getIntervalMilis (int iCol, int iRow)
     throws ArrayIndexOutOfBoundsException,ClassCastException {
-    Object obj = (((Vector) oResults.get(iRow)).get(iCol));
+    Object obj = (((Vector) super.get(iRow)).get(iCol));
     // 	0 years 0 mons 0 days 0 hours 0 mins 0.00 secs
     String s;
    
@@ -2495,13 +2491,12 @@ public final class DBSubset {
       DebugFile.incIdent();
     }
 
-    oResults = new Vector(nRows);
     for (int r=0;r<nRows; r++) {
-      Vector oNewRow = new Vector(nCols);
+      Vector<Object> oNewRow = new Vector<Object>(nCols);
       for (int c=0; c<nCols; c++) {
         oNewRow.add(null);
       }
-      oResults.add(oNewRow);
+      super.add(oNewRow);
     }
     if (DebugFile.trace) {
       DebugFile.decIdent();
@@ -2528,18 +2523,13 @@ public final class DBSubset {
       DebugFile.incIdent();
     }
 
-    if (null==oResults) {
-      if (DebugFile.trace) DebugFile.writeln("new Vector("+String.valueOf(iFetch)+",1)");
-      oResults = new Vector(iFetch, 1);
-    }
-
     Vector oRow;
-    Object oRaw = oResults.get(iRow);
+    Object oRaw = super.get(iRow);
 
     if (null==oRaw) {
       if (DebugFile.trace) DebugFile.writeln("new Vector("+String.valueOf(iCol)+",1)");
       oRow = new Vector(iCol, 1);
-      oResults.add(iRow, oRow);
+      super.add(iRow, oRow);
     }
     else {
       oRow = (Vector) oRaw;
@@ -2581,7 +2571,7 @@ public final class DBSubset {
    */
   public boolean isNull (int iCol, int iRow)
     throws ArrayIndexOutOfBoundsException {
-    Object obj = (((Vector) oResults.get(iRow)).get(iCol));
+    Object obj = (((Vector) super.get(iRow)).get(iCol));
 
     return (null==obj);
 
@@ -2603,7 +2593,7 @@ public final class DBSubset {
     if (iCol==-1)
       throw new ArrayIndexOutOfBoundsException ("Column " + sCol + " not found");
 
-    Object obj = (((Vector) oResults.get(iRow)).get(iCol));
+    Object obj = (((Vector) super.get(iRow)).get(iCol));
 
     return (null==obj);
   } // isNull()
@@ -2622,9 +2612,9 @@ public final class DBSubset {
     int iRowCount;
     StringBuffer strBuff;
 
-    if (oResults==null) return "";
+    if (super.isEmpty()) return "";
 
-    iRowCount = oResults.size();
+    iRowCount = super.size();
 
     if (iRowCount==0) return "";
 
@@ -2632,7 +2622,7 @@ public final class DBSubset {
 
     for (int iRow=0; iRow<iRowCount; iRow++)
       {
-      vRow = (Vector) oResults.get(iRow);
+      vRow = (Vector) super.get(iRow);
       iCol = 0;
       while (iCol<iColCount)
         {
@@ -2701,11 +2691,11 @@ public final class DBSubset {
       ClassFloat = Class.forName("java.lang.Float");
     } catch (ClassNotFoundException ignore) { }
 
-    if (oResults!=null) {
+    if (!super.isEmpty()) {
 
       sNodeName = (null!=sNode ? sNode : sTable);
 
-      iRowCount = oResults.size();
+      iRowCount = super.size();
       strBuff = new StringBuffer(256*iRowCount);
 
       strTok = new StringTokenizer(sColList,",");
@@ -2723,7 +2713,7 @@ public final class DBSubset {
 
       for (int iRow=0; iRow<iRowCount; iRow++)
         {
-        vRow = (Vector) oResults.get(iRow);
+        vRow = (Vector) super.get(iRow);
         iCol = 0;
         strBuff.append(sIdent + "<" + sNodeName + ">\n");
         while (iCol<iColCount)
@@ -2902,6 +2892,30 @@ public final class DBSubset {
     }
 
   } // print()
+
+  // ----------------------------------------------------------
+
+  private static String rpl(String s) {
+  	return s.replace('"','`').replace('\n',' ').replace('\t',' ');
+  }
+
+  public String json(String sName, String sIdentifier, String sLabel) throws ArrayIndexOutOfBoundsException {
+    boolean c = false;
+    StringBuffer oBuff = new StringBuffer(200*(getRowCount()+1));
+    oBuff.append("{\"identifier\":\""+sIdentifier+"\",\"label\":\""+sLabel+"\",\"items\":[\n");
+
+    for (int r=0; r<getRowCount(); r++) {
+      if (c) oBuff.append(',');
+      oBuff.append("{\"name\":\""+rpl(getStringNull(sName,r,""))+"\",");
+      oBuff.append("\""+sIdentifier+"\":\""+rpl(getStringNull(sIdentifier,r,""))+"\",");
+      oBuff.append("\""+sLabel+"\":\""+rpl(getStringNull(sLabel,r,""))+"\"}\n");
+      c = true;
+    } // next
+
+    oBuff.append("]}");  	
+    return oBuff.toString();
+  	
+  }
 
   // ----------------------------------------------------------
 
@@ -3169,10 +3183,10 @@ public final class DBSubset {
 
   private boolean swapRows(int iRow1, int iRow2)
     throws ArrayIndexOutOfBoundsException {
-    Object oRow1 = oResults.get(iRow1);
-    Object oRow2 = oResults.get(iRow2);
-    oResults.setElementAt(oRow2, iRow1);
-    oResults.setElementAt(oRow1, iRow2);
+    Vector<Object> oRow1 = super.get(iRow1);
+    Vector<Object> oRow2 = super.get(iRow2);
+    super.setElementAt(oRow2, iRow1);
+    super.setElementAt(oRow1, iRow2);
     return true;
   }
 
@@ -3257,6 +3271,21 @@ public final class DBSubset {
       DebugFile.writeln("End DBSubset.sortByDesc("+String.valueOf(iCol)+")");
     }
   } // sortByDesc
+
+  // ----------------------------------------------------------
+
+  /**
+   * <p>Sort in memory an already loaded ResultSet by a given column</p>
+   * A modified bubble sort algorithm is used. Resulting in a O(n&sup2;) worst case
+   * and O(n) best case if the ResultSet was already sorted by the given column.
+   * @param sCol String Column Name
+   * @throws ArrayIndexOutOfBoundsException
+   * @throws ClassCastException
+   * @since 7.0
+   */
+  public void sort(String sCol) throws ArrayIndexOutOfBoundsException {
+    sortBy(getColumnPosition(sCol));
+  }
 
   // ----------------------------------------------------------
 
@@ -3373,9 +3402,9 @@ public final class DBSubset {
     }
     final int iDbsRows = oDbs.getRowCount();
     if (iDbsRows>0) {
-      oResults.ensureCapacity(getRowCount()+iDbsRows);
+      super.ensureCapacity(getRowCount()+iDbsRows);
       for (int r=0; r<iDbsRows; r++) {
-        oResults.add(oDbs.oResults.get(r));
+        super.add(oDbs.get(r));
       } // next
     } // fi
   } // union
@@ -3417,15 +3446,13 @@ public final class DBSubset {
 
     final int iRowCount = oParser.getLineCount();
 
-    oResults = new Vector (iRowCount, 1);
-
     for (int r=0; r<iRowCount; r++) {
-      oRow = new Vector (iColCount);
+      oRow = new Vector<Object> (iColCount);
 
       for (int c=0; c<iColCount; c++)
         oRow.add (oParser.getField(c,r));
 
-      oResults.add (oRow);
+      super.add (oRow);
     } // next
 
     if (DebugFile.trace) {
@@ -3479,15 +3506,13 @@ public final class DBSubset {
     final int iRowCount = oParser.getLineCount();
     iColCount = aCols.length;
 
-    oResults = new Vector (iRowCount, 1);
-
     for (int r=0; r<iRowCount; r++) {
-      oRow = new Vector (iColCount);
+      oRow = new Vector<Object> (iColCount);
 
       for (int c=0; c<iColCount; c++)
         oRow.add (oParser.getField(c,r));
 
-      oResults.add (oRow);
+      super.add (oRow);
     } // next
 
     if (DebugFile.trace) {
@@ -3511,6 +3536,7 @@ public final class DBSubset {
     parseCSV(aData, null);
   }
 
+  
   // **********************************************************
   // Private Variables
 
@@ -3545,7 +3571,6 @@ public final class DBSubset {
   private String sColDelim;
   private String sRowDelim;
   private String sTxtQualifier;
-  private Vector oResults;
   private Vector<DBSubset> oSubRecords;
   private String ColNames[];
   private SimpleDateFormat oShortDate;

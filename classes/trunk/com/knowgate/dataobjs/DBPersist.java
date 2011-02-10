@@ -79,6 +79,9 @@ import com.knowgate.jdc.*;
 import com.knowgate.math.Money;
 import com.knowgate.misc.Gadgets;
 
+import com.knowgate.storage.Column;
+import com.knowgate.storage.AbstractRecord;
+
 /**
  * <p>Core class for persisting Java objects as registers in a RDMS.<p>
  * <p>Althought not an abstract class, DBPersist is mainly designed to be inherited
@@ -95,7 +98,7 @@ import com.knowgate.misc.Gadgets;
  * @version 6.0
  */
 
-public class DBPersist implements Map,Serializable {
+public class DBPersist extends AbstractRecord {
 
   /**
    * Create instance for reading and writing register from a table
@@ -104,10 +107,10 @@ public class DBPersist implements Map,Serializable {
    * @throws IllegalStateException
   */
 
-  public DBPersist (String sTableName, String sAuditClass)
+  public DBPersist (String sTable, String sAuditClass)
     throws IllegalStateException {
 
-    sTable = sTableName;
+	super(sTable);
 
     sAuditCls = sAuditClass;
     sAuditUsr = "";
@@ -125,10 +128,10 @@ public class DBPersist implements Map,Serializable {
    * @since 3.0
   */
 
-  public DBPersist (String sTableName, String sAuditClass, boolean bAllValuesUpperCase)
+  public DBPersist (String sTable, String sAuditClass, boolean bAllValuesUpperCase)
     throws IllegalStateException {
 
-    sTable = sTableName;
+	super(sTable);
 
     sAuditCls = sAuditClass;
     sAuditUsr = "";
@@ -202,9 +205,19 @@ public class DBPersist implements Map,Serializable {
    * @since 2.2
    */
   public void clone(DBPersist oSource) {
-    sTable = oSource.getTableName();
+    sTableName = oSource.getTableName();
     sAuditCls = oSource.getAuditClassName();
     AllVals = new HashMap(oSource.AllVals);
+  }
+
+  /**
+   * <p>Get list of columns from underlying table of this DBPersist</p>
+   * Table and audit class values are replaced with to ones from source object
+   * @param oSource Source Object
+   * @since 7.0
+   */
+  public LinkedList<Column> columns() {
+  	return getTable().getColumns();
   }
 
   /**
@@ -720,6 +733,25 @@ public class DBPersist implements Map,Serializable {
   } // getDate
 
   /**
+   * <p>Get value for a DATETIME field<p>
+   * @param sKey Field Name
+   * @param dtDefault Date default value
+   * @return Date value or default value.
+   * @throws ClassCastException if sKey field is not of type DATETIME
+   * @since 7.0
+   */
+  public java.util.Date getDate(String sKey, java.util.Date dtDefault) {
+    java.util.Date dtRetVal;
+    if (containsKey(sKey)) {
+      dtRetVal = dtDefault;
+    } else {
+      dtRetVal = getDate(sKey);
+      if (null==dtRetVal) dtRetVal = dtDefault;
+    }
+    return dtRetVal;
+  }
+
+  /**
    * <p>Get DATE formated as ccyy-MM-dd<p>
    * @param sKey Field Name
    * @throws ClassCastException if sKey field is not of type DATE
@@ -953,12 +985,26 @@ public class DBPersist implements Map,Serializable {
   }
 
   /**
-   * Get base table name
-   * @return Name of base table for this DBPersist
+   * Get value of primary key field for this DBPersist record
+   * @return Value contained at primary key field
+   * @since 7.0
    */
+  public String getPrimaryKey() {
+  	Object oPkValue = get((String) getTable().getPrimaryKey().getFirst());
+  	if (oPkValue==null)
+  	  return null;
+  	else
+  	  return oPkValue.toString();
+  }
 
-  public String getTableName() {
-    return sTable;
+  /**
+   * Set value of primary key field for this DBPersist record
+   * @return Value contained at primary key field
+   * @since 7.0
+   */
+  public void setPrimaryKey(String sValue) throws NullPointerException {
+  	if (null==sValue) throw new NullPointerException("DBPersist.setPrimaryKey() Value of primary key may not be null");
+  	put((String) getTable().getPrimaryKey().getFirst(), sValue);
   }
 
   /**
@@ -969,7 +1015,7 @@ public class DBPersist implements Map,Serializable {
 
   public DBTable getTable() {
     if (null==oTable) {
-      oTable = DBBind.getTable(sTable);
+      oTable = DBBind.getTable(getTableName());
     }
     return oTable;
   } // getTable()
@@ -994,9 +1040,9 @@ public class DBPersist implements Map,Serializable {
 
       if (null==oPool) {
         if (oConn.getDataBaseProduct()==JDCConnection.DBMS_POSTGRESQL)
-          oTable = new DBTable(oConn.getCatalog(), null, sTable, 1);
+          oTable = new DBTable(oConn.getCatalog(), null, getTableName(), 1);
         else
-          oTable = new DBTable(oConn.getCatalog(), oConn.getSchemaName(), sTable, 1);
+          oTable = new DBTable(oConn.getCatalog(), oConn.getSchemaName(), getTableName(), 1);
 
         oTable.readColumns(oConn, oConn.getMetaData());
       }
@@ -1006,7 +1052,7 @@ public class DBPersist implements Map,Serializable {
         if (null==oBind)
           throw new IllegalStateException("Connection Pool for " + sAuditCls + " is not binded to the database.");
         else
-         oTable = oBind.getDBTable(sTable);
+         oTable = oBind.getDBTable(getTableName());
       }
     }
     return oTable;
@@ -1038,7 +1084,7 @@ public class DBPersist implements Map,Serializable {
   public boolean load(JDCConnection oConn, Object[] PKVals) throws SQLException {
     if (oTable==null) {
       oTable = getTable(oConn);
-      if (null==oTable) throw new SQLException("Table not found "+sTable,"42S02", 42002);
+      if (null==oTable) throw new SQLException("Table not found "+getTableName(),"42S02", 42002);
       return oTable.loadRegister(oConn, PKVals, AllVals);
     } else
       return oTable.loadRegister(oConn, PKVals, AllVals);
@@ -1056,7 +1102,7 @@ public class DBPersist implements Map,Serializable {
   public boolean load(JDCConnection oConn, String sKey) throws SQLException {
     if (oTable==null) {
       oTable = getTable(oConn);
-      if (null==oTable) throw new SQLException("Table not found "+sTable,"42S02", 42002);
+      if (null==oTable) throw new SQLException("Table not found "+getTableName(),"42S02", 42002);
       return oTable.loadRegister(oConn, new Object[]{sKey}, AllVals);
     } else
       return oTable.loadRegister(oConn, new Object[]{sKey}, AllVals);
@@ -1193,7 +1239,13 @@ public class DBPersist implements Map,Serializable {
                 ByteArrayOutputStream oBOut = new ByteArrayOutputStream();
 			    ObjectOutputStream oOOut = new ObjectOutputStream(oBOut);
 			    oOOut.writeObject(oObj);
-			    put(sKey, oBOut.toByteArray());
+			    byte[] aBytes = oBOut.toByteArray();
+			    if (aBytes!=null) {
+    			  if (!bHasLongVarBinaryData) LongVarBinaryValsLen = new HashMap();
+    			  LongVarBinaryValsLen.put(sKey, new Long(aBytes.length));
+    			  AllVals.put(sKey, aBytes);
+    			  bHasLongVarBinaryData = true;
+			    }
 			    oOOut.close();
 			    oBOut.close();              
 	      	  } catch (IOException neverthrown) { }
@@ -1209,6 +1261,17 @@ public class DBPersist implements Map,Serializable {
       }
 	}
     return oPrevious;
+  }
+
+  /**
+   * <p>Set value at internal collection</p>
+   * @param sKey Field Name
+   * @param iVal Field Value
+   * @since 7.0
+   */
+
+  public void put(String sKey, byte byVal) {
+    AllVals.put(sKey, new Byte(byVal));
   }
 
   /**
@@ -1761,7 +1824,7 @@ public class DBPersist implements Map,Serializable {
       try {
         if (oTable==null) {
           oTable = getTable(oConn);
-          if (null==oTable) throw new SQLException("Table not found "+sTable,"42S02", 42002);
+          if (null==oTable) throw new SQLException("Table not found "+getTableName(),"42S02", 42002);
           bRetVal = oTable.storeRegisterLong(oConn, AllVals, LongVarBinaryValsLen);
         } else
           bRetVal = oTable.storeRegisterLong(oConn, AllVals, LongVarBinaryValsLen);
@@ -1777,7 +1840,7 @@ public class DBPersist implements Map,Serializable {
     else
       if (oTable==null) {
         oTable = getTable(oConn);
-        if (null==oTable) throw new SQLException("Table not found "+sTable,"42S02", 42002);
+        if (null==oTable) throw new SQLException("Table not found "+getTableName(),"42S02", 42002);
         bRetVal = oTable.storeRegister(oConn, AllVals);
       } else
         bRetVal = oTable.storeRegister(oConn, AllVals);
@@ -1799,7 +1862,7 @@ public class DBPersist implements Map,Serializable {
 
     if (null==oTable) {
       oTable = getTable(oConn);
-      if (null==oTable) throw new SQLException("Table not found "+sTable,"42S02", 42002);
+      if (null==oTable) throw new SQLException("Table not found "+getTableName(),"42S02", 42002);
       bRetVal = oTable.deleteRegister(oConn, AllVals);
     } else
       bRetVal = oTable.deleteRegister(oConn, AllVals);
@@ -1818,7 +1881,7 @@ public class DBPersist implements Map,Serializable {
   public boolean exists(JDCConnection oConn) throws SQLException {
     if (null==oTable) {
       oTable = getTable(oConn);
-      if (null==oTable) throw new SQLException("Table not found "+sTable,"42S02", 42002);
+      if (null==oTable) throw new SQLException("Table not found "+getTableName(),"42S02", 42002);
       return oTable.existsRegister(oConn, AllVals);
     } else
       return oTable.existsRegister(oConn, AllVals);
@@ -2109,7 +2172,6 @@ public class DBPersist implements Map,Serializable {
   private boolean bHasLongVarBinaryData;
   private HashMap LongVarBinaryValsLen;
   private DBTable oTable;
-  private String sTable;
 
   // ----------------------------------------------------------
 

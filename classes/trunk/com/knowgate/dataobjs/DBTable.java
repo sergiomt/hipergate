@@ -58,10 +58,12 @@ import java.util.ListIterator;
 import com.knowgate.debug.*;
 import com.knowgate.jdc.*;
 
+import com.knowgate.storage.Column;
+
 /**
  * <p>A database table as a Java Object</p>
  * @author Sergio Montoro Ten
- * @version 6.0
+ * @version 7.0
  */
 
 public class DBTable {
@@ -818,7 +820,7 @@ public class DBTable {
    * @return List of {@link DBColumn} objects composing this table.
    */
 
-  public LinkedList<DBColumn> getColumns() {
+  public LinkedList<Column> getColumns() {
     return oColumns;
   }
 
@@ -994,7 +996,7 @@ public class DBTable {
       String sSetAllCols = "";
       String sSetNoPKCols = "";
 
-      oColumns = new LinkedList<DBColumn>();
+      oColumns = new LinkedList<Column>();
 	  oIndexes = new LinkedList<DBIndex>();
       oPrimaryKeys = new LinkedList<String>();
 
@@ -1269,7 +1271,7 @@ public class DBTable {
   private String sSchema;
   private String sName;
   private int iHashCode;
-  private LinkedList<DBColumn> oColumns;
+  private LinkedList<Column> oColumns;
   private LinkedList<DBIndex> oIndexes;
   private LinkedList<String> oPrimaryKeys;
 

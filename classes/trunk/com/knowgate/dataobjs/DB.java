@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2003-2010  Know Gate S.L. All rights reserved.
+  Copyright (C) 2003-2011  Know Gate S.L. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -90,6 +90,7 @@ public final class DB {
   public static final String k_users = "k_users";
   public static final String k_user_mail = "k_user_mail";
   public static final String k_user_pwd = "k_user_pwd";
+  public static final String k_user_accounts = "k_user_accounts";
   public static final String k_apps = "k_apps";
   public static final String k_workareas = "k_workareas";
   public static final String k_x_app_workarea = "k_x_app_workarea";
@@ -203,7 +204,11 @@ public final class DB {
   public static final String k_activity_attachs = "k_activity_attachs";
   public static final String k_syndfeeds = "k_syndfeeds";
   public static final String k_syndentries = "k_syndentries";
-
+  public static final String k_syndreferers = "k_syndreferers";
+  public static final String k_syndsearches = "k_syndsearches";
+  public static final String k_syndsearch_run = "k_syndsearch_run";
+  public static final String k_syndsearch_request = "k_syndsearch_request";
+  	
   public static final String k_microsites = "k_microsites";
   public static final String k_pagesets = "k_pagesets";
   public static final String k_pagesets_lookup = "k_pagesets_lookup";
@@ -1257,6 +1262,14 @@ public final class DB {
   public static final String id_drop_cause = "id_drop_cause";
   /**fin i2e**/
 
+  // k_syndsearches
+  public static final String tx_sought = "tx_sought";
+  public static final String dt_run = "dt_run";
+  public static final String dt_last_run = "dt_last_run";
+  public static final String nu_runs = "nu_runs";
+  public static final String nu_requests = "nu_requests";
+  public static final String nu_results = "nu_results";
+
   // k_syndentries
   public static final String nu_influence = "nu_influence";
   public static final String gu_feed = "gu_feed";
@@ -1265,6 +1278,9 @@ public final class DB {
   public static final String tl_entry = "tl_entry";
   public static final String de_entry = "de_entry";
   public static final String bin_entry = "bin_entry";
-  
+  public static final String url_domain = "url_domain";
+  public static final String url_author = "url_author";
+  public static final String nu_entries = "nu_entries";
+  public static final String id_syndref = "id_syndref";
   
 }
