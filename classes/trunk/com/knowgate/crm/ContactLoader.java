@@ -915,7 +915,7 @@ public final class ContactLoader implements ImportLoader {
     if (test(iFlags,WRITE_LOOKUPS)) {
       addLookUp("k_addresses_lookup", "tp_location", getColNull(tp_location), oConn, oAddrLook, oAddrLocsMap);
       addLookUp("k_addresses_lookup", "tp_street", getColNull(tp_street), oConn, oAddrLook, oAddrTypesMap);
-      addLookUp("k_addresses_lookup", "tx_salutation", getColNull(tp_street), oConn, oAddrLook, oAddrSalutMap);
+      addLookUp("k_addresses_lookup", "tx_salutation", getColNull(tx_salutation), oConn, oAddrLook, oAddrSalutMap);
     } // if (test(WRITE_LOOKUPS))
 
     iAffected = 0;

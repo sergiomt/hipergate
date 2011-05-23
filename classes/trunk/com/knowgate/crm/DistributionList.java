@@ -54,7 +54,7 @@ import com.knowgate.hipergate.QueryByForm;
 /**
  * <p>Distribution List</p>
  * @author Sergio Montoro Ten
- * @version 6.0
+ * @version 7.0
  */
 public class DistributionList extends DBPersist {
 
@@ -133,11 +133,16 @@ public class DistributionList extends DBPersist {
     int iCount;
 
     String sBlackList = blackList(oConn);
-
+	 
     if (getShort(DB.tp_list)==TYPE_DYNAMIC) {
-      sTableName = DB.k_member_address;
+	  String sQrySpec = DBCommand.queryStr(oConn, "SELECT "+DB.nm_queryspec+" FROM "+DB.k_queries+" WHERE "+DB.gu_query+"='"+getStringNull(DB.gu_query,"")+"'");
+	  if (null==sQrySpec) sQrySpec = "";
+      if (sQrySpec.equals("peticiones"))
+        sTableName = "v_oportunity_contact_address";
+      else
+        sTableName = DB.k_member_address;
 
-      QueryByForm oQBF = new QueryByForm(oConn, DB.k_member_address, "m", getString(DB.gu_query));
+      QueryByForm oQBF = new QueryByForm(oConn, sTableName, "m", getStringNull(DB.gu_query,""));
 
       sWhere = "m." + DB.gu_workarea + "='" + getString(DB.gu_workarea) + "' AND ";
       sWhere+= "(" + oQBF.composeSQL() + ") AND ";
@@ -207,11 +212,16 @@ public class DistributionList extends DBPersist {
     ResultSet oRSet;
 
     String sBlackList = blackList(oConn);
+	String sQrySpec = DBCommand.queryStr(oConn, "SELECT "+DB.nm_queryspec+" FROM "+DB.k_queries+" WHERE "+DB.gu_query+"='"+getStringNull(DB.gu_query,"")+"'");
+	if (null==sQrySpec) sQrySpec = "";
 
     if (getShort(DB.tp_list)==TYPE_DYNAMIC) {
-      sTableName = DB.k_member_address;
+      if (sQrySpec.equals("peticiones"))
+        sTableName = "v_oportunity_contact_address";
+      else
+        sTableName = DB.k_member_address;
 
-      QueryByForm oQBF = new QueryByForm(oConn, DB.k_member_address, "m", getString(DB.gu_query));
+      QueryByForm oQBF = new QueryByForm(oConn, sTableName, "m", getStringNull(DB.gu_query,""));
 
       sWhere = "m." + DB.gu_workarea + "='" + getString(DB.gu_workarea) + "' AND ";
       sWhere+= "(" + oQBF.composeSQL() + ") AND ";
@@ -287,10 +297,16 @@ public class DistributionList extends DBPersist {
 
     String sBlackList = blackList(oConn);
 
-    if (getShort(DB.tp_list)==TYPE_DYNAMIC) {
-      sTableName = DB.k_member_address;
+	String sQrySpec = DBCommand.queryStr(oConn, "SELECT "+DB.nm_queryspec+" FROM "+DB.k_queries+" WHERE "+DB.gu_query+"='"+getStringNull(DB.gu_query,"")+"'");
+	if (null==sQrySpec) sQrySpec = "";
 
-      QueryByForm oQBF = new QueryByForm(oConn, DB.k_member_address, "m", getString(DB.gu_query));
+    if (getShort(DB.tp_list)==TYPE_DYNAMIC) {
+      if (sQrySpec.equals("peticiones"))
+        sTableName = "v_oportunity_contact_address";
+      else
+        sTableName = DB.k_member_address;
+
+      QueryByForm oQBF = new QueryByForm(oConn, sTableName, "m", getStringNull(DB.gu_query,""));
 
       sWhere = "m." + DB.gu_workarea + "='" + getString(DB.gu_workarea) + "' AND ";
       sWhere+= "(" + oQBF.composeSQL() + ") AND " + DB.gu_contact + " IS NOT NULL AND ";
@@ -368,10 +384,16 @@ public class DistributionList extends DBPersist {
     Statement oStmt;
     ResultSet oRSet;
 
-    if (getShort(DB.tp_list)==TYPE_DYNAMIC) {
-      sTableName = DB.k_member_address;
+	String sQrySpec = DBCommand.queryStr(oConn, "SELECT "+DB.nm_queryspec+" FROM "+DB.k_queries+" WHERE "+DB.gu_query+"='"+getStringNull(DB.gu_query,"")+"'");
+	if (null==sQrySpec) sQrySpec = "";
 
-      QueryByForm oQBF = new QueryByForm(oConn, DB.k_member_address, "m", getString(DB.gu_query));
+    if (getShort(DB.tp_list)==TYPE_DYNAMIC) {
+      if (sQrySpec.equals("peticiones"))
+        sTableName = "v_oportunity_contact_address";
+      else
+        sTableName = DB.k_member_address;
+
+      QueryByForm oQBF = new QueryByForm(oConn, sTableName, "m", getStringNull(DB.gu_query,""));
 
       sWhere = "m." + DB.gu_workarea + "='" + getString(DB.gu_workarea) + "' AND ";
       sWhere+= "(" + oQBF.composeSQL() + ") AND " + DB.gu_company + " IS NOT NULL AND ";
@@ -439,6 +461,7 @@ public class DistributionList extends DBPersist {
     PreparedStatement oStmt;
     ResultSet oRSet;
     QueryByForm oQBF;
+	String sTableName;
 
     if (DebugFile.trace) {
       DebugFile.writeln("Begin DistributionList.contains([Connection], " + sMember + ")");
@@ -448,12 +471,19 @@ public class DistributionList extends DBPersist {
     switch (getShort(DB.tp_list)) {
 
       case TYPE_DYNAMIC:
-        oQBF = new QueryByForm(oConn, DB.k_member_address, "ma", getString (DB.gu_query));
+		String sQrySpec = DBCommand.queryStr(oConn, "SELECT "+DB.nm_queryspec+" FROM "+DB.k_queries+" WHERE "+DB.gu_query+"='"+getStringNull(DB.gu_query,"")+"'");
+	    if (null==sQrySpec) sQrySpec = "";
+        if (sQrySpec.equals("peticiones"))
+          sTableName = "v_oportunity_contact_address";
+        else
+          sTableName = DB.k_member_address;
+
+        oQBF = new QueryByForm(oConn, sTableName, "ma", getString (DB.gu_query));
 
         if (DebugFile.trace)
-          DebugFile.writeln("Connection.prepareStatement(SELECT NULL FROM " + DB.k_member_address + " ma WHERE ma." + DB.gu_workarea + "=? AND (ma." + DB.gu_contact + "='" + sMember + "' OR ma." + DB.gu_company + "='" + sMember + "') AND (" + oQBF.composeSQL() + "))");
+          DebugFile.writeln("Connection.prepareStatement(SELECT NULL FROM " + sTableName + " ma WHERE ma." + DB.gu_workarea + "=? AND (ma." + DB.gu_contact + "='" + sMember + "' OR ma." + DB.gu_company + "='" + sMember + "') AND (" + oQBF.composeSQL() + "))");
 
-        oStmt = oConn.prepareStatement("SELECT NULL FROM " + DB.k_member_address + " ma WHERE ma." + DB.gu_workarea + "=? AND (ma." + DB.gu_contact + "=? OR ma." + DB.gu_company + "=?) AND (" + oQBF.composeSQL() + ")", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+        oStmt = oConn.prepareStatement("SELECT NULL FROM " + sTableName + " ma WHERE ma." + DB.gu_workarea + "=? AND (ma." + DB.gu_contact + "=? OR ma." + DB.gu_company + "=?) AND (" + oQBF.composeSQL() + ")", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
         oStmt.setString(1, getString(DB.gu_workarea));
         oStmt.setString(2, sMember);
@@ -706,6 +736,7 @@ public class DistributionList extends DBPersist {
     Statement oInsrt;
     String sSQL;
     String  sColumnList;
+    String sTableName;
     DistributionList oAppendedList;
 
     if (DebugFile.trace) {
@@ -733,12 +764,20 @@ public class DistributionList extends DBPersist {
 
     if (oAppendedList.getShort(DB.tp_list)==TYPE_DYNAMIC) {
 
+	  String sQrySpec = DBCommand.queryStr(oConn, "SELECT "+DB.nm_queryspec+" FROM "+DB.k_queries+" WHERE "+DB.gu_query+"='"+oAppendedList.getStringNull(DB.gu_query,"")+"'");
+	  if (null==sQrySpec) sQrySpec = "";
+
+      if (sQrySpec.equals("peticiones"))
+        sTableName = "v_oportunity_contact_address";
+      else
+        sTableName = DB.k_member_address;
+
       // Componer la sentencia SQL de filtrado de datos a partir de la definición de la consulta almacenada en la tabla k_queries
-      QueryByForm oQBF = new QueryByForm(oConn, DB.k_member_address, "ma", oAppendedList.getString(DB.gu_query));
+      QueryByForm oQBF = new QueryByForm(oConn, sTableName, "ma", oAppendedList.getStringNull(DB.gu_query,""));
       sColumnList = DB.mov_phone + "," + DB.tx_email + "," + DB.tx_name + "," + DB.tx_surname + "," + DB.tx_salutation + "," + DB.gu_company + "," + DB.gu_contact;
 
       sSQL = "INSERT INTO " + DB.k_x_list_members + " ("+DB.gu_list+"," + sColumnList + ") " +
-             "SELECT '" + getString(DB.gu_list) + "'," + sColumnList + " FROM " + DB.k_member_address  + " ma WHERE ma.gu_workarea='" + oAppendedList.getString(DB.gu_workarea) + "' AND (" + oQBF.composeSQL() + ") AND " +
+             "SELECT '" + getString(DB.gu_list) + "'," + sColumnList + " FROM " + sTableName  + " ma WHERE ma.gu_workarea='" + oAppendedList.getString(DB.gu_workarea) + "' AND (" + oQBF.composeSQL() + ") AND " +
              "ma." + DB.tx_email + " NOT IN (SELECT " + DB.tx_email + " FROM " + DB.k_x_list_members + " WHERE " + DB.gu_list + "='" + getString(DB.gu_list) + "')";
     }
 
@@ -780,6 +819,7 @@ public class DistributionList extends DBPersist {
     ResultSet oRSet;
     String sSQL;
     String  sColumnList;
+    String sTableName;
     DistributionList oAppendedList;
 
     if (DebugFile.trace) {
@@ -818,12 +858,24 @@ public class DistributionList extends DBPersist {
     try { if (oConn.getDataBaseProduct()!=JDCConnection.DBMS_POSTGRESQL) oInsrt.setQueryTimeout(60); }  catch (SQLException sqle) { /* ignore */}
 
     if (oAppendedList.getShort(DB.tp_list)==TYPE_DYNAMIC) {
-      QueryByForm oQBF = new QueryByForm(oConn, DB.k_member_address, "b", oAppendedList.getString(DB.gu_query));
 
-      sSQL = "SELECT b." + DB.tx_name + ",b." + DB.tx_surname + ",b." + DB.tx_salutation + ",1,b." + DB.gu_company + ",b." + DB.gu_contact + ",'TXT', a." + DB.tx_email + " FROM " + DB.k_x_list_members + " a, " + DB.k_member_address + " b WHERE a." + DB.gu_list + "='" + getString(DB.gu_list) + "' AND b." + DB.gu_workarea + "='" + oAppendedList.getString(DB.gu_workarea) + "' AND (" + oQBF.composeSQL() + ") AND a." + DB.tx_email + "=b." + DB.tx_email;
-    }
-    else
+	  String sQrySpec = DBCommand.queryStr(oConn, "SELECT "+DB.nm_queryspec+" FROM "+DB.k_queries+" WHERE "+DB.gu_query+"='"+oAppendedList.getStringNull(DB.gu_query,"")+"'");
+	  if (null==sQrySpec) sQrySpec = "";
+
+      if (sQrySpec.equals("peticiones"))
+        sTableName = "v_oportunity_contact_address";
+      else
+        sTableName = DB.k_member_address;
+
+      QueryByForm oQBF = new QueryByForm(oConn, sTableName, "b", oAppendedList.getStringNull(DB.gu_query,""));
+
+      sSQL = "SELECT b." + DB.tx_name + ",b." + DB.tx_surname + ",b." + DB.tx_salutation + ",1,b." + DB.gu_company + ",b." + DB.gu_contact + ",'TXT', a." + DB.tx_email + " FROM " + DB.k_x_list_members + " a, " + sTableName + " b WHERE a." + DB.gu_list + "='" + getString(DB.gu_list) + "' AND b." + DB.gu_workarea + "='" + oAppendedList.getString(DB.gu_workarea) + "' AND (" + oQBF.composeSQL() + ") AND a." + DB.tx_email + "=b." + DB.tx_email;
+
+    } else {
+
       sSQL = "SELECT b." + DB.tx_name + ",b." + DB.tx_surname + ",b." + DB.tx_salutation + ",b." + DB.bo_active + ",b." + DB.gu_company + ",b." + DB.gu_contact + ",b." + DB.id_format + ", a." + DB.tx_email + " FROM " + DB.k_x_list_members + " a, " + DB.k_x_list_members + " b WHERE a." + DB.gu_list + "='" + getString(DB.gu_list) + "' AND b." + DB.gu_list + "='" + sListGUID + "' AND a." + DB.tx_email + "=b." + DB.tx_email;
+
+    }
 
     if (DebugFile.trace) DebugFile.writeln("Statement.executeQuery(" + sSQL + ")");
 
@@ -865,6 +917,7 @@ public class DistributionList extends DBPersist {
   public void substract(JDCConnection oConn, String sListGUID) throws SQLException,IllegalArgumentException,IllegalStateException,ClassCastException {
     String sSQL;
     Statement oDlte;
+    String sTableName;
     DistributionList oAppendedList;
 
     if (DebugFile.trace) {
@@ -889,9 +942,17 @@ public class DistributionList extends DBPersist {
 
     else if (oAppendedList.getShort(DB.tp_list)==TYPE_DYNAMIC) {
 
-      QueryByForm oQBF = new QueryByForm(oConn, DB.k_member_address, "ma", oAppendedList.getString(DB.gu_query));
+	  String sQrySpec = DBCommand.queryStr(oConn, "SELECT "+DB.nm_queryspec+" FROM "+DB.k_queries+" WHERE "+DB.gu_query+"='"+oAppendedList.getStringNull(DB.gu_query,"")+"'");
+	  if (null==sQrySpec) sQrySpec = "";
 
-      sSQL = "DELETE FROM " + DB.k_x_list_members + " WHERE " + DB.gu_list + "='" + getString(DB.gu_list) + "' AND " + DB.tx_email + " IN (SELECT " + DB.tx_email + " FROM " + DB.k_member_address + " ma WHERE ma." + DB.gu_workarea + "='" + oAppendedList.getString(DB.gu_workarea) + "' AND (" + oQBF.composeSQL() + "))";
+      if (sQrySpec.equals("peticiones"))
+        sTableName = "v_oportunity_contact_address";
+      else
+        sTableName = DB.k_member_address;
+
+      QueryByForm oQBF = new QueryByForm(oConn, sTableName, "ma", oAppendedList.getStringNull(DB.gu_query,""));
+
+      sSQL = "DELETE FROM " + DB.k_x_list_members + " WHERE " + DB.gu_list + "='" + getString(DB.gu_list) + "' AND " + DB.tx_email + " IN (SELECT " + DB.tx_email + " FROM " + sTableName + " ma WHERE ma." + DB.gu_workarea + "='" + oAppendedList.getString(DB.gu_workarea) + "' AND (" + oQBF.composeSQL() + "))";
     }
 
     else
@@ -1063,15 +1124,21 @@ public class DistributionList extends DBPersist {
     sColumnList = "m." + DB.tx_email + ",m." + DB.tx_name + ",m." + DB.tx_surname + ",m." + DB.tx_salutation + ",m." + DB.bo_active + ",m." + DB.gu_company + ",m." + DB.gu_contact + ",m." + DB.dt_modified;
 
     if (getShort(DB.tp_list)==TYPE_DYNAMIC) {
-      sTableName = DB.k_member_address;
+	  String sQrySpec = DBCommand.queryStr(oConn, "SELECT "+DB.nm_queryspec+" FROM "+DB.k_queries+" WHERE "+DB.gu_query+"='"+getStringNull(DB.gu_query,"")+"'");
+	  if (null==sQrySpec) sQrySpec = "";
 
-      QueryByForm oQBF = new QueryByForm(oConn, DB.k_member_address, "m", getString(DB.gu_query));
+      if (sQrySpec.equals("peticiones"))
+        sTableName = "v_oportunity_contact_address";
+      else
+        sTableName = DB.k_member_address;
+
+      QueryByForm oQBF = new QueryByForm(oConn, sTableName, "m", getStringNull(DB.gu_query,""));
 
       sWhere = "m." + DB.gu_workarea + "='" + getString(DB.gu_workarea) + "' AND (" + oQBF.composeSQL() + ")";
 
       oQBF = null;
-    }
-    else {
+
+    } else {
       sTableName = DB.k_x_list_members;
       sWhere = "m." + DB.gu_list + "='" + getString(DB.gu_list) + "'";
     }
