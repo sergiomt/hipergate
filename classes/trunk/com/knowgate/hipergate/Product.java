@@ -999,16 +999,16 @@ public class Product extends DBPersist {
       
       oQury = oConn.prepareStatement("SELECT "+DB.gu_shop+" FROM "+DB.k_shops+" WHERE "+DB.id_domain+"="+sIdDomain+" AND "+DB.gu_root_cat+"=?",
                                      ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-      ListIterator oIter = new Category (oConn, oCats.getString(0,0)).browse(oConn, Category.BROWSE_UP, Category.BROWSE_TOPDOWN).listIterator();
-      while (oIter.hasNext() && (null==sGuShop)) {
-      	Category oPrnt = (Category) oIter.next();
-		if (DebugFile.trace) DebugFile.writeln("Statement.executeQuery(SELECT "+DB.gu_shop+" FROM "+DB.k_shops+" WHERE "+DB.id_domain+"="+sIdDomain+" AND "+DB.gu_root_cat+"='"+oPrnt.getStringNull(DB.gu_category,"null")+"'");
-		oQury.setString(1, oPrnt.getString(DB.gu_category));
-		oRSet = oQury.executeQuery();
-		if (oRSet.next())
-		  sGuShop = oRSet.getString(1);
-		oRSet.close();
-      } // wend
+      for (int c=0; c<oCats.getRowCount() && sGuShop==null; c++) {
+        for (Category oPrnt : new Category (oConn, oCats.getString(0,c)).browse(oConn, Category.BROWSE_UP, Category.BROWSE_TOPDOWN)) {
+		  if (DebugFile.trace) DebugFile.writeln("Statement.executeQuery(SELECT "+DB.gu_shop+" FROM "+DB.k_shops+" WHERE "+DB.id_domain+"="+sIdDomain+" AND "+DB.gu_root_cat+"='"+oPrnt.getStringNull(DB.gu_category,"null")+"'");
+		  oQury.setString(1, oPrnt.getString(DB.gu_category));
+		  oRSet = oQury.executeQuery();
+		  if (oRSet.next()) sGuShop = oRSet.getString(1);
+		  oRSet.close();
+		  if (sGuShop!=null) break;
+        } // next
+      } // next
       oQury.close();
     }
 

@@ -64,13 +64,14 @@ import com.knowgate.crm.DistributionList;
 /**
  * <p>Query By Form XML parser and SQL composer.</p>
  * @author Sergio Montoro Ten
- * @version 3.0
+ * @version 7.0
  */
 
 public class QueryByForm extends DBPersist {
 
   private DBTable oBaseTable;
   String sAlias;
+  int iDBMS;
   DOMDocument oXMLDoc;
 
 
@@ -88,6 +89,7 @@ public class QueryByForm extends DBPersist {
     throws ClassNotFoundException, IllegalAccessException, Exception {
     super(DB.k_queries, "QueryByForm");
     parseURI(sQBFURI);
+    iDBMS = JDCConnection.DBMS_GENERIC;
   }
 
   // ----------------------------------------------------------
@@ -107,6 +109,7 @@ public class QueryByForm extends DBPersist {
            UnsupportedEncodingException, Exception {
     super(DB.k_queries, "QueryByForm");
     parseURI(sQBFURI, sEncoding);
+    iDBMS = JDCConnection.DBMS_GENERIC;
   }
 
   /**
@@ -119,8 +122,21 @@ public class QueryByForm extends DBPersist {
    */
   public QueryByForm(JDCConnection oConn, String sBaseTable, String sTableAlias, String sQueryGUID) throws SQLException {
     super(DB.k_queries, "QueryByForm");
-
-    oBaseTable = new DBTable(oConn.getCatalog(), "dbo", sBaseTable, 1);
+	String sSchema;
+	
+	iDBMS = oConn.getDataBaseProduct();
+	switch (iDBMS) {
+	  case JDCConnection.DBMS_POSTGRESQL:
+	  	sSchema = "public";
+	  	break;
+	  case JDCConnection.DBMS_MSSQL:
+	  	sSchema = "dbo";
+	  	break;
+	  default:
+	  	sSchema = "";
+	}
+	
+    oBaseTable = new DBTable(oConn.getCatalog(), sSchema, sBaseTable, 1);
     oBaseTable.readColumns(oConn, oConn.getMetaData());
     sAlias = sTableAlias;
 
@@ -475,12 +491,14 @@ public class QueryByForm extends DBPersist {
     short type;
     DBColumn col;
 
-    col = oBaseTable.getColumnByName(fld.toLowerCase());
-
-    if (null==col)
-      throw new NullPointerException("Cannot find column " + fld + " on " + oBaseTable.getName());
-
-    type = col.getSqlType();
+    if (fld.equalsIgnoreCase(DB.dt_created)) {
+      type = Types.TIMESTAMP;
+    } else {
+      col = oBaseTable.getColumnByName(fld.toLowerCase());
+      if (null==col)
+        throw new NullPointerException("Cannot find column " + fld + " on " + oBaseTable.getName());
+      type = col.getSqlType();
+    }
 
     if (type==Types.VARCHAR || type==Types.CHAR || type==Types.LONGVARCHAR || type==Types.CLOB) {
       if (opr.equals("S"))
@@ -495,7 +513,19 @@ public class QueryByForm extends DBPersist {
         ret = sAlias + "." + fld + " " + opr + " '" + vle + "' ";
     }
     else if (type==Types.DATE || type==Types.TIMESTAMP) {
-      ret = sAlias + "." + fld + opr + "{ d '" + vle + "'}" + " ";
+      switch (iDBMS) {
+        case JDCConnection.DBMS_MYSQL:
+          ret = sAlias + "." + fld + opr + "CAST('" + vle + "' AS DATE) ";
+		  break;
+        case JDCConnection.DBMS_ORACLE:
+          ret = sAlias + "." + fld + opr + "TO_DATE('" + vle + "','YYYY-MM-DD') ";
+		  break;
+        case JDCConnection.DBMS_POSTGRESQL:
+          ret = sAlias + "." + fld + opr + "TIMESTAMP '" + vle + "' ";
+		  break;
+		default:
+          ret = sAlias + "." + fld + opr + "{ d '" + vle + "'} ";
+      }
     }
     else {
       ret = sAlias + "." + fld + opr + vle + " ";

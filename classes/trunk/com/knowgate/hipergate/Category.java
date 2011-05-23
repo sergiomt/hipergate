@@ -43,6 +43,7 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
+import java.sql.Types;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -195,8 +196,39 @@ public class Category  extends DBPersist {
           int nCols = oMDat.getColumnCount();                    
           oCatg = new Category();
           for (int c=1; c<=nCols; c++) {
-            oCatg.put(oMDat.getColumnName(c).toLowerCase(), oRSet.getObject(c));
-          }          
+			switch (oMDat.getColumnType(c)) {
+			  case Types.CHAR:
+			  case Types.NCHAR:
+			  case Types.VARCHAR:
+			  case Types.NVARCHAR:
+			  case Types.LONGVARCHAR:
+			  	oCatg.put(oMDat.getColumnName(c).toLowerCase(), oRSet.getString(c));
+			  	break;
+			  case Types.DATE:
+			  case Types.TIMESTAMP:
+			  	oCatg.put(oMDat.getColumnName(c).toLowerCase(), oRSet.getDate(c));
+			  	break;
+			  case Types.SMALLINT:			  	
+			  	oCatg.put(oMDat.getColumnName(c).toLowerCase(), oRSet.getShort(c));
+			  	break;
+			  case Types.INTEGER:			  	
+			  	oCatg.put(oMDat.getColumnName(c).toLowerCase(), oRSet.getInt(c));
+			  	break;
+			  case Types.NUMERIC:
+			  case Types.DECIMAL:
+			  	oCatg.put(oMDat.getColumnName(c).toLowerCase(), oRSet.getBigDecimal(c));
+			  	break;
+			  case Types.REAL:			  	
+			  case Types.FLOAT:			  	
+			  	oCatg.put(oMDat.getColumnName(c).toLowerCase(), oRSet.getFloat(c));
+			  	break;
+			  case Types.DOUBLE:			  	
+			  	oCatg.put(oMDat.getColumnName(c).toLowerCase(), oRSet.getDouble(c));
+			  	break;
+			  default:
+			  	oCatg.put(oMDat.getColumnName(c).toLowerCase(), oRSet.getObject(c));
+			} // end switch
+          } // next
           oRSet.close();          
 
           if (iDirection==Category.BROWSE_UP)

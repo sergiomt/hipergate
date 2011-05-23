@@ -314,10 +314,11 @@ public class Term extends DBPersist {
 
       iChilds = oChilds.load(oConn);
 
-      Term oChld;
+      Term oChld = new Term();
 
       for (int t=0; t<iChilds; t++) {
         oChld = new Term();
+        Object oTbl = oChld.getTable(oConn); // Do not remove this line
 
         for (int c=0; c<iCols; c++)
           oChld.put(aColArray[c], oChilds.get(c, t));
