@@ -62,7 +62,9 @@ import java.util.Properties;
 import java.util.Enumeration;
 
 import com.knowgate.misc.Gadgets;
+
 import com.knowgate.debug.DebugFile;
+import com.knowgate.debug.StackTraceUtil;
 
 import com.knowgate.berkeleydb.DBEnvironment;
 
@@ -89,22 +91,13 @@ public class RecordQueueProducer {
     oCtx = null;
     oCnf = null;
     oQue = null;  
-    oRql = new RecordQueueListener(Engine.DEFAULT, MetaData.getDefaultSchema().getSchemaName(), null);
-  }
-
-  public RecordQueueProducer(Properties oProps)
-  	throws NamingException,JMSException {
-  	this(oProps.getProperty("jmsconnectionfactory"),
-  		 oProps.getProperty("jmsqueue"),
-  		 oProps.getProperty("jmsprovider"),
-  		 oProps.getProperty("jmsuser"),
-  		 oProps.getProperty("jmspassword"));
+    oRql = new RecordQueueListener(Engine.DEFAULT, "extranet", null);
   }
   
   public RecordQueueProducer(String sConnectionFactoryName, String sQueueName,
   							 String sDirectory, String sUserId,
   							 String sPassword)
-  	throws NamingException,JMSException {
+  	throws NamingException,JMSException,StorageException,InstantiationException {
   	sLoginId = sUserId;
   	sAuthStr = sPassword;
     oEnv = new Hashtable();
@@ -115,7 +108,23 @@ public class RecordQueueProducer {
       oCnf = (ConnectionFactory) oCtx.lookup(sConnectionFactoryName);	
       oQue = (Queue) oCtx.lookup(sQueueName);
       oRql = null;
-    } // fi
+    } else {
+      oRql = new RecordQueueListener(Engine.DEFAULT, "extranet", null);
+    }
+  }
+
+  public RecordQueueProducer(String sProfileName)
+  	throws NamingException,JMSException,StorageException,InstantiationException {
+    oRql = new RecordQueueListener(Engine.DEFAULT, sProfileName, null);
+  }
+
+  public RecordQueueProducer(Properties oProps)
+  	throws NamingException,JMSException,StorageException,InstantiationException {
+  	this(oProps.getProperty("jmsconnectionfactory"),
+  		 oProps.getProperty("jmsqueue"),
+  		 oProps.getProperty("jmsprovider"),
+  		 oProps.getProperty("jmsuser"),
+  		 oProps.getProperty("jmspassword"));
   }
 
   protected void finalize() {
@@ -126,7 +135,7 @@ public class RecordQueueProducer {
     if (null!=oRql) oRql.close();	
   }
 
-  private void setProperties(Session oSes, ObjectMessage oMsg, Properties oProps)
+  private void setProperties(ObjectMessage oMsg, Properties oProps)
   	throws JMSException {
   	
   	if (DebugFile.trace) {
@@ -180,7 +189,11 @@ public class RecordQueueProducer {
 	
 	if (oQue==null) {
 
-	  // ObjectMessage oMsg = new ObjectMessage();
+	  ObjectMessageImpl oMsg = new ObjectMessageImpl();
+	  oMsg.setObject(oObj);
+	  oMsg.setIntProperty("command", iCommand);
+	  setProperties(oMsg,oProps);
+	  oRql.onMessage(oMsg);
   	  	
 	} else {
 
@@ -190,7 +203,7 @@ public class RecordQueueProducer {
 	    ObjectMessage oMsg = oSes.createObjectMessage(oObj);
 	    oMsg.setJMSDeliveryMode(DeliveryMode.PERSISTENT);
 	    oMsg.setIntProperty("command", iCommand);
-	    setProperties(oSes,oMsg,oProps);
+	    setProperties(oMsg,oProps);
 
 		if (oMsg.getBooleanProperty("synchronous")) {
 	      oQcn.start();

@@ -31,6 +31,9 @@
 
 package com.knowgate.storage;
 
+import java.io.IOException;
+import java.io.FileNotFoundException;
+
 import java.util.Date;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,17 +49,24 @@ public class DataSourcePool {
   public static DataSource get(Engine eEngine, String sProfileName, boolean bReadOnly)
   	throws StorageException,InstantiationException {
   	DataSource oRetDts;
-  	if (bReadOnly || eEngine==Engine.JDBCRDBMS) {
-  	  if (oReadOnly.empty()){
-  	    oRetDts = Factory.createDataSource(eEngine, sProfileName, true);
+
+	try {
+  	  if (bReadOnly || eEngine==Engine.JDBCRDBMS) {
+  	    if (oReadOnly.empty()){
+  	      oRetDts = Manager.createDataSource(eEngine, sProfileName, true);
+  	    } else {
+  	      oRetDts = oReadOnly.pop();
+  	    }
   	  } else {
-  	    oRetDts = oReadOnly.pop();
+  	    oRetDts = Manager.createDataSource(eEngine, sProfileName, false);
   	  }
-  	} else {
-  	  oRetDts = Factory.createDataSource(eEngine, sProfileName, false);
-  	}
-  	if (oLastUse.containsKey(oRetDts)) oLastUse.remove(oRetDts);
-	oLastUse.put(oRetDts, new Date());  
+  	  if (oLastUse.containsKey(oRetDts)) oLastUse.remove(oRetDts);
+	  oLastUse.put(oRetDts, new Date());  
+	} catch (FileNotFoundException fnf) {
+	  throw new StorageException(fnf.getMessage(), fnf);
+	} catch (IOException ioe) {
+	  throw new StorageException(ioe.getMessage(), ioe);
+	}
   	return oRetDts;
   } // get
    
@@ -69,6 +79,7 @@ public class DataSourcePool {
 	    if (oDts.isReadOnly()) {
 	      oReadOnly.push(oDts);
 	    } else {
+	      oLastUse.remove(oDts);
 	      oDts.close();
 	    }
   	  } if (oDts.getEngine()==Engine.JDBCRDBMS) {

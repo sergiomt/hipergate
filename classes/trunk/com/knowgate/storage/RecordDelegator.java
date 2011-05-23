@@ -45,7 +45,7 @@ import java.text.NumberFormat;
 import com.knowgate.storage.Table;
 import com.knowgate.storage.Column;
 import com.knowgate.storage.Record;
-import com.knowgate.storage.Factory;
+import com.knowgate.storage.DataSource;
 import com.knowgate.storage.StorageException;
 
 import com.knowgate.debug.DebugFile;
@@ -56,28 +56,30 @@ public class RecordDelegator implements Record {
 
 	private AbstractRecord impl;
 
-    public RecordDelegator(Engine eEngine, String sBaseTable, LinkedList<Column> oColumnsList)
-      throws InstantiationException {
+    public RecordDelegator(DataSource oDts, String sBaseTable)
+      throws NullPointerException,InstantiationException {
+
+      if (null==oDts) throw new NullPointerException("RecordDelegator DataSource may not be null");
+      if (null==sBaseTable) throw new NullPointerException("RecordDelegator table name may not be null");
+      if (sBaseTable.length()==0) throw new NullPointerException("RecordDelegator table name may not be an empty string");
       
-      if (DebugFile.trace) {
-  	    String sColNames = "";
-  	    for (Column c : oColumnsList) sColNames += " "+c.getName();
-      	DebugFile.writeln("Creating instance of "+eEngine+" for table "+sBaseTable+" with columns "+sColNames);
-      }
-      
-      switch (eEngine) {
+      switch (oDts.getEngine()) {
      	case BERKELYDB:
-          impl = new DBEntity (sBaseTable,oColumnsList);
+     	  try {
+            impl = new DBEntity (sBaseTable,oDts.getMetaData().getColumns(sBaseTable));
+     	  } catch (StorageException xcpt) {
+     	  	throw new InstantiationException("Could not instantiate DBEntity "+xcpt.getMessage());
+     	  }
           break;
      	case JDBCRDBMS:
           impl = new DBPersist (sBaseTable,sBaseTable);
           break;
         default:
-          throw new InstantiationException("RecordDelegator could not instantiate Record implementation for "+eEngine);
+          throw new InstantiationException("RecordDelegator could not instantiate Record implementation for "+oDts.getEngine());
       }
     }		
     
-	public LinkedList columns() {
+	public LinkedList<Column> columns() {
       return impl.columns();
 	}
 

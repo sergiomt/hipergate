@@ -31,6 +31,7 @@
 
 package com.knowgate.storage;
 
+import java.util.Map;
 import java.util.Properties;
 
 public interface DataSource {
@@ -42,6 +43,8 @@ public interface DataSource {
 	public boolean isReadOnly();
 
 	public boolean isClosed();
+
+	public SchemaMetaData getMetaData() throws StorageException;
 
 	public Table openTable(Record oRec) throws StorageException;
 

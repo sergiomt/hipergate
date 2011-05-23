@@ -92,7 +92,7 @@ public abstract class AbstractRecord extends HashMap implements Record {
   public void delete(Table oConn) throws StorageException {
   	oConn.delete(this);
   }
-  
+
   public boolean load(Table oConn, String sKey) throws StorageException {
   	Record oRec = oConn.load(sKey);
   	clear();

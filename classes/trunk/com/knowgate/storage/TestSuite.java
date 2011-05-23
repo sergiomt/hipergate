@@ -18,12 +18,15 @@ import com.knowgate.berkeleydb.DBEnvironment;
 import com.knowgate.clocial.*;
 
 import com.knowgate.berkeleydb.DBErrorLog;
+import com.knowgate.berkeleydb.DBEnvironment;
 
+import com.knowgate.storage.Manager;
 import com.knowgate.storage.RecordQueueProducer;
 import com.knowgate.storage.RecordQueueConsumer;
 
 import com.knowgate.syndication.FeedEntry;
 import com.knowgate.syndication.SyndSearch;
+import com.knowgate.syndication.crawler.SearchDaemon;
 import com.knowgate.syndication.crawler.SearchRunner;
 import com.knowgate.syndication.crawler.EntrySearcher;
 
@@ -59,10 +62,10 @@ public final class TestSuite {
   public static boolean test02_WriteDomain() throws StorageException,InstantiationException,SQLException {
   	DataSource oDs = DataSourcePool.get(NOSQL,PROFILE,false);
 
-	Domain oDom = new Domain(NOSQL);
+	Domain oDom = new Domain(oDs);
 
   	Table oCn = oDs.openTable(oDom);
-	oCn.truncate();
+	// oCn.truncate();
 
     oDom.put("nm_domain","DirectWriteTest02");
 	oDom.store(oCn);
@@ -87,22 +90,14 @@ public final class TestSuite {
 	return oDom!=null;
   }
 
-  public static boolean test03_WriteDomainAsync()
-  	throws StorageException,JMSException,NamingException,InstantiationException {
-	Domain oDom = new Domain(NOSQL);
-	StorageManager oStMan = new StorageManager();
-    oDom.put("nm_domain","QueuedWriteTest03");
-	oStMan.store(oDom, true);
-	return true;
-  }
-
   public static boolean test04_WriteUserAccount()
-  	throws StorageException,JMSException,NamingException,InstantiationException {
+  	throws StorageException,JMSException,NamingException,InstantiationException,
+  		   ClassNotFoundException,IllegalAccessException,NoSuchMethodException {
 
-	StorageManager oStMan = new StorageManager();
+	Manager oStMan = new Manager();
 	RecordSet oCl = oStMan.fetch("k_domains");
 	Record oRec = oCl.get(0);
-	UserAccount oAcc = new 	UserAccount(NOSQL);
+	UserAccount oAcc = (UserAccount) oStMan.createRecord("com.knowgate.clocial.UserAccount");
 	oAcc.put("id_domain", oRec.getInt("id_domain"));
 	oAcc.put("tx_nickname", "TestNickName");
 	oAcc.put("tx_pwd", "123456");
@@ -113,7 +108,7 @@ public final class TestSuite {
 
   public static boolean test05_WebSearch(String sTxSought)
   	throws Exception {
-	StorageManager oStMan = new StorageManager();
+	Manager oStMan = new Manager();
 	RecordSet oCl = oStMan.fetch("k_user_accounts");
 	Record oRec = oCl.get(0);
     EntrySearcher.search(oStMan, sTxSought,oRec.getString("gu_account"), 100);
@@ -126,39 +121,37 @@ public final class TestSuite {
 
   public static int test06_FetchIndex(String sTxSought)
   	throws Exception {
-	StorageManager oStMan = new StorageManager();
+	Manager oStMan = new Manager();
 	RecordSet oRst = oStMan.fetch("k_syndentries", "tx_sought", sTxSought);
     return oRst.size();
   }
 
   public static boolean test07_IPInfo()
   	throws StorageException,JMSException,NamingException,InstantiationException {
-	StorageManager oStMan = new StorageManager();
+	Manager oStMan = new Manager();
 	IPInfo oIp = IPInfo.forHost(oStMan, "84.20.10.80");
 	return true;
   }
 
   public static void test08_deteteSearch(String sTxSought)
   	throws Exception {
-	StorageManager oStMan = new StorageManager();
+	Manager oStMan = new Manager();
 	DataSource oDts = oStMan.getDataSource();
-	SyndSearch oSs = new SyndSearch();
+	SyndSearch oSs = new SyndSearch(oDts);
 	Table oTbl = oDts.openTable(oSs);
 	oSs.put("tx_sought", sTxSought);
 	oSs.delete(oTbl);
 	oTbl.close();
 	oStMan.free(oDts);
   }
-
-  public static void test09_rebuildIndexes()
+  	
+  public static void test09_rebuildIndexes(String sTxSought)
   	throws Exception {
-  	SimpleDateFormat oFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	StorageManager oStMan = new StorageManager();
-	DataSource oDts = oStMan.getDataSource();
-	Table oTbl;
 	RecordSet oRst;
-	SyndSearch oSs = new SyndSearch();
-	oTbl = oDts.openTable(oSs);
+	Manager oStMan = new Manager();
+	DataSource oDts = oStMan.getDataSource();
+	SyndSearch oSs = new SyndSearch(oDts);
+	Table oTbl = oDts.openTable(oSs);
 	SearchRunner oRun = new SearchRunner("", oStMan.getProperties());
 	oRst = oTbl.fetch();
 	oTbl.close();
@@ -168,20 +161,47 @@ public final class TestSuite {
 	}
 	oStMan.free(oDts);
   }
+
+  public static void test10_shortenURL()
+  	throws Exception {
+	Manager oStMan = new Manager();
+	DataSource oDts = oStMan.getDataSource();
+	String sShort = Redirect.shorten(oDts, "http://www.urltobeshortened/params.php?one=1&two=2","http://short.ul/",null).shortURL();
+	System.out.println(sShort);
+	String sOriginal = Redirect.resolve(oDts, sShort, "127.0.0.1");
+	System.out.println(sOriginal);
+	oStMan.free(oDts);
+  }
+
+  public static void test11_refreshSearchresults()
+  	throws Exception {
+	SearchDaemon.main(new String[]{"lapastillaroja.net"});
+  }
+
+  public static void test12_delete_UserAccounts()
+  	throws Exception {
+	Manager oStMan = new Manager();
+	oStMan.delete(oStMan.createRecord("com.knowgate.clocial.UserAccount"),Gadgets.split("c0a8203312ed8187d29100000b809d45`c0a8203312ed8473cc01000009ac0db1",'`'));
+  }
   
   public static void main (String[] args) throws Exception {
-
+	
+	// DBEnvironment.runRecovery("C:\\Temp\\sleepycat");
+	
     // test01_WriteErrorLog();
     // test02_WriteDomain();
     // test03_WriteDomainAsync();
     // test04_WriteUserAccount();
     // test05_WebSearch("www.eoi.es");
     // test05_WebSearch("www.lapastillaroja.net");
+    test05_WebSearch("lapastillaroja.net");
+    // test05_WebSearch("clay shirky");
+    // test11_refreshSearchresults();
     // test05_WebSearch("inncorpora");	
 	// test07_IPInfo();
-	// test08_deteteSearch("www.eoi.es");
-		
-	test09_rebuildIndexes();	
-
+	// test08_deteteSearch("www.eoi.es");		
+	// test09_rebuildIndexes();	
+	// test10_shortenURL();
+    // test12_delete_UserAccounts();
   }
 }
