@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<MetaData>
+<Schema name="clocial" package="com.knowgate.syndication"> 
+  <Record table="k_syndsearches" pojo="SyndSearch">
+    <Column name="tx_sought" type="VARCHAR" maxlength="254" nullable="false" constraint="primary key" indexed="true"></Column>
+    <Column name="dt_created" type="TIMESTAMP" nullable="false" default="now"></Column>
+    <Column name="dt_last_run" type="TIMESTAMP" nullable="false"></Column>
+    <Column name="dt_next_run" type="TIMESTAMP" indexed="true" nullable="true"></Column>
+    <Column name="nu_rerun_after_secs" type="INT" maxlength="11" nullable="true" default="1200"></Column>
+    <Column name="nu_runs" type="INT" maxlength="11" nullable="false"></Column>
+    <Column name="dt_last_request" type="TIMESTAMP" nullable="true" indexed="true"></Column>
+    <Column name="nu_requests" type="INT" maxlength="11" nullable="false"></Column>
+    <Column name="nu_results" type="INT" maxlength="11" nullable="false"></Column>
+    <Column name="xml_recent" type="LONGVARCHAR" nullable="true"></Column>
+  </Record>
+  <Record table="k_syndsearch_request" pojo="SyndSearchRequest">
+    <Column name="id_request" type="BIGINT" nullable="false" constraint="primary key" indexed="true" default="SERIAL"></Column>
+    <Column name="tx_sought" type="VARCHAR" maxlength="254" nullable="false" indexed="true" foreignkey="k_syndsearches"></Column>
+    <Column name="dt_request" type="TIMESTAMP" nullable="false" indexed="true"></Column>
+    <Column name="nu_milis" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="gu_user" type="CHAR" maxlength="32" nullable="true"></Column>
+    <Column name="gu_account" type="CHAR" maxlength="32" nullable="true"></Column>
+  </Record>
+  <Record table="k_syndsearch_run" pojo="SyndSearchRun">
+    <Column name="id_run" type="BIGINT" nullable="false" constraint="primary key" indexed="true" default="SERIAL"></Column>
+    <Column name="tx_sought" type="VARCHAR" maxlength="254" nullable="false" indexed="true" foreignkey="k_syndsearches"></Column>
+    <Column name="dt_run" type="TIMESTAMP" nullable="false"></Column>
+    <Column name="nu_milis" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="nu_entries" type="INT" maxlength="11" nullable="true"></Column>
+  </Record>
+  <Record table="k_syndreferers" pojo="SyndReferer">
+    <Column name="id_syndref" type="VARCHAR" maxlength="480" constraint="primary key" indexed="true" ></Column>
+    <Column name="tx_sought" type="VARCHAR" maxlength="254" nullable="false" indexed="true" foreignkey="k_syndsearches"></Column>
+    <Column name="url_domain" type="VARCHAR" maxlength="100" nullable="false" indexed="true" ></Column>
+    <Column name="nu_entries" type="INT" maxlength="11" nullable="false"></Column>
+    <Column name="dt_created" type="TIMESTAMP" nullable="false" default="now"></Column>
+  </Record>
+  <Record table="k_syndentries" pojo="FeedEntry">
+    <Column name="id_syndentry" type="BIGINT" nullable="false" constraint="primary key" indexed="true" default="SERIAL"></Column>
+    <Column name="uri_entry" type="VARCHAR" maxlength="200" indexed="true"></Column>
+    <Column name="tx_sought" type="VARCHAR" maxlength="254" indexed="true" foreignkey="k_syndsearches"></Column>
+    <Column name="tx_sought_by_date" type="VARCHAR" maxlength="276" indexed="true" nullable="false" default="tx_sought+dt_published"></Column>
+    <Column name="dt_created" type="TIMESTAMP" nullable="false" indexed="true" default="now"></Column>
+    <Column name="id_domain" type="INT" maxlength="11" nullable="true" indexed="false"></Column>
+    <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="true" indexed="false"></Column>
+    <Column name="gu_feed" type="CHAR" maxlength="32" nullable="true" indexed="false"></Column>
+    <Column name="id_type" type="VARCHAR" maxlength="50" nullable="true" indexed="false"></Column>
+    <Column name="dt_run" type="TIMESTAMP" nullable="false"></Column>
+    <Column name="dt_published" type="TIMESTAMP" nullable="false"></Column>
+    <Column name="dt_modified" type="TIMESTAMP" nullable="true"></Column>
+    <Column name="gu_account" type="CHAR" maxlength="32" nullable="true" indexed="true"></Column>
+    <Column name="id_acalias" type="CHAR" maxlength="150" nullable="true" foreignkey="k_user_account_alias" indexed="true"></Column>
+    <Column name="nm_author" type="VARCHAR" maxlength="100" nullable="true" indexed="true"></Column>
+    <Column name="url_author" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="tl_entry" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="de_entry" type="VARCHAR" maxlength="1000" nullable="true"></Column>
+    <Column name="url_addr" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="url_domain" type="VARCHAR" maxlength="100" nullable="true" indexed="true"></Column>
+    <Column name="bin_entry" type="JAVA_OBJECT" nullable="true"></Column>    
+    <Column name="nu_influence" type="INT" maxlength="11" nullable="true"></Column>
+    <Column name="nu_relevance" type="INT" maxlength="11" nullable="true"></Column>    
+    <Column name="id_country" type="CHAR" maxlength="2" nullable="true" indexed="false"></Column>
+    <Column name="id_language" type="CHAR" maxlength="2" nullable="true" indexed="false"></Column>
+  </Record>
+</Schema>
+</MetaData>

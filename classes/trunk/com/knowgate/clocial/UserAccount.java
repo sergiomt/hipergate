@@ -2,6 +2,7 @@ package com.knowgate.clocial;
 
 import java.sql.SQLException;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Properties;
 
@@ -17,18 +18,14 @@ public class UserAccount extends RecordDelegator {
   
   private static final String tableName = "k_user_accounts";
 
-  public UserAccount() throws InstantiationException {
-  	super(Engine.DEFAULT,tableName,MetaData.getDefaultSchema().getColumns(tableName));
-  }	
-  
-  public UserAccount(Engine eEngine) throws InstantiationException {
-  	super(eEngine,tableName,MetaData.getDefaultSchema().getColumns(tableName));
+  public UserAccount(DataSource oDts) throws InstantiationException {
+  	super(oDts,tableName);
   }	
 
-  public UserAccount(Engine eEngine,Record oRec) throws InstantiationException {
-  	super(eEngine,tableName,MetaData.getDefaultSchema().getColumns(tableName));
+  public UserAccount(DataSource oDts,Record oRec) throws InstantiationException {
+  	super(oDts,tableName);
     putAll(oRec);
-  }	
+  }
 
   public String store(Table oConn) throws StorageException {
 	replace("nm_ascii", Gadgets.left(Gadgets.ASCIIEncode(getString("nm_user","")+getString("tx_surname1","")+getString("tx_surname2","")),254));	
@@ -54,7 +51,32 @@ public class UserAccount extends RecordDelegator {
     } // fi
     return oSearches;
   } // pushSearch
- 
+
+  public String getUniqueNickName(Table oTbl, String sTxSuggested)
+  	throws StorageException, NullPointerException {
+    String sTxNickName;
+    if (sTxSuggested==null)
+      throw new NullPointerException("Suggested nickname may not be null");
+    if (sTxSuggested.length()==0)
+      throw new NullPointerException("Suggested nickname may not be an empty string");
+    RecordSet oRst = oTbl.fetch("tx_nickname", sTxSuggested, 1);
+    if (oRst.size()==0) {
+      sTxNickName = sTxSuggested;
+    } else {
+      int iUnderscore = sTxSuggested.indexOf('_');
+      if (iUnderscore<=0) {
+        sTxNickName = getUniqueNickName(oTbl, sTxSuggested+"_"+String.valueOf(new Date().getYear()));
+      } else {
+      	String sNumberSuffix = sTxSuggested.substring(++iUnderscore);
+        if (sNumberSuffix.matches("\\d+"))
+          sTxNickName = getUniqueNickName(oTbl, sTxSuggested.substring(0,iUnderscore)+String.valueOf(Integer.parseInt(sNumberSuffix)+1));
+        else
+          sTxNickName = getUniqueNickName(oTbl, sTxSuggested+"_"+String.valueOf(new Date().getYear()));        
+      }
+    }
+    return sTxNickName;
+  } // getUniqueNickName
+
   public ErrorCode authenticate(String sPassword)
   	throws StorageException {
   	if (!containsKey("gu_account"))
@@ -68,28 +90,6 @@ public class UserAccount extends RecordDelegator {
     else
       return ErrorCode.PASSWORD_MISMATCH;
   } // authenticate
-
-  public static UserAccount forEmail(DataSource oDtSrc, String sEmail) throws StorageException,InstantiationException  {
-	UserAccount oRetVal = null;
-  	Table oConn = null;
-  	RecordSet oRecs = null;
-  	try {
-  	  oConn = oDtSrc.openTable(tableName, new String[]{"tx_main_email"});
-  	  oRecs = oConn.fetch("tx_main_email", sEmail);
-  	  if (oRecs.size()>0)
-	    oRetVal = new UserAccount(oDtSrc.getEngine(), oRecs.get(0));
-  	} finally {
-	  if (null!=oConn) {
-	  	try {
-	  	  oConn.close();
-	  	} catch (SQLException sqle) {
-	  	  throw new StorageException(sqle.getMessage(), sqle);
-	  	}
-	  }
-  	}
-	
-	return oRetVal;
-  } // forEmail
 
   public static ErrorCode authenticate(DataSource oDtSrc, String sEmail, String sPassword)
   	throws StorageException,InstantiationException  {
@@ -108,4 +108,27 @@ public class UserAccount extends RecordDelegator {
       return oUacc.authenticate(sPassword);
     }
   } // authenticate
+
+  public static UserAccount forEmail(DataSource oDtSrc, String sEmail) throws StorageException,InstantiationException  {
+	UserAccount oRetVal = null;
+  	Table oConn = null;
+  	RecordSet oRecs = null;
+  	try {
+  	  oConn = oDtSrc.openTable(tableName, new String[]{"tx_main_email"});
+  	  oRecs = oConn.fetch("tx_main_email", sEmail);
+  	  if (oRecs.size()>0)
+	    oRetVal = new UserAccount(oDtSrc, oRecs.get(0));
+  	} finally {
+	  if (null!=oConn) {
+	  	try {
+	  	  oConn.close();
+	  	} catch (SQLException sqle) {
+	  	  throw new StorageException(sqle.getMessage(), sqle);
+	  	}
+	  }
+  	}
+	
+	return oRetVal;
+  } // forEmail
+ 
 }

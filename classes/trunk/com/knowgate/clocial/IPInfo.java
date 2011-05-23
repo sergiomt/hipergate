@@ -15,7 +15,7 @@ import com.knowgate.dfs.FileSystem;
 import com.knowgate.misc.Gadgets;
 
 import com.knowgate.storage.Table;
-import com.knowgate.storage.Engine;
+import com.knowgate.storage.Manager;
 import com.knowgate.storage.DataSource;
 import com.knowgate.storage.RecordDelegator;
 import com.knowgate.storage.StorageException;
@@ -26,12 +26,8 @@ public class IPInfo extends RecordDelegator {
 
   private static final long serialVersionUID = Serials.IPInfo;
 
-  public IPInfo() throws InstantiationException {
-  	super(Engine.DEFAULT,tableName,MetaData.getDefaultSchema().getColumns(tableName));
-  }	
-
-  public IPInfo(Engine eEngine) throws InstantiationException {
-  	super(eEngine,tableName,MetaData.getDefaultSchema().getColumns(tableName));
+  public IPInfo(DataSource oDts) throws InstantiationException {
+  	super(oDts,tableName);
   }	
 
   public static String getHostIPforUrl(String sUrl)
@@ -48,7 +44,7 @@ public class IPInfo extends RecordDelegator {
   	return sIP;
   }
 
-  public static IPInfo forHost(Engine eEngine, String sIPAddress)
+  public static IPInfo forHost(DataSource oDts, String sIPAddress)
   	throws IOException,FileNotFoundException,InstantiationException  {
   	FileSystem oFs = new FileSystem();
   	String sInfoXML = null;
@@ -57,7 +53,7 @@ public class IPInfo extends RecordDelegator {
   	} catch (java.net.MalformedURLException neverthrown) {}
   	  catch (com.enterprisedt.net.ftp.FTPException neverthrown) {}
     if (sInfoXML!=null) {
-      IPInfo oIpInf = new IPInfo(eEngine);
+      IPInfo oIpInf = new IPInfo(oDts);
       oIpInf.put("ip_addr", sIPAddress);
       oIpInf.put("id_country", Gadgets.substrBetween(sInfoXML,"<countryAbbrev>","</countryAbbrev>").toLowerCase());
       oIpInf.put("nm_city",Gadgets.substrBetween(sInfoXML.substring(sInfoXML.indexOf("<Hostip>")),"<gml:name>","</gml:name>"));
@@ -76,35 +72,18 @@ public class IPInfo extends RecordDelegator {
     }    
   }
 
-  public static IPInfo forHost(DataSource oDts, String sIPAddress) {
-	IPInfo oIP = null;
-	Table oTbl;
-	try {
-	  oIP = new IPInfo(oDts.getEngine());	  
-	  oTbl = oDts.openTable(oIP);
-	  boolean bAlreadyExists = oIP.load(oTbl, sIPAddress);
-	  if (!bAlreadyExists) {
-	  	oIP = forHost(oDts.getEngine(), sIPAddress);
-	  	oIP.store(oTbl);
-	  }
-	  oTbl.close();
-	} catch (Exception xcpt) {
-	}
-	return oIP;
-  }
-
-  public static IPInfo forHost(StorageManager oStorMan, String sIPAddress) {
+  public static IPInfo forHost(Manager oStorMan, String sIPAddress) {
 	IPInfo oIP = null;
 	Table oTbl;
 	DataSource oDts = null;
 	try {
 	  oDts = oStorMan.getDataSource();
-	  oIP = new IPInfo(oDts.getEngine());	  
+	  oIP = new IPInfo(oDts);	  
 	  oTbl = oDts.openTable(oIP);
 	  boolean bAlreadyExists = oIP.load(oTbl, sIPAddress);
 	  oTbl.close();
 	  if (!bAlreadyExists) {
-	  	oIP = forHost(oDts.getEngine(), sIPAddress);
+	  	oIP = forHost(oDts, sIPAddress);
 	  	oStorMan.store(oIP, false);
 	  }
 	} catch (Exception xcpt) {
@@ -115,13 +94,18 @@ public class IPInfo extends RecordDelegator {
   }
 
   public static IPInfo forUrl(DataSource oDts, String sUrlAddress)
-  	throws MalformedURLException, UnknownHostException {
+  	throws MalformedURLException, UnknownHostException, IOException, InstantiationException {
     if (DebugFile.trace) DebugFile.writeln("looking for info about "+sUrlAddress);
 	String sIPAddress = getHostIPforUrl(sUrlAddress);
-	if (null==sIPAddress)
-	  return null;
-	else
-	  return forHost(oDts,sIPAddress);
+	IPInfo oIPi = null;
+	if (null!=sIPAddress)
+	  oIPi = forHost(oDts,sIPAddress);
+    if (DebugFile.trace)
+      if (oIPi==null)
+        DebugFile.writeln("could not get IP address of "+sUrlAddress);
+      else
+        DebugFile.writeln("IP address of "+sUrlAddress+" is "+oIPi.getString("ip_addr"));      	
+    return oIPi;
   }
 
 }

@@ -15,12 +15,8 @@ public class Company extends RecordDelegator {
 
   private static final long serialVersionUID = Serials.Company;
 
-  public Company() throws InstantiationException  {
-  	super(Engine.DEFAULT, tableName,MetaData.getDefaultSchema().getColumns(tableName));
-  }	
-
-  public Company(Engine eEngine) throws InstantiationException {
-  	super(eEngine, tableName,MetaData.getDefaultSchema().getColumns(tableName));
+  public Company(DataSource oDts) throws InstantiationException {
+  	super(oDts, tableName);
   }	
 
   public String store(Table oConn) throws StorageException {
