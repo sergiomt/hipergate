@@ -265,12 +265,23 @@ public class DOMDocument {
         } else {
           oReader = new InputStreamReader(new FileInputStream(oXMLFile), sEncoding);
         }
+        if (DebugFile.trace) DebugFile.writeln("DOMParserWrapper.parse(new InputSource(FileInputStream))");
         oDocument = oParserWrapper.parse(new InputSource(oReader));
         oReader.close();
       }
       else {
-        if (DebugFile.trace) DebugFile.writeln("DOMParserWrapper.parse(" + sURI + ")");
-        oDocument = oParserWrapper.parse(sURI);
+        File oXMLFile = new File(sURI);
+        if (!oXMLFile.exists()) throw new FileNotFoundException("DOMDocument.parseURI(" + sURI + ") file not found");
+        if (null==sEncoding) {
+          if (DebugFile.trace) DebugFile.writeln("new FileReader(" + sURI + ")");
+          oReader = new FileReader(oXMLFile);
+          if (DebugFile.trace) DebugFile.writeln("DOMParserWrapper.parse([InputSource])");
+        } else {
+          oReader = new InputStreamReader(new FileInputStream(oXMLFile), sEncoding);
+        }
+        if (DebugFile.trace) DebugFile.writeln("DOMParserWrapper.parse(new InputSource(FileInputStream))");
+        oDocument = oParserWrapper.parse(new InputSource(oReader));
+        oReader.close();
       }
 
       if (DebugFile.trace) {
