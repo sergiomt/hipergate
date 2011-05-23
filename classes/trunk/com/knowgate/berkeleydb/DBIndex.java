@@ -1,11 +1,14 @@
 package com.knowgate.berkeleydb;
 
+import com.sleepycat.db.Transaction;
 import com.sleepycat.db.DatabaseException;
 import com.sleepycat.db.SecondaryConfig;
 import com.sleepycat.db.SecondaryCursor;
 import com.sleepycat.db.SecondaryDatabase;
 import com.sleepycat.db.SecondaryKeyCreator;
 import com.sleepycat.db.SecondaryMultiKeyCreator;
+
+import com.knowgate.debug.DebugFile;
 
 public class DBIndex {
   private String sTable;
@@ -19,7 +22,7 @@ public class DBIndex {
   	sRelation = sRelationType;
   	oSdb = null;
   }
-
+  
   public String getName() {
   	return sColumn;
   }
@@ -43,8 +46,9 @@ public class DBIndex {
     return oSdb==null;
   }
   
-  public SecondaryCursor getCursor() throws DatabaseException {
-  	return oSdb.openSecondaryCursor(null, null);
+  public SecondaryCursor getCursor(Transaction oTrn) throws DatabaseException {
+    if (DebugFile.trace) DebugFile.writeln("SecondaryDatabase.openSecondaryCursor(null,null)");
+  	return oSdb.openSecondaryCursor(oTrn, null);
   }
   
 }

@@ -15,12 +15,31 @@ import java.sql.Types;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.LinkedList;
+
 import com.knowgate.debug.DebugFile;
-import com.knowgate.storage.*;
+import com.knowgate.debug.StackTraceUtil;
+
+import com.knowgate.misc.Gadgets;
+import com.knowgate.misc.NameValuePair;
+
+import com.knowgate.storage.DataSource;
+import com.knowgate.storage.Table;
+import com.knowgate.storage.Column;
+import com.knowgate.storage.Record;
+import com.knowgate.storage.RecordSet;
+import com.knowgate.storage.AbstractRecord;
+import com.knowgate.storage.StorageException;
+import com.knowgate.storage.IntegrityViolationException;
 
 import com.sleepycat.db.Cursor;
+import com.sleepycat.db.JoinCursor;
+import com.sleepycat.db.JoinConfig;
 import com.sleepycat.db.Database;
 import com.sleepycat.db.LockMode;
+import com.sleepycat.db.Transaction;
 import com.sleepycat.db.DatabaseType;
 import com.sleepycat.db.OperationStatus;
 import com.sleepycat.db.DatabaseEntry;
@@ -45,6 +64,8 @@ public class DBTable implements Table {
   private HashMap<String,DBIndex> oInd;
   private StoredClassCatalog oCtg;
   private EntryBinding oKey;
+  private Transaction oTrn;
+
     
   private static SimpleDateFormat oTsFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -70,7 +91,11 @@ public class DBTable implements Table {
     oFdb = oForeignDatabase;
     oCtg = oClassCatalog;
     oKey = oEntryBind;
-
+    try {
+	  oTrn = oRep.isTransactional() ? oRep.getEnvironment().beginTransaction(null,null) : null;
+    } catch (DatabaseException dbe) {
+      throw new StorageException(dbe.getMessage(),dbe);
+    }
     if (!isReadOnly()) {
   	  for (String sColumnName : oInd.keySet()) {
   	  	openIndex(sColumnName);
@@ -92,6 +117,15 @@ public class DBTable implements Table {
   	  DebugFile.writeln("Begin DBTable.close()");
   	  DebugFile.incIdent();
   	}
+  	
+  	if (oTrn!=null) {
+      try {
+	    oTrn.commitNoSync();
+	    oTrn = null;
+      } catch (DatabaseException dbe) {
+        throw new StorageException(dbe.getMessage(),dbe);
+      }
+  	} // fi
   	
   	try {
   	  for (String sColumnName : oInd.keySet()) {
@@ -131,28 +165,61 @@ public class DBTable implements Table {
 
   // --------------------------------------------------------------------------
 
+  public LinkedList<Column> columns() {
+  	LinkedList<Column> oLst;
+  	try {
+  	  oLst = getDataSource().getMetaData().getColumns(getName());
+  	} catch (Exception xcpt) { oLst = null; }
+    return oLst;
+  }
+
+  // --------------------------------------------------------------------------
+
   public DataSource getDataSource() {
   	return (DataSource) oRep;
   }
 
   // --------------------------------------------------------------------------
 
-  public void delete(AbstractRecord oRec) throws StorageException {
+  public void delete(AbstractRecord oRec, Transaction oTrans) throws StorageException {
+
     if (oRec.getPrimaryKey()==null)
   	  throw new StorageException("Tried to delete record with no primary key");	
+
+  	if (DebugFile.trace) {
+  	  DebugFile.writeln("Begin DBTable.delete("+oRec.getTableName()+"."+oRec.getPrimaryKey()+")");
+  	  DebugFile.incIdent();
+  	  byte[] aByKey = oRec.getPrimaryKey().getBytes();
+  	  StringBuffer oStrKey = new StringBuffer(aByKey.length*3);
+  	  for (int b=0; b<aByKey.length; b++) oStrKey.append(" "+Integer.toHexString(aByKey[b]));
+  	  DebugFile.writeln("raw key hex is"+oStrKey.toString());
+  	}
+
 	try {
-	  oPdb.delete(null, new DatabaseEntry(new DBEntityBinding(oCtg).objectToKey((DBEntity) oRec).getBytes()));	
+	  oPdb.delete(oTrans, new DatabaseEntry(oRec.getPrimaryKey().getBytes()));	
 	} catch (DatabaseException dbe) {
+  	  if (DebugFile.trace) DebugFile.decIdent();
 	  throw new StorageException(dbe.getMessage(), dbe);
 	}
-  }
 
+  	if (DebugFile.trace) {
+  	  DebugFile.writeln("End DBTable.delete()");
+  	  DebugFile.decIdent();
+  	}
+  } // delete
+
+  // --------------------------------------------------------------------------
+
+  public void delete(AbstractRecord oRec) throws StorageException {
+    delete(oRec, oTrn);
+  }
+  
   // --------------------------------------------------------------------------
     
   public boolean exists(String sKey) throws StorageException {
 
   	if (DebugFile.trace) {
-  	  DebugFile.writeln("Begin DBTable.exists("+sKey+")");
+  	  DebugFile.writeln("Begin DBTable.exists("+sKey+" at "+sCnm+"."+sDbk+")");
   	  DebugFile.incIdent();
   	  byte[] aByKey = sKey.getBytes();
   	  StringBuffer oStrKey = new StringBuffer(aByKey.length*3);
@@ -164,7 +231,7 @@ public class DBTable implements Table {
 	OperationStatus oOpSt;
 	
   	try {
-  	  oOpSt = oPdb.get(null, new DatabaseEntry(sKey.getBytes()), new DatabaseEntry(), LockMode.DEFAULT);
+  	  oOpSt = oPdb.get(oTrn, new DatabaseEntry(sKey.getBytes()), new DatabaseEntry(), LockMode.DEFAULT);
   	  bRetVal = (OperationStatus.SUCCESS==oOpSt);
   	} catch (Exception xcpt) {
   	  throw new StorageException(xcpt.getMessage(), xcpt);
@@ -193,10 +260,11 @@ public class DBTable implements Table {
   	}
 
   	DBEntity oDbEnt = null;
+
   	try {
 	  DatabaseEntry oDbKey = new DatabaseEntry(sKey.getBytes());
       DatabaseEntry oDbDat = new DatabaseEntry();
-  	  if (OperationStatus.SUCCESS==oPdb.get(null, oDbKey, oDbDat, LockMode.DEFAULT)) {
+  	  if (OperationStatus.SUCCESS==oPdb.get(oTrn, oDbKey, oDbDat, LockMode.DEFAULT)) {
 	    DBEntityBinding oDbeb = new DBEntityBinding(oCtg);
   	    oDbEnt = oDbeb.entryToObject(oDbKey,oDbDat);
   	  }
@@ -207,7 +275,7 @@ public class DBTable implements Table {
 
   	if (DebugFile.trace) {
   	  DebugFile.decIdent();
-  	  DebugFile.writeln("End DBTable.load() : "+oDbEnt);
+  	  DebugFile.writeln("End DBTable.load()");
   	}
 
   	return oDbEnt;
@@ -215,14 +283,14 @@ public class DBTable implements Table {
 
   // --------------------------------------------------------------------------
 
-  public void store(AbstractRecord oRec) throws StorageException {
+  public void store(AbstractRecord oRec, Transaction oTrans) throws StorageException {
   	
   	if (isReadOnly()) throw new StorageException("DBTable.store() table "+getName()+" is in read-only mode");
 
   	if (oRec==null) throw new NullPointerException("DBTable.store() Record to be stored is null");
 
   	if (DebugFile.trace) {
-  	  DebugFile.writeln("Begin DBTable.store("+oRec.getPrimaryKey()+")");
+  	  DebugFile.writeln("Begin DBTable.store("+getName()+"."+oRec.getPrimaryKey()+")");
   	  DebugFile.incIdent();
   	}
 
@@ -247,32 +315,76 @@ public class DBTable implements Table {
   	  }
   	  
   	  if (null!=oRec.columns()) {
-
+		
+		boolean bHasCompoundIndexes = false;
+		
+  		if (DebugFile.trace) {
+  	      String sColNames = "Iterating through";
+  	      for (Column c : oRec.columns()) sColNames += " "+c.getName();
+		  DebugFile.writeln(sColNames);
+  	    }
+		
   	    for (Column c : oRec.columns()) {
   	      String n = c.getName();
 
 		  boolean bIsEmptyPk = !oRec.containsKey(n);
 		  if (!bIsEmptyPk) bIsEmptyPk = (oRec.get(n).toString().length()==0);
-		  	
-  	      if (bIsEmptyPk && c.getDefaultValue()!=null) {
-  	      	if (c.getDefaultValue().equals("GUID"))
-  	          oRec.put(n, createUniqueKey());
-  	      	else if (c.getDefaultValue().equals("SERIAL"))
-  	          oRec.put(n, String.valueOf(oRep.nextVal(n)));
-  	      	else if (c.getDefaultValue().equals("NOW"))
-  	          oRec.put(n, oTsFmt.format(new Date()));
-  	        else
-  	          oRec.put(n, c.getDefaultValue());
-  			if (DebugFile.trace)
-  	  		  DebugFile.writeln("auto setting default value of "+n+" to "+oRec.get(n).toString());
-  	        if (c.isPrimaryKey()) oRec.setPrimaryKey(oRec.get(n).toString());
-  	      } // fi
+		  Object sDefVal = c.getDefaultValue();
 
-  	  	  if (!c.isNullable() && !oRec.containsKey(n))
-		    throw new IntegrityViolationException(c, null);
+		  if (sDefVal!=null) {
+  	        if (bIsEmptyPk) {
 
-		  if (!c.check(oRec.get(c.getName())))
-		    throw new IntegrityViolationException(c, oRec.get(n));
+  	      	  if (sDefVal.equals("GUID")) {
+  	            oRec.put(n, createUniqueKey());
+
+  	      	  } else if (sDefVal.equals("SERIAL")) {
+  	      	    String sSerial = String.valueOf(oRep.nextVal(n));
+		        int iPadLen = (c.getType()==Types.BIGINT ? 21 : 11) - sSerial.length();
+      		    if (iPadLen>0) {
+      			  char aPad[] = new char[iPadLen];
+      			  Arrays.fill(aPad, '0');
+     		  	  sSerial = new String(aPad) + sSerial;
+      		    }
+  	            oRec.put(n, sSerial);
+
+  	      	  } else if (sDefVal.equals("NOW")) {
+  	            oRec.put(n, oTsFmt.format(new Date()));
+
+  	      	  } else if (sDefVal.toString().indexOf('+')<0) {
+  	            if (sDefVal.toString().startsWith("$"))
+  	              oRec.put(n, Gadgets.ASCIIEncode(oRec.getString(sDefVal.toString().substring(1))).replace(' ','_').toLowerCase());
+  	            else if (sDefVal.toString().startsWith("'"))
+				  oRec.put(n, sDefVal.toString().substring(1, sDefVal.toString().indexOf((char) 39, 1)));
+  	            else
+  	              oRec.put(n, sDefVal);
+  	      	  } else {
+				String[] aCols = Gadgets.split(sDefVal.toString(),'+');
+				sDefVal = "";
+				if (aCols!=null)
+				  for (int v=0; v<aCols.length; v++)
+				  	if (aCols[v].startsWith("$"))
+				  	  sDefVal = sDefVal + Gadgets.ASCIIEncode(oRec.getString(aCols[v].substring(1))).replace(' ','_').toLowerCase();
+				  	else if (aCols[v].startsWith("'"))
+				  	  sDefVal = sDefVal + aCols[v].substring(1, aCols[v].indexOf((char) 39, 1));
+				  	else
+				  	  sDefVal = sDefVal.toString() + oRec.get(aCols[v]);
+  	            oRec.put(n, sDefVal);				
+  	      	  }
+  	          if (c.isPrimaryKey()) {
+  			    if (DebugFile.trace)
+  	  		      DebugFile.writeln("auto setting default value of "+n+" to "+oRec.get(n));
+  	            oRec.setPrimaryKey(oRec.get(n).toString());
+  	          }
+  	        } // fi
+  	        bHasCompoundIndexes = (sDefVal.toString().indexOf('+')>0);
+		  } // fi
+		  
+  	  	  if (!c.isNullable() && !oRec.containsKey(n)) {
+		    if (sDefVal==null)
+		      throw new IntegrityViolationException(c, null);
+			else if (sDefVal.toString().indexOf('+')<0)
+		      throw new IntegrityViolationException(c, null);
+  	  	  }
 
   	      if (oRec.containsKey(n) && c.getForeignKey()!=null) {
 			if (oRec.get(n)!=null) {
@@ -282,13 +394,39 @@ public class DBTable implements Table {
 
   	  	        DBTable oFk = (DBTable) oRep.openTable(c.getForeignKey(), new String []{c.getName()});
   	            boolean bExists;
+  	            String sNum;
   	            if (c.getType()==Types.INTEGER) {
-  	              bExists = oFk.exists(String.valueOf(oRec.getInt(n)));
+  	              sNum = String.valueOf(oRec.getInt(n));
+  	              if (sNum.length()>=11) {
+  	                bExists = oFk.exists(sNum);
+  	              } else {
+			        bExists = oFk.exists(sNum);
+			        if (!bExists) {
+      				  char iPad[] = new char[11-sNum.length()];
+      				  Arrays.fill(iPad, '0');
+			          bExists = oFk.exists(new String(iPad) + sNum);
+			          if (bExists) oRec.put(n,new String(iPad) + sNum);
+			        } // fi (!bExists)
+  	              }
+  	            } else if (c.getType()==Types.BIGINT) {
+  	              sNum = String.valueOf(oRec.getLong(n));
+  	              if (sNum.length()>=21) {
+  	                bExists = oFk.exists(sNum);
+  	              } else {
+			        bExists = oFk.exists(sNum);
+			        if (!bExists) {
+      				  char iPad[] = new char[21-sNum.length()];
+      				  Arrays.fill(iPad, '0');
+			          bExists = oFk.exists(new String(iPad) + sNum);
+			          if (bExists) oRec.put(n,new String(iPad) + sNum);
+			        } // fi (!bExists)
+  	              }
   	            } else {
-			      bExists = oFk.exists(oRec.getString(n));
+  	              sNum = oRec.getString(n);
+			      bExists = oFk.exists(sNum);
   	            }
   	            oFk.close();
-  	            if (!bExists) throw new IntegrityViolationException(c,oRec.get(n));
+  	            if (!bExists) throw new IntegrityViolationException(c,sNum);
 			  } // fi
 			} // fi ()
   	      } // fi (c.getForeignKey())
@@ -301,11 +439,78 @@ public class DBTable implements Table {
   	      	  } // fi
   	        } // fi
   	      } // fi
+  	      if (c.getType()==Types.BOOLEAN) {
+  	        if (oRec.containsKey(n)) {
+  	      	  if (oRec.get(n) instanceof String) {
+  	      	    if (oRec.get(n).equals("true") || oRec.get(n).equals("True") || oRec.get(n).equals("TRUE") ||
+  	      	    	oRec.get(n).equals("yes")  || oRec.get(n).equals("Yes")  || oRec.get(n).equals("YES")  ||
+  	      	    	oRec.get(n).equals("1"))
+  	      	      oRec.replace(n, Boolean.TRUE);
+  	      	    else if (oRec.get(n).equals("false") || oRec.get(n).equals("False") || oRec.get(n).equals("FALSE") ||
+  	      	    	oRec.get(n).equals("no")  || oRec.get(n).equals("No")  || oRec.get(n).equals("NO")  ||
+  	      	    	oRec.get(n).equals("0"))
+  	      	      oRec.replace(n, Boolean.FALSE);
+  	      	  } // fi (instanceof String)
+  	      	  if (oRec.get(n) instanceof Short) {
+  	      	    if (oRec.get(n).equals(new Short((short)1)))
+  	      	      oRec.replace(n, Boolean.TRUE);
+  	      	    else if (oRec.get(n).equals(new Short((short)0)))
+  	      	      oRec.replace(n, Boolean.FALSE);
+  	      	  } // fi (instanceof String)
+  	      	  if (oRec.get(n) instanceof Integer) {
+  	      	    if (oRec.get(n).equals(new Integer(1)))
+  	      	      oRec.replace(n, Boolean.TRUE);
+  	      	    else if (oRec.get(n).equals(new Integer(0)))
+  	      	      oRec.replace(n, Boolean.FALSE);
+  	      	  } // fi (instanceof String)  	        
+  	      	  if (!(oRec.get(n) instanceof Boolean)) {
+  	      	    throw new IntegrityViolationException(c,"Must be of type Boolean but is actually "+oRec.get(n).getClass().getName());
+  	      	  }
+  	        }
+  	      } // fi (BOOLEAN)
   	    } // next
+  	    
+  	    if (DebugFile.trace) {
+  	      DebugFile.writeln("table "+(bHasCompoundIndexes ? " has " : " has not ")+"compound indexes");  	    	
+  	    }
+
+  	    if (bHasCompoundIndexes) {
+  	      for (Column c : oRec.columns()) {
+  	        String n = c.getName();
+		    if (c.getDefaultValue()!=null) {
+		      String sDefVal = c.getDefaultValue().toString();
+  	      	  if (sDefVal.indexOf('+')>0) {
+		        // boolean bIsEmptyPk = !oRec.containsKey(n);
+		  	    // if (!bIsEmptyPk) bIsEmptyPk = (oRec.get(n).toString().length()==0);
+  	            // if (bIsEmptyPk) {
+  	              String[] aIndexColumns = sDefVal.split("\\x2B");
+				  StringBuffer oCompoundIndexValue = new StringBuffer(1000);
+				  for (int i=0; i<aIndexColumns.length; i++) {
+				  	oCompoundIndexValue.append(oRec.get(aIndexColumns[i]));
+				  } // next
+				  oRec.put(n, oCompoundIndexValue.toString());
+  	    		  if (DebugFile.trace) {
+  	      			DebugFile.writeln("compound index "+n+" value set to \""+oRec.getString(n)+"\"");
+  	    		  }
+  	            // } // fi
+  	      	  } // fi (indexOf('+')>0)
+		    } // fi (getDefaultValue())
+		    if (!c.check(oRec.get(n)))
+		      throw new IntegrityViolationException(c, oRec.get(n));
+  	      } // next (c)
+  	    } else {
+  	      for (Column c : oRec.columns()) {
+		    if (!c.check(oRec.get(c.getName())))
+		      throw new IntegrityViolationException(c, oRec.get(c.getName()));
+  	      } // next
+  	    }
   	  } // fi
 
-	  if (oRec.getPrimaryKey()==null) throw new IntegrityViolationException("Primary key not set and no default specified at table "+oRec.getTableName());
-
+	  if (oRec.getPrimaryKey()==null)
+	  	throw new IntegrityViolationException("Primary key not set and no default specified at table "+oRec.getTableName());
+	  else if (oRec.getPrimaryKey().length()==0)
+	  	throw new IntegrityViolationException("Empty string not allowed as primary key at table "+oRec.getTableName());
+	  	
   	  DBEntity oEnt = (DBEntity) oRec;
   	  DBEntityBinding oDbeb = new DBEntityBinding(oCtg);
 
@@ -319,10 +524,17 @@ public class DBTable implements Table {
 
 	  DatabaseEntry oDbKey = new DatabaseEntry(oRec.getPrimaryKey().getBytes());
       DatabaseEntry oDbDat = new DatabaseEntry(oDbeb.objectToData(oEnt));
-  	  oPdb.put(null, oDbKey, oDbDat);
+  	  
+  	  if (DebugFile.trace) DebugFile.writeln("Database.put("+(oTrans==null ? "null" : oTrans)+","+oRec.getPrimaryKey()+","+"[DatabaseEntry])");
+  	  	
+  	  oPdb.put(oTrans, oDbKey, oDbDat);
 
   	} catch (Exception xcpt) {
-  	  if (DebugFile.trace) DebugFile.decIdent();
+  	  if (DebugFile.trace) {
+  	  	DebugFile.writeln(xcpt.getClass().getName()+" "+xcpt.getMessage());
+  	  	try { DebugFile.writeln(StackTraceUtil.getStackTrace(xcpt)); } catch (java.io.IOException ignore) {}
+  	  	DebugFile.decIdent();
+  	  }
   	  throw new StorageException(xcpt.getMessage(), xcpt);
   	}
 
@@ -335,18 +547,20 @@ public class DBTable implements Table {
 
   // --------------------------------------------------------------------------
 
-  public void store(AbstractRecord oRec, Transaction oTrans) throws StorageException {
-  	store(oRec);
-  }
+  public void store(AbstractRecord oRec) throws StorageException {  	
+    store(oRec, oTrn);
+  } // store
 
   // --------------------------------------------------------------------------
 
-  public RecordSet fetch() throws StorageException {
+  public RecordSet fetch(final int iMaxRows, final int iOffset) throws StorageException {
     DBEntitySet oEst = new DBEntitySet();
     DatabaseEntry oDbKey = new DatabaseEntry();
     DatabaseEntry oDbDat = new DatabaseEntry();
     OperationStatus oOst;    
     Cursor oCur = null;
+    int iFetched = 0;
+    int iAdded = 0;
 
   	if (DebugFile.trace) {
   	  DebugFile.writeln("Begin DBTable.fetch()");
@@ -359,8 +573,11 @@ public class DBTable implements Table {
 	  oCur = oPdb.openCursor(null,null);
 	  
 	  oOst = oCur.getFirst(oDbKey, oDbDat, LockMode.DEFAULT);
-      while (oOst == OperationStatus.SUCCESS) {
-        oEst.add(oDbeb.entryToObject(oDbKey,oDbDat)); 
+      while (oOst == OperationStatus.SUCCESS && iAdded<iMaxRows) {
+        if (++iFetched>iOffset) {
+          oEst.add(oDbeb.entryToObject(oDbKey,oDbDat)); 
+          iAdded++;
+        }
         oOst = oCur.getNext(oDbKey, oDbDat, LockMode.DEFAULT);
       } // wend
   	} catch (Exception xcpt) {
@@ -380,8 +597,19 @@ public class DBTable implements Table {
 
   // --------------------------------------------------------------------------
 
+  public RecordSet fetch() throws StorageException {
+    return fetch(2147483647,0);
+  }
+
+  // --------------------------------------------------------------------------
+
   public RecordSet fetch(final String sIndexColumn, String sIndexValue, final int iMaxRows)
   	throws StorageException {
+
+  	if (DebugFile.trace) {
+  	  DebugFile.writeln("Begin DBTable.fetch("+sIndexColumn+","+sIndexValue+","+String.valueOf(iMaxRows)+")");
+  	  DebugFile.incIdent();
+  	}
 		
     if (null==sIndexColumn) throw new StorageException("DBTable.fetch() Column name may not be null");
 
@@ -400,10 +628,12 @@ public class DBTable implements Table {
 
 	  DBEntityBinding oDbeb = new DBEntityBinding(oCtg);
       DatabaseEntry oDbDat = new DatabaseEntry();
-      DatabaseEntry oDbKey = new DatabaseEntry();;
+      DatabaseEntry oDbKey = new DatabaseEntry();
       DatabaseEntry oPkKey;
 
 	  if (sIndexValue.equals("%") || sIndexValue.equalsIgnoreCase("IS NOT NULL")) {
+
+  		if (DebugFile.trace) DebugFile.writeln("Database.openCursor(null,null)");
 
 	    oPur = oPdb.openCursor(null,null);
 	  
@@ -418,6 +648,8 @@ public class DBTable implements Table {
         oPur = null;
         
 	  } else if (sIndexValue.equalsIgnoreCase("NULL") || sIndexValue.equalsIgnoreCase("IS NULL")) {
+
+  		if (DebugFile.trace) DebugFile.writeln("Database.openCursor(null,null)");
 
 	    oPur = oPdb.openCursor(null,null);
 	    oOst = oPur.getFirst(oDbKey, oDbDat, LockMode.DEFAULT);
@@ -437,7 +669,7 @@ public class DBTable implements Table {
         DBIndex oIdx = oInd.get(sIndexColumn);
 	    if (oIdx.isClosed()) openIndex(sIndexColumn);
 
-        oCur = oIdx.getCursor();
+        oCur = oIdx.getCursor(oTrn);
 	    int r = -1;
 
 	    if (sIndexValue.endsWith("%")) {
@@ -476,11 +708,22 @@ public class DBTable implements Table {
 	  } // fi 
 
   	} catch (Exception xcpt) {
+  	  if (DebugFile.trace) {
+  	    DebugFile.writeln(xcpt.getClass().getName()+" "+xcpt.getMessage());
+		try { DebugFile.writeln(StackTraceUtil.getStackTrace(xcpt)); } catch (Exception ignore) { }
+  	    DebugFile.decIdent();
+  	  }
   	  throw new StorageException(xcpt.getMessage(), xcpt);
   	} finally {
   	  try { if (oPur!=null) oPur.close(); } catch (Exception ignore) { }
   	  try { if (oCur!=null) oCur.close(); } catch (Exception ignore) { }
   	}
+
+  	if (DebugFile.trace) {
+  	  DebugFile.decIdent();
+  	  DebugFile.writeln("End DBTable.fetch() : " + String.valueOf(oEst.size()));
+  	}
+
     return oEst;
   } // fetch
 
@@ -488,6 +731,11 @@ public class DBTable implements Table {
 
   public RecordSet fetch(final String sIndexColumn, String sIndexValueMin, String sIndexValueMax)
   	throws StorageException {
+
+  	if (DebugFile.trace) {
+  	  DebugFile.writeln("Begin DBTable.fetch("+sIndexColumn+","+sIndexValueMin+","+sIndexValueMax+")");
+  	  DebugFile.incIdent();
+  	}
 		
     if (null==sIndexColumn) throw new StorageException("DBTable.fetch() Column name may not be null");
     if (null==sIndexValueMin) throw new StorageException("DBTable.fetch() Index minimum value may not be null");
@@ -502,6 +750,7 @@ public class DBTable implements Table {
 
   	try {
 
+      Comparable oValue;
       DBEntity oDbEnt;
 	  DBEntityBinding oDbeb = new DBEntityBinding(oCtg);
       DatabaseEntry oDbDat = new DatabaseEntry();
@@ -512,8 +761,10 @@ public class DBTable implements Table {
       DBIndex oIdx = oInd.get(sIndexColumn);
 	  if (oIdx.isClosed()) openIndex(sIndexColumn);
 
-      oCur = oIdx.getCursor();
+      oCur = oIdx.getCursor(oTrn);
 	  int r = -1;
+
+	  if (DebugFile.trace) DebugFile.writeln("got SecondaryCursor for "+sIndexColumn);
 
       oDbKey = new DatabaseEntry(sIndexValueMin.getBytes());
       oOst = oCur.getSearchKey(oDbKey, oDbDat, LockMode.DEFAULT);
@@ -521,13 +772,18 @@ public class DBTable implements Table {
       oCur.close();
 	  oCur = null;
 
+	  if (DebugFile.trace) DebugFile.writeln(sIndexColumn+" has "+(bMinExists ? "" : "not")+" a minimum value");
+
 	  if (bMinExists) {
         oDbKey = new DatabaseEntry(sIndexValueMin.getBytes());
         oOst = oCur.getSearchKey(oDbKey, oDbDat, LockMode.DEFAULT);
         while (oOst==OperationStatus.SUCCESS) {
           oDbEnt = oDbeb.entryToObject(oDbKey,oDbDat);
-          if (((Comparable)oDbEnt.get(sIndexColumn)).compareTo(sIndexValueMax)>0) break;
-          oEst.add(oDbEnt);
+          oValue = (Comparable)oDbEnt.get(sIndexColumn);
+          if (oValue!=null) {
+            if (oValue.compareTo(sIndexValueMax)>0) break;
+            oEst.add(oDbEnt);
+          }
           oOst = oCur.getNext(oDbKey, oDbDat, LockMode.DEFAULT);
         } // wend
 	    oCur.close();
@@ -538,21 +794,34 @@ public class DBTable implements Table {
 	    oOst = oPur.getFirst(oDbKey, oDbDat, LockMode.DEFAULT);
         while (oOst==OperationStatus.SUCCESS) {
           oDbEnt = oDbeb.entryToObject(oDbKey,oDbDat);
-          if (((Comparable)oDbEnt.get(sIndexColumn)).compareTo(sIndexValueMax)>0) break;
-          if (((Comparable)oDbEnt.get(sIndexColumn)).compareTo(sIndexValueMin)>=0) {
-            oOst = oPur.getNext(oDbKey, oDbDat, LockMode.DEFAULT);
-          } // fi
+          oValue = (Comparable)oDbEnt.get(sIndexColumn);
+          if (oValue!=null) {
+            if (oValue.compareTo(sIndexValueMax)>0) break;
+            oEst.add(oDbEnt);
+          }
+          oOst = oPur.getNext(oDbKey, oDbDat, LockMode.DEFAULT);
         } // wend
         oPur.close();
 		oPur=null;
 	  }
 
   	} catch (Exception xcpt) {
+  	  if (DebugFile.trace) {
+  	    DebugFile.writeln(xcpt.getClass().getName()+" "+xcpt.getMessage());
+		try { DebugFile.writeln(StackTraceUtil.getStackTrace(xcpt)); } catch (Exception ignore) { }
+  	    DebugFile.decIdent();
+  	  }
   	  throw new StorageException(xcpt.getMessage(), xcpt);
   	} finally {
   	  try { if (oPur!=null) oPur.close(); } catch (Exception ignore) { }
   	  try { if (oCur!=null) oCur.close(); } catch (Exception ignore) { }
   	}
+
+  	if (DebugFile.trace) {
+  	  DebugFile.decIdent();
+  	  DebugFile.writeln("End DBTable.fetch() " + String.valueOf(oEst.size()));
+  	}
+
     return oEst;
   } // fetch
 
@@ -562,30 +831,148 @@ public class DBTable implements Table {
   	throws StorageException {
   	if (dtIndexValueMax==null)
       return fetch (sIndexColumn, oTsFmt.format(dtIndexValueMin), 2147483647);
+  	else if (dtIndexValueMin==null)
+      return fetch (sIndexColumn, "0000-00-00 00:00:00", oTsFmt.format(dtIndexValueMax));
   	else
-      return fetch (sIndexColumn, oTsFmt.format(dtIndexValueMin), oTsFmt.format(dtIndexValueMin));
+      return fetch (sIndexColumn, oTsFmt.format(dtIndexValueMin), oTsFmt.format(dtIndexValueMax));
   }
 
   // --------------------------------------------------------------------------
 
-  public RecordSet last(int iRows) throws StorageException {
+  public RecordSet fetch(NameValuePair[] aIndexedValues, final int iMaxRows)
+  	throws StorageException {
+
+    if (null==aIndexedValues) throw new StorageException("DBTable.fetch() Column names may not be null");
+
+	final int nValues = aIndexedValues.length;
+
+	if (1==nValues)	{
+
+	  return fetch (aIndexedValues[0].getName(),aIndexedValues[0].getValue(), iMaxRows);
+
+	} else {
+  	  if (DebugFile.trace) {
+  	    String sPairs = "";
+  	    for (int nv=0; nv<nValues; nv++) {
+  	    	sPairs+=(nv==0 ? "" : ",")+aIndexedValues[nv].getName()+":"+aIndexedValues[nv].getValue();
+	      if (!oInd.containsKey(aIndexedValues[nv].getName()))
+	        throw new StorageException("DBTable.fetch() Column "+aIndexedValues[nv].getName()+" is not indexed");
+  	      if (aIndexedValues[nv].getValue()==null)
+	        throw new StorageException("DBTable.fetch() Column "+aIndexedValues[nv].getName()+" may not be null");
+  	      if (aIndexedValues[nv].getValue().indexOf('%')>=0)
+	        throw new StorageException("DBTable.fetch() "+aIndexedValues[nv].getName()+" % wildcards are not allowed in join cursors");
+  	      if (aIndexedValues[nv].getValue().equalsIgnoreCase("null") || aIndexedValues[nv].getValue().equalsIgnoreCase("is null") || aIndexedValues[nv].getValue().equalsIgnoreCase("is not null"))
+	        throw new StorageException("DBTable.fetch() "+aIndexedValues[nv].getName()+" IS [NOT] NULL conditional is not allowed in join cursors");
+  	    } // next
+  	    DebugFile.writeln("Begin DBTable.fetch({"+sPairs+"},"+String.valueOf(iMaxRows)+")");
+  	    DebugFile.incIdent();
+  	  }
+      
+      if (iMaxRows<=0) throw new StorageException("Invalid value for max rows parameter "+String.valueOf(iMaxRows));
+      
+	    DBEntityBinding oDbeb = new DBEntityBinding(oCtg);
+      DatabaseEntry oDbDat = new DatabaseEntry();
+      DatabaseEntry oDbKey = new DatabaseEntry();
+      DBEntitySet oEst = new DBEntitySet();
+      JoinCursor oJur = null;
+      
+      OperationStatus[] aOst = new OperationStatus[nValues];
+	    DBIndex[] aIdxs = new DBIndex[nValues];	
+      SecondaryCursor[] aCurs = new SecondaryCursor[aIndexedValues.length];
+	    
+  	  try {
+      
+	    for (int sc=0; sc<nValues; sc++) {
+	      aIdxs[sc] = oInd.get(aIndexedValues[sc].getName());
+	      if (aIdxs[sc].isClosed()) openIndex(aIndexedValues[sc].getName());	  
+	      aCurs[sc] = aIdxs[sc].getCursor(oTrn);
+	      aOst[sc] = aCurs[sc].getSearchKey(new DatabaseEntry(aIndexedValues[sc].getValue().getBytes()), new DatabaseEntry(), LockMode.DEFAULT);
+	    } // next
+      
+	    oJur = oPdb.join(aCurs, JoinConfig.DEFAULT);
+      
+        while (oJur.getNext(oDbKey, oDbDat, LockMode.DEFAULT) == OperationStatus.SUCCESS) {
+          Record oRec = oDbeb.entryToObject(oDbKey,oDbDat);
+		  oEst.add(oRec);
+        } // wend
+      
+	    oJur.close();
+	    
+	    for (int sc=nValues-1; sc>=0; sc--) {
+	    	aCurs[sc].close();
+	      aIdxs[sc].close();
+	    }
+	    	  
+  	  } catch (Exception xcpt) {
+  	    if (DebugFile.trace) {
+  	      DebugFile.writeln(xcpt.getClass().getName()+" "+xcpt.getMessage());
+		  try { DebugFile.writeln(StackTraceUtil.getStackTrace(xcpt)); } catch (Exception ignore) { }
+  	      DebugFile.decIdent();
+  	    }
+  	    throw new StorageException(xcpt.getMessage(), xcpt);
+  	  } finally {
+  	    try { if (oJur!=null) oJur.close(); } catch (Exception ignore) { }
+	    for (int sc=nValues-1; sc>=0; sc--) {
+	      try { if (aCurs[sc]!=null) aCurs[sc].close(); } catch (Exception ignore) { }
+	      try { if (aIdxs[sc]!=null) aIdxs[sc].close(); } catch (Exception ignore) { }
+	    } // next
+  	  }
+      
+  	  if (DebugFile.trace) {
+  	    DebugFile.decIdent();
+  	    DebugFile.writeln("End DBTable.fetch() : " + String.valueOf(oEst.size()));
+  	  }	
+      return oEst;
+	} // fi
+  } // fetch
+
+  // --------------------------------------------------------------------------
+
+  public RecordSet last(final String sOrderByColumn, final int iRows, final int iOffset) throws StorageException {
 
     DBEntitySet oEst = new DBEntitySet();
 	DBEntityBinding oDbeb = new DBEntityBinding(oCtg);
     DatabaseEntry oDbDat = new DatabaseEntry();
     DatabaseEntry oDbKey = new DatabaseEntry();;
-	int iFetched = 0;
+	OperationStatus oOst;
 	Cursor oPur = null;
+    SecondaryCursor oCur = null;
+	int iFetched = 0;
+	int iAdded = 0;
 
   	try {
-	  oPur = oPdb.openCursor(null,null);	  
-	  OperationStatus oOst = oPur.getLast(oDbKey, oDbDat, LockMode.DEFAULT);
-      while (oOst==OperationStatus.SUCCESS && ++iFetched<=iRows) {
-        oEst.add(oDbeb.entryToObject(oDbKey,oDbDat));
-        oOst = oPur.getPrev(oDbKey, oDbDat, LockMode.DEFAULT);
-      } // wend
-      oPur.close();
-      oPur=null;
+	  if (sOrderByColumn==null) {
+	    oPur = oPdb.openCursor(null,null);	  
+	    oOst = oPur.getLast(oDbKey, oDbDat, LockMode.DEFAULT);
+        while (oOst==OperationStatus.SUCCESS && iAdded<iRows) {
+          if (++iFetched>iOffset) {
+            oEst.add(oDbeb.entryToObject(oDbKey,oDbDat));
+            iAdded++;
+          }
+          oOst = oPur.getPrev(oDbKey, oDbDat, LockMode.DEFAULT);
+        } // wend
+        oPur.close();
+        oPur=null;
+		
+	  } else {
+    	
+        DBIndex oIdx = oInd.get(sOrderByColumn);
+	    if (oIdx.isClosed()) openIndex(sOrderByColumn);
+
+        oCur = oIdx.getCursor(oTrn);
+	    int r = -1;
+
+        oOst = oOst = oCur.getLast(oDbKey, oDbDat, LockMode.DEFAULT);
+        while (oOst==OperationStatus.SUCCESS && iAdded<iRows) {
+          if (++iFetched>iOffset) {
+            oEst.add(oDbeb.entryToObject(oDbKey,oDbDat));
+            iAdded++;
+          }
+          oOst = oCur.getPrevDup(oDbKey, oDbDat, LockMode.DEFAULT);
+        } // wend
+        oCur.close();
+        oCur.close();
+	  }
   	} catch (Exception xcpt) {
   	  throw new StorageException(xcpt.getMessage(), xcpt);
   	} finally {
@@ -593,7 +980,8 @@ public class DBTable implements Table {
   	}
 
 	return oEst;
-  }
+  } // last
+
 
   // --------------------------------------------------------------------------
 
@@ -604,14 +992,18 @@ public class DBTable implements Table {
   // --------------------------------------------------------------------------
 
   public void openIndex(String sColumnName) throws StorageException {
+
+    if (DebugFile.trace) DebugFile.writeln("openIndex("+sColumnName+")");
+
 	DBIndex oIdx = oInd.get(sColumnName);
-	
-    SecondaryConfig oSec = new SecondaryConfig();      
+    SecondaryConfig oSec = new SecondaryConfig(); 
     oSec.setAllowCreate(true);
     oSec.setAllowPopulate(true);
     oSec.setSortedDuplicates(true);
     oSec.setType(DatabaseType.BTREE);
     oSec.setReadOnly(isReadOnly());
+
+    if (DebugFile.trace) DebugFile.writeln("relation type is "+oIdx.getRelationType());
 
     if (oIdx.getRelationType().equalsIgnoreCase("one-to-one") ||
     	oIdx.getRelationType().equalsIgnoreCase("many-to-one")) {
@@ -624,7 +1016,8 @@ public class DBTable implements Table {
     }
 
     try {
-	  oIdx.open(oRep.getEnvironment().openSecondaryDatabase(null, oRep.getPath()+oPdb.getDatabaseName()+"."+oIdx.getName()+".db",
+      if (DebugFile.trace) DebugFile.writeln("DBIndex.open("+(oTrn==null ? "null" : "[Transaction]")+","+oRep.getPath()+oPdb.getDatabaseName()+"."+oIdx.getName()+".db"+","+oPdb.getDatabaseName()+"_"+oIdx.getName()+")");
+	  oIdx.open(oRep.getEnvironment().openSecondaryDatabase(oTrn, oRep.getPath()+oPdb.getDatabaseName()+"."+oIdx.getName()+".db",
                                                             oPdb.getDatabaseName()+"_"+oIdx.getName(), oPdb, oSec));
     } catch (DatabaseException dbe) {
       throw new StorageException(dbe.getMessage(), dbe);
@@ -638,41 +1031,85 @@ public class DBTable implements Table {
   
   public void delete(final String sIndexColumn, final String sIndexValue) throws StorageException {
 
+    Transaction oTrd = null;
     SecondaryDatabase oSdb = null;
     SecondaryCursor oCur = null;
+    SecondaryConfig oSec = new SecondaryConfig(); 
+    oSec.setAllowCreate(false);
+    oSec.setAllowPopulate(false);
+    oSec.setType(DatabaseType.BTREE);
+    oSec.setReadOnly(true);
 
   	try {
-    
-	  DBIndex oIdx = oInd.get(sIndexColumn);
+      String sIndexName;
+      
+	  if (sIndexColumn.startsWith("one-to-one")) {
+        sIndexName = sIndexColumn.substring(10).trim();
+        oSec.setKeyCreator(oRep.getKeyCreator(sIndexName));
+	  } else if (sIndexColumn.startsWith("many-to-one")) {
+        sIndexName = sIndexColumn.substring(11).trim();
+        oSec.setKeyCreator(oRep.getKeyCreator(sIndexName));
+	  } else if (sIndexColumn.startsWith("one-to-many")) {
+        sIndexName = sIndexColumn.substring(11).trim();
+        oSec.setMultiKeyCreator(oRep.getMultiKeyCreator(sIndexName));	
+	  } else if (sIndexColumn.startsWith("many-to-many")) {
+        sIndexName = sIndexColumn.substring(12).trim();
+        oSec.setMultiKeyCreator(oRep.getMultiKeyCreator(sIndexName));	
+	  } else /* many-to-one assumed by default */ {
+        sIndexName = sIndexColumn.trim();
+        oSec.setKeyCreator(oRep.getKeyCreator(sIndexName));
+	  }
+
+	  oSdb = oRep.getEnvironment().openSecondaryDatabase(oTrn, oRep.getPath()+oPdb.getDatabaseName()+"."+sIndexName+".db",
+                                                         oPdb.getDatabaseName()+"_"+sIndexName, oPdb, oSec);
 	  
 	  DBEntityBinding oDbeb = new DBEntityBinding(oCtg);
       DatabaseEntry oDbKey = new DatabaseEntry(sIndexValue.getBytes());
       DatabaseEntry oDbDat = new DatabaseEntry();
-      oCur = oIdx.getCursor();
-      
-      // oCur.setCacheMode(CacheMode.UNCHANGED);
+      oCur = oSdb.openSecondaryCursor(oTrn,null);
+
+	  ArrayList<String> aKeys = new ArrayList<String>(1000);
 
       OperationStatus oOst = oCur.getSearchKey(oDbKey, oDbDat, LockMode.DEFAULT);
       while (oOst == OperationStatus.SUCCESS) {
-        oCur.delete();
-        oOst = oCur.getNext(oDbKey, oDbDat, LockMode.DEFAULT);
+        aKeys.add(oDbeb.objectToKey(oDbeb.entryToObject(oDbKey,oDbDat)));
+        oOst = oCur.getNextDup(oDbKey, oDbDat, LockMode.DEFAULT);
       } // wend
+      
+      oCur.close();
+      oCur=null;
+      oSdb.close();
+      oSdb=null;
+      
+      oTrd = oRep.isTransactional() ? oRep.getEnvironment().beginTransaction(oTrn,null) : null;
+      for (String k : aKeys) {
+        delete(k,oTrd);
+      }
+      oTrd.commit();
+      
   	} catch (Exception xcpt) {
   	  throw new StorageException(xcpt.getMessage(), xcpt);
   	} finally {
+  	  try { if (oTrd!=null) oTrd.discard(); } catch (Exception ignore) { }
   	  try { if (oCur!=null) oCur.close(); } catch (Exception ignore) { }
+  	  try { if (oSdb!=null) oSdb.close(); } catch (Exception ignore) { }
+  	}
+  } // delete
+
+  // --------------------------------------------------------------------------
+  
+  public void delete(final String sKeyValue, Transaction oTrans) throws StorageException {
+	try {
+      oPdb.delete(oTrans, new DatabaseEntry(sKeyValue.getBytes()));
+  	} catch (Exception xcpt) {
+  	  throw new StorageException(xcpt.getMessage(), xcpt);
   	}
   } // delete
 
   // --------------------------------------------------------------------------
   
   public void delete(final String sKeyValue) throws StorageException {
-
-	try {
-      oPdb.delete(null, new DatabaseEntry(sKeyValue.getBytes()));
-  	} catch (Exception xcpt) {
-  	  throw new StorageException(xcpt.getMessage(), xcpt);
-  	}
+    delete(sKeyValue, oTrn);
   } // delete
 
   // --------------------------------------------------------------------------
@@ -705,8 +1142,7 @@ public class DBTable implements Table {
 
 	try {
 
-      oPdb.truncate(null,false);
-
+      oPdb.truncate(oTrn,false);
   	} catch (Exception xcpt) {
   	  throw new StorageException(xcpt.getMessage(), xcpt);
   	} 

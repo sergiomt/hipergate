@@ -16,6 +16,9 @@ import com.sleepycat.bind.serial.SerialBinding;
 import com.sleepycat.bind.serial.StoredClassCatalog;
 import com.sleepycat.bind.serial.SerialSerialBinding;
 
+import com.knowgate.debug.DebugFile;
+import com.knowgate.debug.StackTraceUtil;
+
 public final class DBEntityBinding extends SerialSerialBinding<String,byte[],DBEntity> {
 
 	private static final Class CKEY = new String().getClass();
@@ -43,11 +46,10 @@ public final class DBEntityBinding extends SerialSerialBinding<String,byte[],DBE
   			oByIn.close();
 		} catch (IOException xcpt) {
 			String s = "";
-			try { s = com.knowgate.debug.StackTraceUtil.getStackTrace(xcpt);
-			} catch (Exception x) {}
-			System.out.println("IOException "+xcpt.getMessage()+" "+s);
+			try { s = StackTraceUtil.getStackTrace(xcpt); } catch (Exception x) {}
+			if (DebugFile.trace) DebugFile.writeln("entryToObject("+sKey+", byte[]) IOException "+xcpt.getMessage()+" "+s);
 		} catch (ClassNotFoundException xcpt) {
-			// ***
+	 	  if (DebugFile.trace) DebugFile.writeln("entryToObject("+sKey+", byte[]) ClassNotFoundException "+xcpt.getMessage());
 		}
   		return oEnt;
 	}
@@ -67,15 +69,19 @@ public final class DBEntityBinding extends SerialSerialBinding<String,byte[],DBE
 			oByOut.close();
 		} catch (IOException xcpt) {
 			String s = "";
-			try { s = com.knowgate.debug.StackTraceUtil.getStackTrace(xcpt);
-			} catch (Exception x) {}
-			System.out.println("IOException "+xcpt.getMessage()+" "+s);
+			try { s = StackTraceUtil.getStackTrace(xcpt); } catch (Exception x) {}
+			if (DebugFile.trace) DebugFile.writeln("IOException "+xcpt.getMessage()+"\n"+s);
 		}
 		return aBytes;
   	}	
   	
   	public DBEntity entryToObject(DatabaseEntry oKey, DatabaseEntry oDat) {
-  		return entryToObject(new String(oKey.getData()), oDat.getData());
+  		if (null==oKey)
+  		  return entryToObject(null, oDat.getData());
+  		else if (null==oKey.getData())
+  		  return entryToObject(null, oDat.getData());
+  		else
+  		  return entryToObject(new String(oKey.getData()), oDat.getData());
   	} 
  
 }

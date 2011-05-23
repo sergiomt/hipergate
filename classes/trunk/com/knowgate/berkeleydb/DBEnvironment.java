@@ -4,13 +4,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.Random;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Collection;
 import java.util.Collections;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.knowgate.debug.DebugFile;
 
@@ -20,6 +24,7 @@ import com.knowgate.storage.Engine;
 import com.knowgate.storage.Column;
 import com.knowgate.storage.Record;
 import com.knowgate.storage.DataSource;
+import com.knowgate.storage.SchemaMetaData;
 import com.knowgate.storage.StorageException;
 
 import com.sleepycat.db.Database;
@@ -28,6 +33,7 @@ import com.sleepycat.db.DatabaseEntry;
 import com.sleepycat.db.DatabaseConfig;
 import com.sleepycat.db.DatabaseException;
 import com.sleepycat.db.EnvironmentConfig;
+import com.sleepycat.db.Transaction;
 import com.sleepycat.db.Environment;
 import com.sleepycat.db.SecondaryConfig;
 import com.sleepycat.db.SecondaryDatabase;
@@ -51,10 +57,11 @@ public class DBEnvironment implements DataSource {
   
   // --------------------------------------------------------------------------
 
-  private final boolean TRANSACTIONAL = false;
+  private final boolean TRANSACTIONAL = true;
 
   private boolean bReadOnly;
-  private String sProfile;
+  private String sPath;
+  private SchemaMetaData oSmd;
   private Environment oEnv;
   private EnvironmentConfig oCfg;
   private Database oJcc;
@@ -64,7 +71,7 @@ public class DBEnvironment implements DataSource {
   private EntryBinding oKey;
   private Random oRnd;
   
-  private HashMap<String,DBTable> oConnectionMap;
+  private ConcurrentHashMap<String,DBTable> oConnectionMap;
 
   // --------------------------------------------------------------------------
 
@@ -141,9 +148,10 @@ public class DBEnvironment implements DataSource {
 
   // --------------------------------------------------------------------------
 
-  public DBEnvironment(String sProfileName, boolean bReadOnly)
+  public DBEnvironment(String sEnvUrl, SchemaMetaData oMetaData, boolean bReadOnly)
   	throws StorageException {
-  	open(sProfileName, bReadOnly);
+    oSmd = oMetaData;
+  	open(sEnvUrl, null, null, bReadOnly);
   } // DBEnvironment
 
   // --------------------------------------------------------------------------
@@ -160,34 +168,70 @@ public class DBEnvironment implements DataSource {
   
   // --------------------------------------------------------------------------
 
-  public void open(String sProfileName, boolean bReadOnlyMode)
+  public static void runRecovery(String sDbEnv) throws DatabaseException,FileNotFoundException {
+	if (DebugFile.trace) {
+	  DebugFile.writeln("Begin DBEnvironment.runRecovery("+sDbEnv+")");
+	  DebugFile.incIdent();
+	}
+    EnvironmentConfig oEcn = new EnvironmentConfig();
+    oEcn.setAllowCreate(true);
+    oEcn.setInitializeLocking(true);
+    oEcn.setInitializeLogging(true);
+    oEcn.setTransactional(true);
+    oEcn.setRunRecovery(true);
+    Environment oRco = new Environment(new File(sDbEnv), oEcn);
+    oRco.close();
+	if (DebugFile.trace) {
+	  DebugFile.decIdent();
+	  DebugFile.writeln("End DBEnvironment.runRecovery("+sDbEnv+")");
+	}
+  } // runRecovery
+
+  // --------------------------------------------------------------------------
+
+  public void open(String sDbEnv, String sUser, String sPassw, boolean bReadOnlyMode)
   	throws StorageException {
 
+	if (DebugFile.trace) {
+	  DebugFile.writeln("Begin DBEnvironment.open("+sDbEnv+", ..., ..., "+String.valueOf(bReadOnlyMode)+")");
+	  DebugFile.incIdent();
+	}
+	
 	try {
-	  if (null!=sProfile) throw new DatabaseException("Environment is already opened");
+	  if (null==sDbEnv) throw new DatabaseException("DBEnvironment location may not be null");
+	  sPath = sDbEnv.endsWith(java.io.File.separator) ? sDbEnv : sDbEnv + java.io.File.separator;
 
       oRnd = new Random();
 
-	  oConnectionMap = new HashMap<String,DBTable>();
+	  oConnectionMap = new ConcurrentHashMap<String,DBTable>();
     
-      sProfile = sProfileName;
       bReadOnly = bReadOnlyMode;
 
 	  oCfg = new EnvironmentConfig();
-      oCfg.setTransactional(TRANSACTIONAL);
       oCfg.setAllowCreate(true);
       
-      // For Berkeley DB Concurrent Data Store Only
-      oCfg.setInitializeCDB(true);
-      oCfg.setInitializeCache(true); 
+      oCfg.setInitializeCache(true);
+
+      if (TRANSACTIONAL) {
+        oCfg.setInitializeLocking(true);
+        oCfg.setInitializeLogging(true);
+        oCfg.setTransactional(true);
+      } else {
+        oCfg.setInitializeCDB(true);
+      }
+
+	  //oCfg.setMaxMutexes(1000);
+	  //oCfg.setMutexIncrement(200);
+
+	  if (DebugFile.trace) {
+	    DebugFile.writeln("Created new EnvironmentConfig with max "+String.valueOf(oCfg.getMaxMutexes())+" mutexes and mutex increment "+String.valueOf(oCfg.getMutexIncrement()));
+	  }
 	  
       // For Berkeley DB Java
       // oCfg.setReadOnly(bReadOnly);
 	
-	  String sDbEnv = getProperty("dbenvironment");
+	  // String sDbEnv = getProperty("dbenvironment");
 	
-	  if (null==sDbEnv) throw new DatabaseException("DBEnvironment Property dbenvironment not found at "+sProfileName+" profile file");
-
       oDfg = new DatabaseConfig();
       oDfg.setTransactional(TRANSACTIONAL);
       oDfg.setSortedDuplicates(false);
@@ -206,9 +250,12 @@ public class DBEnvironment implements DataSource {
 	  // For Berkeley DB Standard Only
 	  oDro.setType(DatabaseType.BTREE);
 
+	  if (DebugFile.trace) DebugFile.writeln("Creating new Environment at "+sDbEnv);
+
       oEnv = new Environment(new File(sDbEnv), oCfg);	  
 
       DatabaseConfig oCtf = new DatabaseConfig();
+      oCtf.setTransactional(TRANSACTIONAL);
       oCtf.setAllowCreate(true);
 	  oCtf.setType(DatabaseType.BTREE);
 
@@ -227,11 +274,18 @@ public class DBEnvironment implements DataSource {
 	} catch (FileNotFoundException fnf) {
 	  throw new StorageException(fnf.getMessage(), fnf);
 	}
+
+	if (DebugFile.trace) {
+	  DebugFile.decIdent();
+	  DebugFile.writeln("End DBEnvironment.open()");
+	}
+
   } // DBEnvironment
 
   // --------------------------------------------------------------------------
 
-  public Table openTable(Properties oConnectionProperties) throws StorageException {
+  public Table openTable(Properties oConnectionProperties)
+  	throws StorageException,IllegalArgumentException {
   	DBTable oDbc = null;
   	Database oPdb = null;
   	Database oFdb = null;
@@ -258,12 +312,19 @@ public class DBEnvironment implements DataSource {
 	  
       sFdb = oConnectionProperties.getProperty("foreigndatabase");
 
-      if (null!=sFdb) oFdb = oEnv.openDatabase(null, getPath()+sFdb+".db", sFdb, oDfg);
+      if (null!=sFdb) {
+  	    if (DebugFile.trace)
+  	      DebugFile.writeln("Environment.openDatabase(null,"+getPath()+sFdb+".db"+","+sFdb+")");
+      	oFdb = oEnv.openDatabase(null, getPath()+sFdb+".db", sFdb, oDfg);
+      }
 
       if (oConnectionProperties.containsKey("indexes")) {
   	    
         // For Berkeley DB Java
   	    // oPdb = oEnv.openDatabase(null, sDbk, bRo ? oDro : oDfg);
+
+  	    if (DebugFile.trace)
+  	      DebugFile.writeln(oEnv+".openDatabase(null,"+getPath()+sDbk+".db"+","+sDbk+","+String.valueOf(bRo)+")");
   	    
   	    oPdb = oEnv.openDatabase(null, getPath()+sDbk+".db", sDbk, bRo ? oDro : oDfg);
 
@@ -289,6 +350,9 @@ public class DBEnvironment implements DataSource {
         // For Berkeley DB Java
   	    // oPdb = oEnv.openDatabase(null, sDbk, bRo ? oDro : oDfg);
 
+  	    if (DebugFile.trace)
+  	      DebugFile.writeln(oEnv+".openDatabase(null,"+getPath()+sDbk+".db"+","+sDbk+","+String.valueOf(bRo)+")");
+
   	    oPdb = oEnv.openDatabase(null, getPath()+sDbk+".db", sDbk, bRo ? oDro : oDfg);
 
       }
@@ -313,16 +377,18 @@ public class DBEnvironment implements DataSource {
 
   // --------------------------------------------------------------------------
 
-  public Table openTable(String sName) throws StorageException {
+  public Table openTable(String sName)
+  	throws StorageException,IllegalArgumentException {
     Properties oProps = new Properties();
     oProps.put("name", sName);
     oProps.put("readonly", "true");
     return openTable(oProps);
-  }
+  } // openTable
 
   // --------------------------------------------------------------------------
 
-  public Table openTable(String sName, String[] aIndexes) throws StorageException {
+  public Table openTable(String sName, String[] aIndexes)
+  	throws StorageException,IllegalArgumentException {
   	if (DebugFile.trace) {
   	  DebugFile.writeln("Begin DBEnvironment.openTable("+sName+", String[])");
   	  DebugFile.incIdent();
@@ -346,11 +412,11 @@ public class DBEnvironment implements DataSource {
   	}
 
 	return oRetVal;
-  }
+  } // openTable
 
   // --------------------------------------------------------------------------
 
-  public Table openTable(Record oRec) throws StorageException {
+  public Table openTable(Record oRec) throws StorageException,IllegalArgumentException {
 
   	if (DebugFile.trace) {
   	  DebugFile.writeln("Begin DBEnvironment.openTable("+oRec.getClass().getName()+")");
@@ -379,22 +445,33 @@ public class DBEnvironment implements DataSource {
 
  // --------------------------------------------------------------------------
 
-  public int nextVal(String sSequenceName) throws StorageException {
-  	int iRetVal = -1;
+  public long nextVal(String sSequenceName) throws StorageException {
+  	long iRetVal = -1l;
   	SequenceConfig oQqg = new SequenceConfig();
+  	oQqg.setAutoCommitNoSync(true);
   	oQqg.setAllowCreate(true);
   	// oSqg.setRange(65536l,2147483647l);
 
 	DatabaseEntry oKey = new DatabaseEntry(sSequenceName.getBytes());
     Database oQdb = null;
     Sequence oSqc = null;
+	Transaction oTrn = null;
+
+    DatabaseConfig oSqg = new DatabaseConfig();
+    oSqg.setTransactional(false);
+    oSqg.setAllowCreate(true);
+	oSqg.setReadOnly(false);
+	oSqg.setType(DatabaseType.BTREE);
 
     try {
-  	  oQdb = new Database(getPath()+"Sequence.db", sSequenceName, oDfg);
-      oSqc = oQdb.openSequence(null, oKey, oQqg);
-      iRetVal = (int) oSqc.get(null, 1);
+      oTrn = null; // isTransactional() ? getEnvironment().beginTransaction(null,null) : null;
+  	  oQdb = new Database(getPath()+"Sequence.db", sSequenceName, oSqg);
+      oSqc = oQdb.openSequence(oTrn, oKey, oQqg);
+      iRetVal = (int) oSqc.get(oTrn, 1);
       oSqc.close();
       oSqc=null;
+      if (oTrn!=null) oTrn.commit();
+      oTrn = null;
 	} catch (FileNotFoundException fnf) {
       throw new StorageException("DBTable.nextVal("+sSequenceName+") "+fnf.getMessage()+" "+getPath()+"Sequence.db", ErrorCode.IO_EXCEPTION, fnf);
     } catch (IllegalArgumentException iae) {
@@ -402,6 +479,11 @@ public class DBEnvironment implements DataSource {
     } catch (DatabaseException dbe) {
       throw new StorageException("DBTable.nextVal("+sSequenceName+") "+dbe.getMessage(), ErrorCode.DATABASE_EXCEPTION, dbe);
     } finally {
+      if (oTrn!=null) {
+        try {
+	      oTrn.abort();
+        } catch (DatabaseException ignore) { }
+  	  } // fi
       if (null!=oSqc) { try { oSqc.close(); } catch (DatabaseException ignore) { } }
       if (null!=oQdb) { try { oQdb.close(); } catch (DatabaseException ignore) { } }
     }
@@ -417,35 +499,25 @@ public class DBEnvironment implements DataSource {
 
   // --------------------------------------------------------------------------
 
+  /*
   public String getName() {
     return sProfile;  	
   }
+  */
 
   // --------------------------------------------------------------------------
 
+  /*
   public static DBEnvironment openDefault()
   	throws StorageException {
 	if (null==DEFAULT_ENVIRONMENT) DEFAULT_ENVIRONMENT = new DBEnvironment("extranet",true);
 	return DEFAULT_ENVIRONMENT;
   }
+  */
   
-  // --------------------------------------------------------------------------
-  
-  public String getProperty(String sVariableName) {
-    return com.knowgate.misc.Environment.getProfileVar(sProfile, sVariableName);
-  }
-
-  // --------------------------------------------------------------------------
-  
-  public Properties getProperties() {
-    return com.knowgate.misc.Environment.getProfile(sProfile);
-  }
-
   // --------------------------------------------------------------------------
   
   public String getPath() {
-    String sPath = com.knowgate.misc.Environment.getProfileVar(sProfile,"dbenvironment");
-    if (!sPath.endsWith(java.io.File.separator)) sPath += java.io.File.separator;
 	return sPath;
   }
 
@@ -454,18 +526,34 @@ public class DBEnvironment implements DataSource {
   public void closeTables()
   	throws StorageException {
 
+	if (DebugFile.trace) {
+	  DebugFile.writeln("Begin DBEnvironment.closeTables()");
+	  DebugFile.incIdent();
+	}
+
 	Iterator<String> oItr = oConnectionMap.keySet().iterator();
 	while (oItr.hasNext()) {
 	  oConnectionMap.get(oItr.next()).close();
 	}
 	  
 	oConnectionMap.clear();
+
+	if (DebugFile.trace) {
+	  DebugFile.decIdent();
+	  DebugFile.writeln("End DBEnvironment.closeTables()");
+	}
+
   } // closeTables
   	
   // --------------------------------------------------------------------------
   
   public void close()
   	throws StorageException {
+
+	if (DebugFile.trace) {
+	  DebugFile.writeln("Begin DBEnvironment.close()");
+	  DebugFile.incIdent();
+	}
 
     try {
   	  if (oEnv!=null) {  	  
@@ -481,8 +569,17 @@ public class DBEnvironment implements DataSource {
   	    oEnv = null;
   	  }
     } catch (DatabaseException dbe) {
+	  if (DebugFile.trace) {
+	    DebugFile.writeln("DatabaseException "+dbe.getMessage());
+	    DebugFile.decIdent();
+	  }
       throw new StorageException(dbe.getMessage(),dbe);
     }
+
+	if (DebugFile.trace) {
+	  DebugFile.decIdent();
+	  DebugFile.writeln("End DBEnvironment.close()");
+	}
   } // close
 
   // --------------------------------------------------------------------------
@@ -497,9 +594,17 @@ public class DBEnvironment implements DataSource {
     return bReadOnly;
   }
 
+  // --------------------------------------------------------------------------
+
   public Engine getEngine() {
     return Engine.BERKELYDB;
   }
 
+  // --------------------------------------------------------------------------
+
+  public SchemaMetaData getMetaData() throws StorageException {
+    return oSmd;
+  }
+  
 } // DBEnvironment
 

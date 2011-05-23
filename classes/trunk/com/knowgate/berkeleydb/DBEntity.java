@@ -6,13 +6,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.Date;
 
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
+import com.knowgate.debug.DebugFile;
 import com.knowgate.storage.Connection;
 import com.knowgate.storage.Column;
 import com.knowgate.storage.AbstractRecord;
@@ -27,29 +28,20 @@ public class DBEntity extends AbstractRecord {
   private static final long serialVersionUID = 600000101201000110l;
   private static SimpleDateFormat oTsFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-  private String sPkColumnName;
-
-  public DBEntity(String sBaseTable, ArrayList<Column> oColumnsList) {
+  public DBEntity(String sBaseTable, LinkedList<Column> oColumnsList) {
     super(sBaseTable,oColumnsList);
   }
 
-  /*
-  public DBEntity(String sValue) {
-  	sPkColumnName = "PrimaryKey";
-  	put(sPkColumnName, sValue);
-  }
-  */
-
-  public DBEntity(String sValue, HashMap<String,Object> oData) {
-  	putAll(oData);
-  	setPrimaryKey(sValue);
-  }
-  
   public String getPrimaryKey() {
-  	if (sPkColumnName==null)
+  	if (sPkColumnName==null) {
   	  return null;
-  	else
-  	  return (String) get(sPkColumnName);
+  	} else {
+  	  Object oPkVal = get(sPkColumnName);
+  	  if (null==oPkVal)
+  	  	return null;
+  	  else
+  	  	return oPkVal.toString();
+  	}
   }
 
   public void setPrimaryKey(String sValue) {
@@ -58,6 +50,7 @@ public class DBEntity extends AbstractRecord {
   	  put(sPkColumnName, sValue);
   	} else {
   	  if (containsKey(sPkColumnName)) remove(sPkColumnName);
+  	  if (DebugFile.trace) DebugFile.writeln("setting primary key value for "+sPkColumnName+" to "+sValue);
   	  put(sPkColumnName, sValue);
   	}
   }
@@ -91,7 +84,7 @@ public class DBEntity extends AbstractRecord {
   }
 
   public void delete(Connection oConn) throws StorageException {
-  	((DBConnection) oConn).delete(this);
+  	((DBTable) oConn).delete(this);
   }
 
 }
