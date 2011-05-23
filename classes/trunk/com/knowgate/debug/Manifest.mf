@@ -4,5 +4,5 @@ Specification-Title: HiperGate Print Debug traces to File
 Specification-Version: 4.0
 Specification-Vendor: Know Gate S.L.
 Implementation-Title: com.knowgate.debug
-Implementation-Version: 4.0
+Implementation-Version: 5.5
 Implementation-Vendor: Know Gate S.L.

@@ -34,6 +34,7 @@ package com.knowgate.debug;
 
 import java.util.Date;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -45,14 +46,12 @@ import java.io.InputStream;
  * Traces are written to javatrc.txt file on the especified directory.<br>
  * By default /tmp/ on Unix and C:\WINNT\TEMP or C:\WINDOWS\TEMP on Windows.
  * @author Sergio Montoro Ten
- * @version 4.0
+ * @version 7.0
  */
 public final class DebugFile {
 
   private static final String DEFAULT_TMP_LINUX = "/tmp/";
-  private static final String DEFAULT_TMP_WIN32 = "C:\\";
-
-  private static String sFilePath = null;
+  private static final String DEFAULT_TMP_WIN32 = "C:\\TEMP\\Debug\\";
 
   private static String chomp(String sSource, String cEndsWith) {
   	return sSource.endsWith(cEndsWith) ? sSource : sSource + cEndsWith;
@@ -96,11 +95,10 @@ public final class DebugFile {
    * javatrc.txt file is generated
    */
   public static String getFile() {
-    if (null==sFilePath) {
-      sFilePath = chomp(System.getProperty("hipergate.debugdir", getDebugPath()),File.separator) + "javatrc.txt";
-    }
-    return sFilePath;
-  }
+    if (null==sFilePath)
+      sFilePath = chomp(System.getProperty("hipergate.debugdir", getDebugPath()),File.separator) + "javatrc.";
+    return sFilePath+String.valueOf(Thread.currentThread().getId())+".txt";
+  } // getFile()
 
   /**
    * Increment identation level
@@ -109,20 +107,43 @@ public final class DebugFile {
    * identation is automatically set to zero
    */
   public static void incIdent() {
-    sIdent += "  ";
-    if (sIdent.length()>80) sIdent = "";
-  }
+    Long oThId = new Long (Thread.currentThread().getId());
+	String sIdent = "";
+	if (mIdent.containsKey(oThId)) {
+	  sIdent = mIdent.get(oThId);
+	  mIdent.remove(oThId);
+      if (sIdent.length()>80) sIdent = "";
+	  
+	}
+	mIdent.put(oThId, sIdent+"  ");
+  } // incIdent()
 
   /**
    * Decrement identation level
    */
 
   public static void decIdent() {
-    if (sIdent.length()>2)
-      sIdent = sIdent.substring(0,sIdent.length()-2);
-    else
-      sIdent = "";
+    Long oThId = new Long (Thread.currentThread().getId());
+	String sIdent = "";
+	if (mIdent.containsKey(oThId)) {
+	  sIdent = mIdent.get(oThId);
+      if (sIdent.length()>2)
+        sIdent = sIdent.substring(0,sIdent.length()-2);
+      else
+        sIdent = "";
+	  mIdent.remove(oThId);
+	} // fi
+	mIdent.put(oThId, sIdent);
   }
+
+  private static String getIdent() {
+    Long oThId = new Long (Thread.currentThread().getId());
+	String sIdent = "";
+	if (mIdent.containsKey(oThId)) {
+	  sIdent = mIdent.get(oThId);
+	}
+	return sIdent;
+  } // getIdent()
 
   /**
    * <p>Write trace</p>
@@ -196,16 +217,16 @@ public final class DebugFile {
       switch (dumpTo) {
         case DUMP_TO_FILE:
           oDebugWriter = new FileWriter(getFile(), true);
-          oDebugWriter.write(dt.toString()+" "+sIdent+str+"\n");
+          oDebugWriter.write(String.valueOf(Thread.currentThread().getId())+" "+dt.toString()+" "+getIdent()+str+"\n");
           oDebugWriter.close();
           break;
         case DUMP_TO_STDOUT:
-          System.out.print(dt.toString()+sIdent+str+"\n");
+          System.out.print(String.valueOf(Thread.currentThread().getId())+" "+dt.toString()+getIdent()+str+"\n");
           break;
       }
     }
     catch (IOException e) {
-      System.out.print(dt.toString()+sIdent+str+"\n");
+      System.out.print(dt.toString()+getIdent()+str+"\n");
     }
   }
 
@@ -225,16 +246,16 @@ public final class DebugFile {
       switch (dumpTo) {
         case DUMP_TO_FILE:
           oDebugWriter = new FileWriter(getFile(), true);
-          oDebugWriter.write(dt.toString()+" "+sIdent+new String(str)+"\n");
+          oDebugWriter.write(String.valueOf(Thread.currentThread().getId())+" "+dt.toString()+" "+getIdent()+new String(str)+"\n");
           oDebugWriter.close();
           break;
         case DUMP_TO_STDOUT:
-          System.out.print(dt.toString()+sIdent+new String(str)+"\n");
+          System.out.print(String.valueOf(Thread.currentThread().getId())+" "+dt.toString()+getIdent()+new String(str)+"\n");
           break;
       }
     }
     catch (IOException e) {
-      System.out.print(dt.toString()+sIdent+new String(str)+"\n");
+      System.out.print(dt.toString()+getIdent()+new String(str)+"\n");
     }
   } // write
 
@@ -311,12 +332,13 @@ public final class DebugFile {
     System.out.println(System.getProperty("java.vendor") + " Runtime Environment " + System.getProperty("java.version"));
     System.out.println(System.getProperty("java.vm.vendor") + " " + System.getProperty("java.vm.name") +  " " + System.getProperty("java.vm.version"));
     System.out.println(System.getProperty("os.name") + " " + System.getProperty("os.version") + " " + System.getProperty("os.arch"));
-    System.out.println("JVM encoding " + System.getProperty( "file.encoding "));
+    System.out.println("JVM encoding " + System.getProperty( "file.encoding"));
   }
 
   // Espacios de identación en cada línea de traza
-  private static String sIdent = "";
-
+  private static ConcurrentHashMap<Long,String> mIdent = new ConcurrentHashMap<Long,String>();
+  private static String sFilePath;
+  
   // **********************************************************
   // Esta variable controla si se volcarán trazas o no
 
@@ -328,5 +350,5 @@ public final class DebugFile {
   /**
    * Activate/Deactive trace output
    */
-  public static final boolean trace = false;
+  public static final boolean trace = true;
   }
