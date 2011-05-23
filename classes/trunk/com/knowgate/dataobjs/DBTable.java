@@ -1028,7 +1028,17 @@ public class DBTable {
       try {
         if (DebugFile.trace) DebugFile.writeln("Statement.executeQuery(SELECT * FROM " + sName + " WHERE 1=0)");
 
-        oRSet = oStmt.executeQuery("SELECT * FROM " + sName + " WHERE 1=0");
+        if (iDBMS==JDCConnection.DBMS_POSTGRESQL) {
+          if (sSchema==null)
+            oRSet = oStmt.executeQuery("SELECT * FROM " + sName + " WHERE 1=0");
+          else if (sSchema.length()==0)
+            oRSet = oStmt.executeQuery("SELECT * FROM " + sName + " WHERE 1=0");
+          else
+            oRSet = oStmt.executeQuery("SELECT * FROM \""+sSchema+"\"." + sName + " WHERE 1=0");
+        } else {
+          oRSet = oStmt.executeQuery("SELECT * FROM " + sName + " WHERE 1=0");
+        }
+        
         iErrCode = 0;
       }
       catch (SQLException sqle) {
@@ -1038,12 +1048,12 @@ public class DBTable {
         oStmt.close();
         oRSet = null;
 
-        if (DebugFile.trace) DebugFile.writeln("SQLException " + sName + " " + sqle.getMessage());
+        if (DebugFile.trace) DebugFile.writeln("SQLException " + sSchema + "." + sName + " " + sqle.getMessage());
 
         iErrCode = sqle.getErrorCode();
         if (iErrCode==0) iErrCode=-1;
         if (!sqle.getSQLState().equals("42000"))
-          throw new SQLException(sqle.getMessage(), sqle.getSQLState(), sqle.getErrorCode());
+          throw new SQLException(sSchema + "." + sName + " " + sqle.getMessage(), sqle.getSQLState(), sqle.getErrorCode());
       }
 
       if (0==iErrCode) {

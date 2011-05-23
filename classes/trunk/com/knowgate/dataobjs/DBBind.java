@@ -85,7 +85,7 @@ public class DBBind extends Beans implements DataSource {
 
   private HashMap<String,DBTable> oTableMap;
 
-  private static final String VERSION = "6.0.0";
+  private static final String VERSION = "7.0.0";
 
   // ***********
   // Constructor
@@ -342,6 +342,7 @@ public class DBBind extends Beans implements DataSource {
     DBTable oTable;
     String sCatalog;
     String sSchema;
+    String sTableSchema;
     String sTableName;
     Iterator oTableIterator;
     String[] aExclude;
@@ -486,7 +487,9 @@ public class DBBind extends Beans implements DataSource {
         while (oRSet.next()) {
 
           if (oRSet.getString(3).indexOf('$')<0 && !in(oRSet.getString(3).toUpperCase(), aExclude)) {
-            oTable = new DBTable(sCatalog, sSchema, oRSet.getString(3), ++i);
+          	sTableSchema = oRSet.getString(2);
+          	if (oRSet.wasNull()) sTableSchema = sSchema;
+            oTable = new DBTable(sCatalog, sTableSchema, oRSet.getString(3), ++i);
 
             sTableName = oTable.getName().toLowerCase();
 
@@ -542,7 +545,9 @@ public class DBBind extends Beans implements DataSource {
             sTableName = oRSet.getString(3);
 
             if (!oRSet.wasNull()) {
-              oTable = new DBTable (sCatalog, oProfEnvProps.getProperty("schema", "dbo"), sTableName, ++i);
+          	  sTableSchema = oRSet.getString(2);
+          	  if (oRSet.wasNull()) sTableSchema = oProfEnvProps.getProperty("schema", "dbo");
+              oTable = new DBTable (sCatalog, sTableSchema, sTableName, ++i);
 
               sTableName = oTable.getName().toLowerCase();
 
@@ -560,10 +565,13 @@ public class DBBind extends Beans implements DataSource {
         else { // sSchema == ""
           while (oRSet.next()) {
 
+          	sTableSchema = oRSet.getString(2);
+          	if (oRSet.wasNull()) sTableSchema = "";
+
             sTableName = oRSet.getString(3);
 
             if (!oRSet.wasNull()) {
-              oTable = new DBTable (sCatalog, "", sTableName, ++i);
+              oTable = new DBTable (sCatalog, sTableSchema, sTableName, ++i);
 
               sTableName = oTable.getName().toLowerCase();
 
@@ -1202,7 +1210,7 @@ public class DBBind extends Beans implements DataSource {
    * @deprecated Use {@link #getDBTable(String) getDBTable} instead
    */
 
-  public static DBTable getTable(String sTable) throws java.lang.IllegalStateException {
+  public static DBTable getTable(String sTable) throws IllegalStateException {
 
     if (null==oGlobalTableMap)
       throw new IllegalStateException("DBBind global table map not initialized, call DBBind constructor first");

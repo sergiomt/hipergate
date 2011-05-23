@@ -4,5 +4,5 @@ Specification-Title: KnowGate Object-Relational Mapping Objects
 Specification-Version: 6.0
 Specification-Vendor: Know Gate S.L.
 Implementation-Title: com.knowgate.dataobjs
-Implementation-Version: 6.0
+Implementation-Version: 7.0
 Implementation-Vendor: Know Gate S.L.

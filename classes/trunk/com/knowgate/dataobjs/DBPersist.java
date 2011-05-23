@@ -1015,7 +1015,11 @@ public class DBPersist extends AbstractRecord {
 
   public DBTable getTable() {
     if (null==oTable) {
-      oTable = DBBind.getTable(getTableName());
+      try {
+        oTable = DBBind.getTable(getTableName());
+      } catch (IllegalStateException ise) {
+        oTable = new DBBind().getTable(getTableName());      	
+      }
     }
     return oTable;
   } // getTable()
@@ -1199,6 +1203,78 @@ public class DBPersist extends AbstractRecord {
         AllVals.put(sKey, oObj);
       }
 	}
+  }
+
+  /**
+   * <p>Set Short value at internal collection</p>
+   * If internal collection previously contained a mapping for this key, the old value is replaced.
+   * @param sKey Field Name
+   * @param oObj Short Value
+   * @throws NullPointerException If sKey is <b>null</b>
+   * @since 7.0
+   */
+
+  public void put(String sKey, Short oShr) throws NullPointerException {
+    if (sKey==null)
+      throw new NullPointerException("DBPersist.put(String,Short) field name cannot be null");
+    if (null==oShr)
+      AllVals.put(sKey, null);
+    else
+      AllVals.put(sKey, oShr);
+  }
+
+  /**
+   * <p>Set Integer value at internal collection</p>
+   * If internal collection previously contained a mapping for this key, the old value is replaced.
+   * @param sKey Field Name
+   * @param oObj Integer Value
+   * @throws NullPointerException If sKey is <b>null</b>
+   * @since 7.0
+   */
+
+  public void put(String sKey, Integer oInt) throws NullPointerException {
+    if (sKey==null)
+      throw new NullPointerException("DBPersist.put(String,Integer) field name cannot be null");
+    if (null==oInt)
+      AllVals.put(sKey, null);
+    else
+      AllVals.put(sKey, oInt);
+  }
+
+  /**
+   * <p>Set Float value at internal collection</p>
+   * If internal collection previously contained a mapping for this key, the old value is replaced.
+   * @param sKey Field Name
+   * @param oObj Float Value
+   * @throws NullPointerException If sKey is <b>null</b>
+   * @since 7.0
+   */
+
+  public void put(String sKey, Float oFlt) throws NullPointerException {
+    if (sKey==null)
+      throw new NullPointerException("DBPersist.put(String,Float) field name cannot be null");
+    if (null==oFlt)
+      AllVals.put(sKey, null);
+    else
+      AllVals.put(sKey, oFlt);
+  }
+
+  /**
+   * <p>Set Double value at internal collection</p>
+   * If internal collection previously contained a mapping for this key, the old value is replaced.
+   * @param sKey Field Name
+   * @param oObj Double Value
+   * @throws NullPointerException If sKey is <b>null</b>
+   * @since 7.0
+   */
+
+  public void put(String sKey, Double oDbl) throws NullPointerException {
+    if (sKey==null)
+      throw new NullPointerException("DBPersist.put(String,Double) field name cannot be null");
+    if (null==oDbl)
+      AllVals.put(sKey, null);
+    else
+      AllVals.put(sKey, oDbl);
   }
 
   /**

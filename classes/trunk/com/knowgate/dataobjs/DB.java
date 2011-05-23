@@ -1282,5 +1282,8 @@ public final class DB {
   public static final String url_author = "url_author";
   public static final String nu_entries = "nu_entries";
   public static final String id_syndref = "id_syndref";
+  public static final String id_acalias = "id_acalias";
+  public static final String nm_service = "nm_service";
+  public static final String nm_alias = "nm_alias";
   
 }

@@ -55,6 +55,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
+import java.util.Comparator;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.Date;
@@ -68,6 +69,7 @@ import com.knowgate.debug.StackTraceUtil;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.storage.RecordSet;
 import com.knowgate.misc.Gadgets;
+import com.knowgate.misc.Calendar;
 import com.knowgate.misc.CSVParser;
 import com.knowgate.math.Money;
 
@@ -583,7 +585,7 @@ public final class DBSubset extends Vector<Vector<Object>> {
           case JDCConnection.DBMS_MYSQL:
             if (DebugFile.trace) DebugFile.writeln("Statement.executeQuery(" + sSelect + " LIMIT " + String.valueOf(iSkip) + "," + String.valueOf(iMaxRows+2) + ")");
             oRSet = oStmt.executeQuery(sSelect + " LIMIT " + String.valueOf(iSkip) + "," + String.valueOf(iMaxRows+2));
-            iSkip = 0; // Use PostgreSQL native OFFSET clause, so do not skip any rows before client side fetching
+            iSkip = 0; // Use MySQL native OFFSET parameter, so do not skip any rows before client side fetching
             break;
 
           case JDCConnection.DBMS_POSTGRESQL:
@@ -906,6 +908,54 @@ public final class DBSubset extends Vector<Vector<Object>> {
   	return oDistinct;
 	
   } // distinct
+
+  // ----------------------------------------------------------
+
+  /**
+   * <p>Get maximum value for a column<p>
+   * @param iCol Column index [0..getColumnCount()-1]
+   * @return Maximum value for column
+   * @since 7.0
+   */
+
+  public Object max (int iCol) throws ArrayIndexOutOfBoundsException {
+  	final int nCount = getRowCount();
+  	Comparable oMax = null;
+  	for (int iRow=0; iRow<nCount; iRow++) {
+  	  Comparable oObj = (Comparable) get(iCol,iRow);
+  	  if (null!=oObj) {
+  	  	if (null==oMax)
+  	  	  oMax = oObj;
+  	  	else if (oObj.compareTo(oMax)>0)
+  	  	  oMax = oObj;
+  	  } // fi
+  	} // next
+  	return oMax;	
+  } // max
+
+  // ----------------------------------------------------------
+
+  /**
+   * <p>Get minimum value for a column<p>
+   * @param iCol Column index [0..getColumnCount()-1]
+   * @return Minimum value for column
+   * @since 7.0
+   */
+
+  public Object min (int iCol) throws ArrayIndexOutOfBoundsException {
+  	final int nCount = getRowCount();
+  	Comparable oMin = null;
+  	for (int iRow=0; iRow<nCount; iRow++) {
+  	  Comparable oObj = (Comparable) get(iCol,iRow);
+  	  if (null!=oObj) {
+  	  	if (null==oMin)
+  	  	  oMin = oObj;
+  	  	else if (oObj.compareTo(oMin)<0)
+  	  	  oMin = oObj;
+  	  } // fi
+  	} // next
+  	return oMin;	
+  } // min
 
   // ----------------------------------------------------------
 
@@ -3409,6 +3459,256 @@ public final class DBSubset extends Vector<Vector<Object>> {
     } // fi
   } // union
 
+  // ----------------------------------------------------------
+
+  public class DBSubsetDateGroup extends ArrayList<Integer> {
+    private Date dtFrom;
+    private Date dtTo;
+    
+	public DBSubsetDateGroup(Date dtStart, Date dtEnd) {
+	  dtFrom = dtStart;
+	  dtTo = dtEnd;
+	}
+	public Date getDateFrom() {
+	  return dtFrom;
+	}
+	public Date getDateTo() {
+	  return dtTo;
+	}	
+	public int compareTo(Date dt) {
+	  boolean bAfterFrom = (dt.compareTo(dtFrom)>=0);
+	  boolean bBeforeTo = dt.compareTo(dtTo)<=0;
+	  return bAfterFrom && bBeforeTo ? 0 : !bBeforeTo ? -1 : 1;
+	}
+  }
+  
+  /**
+   * <p>Group subsets of rows by date intervals</p>
+   * @param iDateColumnPosition int Date Column Index [0..getColumnCount()-1]
+   * @param lInterval long May be 3600000 for grouping by hour, 86400000 for grouping by day,
+   * 604800000 for grouping by week, 2592000000 for grouping by month
+   * or any other arbitrary interval value.
+   * @param iFirstDayOfWeek int SUNDAY=0, MONDAY=1
+   * @return ArrayList<DBSubsetGroup> with one DBSubsetGroup for each interval
+   * @throws ArrayIndexOutOfBoundsException
+   * @throws NullPointerException
+   * @throws ClassCastException
+   * @since 7.0
+   */
+  private ArrayList<DBSubsetDateGroup> groupByInterval(int iDateColumnPosition, long lInterval, int iFirstDayOfWeek)
+    throws ArrayIndexOutOfBoundsException,NullPointerException,ClassCastException {
+    
+    ArrayList<DBSubsetDateGroup> aRetVal = new ArrayList<DBSubsetDateGroup>();
+    DBSubsetDateGroup oNulls = new DBSubsetDateGroup(null,null);
+    Date dtMin = (Date) min(iDateColumnPosition);
+    Date dtMax = (Date) max(iDateColumnPosition);
+    Date dtFirst, dtLast;
+    
+    if (dtMin==null || dtMax==null)
+      throw new NullPointerException("Could not find minimum and maximum date values");
+
+	if (dtMax.getTime()-dtMin.getTime()>1000l*lInterval) {
+	  throw new ArrayIndexOutOfBoundsException("Date values may not span for more than 1000 intervals");
+	}
+
+	if (lInterval==3600000l) {
+
+      // Group by hours
+      dtFirst = new Date(dtMin.getYear(), dtMin.getMonth(), dtMin.getDate(),dtMin.getHours(),0,0);
+      dtLast = new Date(dtMax.getYear(), dtMax.getMonth(), dtMax.getDate(),dtMin.getHours(),59,59);
+	  Date dtHour = dtFirst;	
+	  aRetVal.add(new DBSubsetDateGroup(dtHour, new Date(dtHour.getTime()+lInterval-1l)));
+	  while (dtHour.compareTo(dtLast)<0) {
+	    dtHour = new Date(dtHour.getTime()+lInterval);
+	    aRetVal.add(new DBSubsetDateGroup(dtHour, new Date(dtHour.getTime()+lInterval-1l)));
+	  } // wend
+
+	} else if (lInterval==86400000l) {
+
+      // Group by days
+      dtFirst = new Date(dtMin.getYear(), dtMin.getMonth(), dtMin.getDate(),0,0,0);
+      dtLast = new Date(dtMax.getYear(), dtMax.getMonth(), dtMax.getDate(),23,59,59);
+	  Date dtDay = dtFirst;	
+	  aRetVal.add(new DBSubsetDateGroup(dtDay, new Date(dtDay.getTime()+lInterval-1l)));
+	  while (dtDay.compareTo(dtLast)<0) {
+	    dtDay = new Date(dtDay.getTime()+lInterval);
+	    aRetVal.add(new DBSubsetDateGroup(dtDay, new Date(dtDay.getTime()+lInterval-1l)));
+	  } // wend
+
+	} else if (lInterval==7l*86400000l) {
+
+      // Group by weeks
+      dtFirst = new Date(dtMin.getYear(), dtMin.getMonth(), dtMin.getDate(),0,0,0);
+      while (dtFirst.getDay()!=iFirstDayOfWeek)
+      	dtFirst = new Date(dtFirst.getTime()-86400000l);
+      dtLast = new Date(dtMax.getYear(), dtMax.getMonth(), dtMax.getDate(),23,59,59);
+      while (dtLast.getDay()!=(iFirstDayOfWeek==0 ? 6 : 0))
+      	dtLast = new Date(dtLast.getTime()+86400000l);
+	  Date dtWeek = dtFirst;	
+	  aRetVal.add(new DBSubsetDateGroup(dtWeek, new Date(dtWeek.getTime()+lInterval-1l)));
+	  while (dtWeek.compareTo(dtLast)<0) {
+	    dtWeek = new Date(dtWeek.getTime()+lInterval);
+	    aRetVal.add(new DBSubsetDateGroup(dtWeek, new Date(dtWeek.getTime()+lInterval-1l)));
+	  } // wend
+
+	} else if (lInterval==30l*86400000l) {
+
+      // Group by months
+      dtFirst = new Date(dtMin.getYear(), dtMin.getMonth(), dtMin.getDate(),0,0,0);
+      while (dtFirst.getDate()!=1)
+      	dtFirst = new Date(dtFirst.getTime()-86400000l);
+      dtLast = new Date(dtMax.getYear(), dtMax.getMonth(), dtMax.getDate(),23,59,59);
+      while (dtLast.getDate()!=Calendar.LastDay(dtLast.getMonth(),dtLast.getYear()+1900))
+      	dtLast = new Date(dtLast.getTime()+86400000l);
+	  Date dtMonth = dtFirst;	
+	  aRetVal.add(new DBSubsetDateGroup(dtMonth, new Date(dtMonth.getTime()+(Calendar.LastDay(dtMonth.getMonth(),dtMonth.getYear()+1900)*86400000l)-1l)));
+	  while (dtMonth.compareTo(dtLast)<0) {
+	    dtMonth = new Date(dtMonth.getTime()+(Calendar.LastDay(dtMonth.getMonth(),dtMonth.getYear()+1900)*86400000l));
+	    aRetVal.add(new DBSubsetDateGroup(dtMonth, new Date(dtMonth.getTime()+(Calendar.LastDay(dtMonth.getMonth(),dtMonth.getYear()+1900)*86400000l)-1l)));
+	  } // wend
+
+	} else if (lInterval==365l*86400000l) {
+
+      // Group by years
+      dtFirst = new Date(dtMin.getYear(), 0, 1,0,0,0);
+      dtLast = new Date(dtMax.getYear(), 11, 31,23,59,59);
+	  Date dtYear = dtFirst;	
+	  aRetVal.add(new DBSubsetDateGroup(dtYear, new Date(dtYear.getTime()+((Calendar.LastDay(1,dtYear.getYear()+1900)==29 ? 366l : 365l)*86400000l)-1l)));
+	  while (dtYear.compareTo(dtLast)<0) {
+	    dtYear = new Date(dtYear.getTime()+((Calendar.LastDay(1,dtYear.getYear()+1900)==29 ? 366l : 365l)*86400000l));
+	    aRetVal.add(new DBSubsetDateGroup(dtYear, new Date(dtYear.getTime()+((Calendar.LastDay(1,dtYear.getYear()+1900)==29 ? 366l : 365l)*86400000l)-1l)));
+	  } // wend
+
+	} else {
+
+      // Group by arbitrary intervals
+      dtFirst = dtMin;
+      dtLast = dtMax;
+	  Date dtInterval = dtFirst;	
+	  aRetVal.add(new DBSubsetDateGroup(dtInterval, new Date(dtInterval.getTime()+lInterval-1l)));
+	  while (dtInterval.compareTo(dtLast)<0) {
+	    dtInterval = new Date(dtInterval.getTime()+lInterval);
+	    aRetVal.add(new DBSubsetDateGroup(dtInterval, new Date(dtInterval.getTime()+lInterval-1l)));
+	  } // wend
+	}
+
+    final int nRows = getRowCount();
+    
+	for (int r=0; r<nRows; r++) {
+	  if (isNull(iDateColumnPosition,r)) {
+	  	oNulls.add(new Integer(r));
+	  } else {
+	    Date dtRow = getDate(iDateColumnPosition,r);
+	    int iFound = -1;
+		int iLow = 0;
+		int iHigh = aRetVal.size()-1;
+	    while (iLow<=iHigh) {
+	  	  int iComparison;	  	    
+ 		  DBSubsetDateGroup oGrp;
+ 		  if (iLow==iHigh) {
+ 		  	oGrp = aRetVal.get(iLow);
+ 		  	if (0==oGrp.compareTo(dtRow)) iFound = iLow;
+	  	    break;	  	
+ 		  } else if (iLow==iHigh-1) {	      
+ 		  	oGrp = aRetVal.get(iLow);
+	   	    iComparison = oGrp.compareTo(dtRow);
+		    if (0==iComparison) iFound = iLow;
+	        oGrp = aRetVal.get(iHigh);
+	  	    iComparison = oGrp.compareTo(dtRow);
+		    if (0==iComparison) iFound = iHigh;
+	  	    break;	  	  
+	  	  } else {
+            int iMid = (iLow + iHigh) / 2;
+ 		  	oGrp = aRetVal.get(iMid);
+	        iComparison = oGrp.compareTo(dtRow);
+		    if (0==iComparison) {
+		      iFound = iMid;
+		      break;
+		    } else if (iComparison>0) {
+		      iHigh = iMid - 1;
+		    } else {
+              iLow = iMid + 1;
+		    }
+	  	  } // fi
+	    } // wend
+	    if (-1==iFound)
+	      throw new ArrayIndexOutOfBoundsException("Date "+dtRow+" not found at any interval");
+	    else
+	      aRetVal.get(iFound).add(new Integer(r));
+	  } // fi
+	} // next
+	return aRetVal;
+  } // groupByInterval
+
+  /**
+   * <p>Group rows by hour intervals</p>
+   * @param iDateColumnPosition int Date Column Index [0..getColumnCount()-1]
+   * @return ArrayList<DBSubsetGroup> with one DBSubsetGroup for each hour
+   * @throws ArrayIndexOutOfBoundsException
+   * @throws NullPointerException
+   * @throws ClassCastException
+   * @since 7.0
+   */
+
+  public ArrayList<DBSubsetDateGroup> groupByHour(int iDateColumnPosition) {
+  	return groupByInterval(iDateColumnPosition, 3600000l, 0);
+  }
+
+  /**
+   * <p>Group rows by day intervals</p>
+   * @param iDateColumnPosition int Date Column Index [0..getColumnCount()-1]
+   * @return ArrayList<DBSubsetGroup> with one DBSubsetGroup for each day
+   * @throws ArrayIndexOutOfBoundsException
+   * @throws NullPointerException
+   * @throws ClassCastException
+   * @since 7.0
+   */
+
+  public ArrayList<DBSubsetDateGroup> groupByDay(int iDateColumnPosition) {
+  	return groupByInterval(iDateColumnPosition, 86400000l, 0);
+  }
+
+  /**
+   * <p>Group rows by week intervals</p>
+   * @param iDateColumnPosition int Date Column Index [0..getColumnCount()-1]
+   * @param iFirstDayOfWeek int First day of the week, SUNDAY=0, MONDAY=1
+   * @return ArrayList<DBSubsetGroup> with one DBSubsetGroup for each week
+   * @throws ArrayIndexOutOfBoundsException
+   * @throws NullPointerException
+   * @throws ClassCastException
+   * @since 7.0
+   */
+
+  public ArrayList<DBSubsetDateGroup> groupByWeek(int iDateColumnPosition, int iFirstDayOfWeek) {
+  	return groupByInterval(iDateColumnPosition, 604800000l, iFirstDayOfWeek);
+  }
+
+  /**
+   * <p>Group rows by month intervals</p>
+   * @param iDateColumnPosition int Date Column Index [0..getColumnCount()-1]
+   * @return ArrayList<DBSubsetGroup> with one DBSubsetGroup for each month
+   * @throws ArrayIndexOutOfBoundsException
+   * @throws NullPointerException
+   * @throws ClassCastException
+   * @since 7.0
+   */
+  public ArrayList<DBSubsetDateGroup> groupByMonth(int iDateColumnPosition) {
+  	return groupByInterval(iDateColumnPosition, 2592000000l, 0);
+  }
+
+  /**
+   * <p>Group rows by year intervals</p>
+   * @param iDateColumnPosition int Date Column Index [0..getColumnCount()-1]
+   * @return ArrayList<DBSubsetGroup> with one DBSubsetGroup for each month
+   * @throws ArrayIndexOutOfBoundsException
+   * @throws NullPointerException
+   * @throws ClassCastException
+   * @since 7.0
+   */
+  public ArrayList<DBSubsetDateGroup> groupByYear(int iDateColumnPosition) {
+  	return groupByInterval(iDateColumnPosition, 31536000000l, 0);
+  }
+    
   // ----------------------------------------------------------
 
   /**
