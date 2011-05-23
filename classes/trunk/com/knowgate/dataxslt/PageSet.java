@@ -113,15 +113,18 @@ public class PageSet extends DOMDocument {
 
       File oMFile = new File(sMsiteURI);
 
-      if (!oMFile.exists())
+      if (!oMFile.exists()) {
+        if (DebugFile.trace) DebugFile.writeln("FileNotFoundException "+sMsiteURI);
         throw new FileNotFoundException (sMsiteURI + " not found");
+      }
 
       oMFile = null;
 
       oMSite = MicrositeFactory.getInstance("file://" + sMsiteURI, bValidateXML);
     }
-    else
+    else {
       oMSite = MicrositeFactory.getInstance(sMsiteURI, bValidateXML);
+    }
   }
 
  /**
@@ -185,8 +188,10 @@ public class PageSet extends DOMDocument {
     if (sPageSetURI.startsWith("file://")) {
       oPFile = new File(sPageSetURI.substring(7));
 
-      if (!oPFile.exists())
+      if (!oPFile.exists()) {
+        if (DebugFile.trace) DebugFile.writeln("FileNotFoundException "+sPageSetURI.substring(7));
         throw new FileNotFoundException (sPageSetURI.substring(7) + " not found");
+      }
 
       if (DebugFile.trace) DebugFile.writeln("parseURI (" + sPageSetURI  + ");");
 
@@ -195,8 +200,10 @@ public class PageSet extends DOMDocument {
     else {
       oPFile = new File(sPageSetURI);
 
-      if (!oPFile.exists())
+      if (!oPFile.exists()) {
+        if (DebugFile.trace) DebugFile.writeln("FileNotFoundException "+sPageSetURI);
         throw new FileNotFoundException (sPageSetURI + " not found");
+      }
 
       if (DebugFile.trace) DebugFile.writeln("parseURI (file://" + sPageSetURI  + ");");
 
@@ -237,16 +244,20 @@ public class PageSet extends DOMDocument {
     if (sPageSetURI.startsWith("file://")) {
       oPFile = new File(sPageSetURI.substring(7));
 
-      if (!oPFile.exists())
+      if (!oPFile.exists()) {
+        if (DebugFile.trace) DebugFile.writeln("FileNotFoundException "+sPageSetURI.substring(7));
         throw new FileNotFoundException (sPageSetURI.substring(7) + " not found");
+      }
 
       parseURI(sPageSetURI, "UTF-8");
     }
     else {
       oPFile = new File(sPageSetURI);
 
-      if (!oPFile.exists())
+      if (!oPFile.exists()) {
+        if (DebugFile.trace) DebugFile.writeln("FileNotFoundException "+sPageSetURI);
         throw new FileNotFoundException (sPageSetURI + " not found");
+      }
 
       parseURI("file://" + sPageSetURI, "UTF-8");
     }

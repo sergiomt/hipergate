@@ -42,6 +42,7 @@ import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.sql.Types;
 
 import java.text.SimpleDateFormat;
@@ -236,7 +237,7 @@ public class PageSetDB extends DBPersist {
 
       bRetVal = oRSet.next();
 
-      put (DB.gu_pageset, aPK[0]);
+      put (DB.gu_pageset, (String) aPK[0]);
 
       if (bRetVal) {
         put (DB.gu_microsite, oRSet.getString(1));
@@ -406,14 +407,15 @@ public class PageSetDB extends DBPersist {
 
       if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement(" + "INSERT INTO " + DB.k_pageset_pages + " (" + DB.gu_page + "," + DB.pg_page + "," + DB.gu_pageset + "," + DB.dt_modified + "," + DB.tl_page + "," + DB.path_page + ") VALUES ('" + sIdPage + "'," + String.valueOf(iPgPage) + ",'" + getString(DB.gu_pageset) + "'," + DBBind.escape(new Date(), "ts") + ",'" + sTlPage + "','" + sPathPage + "')" + ")");
 
-      sSQL = "INSERT INTO " + DB.k_pageset_pages + " (" + DB.gu_page + "," + DB.pg_page + "," + DB.gu_pageset + "," + DB.dt_modified + "," + DB.tl_page + "," + DB.path_page + ") VALUES (?,?,?," + DBBind.escape(new Date(), "ts") + ",?,?)";
+      sSQL = "INSERT INTO " + DB.k_pageset_pages + " (" + DB.gu_page + "," + DB.pg_page + "," + DB.gu_pageset + "," + DB.dt_modified + "," + DB.tl_page + "," + DB.path_page + ") VALUES (?,?,?,?,?,?)";
 
       oStmt = oConn.prepareStatement(sSQL);
       oStmt.setString(1, sIdPage);
       oStmt.setInt(2, iPgPage);
       oStmt.setString(3, getString(DB.gu_pageset));
-      oStmt.setString(4, sTlPage);
-      oStmt.setString(5, sPathPage);
+      oStmt.setTimestamp(4, new Timestamp(new Date().getTime()));      
+      oStmt.setString(5, sTlPage);
+      oStmt.setString(6, sPathPage);
       if (DebugFile.trace) DebugFile.writeln("PreparedStatement.execute()");
       oStmt.execute();
       oStmt.close();

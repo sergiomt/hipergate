@@ -34,6 +34,8 @@ package com.knowgate.dataxslt;
 
 import java.util.HashMap;
 
+import com.knowgate.debug.DebugFile;
+
 /**
  * A SoftReferences cache to Microsite objects.
  * When working with XSL tranformations, typically only a small number of Microsite
@@ -86,10 +88,17 @@ public class MicrositeFactory {
     Microsite oRetObj;
     Object oRefObj;
 
+	if (DebugFile.trace) {
+	  DebugFile.writeln("Begin MicrositeFactory.getInstance("+sURI+", "+String.valueOf(bValidateXML)+")");
+	  DebugFile.incIdent();
+	  DebugFile.writeln("cache is "+(bCache ? "enabled" : "disabled"));
+	}
+	
     if (bCache) {
       oRefObj = oMicrosites.get(sURI);
 
       if (null == oRefObj) {
+      	if (DebugFile.trace) DebugFile.writeln("cache miss");
         oRetObj = new Microsite(sURI, bValidateXML);
         oMicrosites.put(sURI, new SoftReference(oRetObj));
       }
@@ -97,11 +106,18 @@ public class MicrositeFactory {
         oRetObj = (Microsite) ( (SoftReference) oRefObj).get();
         if (null == oRetObj)
           oRetObj = new Microsite(sURI, bValidateXML);
+        else if (DebugFile.trace) DebugFile.writeln("cache hit");
       }
       return oRetObj;
     }
-    else
+    else {
       oRetObj = new Microsite(sURI, bValidateXML);
+    }
+
+	if (DebugFile.trace) {
+	  DebugFile.decIdent();
+	  DebugFile.writeln("End MicrositeFactory.getInstance()");
+	}
 
     return oRetObj;
   } // getInstance

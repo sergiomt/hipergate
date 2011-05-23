@@ -357,7 +357,8 @@ public class StylesheetCache {
    * @throws TransformerConfigurationException
    * @since 6.0
    */
-  public static String transform (InputStream oStyleSheetStream, InputStream oXMLInputStream, String sEncoding, Properties oProps)
+  public static String transform (InputStream oStyleSheetStream, InputStream oXMLInputStream,
+  								  String sEncoding, Properties oProps)
     throws IOException, FileNotFoundException, UnsupportedEncodingException,
            NullPointerException, TransformerException, TransformerConfigurationException {
 
@@ -450,6 +451,7 @@ public class StylesheetCache {
     String sEncoding;
     int iEnc = Gadgets.indexOfIgnoreCase(sXMLInput, "encoding");
     if (iEnc<0) {
+      if (DebugFile.trace) DebugFile.writeln("No explicit encoding found, setting default to ISO8859_1");
       sEncoding = "ISO8859_1";
     } else {
       int iBeg = iEnc+8;
