@@ -196,7 +196,10 @@ public class GCalendarSynchronizer {
 	      oCache.put(sUser+"[gmail]", new PasswordRecord());	  	
 	    }
 	  }
-	} // fi
+	} else {
+	  if (DebugFile.trace)
+	    DebugFile.writeln("PasswordRecord has not any line with a GMail account");	  
+	}
 
 	if (DebugFile.trace) {
 	  DebugFile.decIdent();
@@ -236,6 +239,9 @@ public class GCalendarSynchronizer {
 
 	CalendarEventFeed oFeed = oCalSrv.query(myQuery, CalendarEventFeed.class);  	
 
+	if (DebugFile.trace)
+	  DebugFile.writeln(String.valueOf(oFeed.getEntries().size())+" events found at Google calendar");
+
 	ResultSet oRSet;
     PreparedStatement oStmm = oConn.prepareStatement("SELECT "+DB.gu_meeting+" FROM "+DB.k_meetings+" WHERE "+DB.gu_workarea+"=? AND "+DB.id_icalendar+"=?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
     PreparedStatement oStmf = oConn.prepareStatement("SELECT "+DB.gu_fellow+" FROM "+DB.k_fellows+" WHERE "+DB.gu_workarea+"=? AND "+DB.tx_email+"=?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -243,6 +249,10 @@ public class GCalendarSynchronizer {
 	for (int i = 0; i < oFeed.getEntries().size(); i++) {
   	  CalendarEventEntry oEvnt = oFeed.getEntries().get(i);
   	  List<When> oTimes = oEvnt.getTimes();
+
+	  if (DebugFile.trace)
+	    DebugFile.writeln("Synchronizing event "+oEvnt.getIcalUID()+" which occurs "+String.valueOf(oTimes.size())+" times");
+
   	  if (oTimes.size()>0) {
   	  	Meeting oMeet = new Meeting();
   	    boolean bAlreadyExists = false;
@@ -255,6 +265,9 @@ public class GCalendarSynchronizer {
   	    else
   	      oMeet.put(DB.gu_meeting, Gadgets.generateUUID());
 		oRSet.close();
+
+	    if (DebugFile.trace)
+	      DebugFile.writeln(bAlreadyExists ? "event already exists at local calendar" : "event does not exist at local calendar");
 		  	    
   	    oMeet.put(DB.id_domain, iIdDomain);
   	    oMeet.put(DB.gu_workarea, sGuWorkArea);
@@ -273,6 +286,7 @@ public class GCalendarSynchronizer {
 		for (EventWho oEwho : oEvnt.getParticipants()) {
 		  String sEMail = oEwho.getEmail();
 		  if (sEMail!=null) {
+	        if (DebugFile.trace) DebugFile.writeln("adding attendant "+sEMail);
 		  	int iFlw = oFlws.find(4, sEMail);
 		  	if (iFlw<0) {
 		  	  oStmf.setString(1, sGuWorkArea);
@@ -285,13 +299,15 @@ public class GCalendarSynchronizer {
 		  	} // fi
 		  } // fi
 		} // next
-			
-  	    System.out.println("iCalUID="+oMeet.getStringNull(DB.id_icalendar,""));
-  	    System.out.println("Title="+oMeet.getStringNull(DB.tx_meeting,""));
-  	    System.out.println("Summary="+oMeet.getStringNull(DB.de_meeting,""));
-  	    System.out.println("Start="+oMeet.getDateTime24(DB.dt_start));
-  	    System.out.println("End="+oMeet.getDateTime24(DB.dt_end));
-
+		
+		if (DebugFile.trace) {
+  	      DebugFile.writeln("iCalUID="+oMeet.getStringNull(DB.id_icalendar,""));
+  	      DebugFile.writeln("Title="+oMeet.getStringNull(DB.tx_meeting,""));
+  	      DebugFile.writeln("Summary="+oMeet.getStringNull(DB.de_meeting,""));
+  	      DebugFile.writeln("Start="+oMeet.getDateTime24(DB.dt_start));
+  	      DebugFile.writeln("End="+oMeet.getDateTime24(DB.dt_end));
+		}
+		
   	    aMeetings.add(oMeet);
   	  }  	  
 	} // next
