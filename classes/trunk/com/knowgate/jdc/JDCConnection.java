@@ -35,8 +35,9 @@ package com.knowgate.jdc;
 import java.util.Map;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Iterator;
+import java.util.LinkedList;
+
 import java.text.ParseException;
 
 import java.sql.*;
@@ -47,6 +48,7 @@ import javax.sql.StatementEventListener;
 import javax.sql.ConnectionEvent;
 
 import com.knowgate.debug.DebugFile;
+import com.knowgate.misc.NameValuePair;
 
 import com.knowgate.dataobjs.DBBind;
 import com.knowgate.dataobjs.DBTable;
@@ -57,6 +59,7 @@ import com.knowgate.dataobjs.DBRecordSet;
 
 import com.knowgate.storage.Table;
 import com.knowgate.storage.Record;
+import com.knowgate.storage.Column;
 import com.knowgate.storage.RecordSet;
 import com.knowgate.storage.DataSource;
 import com.knowgate.storage.Transaction;
@@ -201,6 +204,10 @@ public final class JDCConnection implements Connection,PooledConnection,Table {
     public String getName() {
         return name;
     }
+
+	public LinkedList<Column> columns() {
+	  return ((DBTable) pool.getDBTablesMap().get(getName())).getColumns();
+	}
 
     public static int getDataBaseProduct(Connection conn) throws SQLException {
       DatabaseMetaData mdat;
@@ -1184,6 +1191,52 @@ public final class JDCConnection implements Connection,PooledConnection,Table {
 	  }
 	  return oRetVal;
 	}
+
+	/**
+	 * Fetch the first n rows matching some indexed values
+	 * @param aIndexPairs Array of NameValuePair
+	 * @param sIndexValue Value for index column
+	 * @param iMaxRows Maximum rows to be readed
+	 * @throws StorageException
+	 * @return RecordSet
+	 * @since 7.0
+	 */
+	public RecordSet fetch(NameValuePair[] aPairs, int iMaxRows) throws StorageException {
+	  DBRecordSet oRetVal = new DBRecordSet();
+	  PreparedStatement oStmt = null;
+	  ResultSet oRSet = null;
+	  try {
+	    DBPersist oDbp = new DBPersist(getName(), getName());
+	    DBTable oDbt = oDbp.getTable(this);
+	    // DBColumn oDbc = oDbt.getColumnByName(sIndexColumn);
+	    String sSQL = "SELECT * FROM "+getName()+" WHERE ";
+	    for (int p=0; p<aPairs.length; p++)
+	      sSQL += (p==0 ? "" : " AND ") + aPairs[p].getName()+"=?";	      
+	    oStmt = prepareStatement(sSQL, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+	    for (int p=0; p<aPairs.length; p++)
+	      oStmt.setString(p+1, aPairs[p].getValue());
+	    oRSet = oStmt.executeQuery();
+	    ResultSetMetaData oMDat = oRSet.getMetaData();
+	    final int nCols = oMDat.getColumnCount();
+	    int iFetched = 0;
+	    while (oRSet.next()) {
+	      oDbp = new DBPersist(getName(), getName());
+	      for (int c=1; c<=nCols; c++)
+	        oDbp.put(oMDat.getColumnName(c).toLowerCase(), oRSet.getObject(c));
+	      oRetVal.add(oDbp);
+	      if (++iFetched>=iMaxRows) break;
+	    } // wend
+	    oRSet.close();
+	    oRSet=null;
+	    oStmt.close();
+	    oStmt=null;
+	  } catch (SQLException sqle) {
+	  	if (oRSet!=null) { try { oRSet.close(); } catch (Exception ignore) { } }
+	  	if (oStmt!=null) { try { oStmt.close(); } catch (Exception ignore) { } }
+      	throw new StorageException(sqle.getMessage(), sqle);
+	  }
+	  return oRetVal;
+	} // fetch
 
 	/**
 	 * <p>Get the last n rows from a table</p>

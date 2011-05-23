@@ -34,6 +34,7 @@ package com.knowgate.jdc;
 
 import java.io.PrintWriter;
 
+import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -60,6 +61,7 @@ import com.knowgate.storage.Table;
 import com.knowgate.storage.Engine;
 import com.knowgate.storage.Record;
 import com.knowgate.storage.DataSource;
+import com.knowgate.storage.SchemaMetaData;
 import com.knowgate.storage.StorageException;
 
 /**
@@ -1189,6 +1191,14 @@ public final class JDCConnectionPool implements ConnectionPoolDataSource,DataSou
 	  }
 	}
 
+    public SchemaMetaData getMetaData() {
+      throw new UnsupportedOperationException("getMetaData() method not implemented for JDCConnectionPool");
+    }
+
+	public Map getDBTablesMap() throws IllegalStateException {
+	  return ((com.knowgate.dataobjs.DBBind) binding).getDBTablesMap();
+	}
+	
     // ============================================================================
 
 } // JDCConnectionPool
