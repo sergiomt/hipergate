@@ -1,0 +1,832 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:simpleType name="guid">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="32"/>
+      <xs:maxLength value="32"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="nillableShort">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:unsignedShort"/>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:length value="0"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <xs:simpleType name="nillableDecimal">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:decimal"/>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:length value="0"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <xs:simpleType name="telephone">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="16"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="str16">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="16"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="str30">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="30"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="str50">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="50"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="str70">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="70"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="str100">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="100"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="str254">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="254"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="gender">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value=""/>
+      <xs:enumeration value="M"/>
+      <xs:enumeration value="F"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="passtype">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="">
+        <xs:annotation>
+          <xs:documentation>Unknown</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="I">
+        <xs:annotation>
+          <xs:documentation>Identity Card</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="P">
+        <xs:annotation>
+          <xs:documentation>Passport</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="R">
+        <xs:annotation>
+          <xs:documentation>Residence Permission</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="email">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="100"/>
+      <xs:pattern value="[\w\._-]+@[\w\._-]+\.\D{2,4}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="url">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="254"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="country">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value=""/>
+      <xs:enumeration value="ad"/>
+      <xs:enumeration value="ae"/>
+      <xs:enumeration value="af"/>
+      <xs:enumeration value="ag"/>
+      <xs:enumeration value="ai"/>
+      <xs:enumeration value="al"/>
+      <xs:enumeration value="am"/>
+      <xs:enumeration value="an"/>
+      <xs:enumeration value="ao"/>
+      <xs:enumeration value="aq"/>
+      <xs:enumeration value="ar"/>
+      <xs:enumeration value="as"/>
+      <xs:enumeration value="at"/>
+      <xs:enumeration value="au"/>
+      <xs:enumeration value="aw"/>
+      <xs:enumeration value="az"/>
+      <xs:enumeration value="ba"/>
+      <xs:enumeration value="bb"/>
+      <xs:enumeration value="bd"/>
+      <xs:enumeration value="be"/>
+      <xs:enumeration value="bf"/>
+      <xs:enumeration value="bg"/>
+      <xs:enumeration value="bh"/>
+      <xs:enumeration value="bi"/>
+      <xs:enumeration value="bj"/>
+      <xs:enumeration value="bm"/>
+      <xs:enumeration value="bn"/>
+      <xs:enumeration value="bo"/>
+      <xs:enumeration value="br"/>
+      <xs:enumeration value="bs"/>
+      <xs:enumeration value="bt"/>
+      <xs:enumeration value="bv"/>
+      <xs:enumeration value="by"/>
+      <xs:enumeration value="bz"/>
+      <xs:enumeration value="ca"/>
+      <xs:enumeration value="cc"/>
+      <xs:enumeration value="cd"/>
+      <xs:enumeration value="cf"/>
+      <xs:enumeration value="cg"/>
+      <xs:enumeration value="ch"/>
+      <xs:enumeration value="ci"/>
+      <xs:enumeration value="ck"/>
+      <xs:enumeration value="cl"/>
+      <xs:enumeration value="cm"/>
+      <xs:enumeration value="cn"/>
+      <xs:enumeration value="co"/>
+      <xs:enumeration value="cr"/>
+      <xs:enumeration value="cs"/>
+      <xs:enumeration value="cu"/>
+      <xs:enumeration value="cv"/>
+      <xs:enumeration value="cx"/>
+      <xs:enumeration value="cy"/>
+      <xs:enumeration value="cz"/>
+      <xs:enumeration value="de"/>
+      <xs:enumeration value="dj"/>
+      <xs:enumeration value="dk"/>
+      <xs:enumeration value="dm"/>
+      <xs:enumeration value="do"/>
+      <xs:enumeration value="dz"/>
+      <xs:enumeration value="ec"/>
+      <xs:enumeration value="ee"/>
+      <xs:enumeration value="eg"/>
+      <xs:enumeration value="eh"/>
+      <xs:enumeration value="es"/>
+      <xs:enumeration value="et"/>
+      <xs:enumeration value="ex"/>
+      <xs:enumeration value="fi"/>
+      <xs:enumeration value="fj"/>
+      <xs:enumeration value="fk"/>
+      <xs:enumeration value="fm"/>
+      <xs:enumeration value="fo"/>
+      <xs:enumeration value="fr"/>
+      <xs:enumeration value="ga"/>
+      <xs:enumeration value="gb"/>
+      <xs:enumeration value="gd"/>
+      <xs:enumeration value="ge"/>
+      <xs:enumeration value="gf"/>
+      <xs:enumeration value="gh"/>
+      <xs:enumeration value="gi"/>
+      <xs:enumeration value="gl"/>
+      <xs:enumeration value="gm"/>
+      <xs:enumeration value="gn"/>
+      <xs:enumeration value="gp"/>
+      <xs:enumeration value="gq"/>
+      <xs:enumeration value="gr"/>
+      <xs:enumeration value="gs"/>
+      <xs:enumeration value="gt"/>
+      <xs:enumeration value="gu"/>
+      <xs:enumeration value="gw"/>
+      <xs:enumeration value="gy"/>
+      <xs:enumeration value="hk"/>
+      <xs:enumeration value="hm"/>
+      <xs:enumeration value="hn"/>
+      <xs:enumeration value="hr"/>
+      <xs:enumeration value="ht"/>
+      <xs:enumeration value="hu"/>
+      <xs:enumeration value="id"/>
+      <xs:enumeration value="ie"/>
+      <xs:enumeration value="il"/>
+      <xs:enumeration value="in"/>
+      <xs:enumeration value="int"/>
+      <xs:enumeration value="io"/>
+      <xs:enumeration value="iq"/>
+      <xs:enumeration value="ir"/>
+      <xs:enumeration value="is"/>
+      <xs:enumeration value="it"/>
+      <xs:enumeration value="jm"/>
+      <xs:enumeration value="jo"/>
+      <xs:enumeration value="jp"/>
+      <xs:enumeration value="ke"/>
+      <xs:enumeration value="kg"/>
+      <xs:enumeration value="kh"/>
+      <xs:enumeration value="ki"/>
+      <xs:enumeration value="km"/>
+      <xs:enumeration value="kn"/>
+      <xs:enumeration value="kp"/>
+      <xs:enumeration value="kr"/>
+      <xs:enumeration value="kw"/>
+      <xs:enumeration value="ky"/>
+      <xs:enumeration value="kz"/>
+      <xs:enumeration value="la"/>
+      <xs:enumeration value="lb"/>
+      <xs:enumeration value="lc"/>
+      <xs:enumeration value="li"/>
+      <xs:enumeration value="lk"/>
+      <xs:enumeration value="lr"/>
+      <xs:enumeration value="ls"/>
+      <xs:enumeration value="lt"/>
+      <xs:enumeration value="lu"/>
+      <xs:enumeration value="lv"/>
+      <xs:enumeration value="ly"/>
+      <xs:enumeration value="ma"/>
+      <xs:enumeration value="mc"/>
+      <xs:enumeration value="md"/>
+      <xs:enumeration value="mg"/>
+      <xs:enumeration value="mh"/>
+      <xs:enumeration value="mk"/>
+      <xs:enumeration value="ml"/>
+      <xs:enumeration value="mm"/>
+      <xs:enumeration value="mn"/>
+      <xs:enumeration value="mo"/>
+      <xs:enumeration value="mp"/>
+      <xs:enumeration value="mq"/>
+      <xs:enumeration value="mr"/>
+      <xs:enumeration value="ms"/>
+      <xs:enumeration value="mt"/>
+      <xs:enumeration value="mu"/>
+      <xs:enumeration value="mv"/>
+      <xs:enumeration value="mw"/>
+      <xs:enumeration value="mx"/>
+      <xs:enumeration value="my"/>
+      <xs:enumeration value="mz"/>
+      <xs:enumeration value="na"/>
+      <xs:enumeration value="nc"/>
+      <xs:enumeration value="ne"/>
+      <xs:enumeration value="net"/>
+      <xs:enumeration value="ng"/>
+      <xs:enumeration value="ni"/>
+      <xs:enumeration value="nl"/>
+      <xs:enumeration value="no"/>
+      <xs:enumeration value="np"/>
+      <xs:enumeration value="nr"/>
+      <xs:enumeration value="nt"/>
+      <xs:enumeration value="nu"/>
+      <xs:enumeration value="nz"/>
+      <xs:enumeration value="om"/>
+      <xs:enumeration value="pa"/>
+      <xs:enumeration value="pe"/>
+      <xs:enumeration value="pf"/>
+      <xs:enumeration value="pg"/>
+      <xs:enumeration value="ph"/>
+      <xs:enumeration value="pk"/>
+      <xs:enumeration value="pl"/>
+      <xs:enumeration value="pm"/>
+      <xs:enumeration value="pn"/>
+      <xs:enumeration value="pr"/>
+      <xs:enumeration value="pt"/>
+      <xs:enumeration value="pw"/>
+      <xs:enumeration value="py"/>
+      <xs:enumeration value="qa"/>
+      <xs:enumeration value="ro"/>
+      <xs:enumeration value="ru"/>
+      <xs:enumeration value="rw"/>
+      <xs:enumeration value="sa"/>
+      <xs:enumeration value="sb"/>
+      <xs:enumeration value="sc"/>
+      <xs:enumeration value="sd"/>
+      <xs:enumeration value="se"/>
+      <xs:enumeration value="sg"/>
+      <xs:enumeration value="si"/>
+      <xs:enumeration value="sj"/>
+      <xs:enumeration value="sk"/>
+      <xs:enumeration value="sl"/>
+      <xs:enumeration value="sm"/>
+      <xs:enumeration value="sn"/>
+      <xs:enumeration value="so"/>
+      <xs:enumeration value="sr"/>
+      <xs:enumeration value="st"/>
+      <xs:enumeration value="su"/>
+      <xs:enumeration value="sv"/>
+      <xs:enumeration value="sy"/>
+      <xs:enumeration value="sz"/>
+      <xs:enumeration value="tc"/>
+      <xs:enumeration value="td"/>
+      <xs:enumeration value="tf"/>
+      <xs:enumeration value="tg"/>
+      <xs:enumeration value="th"/>
+      <xs:enumeration value="tj"/>
+      <xs:enumeration value="tk"/>
+      <xs:enumeration value="tm"/>
+      <xs:enumeration value="tn"/>
+      <xs:enumeration value="to"/>
+      <xs:enumeration value="tp"/>
+      <xs:enumeration value="tr"/>
+      <xs:enumeration value="tt"/>
+      <xs:enumeration value="tv"/>
+      <xs:enumeration value="tw"/>
+      <xs:enumeration value="tz"/>
+      <xs:enumeration value="ua"/>
+      <xs:enumeration value="ug"/>
+      <xs:enumeration value="uk"/>
+      <xs:enumeration value="um"/>
+      <xs:enumeration value="us"/>
+      <xs:enumeration value="uy"/>
+      <xs:enumeration value="uz"/>
+      <xs:enumeration value="va"/>
+      <xs:enumeration value="vc"/>
+      <xs:enumeration value="ve"/>
+      <xs:enumeration value="vg"/>
+      <xs:enumeration value="vi"/>
+      <xs:enumeration value="vn"/>
+      <xs:enumeration value="vu"/>
+      <xs:enumeration value="wf"/>
+      <xs:enumeration value="ws"/>
+      <xs:enumeration value="ye"/>
+      <xs:enumeration value="yt"/>
+      <xs:enumeration value="yu"/>
+      <xs:enumeration value="za"/>
+      <xs:enumeration value="zm"/>
+      <xs:enumeration value="zr"/>
+      <xs:enumeration value="zw"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="language">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="af"/>
+      <xs:enumeration value="ar"/>
+      <xs:enumeration value="be"/>
+      <xs:enumeration value="bg"/>
+      <xs:enumeration value="ca"/>
+      <xs:enumeration value="cn"/>
+      <xs:enumeration value="cs"/>
+      <xs:enumeration value="da"/>
+      <xs:enumeration value="de"/>
+      <xs:enumeration value="el"/>
+      <xs:enumeration value="en"/>
+      <xs:enumeration value="es"/>
+      <xs:enumeration value="et"/>
+      <xs:enumeration value="eu"/>
+      <xs:enumeration value="fa"/>
+      <xs:enumeration value="fi"/>
+      <xs:enumeration value="fo"/>
+      <xs:enumeration value="fr"/>
+      <xs:enumeration value="gd"/>
+      <xs:enumeration value="gl"/>
+      <xs:enumeration value="he"/>
+      <xs:enumeration value="hi"/>
+      <xs:enumeration value="hr"/>
+      <xs:enumeration value="hu"/>
+      <xs:enumeration value="in"/>
+      <xs:enumeration value="is"/>
+      <xs:enumeration value="it"/>
+      <xs:enumeration value="ja"/>
+      <xs:enumeration value="ji"/>
+      <xs:enumeration value="ko"/>
+      <xs:enumeration value="lt"/>
+      <xs:enumeration value="lv"/>
+      <xs:enumeration value="mk"/>
+      <xs:enumeration value="mt"/>
+      <xs:enumeration value="nl"/>
+      <xs:enumeration value="no"/>
+      <xs:enumeration value="pl"/>
+      <xs:enumeration value="pt"/>
+      <xs:enumeration value="rm"/>
+      <xs:enumeration value="ro"/>
+      <xs:enumeration value="ru"/>
+      <xs:enumeration value="sk"/>
+      <xs:enumeration value="sl"/>
+      <xs:enumeration value="sq"/>
+      <xs:enumeration value="sr"/>
+      <xs:enumeration value="sv"/>
+      <xs:enumeration value="sx"/>
+      <xs:enumeration value="sz"/>
+      <xs:enumeration value="th"/>
+      <xs:enumeration value="tn"/>
+      <xs:enumeration value="tr"/>
+      <xs:enumeration value="ts"/>
+      <xs:enumeration value="tw"/>
+      <xs:enumeration value="uk"/>
+      <xs:enumeration value="ur"/>
+      <xs:enumeration value="ve"/>
+      <xs:enumeration value="vi"/>
+      <xs:enumeration value="xh"/>
+      <xs:enumeration value="zh"/>
+    </xs:restriction>
+  </xs:simpleType>  
+  <xs:simpleType name="street">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value=""/>
+      <xs:enumeration value="ACCESO"/>
+      <xs:enumeration value="ACEQUIA"/>
+      <xs:enumeration value="ALAMEDA"/>
+      <xs:enumeration value="ALQUERIA"/>
+      <xs:enumeration value="ALQUERIAS"/>
+      <xs:enumeration value="ALTO"/>
+      <xs:enumeration value="APARTAMENTOS"/>
+      <xs:enumeration value="APARTAMENTS"/>
+      <xs:enumeration value="APDO. POSTAL"/>
+      <xs:enumeration value="APEADEIRO"/>
+      <xs:enumeration value="APEADERO"/>
+      <xs:enumeration value="ARCO"/>
+      <xs:enumeration value="ARRABAL"/>
+      <xs:enumeration value="ARROYO"/>
+      <xs:enumeration value="ATAJO"/>
+      <xs:enumeration value="AUTOVÍA"/>
+      <xs:enumeration value="AVENIDA"/>
+      <xs:enumeration value="AVINGUDA"/>
+      <xs:enumeration value="BAIXADA"/>
+      <xs:enumeration value="BAJADA"/>
+      <xs:enumeration value="BARRANC"/>
+      <xs:enumeration value="BARRANCO"/>
+      <xs:enumeration value="BARRIADA"/>
+      <xs:enumeration value="BASERRIA"/>
+      <xs:enumeration value="BLOC"/>
+      <xs:enumeration value="BLOCS"/>
+      <xs:enumeration value="BLOQUE"/>
+      <xs:enumeration value="BLOQUES"/>
+      <xs:enumeration value="CALEXON"/>
+      <xs:enumeration value="CALLE"/>
+      <xs:enumeration value="CALLEJA"/>
+      <xs:enumeration value="CALLEJÓN"/>
+      <xs:enumeration value="CALLEJUELA"/>
+      <xs:enumeration value="CALZADA"/>
+      <xs:enumeration value="CAMÍ"/>
+      <xs:enumeration value="CAMINET"/>
+      <xs:enumeration value="CAMINO"/>
+      <xs:enumeration value="CAMIÑO"/>
+      <xs:enumeration value="CAMPING"/>
+      <xs:enumeration value="CAMPO"/>
+      <xs:enumeration value="CAÑADA"/>
+      <xs:enumeration value="CANELLA"/>
+      <xs:enumeration value="CANTINA"/>
+      <xs:enumeration value="CARRERA"/>
+      <xs:enumeration value="CARRERÓ"/>
+      <xs:enumeration value="CARRETERA"/>
+      <xs:enumeration value="CARRIL"/>
+      <xs:enumeration value="CASA"/>
+      <xs:enumeration value="CASAS"/>
+      <xs:enumeration value="CASERÍO"/>
+      <xs:enumeration value="CENTRO"/>
+      <xs:enumeration value="CERRO"/>
+      <xs:enumeration value="CHALET"/>
+      <xs:enumeration value="CHALETS"/>
+      <xs:enumeration value="CINTURÓ"/>
+      <xs:enumeration value="CIRCUNVALACIÓN"/>
+      <xs:enumeration value="COLONIA"/>
+      <xs:enumeration value="COMPLEJO"/>
+      <xs:enumeration value="CONJUNTO"/>
+      <xs:enumeration value="CONVENT"/>
+      <xs:enumeration value="CONVENTO"/>
+      <xs:enumeration value="COOPERATIVA"/>
+      <xs:enumeration value="CORREDERA"/>
+      <xs:enumeration value="CORREDOIRA"/>
+      <xs:enumeration value="CORTIJO"/>
+      <xs:enumeration value="COSTA"/>
+      <xs:enumeration value="COSTANILLA"/>
+      <xs:enumeration value="COSTERA"/>
+      <xs:enumeration value="CRUCEIRO"/>
+      <xs:enumeration value="CUADRA"/>
+      <xs:enumeration value="CUESTA"/>
+      <xs:enumeration value="DEHESA"/>
+      <xs:enumeration value="DISEMINADO"/>
+      <xs:enumeration value="DISSEMINAT"/>
+      <xs:enumeration value="DRECERA"/>
+      <xs:enumeration value="EDIFICIO"/>
+      <xs:enumeration value="EIRADO"/>
+      <xs:enumeration value="EMPRESA"/>
+      <xs:enumeration value="ESCALA"/>
+      <xs:enumeration value="ESCALERAS"/>
+      <xs:enumeration value="ESCALES"/>
+      <xs:enumeration value="ESCALINATA"/>
+      <xs:enumeration value="ESPIGO"/>
+      <xs:enumeration value="ESTACIÓ"/>
+      <xs:enumeration value="ESTACIÓN"/>
+      <xs:enumeration value="ESTRADA"/>
+      <xs:enumeration value="ETORBIDEA"/>
+      <xs:enumeration value="EXPLANADA"/>
+      <xs:enumeration value="EXTRARRADIO"/>
+      <xs:enumeration value="FÁBRICA"/>
+      <xs:enumeration value="FINCA"/>
+      <xs:enumeration value="FINCAS"/>
+      <xs:enumeration value="GALERÍA"/>
+      <xs:enumeration value="GLORIETA"/>
+      <xs:enumeration value="GRANJA"/>
+      <xs:enumeration value="GRUP"/>
+      <xs:enumeration value="GRUPO"/>
+      <xs:enumeration value="GRUPOS"/>
+      <xs:enumeration value="HIRIBIDEA"/>
+      <xs:enumeration value="HORTA"/>
+      <xs:enumeration value="IBILBIDEA"/>
+      <xs:enumeration value="IBILTOKIA"/>
+      <xs:enumeration value="LUGAR"/>
+      <xs:enumeration value="MASÍA"/>
+      <xs:enumeration value="MERCADO"/>
+      <xs:enumeration value="MERCAT"/>
+      <xs:enumeration value="MONASTERIO"/>
+      <xs:enumeration value="MONTE"/>
+      <xs:enumeration value="NÚCLEO"/>
+      <xs:enumeration value="NUDO"/>
+      <xs:enumeration value="NUS"/>
+      <xs:enumeration value="PANTA"/>
+      <xs:enumeration value="PARAJE"/>
+      <xs:enumeration value="PARC"/>
+      <xs:enumeration value="PARQUE"/>
+      <xs:enumeration value="PARTIDA"/>
+      <xs:enumeration value="PAS"/>
+      <xs:enumeration value="PASADIZO"/>
+      <xs:enumeration value="PASAJE"/>
+      <xs:enumeration value="PASEALEKUA"/>
+      <xs:enumeration value="PASEO"/>
+      <xs:enumeration value="PASILLO"/>
+      <xs:enumeration value="PASO"/>
+      <xs:enumeration value="PASSADÍS"/>
+      <xs:enumeration value="PASSATGE"/>
+      <xs:enumeration value="PASSEIG"/>
+      <xs:enumeration value="PATI"/>
+      <xs:enumeration value="PATIO"/>
+      <xs:enumeration value="PLAÇA"/>
+      <xs:enumeration value="PLACETA"/>
+      <xs:enumeration value="PLACETILLA"/>
+      <xs:enumeration value="PLATJA"/>
+      <xs:enumeration value="PLAYA"/>
+      <xs:enumeration value="PLAZA"/>
+      <xs:enumeration value="PLAZOLETA"/>
+      <xs:enumeration value="PLAZUELA"/>
+      <xs:enumeration value="POBLADO"/>
+      <xs:enumeration value="PORTO"/>
+      <xs:enumeration value="POSADA"/>
+      <xs:enumeration value="PRACIÑA"/>
+      <xs:enumeration value="PRAIA"/>
+      <xs:enumeration value="PRAZA"/>
+      <xs:enumeration value="PRAZUELA"/>
+      <xs:enumeration value="PROLONGACIÓ"/>
+      <xs:enumeration value="PROLONGACIÓN"/>
+      <xs:enumeration value="PUEBLO"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="level3">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="">
+        <xs:annotation>
+          <xs:documentation>Unspecified</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="ALTO">
+        <xs:annotation>
+          <xs:documentation>High</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="MEDIO">
+        <xs:annotation>
+          <xs:documentation>Medium</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="BASICO">
+        <xs:annotation>
+          <xs:documentation>Basic</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="langlevel">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="">
+        <xs:annotation>
+          <xs:documentation>Unspecified</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="1">
+        <xs:annotation>
+          <xs:documentation>Basic</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="2">
+        <xs:annotation>
+          <xs:documentation>Medium</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="3">
+        <xs:annotation>
+          <xs:documentation>Fluid</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="4">
+        <xs:annotation>
+          <xs:documentation>Native</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="curriculum">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="contact">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="gu_contact" type="guid" nillable="false" />
+              <xs:element name="gu_workarea" type="guid" nillable="false" />
+              <xs:element name="dt_created" type="xs:dateTime" nillable="false" />
+              <xs:element name="dt_modified" type="xs:dateTime" />
+              <xs:element name="id_ref" type="str50" />
+              <xs:element name="id_batch" type="guid" />
+              <xs:element name="id_bpartner" type="guid" />
+              <xs:element name="id_status" type="str50" />
+              <xs:element name="tx_name" type="str100" />
+              <xs:element name="tx_surname" type="str100" />
+              <xs:element name="de_title">
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="xs:string">
+                      <xs:attribute name="code" type="xs:string" use="required" />
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="tx_dept" type="str70" />
+              <xs:element name="tx_division" type="str70" />
+              <xs:element name="id_gender" type="gender" nillable="true" />
+              <xs:element name="dt_birth" type="xs:dateTime" nillable="true" />
+              <xs:element name="ny_age" type="nillableShort" />
+              <xs:element name="id_nationality" type="country" />
+              <xs:element name="sn_passport" type="str16" />
+              <xs:element name="tp_passport" type="passtype" nillable="true" />
+              <xs:element name="url_linkedin" type="url" nillable="true" />
+              <xs:element name="url_facebook" type="url" nillable="true" />
+              <xs:element name="url_twitter" type="url" nillable="true" />
+              <xs:element name="tx_comments" type="str254" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="company">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="gu_company" type="guid" nillable="true" />
+              <xs:element name="nm_legal" type="str70" />
+              <xs:element name="id_sector">
+                <xs:complexType>
+                  <xs:attribute name="code" type="xs:string" use="required" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="de_company" type="xs:string" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="addresses">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="address">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="gu_address" type="guid" nillable="false" />
+                    <xs:element name="ix_address" type="xs:unsignedByte" />
+                    <xs:element name="gu_workarea" type="guid" />
+                    <xs:element name="dt_created" type="xs:dateTime" />
+                    <xs:element name="bo_active" type="xs:unsignedByte" />
+                    <xs:element name="dt_modified" type="xs:dateTime" />
+                    <xs:element name="tp_location" />
+                    <xs:element name="tp_street">
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="str100">
+                            <xs:attribute name="code" type="street" use="required" />
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="nm_street" type="xs:string" />
+                    <xs:element name="nu_street" type="xs:string" />
+                    <xs:element name="tx_addr1" />
+                    <xs:element name="tx_addr2" />
+                    <xs:element name="id_country" type="country" />
+                    <xs:element name="nm_country" type="xs:string" />
+                    <xs:element name="id_state" type="xs:string" />
+                    <xs:element name="nm_state" type="xs:string" />
+                    <xs:element name="mn_city" type="xs:string" />
+                    <xs:element name="zipcode" type="xs:string" />
+                    <xs:element name="work_phone" type="telephone" />
+                    <xs:element name="direct_phone" type="telephone" />
+                    <xs:element name="home_phone" type="telephone" />
+                    <xs:element name="mov_phone" type="telephone" />
+                    <xs:element name="fax_phone" type="telephone" />
+                    <xs:element name="other_phone" type="telephone" />
+                    <xs:element name="tx_email" type="email" nillable="true" />
+                    <xs:element name="tx_email_alt" type="str100" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="experience">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="position">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="gu_experience" type="guid" />
+                    <xs:element name="nm_company" type="str70" />
+                    <xs:element name="bo_current_job" type="xs:unsignedByte" />
+                    <xs:element name="id_sector">
+                      <xs:complexType>
+                        <xs:attribute name="code" type="xs:string" use="required" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="de_title">
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="xs:string">
+                            <xs:attribute name="code" type="xs:string" use="required" />
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="tx_dt_from" type="str30" />
+                    <xs:element name="tx_dt_to" type="str30" />
+                    <xs:element name="contact_person" type="str100" />
+                    <xs:element name="tx_comments" type="str254" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="education">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="degree">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="gu_degree" type="guid" />
+                    <xs:element name="dt_created" type="xs:dateTime" />
+                    <xs:element name="bo_completed" type="xs:unsignedByte" />
+                    <xs:element name="nm_institution">
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="xs:string">
+                            <xs:attribute name="code" type="guid" use="required" />
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="nm_center" type="str50" />
+                    <xs:element name="tp_degree">
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="xs:string">
+                            <xs:attribute name="code" type="xs:unsignedByte" use="required" />
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="nm_degree">
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="xs:string">
+                            <xs:attribute name="code" type="xs:string" use="required" />
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="lv_degree" />
+                    <xs:element name="ix_degree" type="xs:unsignedByte" />
+                    <xs:element name="tx_dt_from" type="str30" />
+                    <xs:element name="tx_dt_to" type="str30" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="courses">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="course">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="gu_scourse" type="guid" />
+                    <xs:element name="nm_scourse" type="str100" />
+                    <xs:element name="dt_created" type="xs:dateTime" />
+                    <xs:element name="nm_center" type="str50" />
+                    <xs:element name="lv_scourse" type="nillableDecimal" />
+                    <xs:element name="ix_scourse" type="xs:unsignedByte" />
+                    <xs:element name="tx_dt_from" type="str30" />
+                    <xs:element name="tx_dt_to" type="str30" />
+                    <xs:element name="nu_credits" type="nillableShort" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="languages">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="language">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="id_language" type="language" nillable="false" />
+                    <xs:element name="lv_language_degree" type="xs:string" />
+           
