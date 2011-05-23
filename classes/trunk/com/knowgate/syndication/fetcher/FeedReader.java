@@ -38,8 +38,11 @@ import java.net.URL;
 import com.sun.syndication.io.FeedException;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.fetcher.FetcherException;
-import com.sun.syndication.fetcher.impl.DiskFeedInfoCache;
+import com.sun.syndication.fetcher.impl.FeedFetcherCache;
 import com.sun.syndication.fetcher.impl.HttpURLFeedFetcher;
+// import com.sun.syndication.fetcher.impl.DiskFeedInfoCache;
+
+import com.knowgate.debug.DebugFile;
 
 /**
  * Read an RSS feed using disk storage for caching feed info
@@ -48,14 +51,14 @@ import com.sun.syndication.fetcher.impl.HttpURLFeedFetcher;
  */
 public class FeedReader {
   
-  private DiskFeedInfoCache oDche;
+  private FeedFetcherCache oDche;
   
   /**
    * Constructor
    * @param sDiskCachePath String Full path to directory where cached feed info will be stored
    **/
-  public FeedReader(String sDiskCachePath) {
-  	oDche = new DiskFeedInfoCache(sDiskCachePath);
+  public FeedReader(FeedFetcherCache oFeedFetchCache) {
+  	oDche = oFeedFetchCache;
   }
   
   /**
@@ -67,7 +70,10 @@ public class FeedReader {
    */
   public SyndFeed retrieveFeed(String sUrl)
   	throws FeedException,FetcherException,IOException {
+  	if (DebugFile.trace) DebugFile.writeln("Begin FeedReader.retrieveFeed("+sUrl+")");
   	HttpURLFeedFetcher oFtchr = new HttpURLFeedFetcher(oDche);
-  	return oFtchr.retrieveFeed(new URL(sUrl));
+  	SyndFeed oFeed = oFtchr.retrieveFeed(new URL(sUrl));  	
+  	if (DebugFile.trace) DebugFile.writeln("End FeedReader.retrieveFeed() : " + (oFeed==null ? "0" : String.valueOf(oFeed.getEntries().size())));
+  	return oFeed;
   }
 }

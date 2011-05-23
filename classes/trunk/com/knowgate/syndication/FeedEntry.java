@@ -31,9 +31,12 @@
 
 package com.knowgate.syndication;
 
+import java.net.URL;
+
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ByteArrayInputStream;
+
+import java.util.Date;
+import java.util.ArrayList;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -41,70 +44,95 @@ import java.sql.PreparedStatement;
 
 import com.knowgate.jdc.JDCConnection;
 
+import com.knowgate.dataobjs.DB;
 import com.knowgate.misc.Gadgets;
 
-import com.knowgate.dataobjs.DB;
-import com.knowgate.dataobjs.DBPersist;
-
+import com.knowgate.debug.DebugFile;
+import com.knowgate.debug.StackTraceUtil;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndEntryImpl;
 
+import com.knowgate.clocial.Serials;
+
+import com.knowgate.storage.Table;
+import com.knowgate.storage.Engine;
+import com.knowgate.storage.DataSource;
+import com.knowgate.storage.RecordDelegator;
+import com.knowgate.storage.StorageException;
+
 /**
- * Store a SyndEntry object at the database
+ * Store a SyndEntry object at either a RDBMS or a NoSQL engine
  * @author Sergio Montoro Ten
- * @version 6.0
+ * @version 7.0
  */
-public class FeedEntry extends DBPersist {
-      
-  public FeedEntry() {
-	super(DB.k_syndentries, "FeedEntry");
+public class FeedEntry extends RecordDelegator {
+
+  public static final short ClassId = 151;
+
+  private static final long serialVersionUID = Serials.SyndEntry;
+  
+  private static final String tableName = DB.k_syndentries;
+  
+  private static final int MAX_URL_LENGTH = 254;
+
+  public FeedEntry(DataSource oDts) throws InstantiationException {
+  	super(oDts, tableName);
   }
   
   public SyndEntryImpl getEntry() throws IOException,ClassNotFoundException {
   	SyndEntryImpl oRetVal;
   	if (!containsKey(DB.bin_entry))
       put(DB.bin_entry, new SyndEntryImpl());
-    return (SyndEntryImpl) new ObjectInputStream(new ByteArrayInputStream((byte[])get(DB.bin_entry))).readObject();
+    return (SyndEntryImpl) get(DB.bin_entry);
   }
 
-  public void putEntry(SyndEntryImpl oEntry) {
-  	if (oEntry.getUri()!=null) put(DB.uri_entry, oEntry.getUri());
-  	if (oEntry.getAuthor()!=null) put(DB.nm_author, Gadgets.left(oEntry.getAuthor(),100));
+  public String getURL() {
+    return getString(DB.url_addr);
+  }
+
+  public void putEntry(SyndEntryImpl oEntry) throws IllegalArgumentException {
+
+	if (DebugFile.trace) DebugFile.writeln("FeedEntry.putEntry([SyndEntryImpl])");
+
   	if (oEntry.getTitle()!=null) put(DB.tl_entry, Gadgets.left(oEntry.getTitle(),254));
-  	if (oEntry.getLink()!=null) put(DB.url_addr, Gadgets.left(oEntry.getLink(),254));
+	  	
+  	if (oEntry.getUri()!=null) put(DB.uri_entry, oEntry.getUri());
+  	      	
+  	if (oEntry.getLink()!=null) {
+
+  	  put(DB.url_addr, Gadgets.left(oEntry.getLink(), MAX_URL_LENGTH));
+
+  	  try {
+  	  	String[] aHost = Gadgets.split(new URL(oEntry.getLink()).getHost(),'.');
+		if (aHost.length==1)
+  	      put(DB.url_domain, Gadgets.left(aHost[0],100));						
+		else
+  	      put(DB.url_domain, Gadgets.left(aHost[aHost.length-2]+"."+aHost[aHost.length-1],100));
+  	    if (getString(DB.url_domain,"").endsWith(".es")) put(DB.id_country, "es");						
+  	  } catch (Exception ignore) { }
+
+  	  if (oEntry.getLink().startsWith("http://twitter.com/")) {
+  	  	String sUrlAuthor = null;
+  	  	if (oEntry.getLink().indexOf("/statuses/")>0)
+  	  	  sUrlAuthor = Gadgets.substrUpTo(oEntry.getLink(),0,"/statuses/");
+  	  	else if (oEntry.getLink().indexOf("/status/")>0)
+  	  	  sUrlAuthor = Gadgets.substrUpTo(oEntry.getLink(),0,"/status/");
+		if (sUrlAuthor==null) sUrlAuthor = oEntry.getLink();
+		else if (sUrlAuthor.length()==0) sUrlAuthor = oEntry.getLink();
+  	      put(DB.url_author, sUrlAuthor);		
+  	  } // Twitter
+
+  	} // getLink()
+  	
   	if (oEntry.getDescription()!=null) put(DB.de_entry, Gadgets.left(oEntry.getDescription().getValue(),1000));
-  	if (oEntry.getPublishedDate()!=null) put(DB.dt_published, oEntry.getPublishedDate());
+  	if (oEntry.getPublishedDate()==null)
+  	  if (oEntry.getUpdatedDate()!=null)
+  	  	put(DB.dt_published, oEntry.getUpdatedDate());
+  	  else
+  	    put(DB.dt_published, new Date());
+  	else
+  	  put(DB.dt_published, oEntry.getPublishedDate());
   	if (oEntry.getUpdatedDate()!=null) put(DB.dt_modified, oEntry.getUpdatedDate());
   	put(DB.bin_entry, oEntry);
-  }
-
-  /**
-   * Store a new SyndEntry object at k_syndentries table
-   * @param oConn JDCConnection Opened JDBC database connection
-   * @param iIdDomain int Domain unique Id. to which the SyndEntry will be associated
-   * @param sGuWorkArea String Work Area GUID to which the SyndEntry will be associated, may be <b>null</b>
-   * @param sIdType String Entry type or source "backtype" "twingly" etc.
-   * @param sTxQuery String Optional query string passed when generating the feed
-   * @param oInfluence Integer Optional user influence
-   * @param oEntry SyndEntryImpl SyndEntry object to be stored
-   * @throws SQLException
-   */
-  public static FeedEntry store(JDCConnection oConn, int iIdDomain, String sGuWorkArea,
-  							  String sIdType, String sGuFeed, String sTxQuery, Integer oInfluence,
-  							  SyndEntryImpl oEntry) throws SQLException {    
-    FeedEntry oFE = new FeedEntry();
-    oFE.put(DB.id_domain, iIdDomain);
-    oFE.put(DB.gu_workarea, sGuWorkArea);
-    if (null!=sIdType ) oFE.put(DB.id_type, sIdType);
-    if (null!=sGuFeed ) oFE.put(DB.gu_feed, sGuFeed);
-    if (null!=sTxQuery) oFE.put(DB.tx_query, sTxQuery);
-    if (null!=oInfluence) oFE.put(DB.nu_influence, oInfluence);
-    oFE.putEntry(oEntry);    
-    if (oFE.store(oConn))
-      return oFE;
-    else
-      return null;
-  }
-  
-  public static final short ClassId = 151;
+  } // putEntry 
 }
