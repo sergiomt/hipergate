@@ -338,7 +338,7 @@ public final class ActivityAudienceLoader implements ImportLoader {
       		DebugFile.writeln(oRow.toString());
     	}
 		
-		if (test(iFlags,WRITE_CONTACTS))	{	
+		if (test(iFlags,WRITE_CONTACTS)) {	
 			oCntLdr.store(oConn, sWorkArea, iFlags);
 			oAcAuInsr.setObject(1, oCntLdr.get(ContactLoader.gu_contact), Types.CHAR);
 			if (test(iFlags,WRITE_ADDRESSES))
@@ -346,9 +346,9 @@ public final class ActivityAudienceLoader implements ImportLoader {
 			else
 			  oAcAuInsr.setNull(2, Types.CHAR);
 		}	else	{
-			oAcAuInsr.setObject(1, oCntLdr.get(ContactLoader.gu_contact), Types.CHAR);
+			oAcAuInsr.setObject(1, get(gu_contact), Types.CHAR);
 			if (test(iFlags,WRITE_ADDRESSES))
-			  oAcAuInsr.setObject(2, oCntLdr.get(ContactLoader.gu_address), Types.CHAR);
+			  oAcAuInsr.setObject(2, get(gu_address), Types.CHAR);
 			else
 			  oAcAuInsr.setNull(2, Types.CHAR);			
 		}
