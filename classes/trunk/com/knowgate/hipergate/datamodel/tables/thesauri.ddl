@@ -133,13 +133,15 @@ CREATE TABLE k_addresses
     coord_y        FLOAT        NULL,
     contact_person VARCHAR(100) NULL,
     tx_salutation  VARCHAR(16)  NULL,
+    tx_dept        VARCHAR(70)  NULL,
     id_ref         VARCHAR(50)  NULL,
     tx_remarks     VARCHAR(254) NULL,
 
     CONSTRAINT pk_address PRIMARY KEY (gu_address),
     CONSTRAINT c1_address CHECK ((id_country<>'es' AND id_country<>'fr' AND id_country<>'de') OR (LENGTH(zipcode)=5 OR LENGTH(zipcode)=0 OR zipcode IS NULL)),
     CONSTRAINT c2_address CHECK (id_country<>'us' OR (LENGTH(zipcode) BETWEEN 5 AND 10 OR zipcode IS NULL)),
-    CONSTRAINT c3_address CHECK (id_country<>'cn' OR (LENGTH(zipcode)=6 OR zipcode IS NULL))
+    CONSTRAINT c3_address CHECK (id_country<>'cn' OR (LENGTH(zipcode)=6 OR zipcode IS NULL)),
+    CONSTRAINT c4_address CHECK (nm_street IS NULL OR LENGTH(nm_street)>0)
 )
 GO;
 
