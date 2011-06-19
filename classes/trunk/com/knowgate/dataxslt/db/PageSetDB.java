@@ -421,13 +421,14 @@ public class PageSetDB extends DBPersist {
       oStmt.close();
     }
     else {
-      sSQL = "UPDATE " + DB.k_pageset_pages + " SET " + DB.dt_modified + "=" + DBBind.escape(new Date(), "ts") + "," + DB.tl_page + "=?," + DB.path_page + "=? WHERE " + DB.gu_page + "=?";
+      sSQL = "UPDATE " + DB.k_pageset_pages + " SET " + DB.dt_modified + "=?," + DB.tl_page + "=?," + DB.path_page + "=? WHERE " + DB.gu_page + "=?";
       if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement)" + sSQL + ")");
 
       oStmt = oConn.prepareStatement(sSQL);
-      oStmt.setString(1, sTlPage);
-      oStmt.setString(2, sPathPage);
-      oStmt.setString(3, sGuPage);
+      oStmt.setTimestamp(1, new Timestamp(new Date().getTime()));
+      oStmt.setString(2, sTlPage);
+      oStmt.setString(3, sPathPage);
+      oStmt.setString(4, sGuPage);
       if (DebugFile.trace) DebugFile.writeln("PreparedStatement.executeUpdate()");
       oStmt.executeUpdate();
       oStmt.close();
