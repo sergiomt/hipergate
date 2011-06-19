@@ -40,10 +40,18 @@ import com.knowgate.debug.DebugFile;
 /**
  * <p>Calendar localization functions</p>
  * @author Sergio Montoro Ten
- * @version 2.0
+ * @version 7.0
  */
 
 public class Calendar {
+
+  public static final int SUNDAY = 0;
+  public static final int MONDAY = 1;
+  public static final int TUESDAY = 2;
+  public static final int WEDNESDAY = 3;
+  public static final int THURSDAY = 4;
+  public static final int FRIDAY = 5;
+  public static final int SATURDAY = 6;
 
   private static String WeekDayNamesES[] = { null, "domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado" };
   private static String WeekDayNamesEN[] = { null, "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
@@ -244,5 +252,72 @@ public class Calendar {
   } // DaysBetween
 
   //-----------------------------------------------------------
+ 
+  public static Date[] ThisWeek(int iFirstDayOfWeek)
+  	throws IllegalArgumentException {
+  	
+  	if (iFirstDayOfWeek<0 || iFirstDayOfWeek>6)
+  	  throw new IllegalArgumentException("Week day must be between 0 and 6");
+  	  	
+    Date dtToday = new Date();
+    Date dtFirst = new Date();
+    Date dtLast  = new Date();
+    
+    while (dtFirst.getDay()!=iFirstDayOfWeek) {
+      dtFirst = new Date (dtFirst.getTime()-86400000l);
+    }
 
+    while (dtLast.getDay()!=(iFirstDayOfWeek==SUNDAY ? SATURDAY : SUNDAY)) {
+      dtLast = new Date (dtLast.getTime()+86400000l);
+    }
+
+    return new Date[]{dtFirst,dtLast};
+  } // ThisWeek
+
+  //-----------------------------------------------------------
+ 
+  public static Date[] LastWeek(int iFirstDayOfWeek)
+  	throws IllegalArgumentException {
+  	if (iFirstDayOfWeek<0 || iFirstDayOfWeek>6)
+  	  throw new IllegalArgumentException("Week day must be between 0 and 6");
+    Date[] aWeek = ThisWeek(iFirstDayOfWeek);
+    aWeek[0] = new Date (aWeek[0].getTime()-(7l*86400000l));
+    aWeek[1] = new Date (aWeek[1].getTime()-(7l*86400000l));
+    return aWeek;
+  } // LastWeek
+
+  //-----------------------------------------------------------
+ 
+  public static Date[] ThisMonth() {
+    Date dtToday = new Date();
+    Date dtFirst = new Date();
+    Date dtLast  = new Date();    
+
+    while (dtFirst.getDate()!=1) {
+      dtFirst = new Date (dtFirst.getTime()-86400000l);
+    }
+
+    while (dtLast.getDate()!=LastDay(dtToday.getMonth(),dtToday.getYear()+1900)) {
+      dtLast = new Date (dtLast.getTime()+86400000l);
+    }
+    
+    return new Date[]{dtFirst,dtLast};
+  } // ThisMonth
+
+  //-----------------------------------------------------------
+ 
+  public static Date[] LastMonth() {
+    Date dtToday = new Date();
+    Date dtFirst = new Date(dtToday.getMonth()==0 ? dtToday.getYear()-1 : dtToday.getYear(),
+    						dtToday.getMonth()==0 ? 11 : dtToday.getMonth()-1, 1);
+    Date dtLast = new Date(dtToday.getMonth()==0 ? dtToday.getYear()-1 : dtToday.getYear(),
+    					   dtToday.getMonth()==0 ? 11 : dtToday.getMonth()-1,
+    					   LastDay(dtToday.getMonth()==0 ? 11 : dtToday.getMonth()-1,
+    					          (dtToday.getMonth()==0 ? dtToday.getYear()-1 : dtToday.getYear())+1900));
+
+    
+    return new Date[]{dtFirst,dtLast};    
+  } // LastMonth
+  
+  
 }

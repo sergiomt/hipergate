@@ -35,6 +35,7 @@ package com.knowgate.misc;
 import java.lang.StringBuffer;
 import java.lang.System;
 
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Date;
 import java.util.StringTokenizer;
@@ -62,7 +63,7 @@ import com.knowgate.debug.DebugFile;
 /**
  * Miscellaneous functions and utilities.
  * @author Sergio Montoro Ten
- * @version 5.0
+ * @version 6.0
  */
 public final class Gadgets {
 
@@ -75,6 +76,8 @@ public final class Gadgets {
 
   private static PatternMatcher oMatcher = null;
   private static PatternCompiler oCompiler = null;
+  
+  private static Pattern oXss1 = null, oXss2 = null;
 
   public Gadgets() { }
 
@@ -192,10 +195,11 @@ public final class Gadgets {
 	return oId.toString();
   } // generateRandomId
 
+  //-----------------------------------------------------------
+
   /**
    * <p>Return text enconded as XHTML.</p>
    * ASCII-7 characters [0..127] are returned as they are,
-   * except double and single quotes which are returned as &#<i>34</i>; and &#<i>39</i>;
    * any other character is returned as &#<i>code</i>;
    * @param text String
    * @return String
@@ -211,6 +215,54 @@ public final class Gadgets {
 		results.append(c);
       } else {
         results.append("&#"+String.valueOf((int)c)+";");
+      }
+    }
+    return results.toString();
+  }
+
+  /**
+   * <p>Escape XML entities &amp; &lt; and &gt;</p>
+   * @param text String
+   * @return String
+   * @since 7.0
+   */
+  public static String XMLEncode(String text) {
+    char c;
+    int len = text.length();
+    StringBuffer results = new StringBuffer(len*2);
+
+    for (int i = 0; i < len; ++i) {
+      c = text.charAt(i);
+      switch (c) {
+      	case '&':
+      	  if (i>len-5)
+      	    results.append("&amp;");
+          else if (text.charAt(i+1)=='a' && text.charAt(i+2)=='m' && text.charAt(i+3)=='p' && text.charAt(i+4)==';')
+      	    results.append(c);
+      	  else if (text.charAt(i+1)=='#' &&
+      	  	      ((text.charAt(i+2)>='0' && text.charAt(i+2)<='9') || text.charAt(i+2)=='x' || text.charAt(i+2)=='X'))
+      	    results.append(c);
+      	  else
+      	    results.append("&amp;");      	  	
+          break;
+      	case '<':
+      	  if (i>len-4)
+      	    results.append("&lt;");
+          else if (text.charAt(i+1)!='l' || text.charAt(i+2)!='t' || text.charAt(i+3)!=';')
+      	    results.append("&lt;");
+      	  else
+      	    results.append(c);
+          break;
+      	case '>':
+      	  if (i>len-4)
+      	    results.append("&gt;");
+          else if (text.charAt(i+1)!='t' || text.charAt(i+2)!='t' || text.charAt(i+3)!=';')
+      	    results.append("&gt;");
+      	  else
+      	    results.append(c);
+          break;
+        default:
+      	  results.append(c);        	
       }
     }
     return results.toString();
@@ -658,7 +710,7 @@ public final class Gadgets {
     char c,d;
     int len = text.length();
     StringBuffer results = new StringBuffer(len);
-
+    
     final String[] aEnts = {"amp;", "lt;", "gt;", "quot;", "iexcl;", "curren;", "yen;", "brvbar;", "sect;",
                            "uml;", "copy;", "ordf;", "laquo;", "raquo;", "euro;", "pound;", "shy;", "reg;",
                            "macr;", "deg;", "plusmn;", "sup1;", "sup2;", "sup3;", "acute;", "micro;", "para;",
@@ -667,7 +719,11 @@ public final class Gadgets {
                            "Egrave;", "Euml;", "Ecirc;", "Iacute;", "Igrave;", "Iuml;", "Icirc;", "Oacute;", "Ograve;",
                            "Ouml;", "Ocirc;", "Uacute;", "Ugrave;", "Uuml;", "Ucirc;", "frac12;", "frac34;", "frac14;",
                            "Ccedil;", "ccedil;", "eth;", "cent;", "THORN;",  "thorn;", "ETH;", "times;", "divide;",
-                           "AElig;"
+                           "AElig;", "ordf;", "hellip;", "bull;", "ldquo;", "rdquo;", "ndash;", "mdash;", "oline;",
+                           "Alpha;", "Beta;", "Gamma;", "Delta;", "Epsilon;", "Lambda;", "Sigma;", "Pi;", "Psi;", "Omega;",
+                           "alpha;", "beta;", "gamma;", "delta;", "epsilon;", "lambda;", "sigma;", "pi;", "zeta;", "omega;",
+                           "forall;", "part;", "exist;", "empty;", "isin;", "notin;", "sum;", "infin;", "minus;",
+                           "loz;", "spades;", "clubs;", "hearts;", "diams;", "nbsp;"
                            };
 
     final String[] aChars= {"&", "<", ">", "\"", "¡", "¤", "¥", "|", "§",
@@ -678,37 +734,50 @@ public final class Gadgets {
                             "È", "Ë", "Ê", "Í" , "Ì", "Ï", "Î", "Ó", "Ò",
                             "Ö", "Ô", "Ú", "Ù" , "Ü", "Û", "½", "¾", "¼",
                             "Ç", "ç", "ð", "¢" , "Þ", "þ", "Ð", "×", "÷",
-                            "Æ"
+                            "Æ", "ª", "…", "•" , "“", "”", "–", "—", "‾",
+                            "Α", "Β", "Γ", "Δ" , "Ε", "Λ", "Σ", "Π", "Ψ", "Ω",
+                            "α", "β", "γ", "δ" , "ε", "λ", "σ", "σ", "ζ", "ω",
+                            "∀", "∂", "∃", "∅" , "∈", "∈", "∑", "∞", "−",
+                            "◊", "♠", "♣", "♥" , "♦", " "
                            };
 
     final int iEnts = aEnts.length;
-
-    for (int i = 0; i < len; ++i) {
+    
+    for (int i = 0; i < len; ) {
       c = text.charAt(i);
       if (c=='&' && i<len-3) {
         try {
-          if (text.charAt(i+1)=='#') {
-            int semicolon = text.indexOf(59, i+1);
-            if (semicolon>0) {
-              results.append( (char) Integer.parseInt(text.substring(i + 2, semicolon)));
-              i = semicolon+1;
-            }
-            else {
-              results.append(c);
-            }
-          }
-          else {
-            for (int e=0; e<iEnts; e++) {
-              if (text.substring(i+1, i+aEnts[e].length()).equals(aEnts[e]))
+          int semicolon = text.indexOf(59, i+1)+1;
+          if (semicolon>0) {
+            if (text.charAt(i+1)=='#') {
+            	if (text.charAt(i+2)=='x')
+                results.append( (char) Integer.parseInt(text.substring(i + 3, semicolon-1), 16));
+              else
+                results.append( (char) Integer.parseInt(text.substring(i + 2, semicolon-1)));
+              i = semicolon;
+            } else {
+              int e = -1;
+              for (int f=0; f<iEnts && e<0; f++)
+              	if (aEnts[f].equals(text.substring(i+1, semicolon)))
+              	  e = f;
+              if (e>=0) {
                 results.append(aChars[e]);
-            }
+                i = semicolon;
+              } else {
+                results.append(c);
+                i++;
+              }
+            }          
+          } else {
+            results.append(c);
+            i++;        
           }
         } catch (StringIndexOutOfBoundsException siob) {
           return results.toString();
         }
-      }
-      else {
+      } else {
         results.append(c);
+        i++;
       }
     } // next (i)
 
@@ -1561,6 +1630,57 @@ public final class Gadgets {
   // ----------------------------------------------------------
 
   /**
+   * Get all substrings that match the given regular expression
+   * @param sSource String Source
+   * @param sRegExp String Regular Expression
+   * @return ArrayList<MatchResult>
+   * @throws MalformedPatternException
+   * @since v7.0
+   */
+  public static ArrayList<MatchResult> getAllMatches (String sSource, String sRegExp) throws MalformedPatternException {
+    ArrayList<MatchResult> aRetVal = new ArrayList<MatchResult>();
+    if (sSource!=null && sRegExp!=null) {
+      if (null==oMatcher) oMatcher = new Perl5Matcher();
+      if (null==oCompiler) oCompiler = new Perl5Compiler();
+      Pattern oPatt = oCompiler.compile(sRegExp);
+      PatternMatcherInput oPmin = new PatternMatcherInput(sSource);
+      while (oMatcher.contains(oPmin, oPatt)) {
+        aRetVal.add(oMatcher.getMatch());
+      } // wend
+    } // fi
+    return aRetVal;
+  } // getAllMatches
+
+  // --------------------------------------------------------------------------
+
+  /**
+   * Check if a String seems to has a cross site scripting attack signature
+   * @param sSource String to be checked
+   * @return <b>true</b>if the input string appears to be an XSS attack attempt
+   * @since 6.0
+   */
+
+  public static boolean hasXssSignature(String sSource) {
+    boolean bIsXss;
+    if (sSource==null)
+      bIsXss = false;
+    else {
+      if (null==oXss1) {
+        oMatcher = new Perl5Matcher();
+        oCompiler = new Perl5Compiler();
+        try {
+	      oXss1 = oCompiler.compile("((\\%3C)|<)((\\%2F)|\\/)*[a-z0-9A-Z\\%]+((\\%3E)|>)");
+	      oXss2 = oCompiler.compile("((\\%3C)|<)((\\%69)|(i|I)|(\\%49))((\\%6D)|(m|M)|(\\%4D))((\\%67)|(g|G)|(\\%47))[^\\n]+((\\%3E)|>)");
+        } catch (MalformedPatternException neverthrown) { }
+      } // fi
+      bIsXss = oMatcher.matches(sSource, oXss1) || oMatcher.matches(sSource, oXss2);
+    }
+    return bIsXss;
+  } // hasXssSignature
+
+  // ----------------------------------------------------------
+
+  /**
    * Replace a single character with one or more other characters
    * @param sSource Source String
    * @param cSought Character to be sought
@@ -1730,7 +1850,7 @@ public final class Gadgets {
 
       char aPad[] = new char[iPadLen];
 
-      for (int c=0; c<iPadLen; c++) aPad[c] = cPad;
+      java.util.Arrays.fill(aPad, cPad);
 
       return new String(aPad) + sSource;
   } // leftPad
@@ -1852,6 +1972,8 @@ public final class Gadgets {
    * @param sSource Source String
    * @param sLowerBound Lower bound character sequence
    * @param sUpperBound Upper bound character sequence
+   * @return Subtring between sLowerBound and sUpperBound or <b>null</b> if
+   * either sLowerBound or sUpperBound are not found at sSource
    * @since 4.0
    */
   public static String substrBetween(String sSource, String sLowerBound, String sUpperBound)

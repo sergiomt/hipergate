@@ -44,6 +44,8 @@ import java.io.Reader;
 import java.io.InputStreamReader;
 import java.io.FileInputStream;
 
+import java.text.SimpleDateFormat;
+
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -194,6 +196,7 @@ public class CSVParser  {
   // ----------------------------------------------------------
 
   private boolean isEmptyRow(HSSFRow oRow, int nCols) {
+  	if (null==oRow) return true;
   	for (int c=0; c<nCols; c++) {
   	  if (oRow.getCell(c)!=null) {
   	  	if (!isVoid(oRow.getCell(c).getStringCellValue()))
@@ -210,11 +213,13 @@ public class CSVParser  {
   	HSSFRow oRow = oSheet.getRow(0);
     int iRow;
     char cDelim;
-    String[] aFileDescriptor;
-    int iFileDescLen;
-    
+    SimpleDateFormat oFmt4 = new SimpleDateFormat("yyyy-MM-dd");
+  	String[] aFileDescriptor;
+  	int iFileDescLen;
+  	  
   	if (isVoid(sFileDescriptor)) {
   	  iRow = 1;
+  	  cDelim = '\t';
   	  sFileDescriptor = "";
   	  short iCel = (short) 0;
 	  oCel = oRow.getCell(iCel);
@@ -223,10 +228,13 @@ public class CSVParser  {
 	  	sFileDescriptor += (sFileDescriptor.length()==0 ? "" : "\t") + oCel.getStringCellValue();
 	    oCel = oRow.getCell(++iCel);
 	  } // wend
+  	  aFileDescriptor = Gadgets.split(sFileDescriptor, cDelim);
+      iFileDescLen = aFileDescriptor.length;
   	} else {
   	  iRow = 1;
-  	  aFileDescriptor = Gadgets.split(sFileDescriptor, extractDelimiter(sFileDescriptor));
-  	  iFileDescLen = aFileDescriptor.length;
+  	  cDelim = extractDelimiter(sFileDescriptor);
+  	  aFileDescriptor = Gadgets.split(sFileDescriptor, cDelim);
+      iFileDescLen = aFileDescriptor.length;
   	  for (int c=0; c<iFileDescLen; c++) {
   	  	oCel = oRow.getCell(c);
   	  	if (null==oCel) {
@@ -238,20 +246,36 @@ public class CSVParser  {
   	  	}
   	  } //next
   	} // fi
-  	cDelim = extractDelimiter(sFileDescriptor);
-  	aFileDescriptor = Gadgets.split(sFileDescriptor, cDelim);
-    iFileDescLen = aFileDescriptor.length;
-    StringBuffer oData = new StringBuffer();
-	while (!isEmptyRow(oSheet.getRow(iRow),iFileDescLen)){
+  	
+    StringBuffer oData = new StringBuffer(1024*1024);
+	while (!isEmptyRow(oSheet.getRow(iRow),iFileDescLen) && iRow<=65535) {
 	  oRow = oSheet.getRow(iRow);
-	  if (oRow.getCell(0)!=null)
+	  if (oRow.getCell(0)!=null) 
 	    oData.append(oRow.getCell(0).getStringCellValue());
 	  for (int c=1; c<iFileDescLen; c++) {
 	    oData.append(cDelim);
-	    if (oRow.getCell(c)!=null) 
-	      oData.append(oRow.getCell(c).getStringCellValue());
+	    if (oRow.getCell(c)!=null) {
+	      int iCelType = oRow.getCell(c).getCellType();
+		  switch (iCelType) {
+		    case HSSFCell.CELL_TYPE_BLANK:
+			  break;
+		    case HSSFCell.CELL_TYPE_STRING:
+	          oData.append(oRow.getCell(c).getStringCellValue().replace(cDelim,' ').replace('\n',' '));
+		      break;
+			case HSSFCell.CELL_TYPE_NUMERIC:
+			  switch (oRow.getCell(c).getCellStyle().getDataFormat()) {
+				case (short) 15: // m/d/yy
+				case (short) 16: // d-mmm-yy
+				oData.append(oFmt4.format(oRow.getCell(c).getDateCellValue()));
+			    break;
+			  default:
+				oData.append(String.valueOf(oRow.getCell(c).getNumericCellValue()));
+		      }
+			  break;				            
+		  } // end switch	      	      
+	    } // fi 
 	  } // next
-	  oData.append((char) 10);
+	  oData.append('\n');
 	  iRow++;
 	} // wend
 	parseData(oData.toString().toCharArray(), sFileDescriptor);
