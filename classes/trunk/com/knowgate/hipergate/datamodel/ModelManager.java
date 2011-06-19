@@ -77,12 +77,12 @@ import com.knowgate.workareas.FileSystemWorkArea;
  * <p>It may be used as an alternative method to database dumps for initial data loading,
  * or, also, as a tool for porting the data model to a new DBMS in a structured way.</p>
  * @author Sergio Montoro ten
- * @version 6.0
+ * @version 7.0
  */
 
 public class ModelManager {
 
-  private static final String VERSION = "5.5.0";
+  private static final String VERSION = "7.0.0";
 
   private static final int BULK_PROCEDURES = 1;
   private static final int BULK_STATEMENTS = 2;
@@ -180,6 +180,12 @@ public class ModelManager {
     bStopOnError = false;
     sEncoding = "UTF-8";
     bASCII = false;
+  }
+
+  // ---------------------------------------------------------------------------
+
+  public void activateLog(boolean bActivate) {
+    oStrLog = (bActivate ? new StringBuffer() : null);      
   }
 
   // ---------------------------------------------------------------------------
@@ -388,7 +394,7 @@ public class ModelManager {
    * @throws NullPointerException if sSQL is <b>null</b>
    * @return SQL statement translated for the active DBMS
    */
-  private String translate(String sSQL)
+  public String translate(String sSQL)
     throws NullPointerException {
 
 	String sRetSql;
@@ -3103,6 +3109,27 @@ public class ModelManager {
       else if (sOldVersion.equals("500") &&
                sNewVersion.equals("550")) {
         executeBulk("upgrade/" + sDbms + "/500-550.ddl", BULK_PLSQL);
+        if (iDbms==DBMS_ORACLE) recompileOrcl();
+      }
+      else if (sOldVersion.equals("400") &&
+               sNewVersion.equals("600")) {
+        executeBulk("upgrade/" + sDbms + "/400-500.ddl", BULK_PLSQL);
+        executeBulk("upgrade/" + sDbms + "/500-550.ddl", BULK_PLSQL);
+        executeBulk("upgrade/" + sDbms + "/500-550.ddl", BULK_PLSQL);
+        executeBulk("upgrade/" + sDbms + "/550-600.ddl", BULK_PLSQL);
+        if (iDbms==DBMS_ORACLE) recompileOrcl();
+      }
+      else if (sOldVersion.equals("500") &&
+               sNewVersion.equals("600")) {
+        executeBulk("upgrade/" + sDbms + "/500-550.ddl", BULK_PLSQL);
+        executeBulk("upgrade/" + sDbms + "/500-550.ddl", BULK_PLSQL);
+        executeBulk("upgrade/" + sDbms + "/550-600.ddl", BULK_PLSQL);
+        if (iDbms==DBMS_ORACLE) recompileOrcl();
+      }
+      else if (sOldVersion.equals("550") &&
+               sNewVersion.equals("600")) {
+        executeBulk("upgrade/" + sDbms + "/500-550.ddl", BULK_PLSQL);
+        executeBulk("upgrade/" + sDbms + "/550-600.ddl", BULK_PLSQL);
         if (iDbms==DBMS_ORACLE) recompileOrcl();
       }
       else

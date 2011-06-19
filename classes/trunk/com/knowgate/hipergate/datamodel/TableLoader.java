@@ -47,21 +47,20 @@ import java.sql.PreparedStatement;
 
 import com.knowgate.debug.DebugFile;
 import com.knowgate.jdc.JDCConnection;
-import com.knowgate.dataobjs.DBColumn;
+import com.knowgate.storage.Column;
 import com.knowgate.dataobjs.DBTable;
 import com.knowgate.misc.Gadgets;
 
 /**
  * Generic text to table loader
  * @author Sergio Montoro Ten
- * @version 2.0
+ * @version 7.0
  */
 public class TableLoader extends DBTable implements ImportLoader {
 
   private JDCConnection jConn;
-  private short[] aColTypes;
-  private String[] aColNames;
   private Object[] aValues;
+  private short[] aColTypes;
   private SimpleDateFormat oDtFmt = new SimpleDateFormat("yyyy-MM-dd");
   private SimpleDateFormat oTsFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
   HashMap oInsrColPos;
@@ -73,17 +72,13 @@ public class TableLoader extends DBTable implements ImportLoader {
 
   public TableLoader(String sTableName) {
     super(sTableName);
-    aColNames = null;
-    aColTypes = null;
     jConn = null;
   }
 
   // ---------------------------------------------------------------------------
 
   public String[] columnNames() throws IllegalStateException {
-    if (null==aColNames)
-      throw new IllegalStateException("TableLoader: must call prepare() before columnNames()");
-    return aColNames;
+    return getColumnsStr().split(",");
   }
 
   // ---------------------------------------------------------------------------
@@ -107,12 +102,11 @@ public class TableLoader extends DBTable implements ImportLoader {
       DebugFile.decIdent();
       throw new SQLException("No columns found for table "+getName());
     }
-    aColNames = Gadgets.split(","+getColumnsStr(),',');
-    aColTypes = new short[aColNames.length];
-    ListIterator<DBColumn> oColIter = getColumns().listIterator();
+    aColTypes = new short[getColumns().size()];
+    ListIterator<Column> oColIter = getColumns().listIterator();
     int t=-1;
     while (oColIter.hasNext()) {
-      aColTypes[++t] = oColIter.next().getSqlType();
+      aColTypes[++t] = (short) oColIter.next().getType();
     } // wend
     aValues = new Object[columnCount()+1];
     String sSQL;
@@ -138,35 +132,38 @@ public class TableLoader extends DBTable implements ImportLoader {
     // ************************************
     // Compose and prepare update statement
 
-    sSQL = oColList.toString("=?,");
-    ListIterator oIter = getPrimaryKey().listIterator();
-    while (oIter.hasNext()) {
-      sCol = (String) oIter.next();
-      try {
-        sSQL = Gadgets.replace(sSQL, sCol + "=?,", "");
-        sSQL = Gadgets.replace(sSQL, sCol + "=?", "");
-      } catch (Exception neverthrown) {}
-    }
-    String[] aUpdtCols = Gadgets.split(sSQL, ",");
-    for (int c=0; c<aUpdtCols.length; c++) {
-      oUpdtColPos.put(Gadgets.dechomp(aUpdtCols[c],"=?").toLowerCase(),new Integer(c+1));
-    }
-    sSQL = "UPDATE "+getName()+" SET "+sSQL+ " WHERE ";
-    oIter = getPrimaryKey().listIterator();
-    int iPK=1;
-    while (oIter.hasNext()) {
-      sCol = (String) oIter.next();
-      oUpdtColPos.put(sCol.toLowerCase(),new Integer(aUpdtCols.length+iPK));
-      if (iPK>1) sSQL += " AND ";
-      sSQL += sCol+"=?";
-      iPK++;
-    }
+	if (getPrimaryKey().size()==0) {
+	
+	  oUpdt = null;
 
-    if (DebugFile.trace) {
-      DebugFile.writeln("Connection.prepareStatement("+sSQL+")");
-    }
+	} else {
+      sSQL = oColList.toString("=?,");
+      ListIterator oIter = getPrimaryKey().listIterator();
+      while (oIter.hasNext()) {
+        sCol = (String) oIter.next();
+        try {
+          sSQL = Gadgets.replace(sSQL, sCol + "=?,", "");
+          sSQL = Gadgets.replace(sSQL, sCol + "=?", "");
+        } catch (Exception neverthrown) {}
+      }
+      String[] aUpdtCols = Gadgets.split(sSQL, ",");
+      for (int c=0; c<aUpdtCols.length; c++) {
+        oUpdtColPos.put(Gadgets.dechomp(aUpdtCols[c],"=?").toLowerCase(),new Integer(c+1));
+      }
+      sSQL = "UPDATE "+getName()+" SET "+sSQL+ " WHERE ";
+      oIter = getPrimaryKey().listIterator();
+      int iPK=1;
+      while (oIter.hasNext()) {
+        sCol = (String) oIter.next();
+        oUpdtColPos.put(sCol.toLowerCase(),new Integer(aUpdtCols.length+iPK));
+        if (iPK>1) sSQL += " AND ";
+        sSQL += sCol+"=?";
+        iPK++;
+      }
+      if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement("+sSQL+")");
 
-    oUpdt = oConn.prepareStatement(sSQL);
+      oUpdt = oConn.prepareStatement(sSQL);
+	}
 
     jConn = new JDCConnection(oConn, null);
 
@@ -276,12 +273,16 @@ public class TableLoader extends DBTable implements ImportLoader {
   public void store(Connection oConn, String sWorkArea, int iFlags)
       throws SQLException,IllegalArgumentException,NullPointerException {
 
-    int iAffected;
-    if (oUpdt==null || oInsr==null)
+    int iAffected = 0;
+    
+    if (oInsr==null)
       throw new SQLException("Invalid command sequece. Must call ContactLoader.prepare() before TableLoader.store()");
 
     if (!test(iFlags,MODE_APPEND) && !test(iFlags,MODE_UPDATE))
       throw new IllegalArgumentException("TableLoader.store() Flags bitmask must contain either MODE_APPEND, MODE_UPDATE or both");
+
+    if (test(iFlags,MODE_UPDATE) && oUpdt==null)
+      throw new IllegalArgumentException("TableLoader.store() Flags bitmask cannot contain MODE_UPDATE because table has not primary key");
 
     if (DebugFile.trace) {
       DebugFile.writeln("Begin TableLoader.store([Connection], "+sWorkArea+","+String.valueOf(iFlags)+")");
@@ -289,32 +290,31 @@ public class TableLoader extends DBTable implements ImportLoader {
     }
 
     if (test(iFlags,MODE_UPDATE)) {
-      ListIterator oIter = getColumns().listIterator();
-      int iPos = 0;
+      if (DebugFile.trace) DebugFile.writeln("trying to update record...");
+      ListIterator<Column> oIter = getColumns().listIterator();
       while (oIter.hasNext()) {
-        DBColumn oCol = (DBColumn) oIter.next();
+        Column oCol = oIter.next();
         Integer iUpdtPos = (Integer) oUpdtColPos.get(oCol.getName());
         if (null!=iUpdtPos) {
-          jConn.bindParameter(oUpdt, iUpdtPos.intValue(), aValues[iPos], oCol.getSqlType());
+          jConn.bindParameter(oUpdt, iUpdtPos.intValue(), get(oCol.getName()), (short) oCol.getType());
         }
-        iPos++;
       } // wend
       iAffected = oUpdt.executeUpdate();
     } // fi (MODE_UPDATE)
 
-    if (test(iFlags,MODE_APPEND)) {
-      ListIterator oIter = getColumns().listIterator();
-      int iPos = 0;
+    if (0==iAffected && test(iFlags,MODE_APPEND)) {
+      if (DebugFile.trace) DebugFile.writeln("trying to insert record...");
+      ListIterator<Column> oIter = getColumns().listIterator();
       while (oIter.hasNext()) {
-        DBColumn oCol = (DBColumn) oIter.next();
+        Column oCol = oIter.next();
         Integer iInsrPos = (Integer) oInsrColPos.get(oCol.getName());
         if (null!=iInsrPos) {
-          jConn.bindParameter(oInsr, iInsrPos.intValue(), aValues[iPos], oCol.getSqlType());
+    	  if (DebugFile.trace) DebugFile.writeln("binding "+oCol.getName());
+          jConn.bindParameter(oInsr, iInsrPos.intValue(), get(oCol.getName()), (short) oCol.getType());
         }
-        iPos++;
       } // wend
       iAffected = oInsr.executeUpdate();
-    } // fi (MODE_UPDATE)
+    } // fi (MODE_APPEND)
     if (DebugFile.trace) {
       DebugFile.decIdent();
       DebugFile.writeln("End TableLoader.store()");

@@ -886,9 +886,9 @@ public class ImportExport {
                                 sColName.startsWith("gu_") ||
                                 sColName.startsWith("id_") ||
                                 sColName.startsWith("tp_") )
-                              oImplLoad.put(oColFmt.getPosition(), oColFmt.convert(aLine[c]));
+                              oImplLoad.put(sColName, oColFmt.convert(aLine[c]));
                             else
-                              oImplLoad.put(oColFmt.getPosition(), oColFmt.convert(aLine[c].toUpperCase()));
+                              oImplLoad.put(sColName, oColFmt.convert(aLine[c].toUpperCase()));
                           } // fi (getSqlType()!=NULL)
                         } // next c)
                       } else {
@@ -896,7 +896,7 @@ public class ImportExport {
                           oColFmt = oColumns.getColumn(c);
                           if (oColFmt.getSqlType()!=Types.NULL) {
                             if (DebugFile.trace) DebugFile.writeln("  ImportLoader.put("+oColFmt.getName()+"("+String.valueOf(oColFmt.getPosition())+"),"+aLine[c]+")");
-                            oImplLoad.put(oColFmt.getPosition(), oColFmt.convert(aLine[c]));
+                            oImplLoad.put(oColFmt.getName(), oColFmt.convert(aLine[c]));
                           } // fi (getSqlType()!=NULL)
                         } // next c)
                       } // fi (ALLCAPS)
