@@ -97,7 +97,7 @@ import com.knowgate.lucene.MailIndexer;
  * Category behaviour is obtained by delegation to a private Category instance.<br>
  * For each DBFolder there is a corresponding row at k_categories database table.
  * @author Sergio Montoro Ten
- * @version 3.0
+ * @version 7.0
  */
 
 public class DBFolder extends Folder {
@@ -462,7 +462,7 @@ public class DBFolder extends Folder {
       oConn = getConnection();
       oConn.setAutoCommit(false);
 
-      BigDecimal dNext = getNextMessage();
+      BigDecimal dNext = getNextMessage(oConn);
 
       if (DebugFile.trace)
       	DebugFile.writeln("JDCConnection.prepareStatement(UPDATE "+DB.k_mime_msgs+" SET "+DB.gu_category+"='"+sCatGuid+"',"+DB.pg_message+"="+dNext.toString()+" WHERE "+DB.gu_mimemsg+"='"+oSrcMsg.getMessageGuid()+"')");
@@ -613,6 +613,7 @@ public class DBFolder extends Folder {
         PreparedStatement oStmt = null;
         ResultSet oRSet = null;
         boolean bHasFilePointer;
+
         try {
           oStmt = oConn.prepareStatement("SELECT NULL FROM "+DB.k_x_cat_objs+ " WHERE "+DB.gu_category+"=? AND "+DB.id_class+"=15",
                                          ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -646,6 +647,9 @@ public class DBFolder extends Folder {
             oLoca.put(DB.xoriginalfile, oCatg.getString(DB.nm_category)+".mbox");
             oLoca.store(oConn);
 
+            if (DebugFile.trace)
+              DebugFile.writeln("JDCConection.prepareStatement(INSERT INTO "+DB.k_x_cat_objs+" ("+DB.gu_category+","+DB.gu_object+","+DB.id_class+") VALUES ('"+oCatg.getStringNull(DB.gu_category,"null")+"','"+oProd.getStringNull(DB.gu_product,"null")+"',15)");
+ 
             oStmt = oConn.prepareStatement("INSERT INTO "+DB.k_x_cat_objs+" ("+DB.gu_category+","+DB.gu_object+","+DB.id_class+") VALUES (?,?,15)");
             oStmt.setString(1, oCatg.getString(DB.gu_category));
             oStmt.setString(2, oProd.getString(DB.gu_product));
@@ -838,6 +842,7 @@ public class DBFolder extends Folder {
     int iEmptyDrafts = 0;
     
     JDCConnection oConn = null;
+
     try {
       oConn = getConnection();
       iEmptyDrafts = oEmptyDrafts.load(oConn, new Object[]{getCategoryGuid(),((DBStore)getStore()).getUser().getString(DB.gu_workarea)});
@@ -871,7 +876,7 @@ public class DBFolder extends Folder {
                                      DB.bo_deleted+"=1 AND "+DB.gu_category+"='"+oCatg.getString(DB.gu_category)+"'", 100);
 
     try {
-      int iDeleted = oDeleted.load(getConnection());
+      int iDeleted = oDeleted.load(oConn);
 
       File oFile = getFile();
 
@@ -1419,7 +1424,7 @@ public class DBFolder extends Folder {
 
   // ---------------------------------------------------------------------------
 
-  private void saveMimeParts (MimeMessage oMsg, String sMsgCharSeq,
+  private void saveMimeParts (JDCConnection oConn, MimeMessage oMsg, String sMsgCharSeq,
                               String sBoundary, String sMsgGuid,
                               String sMsgId, int iPgMessage, int iOffset)
     throws MessagingException,OutOfMemoryError {
@@ -1429,7 +1434,6 @@ public class DBFolder extends Folder {
       DebugFile.incIdent();
     }
 
-    JDCConnection oConn = null;
     PreparedStatement oStmt = null;
     Blob oContentTxt;
     ByteArrayOutputStream byOutPart;
@@ -1453,8 +1457,6 @@ public class DBFolder extends Folder {
             if (DebugFile.trace) DebugFile.writeln("found message boundary token at " + String.valueOf(iPrevPart));
           } // fi (message boundary)
         } // fi (sMsgCharSeq && sBoundary)
-
-		oConn = getConnection();
 
         String sSQL = "INSERT INTO " + DB.k_mime_parts + "(gu_mimemsg,id_message,pg_message,nu_offset,id_part,id_content,id_type,id_disposition,len_part,de_part,tx_md5,file_name,by_content) VALUES ('"+sMsgGuid+"',?,?,?,?,?,?,?,?,?,NULL,?,?)";
 
@@ -1512,7 +1514,7 @@ public class DBFolder extends Folder {
 
                 MimeMessage oForwarded = new MimeMessage (((DBStore) getStore()).getSession(), byInStrm);
 
-                saveMimeParts (oForwarded, sMsgCharSeq, getPartsBoundary(oForwarded), sMsgGuid, sMsgId, iPgMessage, iOffset+iParts);
+                saveMimeParts (oConn, oForwarded, sMsgCharSeq, getPartsBoundary(oForwarded), sMsgGuid, sMsgId, iPgMessage, iOffset+iParts);
 
                 byInStrm.close();
                 byInStrm = null;
@@ -1686,14 +1688,17 @@ public class DBFolder extends Folder {
 
   // ---------------------------------------------------------------------------
 
-  private synchronized BigDecimal getNextMessage() throws MessagingException {
-    JDCConnection oConn = null;
+  private synchronized BigDecimal getNextMessage(JDCConnection oConn) throws MessagingException {
     PreparedStatement oStmt = null;
     ResultSet oRSet = null;
     BigDecimal oNext;
 	
+	if (DebugFile.trace) {
+	  DebugFile.writeln("Begin DBFolder.getNextMessage([JDCConnection])");
+	  DebugFile.incIdent();
+	}
+
     try {
-      oConn = getConnection();
 
       oStmt = oConn.prepareStatement("SELECT MAX("+DB.pg_message+") FROM "+DB.k_mime_msgs+" WHERE "+DB.gu_category+"=?",
                                      ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
@@ -1710,10 +1715,17 @@ public class DBFolder extends Folder {
       oStmt.close();
       oStmt=null;
     } catch (Exception xcpt) {
+	  if (DebugFile.trace) DebugFile.decIdent();
       try { if (null!=oRSet) oRSet.close(); } catch (Exception ignore) {}
       try { if (null!=oStmt) oStmt.close(); } catch (Exception ignore) {}
       throw new MessagingException(xcpt.getMessage(),xcpt);
     }
+
+	if (DebugFile.trace) {
+	  DebugFile.decIdent();
+	  DebugFile.writeln("End DBFolder.getNextMessage() : "+oNext.toString());
+	}
+
     return oNext;
   } // getNextMessage()
 
@@ -1761,6 +1773,8 @@ public class DBFolder extends Folder {
 
     try {
       oConn = getConnection();
+
+      dPgMessage = getNextMessage(oConn);
       
       sSQL = "INSERT INTO " + DB.k_mime_msgs + "(gu_mimemsg,gu_workarea,gu_category,id_type,id_content,id_message,id_disposition,len_mimemsg,tx_md5,de_mimemsg,file_name,tx_encoding,tx_subject,dt_sent,dt_received,tx_email_from,nm_from,tx_email_reply,nm_to,id_priority,bo_answered,bo_deleted,bo_draft,bo_flagged,bo_recent,bo_seen,bo_spam,pg_message,nu_position,by_content) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
@@ -1851,8 +1865,6 @@ public class DBFolder extends Folder {
       // For Oracle insert flags in NUMBER columns and message body in a BLOB column.
       // for any other RDBMS use SMALLINT columns for Flags and a LONGVARBINARY column for the body.
 
-      dPgMessage = getNextMessage();
-
       if (oConn.getDataBaseProduct()==JDCConnection.DBMS_ORACLE) {
         if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setBigDecimal(21, ...)");
 
@@ -1872,8 +1884,8 @@ public class DBFolder extends Folder {
           oStmt.setBinaryStream(30, new ByteArrayInputStream(byOutStrm.toByteArray()), byOutStrm.size());
         else
           oStmt.setNull(30, Types.LONGVARBINARY);
-      }
-      else {
+
+      } else {
         if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setShort(21, ...)");
 
         oStmt.setShort(21, (short) (oFlgs.contains(Flags.Flag.ANSWERED) ? 1 : 0));
@@ -1886,9 +1898,7 @@ public class DBFolder extends Folder {
         oStmt.setBigDecimal(28, dPgMessage);
         oStmt.setBigDecimal(29, dPosition);
 
-        if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setBinaryStream(30, new ByteArrayInputStream("+String.valueOf(byOutStrm.size())+"))");
-
-		if (DebugFile.trace) DebugFile.writeln("Binding ByteArrayInputStream of "+String.valueOf(byOutStrm.size()));
+		if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setBytes "+String.valueOf(byOutStrm.size()));
 			
         if (byOutStrm.size()>0)
           oStmt.setBytes(30, byOutStrm.toByteArray());
@@ -1902,6 +1912,8 @@ public class DBFolder extends Folder {
       oStmt.executeUpdate();
       oStmt.close();
       oStmt=null;
+      
+      if (!oConn.getAutoCommit()) oConn.commit();
 
     } catch (SQLException sqle) {
       String sTrace = "";
@@ -1926,7 +1938,7 @@ public class DBFolder extends Folder {
       Object oContent = oMsg.getContent();
       if (oContent instanceof MimeMultipart) {
         try {
-          saveMimeParts(oMsg, sMsgCharSeq, sBoundary, sGuMimeMsg, sMessageID, dPgMessage.intValue(), 0);
+          saveMimeParts(oConn, oMsg, sMsgCharSeq, sBoundary, sGuMimeMsg, sMessageID, dPgMessage.intValue(), 0);
         } catch (MessagingException msge) {
           // Close Mbox file rollback and re-throw
           try { oConn.rollback(); } catch (Exception ignore) {}
@@ -1934,7 +1946,7 @@ public class DBFolder extends Folder {
         }
       } // fi (MimeMultipart)
     } catch (Exception xcpt) {
-      try { oConn.rollback(); } catch (Exception ignore) {}
+      try { if (!oConn.getAutoCommit()) oConn.rollback(); } catch (Exception ignore) {}
       throw new MessagingException("MimeMessage.getContent() " + xcpt.getMessage(), xcpt);
     }
 
@@ -1956,6 +1968,7 @@ public class DBFolder extends Folder {
     PreparedStatement oAddr = null;
 
     try {
+      oConn = getConnection();
       oAddr = oConn.prepareStatement(sSQL, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
       ResultSet oRSet;
 
@@ -2297,9 +2310,12 @@ public class DBFolder extends Folder {
       oStmt.close();
       oStmt=null;
 
+      if (!oConn.getAutoCommit()) oConn.commit();
+
     } catch (SQLException sqle) {
-      try { if (null!=oStmt) oStmt.close(); oStmt=null; } catch (Exception ignore) {}
-      try { if (null!=oAddr) oAddr.close(); oAddr=null; } catch (Exception ignore) {}
+      try { if (!oConn.getAutoCommit()) oConn.rollback();} catch (Exception ignore) {};
+      try { if (null!=oStmt) oStmt.close(); oStmt=null;  } catch (Exception ignore) {}
+      try { if (null!=oAddr) oAddr.close(); oAddr=null;  } catch (Exception ignore) {}
       if (DebugFile.trace) DebugFile.decIdent();
       throw new MessagingException(sqle.getMessage(), sqle);
     }

@@ -102,7 +102,7 @@ import com.knowgate.dataxslt.FastStreamReplacer;
 /**
  * <p>A wrapper around javax.mail.Store and javax.mail.Transport</p>
  * @author Sergio Montoro Ten
- * @version 1.0
+ * @version 7.0
  */
 public class SessionHandler {
 
@@ -684,6 +684,91 @@ public class SessionHandler {
 	
 	return aMsgsXml;
   } // listFolderMessages
+
+  // ---------------------------------------------------------------------------
+
+  /**
+   * <p>Get a list of headers for all folder messages which are not deleted</p>
+   * Messages are returned in ascending date order, oldest messages are returned first
+   * @param sFolderName Folder Name, for example: "INBOX"
+   * @return An array of HeadersHelper objetcs
+   * @throws AuthenticationFailedException
+   * @throws NoSuchProviderException
+   * @throws MessagingException
+   * @since 7.0
+   */
+
+  public HeadersHelper[] listFolderMessagesHeaders(String sFolderName)
+  	throws AuthenticationFailedException,NoSuchProviderException,MessagingException {
+
+	Chronometer oChMeter = null;
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin SessionHandler.listFolderMessagesHeaders("+sFolderName+")");
+      DebugFile.incIdent();
+      oChMeter = new Chronometer();
+    }
+
+    HeadersHelper[] aMsgsHdr = null;
+
+    Folder oFldr = getFolder(sFolderName);
+
+	oFldr.open (Folder.READ_ONLY);
+
+	int iDeleted = 0;
+	int iTotalCount = oFldr.getMessageCount();
+
+	if (iTotalCount>0) {
+
+      if (DebugFile.trace) DebugFile.writeln("Folder.getMessages("+String.valueOf(iTotalCount)+")");
+
+      Message[] aMsgsObj = oFldr.getMessages();
+
+      FetchProfile oFtchPrfl = new FetchProfile();
+      oFtchPrfl.add(FetchProfile.Item.ENVELOPE);
+      oFtchPrfl.add(FetchProfile.Item.CONTENT_INFO);
+      oFtchPrfl.add(FetchProfile.Item.FLAGS);
+      oFtchPrfl.add("X-Priority");
+      oFtchPrfl.add("X-Spam-Flag");
+
+      if (DebugFile.trace) {
+      	DebugFile.writeln("Folder.fetch(Message[], ENVELOPE & CONTENT_INFO & FLAGS)");
+        oChMeter.start();
+      }
+
+      oFldr.fetch(aMsgsObj, oFtchPrfl);
+      
+      if (DebugFile.trace) {
+      	DebugFile.writeln(String.valueOf(iTotalCount)+" headers fetched in "+String.valueOf(oChMeter.stop()/1000l)+" seconds");
+        oChMeter.start();
+      }
+      	
+      aMsgsHdr = new HeadersHelper[iTotalCount];
+      for (int m=0; m<iTotalCount; m++) {
+        if (aMsgsObj[m].isSet(Flags.Flag.DELETED)) {
+          iDeleted++;
+        } else {
+          aMsgsHdr[m-iDeleted] = new HeadersHelper((MimeMessage) aMsgsObj[m]);
+        } // fi
+      } // next (m)
+      
+      aMsgsObj = null;
+
+	  if (iDeleted>0) aMsgsHdr = Arrays.copyOfRange(aMsgsHdr, 0, iTotalCount-iDeleted);
+
+	} // fi (iTotalCount>0)
+	oFldr.close(false);
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      if (null==aMsgsHdr)
+        DebugFile.writeln("End SessionHandler.listFolderMessagesHeaders() : 0");
+      else
+        DebugFile.writeln("End SessionHandler.listFolderMessagesHeaders() : " + String.valueOf(aMsgsHdr.length));
+    }
+
+	return aMsgsHdr;
+  } // listFolderMessagesHeaders
 
   // ---------------------------------------------------------------------------
 

@@ -134,9 +134,14 @@ public class DBStore extends javax.mail.Store {
       connect();
 
     } else if (oConn.getDataBaseProduct()==JDCConnection.DBMS_POSTGRESQL) {
+
+      long lStartValidation = new java.util.Date().getTime();
+      
       if (!oConn.isValid(10)) {
 
-        if (DebugFile.trace) DebugFile.writeln("DBStore.getConnection() connection with process id. "+oConn.pid()+" is not valid");
+        long lEndValidation = new java.util.Date().getTime();
+
+        if (DebugFile.trace) DebugFile.writeln("DBStore.getConnection() connection with process id. "+oConn.pid()+" is not valid after "+String.valueOf(lEndValidation-lStartValidation)+" ms of connection testing");
 
 	    try {
 	  	  oConn.close();
@@ -338,6 +343,10 @@ public class DBStore extends javax.mail.Store {
     if (sFolderName.length()==0) {
       if (DebugFile.trace) DebugFile.decIdent();
       throw new NullPointerException("DBStore.getFolder() folder name cannot be an empty string");
+    }
+    if (sFolderName.equalsIgnoreCase("null")) {
+      if (DebugFile.trace) DebugFile.decIdent();
+      throw new NullPointerException("DBStore.getFolder() folder name cannot be 'null'");
     }
 
     if (!isConnected()) {

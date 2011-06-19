@@ -32,6 +32,7 @@
 
 package com.knowgate.hipermail;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import java.util.Date;
@@ -58,11 +59,12 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * Set of utility functions for managing MimeMessage headers
  * @author Sergio Montoro Ten
- * @version 5.0
+ * @version 7.0
  */
 
 public class HeadersHelper extends DefaultHandler {
   private MimeMessage oMsg;
+  private DBMimeMessage oBbm;
   private final static String EmptyString = "";
   private final static SimpleDateFormat DateFrmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -70,18 +72,21 @@ public class HeadersHelper extends DefaultHandler {
 
   public HeadersHelper() {
     oMsg = null;
+    oBbm = null;
   }
 
   // ---------------------------------------------------------------------------
 
   public HeadersHelper(MimeMessage oMimeMsg) {
     oMsg = oMimeMsg;
+    try { oBbm = new DBMimeMessage(oMsg); } catch (MessagingException me) {}
   }
 
   // ---------------------------------------------------------------------------
 
   public void setMessage(MimeMessage oMimeMsg) {
     oMsg = oMimeMsg;
+    try { oBbm = new DBMimeMessage(oMsg); } catch (MessagingException me) {}
   }
 
   // ---------------------------------------------------------------------------
@@ -418,6 +423,12 @@ public class HeadersHelper extends DefaultHandler {
         oAddr = (InternetAddress) aAddrs[0];
 
     return oAddr;
+  } // getFrom
+
+  // ---------------------------------------------------------------------------
+
+  public String getText () throws MessagingException,IOException {
+    return oBbm.getText();
   } // getFrom
 
   // ---------------------------------------------------------------------------
