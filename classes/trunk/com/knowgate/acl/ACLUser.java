@@ -1586,7 +1586,8 @@ public final class ACLUser extends DBPersist {
     }
 
       ACLUser oUsr = new ACLUser();
-      	  
+      oUsr.getTable(oConn); // Do not remove this line
+
       if (null==Values[0]) {
         if (DebugFile.trace) DebugFile.decIdent();
         throw new NullPointerException("ACLUSer.create() a domain identifier is required");

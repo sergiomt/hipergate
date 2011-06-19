@@ -97,7 +97,7 @@ public final class ACL {
    * <p>Checks whether or not password is valid for given user.</p>
    * <p>This method calls k_sp_autenticate stored procedure witch looks up tx_pwd field at k_users table and see if it is the same as sAuthStr parameter.</p>
    * @param oConn Opened Database Connection
-   * @param sUserId User nickname
+   * @param sUserId User GUID
    * @param sAuthStr Authentication String (password)
    * @param iFlags Authentication String Flags
    * <ul>
@@ -201,7 +201,7 @@ public final class ACL {
    * <p>This method calls k_sp_autenticate stored procedure witch looks up tx_pwd field at k_users table and see if it is the same as sAuthStr parameter.</p>
    * <p>Also it checks that the given captcha text corresponds to its signature and that it has not expired.</p>
    * @param oConn Opened Database Connection
-   * @param sUserId User nickname
+   * @param sUserId User GUID
    * @param sAuthStr Authentication String (password)
    * @param iFlags Authentication String Flags
    * @param lTimestamp Timestamp (in miliseconds) when sPlainCaptcha was generated
