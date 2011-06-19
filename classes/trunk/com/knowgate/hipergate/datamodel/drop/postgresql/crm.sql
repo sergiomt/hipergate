@@ -5,3 +5,7 @@ DROP FUNCTION k_sp_del_contact (CHAR);
 DROP FUNCTION k_sp_del_company (CHAR);
 DROP FUNCTION k_sp_del_oportunity (CHAR);
 DROP FUNCTION k_sp_del_supplier (CHAR);
+DROP FUNCTION k_sp_dedup_email_contacts ();
+DROP FUNCTION k_sp_dedup_oportunities ();
+DROP FUNCTION k_sp_dedup_oportunities ();
+DROP FUNCTION k_sp_objetives_for_contact (CHAR);
