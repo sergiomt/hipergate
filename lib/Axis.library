@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<library>
+  <!--JBuilder Library Definition File-->
+  <fullname>Axis</fullname>
+  <class>
+    <path>[saaj.jar]</path>
+    <path>[jaxrpc.jar]</path>
+    <path>[axis.jar]</path>
+    <path>[axis-ant.jar]</path>
+    <path>[wsdl4j.jar]</path>
+    <path>[commons-logging.jar]</path>
+    <path>[commons-discovery.jar]</path>
+  </class>
+  <source>
+    <path>[../extras/ws-axis.zip]ws-axis/java/src/</path>
+  </source>
+  <documentation>
+  </documentation>
+</library>
+
