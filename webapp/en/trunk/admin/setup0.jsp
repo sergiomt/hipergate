@@ -34,8 +34,8 @@
 <HTML>
 <HEAD>
   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
 </HEAD>
 <BODY >
 <FORM ACTION="setup2.jsp">
@@ -61,7 +61,7 @@
   </TR>
 	<TR><TD WIDTH="180"></TD><TD VALIGN="top"><INPUT TYPE="submit" CLASS="pushbutton" VALUE="Start" onclick="window.parent.frames[1].document.location='setup1_do.jsp'"></TD></TR>
 </TABLE>
-<CENTER><FONT CLASS="textsmall">&copy; Know Gate S.L. 2003-2010</FONT></CENTER> 
+<CENTER><FONT CLASS="textsmall">&copy; Know Gate S.L. 2003-2011</FONT></CENTER> 
 </FORM>
 </BODY>
 </HTML>

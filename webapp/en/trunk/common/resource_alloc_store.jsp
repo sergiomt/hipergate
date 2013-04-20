@@ -145,8 +145,8 @@
 <HEAD>
   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
   <TITLE>hipergate</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
 </HEAD>
 <BODY TOPMARGIN="16px" MARGINHEIGHT="16px">
   <BR>

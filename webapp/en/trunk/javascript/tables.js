@@ -22,7 +22,7 @@
   adds a rows of 4 cells to row identified by 'fila1' : <TR ID='fila1' .... at position 1
   notes :
   	(posicion > 0 and posicion < number of table's rows)
-  	never put blank spaces in the tags: '</TD>' bien, '</TD > ó < /TD>...' mal
+  	never put blank spaces in the tags: '</TD>' bien, '</TD > ï¿½ < /TD>...' mal
   
   deleteRow(('myTable','fila1')
   removes a row
@@ -44,12 +44,12 @@
     	
     	    	
     	strcells = new String(sHtmlTr);
-    	rExp = /<[/][Tt][Dd]>/gi;
+    	rExp = new REgExp("<[/][Tt][Dd]>","gi");
     	strcells = strcells.replace(rExp,'</td>');
     	
     	    	    	   	
     	var array_lcells = strcells.split('</td>');
-    	for (i=0;i<array_lcells.length-1;i++)
+    	for (var i=0;i<array_lcells.length-1;i++)
     	{
     		
     		arrayTd_attr_text = array_lcells[i].split('>');

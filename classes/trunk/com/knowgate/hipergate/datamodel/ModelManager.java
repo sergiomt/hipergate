@@ -2007,14 +2007,6 @@ public class ModelManager {
 	if (null==oIoStrm) throw new FileNotFoundException("Resource "+sResourcePath+" not found for class "+this.getClass().getName());
 
     oReader = new InputStreamReader(oIoStrm, sEncoding);
-
-	if (null==oReader) {
-      if (DebugFile.trace) {
-        DebugFile.writeln("Could not find file " + sResourcePath);
-        DebugFile.decIdent();
-      }		
-	  throw new FileNotFoundException("Could not open resource file " + sResourcePath);
-	}
 	
     while (true) {
       iReaded = oReader.read(Buffer, 0, 4000);
@@ -2665,7 +2657,6 @@ public class ModelManager {
       oInterpreter.set ("DefaultConnection", new JDCConnection(oConn,null));
       if (DebugFile.trace) DebugFile.writeln("Interpreter.eval(getResourceAsString(scripts/user_categories_create.js,"+sEncoding);
       oInterpreter.eval(getResourceAsString("scripts/user_categories_create.js", sEncoding));
-      Object obj = oInterpreter.get("ErrorCode");
       oCodError = (Integer) oInterpreter.get("ErrorCode");
       if (oCodError.intValue()==0) {
         sErrMsg = (String) oInterpreter.get("ErrorMessage");
@@ -3130,6 +3121,25 @@ public class ModelManager {
                sNewVersion.equals("600")) {
         executeBulk("upgrade/" + sDbms + "/500-550.ddl", BULK_PLSQL);
         executeBulk("upgrade/" + sDbms + "/550-600.ddl", BULK_PLSQL);
+        if (iDbms==DBMS_ORACLE) recompileOrcl();
+      }
+      else if (sNewVersion.equals("700")) {
+        if (sOldVersion.equals("400")) {
+          executeBulk("upgrade/" + sDbms + "/400-500.ddl", BULK_PLSQL);
+          executeBulk("upgrade/" + sDbms + "/500-550.ddl", BULK_PLSQL);
+          executeBulk("upgrade/" + sDbms + "/500-550.ddl", BULK_PLSQL);
+          executeBulk("upgrade/" + sDbms + "/550-600.ddl", BULK_PLSQL);
+          executeBulk("upgrade/" + sDbms + "/600-700.ddl", BULK_PLSQL);
+        } else if (sOldVersion.equals("500")) {
+          executeBulk("upgrade/" + sDbms + "/500-550.ddl", BULK_PLSQL);
+          executeBulk("upgrade/" + sDbms + "/500-550.ddl", BULK_PLSQL);
+          executeBulk("upgrade/" + sDbms + "/550-600.ddl", BULK_PLSQL);
+          executeBulk("upgrade/" + sDbms + "/600-700.ddl", BULK_PLSQL);
+        } else if (sOldVersion.equals("550")) {
+          executeBulk("upgrade/" + sDbms + "/550-600.ddl", BULK_PLSQL);
+          executeBulk("upgrade/" + sDbms + "/600-700.ddl", BULK_PLSQL);
+        } else if (sOldVersion.equals("600"))
+          executeBulk("upgrade/" + sDbms + "/600-700.ddl", BULK_PLSQL);
         if (iDbms==DBMS_ORACLE) recompileOrcl();
       }
       else

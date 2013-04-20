@@ -47,7 +47,6 @@ import javax.activation.DataHandler;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpEntity;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.auth.AuthScope;
@@ -126,6 +125,7 @@ public class FileSystem {
    */
 
   public FileSystem(int iMode) {
+	OS = iMode;
     SLASH = System.getProperty("file.separator");
     oRunner = Runtime.getRuntime();
     oHttpCli = null;
@@ -904,6 +904,13 @@ public class FileSystem {
 
       switch (OS) {
           case OS_PUREJAVA:
+        	File[] aFiles = oFile.listFiles();
+        	if (aFiles!=null)
+        	  for (int f=0; f<aFiles.length; f++)
+        	    if (aFiles[f].isDirectory())
+        	      rmdir("file://"+aFiles[f].getAbsolutePath());
+        	    else
+        	      aFiles[f].delete();
             bRetVal = oFile.delete();
             break;
           case OS_UNIX:
@@ -1126,6 +1133,65 @@ public class FileSystem {
     return bRetVal;
   } // delete
 
+  // ----------------------------------------------------------
+
+  /**
+   * <p>Recursively delete a files matching a given wildcard from a local directory</p>
+   * @param sBasePath String. base path for start deleting files (like file:///opt/knowgate/files/)
+   * @param sWildCard String. Wildcard to match (like *.tmp)
+   * @return Number of deleted files or directories
+   * @throws IOException
+   * @throws  MalformedPatternException
+   * @since 7.0
+   */
+
+  public int xdelete (String sBasePath, final String sWildCard) throws IOException, MalformedPatternException  {
+
+	if (DebugFile.trace) {
+	  DebugFile.writeln("Begin FileSystem.xdelete(" + sBasePath + "," + sWildCard + ")");
+	  DebugFile.incIdent();
+	}
+
+	int nDeleted = 0;
+    final String sRegExp = Gadgets.replace(Gadgets.replace(Gadgets.replace(Gadgets.replace(Gadgets.replace(Gadgets.replace(Gadgets.replace(sWildCard,
+    		               '?', "[^\\x2E]"), '*', "[^\\x2E]*"), '.', "\\x2E"), '(', "\\x28"), ')', "\\x29"), '[', "\\x5B"), ']', "\\x5D");
+    final Pattern oPattern = new Perl5Compiler().compile(sRegExp, Perl5Compiler.CASE_INSENSITIVE_MASK);
+	
+    FilenameFilter oFilter = new FilenameFilter() {
+        public boolean accept(File oDir, String sName) {
+          Perl5Matcher oMatcher = new Perl5Matcher();
+          return oMatcher.matches(sName, oPattern);
+        }
+      };
+
+    if (sBasePath.startsWith("file://")) sBasePath = sBasePath.substring(7);
+    File oDir = new File(sBasePath);    
+    File aFiles[] = oDir.listFiles(oFilter);
+    if (aFiles!=null) {
+      int nFiles = aFiles.length;
+      for (int f=0; f<nFiles; f++) {
+      	System.out.println("Deleting "+aFiles[f].getAbsolutePath());
+    	boolean dDeleted = delete("file://"+aFiles[f].getAbsolutePath());
+    	if (!dDeleted) System.out.println(aFiles[f].getAbsolutePath()+" could not be deleted");
+    	nDeleted++;
+      } // next
+    } // fi
+    aFiles = oDir.listFiles();
+    if (aFiles!=null) {
+      int nFiles = aFiles.length;
+      for (int f=0; f<nFiles; f++) {
+    	  nDeleted += xdelete(aFiles[f].getAbsolutePath(), sWildCard);
+      } // next
+    } // fi
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End FileSystem.xdelete() : " + String.valueOf(nDeleted));
+    }
+    
+    return nDeleted;
+  } // xdelete
+  
   // ----------------------------------------------------------
 
   private boolean moveFTPToFTP (String sSourceURI, String sTargetURI) throws FTPException, IOException {
@@ -1570,6 +1636,7 @@ public class FileSystem {
 
 	  if (user().equals("anonymous") || user().length()==0) {
         ByteArrayOutputStream oStrm = new ByteArrayOutputStream();
+		if (DebugFile.trace) DebugFile.writeln("new DataHandler(" + oUrl.toString() + ")");
         DataHandler oHndlr = new DataHandler(oUrl);
         oHndlr.writeTo(oStrm);
         aRetVal = oStrm.toByteArray();
@@ -1784,7 +1851,6 @@ public class FileSystem {
       if (iFLen>0) {
         byte byBuffer[] = new byte[3];
         char aBuffer[] = new char[iFLen];
-        StringBuffer oBuffer = new StringBuffer(iFLen);
         BufferedInputStream oBfStrm;
         FileInputStream oInStrm;
         InputStreamReader oReader;
@@ -1811,10 +1877,6 @@ public class FileSystem {
         // Skip FF FE character mark for Unidode files
         int iSkip = ( (int) aBuffer[0] == 65279 || (int) aBuffer[0] == 65533 || (int) aBuffer[0] == 65534 ? 1 : 0);
 
-        oBuffer.append(aBuffer, iSkip, iReaded - iSkip);
-
-        aBuffer = null;
-
         oReader.close();
         oBfStrm.close();
         oInStrm.close();
@@ -1823,7 +1885,7 @@ public class FileSystem {
         oInStrm = null;
         oFile = null;
 
-        sRetVal = oBuffer.toString();
+        sRetVal = new String(aBuffer, iSkip, iReaded - iSkip);
       }
       else
         sRetVal = "";
@@ -2060,28 +2122,31 @@ public class FileSystem {
    * @param sBasePath String Base path for page and its referenced files
    * @param sFilePath String File path from sBasePath
    * @param oOutStrm OutputStream where ZIP is written
+   * @param sDefaultEncoding Character encoding of file to be downloaded
    * @throws IOException
-   * @since 5.5
+   * @since 7.0
    */
-  public void downloadhtmlpage (String sBasePath, String sFilePath, OutputStream oOutStrm)
+  public void downloadhtmlpage (String sBasePath, String sFilePath, OutputStream oOutStrm, String sDefaultEncoding)
     throws IOException {
 
 	if (DebugFile.trace) {
-	  DebugFile.writeln("Begin FileSystem.downloadhtmlpage("+sBasePath+","+sFilePath+",[OutputStream])");
+	  DebugFile.writeln("Begin FileSystem.downloadhtmlpage("+sBasePath+","+sFilePath+",[OutputStream],"+sDefaultEncoding+")");
 	  DebugFile.incIdent();
 	}
 	
-    String sEncoding;
+    String sEncoding = sDefaultEncoding;
 	String sBaseHref = "";
-	boolean bAutoDetectEncoding = true;
+	boolean bAutoDetectEncoding = (sDefaultEncoding==null);
 	TreeSet<String> oFiles = new TreeSet<String>();
 	TreeSet<String> oEntries = new TreeSet<String>();
     Perl5Matcher oMatcher = new Perl5Matcher();
     Perl5Matcher oReplacer = new Perl5Matcher();
     Perl5Compiler oCompiler = new Perl5Compiler();
 
+	if (sDefaultEncoding==null) sDefaultEncoding = "ASCII";
+	
     try {
-      String sHtml = readfilestr(sBasePath+sFilePath,"ASCII");
+      String sHtml = readfilestr(sBasePath+sFilePath,sDefaultEncoding);
 
 	  if (null==sHtml) {
 	    if (DebugFile.trace) {
@@ -2095,6 +2160,7 @@ public class FileSystem {
 	    DebugFile.writeln(String.valueOf(sHtml.length())+" characters readed from file "+sBasePath+sFilePath);
 	  }
 	  
+	  if (bAutoDetectEncoding) {
       if (oMatcher.contains(sHtml, oCompiler.compile("<meta\\x20+http-equiv=(\"|')?Content-Type(\"|')?\\x20+content=(\"|')?text/html;\\x20+charset=(\\w|-){3,32}(\"|')?>",Perl5Compiler.CASE_INSENSITIVE_MASK))) {
         if (DebugFile.trace) DebugFile.writeln("<meta http-equiv> tag found");
         String sHttpEquiv = oMatcher.getMatch().toString();
@@ -2119,12 +2185,12 @@ public class FileSystem {
         }
       } else {
         bAutoDetectEncoding = true;    	
-      }
+      } }
     
       if (bAutoDetectEncoding) {
         if (DebugFile.trace) DebugFile.writeln("Autodetecting encoding");
-      	ByteArrayInputStream oHtmlStrm = new ByteArrayInputStream(sHtml.getBytes("ASCII"));
-        sEncoding = new CharacterSetDetector().detect(oHtmlStrm,"ASCII");
+      	ByteArrayInputStream oHtmlStrm = new ByteArrayInputStream(sHtml.getBytes(sDefaultEncoding));
+        sEncoding = new CharacterSetDetector().detect(oHtmlStrm,sDefaultEncoding);
         oHtmlStrm.close();
         if (DebugFile.trace) DebugFile.writeln("Encoding set to "+sEncoding);
       }
@@ -2237,7 +2303,21 @@ public class FileSystem {
 	  DebugFile.writeln("End FileSystem.downloadhtmlpage()");
 	}
   } // downloadhtmlpage
-    
+
+  // ----------------------------------------------------------
+
+  /**
+   * Download an HTML page and all its referenced files into a ZIP
+   * @param sBasePath String Base path for page and its referenced files
+   * @param sFilePath String File path from sBasePath
+   * @param oOutStrm OutputStream where ZIP is written
+   * @throws IOException
+   * @since 5.5
+   */
+  public void downloadhtmlpage (String sBasePath, String sFilePath, OutputStream oOutStrm) throws IOException {
+    downloadhtmlpage (sBasePath, sFilePath, oOutStrm, null);
+  }
+  
   // ----------------------------------------------------------
 
   // ******************

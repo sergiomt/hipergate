@@ -1,9 +1,8 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets,com.knowgate.marketing.Activity,com.knowgate.marketing.ActivityAudience,com.knowgate.addrbook.Meeting,com.knowgate.hipermail.AdHocMailing,com.knowgate.dataxslt.db.PageSetDB" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.misc.Gadgets,com.knowgate.marketing.Activity,com.knowgate.marketing.ActivityAudience,com.knowgate.addrbook.Meeting,com.knowgate.hipermail.AdHocMailing,com.knowgate.dataxslt.db.PageSetDB,com.knowgate.misc.Calendar" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*
   Copyright (C) 2003-2009  Know Gate S.L. All rights reserved.
-                           C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -56,6 +55,7 @@
   String id_domain = request.getParameter("id_domain");
   String gu_workarea = request.getParameter("gu_workarea");
   String gu_activity = request.getParameter("gu_activity");
+  String gu_microsite = null;
 
   String id_user = getCookie(request, "userid", "");
   
@@ -78,6 +78,9 @@
                                 DB.gu_workarea+"=? ORDER BY 2", 100);
   DBSubset oTmpl = new DBSubset(DB.k_microsites, DB.nm_microsite + "," + DB.gu_microsite + "," + DB.path_metadata,
                                 DB.id_app+"=13 AND ("+DB.gu_workarea+" IS NULL OR "+DB.gu_workarea+"=?)", 10);
+  DBSubset oTags = new DBSubset(DB.k_activity_tags, DB.nm_tag, DB.gu_activity+"=?", 10);
+
+  int iTags = 0;
   int iTmpl = 0;
   int iLsts = 0;
   int iRcps = 0;
@@ -119,6 +122,7 @@
     if (null!=gu_activity) {
       oActy.load(oConn, new Object[]{gu_activity});
       oCnts.load(oConn, new Object[]{gu_activity});
+      iTags = oTags.load(oConn, new Object[]{gu_activity});
       iAttc = oAttc.load(oConn, new Object[]{gu_activity});
       if (!oActy.isNull(DB.gu_mailing)) {
         oAdhm.load(oConn, new Object[]{oActy.getString(DB.gu_mailing)});
@@ -148,6 +152,10 @@
         oMroom = oMeet.getRooms(oConn);
 		  }
 
+		  if (!oActy.isNull(DB.gu_pageset)) {
+		    gu_microsite = DBCommand.queryStr(oConn, "SELECT m.gu_microsite FROM k_microsites m, k_pagesets p WHERE p.gu_microsite=m.gu_microsite AND p.gu_pageset='"+oActy.getString(DB.gu_pageset)+"'");
+		  }
+
       if (null==oFllws) {
         oFllws = new DBSubset(DB.k_fellows, DB.gu_fellow + "," + DB.tx_name + "," + DB.tx_surname,
                               DB.gu_workarea + "='" + gu_workarea + "' ORDER BY 2,3", 100);
@@ -175,16 +183,19 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: <%= gu_activity==null ? "New Activity" : "Edit Activity" %></TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/protomultiselect/protoculous-effects-shrinkvars.js" CHARSET="utf-8"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/protomultiselect/textboxlist.js" CHARSET="utf-8"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/protomultiselect/protomultiselect.js" CHARSET="utf-8"></SCRIPT>
+  <SCRIPT TYPE="text/javascript">
     <!--
       var met = false;
       var lst = new Array();
@@ -513,6 +524,8 @@
 				frm.gu_address.value = getCombo(frm.sel_address);
  				frm.bo_active.value = getCheckedValue(frm.chk_active);
 
+				frm.tags.value = $F('facebook-demo');
+
         return true;
       } // validate
 
@@ -556,7 +569,11 @@
             setCombo(frm.sel_year,"<% out.write(String.valueOf(oAdhm.getDate(DB.dt_execution).getYear()+1900)); %>");
             setCombo(frm.sel_month,"<% out.write(Gadgets.leftPad(String.valueOf(oAdhm.getDate(DB.dt_execution).getMonth()+1),'0',2)); %>");
             setCombo(frm.sel_day,"<% out.write(Gadgets.leftPad(String.valueOf(oAdhm.getDate(DB.dt_execution).getDate()),'0',2)); %>");			
-<%        }
+<%        } else if (!oActy.isNull(DB.dt_mailing)) { %>
+            setCombo(frm.sel_year,"<% out.write(String.valueOf(oActy.getDate(DB.dt_mailing).getYear()+1900)); %>");
+            setCombo(frm.sel_month,"<% out.write(Gadgets.leftPad(String.valueOf(oActy.getDate(DB.dt_mailing).getMonth()+1),'0',2)); %>");
+            setCombo(frm.sel_day,"<% out.write(Gadgets.leftPad(String.valueOf(oActy.getDate(DB.dt_mailing).getDate()),'0',2)); %>");			
+<%	      }
           if (!oActy.isNull(DB.gu_mailing) || !oActy.isNull(DB.gu_pageset)) { %>
 					  document.getElementById("emailopts").style.display="block";
 <%        }
@@ -610,6 +627,7 @@
     <INPUT TYPE="hidden" NAME="fellows" VALUE="">
     <INPUT TYPE="hidden" NAME="rooms" VALUE="">
     <INPUT TYPE="hidden" NAME="lists" VALUE="">
+    <INPUT TYPE="hidden" NAME="tags" VALUE="">
 <% if (null!=gu_activity) { %>
     <TABLE SUMMARY="Audience">
       <TR><TD><IMG SRC="../images/images/marketing/audience.gif" HEIGHT="20" WIDTH="20" BORDER="0" ALT="Audience"></TD>
@@ -656,8 +674,8 @@
             <TD ALIGN="left" WIDTH="480" CLASS="formplain">
               <INPUT TYPE="hidden" NAME="dt_start" VALUE="<% out.write(oActy.isNull(DB.dt_start) ? "" : oActy.getDateTime24(DB.dt_start)); %>">
               <SELECT CLASS="combomini" NAME="sel_day_start" onchange="<% if (((iAppMask & (1<<CollaborativeTools))!=0)) { %> loadDailyMeetings();checkAvailability(); <% } %>"><% for (int d=1; d<=31; d++) out.write("<OPTION VALUE=\""+Gadgets.leftPad(String.valueOf(d),'0',2)+"\">"+Gadgets.leftPad(String.valueOf(d),'0',2)+"</OPTION>"); %></SELECT>
-              <SELECT CLASS="combomini" NAME="sel_month_start" onchange="<% if (((iAppMask & (1<<CollaborativeTools))!=0)) { %> loadDailyMeetings();checkAvailability(); <% } %>"><OPTION VALUE="01">Enero</OPTION><OPTION VALUE="02">Febrero</OPTION><OPTION VALUE="03">Marzo</OPTION><OPTION VALUE="04">Abril</OPTION><OPTION VALUE="05">Mayo</OPTION><OPTION VALUE="06">Junio</OPTION><OPTION VALUE="07">Julio</OPTION><OPTION VALUE="08">Agosto</OPTION><OPTION VALUE="09">Septiembre</OPTION><OPTION VALUE="10">Octubre</OPTION><OPTION VALUE="11">Noviembre</OPTION><OPTION VALUE="12">Diciembre</OPTION></SELECT>
-              <SELECT CLASS="combomini" NAME="sel_year_start" onchange="<% if (((iAppMask & (1<<CollaborativeTools))!=0)) { %> loadDailyMeetings();checkAvailability(); <% } %>"><OPTION VALUE="2009">2009</OPTION><OPTION VALUE="2010">2010</OPTION><OPTION VALUE="2011">2011</OPTION><OPTION VALUE="2012">2012</OPTION><OPTION VALUE="2013">2013</OPTION><OPTION VALUE="2014">2014</OPTION></SELECT>
+              <SELECT CLASS="combomini" NAME="sel_month_start" onchange="<% if (((iAppMask & (1<<CollaborativeTools))!=0)) { %> loadDailyMeetings();checkAvailability(); <% } %>"><% for (int m=0; m<=11; m++) out.write("<OPTION VALUE=\""+(m<9 ? "0" : "")+String.valueOf(m+1)+"\">"+Calendar.MonthName(m, sLanguage)+"</OPTION>"); %></SELECT>
+              <SELECT CLASS="combomini" NAME="sel_year_start" onchange="<% if (((iAppMask & (1<<CollaborativeTools))!=0)) { %> loadDailyMeetings();checkAvailability(); <% } %>"><OPTION VALUE="2011">2011</OPTION><OPTION VALUE="2012">2012</OPTION><OPTION VALUE="2013">2013</OPTION><OPTION VALUE="2014">2014</OPTION><OPTION VALUE="2015">2015</OPTION></SELECT>
               <SELECT CLASS="combomini" NAME="sel_h_start" onchange="<% if (((iAppMask & (1<<CollaborativeTools))!=0)) { %> checkAvailability(); <% } %>"><OPTION VALUE="00">00</OPTION><OPTION VALUE="01">01</OPTION><OPTION VALUE="02">02</OPTION><OPTION VALUE="03">03</OPTION><OPTION VALUE="04">04</OPTION><OPTION VALUE="05">05</OPTION><OPTION VALUE="06">06</OPTION><OPTION VALUE="07">07</OPTION><OPTION VALUE="08">08</OPTION><OPTION VALUE="09" SELECTED>09</OPTION><OPTION VALUE="10">10</OPTION><OPTION VALUE="11">11</OPTION><OPTION VALUE="12">12</OPTION><OPTION VALUE="13">13</OPTION><OPTION VALUE="14">14</OPTION><OPTION VALUE="15">15</OPTION><OPTION VALUE="16">16</OPTION><OPTION VALUE="17">17</OPTION><OPTION VALUE="18">18</OPTION><OPTION VALUE="19">19</OPTION><OPTION VALUE="20">20</OPTION><OPTION VALUE="21">21</OPTION><OPTION VALUE="22">22</OPTION><OPTION VALUE="23">23</OPTION></SELECT>
               <SELECT CLASS="combomini" NAME="sel_m_start" onchange="<% if (((iAppMask & (1<<CollaborativeTools))!=0)) { %> checkAvailability(); <% } %>"><OPTION VALUE="00" SELECTED>00</OPTION><OPTION VALUE="05">05</OPTION><OPTION VALUE="10">10</OPTION><OPTION VALUE="15">15</OPTION><OPTION VALUE="20">20</OPTION><OPTION VALUE="25">25</OPTION><OPTION VALUE="30">30</OPTION><OPTION VALUE="35">35</OPTION><OPTION VALUE="40">40</OPTION><OPTION VALUE="45">45</OPTION><OPTION VALUE="50">50</OPTION><OPTION VALUE="55">55</OPTION></SELECT>
             </TD>
@@ -667,8 +685,8 @@
             <TD ALIGN="left" WIDTH="480" CLASS="formplain">
               <INPUT TYPE="hidden" NAME="dt_end" VALUE="<% out.write(oActy.isNull(DB.dt_end) ? "" : oActy.getDateTime24(DB.dt_end)); %>">
               <SELECT CLASS="combomini" NAME="sel_day_end" onchange="<% if (((iAppMask & (1<<CollaborativeTools))!=0)) { %> loadDailyMeetings();checkAvailability(); <% } %>"><% for (int d=1; d<=31; d++) out.write("<OPTION VALUE=\""+Gadgets.leftPad(String.valueOf(d),'0',2)+"\">"+Gadgets.leftPad(String.valueOf(d),'0',2)+"</OPTION>"); %></SELECT>
-              <SELECT CLASS="combomini" NAME="sel_month_end" onchange="<% if (((iAppMask & (1<<CollaborativeTools))!=0)) { %> loadDailyMeetings();checkAvailability(); <% } %>"><OPTION VALUE="01">Enero</OPTION><OPTION VALUE="02">Febrero</OPTION><OPTION VALUE="03">Marzo</OPTION><OPTION VALUE="04">Abril</OPTION><OPTION VALUE="05">Mayo</OPTION><OPTION VALUE="06">Junio</OPTION><OPTION VALUE="07">Julio</OPTION><OPTION VALUE="08">Agosto</OPTION><OPTION VALUE="09">Septiembre</OPTION><OPTION VALUE="10">Octubre</OPTION><OPTION VALUE="11">Noviembre</OPTION><OPTION VALUE="12">Diciembre</OPTION></SELECT>
-              <SELECT CLASS="combomini" NAME="sel_year_end" onchange="<% if (((iAppMask & (1<<CollaborativeTools))!=0)) { %> loadDailyMeetings();checkAvailability(); <% } %>"><OPTION VALUE="2009">2009</OPTION><OPTION VALUE="2010">2010</OPTION><OPTION VALUE="2011">2011</OPTION><OPTION VALUE="2012">2012</OPTION><OPTION VALUE="2013">2013</OPTION><OPTION VALUE="2014">2014</OPTION></SELECT>
+              <SELECT CLASS="combomini" NAME="sel_month_end" onchange="<% if (((iAppMask & (1<<CollaborativeTools))!=0)) { %> loadDailyMeetings();checkAvailability(); <% } %>"><% for (int m=0; m<=11; m++) out.write("<OPTION VALUE=\""+(m<9 ? "0" : "")+String.valueOf(m+1)+"\">"+Calendar.MonthName(m, sLanguage)+"</OPTION>"); %></SELECT>
+              <SELECT CLASS="combomini" NAME="sel_year_end" onchange="<% if (((iAppMask & (1<<CollaborativeTools))!=0)) { %> loadDailyMeetings();checkAvailability(); <% } %>"><OPTION VALUE="2010">2010</OPTION><OPTION VALUE="2011">2011</OPTION><OPTION VALUE="2012">2012</OPTION><OPTION VALUE="2013">2013</OPTION><OPTION VALUE="2014">2014</OPTION><OPTION VALUE="2015">2015</OPTION></SELECT>
               <SELECT CLASS="combomini" NAME="sel_h_end" onchange="<% if (((iAppMask & (1<<CollaborativeTools))!=0)) { %> checkAvailability(); <% } %>"><OPTION VALUE="00">00</OPTION><OPTION VALUE="01">01</OPTION><OPTION VALUE="02">02</OPTION><OPTION VALUE="03">03</OPTION><OPTION VALUE="04">04</OPTION><OPTION VALUE="05">05</OPTION><OPTION VALUE="06">06</OPTION><OPTION VALUE="07">07</OPTION><OPTION VALUE="08">08</OPTION><OPTION VALUE="09" SELECTED>09</OPTION><OPTION VALUE="10">10</OPTION><OPTION VALUE="11">11</OPTION><OPTION VALUE="12">12</OPTION><OPTION VALUE="13">13</OPTION><OPTION VALUE="14">14</OPTION><OPTION VALUE="15">15</OPTION><OPTION VALUE="16">16</OPTION><OPTION VALUE="17">17</OPTION><OPTION VALUE="18">18</OPTION><OPTION VALUE="19">19</OPTION><OPTION VALUE="20">20</OPTION><OPTION VALUE="21">21</OPTION><OPTION VALUE="22">22</OPTION><OPTION VALUE="23">23</OPTION></SELECT>
               <SELECT CLASS="combomini" NAME="sel_m_end" onchange="<% if (((iAppMask & (1<<CollaborativeTools))!=0)) { %> checkAvailability(); <% } %>"><OPTION VALUE="00" SELECTED>00</OPTION><OPTION VALUE="05">05</OPTION><OPTION VALUE="10">10</OPTION><OPTION VALUE="15">15</OPTION><OPTION VALUE="20">20</OPTION><OPTION VALUE="25">25</OPTION><OPTION VALUE="30">30</OPTION><OPTION VALUE="35">35</OPTION><OPTION VALUE="40">40</OPTION><OPTION VALUE="45">45</OPTION><OPTION VALUE="50">50</OPTION><OPTION VALUE="55">55</OPTION></SELECT>
             </TD>
@@ -705,7 +723,7 @@
               <INPUT TYPE="checkbox" NAME="bo_urgent" VALUE="1" <% if (!oAdhm.isNull(DB.bo_urgent)) out.write(oAdhm.getShort("bo_urgent")==0 ? "" : "CHECKED"); %>>&nbsp;E-mail urgente
               <BR/>
               Requested sent date:<BR/>
-              <INPUT TYPE="hidden" NAME="dt_execution" VALUE="<% out.write(oAdhm.isNull(DB.dt_execution) ? "" : oAdhm.getDateShort(DB.dt_execution)); %>">
+              <INPUT TYPE="hidden" NAME="dt_execution" VALUE="<% out.write(oAdhm.isNull(DB.dt_execution) ? (oActy.isNull(DB.dt_mailing) ? "" : oActy.getDateShort(DB.dt_mailing)) : oAdhm.getDateShort(DB.dt_execution)); %>">
               <SELECT CLASS="combomini" NAME="sel_day"><% for (int d=1; d<=31; d++) out.write("<OPTION VALUE=\""+Gadgets.leftPad(String.valueOf(d),'0',2)+"\">"+Gadgets.leftPad(String.valueOf(d),'0',2)+"</OPTION>"); %></SELECT>
               <SELECT CLASS="combomini" NAME="sel_month"><OPTION VALUE="01">Enero</OPTION><OPTION VALUE="02">Febrero</OPTION><OPTION VALUE="03">Marzo</OPTION><OPTION VALUE="04">Abril</OPTION><OPTION VALUE="05">Mayo</OPTION><OPTION VALUE="06">Junio</OPTION><OPTION VALUE="07">Julio</OPTION><OPTION VALUE="08">Agosto</OPTION><OPTION VALUE="09">Septiembre</OPTION><OPTION VALUE="10">Octubre</OPTION><OPTION VALUE="11">Noviembre</OPTION><OPTION VALUE="12">Diciembre</OPTION></SELECT>
               <SELECT CLASS="combomini" NAME="sel_year"><OPTION VALUE="2009">2009</OPTION><OPTION VALUE="2010">2010</OPTION><OPTION VALUE="2011">2011</OPTION><OPTION VALUE="2012">2012</OPTION><OPTION VALUE="2013">2013</OPTION><OPTION VALUE="2014">2014</OPTION></SELECT>
@@ -728,7 +746,7 @@
 <% if (!oActy.isNull(DB.gu_mailing)) { %>
                 	<SELECT CLASS="combomini" NAME="id_template"><OPTION VALUE="adhoc" SELECTED="selected">Ad Hoc</OPTION></SELECT>
 <% } else if (!oActy.isNull(DB.gu_pageset)) { %>
-                	<SELECT CLASS="combomini" NAME="id_template"><% for (int t=0; t<iTmpl; t++) if (oActy.getString(DB.gu_pageset).equals(oTmpl.getString(0,t))) out.write("<OPTION VALUE=\""+oTmpl.getString(0,t)+","+oTmpl.getString(1,t)+","+oTmpl.getString(2,t).replace('/',cSep).replace('\\',cSep)+"\" SELECTED=\"selected\">"+oTmpl.getString(0,t)+"</OPTION>"); %></SELECT>
+                	<SELECT CLASS="combomini" NAME="id_template"><% for (int t=0; t<iTmpl; t++) if (gu_microsite.equals(oTmpl.getString(1,t))) out.write("<OPTION VALUE=\""+oTmpl.getString(0,t)+","+oTmpl.getString(1,t)+","+oTmpl.getString(2,t).replace('/',cSep).replace('\\',cSep)+"\" SELECTED=\"selected\">"+oTmpl.getString(0,t)+"</OPTION>"); %></SELECT>
 <% } else { %>
                 	<SELECT CLASS="combomini" NAME="id_template"><OPTION VALUE="adhoc">Ad Hoc</OPTION><% for (int t=0; t<iTmpl; t++) out.write("<OPTION VALUE=\""+oTmpl.getString(0,t)+","+oTmpl.getString(1,t)+","+oTmpl.getString(2,t).replace('/',cSep).replace('\\',cSep)+"\">"+oTmpl.getString(0,t)+"</OPTION>"); %></SELECT>
 <% } %>
@@ -826,12 +844,29 @@
             </TD>
           </TR>
           <TR>
+            <TD ALIGN="right" WIDTH="160"><FONT CLASS="formstrong">Labels</FONT></TD>
+            <TD ALIGN="left" WIDTH="480">
+              <OL>                
+                <LI ID="facebook-list" CLASS="input-text">
+                  <INPUT TYPE="text" VALUE="" ID="facebook-demo" />
+                  <DIV ID="facebook-auto">        
+                    <DIV CLASS="default">Enter the labels that you want to assign to the activity</DIV> 
+                    <UL CLASS="feed"><%
+                    	for (int t=0; t<iTags; t++)
+                    	  out.write("<LI VALUE=\""+oTags.getString(0,t)+"\">"+oTags.getString(0,t)+"</LI>");
+                    %></UL>
+                  </DIV>                
+                </LI>
+              </OL>
+            </TD>
+          </TR>
+          <TR>
             <TD ALIGN="right" WIDTH="160"><FONT CLASS="formstrong">Description</FONT></TD>
-            <TD ALIGN="left" WIDTH="480"><TEXTAREA NAME="de_activity" COLS="50"><%=oActy.getStringNull("de_activity","")%></TEXTAREA></TD>
+            <TD ALIGN="left" WIDTH="480"><TEXTAREA NAME="de_activity" ROWS="2" COLS="50"><%=oActy.getStringNull("de_activity","")%></TEXTAREA></TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="160"><FONT CLASS="formstrong">Comments</FONT></TD>
-            <TD ALIGN="left" WIDTH="480"><TEXTAREA NAME="tx_comments" COLS="50"><%=oActy.getStringNull("tx_comments","")%></TEXTAREA></TD>
+            <TD ALIGN="left" WIDTH="480"><TEXTAREA NAME="tx_comments" ROWS="2" COLS="50"><%=oActy.getStringNull("tx_comments","")%></TEXTAREA></TD>
           </TR>
           <TR>
             <TD COLSPAN="2"><HR></TD>
@@ -848,4 +883,9 @@
     </TABLE>                 
   </FORM>
 </BODY>
+<SCRIPT TYPE="text/javascript">
+  <!--
+  document.observe('dom:loaded', function() { tlist2 = new FacebookList('facebook-demo', 'facebook-auto',{fetchFile:'activity_tags_json.jsp'}); });
+  //-->
+  </SCRIPT>
 </HTML>

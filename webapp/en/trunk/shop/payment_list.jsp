@@ -167,13 +167,13 @@
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript">
     <!--
     dynapi.library.setPath('../javascript/dynapi3/');
     dynapi.library.include('dynapi.api.DynLayer');
@@ -189,9 +189,9 @@
     }
     //-->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/floatdiv.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/floatdiv.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
         // Global variables for moving the clicked row to the context menu
         
@@ -217,7 +217,7 @@
 
 	      function createInstance() {
 <% if (nShops==0) { %>
-          alert ("It is not possible to create payments because no catalog exists");
+          alert ("It is not possible to generate a payment because there isn't any catalog");
 <%   if (bIsAdmin) { %>
           open ("shop_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>", "editshop", "directories=no,scrollbars=yes,toolbar=no,menubar=no,width=600,height=400");          
 <% } } else { %>
@@ -335,7 +335,7 @@
         // ------------------------------------------------------	
     //-->    
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
     <!--
 	    function setCombos() {
 	      setCookie ("maxrows", "<%=iMaxRows%>");
@@ -459,7 +459,7 @@
       </TABLE>
     </FORM>
     <!-- 22. DynFloat Right-click context menu -->
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <SCRIPT TYPE="text/javascript">
       <!--
       addMenuOption("Open","modifyInstance(jsInstanceId)",1);
       addMenuOption("Clone","clone()",0);

@@ -32,8 +32,8 @@
 package com.knowgate.storage;
 
 import java.sql.Types;
-import java.util.Date;
 import java.util.Comparator;
+import java.util.Date;
 
 public class RecordColumnValueComparatorAsc implements Comparator<Record> {
 
@@ -54,7 +54,8 @@ public class RecordColumnValueComparatorAsc implements Comparator<Record> {
 	      dtNull = "0000-01-01 00:00:00"; 
 	  }
 	  switch (iColType) {
-	  	case Types.INTEGER:
+
+	    case Types.INTEGER:
 	  	  if (r1.isNull(sColName) && r2.isNull(sColName))
 	  	  	return 0;
 	  	  else if (r1.isNull(sColName))
@@ -63,6 +64,17 @@ public class RecordColumnValueComparatorAsc implements Comparator<Record> {
 	  	  	return 1;
 	  	  else
 	  	  	return r1.getInt(sColName)>r2.getInt(sColName) ? 1 : r1.getInt(sColName)<r2.getInt(sColName) ? -1 : 0;	  		
+
+	    case Types.BIGINT:
+		  if (r1.isNull(sColName) && r2.isNull(sColName))
+		  	return 0;
+		  else if (r1.isNull(sColName))
+		  	return -1;
+		  else if (r2.isNull(sColName))
+		  	return 1;
+		  else
+		  	return r1.getLong(sColName)>r2.getLong(sColName) ? 1 : r1.getLong(sColName)<r2.getLong(sColName) ? -1 : 0;
+
 	  	case Types.CLOB:
 	    case Types.CHAR:
 	    case Types.NCHAR:
@@ -71,9 +83,21 @@ public class RecordColumnValueComparatorAsc implements Comparator<Record> {
 	    case Types.LONGVARCHAR:
 	    case Types.LONGNVARCHAR:	    
 	      return r1.getString(sColName,"").compareTo(r2.getString(sColName,""));
-	  	case Types.DATE:
+
+	    case Types.DATE:
 	  	case Types.TIMESTAMP:
-	  	  return r1.getString(sColName,dtNull).compareTo(r2.getString(sColName,dtNull));
+	  	  Date dt1, dt2;
+	  	  if (r1.isNull(sColName)) dt1 = null; else dt1 = r1.getDate(sColName);
+	  	  if (r2.isNull(sColName)) dt2 = null; else dt2 = r2.getDate(sColName);
+	  	  if (dt1==null && dt2==null)
+	  	    return 0;
+	  	  else if (dt1==null)
+		  	return 1;	  		
+	  	  else if (dt2==null)
+		  	return -1;
+	  	  else
+	  	    return dt1.compareTo(dt2);
+
 		default:
 		  throw new IllegalArgumentException("Column comparator not implemented for type");
 	  }

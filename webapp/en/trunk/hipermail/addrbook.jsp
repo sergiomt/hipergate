@@ -83,11 +83,11 @@
 %>
     <HTML>
       <HEAD>
-  	<SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-        <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-        <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-        <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-	<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  	<SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+        <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
+        <SCRIPT SRC="../javascript/getparam.js"></SCRIPT>
+        <SCRIPT SRC="../javascript/combobox.js"></SCRIPT>
+	<SCRIPT TYPE="text/javascript">
 	  <!--	    
             var jsTpList = new Array("1","1"<% if (iLists>0) out.write(",");  for (int l=0; l<iLists; l++) out.write((0==l ? "" : ",")+"\""+oLists.get(2,l)+"\""); %>);
             var jsGuQuery= new Array("",""<% if (iLists>0) out.write(","); for (int l=0; l<iLists; l++) out.write((0==l ? "" : ",")+"\""+oLists.get(3,l)+"\""); %>);

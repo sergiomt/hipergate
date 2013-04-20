@@ -103,10 +103,10 @@
   <HEAD>
     <TITLE>hipergate :: Progress</TITLE>
     <META HTTP-EQUIV="Refresh" CONTENT="8; URL=job_progress.jsp?gu_job=<% out.write(gu_job); %>&id_status=<% out.write(String.valueOf(iStatus)); %>">
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+    <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+    <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
 <% if (iStatus!=id_status) { %>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <SCRIPT TYPE="text/javascript">
       <!--
         window.parent.jobmodify.document.location.reload();
       //-->

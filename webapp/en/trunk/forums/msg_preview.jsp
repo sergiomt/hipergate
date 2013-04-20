@@ -8,8 +8,8 @@
 <!-- | (c) KnowGate 2001         | -->
 <!-- +---------------------------+ -->
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
   <TITLE>hipergate :: Message preview</TITLE>
 </HEAD>
 <BODY  LEFTMARGIN="16" MARGINWIDTH="16">

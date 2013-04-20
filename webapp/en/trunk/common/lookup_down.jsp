@@ -1,8 +1,8 @@
 <%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <HTML>
   <HEAD>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript">
       <!--
       var skin = getCookie("skin");
       if (""==skin) skin="xp";

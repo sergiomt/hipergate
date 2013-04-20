@@ -45,8 +45,6 @@ import java.io.StringReader;
 
 import org.xml.sax.SAXException;
 
-import com.knowgate.debug.DebugFile;
-
 import com.knowgate.datacopy.DataStruct;
 
 /**

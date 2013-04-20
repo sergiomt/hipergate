@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.storage.Table;
 import com.knowgate.storage.Record;
-import com.knowgate.storage.Engine;
 import com.knowgate.storage.DataSource;
 import com.knowgate.storage.StorageException;
 import com.knowgate.storage.RecordDelegator;

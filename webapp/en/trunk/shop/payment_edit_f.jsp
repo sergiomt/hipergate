@@ -6,7 +6,7 @@
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
     <TITLE>hipergate :: <%= request.getParameter("gu_invoice")==null ? "Create Payment" : "Edit Payment"%></TITLE>
     <SCRIPT LANGUAGE="javascript" SRC="../javascript/getparam.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="true">
+    <SCRIPT TYPE="text/javascript" DEFER="true">
     <!--
       function goURL() {
         this.frames['msgslist'].document.location = "payment_edit.jsp?id_domain=<%=request.getParameter("id_domain")%>&gu_workarea=<%=request.getParameter("gu_workarea")%><%=request.getParameter("gu_invoice")==null ? "" : "&gu_invoice="+request.getParameter("gu_invoice")%><%=request.getParameter("pg_payment")==null ? "" : "&pg_payment="+request.getParameter("pg_payment")%>";

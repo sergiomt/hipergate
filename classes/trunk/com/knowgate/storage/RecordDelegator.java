@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2003-2011  Know Gate S.L. All rights reserved.
+  Copyright (C) 2003-2012  Know Gate S.L. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Collection;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.text.NumberFormat;
 
@@ -48,12 +49,10 @@ import com.knowgate.storage.Record;
 import com.knowgate.storage.DataSource;
 import com.knowgate.storage.StorageException;
 
-import com.knowgate.debug.DebugFile;
-import com.knowgate.dataobjs.DBPersist;
-import com.knowgate.berkeleydb.DBEntity;
-
 public class RecordDelegator implements Record {
 
+	private static final long serialVersionUID = 70000l;
+	
 	private AbstractRecord impl;
 
     public RecordDelegator(DataSource oDts, String sBaseTable)
@@ -62,21 +61,21 @@ public class RecordDelegator implements Record {
       if (null==oDts) throw new NullPointerException("RecordDelegator DataSource may not be null");
       if (null==sBaseTable) throw new NullPointerException("RecordDelegator table name may not be null");
       if (sBaseTable.length()==0) throw new NullPointerException("RecordDelegator table name may not be an empty string");
-      
-      switch (oDts.getEngine()) {
-     	case BERKELYDB:
-     	  try {
-            impl = new DBEntity (sBaseTable,oDts.getMetaData().getColumns(sBaseTable));
-     	  } catch (StorageException xcpt) {
-     	  	throw new InstantiationException("Could not instantiate DBEntity "+xcpt.getMessage());
-     	  }
-          break;
-     	case JDBCRDBMS:
-          impl = new DBPersist (sBaseTable,sBaseTable);
-          break;
-        default:
-          throw new InstantiationException("RecordDelegator could not instantiate Record implementation for "+oDts.getEngine());
-      }
+
+      try {
+        switch (oDts.getEngine()) {
+     	  case BERKELYDB:
+		    impl = (AbstractRecord) Factory.createRecord(oDts.getEngine(), sBaseTable, oDts.getMetaData().getColumns(sBaseTable));
+            break;
+     	  case JDBCRDBMS:
+            impl = (AbstractRecord) Factory.createRecord(oDts.getEngine(), sBaseTable, null);
+            break;
+          default:
+            throw new InstantiationException("RecordDelegator could not instantiate Record implementation for "+oDts.getEngine());
+        }
+      } catch (Exception e) {
+    	throw new InstantiationException(e.getClass().getName()+" "+e.getMessage());
+	  }
     }		
     
 	public LinkedList<Column> columns() {
@@ -91,6 +90,10 @@ public class RecordDelegator implements Record {
 	  return impl.load(oConn, sKey);
 	}
 
+	public boolean load(Table oConn, Object[] aKey) throws StorageException {
+	  return impl.load(oConn, aKey);
+	}
+	
 	public String store(Table oConn) throws StorageException {
 	  return impl.store(oConn);
 	}
@@ -143,6 +146,10 @@ public class RecordDelegator implements Record {
 	  return impl.getDate(sKey, dtDefault);
 	}
 
+	public BigDecimal getDecimal(String sKey) {
+      return impl.getDecimal(sKey);
+	}
+	
 	public String getString(String sKey) {
 	  return impl.getString(sKey);
 	}

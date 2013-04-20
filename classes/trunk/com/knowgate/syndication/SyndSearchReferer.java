@@ -6,7 +6,6 @@ import com.knowgate.clocial.Serials;
 
 import com.knowgate.storage.DataSource;
 import com.knowgate.storage.RecordDelegator;
-import com.knowgate.storage.StorageException;
 
 public class SyndSearchReferer extends RecordDelegator {
 	
@@ -15,7 +14,7 @@ public class SyndSearchReferer extends RecordDelegator {
   private static final long serialVersionUID = Serials.SyndSearchRef;
 	
   public SyndSearchReferer(DataSource oDts) throws InstantiationException {
-    super(oDts, DB.k_syndreferers);
+    super(oDts, tableName);
   }	
 	
 }

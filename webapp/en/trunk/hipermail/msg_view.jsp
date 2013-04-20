@@ -40,9 +40,9 @@
   if (autenticateSession(GlobalDBBind, request, response)<0) return; %>
 <HTML>
   <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
 <%
   String sMsgId = request.getParameter("id_msg");
   int iMsgNum = Integer.parseInt(request.getParameter("nu_msg"));
@@ -112,7 +112,6 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=AuthenticationFailedException&desc=" + oMacc.getString(DB.gu_user) + " " +e.getMessage() + "&resume=_close"));  
     return;
   }
-  /*
   catch (MessagingException e) {  
     oHeaders = null;
     try { if (null!=oInbox) oInbox.close(false); } catch (Exception ignore) {}        
@@ -120,8 +119,8 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=MessagingException&desc=" + e.getMessage() + "&resume=_close"));  
     return;
   }
-  */
-  oHndl.close();      
+  
+  oHndl.close();
 %>
   <TITLE><%=sTxSubject%></TITLE>
   </HEAD>
@@ -266,11 +265,12 @@
     for (int p=0; p<iParts; p++) {
        BodyPart oPart = oParts.getBodyPart(p);
        String sContentId = nullif(oPart.getContentType()).toUpperCase();
-       
-       if (DebugFile.trace) DebugFile.writeln("Part " + String.valueOf(p) + " Content-Type: " + sContentId.replace('\r',' ').replace('\n',' '));
-
-       if (!nullif(oPart.getDisposition()).equalsIgnoreCase("inline") ||
-          (!sContentId.startsWith("TEXT/PLAIN") && !sContentId.startsWith("TEXT/HTML"))) {
+       String sDisposition = nullif(oPart.getDisposition(),"inline");
+        
+       if (DebugFile.trace) DebugFile.writeln("Part " + String.valueOf(p) + " " + sDisposition + " Content-Type: " + sContentId.replace('\r',' ').replace('\n',' '));
+			
+       if (!sDisposition.equalsIgnoreCase("inline") ||
+          (!sContentId.startsWith("TEXT/PLAIN") && !sContentId.startsWith("TEXT/HTML") && !sContentId.startsWith("MULTIPART/ALTERNATIVE"))) {
          
          if (sContentId.startsWith("MESSAGE/DELIVERY-STATUS"))
            out.write("<A HREF=\"msg_part.jsp?folder="+sFolder+"&msgid="+Gadgets.URLEncode(sMsgId)+"&part="+String.valueOf(p+1)+"\">"+nullif(oPart.getDescription(),"Delivery error report")+"</A>&nbsp;");

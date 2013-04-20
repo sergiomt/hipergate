@@ -135,10 +135,18 @@
         sEncoding = oCDet.detect(sTargetDir+File.separator+sHtmlFile, sEncoding);
         sHtmlText = oFs.readfilestr(sTargetDir+File.separator+sHtmlFile, sEncoding);
         int iBodyStart = Gadgets.indexOfIgnoreCase(sHtmlText,"<body>", 0);
+        int iCloseTag = -1;
         if (iBodyStart>=0) {
-          int iBodyEnd = Gadgets.indexOfIgnoreCase(sHtmlText,"</body>", iBodyStart+6);
+          iCloseTag = iBodyStart+5;
+        } else {
+          iBodyStart = Gadgets.indexOfIgnoreCase(sHtmlText,"<body ", 0);
+          iCloseTag = sHtmlText.indexOf('>', iBodyStart+6);
+        }
+
+        if (iBodyStart>=0) {
+          int iBodyEnd = Gadgets.indexOfIgnoreCase(sHtmlText,"</body>", iCloseTag+1);
           if (iBodyEnd!=-1) {
-            sHtmlText = sHtmlText.substring(0, iBodyStart+6) + Gadgets.XHTMLEncode(sHtmlText.substring(iBodyStart+6, iBodyEnd)) + sHtmlText.substring(iBodyEnd);
+            sHtmlText = sHtmlText.substring(0, iBodyStart+6) + Gadgets.XHTMLEncode(sHtmlText.substring(iCloseTag+1, iBodyEnd)) + sHtmlText.substring(iBodyEnd);
           } // fi
         } // fi
       } // fi
@@ -397,7 +405,7 @@
     out.write ("if (sched_stat=='stop' || sched_stat=='stopped') httpRequestXML('../servlet/HttpSchedulerServlet?action=start'); ");
   }
   out.write ("if (window.opener) { window.opener.location='../jobs/job_list.jsp?orderby=5&selected=5&subselected=2&id_command=" + id_command + "&list_title=:%20Batches'; self.close(); } ");
-  out.write ("else { document.location = \"../newsletters/newsletter_job_list.jsp?id_command=MAIL\"; }");
+  out.write ("else { document.location = \"../jobs/job_list.jsp?selected=5&subselected=2&list_title=: Envio de Documentos&id_command=MAIL\"; }");
   
   out.write ("<" + "/SCRIPT" +"></HEAD></HTML>");
 

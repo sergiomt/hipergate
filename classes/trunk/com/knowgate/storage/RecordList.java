@@ -2,12 +2,14 @@ package com.knowgate.storage;
 
 import java.util.HashMap;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Collections;
 
 import com.knowgate.storage.RecordColumnValueComparatorAsc;
+import com.knowgate.storage.RecordColumnValueComparatorDesc;
 
 public class RecordList extends ArrayList<Record> implements RecordSet {
+
+  private static final long serialVersionUID = 70000l;
 
   private HashMap<String,HashMap<Object,Integer>> mIndexes;
   
@@ -42,6 +44,12 @@ public class RecordList extends ArrayList<Record> implements RecordSet {
     if (size()>0) {
 	  Collections.sort(this, new RecordColumnValueComparatorAsc(sColumnName));
     }
+  }
+
+  public void sortDesc(String sColumnName) throws ArrayIndexOutOfBoundsException {
+    if (size()>0) {
+	   Collections.sort(this, new RecordColumnValueComparatorDesc(sColumnName));
+	}
   }
 
   private static String rpl(String s) {

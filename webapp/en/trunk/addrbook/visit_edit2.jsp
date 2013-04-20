@@ -113,13 +113,13 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Select Customer</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/email.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/usrlang.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/email.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
     <!--
 
@@ -149,7 +149,7 @@
             if (frm.sel_country.options.selectedIndex>0)
               window.open("../common/lookup_f.jsp?nm_table=k_addresses_lookup&id_language=" + getUserLanguage() + "&id_section=" + getCombo(frm.sel_country) + "&tp_control=2&nm_control=sel_state&nm_coding=id_state", "lookupaddrstate", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
             else
-              alert ("A country must be selected before picking up state or province");
+              alert ("[~Debe seleccionar un Pais antes de poA country must be selected before picking up state or province");
             break;
         }
       } // lookup()
@@ -157,7 +157,7 @@
       // ------------------------------------------------------
       
       function loadstates(setval) {
-	      var frm = window.document.forms[0];
+	var frm = window.document.forms[0];
 
         clearCombo(frm.sel_state);
         
@@ -506,7 +506,7 @@
       <TR>
         <TD CLASS="striptitle" COLSPAN="2">
 <% if (iContacts==iMaxRows) { %>
-	<A CLASS="linksmall" HREF="#" onclick=""
+	<A CLASS="linksmall" HREF="#" onclick=""></A>
 <% } else { %>
           <IMG SRC="../images/images/spacer.gif" HEIGHT="2" WIDTH="1" BORDER="0">
 <% } %>

@@ -11,8 +11,7 @@
     </FRAMESET>
     <NOFRAMES>
       <BODY>
-	      <P>This page uses frames but your browser does not support them</P>
+	<P>[~This page uses frames but your browser does not support them~]</P>
       </BODY>
     </NOFRAMES>
-  </FRAMESET>
 </HTML>

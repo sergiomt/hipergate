@@ -57,6 +57,9 @@
     <SELECT NAME="sel_geozone" STYLE="visibility:hidden"><% out.write (sTerms); %></SELECT>
     <INPUT TYPE="hidden" NAME="gu_geozone" VALUE="<%=oCont.getStringNull(DB.gu_geozone,"")%>">
     <INPUT TYPE="hidden" NAME="nm_geozone" SIZE="40" VALUE="<%=oTerm.getStringNull(DB.tx_term,"")%>">
+    <INPUT TYPE="hidden" NAME="id_batch" VALUE="<%=oCont.getStringNull("id_batch","")%>">
+    <INPUT TYPE="hidden" NAME="tx_nickname" VALUE="<%=oCont.getStringNull(DB.tx_nickname,"")%>">
+    <INPUT TYPE="hidden" NAME="tx_pwd" VALUE="<%=oCont.getStringNull(DB.tx_pwd,"")%>">
 
     <TABLE WIDTH="100%">
       <TR><TD>

@@ -144,7 +144,6 @@ public class CSVParser  {
   // ----------------------------------------------------------
 
   private char extractDelimiter(String sFileDescriptor) {
-    char cDlimiter;
     boolean bIgnore = false;
     final int iFileDescLen = sFileDescriptor.length();
     // Inferir el delimitador

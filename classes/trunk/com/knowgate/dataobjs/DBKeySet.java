@@ -61,7 +61,7 @@ public class DBKeySet extends TreeSet {
    * @param sTableName Table Name
    * @param sColumnName Column Name
    * @param sWhereClause SQL WHERE clause
-   * @param iLimit Absolute maximum number of primary key to be loaded
+   * @param iLimit Absolute maximum number of primary key to be loaded or -1 if there is no limit
    */
   public DBKeySet(String sTableName, String sColumnName, String sWhereClause, int iLimit) {
     sTable = sTableName;

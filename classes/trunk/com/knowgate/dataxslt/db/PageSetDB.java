@@ -74,7 +74,7 @@ import com.knowgate.dataxslt.PageSet;
  *
  * <p>PageSet database index</p>
  * @author Sergio Montoro Ten
- * @version 5.0
+ * @version 7.0
  */
 
 public class PageSetDB extends DBPersist {
@@ -333,7 +333,16 @@ public class PageSetDB extends DBPersist {
           }
           oXFil = null;
       } // fi (path_data)
-
+      
+      /* New for v7.0 */
+      if (DBBind.exists(oConn, DB.k_x_pageset_list, "U")) {
+        oStmt = oConn.createStatement();
+        if (DebugFile.trace) DebugFile.writeln("Connection.execute(" + "DELETE FROM " + DB.k_x_pageset_list + " WHERE " + DB.gu_pageset + "='" + getString(DB.gu_pageset) + "'" + ")");
+        oStmt.execute("DELETE FROM " + DB.k_x_pageset_list + " WHERE " + DB.gu_pageset + "='" + getString(DB.gu_pageset) + "'");
+        oStmt.close();
+      }
+      /****************/
+      
       if (DBBind.exists(oConn, DB.k_list_jobs, "U")) {
         oStmt = oConn.createStatement();
         if (DebugFile.trace) DebugFile.writeln("Connection.execute(" + "DELETE FROM " + DB.k_list_jobs + " WHERE " + DB.gu_pageset + "='" + getString(DB.gu_pageset) + "'" + ")");
@@ -353,6 +362,12 @@ public class PageSetDB extends DBPersist {
       oStmt.execute("DELETE FROM " + DB.k_pageset_pages + " WHERE " + DB.gu_pageset + "='" + getString(DB.gu_pageset) + "'");
       oStmt.close();
 
+      /* New for v7.0 */
+      oStmt = oConn.createStatement();
+      oStmt.execute("UPDATE " + DB.k_activities + " SET " + DB.gu_pageset + "=NULL WHERE " + DB.gu_pageset + "='" + getString(DB.gu_pageset) + "'");
+      oStmt.close();
+      /****************/
+      
       bRetVal = super.delete(oConn);
     }
     else

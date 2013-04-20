@@ -179,14 +179,15 @@ selectTab = selectTab.equals("") ? "1" : selectTab;
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML LANG="<%=sLanguage.toUpperCase()%>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/datefuncs.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript">
     <!--
     function cancelar(selectTab) {
         document.location.href = "cv_contact_edit.jsp?gu_contact=<%=gu_contact%>&fullname=<%=Gadgets.URLEncode(sFullName)%>&selectTab="+selectTab;

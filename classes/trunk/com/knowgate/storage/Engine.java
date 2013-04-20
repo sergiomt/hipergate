@@ -51,5 +51,5 @@ public enum Engine {
    	return iCode;
    }
 
-   public static final Engine DEFAULT = BERKELYDB;
+   public static final Engine DEFAULT = JDBCRDBMS;
 }

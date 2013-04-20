@@ -1,4 +1,4 @@
-<%@ page import="java.text.DecimalFormat,java.util.Vector,java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.Address,com.knowgate.misc.Gadgets,com.knowgate.hipergate.*,com.knowgate.training.AcademicCourse,com.knowgate.workareas.ApplicationModule" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.text.DecimalFormat,java.util.Vector,java.io.IOException,java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.Address,com.knowgate.misc.Gadgets,com.knowgate.hipergate.*,com.knowgate.training.AcademicCourse,com.knowgate.workareas.ApplicationModule,com.knowgate.workareas.WorkArea" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/listchilds.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><% 
 /*  
@@ -49,7 +49,9 @@
   String sLanguage = getNavigatorLanguage(request);
   final int iAppMask = Integer.parseInt(getCookie(request, "appmask", "0"));
   final boolean bShopActivated = ((iAppMask & (1<<20))!=0);
+  boolean bIsAdmin = false;
 
+  String id_user = getCookie (request, "userid", null);
   int id_domain = Integer.parseInt(request.getParameter("id_domain"));
   String gu_workarea = request.getParameter("gu_workarea");
   String gu_acourse = nullif(request.getParameter("gu_acourse"));
@@ -57,6 +59,7 @@
 
   AcademicCourse oCur = new AcademicCourse();
   Address oAdr = new Address();
+  String sShopsList = "";
   
   StringBuffer oSelParents = new StringBuffer("<OPTION VALUE=\"\">None. This product will not be available at the shop.</OPTION>");    
   JDCConnection oConn = null;
@@ -65,7 +68,9 @@
   
   try {
     
-    oConn = GlobalDBBind.getConnection("acourse_edit", true);  
+    oConn = GlobalDBBind.getConnection("acourse_edit");  
+  
+    bIsAdmin = WorkArea.isAdmin(oConn, gu_workarea, id_user);
   
     iCourses = oCourses.load(oConn, new Object[]{gu_workarea});
       
@@ -77,7 +82,17 @@
         oAdr.put(DB.gu_address,Gadgets.generateUUID());
       }
       if (bShopActivated) {
-        gu_category = DBCommand.queryStr(oConn, "SELECT "+DB.gu_category+" FROM "+DB.k_x_cat_objs+" WHERE "+DB.gu_object+"='"+gu_acourse+"' AND "+DB.id_class+"="+String.valueOf(AcademicCourse.ClassId));        
+        gu_category = DBCommand.queryStr(oConn, "SELECT "+DB.gu_category+" FROM "+DB.k_x_cat_objs+" WHERE "+DB.gu_object+"='"+gu_acourse+"'");
+        DBSubset oShops = new DBSubset (DB.k_shops, DB.gu_root_cat+","+DB.nm_shop+","+DB.gu_shop, DB.id_domain+"=? AND "+DB.gu_workarea+"=?", 10);
+        int nShops = oShops.load(oConn, new Object[]{new Integer(id_domain), gu_workarea});
+        if (nShops>0) sShopsList = Gadgets.join(oShops.getColumnAsList(2),",");      
+        PreparedStatement oBrowseChilds = oConn.prepareStatement("SELECT c." + DB.gu_category + "," + DBBind.Functions.ISNULL + "(l." + DB.tr_category + ",c." + DB.nm_category + ") FROM " + DB.k_categories + " c," + DB.k_cat_tree + " t," + DB.k_cat_labels + " l WHERE c." + DB.gu_category + "=t." + DB.gu_child_cat + " AND l." + DB.gu_category + "=c." + DB.gu_category + " AND l." + DB.id_language + "='" + sLanguage + "' AND t." + DB.gu_parent_cat + "=?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+        for (int s=0; s<nShops; s++) {
+          oSelParents.append("<OPTGROUP LABEL=\""+oShops.getString(1,s)+"\">");
+          listChilds (oSelParents, oBrowseChilds, oShops.getString(0,s), oShops.getString(0,s), 3);
+          oSelParents.append("</OPTGROUP>");
+        }
+        oBrowseChilds.close();
       }
     } else {
       oAdr.put(DB.gu_address,Gadgets.generateUUID());    
@@ -85,8 +100,9 @@
 
     // Get categories list in a <SELECT> tag
     if (bShopActivated) {
-      DBSubset oShops = new DBSubset (DB.k_shops, DB.gu_root_cat+","+DB.nm_shop, DB.id_domain+"=? AND "+DB.gu_workarea+"=?", 10);
+      DBSubset oShops = new DBSubset (DB.k_shops, DB.gu_root_cat+","+DB.nm_shop+","+DB.gu_shop, DB.id_domain+"=? AND "+DB.gu_workarea+"=?", 10);
       int nShops = oShops.load(oConn, new Object[]{new Integer(id_domain), gu_workarea});
+      if (nShops>0) sShopsList = Gadgets.join(oShops.getColumnAsList(2),",");
       PreparedStatement oBrowseChilds = oConn.prepareStatement("SELECT c." + DB.gu_category + "," + DBBind.Functions.ISNULL + "(l." + DB.tr_category + ",c." + DB.nm_category + ") FROM " + DB.k_categories + " c," + DB.k_cat_tree + " t," + DB.k_cat_labels + " l WHERE c." + DB.gu_category + "=t." + DB.gu_child_cat + " AND l." + DB.gu_category + "=c." + DB.gu_category + " AND l." + DB.id_language + "='" + sLanguage + "' AND t." + DB.gu_parent_cat + "=?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
       for (int s=0; s<nShops; s++) {
         oSelParents.append("<OPTGROUP LABEL=\""+oShops.getString(1,s)+"\">");
@@ -113,16 +129,17 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Edit Call</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/autosuggest20.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
       
       // ------------------------------------------------------
@@ -165,74 +182,79 @@
       function validate() {
         var frm = window.document.forms[0];
 
-	if (frm.sel_course.selectedIndex<0) {
-	  alert ("Base Course is required");
-	  return false;
-	}
+	      if (frm.sel_course.selectedIndex<0) {
+	        alert ("Base Course is required");
+	        return false;
+	      }
+        
+	      if (frm.nm_course.value.length==0) {
+	        alert ("Academic Course name is required");
+	        return false;
+	      }
+	      
+	      if ((frm.nm_course.value.indexOf("'")>=0) || (frm.nm_course.value.indexOf('"')>=0)) {
+	        alert ("Academic Course Name contains forbidden characters");
+	        return false;
+	      }
+        
+	      if (frm.tx_start.value.length==0) {
+	        alert ("Start date is mandatory");
+	        return false;
+	      }
+        
+	      if (frm.tx_end.value.length==0) {
+	        alert ("End date is mandatory");
+	        return false;
+	      }
+        
+	      if (frm.de_course.value.length>2000) {
+	        alert ("Academic Course description cannot exceed 2000 characters");
+	        return false;
+	      }
+	      
+	      if ((frm.tx_tutor_email.value.length>0) && !check_email(frm.tx_tutor_email.value)) {
+	        alert ("Tutor e-mail address is not valid");
+	        return false;
+	      }
+        
+        if (frm.pr_acourse.value.length>0 && !isFloatValue(frm.pr_acourse.value.replace(",","."))) {
+	        alert ("Course price is not valid");
+	        return false;
+        } else {
+          frm.pr_acourse.value = frm.pr_acourse.value.replace(",",".");
+        }
+        
+        if (frm.pr_booking.value.length>0 && !isFloatValue(frm.pr_booking.value.replace(",","."))) {
+	        alert ("Booking price is not valid");
+	        return false;
+        } else {
+          frm.pr_booking.value = frm.pr_booking.value.replace(",",".");
+        }
+        
+        if (frm.pr_payment.value.length>0 && !isFloatValue(frm.pr_payment.value.replace(",","."))) {
+	        alert ("Monthly Payment amount is not valid");
+	        return false;
+        } else {
+          frm.pr_payment.value = frm.pr_payment.value.replace(",",".");
+        }
+	      
+	      if (frm.nu_max_alumni.value.length>0 && !isIntValue(frm.nu_max_alumni.value)) {
+	        alert ("The capacity is not a valid integer");
+	        return false;
+	      }
 
-	if (frm.nm_course.value.length==0) {
-	  alert ("Academic Course name is required");
-	  return false;
-	}
-	
-	if ((frm.nm_course.value.indexOf("'")>=0) || (frm.nm_course.value.indexOf('"')>=0)) {
-	  alert ("Academic Course Name contains forbidden characters");
-	  return false;
-	}
-
-	if (frm.tx_start.value.length==0) {
-	  alert ("Start date is mandatory");
-	  return false;
-	}
-
-	if (frm.tx_end.value.length==0) {
-	  alert ("End date is mandatory");
-	  return false;
-	}
-
-	if (frm.de_course.value.length>2000) {
-	  alert ("Academic Course description cannot exceed 2000 characters");
-	  return false;
-	}
-	
-	if ((frm.tx_tutor_email.value.length>0) && !check_email(frm.tx_tutor_email.value)) {
-	  alert ("Tutor e-mail address is not valid");
-	  return false;
-	}
-
-  if (frm.pr_acourse.value.length>0 && !isFloatValue(frm.pr_acourse.value.replace(",","."))) {
-	  alert ("Course price is not valid");
-	  return false;
-  } else {
-    frm.pr_acourse.value = frm.pr_acourse.value.replace(",",".");
-  }
-
-  if (frm.pr_booking.value.length>0 && !isFloatValue(frm.pr_booking.value.replace(",","."))) {
-	  alert ("Booking price is not valid");
-	  return false;
-  } else {
-    frm.pr_booking.value = frm.pr_booking.value.replace(",",".");
-  }
-
-  if (frm.pr_payment.value.length>0 && !isFloatValue(frm.pr_payment.value.replace(",","."))) {
-	  alert ("Monthly Payment amount is not valid");
-	  return false;
-  } else {
-    frm.pr_payment.value = frm.pr_payment.value.replace(",",".");
-  }
-	
-	frm.nm_course.value = frm.nm_course.value.toUpperCase();
-	frm.id_course.value = frm.id_course.value.toUpperCase();
-	
-	frm.gu_course.value = getCombo(frm.sel_course);
-
-	if (frm.chk_active.checked) frm.bo_active.value = "1"; else frm.bo_active.value = "0";
+	      frm.nm_course.value = frm.nm_course.value.toUpperCase();
+	      frm.id_course.value = frm.id_course.value.toUpperCase();
+	      
+	      frm.gu_course.value = getCombo(frm.sel_course);
+        
+	      if (frm.chk_active.checked) frm.bo_active.value = "1"; else frm.bo_active.value = "0";
 
         return true;
       } // validate;
     //-->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
     <!--
       function setCombos() {
         var frm = document.forms[0];
@@ -243,15 +265,51 @@
           setCombo(frm.gu_category,"<% out.write(gu_category); %>");
 <%      } %>	
         return true;
-      } // validate;
+      } // setCombos;
+
+      // -----------------------------------------------------------------
+
+		  var req = false;
+
+      function processProductInfo() {
+        if (req.readyState == 4) {
+          if (req.status == 200) {
+          	var frm = document.forms[0];
+          	var prd = req.responseText.split("\t");
+            if (frm.gu_acourse.value.length==0) frm.gu_acourse.value=prd[0];
+            if (frm.nm_course.value.length==0) frm.nm_course.value=prd[1];
+            if (frm.de_course.value.length==0) frm.de_course.value=prd[2];
+            if (frm.id_course.value.length==0) frm.id_course.value=prd[3];
+            if (frm.tx_start.value.length==0 && prd[4].length>0 && prd[4]!="null") frm.tx_start.value=prd[4].substr(0,10);
+            if (frm.tx_end.value.length==0 && prd[5].length>0 && prd[5]!="null") frm.tx_end.value=prd[5].substr(0,10);
+            req = false;
+          }
+	  	  }
+      } // processProductInfo
+		  
+      function loadProductInfo(gu) {
+			  req = createXMLHttpRequest();
+	      if (req) {
+	        req.onreadystatechange = processProductInfo;
+	        req.open("GET", "../shop/item_info.jsp?gu_product="+gu, true);
+	        req.send(null);
+	      }			  
+      }
+
     //-->
   </SCRIPT>    
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8" onLoad="setCombos()">
-  <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">
+  <DIV class="cxMnu1" style="width:420px"><DIV class="cxMnu2">
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="history.back()"><IMG src="../images/images/toolmenu/historyback.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Back"> Back</SPAN>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Refresh"> Refresh</SPAN>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
+<% if (gu_acourse.length()>0) { %>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="document.location='acourse_print.jsp?gu_acourse=<%=gu_acourse%>'"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Imprimir"> Print</SPAN>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="document.location='acourse_excel.jsp?gu_acourse=<%=gu_acourse%>'"><IMG src="../images/images/excel16.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Excel"> Excel</SPAN>
+<% } if (bIsAdmin) { %>
+    <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="document.location='acourse_users_edit.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_acourse=<%=gu_acourse%>'"><IMG src="../images/images/crm/padlock16.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Permisos"> Permissions</SPAN>
+<% } %>
   </DIV></DIV>
   <TABLE WIDTH="100%">
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
@@ -261,7 +319,12 @@
     <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=String.valueOf(id_domain)%>">
     <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
     <INPUT TYPE="hidden" NAME="gu_acourse" VALUE="<%=gu_acourse%>">
+    <INPUT TYPE="hidden" NAME="gu_supplier" VALUE="<%=oCur.getStringNull(DB.gu_supplier,"")%>">
     <INPUT TYPE="hidden" NAME="bo_active" VALUE="<% if (!oCur.isNull(DB.bo_active)) out.write(String.valueOf(oCur.getShort(DB.bo_active))); else out.write("1"); %>">
+    <INPUT TYPE="hidden" NAME="nu_payments" VALUE="<% if (!oCur.isNull(DB.nu_payments)) out.write(String.valueOf(oCur.getInt(DB.nu_payments))); %>">
+    <INPUT TYPE="hidden" NAME="nu_booked" VALUE="<% if (!oCur.isNull("nu_booked")) out.write(String.valueOf(oCur.getInt("nu_booked"))); %>">
+    <INPUT TYPE="hidden" NAME="nu_confirmed" VALUE="<% if (!oCur.isNull("nu_confirmed")) out.write(String.valueOf(oCur.getInt("nu_confirmed"))); %>">
+    <INPUT TYPE="hidden" NAME="nu_alumni" VALUE="<% if (!oCur.isNull("nu_alumni")) out.write(String.valueOf(oCur.getInt("nu_alumni"))); %>">
     <TABLE CLASS="formback">
       <TR><TD>
         <TABLE WIDTH="100%" CLASS="formfront">
@@ -270,12 +333,12 @@
             <TD ALIGN="left" WIDTH="500"><INPUT TYPE="checkbox" NAME="chk_active" <% if (!oCur.isNull(DB.bo_active)) out.write(oCur.getShort(DB.bo_active)!=0 ? "CHECKED" : ""); else out.write("CHECKED"); %>></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formstrong">Name:</FONT></TD>
-            <TD ALIGN="left" WIDTH="500"><INPUT TYPE="text" NAME="nm_course" MAXLENGTH="100" SIZE="48" STYLE="text-transform:uppercase" VALUE="<%=oCur.getStringNull(DB.nm_course,"")%>"></TD>
-          </TR>
-          <TR>
             <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">Identifier:</FONT></TD>
             <TD ALIGN="left" WIDTH="500"><INPUT TYPE="text" NAME="id_course" MAXLENGTH="50" SIZE="10" STYLE="text-transform:uppercase" VALUE="<%=oCur.getStringNull(DB.id_course,"")%>"></TD>
+          </TR>
+          <TR>
+            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formstrong">Name:</FONT></TD>
+            <TD ALIGN="left" WIDTH="500"><INPUT TYPE="text" NAME="nm_course" MAXLENGTH="100" SIZE="48" STYLE="text-transform:uppercase" VALUE="<%=oCur.getStringNull(DB.nm_course,"")%>"></TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="120"><FONT CLASS="formstrong">Start:</FONT></TD>
@@ -289,22 +352,30 @@
             <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">Base Course:</FONT></TD>
             <TD ALIGN="left" WIDTH="500">
               <INPUT TYPE="hidden" NAME="gu_course">
-              <SELECT NAME="sel_course" CLASS="combomini"><OPTION VALUE=""></OPTION>
+              <SELECT NAME="sel_course" CLASS="combomini" STYLE="width:400px"><OPTION VALUE=""></OPTION>
               <% for (int c=0; c<iCourses; c++)
                    out.write ("<OPTION VALUE=\""+oCourses.getString(0,c)+"\">"+Gadgets.HTMLEncode(oCourses.getString(1,c))+"</OPTION>");
               %>
               </SELECT>
               &nbsp;
-              <A HREF="#" onclick="createCourse()" TITLE="New Course"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Course"></A>
+              <A HREF="course_edit.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>" TITLE="New Course"><IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New Course"></A>
             </TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">Price:</FONT></TD>
-            <TD ALIGN="left" WIDTH="500"><INPUT TYPE="text" NAME="pr_acourse" MAXLENGTH="10" SIZE="12" VALUE="<% if (!oCur.isNull(DB.pr_acourse)) { DecimalFormat oFmt2 = new DecimalFormat(); oFmt2.setMaximumFractionDigits(2); out.write(oFmt2.format(oCur.getDecimal(DB.pr_acourse).doubleValue())); } %>"></TD>
+            <TD ALIGN="left" WIDTH="500"><INPUT TYPE="text" NAME="pr_acourse" MAXLENGTH="10" SIZE="10" VALUE="<% if (!oCur.isNull(DB.pr_acourse)) { DecimalFormat oFmt2 = new DecimalFormat(); oFmt2.setMaximumFractionDigits(2); out.write(oFmt2.format(oCur.getDecimal(DB.pr_acourse).doubleValue())); } %>">
+						&nbsp;&nbsp;&nbsp;&nbsp;<FONT CLASS="formplain">Booking:</FONT>&nbsp;
+            <INPUT TYPE="text" NAME="pr_booking" MAXLENGTH="10" SIZE="10" VALUE="<% if (!oCur.isNull(DB.pr_booking)) { DecimalFormat oFmt2 = new DecimalFormat(); oFmt2.setMaximumFractionDigits(2); out.write(oFmt2.format(oCur.getDecimal(DB.pr_booking).doubleValue())); } %>"></TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">Booking:</FONT></TD>
-            <TD ALIGN="left" WIDTH="500"><INPUT TYPE="text" NAME="pr_booking" MAXLENGTH="10" SIZE="12" VALUE="<% if (!oCur.isNull(DB.pr_booking)) { DecimalFormat oFmt2 = new DecimalFormat(); oFmt2.setMaximumFractionDigits(2); out.write(oFmt2.format(oCur.getDecimal(DB.pr_booking).doubleValue())); } %>"></TD>
+            <TD ALIGN="right" WIDTH="120" CLASS="formplain">Capacity:</TD>
+            <TD ALIGN="left" WIDTH="500" CLASS="formplain">
+            	<INPUT TYPE="text" NAME="nu_max_alumni" SIZE="10" VALUE="<% if (!oCur.isNull("nu_max_alumni")) out.write(String.valueOf(oCur.getInt("nu_max_alumni"))); %>">
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              <% if (!oCur.isNull("nu_confirmed")) { %> Confirmed&nbsp;<% out.write(String.valueOf(oCur.getInt("nu_confirmed"))); } %>
+              <% if (!oCur.isNull("nu_alumni")) { %> Accepted&nbsp;<% out.write(String.valueOf(oCur.getInt("nu_alumni"))); } %>
+              &nbsp;&nbsp;&nbsp;&nbsp;
+            </TD>
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">Monthly Payment:</FONT></TD>
@@ -326,7 +397,7 @@
             <TD ALIGN="right" WIDTH="120"><FONT CLASS="formplain">Address:</FONT></TD>
             <TD ALIGN="left" WIDTH="500"><INPUT TYPE="hidden" NAME="gu_address" VALUE="<%=oAdr.getStringNull(DB.gu_address,"")%>">
 <% if (oCur.isNull(DB.gu_address)) { %>
-						  <DIV ID="address_line"><A HREF="#" CLASS="linkplain" onclick="editAddress()">Agregar dirección</A></DIV>
+						  <DIV ID="address_line"><A HREF="#" CLASS="linkplain" onclick="editAddress()">Add address</A></DIV>
 <% } else { %>
 						  <DIV ID="address_line"><A HREF="#" CLASS="linkplain" onclick="editAddress()"><%=oAdr.toLocaleString()%></A></DIV>
 <% } %>
@@ -356,7 +427,16 @@
     	  </TR>            
         </TABLE>
       </TD></TR>
-    </TABLE>                 
+    </TABLE>
   </FORM>
 </BODY>
+<% if (sShopsList.length()>0) { %>
+<SCRIPT TYPE="text/javascript">
+    <!--  
+      var AutoSuggestOptions = { script:"String('../common/autocomplete.jsp?gu_shop=<%=sShopsList%>&')", varname:"tx_like",minchars:3,form:0, callback: function (obj) { loadProductInfo(obj.id); } };
+      var AutoSuggestNmCourse = new AutoSuggest("nm_course", AutoSuggestOptions);
+      var AutoSuggestIdRef = new AutoSuggest("id_course", AutoSuggestOptions);
+    //-->
+</SCRIPT>
+<% } %>
 </HTML>

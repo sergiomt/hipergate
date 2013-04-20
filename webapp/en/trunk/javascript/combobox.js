@@ -26,6 +26,29 @@ function setCombo (objCombo, idValue) {
 //---------------------------------------------------------
 
 /**
+  * Set multiple options from a combo
+  * @param objCombo HTML <SELECT> Object
+  * @param sVals String of delimited values 
+  * @param sDelim String Delimiter 
+*/
+function setComboMult (objCombo, sVals, sDelim) {
+  var opt = objCombo.options;
+  var len = opt.length;
+  var vals = sVals.split(sDelim);
+  var vlen = vals.length;
+  var v;
+   
+  for (var i=0; i<len; i++) {
+		var b = false;
+		for (v=0; v<vlen && !b; v++)
+		  b = (opt[i].value == vals[v] || opt[i].text == vals[v]);
+		opt[i].selected = b;
+  } 
+} // setComboMult
+
+//---------------------------------------------------------
+
+/**
   * Get Index of a value inside a ComboBox
   * @param objCombo HTML <SELECT> Object
   * @param idValue Value to find inside ComboBox

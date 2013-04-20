@@ -3,8 +3,8 @@
 <HTML>
 <HEAD>
   <TITLE>hipergate :: Menu</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT> 
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT> 
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
 </HEAD>
 <BODY SCROLL="no" TOPMARGIN="4" MARGINHEIGHT="4">
 <% try { %>

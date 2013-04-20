@@ -96,12 +96,12 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Example Form</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript">
     <!--
       

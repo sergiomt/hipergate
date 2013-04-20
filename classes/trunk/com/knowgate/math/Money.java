@@ -32,7 +32,6 @@
 
 package com.knowgate.math;
 
-import java.util.Date;
 import java.util.Locale;
 
 import java.math.BigInteger;
@@ -42,7 +41,6 @@ import java.text.DecimalFormat;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
 
-import com.knowgate.debug.DebugFile;
 import com.knowgate.misc.Gadgets;
 
 /**
@@ -55,8 +53,9 @@ public class Money extends BigDecimal {
 
   private static final long serialVersionUID = 1l;
 
-  private static final DecimalFormat FMT2 = new DecimalFormat("#0.00");
-  private static final FieldPosition FRAC = new FieldPosition(NumberFormat.FRACTION_FIELD);
+  private static final DecimalFormat FMT2 = new DecimalFormat();
+  
+  // private static final FieldPosition FRAC = new FieldPosition(NumberFormat.FRACTION_FIELD);
 
   private CurrencyCode oCurrCode;
 
@@ -286,9 +285,9 @@ public class Money extends BigDecimal {
 
     if (iDot!=0 && iCom!=0) {
       if (iDot>iCom) {
-        Gadgets.removeChar(sAmount,',');
+    	sAmount = Gadgets.removeChar(sAmount,',');
       } else {
-        Gadgets.removeChar(sAmount,'.');
+    	sAmount = Gadgets.removeChar(sAmount,'.');
       }
     } // fi
 
@@ -305,9 +304,8 @@ public class Money extends BigDecimal {
    * @return BigDecimal
    */
   public Money round2 () {
-    StringBuffer oBuffer = new StringBuffer();
-    FMT2.format(doubleValue(), oBuffer, FRAC);
-    return new Money (oBuffer.toString(), oCurrCode);
+    FMT2.setMaximumFractionDigits(2);    
+    return new Money (FMT2.format(doubleValue()).replace(',', '.'), oCurrCode);
   }
 
   // ---------------------------------------------------------------------------
@@ -375,7 +373,6 @@ public class Money extends BigDecimal {
 
   public Money convertTo (CurrencyCode oTarget)
     throws NullPointerException,NumberFormatException {
-    double dRatio = 0;
     
 	return convertTo(oTarget, new BigDecimal(oCurrCode.conversionRateTo(oTarget)));
   } // convertTo
@@ -423,7 +420,7 @@ public class Money extends BigDecimal {
 
   // ---------------------------------------------------------------------------
 
-  public String toString () {
+  public String toLocaleString () {
     if (oCurrCode==null)
       return super.toString();
     else

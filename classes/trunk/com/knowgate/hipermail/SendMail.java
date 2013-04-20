@@ -64,7 +64,6 @@ import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.dataobjs.DBPersist;
 import com.knowgate.dfs.FileSystem;
 import com.knowgate.hipermail.DBMimePart;
-import com.knowgate.misc.Environment;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.scheduler.Job;
 import com.knowgate.scheduler.SingleThreadExecutor;
@@ -180,18 +179,18 @@ public final class SendMail {
      */
 	public static ArrayList send(MailAccount oMacc,
 								 Properties oSessionProps,
-								 String sUserDir, // Base directory for mail inline and attached files
-					   	         String sTextHtml, // Mail HTML body
-					   	         String sTextPlain, // Mail Plain Text body
-							     String sEncoding, // Character encoding for body
-							     String aAttachments[],
-							     String sSubject, // Subject,
-							     String sFromAddr,
-							     String sFromPersonal, // Mail From display name
+								 final String sUserDir, // Base directory for mail inline and attached files
+								 final String sTextHtml, // Mail HTML body
+								 final String sTextPlain, // Mail Plain Text body
+								 String sEncoding, // Character encoding for body
+								 final String aAttachments[],
+							     final String sSubject, // Subject,
+							     final String sFromAddr,
+							     final String sFromPersonal, // Mail From display name
 							     String sReplyAddr,
-							     String aRecipients[],
+							     final String aRecipients[],
 							     String sRecipientType,
-						         String sId,
+							     String sId,
 							     String sEnvCnfFileName,
 							     String sJobTl,
 							     boolean bAutoRunJob,
@@ -203,6 +202,9 @@ public final class SendMail {
 	        MessagingException,FTPException,SQLException,
 	        ClassNotFoundException,InstantiationException {
 	  	
+	  if (null==aRecipients) throw new IllegalArgumentException("No recipients list was supplied");
+	  if (0==aRecipients.length) throw new IllegalArgumentException("Recipients list is empty");
+
 	  if (DebugFile.trace) {
 	    DebugFile.writeln("Begin SendMail.send("+oMacc.getString(DB.gu_account)+","+
 	    				  "{mail.smtp.host="+oSessionProps.getProperty("mail.smtp.host","")+","+
@@ -212,18 +214,24 @@ public final class SendMail {
 	    	              "mail.transport.protocol="+oSessionProps.getProperty("mail.transport.protocol","")+"}, "+
 	    				  sUserDir+",text/html, text/plain"+","+
 	    	              sEncoding+",String[],\""+sSubject+"\",<"+sFromAddr+">,"+sFromPersonal+",<"+
-	    	              sReplyAddr+">,"+(aRecipients==null ? null : "{"+Gadgets.join(aRecipients,";")+"}")+","+
+	    	              sReplyAddr+">,{"+Gadgets.join(aRecipients,";")+"},"+
 	    	              sRecipientType+","+sId+","+sEnvCnfFileName+","+sJobTl+",[DBbind])");
 	    DebugFile.incIdent();
 	  } // fi (trace)
 
 	  if (dtExecution!=null) {
 	    if (bAutoRunJob) {
-	      if (DebugFile.trace) DebugFile.decIdent();
+	      if (DebugFile.trace) {
+	    	DebugFile.writeln("SendMail.send() execution date must be null if auto run job is true");
+	    	DebugFile.decIdent();
+	      }
 	      throw new IllegalArgumentException("SendMail.send() execution date must be null if auto run job is true");
 	    }
 	    if (dtExecution.compareTo(new Date())<0) {
-	      if (DebugFile.trace) DebugFile.decIdent();
+	      if (DebugFile.trace) {
+		    DebugFile.writeln("SendMail.send() execution date must be after current date");
+	    	DebugFile.decIdent();
+	      }
 	      throw new IllegalArgumentException("SendMail.send() execution date must be after current date");
 	    }
 	  } // fi (dtExecution)
@@ -238,12 +246,18 @@ public final class SendMail {
 	  boolean bClickThrough = oSessionProps.getProperty("clickthrough","no").equalsIgnoreCase("yes") || oSessionProps.getProperty("clickthrough","false").equalsIgnoreCase("true") || oSessionProps.getProperty("clickthrough","0").equalsIgnoreCase("1");
 
 	  if (bWebBeacon && oSessionProps.getProperty("webserver")==null) {
-	    if (DebugFile.trace) DebugFile.decIdent();
+	    if (DebugFile.trace) {
+		  DebugFile.writeln("SendMail.send() If webbeacon property is true then webserver property is required");
+	      DebugFile.decIdent();
+	    }
 	    throw new NullPointerException("SendMail.send() If webbeacon property is true then webserver property is required");
 	  }
 
 	  if (bClickThrough && oSessionProps.getProperty("webserver")==null) {
-	    if (DebugFile.trace) DebugFile.decIdent();
+	    if (DebugFile.trace) {
+		  DebugFile.writeln("SendMail.send() If webbeacon property is true then webserver property is required");
+	      DebugFile.decIdent();
+	    }
 	    throw new NullPointerException("SendMail.send() If clickthrough property is true then webserver property is required");
 	  }
 
@@ -297,6 +311,8 @@ public final class SendMail {
 	  	throw new MessagingException(sRecipientType+" is not a valid recipient type");
 
 	  if (sJobTl.length()>0) {
+		if (DebugFile.trace) DebugFile.writeln("Processing job "+sJobTl);
+
 		if (null==oGlobalDbb)
 		  oDbb = new DBBind(sEnvCnfFileName);
 		else
@@ -305,7 +321,9 @@ public final class SendMail {
 		JDCConnection oCon = null;
 		try {
 
-		  Job oSnd;
+	      if (DebugFile.trace) DebugFile.writeln("getting JDCConnection from pool");
+
+	      Job oSnd;
 		  DBPersist oJob = new DBPersist(DB.k_jobs,"Job");
 		  oCon = oDbb.getConnection("SendMail",false);
 		  oCon.setAutoCommit(false);
@@ -330,6 +348,8 @@ public final class SendMail {
     		DBStore oRDBMS = DBStore.open(oHndl.getSession(), oDbb.getProfileName(), sMBoxDir, oUsr.getString(DB.gu_user), oUsr.getString(DB.tx_pwd));
 			DBFolder oOutbox = oRDBMS.openDBFolder("outbox",DBFolder.READ_WRITE);
 
+			if (DebugFile.trace) DebugFile.writeln("creating draft");
+			
 			DBMimeMessage oMsg = DraftsHelper.draftMessage(oOutbox, oMacc.getString(DB.outgoing_server),
 														   oUsr.getString(DB.gu_workarea),
 														   oUsr.getString(DB.gu_user),
@@ -343,10 +363,13 @@ public final class SendMail {
     								 oUsr.getString(DB.gu_workarea),
     								 oMsg.getMessageGuid(), sMsgId,
                              	     sFromAddr,sReplyAddr,sFromPersonal,
-                             	     sSubject, "text/"+(sTextHtml==null ? "plain" : "html")+";charset="+sEncoding,
-                             	    (sTextHtml==null ? sTextPlain : sTextHtml), null, null, null);
+                             	     sSubject,
+                             	     "text/"+(sTextHtml==null ? "plain" : "html")+";charset="+sEncoding,
+                             	     sTextHtml==null ? sTextPlain : sTextHtml,
+                             	     null, null, null);
 
 			if (aAttachments!=null) {
+			  if (DebugFile.trace) DebugFile.writeln("adding attachments");
     		  Integer oPart = DBCommand.queryMaxInt(oCon, DB.id_part, DB.k_mime_parts, DB.gu_mimemsg+"='"+oMsg.getMessageGuid()+"'");
     		  if (oPart==null) oPart = new Integer(1);
     		  PreparedStatement oStm = oCon.prepareStatement("INSERT INTO " + DB.k_mime_parts + "("+DB.gu_mimemsg+","+DB.id_message+","+DB.id_part+","+DB.id_disposition+","+DB.id_content+","+DB.id_type+","+DB.len_part+","+DB.de_part+","+DB.file_name+") VALUES ('"+oMsg.getMessageGuid()+"',?,?,'reference',?,?,?,?,?)");
@@ -361,6 +384,7 @@ public final class SendMail {
         		  oStm.setInt(5, (int) oAttach.length());
 	      		  oStm.setString(6, aAttachments[p]);
 	      		  oStm.setString(7, sFilePath);	
+	  			  if (DebugFile.trace) DebugFile.writeln("INSERT INTO " + DB.k_mime_parts + "("+DB.gu_mimemsg+","+DB.id_message+","+DB.id_part+","+DB.id_disposition+","+DB.id_content+","+DB.id_type+","+DB.len_part+","+DB.de_part+","+DB.file_name+") VALUES ('"+oMsg.getMessageGuid()+"','"+sMsgId+"',"+String.valueOf(oPart.intValue()+p)+",'reference',?,?,?,?,'"+sFilePath+"')");
 	      		  oStm.executeUpdate();
 	      	    } // fi
 			  } // next
@@ -386,13 +410,22 @@ public final class SendMail {
 		    	                       "webserver:"+oSessionProps.getProperty("webserver")+","+
 		    	                       "encoding:"+sEncoding);
 		    if (dtExecution!=null) oJob.put(DB.dt_execution, dtExecution);
+			if (DebugFile.trace) DebugFile.writeln("storing job "+sJobId+" "+oJob.getString(DB.tx_parameters));
 		    oJob.store(oCon);
 
 			DBCommand.executeUpdate(oCon, "UPDATE "+DB.k_mime_msgs+" SET "+DB.gu_job+"='"+sJobId+"' WHERE "+DB.gu_mimemsg+"='"+oMsg.getMessageGuid()+"'");
 
-		    oSnd = Job.instantiate(oCon, sJobId, oDbb.getProperties());
+			if (DebugFile.trace) DebugFile.writeln("instantiating job "+sJobId);
+
+			oSnd = Job.instantiate(oCon, sJobId, oDbb.getProperties());
 		    
-		    oSnd.insertRecipients(oCon, aRecipients, sRecipientType,
+			if (DebugFile.trace)
+			  if (null==aRecipients)
+				DebugFile.writeln("ERROR recipients list is null");
+			  else
+			    DebugFile.writeln("inserting "+String.valueOf(aRecipients)+" recipients ");
+
+			oSnd.insertRecipients(oCon, aRecipients, sRecipientType,
 		                          sTextHtml==null ? "text" : "html",
 		                          Job.STATUS_PENDING);
 			
@@ -400,12 +433,19 @@ public final class SendMail {
 
 		    if (DebugFile.trace) DebugFile.writeln("Job "+sJobTl+" found with GUID "+sJobId);
 
-		    oSnd = Job.instantiate(oCon, sJobId, oDbb.getProperties());		    		  	
+			if (DebugFile.trace) DebugFile.writeln("instantiating job "+sJobId);
 
-		    oSnd.insertRecipients(oCon, aRecipients, sRecipientType,
+			oSnd = Job.instantiate(oCon, sJobId, oDbb.getProperties());		    		  	
+
+			if (DebugFile.trace)
+				  if (null==aRecipients)
+					DebugFile.writeln("ERROR recipients list is null");
+				  else
+				    DebugFile.writeln("inserting "+String.valueOf(aRecipients)+" recipients ");
+
+			oSnd.insertRecipients(oCon, aRecipients, sRecipientType,
 		                          sTextHtml==null ? "text" : "html",
 		                          Job.STATUS_PENDING);
-
 		  }
 		  oCon.commit();
 		  oCon.close("SendMail");
@@ -518,8 +558,8 @@ public final class SendMail {
 	public static ArrayList send(MailAccount oMacc,
 								 Properties oSessionProps,
 								 String sUserDir, // Base directory for mail inline and attached files
-					   	         String sTextHtml, // Mail HTML body
-					   	         String sTextPlain, // Mail Plain Text body
+					   	         final String sTextHtml, // Mail HTML body
+					   	         final String sTextPlain, // Mail Plain Text body
 							     String sEncoding, // Character encoding for body
 							     String aAttachments[],
 							     String sSubject, // Subject,
@@ -599,9 +639,9 @@ public final class SendMail {
      * @throws InstantiationException
      */
 	public static ArrayList send(Properties oSessionProps,
-								 String sUserDir, // Base directory for mail inline and attached files
-					   	         String sTextHtml, // Mail HTML body
-					   	         String sTextPlain, // Mail Plain Text body
+								 final String sUserDir, // Base directory for mail inline and attached files
+					   	         final String sTextHtml, // Mail HTML body
+					   	         final String sTextPlain, // Mail Plain Text body
 							     String sEncoding, // Character encoding for body
 							     String aAttachments[],
 							     String sSubject, // Subject,
@@ -643,12 +683,14 @@ public final class SendMail {
 
 	  JDCConnection oCon = oDbb.getConnection("SendMail_RO1", false);
 	  
-	  ACLUser oUsr = new ACLUser(oCon, ACLUser.getIdFromEmail(oCon,sFromAddr));
-	  if (!oUsr.exists(oCon)) {
+	  String sUserId = ACLUser.getIdFromEmail(oCon,sFromAddr);
+	  if (sUserId==null) {
 	  	oCon.close("SendMail_RO1");
 	    if (DebugFile.trace) DebugFile.decIdent();
 		throw new SQLException(sFromAddr+" e-mail address not found at k_users table","01S06");
 	  }
+
+	  ACLUser oUsr = new ACLUser(oCon, sUserId);
 
 	  MailAccount oMacc = MailAccount.forUser(oCon, oUsr.getString(DB.gu_user), oDbb.getProperties());
 	  if (null==oMacc) {
@@ -678,9 +720,9 @@ public final class SendMail {
     // ------------------------------------------------------------------------
 
 	public static ArrayList send(Properties oSessionProps,
-								 String sUserDir,
-					   	         String sTextHtml,
-					   	         String sTextPlain,
+								 final String sUserDir,
+					   	         final String sTextHtml,
+					   	         final String sTextPlain,
 							     String sEncoding,
 							     String aAttachments[],
 							     String sSubject,
@@ -703,9 +745,9 @@ public final class SendMail {
     // ------------------------------------------------------------------------
 
 	public static ArrayList send(Properties oSessionProps,
-								 String sUserDir, // Base directory for mail inline and attached files
-					   	         String sTextHtml, // Mail HTML body
-					   	         String sTextPlain, // Mail Plain Text body
+								 final String sUserDir, // Base directory for mail inline and attached files
+					   	         final String sTextHtml, // Mail HTML body
+					   	         final String sTextPlain, // Mail Plain Text body
 							     String sEncoding, // Character encoding for body
 							     String aAttachments[],
 							     String sSubject, // Subject,
@@ -893,6 +935,88 @@ public final class SendMail {
       return oRetMsgs;
     } // send
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * <p>Send a plain text message to a given recipients list</p>
+     * The message will be sent inmediately indipendently to each recipient
+     * @param oDbb DBBind Session properties will be taken from the .cnf file of this DBBind
+     * @param sTextPlain Plain text message part
+     * @param sSubject Message subject
+     * @param sFromAddr Recipient From address
+     * @param sFromPersonal Recipient From Display Name
+     * @param sReplyAddr Reply-To address
+     * @param aRecipients List of recipient addresses
+	 * @return ArrayList of Strings with status messages about each message sent
+	 * @throws IOException
+	 * @throws IllegalAccessException
+	 * @throws NullPointerException
+	 * @throws MessagingException
+	 * @throws SQLException
+	 * @throws ClassNotFoundException
+	 * @throws InstantiationException
+     * @since 7.0
+     */
+ 
+	public static ArrayList send(DBBind oDbb,
+								 String sTextPlain,
+								 String sSubject,
+							     String sFromAddr,
+							     String sFromPersonal, 
+							     String sReplyAddr,
+							     String aRecipients[])
+      throws IOException,IllegalAccessException,NullPointerException,
+             MessagingException,SQLException,ClassNotFoundException,InstantiationException {
+
+	  if (DebugFile.trace) {
+	    DebugFile.writeln("SendMail.send({mail.smtp.host="+oDbb.getProperty("mail.smtp.host","")+","+
+	    	                             "mail.user="+oDbb.getProperty("mail.user","")+","+
+	    	                             "mail.account="+oDbb.getProperty("mail.account","")+","+
+	    	                             "mail.outgoing="+oDbb.getProperty("mail.outgoing","")+"},"+
+	    	                             "mail.transport.protocol="+oDbb.getProperty("mail.transport.protocol","")+","+
+	    	                             "\""+Gadgets.left(sTextPlain,80).replace('\n',' ')+"\", \""+sSubject+"\", "+
+	    	                             sFromAddr+", \""+sFromPersonal+"\", "+sReplyAddr+", {"+
+	    	                             Gadgets.join(aRecipients,",")+"})");
+        DebugFile.incIdent();
+	  }
+
+	  final String StrNull = null;
+	  final String ArrNull[] = null;
+
+	  if (null==sSubject) sSubject = "";
+	  if (null==sTextPlain) sTextPlain = "";
+	  if (null==sFromPersonal) sFromPersonal = sFromAddr;
+	  if (null==sReplyAddr) sReplyAddr = sFromAddr;
+	  ArrayList oRetMsgs = null;
+	  JDCConnection oConn = null;
+	  
+	  try {
+
+		oConn = oDbb.getConnection("SendMail.send",true);		
+		String sUser = ACLUser.getIdFromEmail(oConn, sFromAddr);
+	    if (null==sUser) {
+	      oConn.close("SendMail.send");
+		  oConn=null;
+		  throw new SQLException(sFromAddr+" e-mail address was not found at k_users table");
+		} else {
+		  MailAccount oMacc = MailAccount.forUser(oConn, sUser, oDbb.getProperties());		
+	      oConn.close("SendMail.send");
+		  oConn=null;
+		  oRetMsgs = send(oMacc, oMacc.getProperties(), StrNull, StrNull, sTextPlain, "UTF-8", ArrNull, sSubject, sFromAddr, sFromPersonal, sReplyAddr, aRecipients, "to", StrNull, oDbb.getProfileName(), StrNull, false, oDbb);
+		}
+	  } catch (FileNotFoundException neverthrown) {}
+	    catch (FTPException neverthrown) {	    	
+	  } finally {
+		if (oConn!=null) { try { if (!oConn.isClosed()) oConn.close(); } catch (SQLException ignore) {} }
+	  }
+	  if (DebugFile.trace) {
+        DebugFile.decIdent();
+        DebugFile.writeln("End SendMail.send()");
+	  }
+
+      return oRetMsgs;
+    } // send
+	
     // ------------------------------------------------------------------------
 
     /**

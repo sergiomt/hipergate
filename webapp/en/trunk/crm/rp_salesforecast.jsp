@@ -51,7 +51,7 @@
 
     if (oConn.getDataBaseProduct()==JDCConnection.DBMS_MYSQL)
       oSales = new DBSubset(DB.k_oportunities + " o," + DB.k_users + " u",
-  		            "o." + DB.tl_oportunity + ",o." + DB.id_objetive + ",o." + DB.id_status + ",o." + DB.im_revenue + ",o." + DB.dt_modified + ",o." + DB.dt_next_action + ",CONCAT(COALESCE(u." + DB.nm_user + ",''),' ',COALESCE(u." + DB.tx_surname1 + ",''),' 'COALESCE(u." + DB.tx_surname2 + ",''))",
+  		            "o." + DB.tl_oportunity + ",o." + DB.id_objetive + ",o." + DB.id_status + ",o." + DB.im_revenue + ",o." + DB.dt_modified + ",o." + DB.dt_next_action + ",CONCAT(COALESCE(u." + DB.nm_user + ",''),' ',COALESCE(u." + DB.tx_surname1 + ",''),' ',COALESCE(u." + DB.tx_surname2 + ",''))",
   			    "o." + DB.gu_workarea + "='" + gu_workarea + "' AND o." + DB.gu_writer + "=u." + DB.gu_user + " AND o." + DB.id_status + " IN ('NUEVA','ABIERTA','APLAZADA')", 100);
     else
       oSales = new DBSubset(DB.k_oportunities + " o," + DB.k_users + " u",

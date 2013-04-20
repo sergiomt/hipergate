@@ -564,7 +564,7 @@
     
     switch (iStatus) {
       case ACL.USER_NOT_FOUND:      
-        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Invalid User&desc=User not found at database&resume=_back"));  
+        response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Invalid User&desc=[~El nombre de usuario especificado "+sNickName+" ("+sUserId+") no se encuentra en la base de datos~]&resume=_back"));  
         return;
       case ACL.INVALID_PASSWORD:
         response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Invalid password&desc=User password is not valid.&resume=_back"));  
@@ -610,7 +610,7 @@
   <HEAD>
     <TITLE>Wait...</TITLE>
     <SCRIPT LANGUAGE="javascript" SRC="../javascript/cookies.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <SCRIPT TYPE="text/javascript">
       <!--
         // status = <% out.write(String.valueOf(iStatus)); %>
 

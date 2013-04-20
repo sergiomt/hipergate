@@ -4,13 +4,10 @@ import java.sql.SQLException;
 
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.Properties;
 
 import com.knowgate.storage.*;
 
 import com.knowgate.misc.Gadgets;
-
-import com.knowgate.berkeleydb.DBEntity;
 
 public class UserAccount extends RecordDelegator {
 

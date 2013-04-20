@@ -8,7 +8,7 @@ GO;
 
 CREATE PROCEDURE k_sp_del_acourse @CourseId CHAR(32) AS
   DECLARE @GuAddress CHAR(32)
-  SELECT @GuAddress=gu_address gu_address FROM k_academic_courses WHERE gu_acourse=@CourseId
+  SELECT @GuAddress=gu_address FROM k_academic_courses WHERE gu_acourse=@CourseId
   DELETE k_x_user_acourse WHERE gu_acourse=@CourseId
   DELETE k_x_course_alumni WHERE gu_acourse=@CourseId
   DELETE k_x_course_bookings WHERE gu_acourse=@CourseId

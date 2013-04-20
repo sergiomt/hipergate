@@ -201,7 +201,7 @@
                 }             
 %>
                 </SELECT>
-                <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+                <SCRIPT TYPE="text/javascript">
                 <!--
                   window.parent.contactexec.location.href='company_load.jsp?gu_company=' + getCombo(document.forms[1].sel_company) + '&gu_workarea=' + document.forms[0].gu_workarea.value;
                 //-->

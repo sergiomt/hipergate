@@ -38,6 +38,7 @@ import java.io.LineNumberReader;
 import java.io.FileReader;
 import java.io.BufferedReader;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -46,13 +47,13 @@ import java.sql.Types;
 import java.util.TreeMap;
 import java.util.Iterator;
 
-import com.knowgate.jdc.JDCConnection;
 import com.knowgate.misc.Gadgets;
+import com.knowgate.jdc.JDCConnection;
 
 /**
  * Keeps an operations log at a file or database table.
  * @author Sergio Montoro ten
- * @version 3.0
+ * @version 7.0
  */
 
 public class DBAudit {
@@ -66,20 +67,20 @@ public class DBAudit {
   /**
    * Write a log entry into k_auditing database table
    * @param oConn Database connection, if null then data if dumped to a flat file.
-   * @param iIdEntity - Internal ClassId short nombre for audited class.
+   * @param iIdEntity - Internal ClassId short name for audited class.
    * @param sCoOp - Operation Code (4 alphanumeric digits)
-   * @param sGUUser - GUID of user performing the operation (máx. 32 characters)
-   * @param sGUEntity1 - GUID of primary entity (or source entitity) for the operation (máx. 32 characters)
-   * @param sGUEntity2 - GUID of secondary entity (or target entitity) for the operation (máx. 32 characters)
+   * @param sGUUser - GUID of user performing the operation (max. 32 characters)
+   * @param sGUEntity1 - GUID of primary entity (or source entity) for the operation (max. 32 characters)
+   * @param sGUEntity2 - GUID of secondary entity (or target entity) for the operation (max. 32 characters)
    * @param iIdTransact - Transaction Identifier
    * @param iIPAddr - User IP address
-   * @param sTxParams1 - Aditional parameters related to entity 1 (máx 255 characters)
-   * @param sTxParams2 - Aditional parameters related to entity 2 (máx 255 characters)
+   * @param sTxParams1 - Additional parameters related to entity 1 (max 255 characters)
+   * @param sTxParams2 - Additional parameters related to entity 2 (max 255 characters)
    * @throws SQLException
    * @throws SecurityException
    */
 
-  public static void log(JDCConnection oConn, short iIdEntity, String sCoOp, String sGUUser, String sGUEntity1, String sGUEntity2, int iIdTransact, int iIPAddr, String sTxParams1, String sTxParams2)
+  public static void log(Connection oConn, short iIdEntity, String sCoOp, String sGUUser, String sGUEntity1, String sGUEntity2, int iIdTransact, int iIPAddr, String sTxParams1, String sTxParams2)
     throws SQLException {
     PreparedStatement oStmt;
 
@@ -123,16 +124,38 @@ public class DBAudit {
   // ----------------------------------------------------------
 
   /**
-   * Write a log entry into javatrx.txt file
-   * @param iIdEntity - Internal ClassId short nombre for audited class.
+   * Write a log entry into k_auditing database table
+   * @param oConn JDCConnection Database connection, if null then data if dumped to a flat file.
+   * @param iIdEntity - Internal ClassId short name for audited class.
    * @param sCoOp - Operation Code (4 alphanumeric digits)
-   * @param sGUUser - GUID of user performing the operation (máx. 32 characters)
-   * @param sGUEntity1 - GUID of primary entity (or source entitity) for the operation (máx. 32 characters)
-   * @param sGUEntity2 - GUID of secondary entity (or target entitity) for the operation (máx. 32 characters)
+   * @param sGUUser - GUID of user performing the operation (max. 32 characters)
+   * @param sGUEntity1 - GUID of primary entity (or source entity) for the operation (max. 32 characters)
+   * @param sGUEntity2 - GUID of secondary entity (or target entity) for the operation (max. 32 characters)
    * @param iIdTransact - Transaction Identifier
    * @param iIPAddr - User IP address
-   * @param sTxParams1 - Aditional parameters related to entity 1 (máx 255 characters)
-   * @param sTxParams2 - Aditional parameters related to entity 2 (máx 255 characters)
+   * @param sTxParams1 - Additional parameters related to entity 1 (max 255 characters)
+   * @param sTxParams2 - Additional parameters related to entity 2 (max 255 characters)
+   * @throws SQLException
+   * @throws SecurityException
+   */
+  public static void log(JDCConnection oConn, short iIdEntity, String sCoOp, String sGUUser, String sGUEntity1, String sGUEntity2, int iIdTransact, int iIPAddr, String sTxParams1, String sTxParams2)
+	throws SQLException {
+	  log((Connection) oConn, iIdEntity, sCoOp, sGUUser, sGUEntity1, sGUEntity2, iIdTransact, iIPAddr, sTxParams1, sTxParams2);
+  }
+  
+  // ----------------------------------------------------------
+
+  /**
+   * Write a log entry into javatrc.txt file
+   * @param iIdEntity - Internal ClassId short name for audited class.
+   * @param sCoOp - Operation Code (4 alphanumeric digits)
+   * @param sGUUser - GUID of user performing the operation (máx. 32 characters)
+   * @param sGUEntity1 - GUID of primary entity (or source entity) for the operation (máx. 32 characters)
+   * @param sGUEntity2 - GUID of secondary entity (or target entity) for the operation (máx. 32 characters)
+   * @param iIdTransact - Transaction Identifier
+   * @param iIPAddr - User IP address
+   * @param sTxParams1 - Additional parameters related to entity 1 (máx 255 characters)
+   * @param sTxParams2 - Additional parameters related to entity 2 (máx 255 characters)
    * @throws SecurityException if there aren't sufficient permissions for writting at javatrc.txt file
    */
   public static void log (short iIdEntity, String sCoOp, String sGUUser, String sGUEntity1, String sGUEntity2, int iIdTransact, String sIPAddr, String sTxParams1, String sTxParams2) {
@@ -186,14 +209,13 @@ public class DBAudit {
 
   public static String analyze(String sFile) throws IOException {
 
-    int f, s, e;
+    int f, s;
     StringBuffer oReport = new StringBuffer(4096);
     String sLine, sOpCode = null, sEntity = null;
 
     TreeMap oOpen  = new TreeMap();
     Integer oCount;
 
-    LineNumberReader lnr;
 
     FileReader oReader = new FileReader(sFile);
     BufferedReader oBuffer = new BufferedReader(oReader);

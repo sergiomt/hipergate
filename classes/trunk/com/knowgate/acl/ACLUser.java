@@ -70,7 +70,7 @@ import com.knowgate.misc.Gadgets;
 /**
  * <p>Object mapping for k_users table registers</p>
  * @author Sergio Montoro Ten
- * @version 5.0
+ * @version 7.0
  */
 
 public final class ACLUser extends DBPersist {
@@ -1917,7 +1917,42 @@ public final class ACLUser extends DBPersist {
   	} // fi
   	return sTxNick;
   } // suggestNickForEmail
-  	
+
+  /**
+   * <p>Get a new unique nick name for a given suggestion</p>
+   * The returned nick name is granted not to exist at k_users table.
+   * The search for a previous nick name the same as the suggested is case insensitive
+   * @param JDCConnection
+   * @param sTxSuggested String suggested nick name
+   * @throws SQLException
+   * @throws NullPointerException is sTxSuggested is null or an empty string
+   * @since 7.0
+   */
+  public static String getUniqueNickName(JDCConnection oConn, String sTxSuggested)
+  	throws NullPointerException, ArrayIndexOutOfBoundsException, NumberFormatException, SQLException {
+    String sTxNickName;
+    if (sTxSuggested==null)
+      throw new NullPointerException("Suggested nickname may not be null");
+    if (sTxSuggested.length()==0)
+      throw new NullPointerException("Suggested nickname may not be an empty string");
+    DBSubset oDbs = new DBSubset(DB.k_users, DB.gu_user, DBBind.Functions.LOWER+"("+DB.tx_nickname+")=?", 1);
+    if (oDbs.load(oConn, new Object[]{sTxSuggested.toLowerCase()})==0) {
+      sTxNickName = sTxSuggested;
+    } else {
+      int iUnderscore = sTxSuggested.indexOf('_');
+      if (iUnderscore<=0) {
+        sTxNickName = getUniqueNickName(oConn, sTxSuggested+"_"+String.valueOf(new Date().getYear()));
+      } else {
+      	String sNumberSuffix = sTxSuggested.substring(++iUnderscore);
+        if (sNumberSuffix.matches("\\d+"))
+          sTxNickName = getUniqueNickName(oConn, sTxSuggested.substring(0,iUnderscore)+String.valueOf(Integer.parseInt(sNumberSuffix)+1));
+        else
+          sTxNickName = getUniqueNickName(oConn, sTxSuggested+"_"+String.valueOf(new Date().getYear()));        
+      }
+    }
+    return sTxNickName;
+   } // getUniqueNickName
+  
   // **********************************************************
   // Public Constants
 

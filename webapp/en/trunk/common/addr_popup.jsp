@@ -136,7 +136,7 @@
 <HTML>
 <HEAD>
   <TITLE>hipergate :: Address</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
   <!--
     top.frames['<%=request.getParameter("visible_frame")%>'].document.forms['<%=request.getParameter("visible_form")%>'].divField.value = '<%=sResult%><br><a href="javascript:hideDiv()">Close</a>';
 <%  if (sErrMsg.length()>0) out.write(    "open('" + sErrMsg + "');\n"); %>

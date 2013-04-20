@@ -65,19 +65,19 @@
 %>
 <!-- +-----------------------+ -->
 <!-- | Listado de Referencia | -->
-<!-- | ¨ KnowGate 2003-2008  | -->
+<!-- |   KnowGate 2003-2008  | -->
 <!-- +-----------------------+ -->
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
     <TITLE>hipergate :: Reference Listing</TITLE>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>    
-    <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" SRC="../javascript/findit.js"></SCRIPT> 
-    <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>    
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/findit.js"></SCRIPT> 
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript">
       <!--
       var eof;
 

@@ -50,7 +50,7 @@
   DBSubset oWrkAs = new DBSubset (DB.k_workareas, DB.gu_workarea+","+DB.nm_workarea, DB.id_domain+"=?", 50);
   DBSubset oCmmds = new DBSubset (DB.k_lu_job_commands, DB.id_command+","+DB.tx_command, DB.nm_class+" LIKE 'com.knowgate.scheduler.events.%'", 50);
   DBSubset oApps = new DBSubset (DB.k_apps, DB.id_app+","+DB.nm_app, null, 50);
-  DBSubset oEvents = new DBSubset (DB.k_events, DB.id_event+","+DB.bo_active+","+DB.id_command+","+DB.id_app+","+DB.gu_workarea+","+DB.de_event, DB.id_domain+"=? ORDER BY 1", 100);
+  DBSubset oEvents = new DBSubset (DB.k_events, DB.id_event+","+DB.bo_active+","+DB.id_command+","+DB.id_app+","+DB.gu_workarea+","+DB.de_event+","+DB.fixed_rate, DB.id_domain+"=? ORDER BY 1", 100);
   int nEvents = 0;
   int iCmmds = 0;
   int nWrkAs = 0;
@@ -81,8 +81,8 @@
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
 </HEAD>
 <BODY TOPMARGIN="8" MARGINHEIGHT="8">
   <%@ include file="../common/header.jspf" %>
@@ -103,7 +103,12 @@
 <%
   for (int e=0; e<nEvents; e++) {
     String s = String.valueOf(e);
-    out.write("<DIV ID=\"div_"+s+"\"><TABLE><TR><TD CLASS=\"textplain\">Active</TD><TD CLASS=\"textplain\">Identifier</TD><TD CLASS=\"textplain\">Work Area</TD><TD CLASS=\"textplain\">Application</TD><TD CLASS=\"textplain\">Command</TD><TD CLASS=\"textplain\">Description</TD></TR><TR><TD ALIGN=\"center\" CLASS=\"textplain\"><INPUT TYPE=\"checkbox\" VALUE=\"1\" NAME=\"chk_"+s+"\" ");
+    int r;
+    if (oEvents.isNull(6,e))
+      r = 0;
+    else
+      r = oEvents.getInt(6,e);
+    out.write("<DIV ID=\"div_"+s+"\"><TABLE><TR><TD CLASS=\"textplain\">Active</TD><TD CLASS=\"textplain\">Identifier</TD><TD CLASS=\"textplain\">Work Area</TD><TD CLASS=\"textplain\">Application</TD><TD CLASS=\"textplain\">Command</TD><TD CLASS=\"textplain\">[~Ejecuci&oacute;n Peri&oacute;dica~]</TD><TD CLASS=\"textplain\">Description</TD></TR><TR><TD ALIGN=\"center\" CLASS=\"textplain\"><INPUT TYPE=\"checkbox\" VALUE=\"1\" NAME=\"chk_"+s+"\" ");
     if (oEvents.isNull(1,e)) out.write(" CHECKED=\"checked\""); else out.write(oEvents.getShort(1,e)==(short)1 ? " CHECKED=\"checked\"" : "");
     out.write("></TD><TD><INPUT TABINDEX=\"-1\" TYPE=\"text\" MAXLENGTH=\"64\" VALUE=\""+oEvents.getString(0,e)+"\" NAME=\"id_"+s+"\" onfocus=\"document.forms[0].wrk_"+s+".focus()\"></TD><TD><SELECT NAME=\"wrk_"+s+"\">");
     for (int w=0; w<nWrkAs; w++) out.write("<OPTION VALUE=\""+oWrkAs.getString(0,w)+"\">"+oWrkAs.getString(1,w)+"</OPTION>");
@@ -115,15 +120,21 @@
     }
     out.write("</SELECT></TD><TD><SELECT NAME=\"cmd_"+s+"\">");    
     for (int c=0; c<iCmmds; c++) out.write("<OPTION VALUE=\""+oCmmds.getString(0,c)+"\" "+(oCmmds.getString(0,c).equals(oEvents.getString(2,e)) ? "SELECTED=\"selected\"" : "")+">"+oCmmds.getString(1,c)+"</OPTION>");
-    out.write("</SELECT></TD><TD><INPUT TYPE=\"text\" MAXLENGTH=\"254\" SIZE=\"50\" NAME=\"de_"+s+"\" VALUE=\""+oEvents.getStringNull(5,e,"")+"\"></TD></TR></TABLE></DIV>\n");
+    out.write("</SELECT></TD>");
+    out.write("<TD><SELECT NAME=\"rt_"+s+"\"><OPTION VALUE=\"0\""+(r==0 ? " SELECTED" : "")+">[~Sin ejecuci&oacute;n peri&oacute;dica~]</OPTION><OPTION VALUE=\"1\""+(r==1 ? " SELECTED" : "")+">[~Cada segundo~]</OPTION><OPTION VALUE=\"10\""+(r==10 ? " SELECTED" : "")+">[~Cada 10 segundos~]</OPTION><OPTION VALUE=\"60\""+(r==60 ? " SELECTED" : "")+">[~Cada minuto~]</OPTION><OPTION VALUE=\"300\""+(r==300 ? " SELECTED" : "")+">[~Cada 5 minutos~]</OPTION><OPTION VALUE=\"600\""+(r==600 ? " SELECTED" : "")+">[~Cada 10 minutos~]</OPTION><OPTION VALUE=\"3600\""+(r==3600 ? " SELECTED" : "")+">[~Cada hora~]</OPTION><OPTION VALUE=\"86400\""+(r==86400 ? " SELECTED" : "")+">[~Cada dia~]</OPTION></SELECT></TD>");
+    out.write("<TD><INPUT TYPE=\"text\" MAXLENGTH=\"254\" SIZE=\"50\" NAME=\"de_"+s+"\" VALUE=\""+oEvents.getStringNull(5,e,"")+"\"></TD>");
+    out.write("</TR></TABLE></DIV>\n");
   } // next
-  out.write("<DIV><TABLE><TR><TD CLASS=\"textplain\">Active</TD><TD CLASS=\"textplain\">Identifier</TD><TD CLASS=\"textplain\">Work Area</TD><TD CLASS=\"textplain\">Application</TD><TD CLASS=\"textplain\">Command</TD><TD CLASS=\"textplain\">Description</TD></TR><TR><TD ALIGN=\"center\"><INPUT TYPE=\"checkbox\" VALUE=\"1\" NAME=\"chk\" CHECKED=\"checked\"></TD><TD><INPUT TYPE=\"text\" MAXLENGTH=\"64\" VALUE=\"\" NAME=\"id\" STYLE=\"text-transform:lowercase\"></TD><TD><SELECT NAME=\"wrk\"><OPTION VALUE=\"\">All</OPTION>");
+  out.write("<DIV><TABLE><TR><TD CLASS=\"textplain\">Active</TD><TD CLASS=\"textplain\">Identifier</TD><TD CLASS=\"textplain\">Work Area</TD><TD CLASS=\"textplain\">Application</TD><TD CLASS=\"textplain\">Command</TD><TD CLASS=\"textplain\">[~Ejecuci&oacute;n Peri&oacute;dica~]</TD><TD CLASS=\"textplain\">Description</TD></TR><TR><TD ALIGN=\"center\"><INPUT TYPE=\"checkbox\" VALUE=\"1\" NAME=\"chk\" CHECKED=\"checked\"></TD><TD><INPUT TYPE=\"text\" MAXLENGTH=\"64\" VALUE=\"\" NAME=\"id\" STYLE=\"text-transform:lowercase\"></TD><TD><SELECT NAME=\"wrk\"><OPTION VALUE=\"\">All</OPTION>");
   for (int w=0; w<nWrkAs; w++) out.write("<OPTION VALUE=\""+oWrkAs.getString(0,w)+"\" "+(gu_workarea.equals(oWrkAs.getString(0,w)) ? "SELECTED=\"selected\"" : "")+">"+oWrkAs.getString(1,w)+"</OPTION>");
   out.write("</SELECT></TD><TD><SELECT NAME=\"app\">");
   for (int a=0; a<iApps; a++) out.write("<OPTION VALUE=\""+oApps.getString(0,a)+"\">"+oApps.getString(1,a)+"</OPTION>");
   out.write("</SELECT></TD><TD><SELECT NAME=\"cmd\">");
   for (int c=0; c<iCmmds; c++) out.write("<OPTION VALUE=\""+oCmmds.getString(0,c)+"\">"+oCmmds.getString(1,c)+"</OPTION>");  
-  out.write("</SELECT></TD><TD><INPUT TYPE=\"text\" MAXLENGTH=\"254\" SIZE=\"50\" NAME=\"de\"></TD></TR></TABLE></DIV>\n");
+  out.write("</SELECT></TD>");
+  out.write("<TD><SELECT NAME=\"rt\"><OPTION VALUE=\"0\">[~Sin ejecuci&oacute;n peri&oacute;dica~]</OPTION><OPTION VALUE=\"1\">[~Cada segundo~]</OPTION><OPTION VALUE=\"10\">[~Cada 10 segundos~]</OPTION><OPTION VALUE=\"60\">[~Cada minuto~]</OPTION><OPTION VALUE=\"300\">[~Cada 5 minutos~]</OPTION><OPTION VALUE=\"600\">[~Cada 10 minutos~]</OPTION><OPTION VALUE=\"3600\">[~Cada hora~]</OPTION><OPTION VALUE=\"86400\">[~Cada dia~]</OPTION></SELECT></TD>");
+  out.write("<TD><INPUT TYPE=\"text\" MAXLENGTH=\"254\" SIZE=\"50\" NAME=\"de\"></TD>");
+  out.write("</TR></TABLE></DIV>\n");
 %>
   <INPUT TYPE="submit" CLASS="pushbutton" VALUE="Save">
   </FORM>

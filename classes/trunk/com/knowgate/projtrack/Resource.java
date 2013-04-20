@@ -39,7 +39,6 @@ import java.sql.SQLException;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBBind;
-import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.acl.ACLUser;
 import com.knowgate.addrbook.Fellow;
 import com.knowgate.crm.Contact;

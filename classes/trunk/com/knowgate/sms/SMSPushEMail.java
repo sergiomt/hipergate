@@ -41,11 +41,9 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.Properties;
 
-import javax.mail.MessagingException;
+import com.oreilly.servlet.MailMessage;
 
 import com.knowgate.sms.SMSPush;
-
-import com.knowgate.hipermail.SendMail;
 
 public class SMSPushEMail extends SMSPush {
 
@@ -62,19 +60,13 @@ public class SMSPushEMail extends SMSPush {
   public SMSResponse push (SMSMessage oSms)
     throws IOException,SQLException,IllegalArgumentException,UnsupportedEncodingException {
 
-	try {
-	  SendMail.send(oMailProps, oSms.textBody(), oSms.subject(), "noreply@hipergate.org",
-	                "Hipergate SMS Test", "noreply@hipergate.org", new String[]{oSms.msisdnNumber()});
-	} catch (IllegalAccessException a) {
-      throw new IOException(a.getMessage(), a);
-    } catch (MessagingException m) {
-      throw new IOException(m.getMessage(), m);
-    } catch (ClassNotFoundException c) {
-      throw new IOException(c.getMessage(), c);
-    } catch (InstantiationException i) {
-      throw new IOException(i.getMessage(), i);
-    }
-    return new SMSResponse(oSms.subject(), new Date(), SMSResponse.ErrorCode.NONE, SMSResponse.StatusCode.POSITIVE_ACK, null);
+	  MailMessage oMail = new MailMessage();
+	  oMail.to(oSms.msisdnNumber());
+	  oMail.from("noreply@hipergate.org");
+	  oMail.setSubject("Hipergate SMS Test");
+	  oMail.getPrintStream().print(oSms.textBody());
+	  oMail.sendAndClose();
+      return new SMSResponse(oSms.subject(), new Date(), SMSResponse.ErrorCode.NONE, SMSResponse.StatusCode.POSITIVE_ACK, null);
   }	
 	
   public void close() throws IOException,SQLException { }

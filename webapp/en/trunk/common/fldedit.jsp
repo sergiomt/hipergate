@@ -86,14 +86,14 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: <%=sHeadStrip%></TITLE>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/layer.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/usrlang.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/layer.js"></SCRIPT>
   
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
   <!--
     // Posicion actual dentro de la lista de etiquetas de traduccion
     var iLabelIndex = -1;
@@ -136,8 +136,8 @@
     // --------------------------------------------------------
     
     function writePos() {
-      // [~//Escribir en una capa HTML la posicion actual dentro de la lista de etiquetas~]
-      var sInnerHTML = '<FONT CLASS="textplain"><B>' + String(iLabelIndex+1) + "/" + String (iMaxLabel+1) + '</B></FONT>'
+      // Escribir en una capa HTML la posicion actual dentro de la lista de etiquetas
+      var sInnerHTML = '<FONT CLASS="textplain"><B>' + String(iLabelIndex+1) + "/" + String (iMaxLabel+1) + '</B></FONT>';
       
       if (iLabelIndex>=0) {
         if (navigator.appName=="Microsoft Internet Explorer") {
@@ -177,7 +177,7 @@
   //-->
   </SCRIPT>
   
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
   <!--
     function validate() {
       
@@ -366,7 +366,7 @@
 		      out.write("<A HREF=\"#\" TITLE=\""+sAltTxt+"\" onclick=\"pressButton(document.images['"+sButton+"'],"+String.valueOf(i)+")\"><IMG ID=\""+sButton+"\" SRC=\"../skins/"+sSkin+"/"+sButton+".gif\" WIDTH=\"26\" HEIGHT=\"23\" BORDER=\"0\" VSPACE=\"3\" ALT=\""+sAltTxt+"\" oncontextmenu=\"return false;\"></A>");
 		    }
 		  %>
-		  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+		  <SCRIPT TYPE="text/javascript">
 		    <!--
 		    if ((navigator.appName=="Microsoft Internet Explorer") || (navigator.appCodeName=="Mozilla"))
 		      document.write('<DIV ID="trpos" CLASS="formfront" STYLE="position:relative;top:-28;left:330;width:40;height:10;"></DIV>');
@@ -409,7 +409,7 @@
     </TABLE>
   </FORM>
 </BODY>
-<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+<SCRIPT TYPE="text/javascript">
   <!--
     var frm = document.forms[0];
     <%    

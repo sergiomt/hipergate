@@ -56,6 +56,7 @@ public class SAXValidate extends DefaultHandler
    private static final String
            DEFAULT_PARSER = "org.apache.xerces.parsers.SAXParser";
    private boolean schemavalidate = false;
+   @SuppressWarnings("unused")
    private boolean valid;
 
    /**

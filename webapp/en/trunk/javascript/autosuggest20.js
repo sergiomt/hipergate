@@ -67,7 +67,7 @@ _bsn.AutoSuggest = function (fldID, param)
 	if (!this.oP.delay)										this.oP.delay = 500;
 	if (!this.oP.offsety)									this.oP.offsety = -5;
 	if (!this.oP.shownoresults)								this.oP.shownoresults = true;
-	if (!this.oP.noresults)									this.oP.noresults = "No matching results found";
+	if (!this.oP.noresults)									this.oP.noresults = "[~No se encontraron resultados~]";
 	if (!this.oP.maxheight && this.oP.maxheight !== 0)		this.oP.maxheight = 250;
 	if (!this.oP.cache && this.oP.cache != false)			this.oP.cache = true;
 	

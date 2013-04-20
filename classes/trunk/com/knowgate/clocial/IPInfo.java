@@ -5,8 +5,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.net.MalformedURLException;
 
-import java.sql.SQLException;
-
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
@@ -18,7 +16,6 @@ import com.knowgate.storage.Table;
 import com.knowgate.storage.Manager;
 import com.knowgate.storage.DataSource;
 import com.knowgate.storage.RecordDelegator;
-import com.knowgate.storage.StorageException;
 
 public class IPInfo extends RecordDelegator {
 

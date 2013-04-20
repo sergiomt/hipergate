@@ -178,11 +178,11 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Corporate Directory</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/getparam.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript">
     dynapi.library.setPath('../javascript/dynapi3/');
     dynapi.library.include('dynapi.api.DynLayer');
@@ -198,7 +198,7 @@
       menuLayer.setHTML(rightMenuHTML);
     }
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
     <!--
         var jsFellowId;
@@ -339,7 +339,7 @@
       // ------------------------------------------------------	
     //-->    
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
     <!--
 	function setCombos() {
 	  setCookie ("maxrows", "<%=iMaxRows%>");

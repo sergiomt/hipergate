@@ -1,27 +1,16 @@
 package com.knowgate.syndication.crawler;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ByteArrayInputStream;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.TreeSet;
-import java.util.ListIterator;
-import java.text.SimpleDateFormat;
 
 import java.sql.SQLException;
 
-import javax.jms.JMSException;
-import javax.naming.NamingException;
-
-import com.knowgate.debug.DebugFile;
 import com.knowgate.dataobjs.DB;
-import com.knowgate.clocial.MetaData;
 import com.knowgate.clocial.UserAccount;
 
 import com.knowgate.storage.Table;
-import com.knowgate.storage.Engine;
 import com.knowgate.storage.Record;
 import com.knowgate.storage.Manager;
 import com.knowgate.storage.DataSource;
@@ -38,9 +27,6 @@ import com.knowgate.syndication.crawler.SearchRunner;
 
 import com.sun.syndication.io.FeedException;
 import com.sun.syndication.fetcher.FetcherException;
-import com.sun.syndication.feed.synd.SyndEntryImpl;
-import com.sun.syndication.feed.synd.SyndContent;
-import com.sun.syndication.feed.synd.SyndContentImpl;
 
 public class EntrySearcher {
 
@@ -147,12 +133,10 @@ public class EntrySearcher {
 	    } // next
 	  } // fi
 	  
-	  oRetSet.sort("dt_published");
+	  oRetSet.sortDesc("dt_published");
 	  
   	} catch (InstantiationException ie) {
   	  throw new StorageException(ie.getMessage(), ie);
-  	} catch (JMSException je) {
-  	  throw new StorageException(je.getMessage(), je);
   	} catch (SQLException se) {
   	  throw new StorageException(se.getMessage(), se);
   	} finally {
@@ -184,8 +168,6 @@ public class EntrySearcher {
   	  oRetSet.sort("nu_entries");
   	} catch (InstantiationException ie) {
   	  throw new StorageException(ie.getMessage(), ie);
-  	} catch (JMSException je) {
-  	  throw new StorageException(je.getMessage(), je);
   	}
     return oRetSet;
   } // referers
@@ -194,7 +176,6 @@ public class EntrySearcher {
   								 String sGuAcc, String sDateFormat,
   								 int iMaxResults, int iOffset, boolean bReloadXMLCache)
   	throws StorageException,InstantiationException,FeedException,FetcherException,IOException {
-    SimpleDateFormat oFmt = new SimpleDateFormat(sDateFormat==null ? "yyyy-MM-dd" : sDateFormat);
     String sRetVal = null;
     if (iMaxResults<=100 && iOffset==0 && !bReloadXMLCache) {
       Record oSs = oStorMngr.load(DB.k_syndsearches, sQry);
@@ -210,11 +191,7 @@ public class EntrySearcher {
 	      // Update last request and number of requests
 	      oSs.put("dt_last_request", new Date());
 	      oSs.put("nu_requests", oSs.getInt("nu_requests")+1);
-		  try {
-		    oStorMngr.store(oSs, false);
-  		  } catch (JMSException je) {
-  	  		throw new StorageException(je.getMessage(), je);
-  		  }
+		  oStorMngr.store(oSs, false);
       	}
       }
     } // fi
@@ -231,7 +208,6 @@ public class EntrySearcher {
   								 String sDateFormat, int iMaxResults,
   								 int iOffset, boolean bReloadXMLCache)
   	throws StorageException,InstantiationException,FeedException,FetcherException,IOException {
-    SimpleDateFormat oFmt = new SimpleDateFormat(sDateFormat==null ? "yyyy-MM-dd" : sDateFormat);
     String sRetVal = null;
 	if (null==sRetVal || bReloadXMLCache) {
       RecordSet oRst = search(oStorMngr, aQrys, aParams, sGuAcc, iMaxResults);

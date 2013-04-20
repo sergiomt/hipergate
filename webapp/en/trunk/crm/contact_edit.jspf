@@ -177,19 +177,19 @@
 <HEAD>
   <TITLE>hipergate :: Edit Individual</TITLE>
 
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" >
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" >
     dynapi.library.setPath('../javascript/dynapi3/');
     dynapi.library.include('dynapi.api.DynLayer');
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
       <!--
 
 				var zone_salesman = new Object();
@@ -467,9 +467,9 @@
       } // validate()
       //-->
     </SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/floatdiv.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/floatdiv.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript">
       <!--
 
         function setCombos() {
@@ -484,7 +484,7 @@
           setCombo(frm.sel_passport,"<%=oCont.getStringNull(DB.tp_passport,"")%>");
           setCombo(frm.sel_geozone,"<%=oCont.getStringNull(DB.gu_geozone,"")%>");
           setCombo(frm.sel_salesman,"<%=oCont.getStringNull(DB.gu_sales_man,"")%>");
-          setCombo(frm.id_nationality,"<%=oCont.getStringNull(DB.id_nationality,"")%>");
+          setCombo(frm.id_nationality,"<%=oCont.getStringNull(DB.id_nationality,"").trim()%>");
         } // setCombos()
         
         var menuLayer,addrLayer;

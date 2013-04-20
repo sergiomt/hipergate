@@ -1,6 +1,5 @@
 package com.knowgate.scheduler;
 
-import java.sql.DriverManager;
 import java.sql.SQLException ;
 import java.sql.Statement;
 import java.sql.ResultSet;
@@ -13,8 +12,6 @@ import java.io.FileNotFoundException;
 import java.util.Properties;
 import java.util.LinkedList;
 import java.util.ListIterator;
-
-import javax.mail.MessagingException;
 
 import com.knowgate.jdc.JDCConnection;
 

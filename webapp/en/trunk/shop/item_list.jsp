@@ -111,12 +111,12 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/simplevalidations.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
         var jsProductId;
         var jsProductNm;
@@ -327,7 +327,7 @@
       // ------------------------------------------------------	
     //-->    
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
     <!--
 	var jsCategoriesLoaded = false;
 
@@ -564,7 +564,7 @@
     <!-- DynFloat -->
     <DIV id="divHolder" style="width:100px;height:20px;z-index:200;visibility:hidden;position:absolute;top:31px;left:0px"></DIV>
     <FORM name="divForm"><input type="hidden" name="divField" value=""></FORM>
-    <SCRIPT LANGUAGE="JavaScript" src="../javascript/dynfloat.js"></SCRIPT>    
+    <SCRIPT src="../javascript/dynfloat.js"></SCRIPT>    
     <!-- DynFloat -->
 
     <!-- RightMenuBody -->

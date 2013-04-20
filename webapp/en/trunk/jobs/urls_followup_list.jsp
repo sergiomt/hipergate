@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.io.File,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.io.File,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBCommand,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
@@ -89,7 +89,9 @@
 
   // **********************************************
 
-  JDCConnection oConn = null;  
+  JDCConnection oConn = null;
+  PreparedStatement oStmt;
+  ResultSet oRSet;  
   boolean bIsGuest = true;
   
   try {
@@ -98,7 +100,64 @@
     
     oConn = GlobalDBBind.getConnection("urllisting");  
     
-    
+    // Limpieza adhoc de URLs txungas
+    if (request.getParameter("cleanup")!=null) {
+
+      DBCommand.executeUpdate(oConn, "DELETE FROM k_job_atoms_clicks WHERE gu_url in (SELECT gu_url FROM k_urls WHERE url_addr LIKE '%&pg_atom=%')");
+      DBCommand.executeUpdate(oConn, "DELETE FROM k_urls WHERE url_addr like '%&pg_atom=%'");
+      DBCommand.executeUpdate(oConn, "DELETE FROM k_job_atoms_clicks WHERE gu_url IN (SELECT gu_url FROM k_urls WHERE length(url_addr)<16 OR url_addr IS NULL)");
+      DBCommand.executeUpdate(oConn, "DELETE FROM k_urls WHERE length(url_addr)<16 OR url_addr IS NULL");
+      
+		  DBSubset oDist = new DBSubset ("k_urls", "DISTINCT(url_addr),gu_workarea", null, 500);
+		  int iDist = oDist.load(oConn);
+		  String sGuid;
+		  
+      for (int u=0; u<iDist; u++) {
+		    oStmt = oConn.prepareStatement("SELECT gu_url FROM k_urls WHERE gu_workarea=? AND url_addr=?");
+		    oStmt.setString(1, oDist.getString(1,u));
+		    oStmt.setString(2, oDist.getString(0,u));
+		    oRSet = oStmt.executeQuery();
+		    if (oRSet.next())
+		      sGuid = oRSet.getString(1);
+		    else
+		    	sGuid = null;
+		    oRSet.close();
+		    oStmt.close();
+      
+        int jSesId = oDist.getString(0,u).indexOf(";jsessionid="); 
+        if (jSesId>0) {
+		    	oStmt = oConn.prepareStatement("UPDATE k_job_atoms_clicks SET gu_url=? WHERE gu_job IN (SELECT gu_job FROM k_jobs WHERE gu_workarea=?) AND gu_url IN (SELECT gu_url FROM k_urls WHERE gu_workarea=? AND url_addr=? OR url_addr LIKE ?)");
+		    	oStmt.setString(1, sGuid);
+		    	oStmt.setString(2, oDist.getString(1,u));
+		    	oStmt.setString(3, oDist.getString(1,u));
+		    	oStmt.setString(4, oDist.getString(0,u));
+		    	oStmt.setString(5, oDist.getString(0,u).substring(0,jSesId)+"%");	
+		    	oStmt.executeUpdate();
+		    	oStmt.close();
+		    	oStmt = oConn.prepareStatement("DELETE FROM k_urls WHERE gu_workarea=? AND gu_url<>? AND url_addr=? OR url_addr LIKE ?");
+		    	oStmt.setString(1, oDist.getString(1,u));
+		    	oStmt.setString(2, sGuid);
+		    	oStmt.setString(3, oDist.getString(0,u));
+		    	oStmt.setString(4, oDist.getString(0,u).substring(0,jSesId)+"%");
+		    	oStmt.executeUpdate();
+		    	oStmt.close();
+		    } else {
+		    	oStmt = oConn.prepareStatement("UPDATE k_job_atoms_clicks SET gu_url=? WHERE gu_job IN (SELECT gu_job FROM k_jobs WHERE gu_workarea=?) AND gu_url IN (SELECT gu_url FROM k_urls WHERE url_addr=?)");
+		    	oStmt.setString(1, sGuid);
+		    	oStmt.setString(2, oDist.getString(1,u));
+		    	oStmt.setString(3, oDist.getString(0,u));
+		    	oStmt.executeUpdate();
+		    	oStmt.close();
+		    	oStmt = oConn.prepareStatement("DELETE FROM k_urls WHERE gu_workarea=? AND gu_url<>? AND url_addr=?");
+		    	oStmt.setString(1, oDist.getString(1,u));
+		    	oStmt.setString(2, sGuid);
+		    	oStmt.setString(3, oDist.getString(0,u));
+		    	oStmt.executeUpdate();
+		    	oStmt.close();
+		  	}
+      }     // next
+    } // fi
+
     if (sFind.length()==0) {
 
       oUrls = new DBSubset (BASE_TABLE, COLUMNS_LIST,
@@ -136,12 +195,12 @@
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
         // Global variables for moving the clicked row to the context menu
         
@@ -245,7 +304,7 @@
         // ------------------------------------------------------	
     //-->    
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
     <!--
 	    function setCombos() {
 	      setCookie ("maxrows", "<%=iMaxRows%>");
@@ -344,7 +403,7 @@
 %>            
             <TR HEIGHT="14">
               <TD CLASS="strip<% out.write (sStrip); %>" ALIGN="right"><A HREF="<%=sUrlAd%>" TARGET="<%=sUrlGu%>"><IMG SRC="../images/images/viewlink.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Open target URL"></A></TD>
-              <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<A HREF="#" onclick="modifyUrl('<%=sUrlGu%>','<%=oUrls.getStringNull(2,i,"").replace((char)39,'´')%>')" ><%=sUrlTl.length()==0 ? sUrlAd : sUrlTl%></A></TD>
+              <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<A HREF="#" onclick="modifyUrl('<%=sUrlGu%>','<%=oUrls.getStringNull(2,i,"").replace((char)39,'´').replace((char)34,'´')%>')" ><%=sUrlTl.length()==0 ? sUrlAd : sUrlTl%></A></TD>
               <TD CLASS="strip<% out.write (sStrip); %>" ALIGN="right">&nbsp;<%=sUrlNu%></TD>
               <TD CLASS="strip<% out.write (sStrip); %>" ALIGN="center">&nbsp;<%=sUrlDt%></TD>
               <TD CLASS="strip<% out.write (sStrip); %>" ALIGN="center">&nbsp;<A HREF="url_followup_list.jsp?gu_url=<%=sUrlGu%>&gu_workarea=<%=gu_workarea%>&selected=<%=request.getParameter("selected")%>&selected=<%=request.getParameter("subselected")%>">Detail</TD>

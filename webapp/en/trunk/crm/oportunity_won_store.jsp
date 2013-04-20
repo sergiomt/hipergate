@@ -79,7 +79,7 @@
 %>
 <HTML>
 	<HEAD>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
 		<SCRIPT language="JavaScript" type="text/javascript">
 		  <!--
 		    function closeWindow() {

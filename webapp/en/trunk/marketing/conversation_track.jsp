@@ -1,10 +1,7 @@
-<%@ page import="java.text.SimpleDateFormat,java.net.URLDecoder,java.util.LinkedList,java.util.ListIterator,java.io.IOException,java.io.File,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.workareas.FileSystemWorkArea,com.sun.syndication.feed.synd.*,com.knowgate.syndication.FeedEntry,com.knowgate.syndication.fetcher.FeedReader" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
-<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
+<%@ page import="java.text.SimpleDateFormat,java.net.URL,java.net.URLDecoder,java.io.IOException,java.io.File,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.storage.*,com.knowgate.clocial.Domain,com.knowgate.clocial.UserAccount,com.knowgate.syndication.crawler.EntrySearcher,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.debug.DebugFile" language="java" session="false" contentType="text/html;charset=UTF-8" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><jsp:useBean id="GlobalNoSQLStore" scope="application" class="com.knowgate.storage.Manager"/><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 
 /*  
-  Copyright (C) 2003-2010  Know Gate S.L. All rights reserved.
-                           C/Oña, 107 1º2 28050 Madrid (Spain)
+  Copyright (C) 2003-2012 Know Gate S.L. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -34,39 +31,36 @@
   if not, visit http://www.hipergate.org or mail to info@hipergate.org
 */ 
 
+  if (autenticateSession(GlobalDBBind, request, response)<0) return;
+
+  final String PAGE_NAME = "activity_audience";
+
   response.addHeader ("Pragma", "no-cache");
   response.addHeader ("cache-control", "no-store");
   response.setIntHeader("Expires", 0);
 
-  final String BASE_TABLE = "k_syndentries b";
-  final String COLUMNS_LIST = "b.uri_entry,b.id_type,b.gu_feed,b.dt_published,b.dt_modified,b.gu_contact,b.nm_author,b.tl_entry,b.de_entry,b.url_addr,b.nu_influence";
-
   final String sLanguage = getNavigatorLanguage(request);  
   final String sSkin = getCookie(request, "skin", "xp");
-  final String sBackTypeKey = GlobalDBBind.getProperty("backtypekey","");
 
   final String id_domain = getCookie(request,"domainid","");
   final String gu_workarea = getCookie(request,"workarea","");
-
+  final String id_user = getCookie(request, "userid", "");
   final String sFind = nullif(request.getParameter("find"),"");
   
   // **********************************************
 
+  DebugFile.writeln("Begin conversation track");
+  
   SimpleDateFormat oFmt = new SimpleDateFormat("EEE dd MMM HH:mm");
-  JDCConnection oConn = null;  
-  DBSubset oEntries = new DBSubset (BASE_TABLE, COLUMNS_LIST, DB.id_domain+"=? AND "+DB.gu_workarea+"=? AND "+DB.tx_query+"=? ORDER BY "+DB.dt_published+" DESC", 500);
   int iEntryCount = 0;
-  LinkedList oNewEntries = new LinkedList<FeedEntry>();
-  ListIterator oIter;
-  SyndEntryImpl oEntr;
-  int iMaxRows = 10;
+  int iMaxRows = 100;
   int iSkip = 0;
 
   try {  
     if (request.getParameter("maxrows")!=null)
       iMaxRows = Integer.parseInt(request.getParameter("maxrows"));
     else 
-      iMaxRows = Integer.parseInt(getCookie(request, "maxrows", "10"));
+      iMaxRows = Integer.parseInt(getCookie(request, "maxrows", "100"));
   }
   catch (NumberFormatException nfe) { iMaxRows = 100; }
   
@@ -77,58 +71,57 @@
     
   if (iSkip<0) iSkip = 0;
 
-  // **********************************************
-
+  JDCConnection oConn = null;
+  DataSource oDts = null;
+  RecordSet oRecs = null;
+  
   try {
-
-    FileSystemWorkArea oFswa = new FileSystemWorkArea(GlobalDBBind.getProperties());
-    oFswa.mkstorpath (Integer.parseInt(id_domain), gu_workarea, "cache"+File.separator+"syndication");
-    FeedReader oFrdr = new FeedReader(oFswa.getstorpath(GlobalDBBind.getProperties(),Integer.parseInt(id_domain), gu_workarea)+File.separator+"cache"+File.separator+"syndication");
-    
-    if (sFind.length()>0) {
-      SyndFeed oFeed = oFrdr.retrieveFeed("http://backtweets.com/search.rss?q="+Gadgets.URLEncode(sFind));
-      
-      oConn = GlobalDBBind.getConnection("entrylisting");  
-      
-      oEntries.setMaxRows(iMaxRows);
-      iEntryCount = oEntries.load (oConn, new Object[]{new Integer(id_domain),gu_workarea,sFind}, iSkip);
-      
-	    oIter = oFeed.getEntries().listIterator();
-		  while (oIter.hasNext()) {
-		    oEntr = (SyndEntryImpl) oIter.next();
-		    if (oEntries.find(0,oEntr.getUri())<0) {
-		      Integer oInfluence = null;
-		      if (sBackTypeKey.length()>0) {
-		  			try {
-		  			  String sScore = Gadgets.substrBetween(oFswa.readfilestr ("http://api.backtype.com/user/influencer_score.xml?user_name="+oEntr.getAuthor()+"&key="+sBackTypeKey, "UTF-8"), "<score>", "</score>");
-		  			  if (null!=sScore) oInfluence = new Integer(sScore);
-		        } catch (IOException ignore) {}
-		      } // fi
-		      oNewEntries.add(FeedEntry.store(oConn, Integer.parseInt(id_domain), gu_workarea, "backtype", null, sFind, oInfluence, oEntr));
-		    } //fi
-		  } // wend
-      
-      oConn.close("entrylisting"); 
+    if (!GlobalNoSQLStore.exists("k_domains",id_domain)) {
+			DebugFile.writeln("Begin new Domain "+id_domain);
+			oConn = GlobalDBBind.getConnection(PAGE_NAME,true);      
+      ACLDomain oAdm = new ACLDomain(oConn, Integer.parseInt(id_domain));
+      oConn.close(PAGE_NAME);
+      oConn = null;
+      oDts = GlobalNoSQLStore.getDataSource();
+      Domain oDom = new Domain(oDts);
+      oDom.putAll(oAdm);
+      GlobalNoSQLStore.store(oDom,true);
+      GlobalNoSQLStore.free(oDts);
+      oDts = null;
+      DebugFile.writeln("End new Domain "+id_domain);
     }
+    if (!GlobalNoSQLStore.exists("k_user_accounts",id_user)) {
+			oConn = GlobalDBBind.getConnection(PAGE_NAME,true);      
+      ACLUser oUsr = new ACLUser(oConn, id_user);
+      oConn.close(PAGE_NAME);
+      oConn = null;
+      oDts = GlobalNoSQLStore.getDataSource();
+      UserAccount oAcc = new UserAccount(oDts);
+      oAcc.putAll(oUsr);
+      oAcc.remove("gu_user");
+      oAcc.put("gu_account",oUsr.getString("gu_user"));
+      GlobalNoSQLStore.store(oAcc,true);
+      GlobalNoSQLStore.free(oDts);
+      oDts = null;
+    }
+    if (sFind.length()>0)
+      oRecs = EntrySearcher.search(GlobalNoSQLStore, Gadgets.removeChars(sFind,"'<>?*&(){}[]"), id_user, iMaxRows);
   }
-  catch (Exception e) {  
-    oEntries = null;
-    if (oConn!=null)
-      if (!oConn.isClosed())
-        oConn.close("entrylisting");
-    oConn = null;
+  catch (NullPointerException e) {
+    if (oConn!=null) if (!oConn.isClosed()) oConn.close();
+    if (null!=oDts) GlobalNoSQLStore.free(oDts);;
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title="+e.getClass().getName()+"&desc=" + e.getMessage() + "&resume=_back"));
     return;
   }
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript">
     <!--
        
       // ----------------------------------------------------
@@ -185,9 +178,8 @@
       <TABLE SUMMARY="Data" CELLSPACING="0" CELLPADDING="2">
         <TR>
           <TD ALIGN="left" COLSPAN="4">
-<%      if (sFind.length()>0) {
-
-    	  // 20. Paint Next and Previous Links
+<%      /*
+				if (sFind.length()>0) {
     
     	  if (iEntryCount>0) {
             if (iSkip>0) // If iSkip>0 then we have prev items
@@ -195,54 +187,45 @@
     
             if (!oEntries.eof())
               out.write("            <A HREF=\"conversation_track.jsp?id_domain=" + id_domain + "&skip=" + String.valueOf(iSkip+iMaxRows) + "&find=" + sFind + "&selected=" + request.getParameter("selected") + "&subselected=" + request.getParameter("subselected") + "\" CLASS=\"linkplain\">Next&nbsp;&gt;&gt;</A>");
-	  } } // fi (iEntryCount)
+	  } } */
 %>
           </TD>
         </TR>
         <TR>
-          <TD COLSPAN="2" CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>Author</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>Date</B></TD>
-          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>Influence</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>Entry</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>Origin</B></TD>
+          <!--<TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><B>Influence</B></TD>-->
 				</TR>
-<%      if (sFind.length()>0) {
-					oIter = oNewEntries.listIterator();
-					while (oIter.hasNext()) {
-					  FeedEntry oFntr = (FeedEntry) oIter.next();
-					  oEntr = oFntr.getEntry();
-%>            
-            <TR>
-              <TD CLASS="textplain">
-              	<A HREF="<%=oEntr.getLink()%>" CLASS="linkplain"><B>@<%=oEntr.getAuthor()%></B></A>
-              </TD>
-              <TD CLASS="textplain">
-              	<%=oEntr.getDescription().getValue()%>
-              </TD>
-              <TD CLASS="textplain">
-              	<%=oFmt.format(oEntr.getPublishedDate())%>
-              </TD>
-              <TD CLASS="textplain" ALIGN="center">
-              	<% if (!oFntr.isNull(DB.nu_influence)) out.write(String.valueOf(oFntr.getInt(DB.nu_influence))); %>
-              </TD>
-            </TR>
-<%        } // wend
-					for (int e=0; e<iEntryCount; e++) {
-%>            
-            <TR>
-              <TD CLASS="textplain">
-              	<A HREF="<%=oEntries.getStringNull(9,e,"#")%>" CLASS="linkplain"><B>@<%=oEntries.getStringNull(6,e,"#")%></B></A>
-              </TD>
-              <TD CLASS="textplain">
-              	<%=oEntries.getStringNull(8,e,"#")%>
-              </TD>
-              <TD CLASS="textplain">
-              	<%=oEntries.getDateFormated(3,e,oFmt)%>
-              </TD>
-              <TD CLASS="textplain" ALIGN="center">
-              	<% if (!oEntries.isNull(10,e)) out.write(String.valueOf(oEntries.getInt(10,e))); %>
-              </TD>
-            </TR>
-<%        } // next
-				} %>
+<%    if (oRecs!=null) {
+			for (Record oRec : oRecs) { %>
+			  <TR><!--<%=oRec.getString("id_type","")%>-->
+    	    <TD CLASS="textplain" VALIGN="top" NOWRAP="nowrap"><A HREF="<%=oRec.getString("url_addr","#")%>"><%=oRec.getString("nm_author","").length()>0 ? oRec.getString("nm_author") : oRec.getString("url_domain")%></A></TD>
+    	    <TD CLASS="textplain" VALIGN="top"><%=oRec.isNull("dt_modified") ? oRec.getDate("dt_published") : oRec.getDate("dt_modified") %></TD>
+    	    <TD CLASS="textplain" VALIGN="top">
+    			<% if (oRec.getString("de_entry","").trim().length()>0) {
+    					if (oRec.getString("tl_entry","").trim().length()>0) {
+						    out.write("<A CLASS=\"linkplain\" HREF=\""+oRec.getString("url_addr","#")+"\">"+oRec.getString("tl_entry","")+"</A><BR/>");
+						    if (oRec.getString("de_entry","").startsWith(oRec.getString("tl_entry","")))
+						      out.write(oRec.getString("de_entry","").substring(oRec.getString("tl_entry","").length()));
+						    else
+						      out.write(oRec.getString("de_entry",""));
+						  } else {
+						    out.write(oRec.getString("de_entry",""));
+						  }
+						} else {
+						  out.write("<A CLASS=\"linkplain\" HREF=\""+oRec.getString("url_addr","#")+"\">"+oRec.getString("tl_entry","")+"</A>");
+						}
+						if (oRec.getString("tx_content","").length()>0) { %>
+        		&#160;<div align="right" id="p{@id}"><img src="images/plusbox13.gif" width="13" height="13" alt="[+]" />&#160;<a href="#" style="text-decoration:none" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'" onclick="dojo.byId('p{@id}').style.display='none';dojo.byId('c{@id}').style.display='block'">read more&#8230;</a></div>
+    	  		<div id="c{@id}" style="display:none"><small><%=oRec.getString("tx_content")%></small>
+    				&#160;<img src="images/minusbox13.gif" width="13" height="13" alt="[-]" />&#160;<a href="#" style="text-decoration:none" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'" onclick="dojo.byId('c{@id}').style.display='none';dojo.byId('p{@id}').style.display='block'">hide contents</a></div>
+<%					} %>
+    	    	</TD>
+    	    	<TD></TD>
+			  </TR>
+<%    } } %>
       </TABLE>
     </FORM>
 </BODY>

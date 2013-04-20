@@ -60,25 +60,16 @@ public class StreamPipe {
 
     private static void pipe (InputStream in, OutputStream out, int bufferSize, boolean autoFlush)
       throws IOException {
-
-      if (DebugFile.trace) {
-        DebugFile.writeln("Begin StreamPipe.pipe()");
-      }
-
+    	
       int total = 0;
       byte[] buffer = new byte[bufferSize];
 
           int length;
           while ((length = in.read(buffer)) > 0) {
-            if (DebugFile.trace) DebugFile.writeln("OutputStream.write(byte[], 0, " + String.valueOf(length)+")");
               out.write(buffer, 0, length);
               if (autoFlush) out.flush();
               total += length;
           }
-
-      if (DebugFile.trace) {
-        DebugFile.writeln("End StreamPipe.pipe() : " + String.valueOf(total));
-      }
     } // pipe
 
     // -------------------------------------------------------------------------
@@ -161,9 +152,6 @@ final class PipeThread extends Thread {
     }
 
     public void run() {
-        if (DebugFile.trace) {
-          DebugFile.writeln("Begin StreamPipe.PipeThread.run()");
-        }
 
         int total = 0;
 
@@ -177,9 +165,5 @@ final class PipeThread extends Thread {
             }
 
         } catch(IOException ex) {  }
-
-        if (DebugFile.trace) {
-          DebugFile.writeln("End StreamPipe.PipeThread.run() : " + String.valueOf(total));
-        }
     }
 }

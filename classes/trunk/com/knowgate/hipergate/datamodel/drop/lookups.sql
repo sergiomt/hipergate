@@ -19,3 +19,5 @@ DROP TABLE k_lu_cont_types;
 DROP TABLE k_lu_prod_types;
 
 DROP TABLE k_lu_meta_attrs;
+
+DROP TABLE k_lu_first_names;

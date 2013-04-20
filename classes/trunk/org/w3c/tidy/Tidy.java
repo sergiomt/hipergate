@@ -1039,7 +1039,6 @@ public class Tidy implements java.io.Serializable {
         AttributeTable at = AttributeTable.getDefaultAttributeTable();
         if (at == null) return;
         TagTable tt = new TagTable();
-        if (tt == null) return;
         tt.setConfiguration(configuration);
         configuration.tt = tt;
         EntityTable et = EntityTable.getDefaultEntityTable();

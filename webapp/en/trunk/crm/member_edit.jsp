@@ -129,13 +129,13 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Edit Member of a List</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/email.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/usrlang.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/email.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
     <!--
       

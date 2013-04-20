@@ -33,10 +33,15 @@ package com.knowgate.acl;
 
 import java.security.AccessControlException;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Types;
 
 import java.util.Date;
 import java.util.ArrayList;
@@ -53,6 +58,8 @@ import com.knowgate.hipergate.Category;
 
 public class PasswordRecord extends DBPersist {
 
+  private static final long serialVersionUID = 5L;
+
   private String sRC4Key;
   
   private ArrayList<PasswordRecordLine> aRecordLines;
@@ -67,36 +74,82 @@ public class PasswordRecord extends DBPersist {
   	aRecordLines = new ArrayList<PasswordRecordLine>();
   	setKey(sKey);  	
   }
-
+  
   public void setKey (String sKey) throws NullPointerException {
     if (null==sKey) throw new NullPointerException("PasswordRecord.setKey() Key value may not be null");
     sRC4Key = sKey;
   }
 
-  public String getValueOf (String sLineId) {
-  	String sVal = null;
+  public Object getValueOf (String sLineId) throws ClassNotFoundException, IOException {
+  	Object oVal = null;
   	for (PasswordRecordLine rcl : aRecordLines) {
 	  if (rcl.getId().equals(sLineId)) {
-	  	sVal = rcl.getValue();
-	  	break;
+		switch (rcl.getType()) {
+		  case PasswordRecordLine.TYPE_BIN:
+			if (rcl.getFileName()==null)
+			  oVal = rcl.getBinaryValue();
+			else if (rcl.getFileName().equals("null"))
+			  oVal = rcl.getBinaryValue();
+			else {
+		      Class oCls = null;
+			  try {
+				  oCls = Class.forName(rcl.getFileName());
+			  } catch (ClassNotFoundException e) {
+				oVal = rcl.getBinaryValue();
+			  }
+			  if (oCls!=null)
+				oVal = rcl.getObjectValue();
+			}
+		    break;
+		  default:
+			oVal = rcl.getValue();
+			break;
+		}
+	  	if (oVal!=null) break;
 	  } // fi
   	} // next
-  	return sVal;
+  	return oVal;
   } // getValueOf
 
-  public void addLine(String sId, char cType, String sLabel) {
-    aRecordLines.add(new PasswordRecordLine(sId, cType, sLabel));
+  public PasswordRecordLine getLine (String sLineId) {
+    for (PasswordRecordLine rcl : aRecordLines) {
+	  if (rcl.getId().equals(sLineId))
+		return rcl;
+	} // next
+	return null;
+  } // getLine
+  
+  public PasswordRecordLine addLine(String sId, char cType, String sLabel) {
+	PasswordRecordLine aNewLine = new PasswordRecordLine(sId, cType, sLabel);
+	aRecordLines.add(aNewLine);
+	return aNewLine;
   }
 
-  public void addLine(String sId, char cType, String sLabel, String sValue) {
-    aRecordLines.add(new PasswordRecordLine(sId, cType, sLabel, sValue));
+  public PasswordRecordLine addLine(String sId, char cType, String sLabel, String sValue) {
+	PasswordRecordLine aNewLine = new PasswordRecordLine(sId, cType, sLabel, sValue);
+	aRecordLines.add(aNewLine);
+	return aNewLine;
+  }
+
+  public PasswordRecordLine addLine(String sId, char cType, String sLabel, byte[] aValue) {
+	PasswordRecordLine aNewLine = new PasswordRecordLine(sId, cType, sLabel);
+	aNewLine.setBinaryValue(sId, aValue);
+	aRecordLines.add(aNewLine);
+	return aNewLine;
+  }
+
+  public PasswordRecordLine addLine(String sId, String sLabel, Serializable oValue) throws IOException {
+	PasswordRecordLine aNewLine = new PasswordRecordLine(sId, PasswordRecordLine.TYPE_BIN, sLabel);
+	aNewLine.setObjectValue(oValue);
+	aRecordLines.add(aNewLine);
+	return aNewLine;
   }
   
   public ArrayList<PasswordRecordLine> lines() {
     return aRecordLines;
   }
   
-  protected void parse() {
+  protected void parse() throws ArrayIndexOutOfBoundsException,AccessControlException {
 
   	if (DebugFile.trace) {
   	  DebugFile.writeln("Begin Passwordrecord.parse()");
@@ -134,15 +187,20 @@ public class PasswordRecord extends DBPersist {
   	  	  } // fi # Password record
 
   	  	  for (int l=1; l<aLines.length; l++) {
-  	  	    String[] aLine = Gadgets.split(aLines[l],'|');
-  	  	    PasswordRecordLine oRecLin = new PasswordRecordLine(aLine[0],aLine[1].charAt(0),aLine[2]);
-  	  	    if (aLine[1].charAt(0)==PasswordRecordLine.TYPE_BIN) {
-  	  	      oRecLin.setFileName(Gadgets.substrBetween(aLine[3], "/", "/"));
-  	  	      oRecLin.setValue(aLine[1].charAt(0), aLine[3].substring(aLine[3].lastIndexOf('/')+1));
-  	  	    } else {
-  	  	      oRecLin.setValue(aLine[1].charAt(0), aLine[3]);
-  	  	    }
-  	  	    aRecordLines.add(oRecLin);
+  	  		if (aLines[l].trim().length()>0) {
+  	  	      String[] aLine = Gadgets.split(aLines[l],'|');
+  	  	      if (aLine.length<3)
+  	  	    	throw new ArrayIndexOutOfBoundsException("Parsing line "+String.valueOf(l)+" "+aLines[l]);
+  	  	      PasswordRecordLine oRecLin = new PasswordRecordLine(aLine[0],aLine[1].charAt(0),aLine[2]);
+  	  	      if (aLine[1].charAt(0)==PasswordRecordLine.TYPE_BIN) {
+  	  	    	int i2ndSlash = aLine[3].indexOf('/',1);    	  	    	  
+  	  	        oRecLin.setFileName(aLine[3].substring(1, i2ndSlash));
+  	  	        oRecLin.setValue(aLine[1].charAt(0), aLine[3].substring(++i2ndSlash));
+  	  	      } else {
+  	  	        oRecLin.setValue(aLine[1].charAt(0), aLine[3]);
+  	  	      }
+  	  	      aRecordLines.add(oRecLin);
+  	  		} //fi
   	  	  } // next
 
   	  	} // fi (aLines)
@@ -156,11 +214,24 @@ public class PasswordRecord extends DBPersist {
 
   public boolean load (JDCConnection oConn, Object[] aPK)
   	throws SQLException, AccessControlException {
-  	boolean bRetVal = super.load(oConn, aPK);
-  	aRecordLines.clear();
-  	if (bRetVal) {
-	  parse();
-  	} // fi  	
+	boolean bRetVal = false;
+	String sPK = null;
+  	if (aPK.length==1) {
+	  bRetVal = super.load(oConn, aPK);
+      aRecordLines.clear();
+	  if (bRetVal) parse();
+  	} else if (aPK.length==2) {
+  	  PreparedStatement oStmt = oConn.prepareStatement("SELECT "+DB.gu_pwd+" FROM "+DB.k_user_pwd+" WHERE "+DB.gu_user+"=? AND ("+DB.tl_pwd+"=? OR "+DB.id_pwd+"=?)");
+  	  oStmt.setObject(1, aPK[0], Types.CHAR);
+  	  oStmt.setObject(2, aPK[1], Types.CHAR);
+  	  oStmt.setObject(3, aPK[1], Types.CHAR);
+  	  ResultSet oRSet = oStmt.executeQuery();
+  	  if (oRSet.next())
+  	    sPK = oRSet.getString(1);
+  	  oRSet.close();
+  	  oStmt.close();
+  	  if (sPK!=null) bRetVal = load(oConn, new Object[]{sPK});
+  	}
   	return bRetVal;
   } // load
 

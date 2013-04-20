@@ -118,11 +118,11 @@
 %>
 <html lang="<%=sLanguage%>">
 <head>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT> 
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/usrlang.js"></SCRIPT> 
+  <SCRIPT TYPE="text/javascript">
     <!--
       function uploadImage() {
         window.open('wb_file_upload.jsp','wUploadImage','top=' + (screen.height-360)/2 + ',left=' + (screen.width-450)/2 + ',height=360,width=450');

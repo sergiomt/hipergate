@@ -54,7 +54,7 @@ CREATE VIEW v_contact_address_title AS
 SELECT b.*,l.gu_owner,l.id_section,l.pg_lookup,l.vl_lookup,l.tr_es,l.tr_en,tr_fr,tr_de,tr_it,tr_pt,tr_ja,tr_cn,tr_tw,tr_ca,tr_eu FROM v_contact_address b LEFT OUTER JOIN k_contacts_lookup l ON b.de_title=l.vl_lookup;
 
 CREATE VIEW v_contact_list AS
-SELECT c.gu_contact,CONCAT(COALESCE(c.tx_surname,''),', ',COALESCE(c.tx_name,'')) AS full_name,l.tr_es,l.tr_en,l.tr_fr,l.tr_de,l.tr_it,l.tr_pt,l.tr_ja,l.tr_cn,l.tr_tw,l.tr_ca,l.tr_eu,d.gu_company,d.nm_legal,c.nu_notes,c.nu_attachs,c.dt_modified, c.bo_private, c.gu_workarea, c.gu_writer, l.gu_owner,c.bo_restricted,c.gu_geozone,c.gu_sales_man,c.id_batch
+SELECT c.gu_contact,CONCAT(COALESCE(c.tx_surname,''),', ',COALESCE(c.tx_name,'')) AS full_name,l.tr_es,l.tr_en,l.tr_fr,l.tr_de,l.tr_it,l.tr_pt,l.tr_ja,l.tr_cn,l.tr_tw,l.tr_ca,l.tr_eu,d.gu_company,d.nm_legal,c.nu_notes,c.nu_attachs,c.dt_modified, c.bo_private, c.gu_workarea, c.gu_writer, l.gu_owner,c.bo_restricted,c.gu_geozone,c.gu_sales_man,c.id_batch,c.id_ref
 FROM k_contacts c LEFT OUTER JOIN k_companies d ON c.gu_company=d.gu_company LEFT OUTER JOIN k_contacts_lookup l ON l.vl_lookup=c.de_title AND l.gu_owner=c.gu_workarea
 WHERE (l.id_section='de_title' OR l.id_section IS NULL);
 

@@ -232,6 +232,9 @@
     
     String sAttrSet = oReq.getParameter("custom_attributes");
 
+    if (com.knowgate.debug.DebugFile.trace) 
+    	com.knowgate.debug.DebugFile.writeln("Begin storeAttributes("+sTable+","+sWrkA+","+sObjPK+","+sAttrSet+")");
+    
     java.sql.PreparedStatement oStmt;
     int iAttrs;
     String aAttrSet[];
@@ -277,6 +280,10 @@
     } // next()
     
     oStmt.close();
+
+    if (com.knowgate.debug.DebugFile.trace) 
+    	com.knowgate.debug.DebugFile.writeln("End storeAttributes()");
+
   } // storeAttributes     
 
   // -------------------------------------------------------------------------------------------------------

@@ -183,7 +183,7 @@ public class RecentContactsTab  extends GenericPortlet {
           if (oRSet.wasNull()) oXML.append("<work_phone/>"); else oXML.append("<work_phone><![CDATA["+oRSet.getString(6)+"]]></work_phone>");
 
           sStr = oRSet.getString(7);
-          if (oRSet.wasNull()) oXML.append("<tx_email/>"); else oXML.append("<tx_email>"+oRSet.getString(7)+"</tx_email>");
+          if (oRSet.wasNull()) oXML.append("<tx_email/>"); else oXML.append("<tx_email><![CDATA["+oRSet.getString(7)+"]]></tx_email>");
 
           oXML.append("</contact>");
 

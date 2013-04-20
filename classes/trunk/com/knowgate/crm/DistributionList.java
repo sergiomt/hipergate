@@ -45,7 +45,6 @@ import com.knowgate.jdc.JDCConnection;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBBind;
-import com.knowgate.dataobjs.DBKeySet;
 import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.dataobjs.DBPersist;
 
@@ -139,8 +138,10 @@ public class DistributionList extends DBPersist {
 	  if (null==sQrySpec) sQrySpec = "";
       if (sQrySpec.equals("peticiones"))
         sTableName = "v_oportunity_contact_address";
+      else if (sQrySpec.equals("contacts"))
+      	sTableName = DB.v_contact_address;
       else
-        sTableName = DB.k_member_address;
+    	sTableName = DB.k_member_address;
 
       QueryByForm oQBF = new QueryByForm(oConn, sTableName, "m", getStringNull(DB.gu_query,""));
 
@@ -218,6 +219,8 @@ public class DistributionList extends DBPersist {
     if (getShort(DB.tp_list)==TYPE_DYNAMIC) {
       if (sQrySpec.equals("peticiones"))
         sTableName = "v_oportunity_contact_address";
+      else if (sQrySpec.equals("contacts"))
+        sTableName = DB.v_contact_address;
       else
         sTableName = DB.k_member_address;
 
@@ -303,6 +306,8 @@ public class DistributionList extends DBPersist {
     if (getShort(DB.tp_list)==TYPE_DYNAMIC) {
       if (sQrySpec.equals("peticiones"))
         sTableName = "v_oportunity_contact_address";
+      else if (sQrySpec.equals("contacts"))
+        sTableName = DB.v_contact_address;
       else
         sTableName = DB.k_member_address;
 
@@ -390,6 +395,8 @@ public class DistributionList extends DBPersist {
     if (getShort(DB.tp_list)==TYPE_DYNAMIC) {
       if (sQrySpec.equals("peticiones"))
         sTableName = "v_oportunity_contact_address";
+      else if (sQrySpec.equals("contacts"))
+          sTableName = DB.v_contact_address;
       else
         sTableName = DB.k_member_address;
 
@@ -475,6 +482,8 @@ public class DistributionList extends DBPersist {
 	    if (null==sQrySpec) sQrySpec = "";
         if (sQrySpec.equals("peticiones"))
           sTableName = "v_oportunity_contact_address";
+        else if (sQrySpec.equals("contacts"))
+            sTableName = DB.v_contact_address;
         else
           sTableName = DB.k_member_address;
 
@@ -769,6 +778,8 @@ public class DistributionList extends DBPersist {
 
       if (sQrySpec.equals("peticiones"))
         sTableName = "v_oportunity_contact_address";
+      else if (sQrySpec.equals("contacts"))
+        sTableName = DB.v_contact_address;
       else
         sTableName = DB.k_member_address;
 
@@ -864,6 +875,8 @@ public class DistributionList extends DBPersist {
 
       if (sQrySpec.equals("peticiones"))
         sTableName = "v_oportunity_contact_address";
+      else if (sQrySpec.equals("contacts"))
+        sTableName = DB.v_contact_address;
       else
         sTableName = DB.k_member_address;
 
@@ -947,6 +960,8 @@ public class DistributionList extends DBPersist {
 
       if (sQrySpec.equals("peticiones"))
         sTableName = "v_oportunity_contact_address";
+      else if (sQrySpec.equals("contacts"))
+        sTableName = DB.v_contact_address;
       else
         sTableName = DB.k_member_address;
 
@@ -1129,6 +1144,8 @@ public class DistributionList extends DBPersist {
 
       if (sQrySpec.equals("peticiones"))
         sTableName = "v_oportunity_contact_address";
+      else if (sQrySpec.equals("contacts"))
+        sTableName = DB.v_contact_address;
       else
         sTableName = DB.k_member_address;
 

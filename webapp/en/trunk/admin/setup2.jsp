@@ -52,11 +52,11 @@
 %><HTML>
 <HEAD>
   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript">
   <!--
   
     function setCombos() {
@@ -68,8 +68,6 @@
       frm.driver.options.selectedIndex = (win ? 2 : 0);      
       frm.schema.value = (win ? "dbo" : "");
       frm.temp.options.selectedIndex = (win ? 2 : 0);
-      if (frm.storage.value.length==0) frm.storage.value = (win ? "C:\\ARCHIV~1\\Tomcat\\storage" : "/opt/hipergate/storage");
-      if (frm.workareasput.value.length==0) frm.workareasput.value = (win ? "C:\\ARCHIV~1\\Tomcat\\webapps\\hipergate\\workareas" : "/opt/apache-tomcat/webapps/hipergate/workareas");
 <%
       Properties oProfile = new Properties();
       String sCnfFilePath = Gadgets.chomp(Environment.getEnvVar("KNOWGATE_PROFILES"),java.io.File.separator)+sCnf+".cnf";
@@ -77,6 +75,8 @@
       try {
         File oFile = new File(sCnfFilePath);
         if (oFile.exists()) {
+
+          out.write("      // found properties file "+sCnfFilePath+"\n");
         
           FileInputStream oFileStream = new FileInputStream(oFile);
   
@@ -103,7 +103,7 @@
                 iSlash = oProfile.getProperty("dburl").toLowerCase().indexOf("database=");
                 if (iSlash>0) {
                   iBlash = oProfile.getProperty("dburl").indexOf(";", iSlash);
-  		if (iBlash>0)
+  		            if (iBlash>0)
                     out.write("      frm.database.value=\"" + oProfile.getProperty("dburl").substring(iSlash+1,iBlash).trim() + "\";\n");
                   else
                     out.write("      frm.database.value=\"" + oProfile.getProperty("dburl").substring(iSlash+1).trim() + "\";\n");
@@ -116,11 +116,11 @@
             out.write("      frm.schema.value=\"" + oProfile.getProperty("schema") + "\";\n");
   
           if (null!=oProfile.getProperty("dburl")) {
-  	  String sServerIP = Gadgets.getFirstMatchSubStr(oProfile.getProperty("dburl"),"[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+");
+  	        String sServerIP = Gadgets.getFirstMatchSubStr(oProfile.getProperty("dburl"),"[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+");
             if (sServerIP!=null)   
               out.write("      frm.server.value=\"" + sServerIP + "\";\n");
   
-  	  String sPortNum = Gadgets.getFirstMatchSubStr(oProfile.getProperty("dburl"),"[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+:[0-9]+.*");
+  	        String sPortNum = Gadgets.getFirstMatchSubStr(oProfile.getProperty("dburl"),"[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+:[0-9]+.*");
             if (sPortNum!=null) {
               sPortNum = sPortNum.substring(sPortNum.indexOf(":")+1);
               int nPortLen = 0;
@@ -135,10 +135,10 @@
               out.write("       if (frm.default_port.selectedIndex==0) { \n");
               out.write("         frm.alt_port.value = \""+sPortNum+"\"; }\n");
             } else {
-  	    out.write("         frm.default_port.options.selectedIndex = (win ? 3 : 2);\n");        
+  	          out.write("         frm.default_port.options.selectedIndex = (win ? 3 : 2);\n");        
             }
           } else {
-  	    out.write("         frm.default_port.options.selectedIndex = (win ? 3 : 2);\n");
+  	        out.write("         frm.default_port.options.selectedIndex = (win ? 3 : 2);\n");
           }// fi (dburl)
           
           if (null!=oProfile.getProperty("dbuser"))
@@ -156,9 +156,18 @@
           if (null!=oProfile.getProperty("workareasget"))
             out.write("      frm.workareasget.value=\"" + oProfile.getProperty("workareasget",sDefWrkArGet) + "\";\n");
   
+  				out.write("      // sDefWrkArPut="+sDefWrkArPut+"\n");
+  				out.write("      // oProfile.getProperty(workareasput="+oProfile.getProperty("workareasput")+"\n");
+  				out.write("      // Gadgets.escapeChars(oProfile.getProperty(workareasput)="+Gadgets.escapeChars(oProfile.getProperty("workareasput"),"\\",'\\')+"\n");
+
+  				out.write("      // oProfile.getProperty(storage="+oProfile.getProperty("storage")+"\n");
+  				out.write("      // Gadgets.escapeChars(oProfile.getProperty(storage)="+Gadgets.escapeChars(oProfile.getProperty("storage"),"\\",'\\')+"\n");
+
           if (null!=oProfile.getProperty("workareasput"))
-            out.write("      frm.workareasput.value=\"" + Gadgets.escapeChars(oProfile.getProperty("workareasput",sDefWrkArPut),"\\",'\\') + "\";\n");
-  
+            out.write("      frm.workareasput.value=\"" + Gadgets.escapeChars(oProfile.getProperty("workareasput"),"\\",'\\') + "\"; // Use value from .cnf file\n");
+  				else
+            out.write("      frm.workareasput.value=\"" + Gadgets.escapeChars(sDefWrkArPut,"\\",'\\') + "\"; // Use default\n");
+
           if (null!=oProfile.getProperty("storage"))
             out.write("      frm.storage.value=\"" + Gadgets.escapeChars(oProfile.getProperty("storage"),"\\",'\\') + "\";\n");
   
@@ -192,6 +201,9 @@
           if (null!=oProfile.getProperty("yahoobosskey"))
             out.write("      frm.yahoobosskey.value=\"" + oProfile.getProperty("yahoobosskey") + "\";\n");
 
+          if (null!=oProfile.getProperty("backtypekey"))
+            out.write("      frm.backtypekey.value=\"" + oProfile.getProperty("backtypekey") + "\";\n");
+
         } else {
           FileWriter oWrtr = new FileWriter(oFile);
           oWrtr.write("#hipergate configuration file\n");
@@ -202,6 +214,8 @@
       catch (IOException ioe) {
       }
 %>
+      if (frm.storage.value.length==0) frm.storage.value = (win ? "C:\\ARCHIV~1\\Tomcat\\storage" : "/opt/hipergate/storage");
+      if (frm.workareasput.value.length==0) frm.workareasput.value = (win ? "C:\\ARCHIV~1\\Tomcat\\webapps\\hipergate\\workareas" : "/opt/apache-tomcat/webapps/hipergate/workareas");
     }
 
     // ------------------------------------------------------------------------
@@ -230,6 +244,13 @@
       window.open("test_connect.jsp?driver="+drv+"&dburl="+escape(url)+"&dbuser="+escape(frm.dbuser.value)+"&schema="+escape(frm.schema.value)+"&dbpassword="+escape(frm.dbpassword.value), "test_connect", "scrollbars=yes,toolbar=no,directories=no,menubar=no,resizable=no,width=500,height=500");
     }
     
+    // ------------------------------------------------------------------------
+    
+    function adjustDefaultSettingForDriver() {
+      var frm = document.forms[0];
+      frm.default_port.options.selectedIndex=frm.driver.options.selectedIndex+1;
+      if (frm.driver.options.selectedIndex==0) frm.schema.value="";
+    }
     // ------------------------------------------------------------------------
     
     function validate() {
@@ -272,6 +293,7 @@
       
       frm.store.value = frm.store.value.toLowerCase();
       frm.transport.value = frm.transport.value.toLowerCase();
+
     }
   //-->
   </SCRIPT>    
@@ -280,7 +302,7 @@
 <TABLE WIDTH="98%" SUMMARY="Title"><TR><TD CLASS="striptitle"><FONT CLASS="title1">Setup Wizard</FONT></TD></TR></TABLE> 
 <FORM ACTION="setup2_do.jsp" onsubmit="return validate()" TARGET="setupoutput">
   <INPUT TYPE="hidden" NAME="workareasget" VALUE="<%=sDefWrkArGet%>">
-	<INPUT TYPE="hidden" NAME="workareasput" VALUE="<%=sDefWrkArPut%>">
+	<INPUT TYPE="hidden" NAME="workareasput" VALUE="<%=Gadgets.escapeChars(sDefWrkArPut,"\\",'\\')%>">
   <FIELDSET>
   <LEGEND CLASS="formstrong">Required Parameters</LEGEND>
   <TABLE SUMMARY="Required Parameters">
@@ -297,10 +319,10 @@
     <TR CLASS="strip1">
       <TD><A CLASS="linkplain" TARGET="_blank" HREF="http://www.hipergate.org/docs/install/#driver" TITLE="What is this?">Driver</A></TD>
       <TD>  
-        <SELECT NAME="driver" CLASS="combomini" onchange="if (document.forms[0].alt_port.value.length==0) document.forms[0].default_port.options.selectedIndex=this.options.selectedIndex+1;">
-          <OPTION VALUE="org.postgresql.Driver">PostgreSQL 8.4</OPTION>
+        <SELECT NAME="driver" CLASS="combomini" onchange="adjustDefaultSettingForDriver()">
+          <OPTION VALUE="org.postgresql.Driver">PostgreSQL 9</OPTION>
           <OPTION VALUE="com.mysql.jdbc.Driver">MySQL 5</OPTION>
-          <OPTION VALUE="com.microsoft.sqlserver.jdbc.SQLServerDriver">SQL Server 2008</OPTION>
+          <OPTION VALUE="com.microsoft.sqlserver.jdbc.SQLServerDriver">SQL Server 2012</OPTION>
           <OPTION VALUE="oracle.jdbc.driver.OracleDriver">Oracle 11</OPTION>
           <!-- <OPTION VALUE="com.microsoft.jdbc.sqlserver.SQLServerDriver">SQL Server 2000</OPTION>-->
           <!-- <OPTION VALUE="com.ibm.db2.jcc.DB2Driver">DB 2</OPTION>-->
@@ -311,7 +333,14 @@
       <TD><INPUT TYPE="text" NAME="server" VALUE="127.0.0.1" SIZE="16" CLASS="combomini"></TD>
       <TD ALIGN="right"><A CLASS="linkplain" TARGET="_blank" HREF="http://www.hipergate.org/docs/install/#dburl" TITLE="What is this?">Port</A></TD>
       <TD>
-        <SELECT NAME="default_port" CLASS="combomini"><OPTION VALUE="" SELECTED="selected"></OPTION><OPTION VALUE="3306">3306 (MySQL)</OPTION><OPTION VALUE="5432">5432 (PostgreSQL)</OPTION><OPTION VALUE="1433">1433 (SQL Server)</OPTION><OPTION VALUE="1521">1521 (Oracle)</OPTION><!--<OPTION VALUE="1527">1527 (DB2)</OPTION>--></SELECT>
+        <SELECT NAME="default_port" CLASS="combomini">
+        	  <OPTION VALUE="" SELECTED="selected"></OPTION>
+        	  <OPTION VALUE="5432">5432 (PostgreSQL)</OPTION>
+        	  <OPTION VALUE="3306">3306 (MySQL)</OPTION>
+        	  <OPTION VALUE="1433">1433 (SQL Server)</OPTION>
+        	  <OPTION VALUE="1521">1521 (Oracle)</OPTION>
+        	  <!--<OPTION VALUE="1527">1527 (DB2)</OPTION>-->
+        	</SELECT>
         <INPUT TYPE="text" NAME="alt_port" MAXLENGTH="5" SIZE="5" CLASS="combomini" onchange="document.forms[0].default_port.options.selectedIndex=0;" onkeypress="return acceptOnlyNumbers();">
       </TD>
     </TR>
@@ -349,7 +378,7 @@
       <TD COLSPAN="3">
         <A HREF="http://www.hipergate.org/docs/install/#temp" TARGET="_blank" CLASS="linkplain">Temporary Directory</A>
         &nbsp;
-        <SELECT NAME="temp" CLASS="combomini"><OPTION VALUE="/tmp">/tmp</OPTION><OPTION VALUE="C:\TEMP">C:\TEMP</OPTION><OPTION VALUE="C:\WINNT\Temp">C:\WINNT\Temp</OPTION><OPTION VALUE="C:\Windows\Temp">C:\Windows\Temp</OPTION>
+        <SELECT NAME="temp" CLASS="combomini"><OPTION VALUE="/tmp">/tmp</OPTION><OPTION VALUE="C:\TEMP">C:\TEMP</OPTION><OPTION VALUE="C:\WINNT\Temp">C:\WINNT\Temp</OPTION><OPTION VALUE="C:\Windows\Temp">C:\Windows\Temp</OPTION></SELECT>
       </TD>
       <TD COLSPAN="3">
         <A HREF="http://www.hipergate.org/docs/install/#storage" CLASS="linkplain" TARGET="_blank">Storage Directory</A>

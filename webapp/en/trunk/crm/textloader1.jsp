@@ -73,12 +73,12 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Contact Loader</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
 
       function showLists(a) {
@@ -167,7 +167,7 @@
         <TABLE WIDTH="100%" CLASS="formfront">
           <TR>
             <TD ALIGN="right"><FONT CLASS="formstrong">Contact Type</FONT></TD>
-            <TD ALIGN="left"><SELECT NAME="sel_type"><OPTION VALUE="CONTACTS" SELECTED>Individual</OPTION><OPTION VALUE="COMPANIES">Company</OPTION></SELECT></TD>
+            <TD ALIGN="left"><SELECT NAME="sel_type"><OPTION VALUE="CONTACTS" SELECTED>Individual</OPTION><OPTION VALUE="COMPANIES">Company</OPTION><OPTION VALUE="OPORTUNITIES">Opportunity</OPTION></SELECT></TD>
           </TR>
           <TR>
             <TD ALIGN="right"><FONT CLASS="formstrong">Action</FONT></TD>

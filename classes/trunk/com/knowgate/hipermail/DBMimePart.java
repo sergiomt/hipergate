@@ -208,7 +208,7 @@ public class DBMimePart extends BodyPart implements MimePart {
 
   // ---------------------------------------------------------------------------
 
-  public Object getContent () throws MessagingException, IOException {
+  public Object getContent() throws MessagingException, IOException, NullPointerException {
 
     int iLen;
     long lPos, lOff;
@@ -232,12 +232,7 @@ public class DBMimePart extends BodyPart implements MimePart {
 
     try {
       if (null==oFldr) {
-        sSQL = "SELECT m.pg_message,p.id_disposition,m.nu_position,p.file_name,p.len_part,p.nu_offset,p.id_content,m.by_content FROM k_mime_msgs m, k_mime_parts p WHERE (m.gu_mimemsg=? OR m.id_message=?) AND m.gu_mimemsg=p.gu_mimemsg AND p.id_part=?";
-        if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement("+sSQL+")");
-        oStmt = oFldr.getConnection().prepareStatement(sSQL);
-        oStmt.setString(1, getMessage().getMessageGuid());
-        oStmt.setString(2, getMessage().getContentID());
-        oStmt.setInt(3, iPartId);
+    	throw new NullPointerException("DBMimePart.getContent() Folder not set and no MIME body part found");
       } else {
         sSQL = "SELECT m.pg_message,p.id_disposition,m.nu_position,p.file_name,p.len_part,p.nu_offset,p.id_content,m.by_content FROM k_mime_msgs m, k_mime_parts p WHERE (m.gu_mimemsg=? OR m.id_message=?) AND m.gu_mimemsg=p.gu_mimemsg AND p.id_part=? AND m.gu_category=?";
         if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement("+sSQL+")");
@@ -829,8 +824,6 @@ public class DBMimePart extends BodyPart implements MimePart {
                                    MimePart oPart, int nPart)
     throws MessagingException, IOException, UnsupportedEncodingException {
 
-    MimeBodyPart oNext = null;
-    MimeMultipart oAlt;
     String sType;
     int iRetVal;
     String sContent;

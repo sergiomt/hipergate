@@ -33,8 +33,6 @@
 
 package com.knowgate.dfs.chardet ;
 
-import java.lang.* ;
-
 public class GB2312Statistics extends nsEUCStatistics {
 
 

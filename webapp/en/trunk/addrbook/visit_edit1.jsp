@@ -119,15 +119,15 @@
 %><HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Arrange meeting</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/datefuncs.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/usrlang.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/datefuncs.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
       var users_type = -1;
       
@@ -279,7 +279,7 @@
       } // validate;
     //-->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
     <!--
 <%  
     out.write("      var jsComments = new Array(");
@@ -447,7 +447,7 @@
                 <TR HEIGHT="20">
                   <TD WIDTH="8">&nbsp;</TD>
                   <TD><FONT CLASS="textsmallfront">Sales Men</FONT></TD>
-                  <TD WIDTH="50"</TD>
+                  <TD WIDTH="50"></TD>
                   <TD><FONT CLASS="textsmallfront">Attendants</FONT></TD>
                   <TD WIDTH="8">&nbsp;</TD>
                 </TR>

@@ -53,8 +53,9 @@ public class ChoiceElement {
           sName.indexOf(39 )>=0 || sName.indexOf('¡')>=0 || sName.indexOf('¿')>=0) {
       }
       throw new IllegalArgumentException("Element name contains invalid characters");
+    } else {
+      name = sName;    	
     }
-    name = sName;
   }
 
   /**

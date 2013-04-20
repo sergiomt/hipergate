@@ -62,7 +62,7 @@ import com.knowgate.hipergate.Product;
 /**
  * <p>NewsMessage</p>
  * @author Sergio Montoro Ten
- * @version 5.0
+ * @version 7.0
  */
 public class NewsMessage extends DBPersist{
 
@@ -420,11 +420,17 @@ public class NewsMessage extends DBPersist{
 	if (!isNull(DB.tx_tags)) {
 	  String[] aTags = Gadgets.split(getString(DB.tx_tags),',');
 	  nTags = aTags.length;
-	  for (int t=0; t<nTags; t++) {
-        DBCommand.executeUpdate(oConn, "INSERT INTO "+DB.k_newsmsg_tags+" ("+DB.gu_msg+","+DB.gu_tag+") VALUES ('"+getString(DB.gu_msg)+"','"+aTags[t]+"')");
-        DBCommand.executeUpdate(oConn, "UPDATE "+DB.k_newsgroup_tags+" SET "+DB.nu_msgs+"="+DB.nu_msgs+"+1 WHERE "+DB.gu_newsgrp+"='"+getString(DB.gu_newsgrp)+"' AND "+DB.gu_tag+"='"+aTags[t]+"'");
-	  }
-	}
+	  PreparedStatement oTagi = oConn.prepareStatement("INSERT INTO "+DB.k_newsmsg_tags+" ("+DB.gu_msg+","+DB.gu_tag+") VALUES (?,?)");
+	  PreparedStatement oTagu = oConn.prepareStatement("UPDATE "+DB.k_newsgroup_tags+" SET "+DB.nu_msgs+"="+DB.nu_msgs+"+1 WHERE "+DB.gu_newsgrp+"=? AND "+DB.gu_tag+"=?");
+      for (int t=0; t<nTags; t++) {
+		oTagi.setString(1, getString(DB.gu_msg));
+		oTagi.setString(2, aTags[t].trim());
+		oTagu.setString(1, getString(DB.gu_newsgrp));
+		oTagu.setString(2, aTags[t].trim());
+	  } // next
+      oTagu.close();
+      oTagi.close();
+	} // fi (tx_tags)
 	
     if (DebugFile.trace) {
       DebugFile.decIdent();

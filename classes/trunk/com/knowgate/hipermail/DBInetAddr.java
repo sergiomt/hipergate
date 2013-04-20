@@ -165,6 +165,7 @@ public class DBInetAddr extends InternetAddress {
    * This method is unsupported and will always throw an exception when called
    * @throws UnsupportedOperationException
    */
+  @SuppressWarnings("unused")
   public boolean store (JDCConnection oConn) throws UnsupportedOperationException {
     if (true) throw new UnsupportedOperationException("Method InetAddrDB.store() is not supported");
     return false;

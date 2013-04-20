@@ -34,11 +34,13 @@
       } // fi
       
       for (int c=0; c<iChlds; c++) {
+        sJs = "treeMenuCategories[treeMenuIndex] = \""+oChlds.getString(0,c) + "\";\n";
+        sJs+= "treeMenuCategNames[treeMenuIndex] = \""+oChlds.getString(2,c) + "\";\n";
         if (oChlds.isNull(3,c))
-          sJs = "    " + sSubCat + ".addItem(new TreeMenuItem('" + oChlds.getString(2,c) + "', 'list_list_f.htm?" + sQryStr + "&gu_category=" + oChlds.getString(0,c) + "&tr_category=" + Gadgets.URLEncode(Gadgets.HTMLEncode(oChlds.getStringNull(2,c,oChlds.getString(1,c)))) + "', 'parent.selectNode(\"" + oChlds.getString(0,c) + "\",\"" + Gadgets.HTMLEncode(oChlds.getStringNull(2,c,oChlds.getString(1,c))) + "\")'));\n";
-	      else
-          sJs = "    " + sSubCat + ".addItem(new TreeMenuItem('" + oChlds.getString(2,c) + "', 'list_list_f.htm?" + sQryStr + "&gu_category=" + oChlds.getString(0,c) + "&tr_category=" + Gadgets.URLEncode(Gadgets.HTMLEncode(oChlds.getStringNull(2,c,oChlds.getString(1,c)))) + "','parent.selectNode(\"" + oChlds.getString(0,c) + "\",\"" + Gadgets.HTMLEncode(oChlds.getStringNull(2,c,oChlds.getString(1,c))) + "\")','" + oChlds.getString(3,c) + "'));\n";
-		    oBuffer.append (sJs);
+          sJs += "    " + sSubCat + ".addItem(new TreeMenuItem('" + oChlds.getString(2,c) + "', 'list_list_f.htm?" + sQryStr + "&gu_category=" + oChlds.getString(0,c) + "&tr_category=" + Gadgets.URLEncode(Gadgets.HTMLEncode(oChlds.getStringNull(2,c,oChlds.getString(1,c)))) + "', 'parent.selectNode(\"" + oChlds.getString(0,c) + "\",\"" + Gadgets.HTMLEncode(oChlds.getStringNull(2,c,oChlds.getString(1,c))) + "\")'));\n";
+	    else
+          sJs += "    " + sSubCat + ".addItem(new TreeMenuItem('" + oChlds.getString(2,c) + "', 'list_list_f.htm?" + sQryStr + "&gu_category=" + oChlds.getString(0,c) + "&tr_category=" + Gadgets.URLEncode(Gadgets.HTMLEncode(oChlds.getStringNull(2,c,oChlds.getString(1,c)))) + "','parent.selectNode(\"" + oChlds.getString(0,c) + "\",\"" + Gadgets.HTMLEncode(oChlds.getStringNull(2,c,oChlds.getString(1,c))) + "\")','" + oChlds.getString(3,c) + "'));\n";
+		oBuffer.append (sJs);
 			  // if (DebugFile.trace) { try { DebugFile.write("<JSP:"+Gadgets.replace(sJs,sSubCat,DBCommand.queryStr(oConn, "SELECT nm_category FROM k_categories WHERE gu_category='"+sChildCatId+"'"))); } catch (org.apache.oro.text.regex.MalformedPatternException ignore) {} };
       } // next
       	      
@@ -86,17 +88,17 @@
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
     <TITLE>hipergate :: Category Tree</TITLE>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>    
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>    
+    <SCRIPT TYPE="text/javascript">
     <!--
     // User-defined tree menu data.
 
     var treeMenuName       = "ListCategories";  // Make this unique for each tree menu.
     var treeMenuDays       = 1;                 // Number of days to keep the cookie.
     var treeMenuFrame      = "tree";            // Name of the menu frame.
-    var treeMenuImgDir     = "../skins/<%=sSkin%>/nav/"        // Path to graphics directory.
+    var treeMenuImgDir     = "../skins/<%=sSkin%>/nav/";        // Path to graphics directory.
     var treeMenuBackground = "../images/images/tree/menu_background.gif";               // Background image for menu frame.   
     var treeMenuBgColor    = "#FFFFFF";         // Color for menu frame background.   
     var treeMenuFgColor    = "#000000";         // Color for menu item text.
@@ -107,6 +109,8 @@
     var treeMenuRoot       = "CATEGORIES"; // Text for the menu root.
     var treeMenuFolders    = 1;                 // Sets display of '+' and '-' icons.
     var treeMenuAltText    = false;             // Use menu item text for icon image ALT text.
+    var treeMenuCategories = new Array();
+    var treeMenuCategNames = new Array();
 
     
     function selectNode(guid,name) {
@@ -118,13 +122,22 @@
 
   //-->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="listmenu.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="listmenu.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript">
   <!--
     var treeMenu = new TreeMenu();   // This is the main menu.  
 <%
     out.write(oBuffer.toString());
 %>
+    
+    function selectCookie() {
+      var s = Number(getCookie(treeMenuName + "-selected"));
+      if (!isNaN(s)) {
+        if (s>=0) {    	  
+    	selectNode(treeMenuCategories[s],treeMenuCategNames[s]);
+        }
+      }
+    }
   //-->
   </SCRIPT>
 </HEAD>

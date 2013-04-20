@@ -42,6 +42,7 @@ DECLARE
   OtherPhone    VARCHAR(16) ;
   PoBox         VARCHAR(50) ;
   UrlAddr       VARCHAR(254);
+  Resolved      INTEGER;
 BEGIN
   SELECT tx_email INTO EMailTx FROM k_job_atoms WHERE gu_job=$1 AND pg_atom=$2;
   IF FOUND THEN
@@ -51,9 +52,14 @@ BEGIN
              tx_salutation=SalutTx,nm_commercial=CommNm,tp_street=StreetTp,nm_street=StreetNm,nu_street=StreetNu,tx_addr1=Addr1Tx,tx_addr2=Addr2Tx,
              nm_country=CountryNm,nm_state=StateNm,mn_city=CityNm,zipcode=Zipcde,work_phone=WorkPhone,direct_phone=DirectPhone,
              home_phone=HomePhone,mov_phone=MobilePhone,fax_phone=FaxPhone,other_phone=OtherPhone,po_box=PoBox WHERE gu_job=$1 AND pg_atom=$2;
+      Resolved:=1;
+    ELSE
+      Resolved:=0;
     END IF;
+  ELSE
+    Resolved:=0;
   END IF;
-  RETURN 0;
+  RETURN Resolved;
 END;
 ' LANGUAGE 'plpgsql';
 GO;
@@ -61,18 +67,19 @@ GO;
 CREATE FUNCTION k_sp_resolve_atoms (CHAR) RETURNS INTEGER AS '
 DECLARE
   WrkAGu CHAR(32);
-  AtomPg INTEGER ;
-  Atoms CURSOR (id CHAR(32)) FOR SELECT pg_atom FROM k_job_atoms WHERE gu_job=id;
+  Atoms INTEGER[] := ARRAY(SELECT pg_atom FROM k_job_atoms WHERE gu_job=$1 AND id_status<>3);
+  NAtms INTEGER := array_upper(Atoms, 1);
+  NResv INTEGER := 0;
+  IResv INTEGER;
 BEGIN
-  SELECT gu_workarea INTO WrkAGu FROM k_jobs WHERE gu_job=$1;
-  OPEN Atoms($1);
-    LOOP
-      FETCH Atoms INTO AtomPg;
-      EXIT WHEN NOT FOUND;
-      PERFORM k_sp_resolve_atom ($1,AtomPg,WrkAGu);
-    END LOOP;
-  CLOSE Atoms;      
-  RETURN 0;
+  IF NAtms IS NOT NULL THEN
+    SELECT gu_workarea INTO WrkAGu FROM k_jobs WHERE gu_job=$1;
+    FOR a IN 1..NAtms LOOP
+      SELECT k_sp_resolve_atom ($1,Atoms[a],WrkAGu) INTO IResv;
+      NResv := NResv + IResv;
+    END LOOP;  
+  END IF;
+  RETURN NResv;
 END;
 ' LANGUAGE 'plpgsql';
 GO;

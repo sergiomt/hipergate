@@ -1,8 +1,8 @@
 package com.knowgate.storage;
 
-import java.sql.SQLException;
-
 public class StorageException extends Exception {
+
+  private static final long serialVersionUID = 70000l;
 
   private ErrorCode eErrCod;
 

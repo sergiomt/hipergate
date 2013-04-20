@@ -110,18 +110,18 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Edit Payment</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/autosuggest20.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/autosuggest20.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript">
     <!--
 
       // ------------------------------------------------------
@@ -179,7 +179,7 @@
       	    clearCombo (frm.sel_product);
     	      var prods = req.responseXML.getElementsByTagName("option");
     	      for (var p = 0; p < prods.length; p++) {
-              comboPush (frm.sel_product, getElementValue(prods[p]), prods[p].attributes.item("value").value, false, false);
+              comboPush (frm.sel_product, getElementValue(prods[p]), prods[p].getAttribute("value"), false, false);
             } // next
 	          req = false;
             if (frm.sel_product.selectedIndex>=0) getPrice(getCombo(frm.sel_product));
@@ -441,7 +441,7 @@
     </TABLE>                 
   </FORM>
 </BODY>
-<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+<SCRIPT TYPE="text/javascript">
     <!--  
       
       var AutoSuggestClientOptions = { script:"'../common/autocomplete.jsp?nm_table=k_contact_company&gu_workarea=<%=gu_workarea%>&'", varname:"tx_like",minchars:2,form:0, callback: function (obj) { fillClientData(obj.id); } };

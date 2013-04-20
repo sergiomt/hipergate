@@ -39,7 +39,7 @@
 
 package com.knowgate.dfs.chardet ;
 
-import java.lang.*;
+
 
 public class nsGB18030Verifier extends nsVerifier {
 

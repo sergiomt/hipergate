@@ -56,7 +56,6 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.MessagingException;
 import javax.mail.NoSuchProviderException;
-import javax.mail.BodyPart;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;

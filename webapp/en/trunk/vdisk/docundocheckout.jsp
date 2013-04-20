@@ -19,7 +19,7 @@
     iACLMask = oCatg.getUserPermissions(oConn,id_user);
 
     if ((iACLMask&ACL.PERMISSION_MODIFY)==0) {
-      throw new SecurityException(String.valueOf(iACLMask)+" You don't have enought access rights to undo check-out");
+      throw new SecurityException(String.valueOf(iACLMask)+" You don't have enought access rights to undo check-out ");
     }
 
     if (tp_item.equals("category")) {

@@ -9,7 +9,6 @@ import com.knowgate.storage.Table;
 import com.knowgate.storage.Record;
 import com.knowgate.storage.RecordSet;
 import com.knowgate.storage.DataSource;
-import com.knowgate.storage.StorageException;
 
 import com.knowgate.clocial.StorageManager;
 import com.knowgate.syndication.SyndSearch;

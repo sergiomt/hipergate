@@ -1,3 +1,6 @@
+
+DROP FUNCTION k_sp_del_duplicates (CHAR);
+
 DROP FUNCTION k_sp_rebuild_member_address ();
 
 DROP FUNCTION k_sp_company_blocked (CHAR,CHAR);

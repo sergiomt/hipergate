@@ -33,14 +33,10 @@ package com.knowgate.projtrack;
 
 import java.sql.SQLException;
 
-import com.knowgate.debug.DebugFile;
-
 import com.knowgate.dataobjs.DB;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DBBind;
 import com.knowgate.dataobjs.DBPersist;
-import com.knowgate.dataobjs.DBSubset;
-
 
 public class BugTrack extends DBPersist {
 

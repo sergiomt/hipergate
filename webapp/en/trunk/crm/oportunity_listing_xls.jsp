@@ -1,4 +1,4 @@
-<%@ page import="java.io.File,java.util.HashMap,java.util.Properties,java.text.SimpleDateFormat,java.util.Date,java.util.HashMap,java.net.URLDecoder,java.sql.Types,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets,org.apache.poi.hssf.usermodel.HSSFWorkbook,org.apache.poi.hssf.usermodel.HSSFSheet,org.apache.poi.hssf.usermodel.HSSFRow,org.apache.poi.hssf.usermodel.HSSFCell,org.apache.poi.hssf.usermodel.HSSFCellStyle,org.apache.poi.hssf.usermodel.HSSFFont,org.apache.poi.hssf.usermodel.HSSFDataFormat,org.apache.poi.hssf.usermodel.HSSFPrintSetup,com.knowgate.http.portlets.*" language="java" session="false" contentType="application/x-excel;charset=UTF-8" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="oportunity_listing.jspf" %><%
+<%@ page import="java.io.File,java.util.HashMap,java.util.Properties,java.text.SimpleDateFormat,java.util.Date,java.util.HashMap,java.net.URLDecoder,java.sql.Types,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,java.util.Date,java.text.SimpleDateFormat,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets,org.apache.poi.hssf.usermodel.HSSFWorkbook,org.apache.poi.hssf.usermodel.HSSFSheet,org.apache.poi.hssf.usermodel.HSSFRow,org.apache.poi.hssf.usermodel.HSSFCell,org.apache.poi.hssf.usermodel.HSSFCellStyle,org.apache.poi.hssf.usermodel.HSSFFont,org.apache.poi.hssf.usermodel.HSSFDataFormat,org.apache.poi.hssf.usermodel.HSSFPrintSetup,com.knowgate.http.portlets.*" language="java" session="false" contentType="application/vnd.ms-excel;charset=UTF-8" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="oportunity_listing.jspf" %><%
 
 	  SimpleDateFormat oDtFtm = new SimpleDateFormat("yyyyMMdd");
 
@@ -20,7 +20,7 @@
 	    oConn = GlobalDBBind.getConnection("oportunitylistingxls");
 
 	    PreparedStatement oLstC = oConn.prepareStatement("SELECT tx_phone, contact_person FROM k_phone_calls WHERE gu_oportunity=? ORDER BY dt_start DESC");
-	    PreparedStatement oAddr = oConn.prepareStatement("SELECT nm_state,mn_city,zipcode FROM k_member_address WHERE gu_contact=? OR gu_company=?");
+	    PreparedStatement oAddr = oConn.prepareStatement("SELECT nm_state,mn_city,zipcode,tx_email,direct_phone,work_phone,mov_phone  FROM k_member_address WHERE gu_contact=? OR gu_company=?");
 
 	    for (int c=0; c<iOportunityCount; c++) {
 
@@ -28,6 +28,10 @@
 	      ResultSet oRstC = oLstC.executeQuery();
 	      if (oRstC.next()) {
 	        aLastCallNumber[c] = oRstC.getString(1);
+	        if (oRstC.wasNull())
+	          aLastCallNumber[c] = null;
+	        else if (aLastCallNumber[c].length()==0)
+	          aLastCallNumber[c] = null;
 	        aLastCallPerson[c] = oRstC.getString(2);
 	        if (oRstC.wasNull()) aLastCallPerson[c] = "";
 	      } else {
@@ -57,7 +61,6 @@
 	    oAddr.close();
 	    oLstC.close();
 
-	    
 	    oConn.close("oportunitylistingxls");
 	  }
     
@@ -121,8 +124,13 @@
       aCells[0].setCellValue(oOportunities.getStringNull(2,i,"* N/A *"));
 
 			// Campaign
-      if (!oOportunities.isNull(8,i))
-        aCells[1].setCellValue(oCampaigns.getString(1, oCampaigns.find(0, oOportunities.get(8,i))));
+      if (!oOportunities.isNull(8,i)) {
+        int iCampg = oCampaigns.find(0, oOportunities.get(8,i));
+        if (iCampg>=0)
+          aCells[1].setCellValue(oCampaigns.getString(1, iCampg));
+        else
+          aCells[1].setCellValue("");
+      }
 
 			// Status
       aCells[2].setCellValue((String) oStatusLookUp.get(oOportunities.getStringNull(1,i,"")));

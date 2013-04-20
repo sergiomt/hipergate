@@ -122,7 +122,7 @@
 %>
 <HTML>
   <HEAD>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <SCRIPT TYPE="text/javascript">
       <!--
         function refreshAndClose() {
 	  var w = window.opener;

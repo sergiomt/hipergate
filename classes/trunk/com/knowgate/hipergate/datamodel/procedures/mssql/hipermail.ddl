@@ -45,6 +45,7 @@ CREATE PROCEDURE k_sp_write_inet_addr @DomainId INTEGER, @WorkAreaId CHAR(32), @
 GO;
 
 CREATE PROCEDURE k_sp_del_adhoc_mailing @AdHocId CHAR(32) AS
-  DELETE k_x_adhoc_mailing_list WHERE gu_mailing=@AdHocId;
-  DELETE k_adhoc_mailings WHERE gu_mailing=@AdHocId;
+  UPDATE k_activities SET gu_mailing=NULL WHERE gu_mailing=@AdHocId
+  DELETE k_x_adhoc_mailing_list WHERE gu_mailing=@AdHocId
+  DELETE k_adhoc_mailings WHERE gu_mailing=@AdHocId
 GO;

@@ -1,6 +1,5 @@
 <%@ page import="java.util.Date,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.acl.ACL" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %>
-<% 
+<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%
 
   String sNickName = request.getParameter("nickname");
   String sCaptchaText = request.getParameter("captcha_text");
@@ -91,8 +90,8 @@
 <HTML>
   <HEAD>
     <TITLE>Pass phrase</TITLE>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   </HEAD>
 	<BODY TOPMARGIN="8" MARGINHEIGHT="8" onload="<% if (!bHasChallenge || !bHasReply) out.write("document.forms[0].submit()"); else out.write("document.getElementById('chform').style.visibility='visible'"); %>">
 		<DIV ID="chform" STYLE="visibility:hidden">
@@ -101,9 +100,9 @@
       <TR><TD CLASS="striptitle"><FONT CLASS="title1">Pass phrase</FONT></TD></TR>
     </TABLE>  
 	  <FORM METHOD="post" ACTION="pwd_retrieve.jsp">
-		  <INPUT TYPE="hidden" name="nickname" VALUE="<%=sNickName%>">
-		  <INPUT TYPE="hidden" name="captcha_text" VALUE="<%=sCaptchaText%>">
-		  <INPUT TYPEen" name="gu_user" VALUE<%=sUserId%>">
+		  <INPUT TYPE="hidden" NAME="nickname" VALUE="<%=sNickName%>">
+		  <INPUT TYPE="hidden" NAME="captcha_text" VALUE="<%=sCaptchaText%>">
+		  <INPUT TYPE="hidden" NAME="gu_user" VALUE="<%=sUserId%>">
       <TABLE>
         <TR><TD CLASS="textplain"><%=sChallenge%></TD></TR>
         <TR><TD><INPUT TYPE="text" NAME="tx_reply" MAXLENGTH="100" SIZE="30"></TD></TR>

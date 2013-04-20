@@ -50,6 +50,12 @@
     return;
   }
 
+  String sSignature = (String) session.getAttribute("signature");
+	if (null==sSignature) {
+	  response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=Invalid Session&desc=Session is invalid. Please log in again&resume=_close"));
+    return;
+  }   
+
   String id_domain = request.getParameter("id_domain");
   String gu_workarea = request.getParameter("gu_workarea");
   String gu_category = request.getParameter("gu_category");
@@ -65,7 +71,7 @@
   PasswordRecordTemplate oRec = new PasswordRecordTemplate();
   oRec.load(Gadgets.chomp(getTemplatesPath(sStorage, id_domain, gu_workarea, id_user),File.separator)+nm_template);
       
-  PasswordRecord oPwd = new PasswordRecord((String) session.getAttribute("signature"));
+  PasswordRecord oPwd = new PasswordRecord(sSignature);
 
   JDCConnection oConn = null;
 

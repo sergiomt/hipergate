@@ -33,8 +33,6 @@
 
 package com.knowgate.dfs.chardet ;
 
-import java.lang.* ;
-
 public class Big5Statistics extends nsEUCStatistics {
 
      static float[] mFirstByteFreq ;

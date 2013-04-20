@@ -1,13 +1,13 @@
-<%@ page import="java.text.NumberFormat,java.util.Arrays,java.util.Comparator,java.util.ArrayList,java.util.HashMap,java.util.Collections,java.util.ArrayList,java.util.HashMap,java.util.TreeMap,java.util.Iterator,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.scheduler.Atom" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.text.NumberFormat,java.util.Arrays,java.util.Comparator,java.util.ArrayList,java.util.HashMap,java.util.Collections,java.util.ArrayList,java.util.HashMap,java.util.TreeMap,java.util.Iterator,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.scheduler.Atom,com.knowgate.misc.Calendar" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/>
 <%@ include file="job_followup_stats.jspf" %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Newsletter follow-up statistics</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript">
     <!--
 
 			function modifyContact(id) {

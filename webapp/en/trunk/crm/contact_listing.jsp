@@ -144,7 +144,7 @@
 	      sUserGroups = "'" + Gadgets.dechomp(oUserGroups.toString(),"','") + "'";
 	      GlobalCacheClient.put("["+id_user+",groups]", sUserGroups);
 	    }
-    	sSecurityFilter = " AND (b.bo_restricted=0 OR EXISTS (SELECT x."+DB.gu_acl_group+" FROM "+DB.k_x_group_contact+" x WHERE x."+DB.gu_contact+"=b."+DB.gu_contact+" AND x."+DB.gu_acl_group+" IN ("+sUserGroups+"))) AND " + (bPrivate ? "(b." + DB.bo_private + "=1 AND b." + DB.gu_writer + "='" + id_user + "') " : "(b." + DB.bo_private + "=0 OR b." + DB.gu_writer + "='" + id_user + "') ") + " ";
+    	sSecurityFilter = " AND (b.bo_restricted=0 OR b.bo_restricted IS NULL OR EXISTS (SELECT x."+DB.gu_acl_group+" FROM "+DB.k_x_group_contact+" x WHERE x."+DB.gu_contact+"=b."+DB.gu_contact+" AND x."+DB.gu_acl_group+" IN ("+sUserGroups+"))) AND " + (bPrivate ? "(b." + DB.bo_private + "=1 AND b." + DB.gu_writer + "='" + id_user + "') " : "(b." + DB.bo_private + "=0 OR "+DB.bo_private+" IS NULL OR b." + DB.gu_writer + "='" + id_user + "') ") + " ";
     }
 
     if (face.equals("edu")) {
@@ -229,11 +229,19 @@
 	      			    "((b." + DB.gu_owner + "='" + gu_workarea + "' OR b." + DB.gu_owner + " IS NULL) AND (b." + DB.id_section + "='de_title' OR b." + DB.id_section + " IS NULL) AND b." + DB.gu_workarea + "='" + gu_workarea + "' AND " +
 	      			    "(b." + DB.work_phone + "=? OR b." + DB.direct_phone + "=? OR b." + DB.home_phone + "=? OR b." + DB.mov_phone + "=?) " + sSecurityFilter + 
 	      			    (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
-	else
+	      else
           oContacts = new DBSubset (DB.v_contact_address_title + " b", 
 	      		      "b." + DB.gu_contact + "," + DBBind.Functions.ISNULL + "(b." + DB.tx_surname + ",'') " + DBBind.Functions.CONCAT + " ', ' " + DBBind.Functions.CONCAT + " " + DBBind.Functions.ISNULL + "(b." + DB.tx_name + ",'')," + DBBind.Functions.ISNULL + "(b." + DB.tr_ + sLanguage + ",''),b." + DB.gu_company + ",b." + DB.nm_legal + ","+DBBind.Functions.ISNULL+"(b." + DB.nu_notes + ",0),"+DBBind.Functions.ISNULL+"(b." + DB.nu_attachs + ",0),b." + DB.dt_modified,
 	      			    "((b." + DB.gu_owner + "='" + gu_workarea + "' OR b." + DB.gu_owner + " IS NULL) AND (b." + DB.id_section + "='de_title' OR b." + DB.id_section + " IS NULL) AND b." + DB.gu_workarea + "='" + gu_workarea + "' AND " +
 	      			    "(b." + DB.work_phone + "=? OR b." + DB.direct_phone + "=? OR b." + DB.home_phone + "=? OR b." + DB.mov_phone + "=?) " + sSecurityFilter + 
+	      			    (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
+      }
+      else if (sField.equalsIgnoreCase(DB.tx_email)) {
+        aFind = new Object[] {gu_workarea,gu_workarea,sFind};
+        oContacts = new DBSubset (DB.v_contact_address_title + " b", 
+	      		      "b." + DB.gu_contact + "," + DBBind.Functions.ISNULL + "(b." + DB.tx_surname + ",'') " + DBBind.Functions.CONCAT + " ', ' " + DBBind.Functions.CONCAT + " " + DBBind.Functions.ISNULL + "(b." + DB.tx_name + ",'')," + DBBind.Functions.ISNULL + "(b." + DB.tr_ + sLanguage + ",''),b." + DB.gu_company + ",b." + DB.nm_legal + ","+DBBind.Functions.ISNULL+"(b." + DB.nu_notes + ",0),"+DBBind.Functions.ISNULL+"(b." + DB.nu_attachs + ",0),b." + DB.dt_modified,
+	      			    "(b." + DB.gu_owner + "=? OR b." + DB.gu_owner + " IS NULL) AND (b." + DB.id_section + "='de_title' OR b." + DB.id_section + " IS NULL) AND b." + DB.gu_workarea + "=? AND " +
+	      			    "b." + DB.tx_email + "=? " + sSecurityFilter + 
 	      			    (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
       }
       else if (sField.equalsIgnoreCase(DB.nm_legal)) {
@@ -369,17 +377,17 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: <%=face.equals("edu") ? "Students Listing" : "Contact Listing"%></TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" >
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" >
     dynapi.library.setPath('../javascript/dynapi3/');
     dynapi.library.include('dynapi.api.DynLayer');
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" >
+  <SCRIPT TYPE="text/javascript" >
     var menuLayer,addrLayer;
 
     dynapi.onLoad(init);
@@ -396,10 +404,10 @@
       addrLayer.setZIndex(200);
     }
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/floatdiv.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/floatdiv.js"></SCRIPT>
 
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
         var jsContactId;
         var jsCompanyId;
@@ -435,7 +443,7 @@
 <% if (bIsGuest) { %>
         alert("Your credential level as Guest does not allow you to perform this action");
 <% } else { %>
-	window.location = "oportunity_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_contact=" + contact_id + "&where=" + escape(" AND gu_contact='" + contact_id + "'") + "&field=" + escape("<%=DB.tx_contact%>") + "&find=" + escape(contact_nm) + "&show=oportunities&skip=0&selected=2&subselected=2";
+	      window.location = "oportunity_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_contact=" + contact_id + "&where=" + escape(" AND gu_contact='" + contact_id + "'") + "&field=" + escape("<%=DB.tx_contact%>") + "&find=" + escape(contact_nm) + "&show=oportunities&skip=0&selected=2&subselected=2";
 <% } %>
       } // viewOportunities
 
@@ -718,7 +726,7 @@
 	//-- Fin I2E
     //-->    
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
     <!--
 	function setCombos() {
 	  setCookie ("maxrows", "<%=iMaxRows%>");
@@ -730,6 +738,7 @@
    if (bIsAdmin) { %>
 	  setCombo(document.forms[0].salesman, "<%=sSalesMan%>");	    
 <% } %>
+   if (getURLParam("find")!=null) document.forms[0].find.value=decodeURIComponent(getURLParam("find"));
 	} // setCombos()
     //-->    
   </SCRIPT>
@@ -768,8 +777,8 @@
         </TD>
         <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Find Individual"></TD>
         <TD VALIGN="middle">
-          <SELECT NAME="sel_searched" CLASS="combomini"><OPTION VALUE="<%=DB.tx_name%>">Name<OPTION VALUE="<%=DB.tx_surname%>">Surname<OPTION VALUE="<%=DB.de_title%>">Position<OPTION VALUE="<%=DB.nm_legal%>">Company<OPTION VALUE="<%=DB.tp_company%>">Company Type<OPTION VALUE="<%=DB.work_phone%>">Telephone<OPTION VALUE="<%=DB.tx_term%>">Zone<OPTION VALUE="<%=DB.nm_course%>">Course</SELECT>
-          <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>">
+          <SELECT NAME="sel_searched" CLASS="combomini"><OPTION VALUE="<%=DB.tx_name%>">Name<OPTION VALUE="<%=DB.tx_surname%>">Surname<OPTION VALUE="<%=DB.de_title%>">Position<OPTION VALUE="<%=DB.nm_legal%>">Company<OPTION VALUE="<%=DB.tx_email%>">e-mail<OPTION VALUE="<%=DB.tp_company%>">Company Type<OPTION VALUE="<%=DB.work_phone%>">Telephone<OPTION VALUE="<%=DB.tx_term%>">Zone<OPTION VALUE="<%=DB.nm_course%>">Course</SELECT>
+          <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50">
 	  &nbsp;<A HREF="#" onclick="findContact();return false;" CLASS="linkplain" TITLE="Find Individual">Search</A>	  
         </TD>
         <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard Find Filter"></TD>

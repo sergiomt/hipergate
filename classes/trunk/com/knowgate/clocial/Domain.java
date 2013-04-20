@@ -1,11 +1,8 @@
 package com.knowgate.clocial;
 
-import java.util.Properties;
-
 import com.knowgate.storage.DataSource;
 import com.knowgate.storage.RecordDelegator;
 
-import com.knowgate.misc.Gadgets;
 
 public class Domain extends RecordDelegator {
 

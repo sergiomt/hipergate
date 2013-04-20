@@ -1,3 +1,4 @@
+DROP VIEW v_oportunity_contact_address;
 DROP VIEW v_ldap_contacts;
 DROP VIEW v_ldap_users;
 
@@ -82,6 +83,10 @@ ALTER TABLE k_oportunities_attrs DROP CONSTRAINT f1_oportunities_attrs;
 
 ALTER TABLE k_oportunities_changelog DROP CONSTRAINT f1_oportunities_changelog;
 
+ALTER TABLE k_x_oportunity_contacts DROP CONSTRAINT f1_x_oportunity_contacts;
+
+ALTER TABLE k_x_oportunity_contacts DROP CONSTRAINT f2_x_oportunity_contacts;
+
 ALTER TABLE k_sales_men DROP CONSTRAINT f1_sales_men;
 ALTER TABLE k_sales_men DROP CONSTRAINT f2_sales_men;
 
@@ -90,6 +95,7 @@ ALTER TABLE k_sales_men_lookup DROP CONSTRAINT f1_sales_men_lookup;
 DROP TABLE k_sales_objectives;
 DROP TABLE k_sales_men_lookup;
 DROP TABLE k_sales_men;
+DROP TABLE k_x_oportunity_contacts;
 DROP TABLE k_oportunities_attachs;
 DROP TABLE k_oportunities_changelog;
 DROP TABLE k_oportunities_attrs;

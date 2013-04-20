@@ -115,12 +115,12 @@
       
 %><html lang="<%=sLanguage%>">
 <head>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT> 
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT> 
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT> 
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT> 
+  <SCRIPT TYPE="text/javascript">
     <!--
       function uploadImage() { 
         window.open('wb_file_upload.jsp','wUploadImage','top=' + (screen.height-360)/2 + ',left=' + (screen.width-450)/2 + ',height=360,width=450');
@@ -134,17 +134,19 @@
       	window.focus();
       	w2.document.write("<html>"); w2.document.write("\n");
       	w2.document.write("<head>"); w2.document.write("\n");
-      	w2.document.write("<TITLE>"); w2.document.write("\n");
+      	w2.document.write("<title>"); w2.document.write("\n");
       	w2.document.write("View image(" + pictureName + ")"); w2.document.write("\n");
-      	w2.document.write("</TITLE>"); w2.document.write("\n");
+      	w2.document.write("</title>"); w2.document.write("\n");
       	w2.document.write("<script type='text/javascript'>"); w2.document.write("\n");
       	w2.document.write("function resizeWin() {"); w2.document.write("\n");
       	w2.document.write("window.resizeTo(laimagen.width+10,laimagen.height+20);"); w2.document.write("\n");
       	w2.document.write("window.moveTo(parseInt((screen.width-laimagen.width-10)/2),parseInt((screen.height-laimagen.height-20)/2));"); w2.document.write("\n");
       	w2.document.write("a=0;"); w2.document.write("\n");
       	w2.document.write("}"); w2.document.write("\n");
-      	w2.document.write("</script>"); w2.document.write("\n");
-      	w2.document.write("</head>"); w2.document.write("\n");
+      	w2.document.write("<"+"/"+"script>");
+      	w2.document.write("\n");
+      	w2.document.write("</head>");
+      	w2.document.write("\n");
       	w2.document.write("<body topmargin=0 marginheight=0 leftmargin=0 onload='resizeWin()'>"); w2.document.write("\n");
       	w2.document.write("<center>"); w2.document.write("\n");
       	w2.document.write("<table width=100% height=100% border=0 cellspacing=0 cellpadding=0>"); w2.document.write("\n");

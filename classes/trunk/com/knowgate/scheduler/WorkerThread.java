@@ -207,7 +207,7 @@ public class WorkerThread extends Thread {
   // ---------------------------------------------------------------------------
 
   /**
-   * <p>Process atoms obtained throught AtomConsumer</p>
+   * <p>Process atoms obtained through AtomConsumer</p>
    * Each worker WorkerThread will enter an endless loop until the queue is empty
    * or an interrupt signal is received.<br>
    * If an exception is thrown while creating of processing atoms the workerthread

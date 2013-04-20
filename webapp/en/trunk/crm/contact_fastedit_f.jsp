@@ -7,11 +7,10 @@
   <FRAMESET NAME="fasteditf" ROWS="100%,*" BORDER="0" FRAMEBORDER="0">
     <FRAME NAME="fastedit" FRAMEBORDER="no" MARGINWIDTH="0" MARGINHEIGHT="0" NORESIZE SRC="contact_fastedit.jsp">
     <FRAME NAME="liststates" FRAMEBORDER="no" MARGINWIDTH="0" MARGINHEIGHT="0" NORESIZE SRC="blank.htm">
-    </FRAMESET>
+  </FRAMESET>
     <NOFRAMES>
       <BODY>
 	<P>This page use frames, but your web browser does not handle them</P>
       </BODY>
     </NOFRAMES>
-  </FRAMESET>
 </HTML>

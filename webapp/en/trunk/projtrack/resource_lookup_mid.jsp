@@ -64,10 +64,10 @@
 <!-- +-----------------------+ -->
 <HTML>
   <HEAD>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript1.2" SRC="../javascript/combobox.js"></SCRIPT>    
     <SCRIPT LANGUAGE="JavaScript1.2" SRC="../javascript/findit.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <SCRIPT TYPE="text/javascript">
       <!--
       var skin = getCookie("skin");
       if (""==skin) skin="xp";

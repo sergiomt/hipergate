@@ -109,7 +109,8 @@
 
     if (gu_company.length()>0) {
       Object aComp[] = { gu_company };
-      oComp.load(oConn, aComp);      
+      if (!oComp.load(oConn, aComp))
+        throw new SQLException("Could not find any company with GUID "+gu_company);
           
       nm_sector = nullif(DBLanguages.getLookUpTranslation((java.sql.Connection) oConn, DB.k_companies_lookup, gu_workarea, DB.id_sector, sLanguage, oComp.getStringNull(DB.id_sector,"")));
       nm_legal = oComp.getString(DB.nm_legal);
@@ -189,15 +190,15 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML LANG="<%=sLanguage.toUpperCase()%>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/datefuncs.js"></SCRIPT>        
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/usrlang.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/combobox.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/datefuncs.js"></SCRIPT>        
   <TITLE>hipergate :: Edit Company</TITLE>
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
       <!--        
       
       // ------------------------------------------------------
@@ -248,8 +249,13 @@
 
       function viewContacts() {            
         
-        window.opener.location.href = "contact_listing_f.jsp?id_domain=" + getURLParam("id_domain") + "&n_domain=" + getURLParam("n_domain") + "&skip=0&orderby=0&field=nm_legal&find=" + escape("<%=nm_legal%>") + "&selected=2&subselected=1";
-        window.opener.focus();
+        if (window.opener) {
+          window.opener.parent.location = "contact_listing_f.jsp?id_domain=" + getURLParam("id_domain") + "&n_domain=" + getURLParam("n_domain") + "&skip=0&orderby=0&field=nm_legal&find=" + encodeURIComponent("<%=nm_legal%>") + "&selected=2&subselected=1";
+          window.opener.focus();
+        } else {
+          open ("contact_listing_f.jsp?id_domain=" + getURLParam("id_domain") + "&n_domain=" + getURLParam("n_domain") + "&skip=0&orderby=0&field=nm_legal&find=" + encodeURIComponent("<%=nm_legal%>") + "&selected=2&subselected=1");
+        }
+        self.close();
       }
 
       // ------------------------------------------------------
@@ -341,7 +347,7 @@
        
       //-->
     </SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript">
+    <SCRIPT TYPE="text/javascript">
       <!--
         function setCombos() {
           var frm = document.forms[0];         
@@ -358,7 +364,7 @@
     tabbed panel by Jamie Jaworski taken from builder.com
     http://builder.cnet.com/webbuilding/0-7701-8-5056260-1.html?tag=st.bl.3882.dir1.7701-8-5056260-1
     -->    
-    <SCRIPT language="JavaScript">
+    <SCRIPT TYPE="text/javascript">
       <!--
         function selectTab(n) {
         	var frm = document.forms["fixedAttrs"];
@@ -380,17 +386,17 @@
 <% } %>
         	}
         	
-        	var panelID = "p1"
-        	var numDiv = 2
+        	var panelID = "p1";
+        	var numDiv = 2;
         	// iterate all tab-panel pairs
         	for(var i=0; i < numDiv; i++) {
-        		var panelDiv = window.document.getElementById(panelID+"panel"+i)
-        		var tabDiv = document.getElementById(panelID+"tab"+i)
-        		z = panelDiv.style.zIndex
+        		var panelDiv = window.document.getElementById(panelID+"panel"+i);
+        		var tabDiv = document.getElementById(panelID+"tab"+i);
+        		z = panelDiv.style.zIndex;
         		// if this is the one clicked and it isn't in front, move it to the front
-        		if (z != numDiv && i == n) { z = numDiv }
+        		if (z != numDiv && i == n) { z = numDiv; }
         		// in all other cases move it to the original position
-        		else { z = (numDiv-i) }
+        		else { z = (numDiv-i); }
         		panelDiv.style.zIndex = z;
         		tabDiv.style.zIndex = z;
         	}

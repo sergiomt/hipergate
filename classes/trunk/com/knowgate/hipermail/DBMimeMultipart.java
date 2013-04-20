@@ -58,7 +58,7 @@ import com.knowgate.debug.DebugFile;
  */
 
 public class DBMimeMultipart extends Multipart {
-  private Vector aParts = new Vector();
+  private Vector<Part> aParts = new Vector<Part>();
   private Part oParent;
 
   public DBMimeMultipart(Part oMessage) {
@@ -88,13 +88,29 @@ public class DBMimeMultipart extends Multipart {
 
   public BodyPart getBodyPart(int index)
     throws MessagingException {
-    BodyPart oRetVal = null;
+
+	if (DebugFile.trace) {
+	  DebugFile.writeln("Begin DBMimeMultipart.getBodyPart("+String.valueOf(index)+")");
+	  DebugFile.incIdent();
+	}
+
+	BodyPart oRetVal = null;
     try {
       oRetVal = (BodyPart) aParts.get(index);
     }
     catch (ArrayIndexOutOfBoundsException aiob) {
+      if (DebugFile.trace) {
+    	DebugFile.writeln("Invalid message part index");
+        DebugFile.decIdent();
+      }
       throw new MessagingException("Invalid message part index", aiob);
     }
+    
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End DBMimeMultipart.getBodyPart() :" + oRetVal);
+    }
+
     return oRetVal;
   }
 

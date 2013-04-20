@@ -172,10 +172,10 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Contact Management</TITLE> 
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript">
   <!--
 
     // ----------------------------------------------------
@@ -189,6 +189,16 @@
     function createContact() {
       self.open ("contact_new_f.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>", null, "directories=no,scrollbars=yes,toolbar=no,menubar=no,width=640,height=" + (screen.height<=600 ? "520" : "600"));
     } // createContact()
+
+    // ----------------------------------------------------
+
+    function createOportunity() {
+<%    if (bIsGuest) { %>
+        alert("Your credential level as Guest does not allow you to perform this action");
+<%    } else { %>
+	  self.open ("oportunity_new.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>", "newoportunity", "directories=no,toolbar=no,scrollbars=yes,menubar=no,width=660,height=" + (screen.height<=600 ? "520" : "660"));	  
+<%    } %>
+    } // createOportunity()
 
     // ----------------------------------------------------
 
@@ -226,7 +236,25 @@
 	      alert ("Contact name contains invalid characters");
 	      return false;
       }
-      window.location = "contact_listing_f.jsp?selected=2&subselected=1&field=tx_name&find=" + escape(nmc);
+      window.location = "contact_listing_f.jsp?selected=2&subselected=1&field=tx_name&find=" + encodeURIComponent(nmc);
+    }
+
+    // ----------------------------------------------------
+
+    function searchOportunity() {
+      var frm = document.forms[0];
+      var nmc = frm.tl_oportunity.value;
+
+      if (nmc.length==0) {
+        alert ("Enter the title of the opportunity to be found");
+        return false;
+      }  
+      
+      if (nmc.indexOf("'")>0 || nmc.indexOf('"')>0 || nmc.indexOf("?")>0 || nmc.indexOf("%")>0 || nmc.indexOf("*")>0 || nmc.indexOf("&")>0 || nmc.indexOf("/")>0) {
+		    alert ("The string contains invalid characters");
+				return false;
+      }
+      window.location = "oportunity_listing_f.jsp?id_domain=<%=id_domain%>&n_domain=<%=n_domain%>&skip=0&orderby=0&field=tl_oportunity&id_status=&id_objetive=&private=0&selected=2&subselected=2&find=" + escape(nmc);
     }
 
     // ----------------------------------------------------
@@ -388,7 +416,7 @@
                   </TD>
                 </TR>
       	        <TR>
-                  <TD>
+                  <TD COLSPAN="2">
       <% if (bIsGuest) { %>
                     <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New Individual</A>
       <% } else { %>
@@ -397,7 +425,6 @@
                     <A HREF="contact_fastedit_f.jsp" CLASS="linkplain">Fast Edit</A>
       <% } %>
                   </TD>
-                  <TD></TD>
       	        </TR>	  
       	        <TR>
                   <TD COLSPAN="2">
@@ -435,6 +462,71 @@
                     </TABLE>
                   </TD>
       	        </TR>	  
+              </TABLE>
+            </TD>
+            <TD WIDTH="3px" ALIGN="right" BACKGROUND="../images/images/graylineright.gif"><IMG style="display:block" SRC="../images/images/spacer.gif" WIDTH="3" BORDER="0"></TD>
+          </TR>
+          <!-- Línea roja -->
+          <TR>
+            <TD WIDTH="2px" CLASS="subtitle" BACKGROUND="../images/images/graylineleft.gif"><IMG style="display:block" SRC="../images/images/spacer.gif" WIDTH="2" HEIGHT="1" BORDER="0"></TD>
+            <TD CLASS="subtitle"><IMG style="display:block" SRC="../images/images/spacer.gif" HEIGHT="1" BORDER="0"></TD>
+            <TD WIDTH="3px" ALIGN="right"><IMG style="display:block" SRC="../images/images/graylineright.gif" WIDTH="3" HEIGHT="1" BORDER="0"></TD>
+          </TR>
+      
+          <!-- espacio en blanco -->
+      
+          <TR> 
+            <TD WIDTH="2px" CLASS="subtitle" BACKGROUND="../images/images/graylineleft.gif"><IMG style="display:block" SRC="../images/images/spacer.gif" WIDTH="2" HEIGHT="12" BORDER="0"></TD>
+            <TD ><IMG style="display:block" SRC="../images/images/spacer.gif" HEIGHT="12" BORDER="0"></TD>
+            <TD WIDTH="3px" ALIGN="right"><IMG style="display:block" SRC="../images/images/graylineright.gif" WIDTH="3" HEIGHT="12" BORDER="0"></TD>
+          </TR>
+      
+          <!-- Pestaña media oportunidades -->
+           <TR>  
+            <TD WIDTH="2px" CLASS="subtitle" BACKGROUND="../images/images/graylineleft.gif"><IMG style="display:block" SRC="../images/images/spacer.gif" WIDTH="2" HEIGHT="1" BORDER="0"></TD>
+            <TD>
+              <TABLE CELLSPACING="0" CELLPADDING="0" BORDER="0">
+                <TR>
+            	  <TD BACKGROUND="../skins/<%=sSkin%>/tab/tabback.gif" CLASS="subtitle" VALIGN="middle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" HEIGHT="1" BORDER="0"><IMG SRC="../images/images/3x3puntos.gif" WIDTH="18" HEIGHT="10" ALT="3x3" BORDER="0">Oportunidades</TD>
+      	          <TD ALIGN="right"><IMG  SRC="../skins/<%=sSkin%>/tab/angle45_22x22.gif" WIDTH="22" HEIGHT="22" BORDER="0"></TD>
+      	        </TR>
+              </TABLE>
+            </TD>
+            <TD ALIGN="right" WIDTH="3px"  BACKGROUND="../images/images/graylineright.gif"><IMG SRC="../images/images/spacer.gif" WIDTH="3" BORDER="0"></TD>
+          </TR>
+        <!-- Línea roja -->
+          <TR>
+            <TD WIDTH="2px" CLASS="subtitle" BACKGROUND="../images/images/graylineleft.gif"><IMG SRC="../images/images/spacer.gif" WIDTH="2" HEIGHT="1" BORDER="0"></TD>
+            <TD CLASS="subtitle"><IMG style="display:block" SRC="../images/images/spacer.gif" HEIGHT="1" BORDER="0"></TD>
+            <TD WIDTH="3px" ALIGN="right"><IMG style="display:block" SRC="../images/images/graylineright.gif" WIDTH="3" HEIGHT="1" BORDER="0"></TD>
+          </TR>
+          <!-- Cuerpo de Oportunidades -->
+          <TR>
+            <TD WIDTH="2px" CLASS="subtitle" BACKGROUND="../images/images/graylineleft.gif"><IMG style="display:block" SRC="../images/images/spacer.gif" WIDTH="2" HEIGHT="1" BORDER="0"></TD>
+            <TD CLASS="menu1">
+              <TABLE CELLSPACING="8" BORDER="0">
+                <TR>
+                  <TD ROWSPAN="3">
+                    <A HREF="oportunity_listing_f.jsp?selected=2&subselected=2"><IMG style="display:block" SRC="../images/images/crm/oportunities.png" BORDER="0" ALT="Opportunities"></A>
+                  </TD>
+                  <TD>
+                    <INPUT TYPE="text" NAME="tl_oportunity" MAXLENGTH="50" STYLE="width:180px">
+                  </TD>
+                  <TD>
+                    <A HREF="#" onClick="searchOportunity();return false;" CLASS="linkplain">Find Opportunity</A>
+                  </TD>
+                </TR>
+      	        <TR>
+                  <TD COLSPAN="2">
+      <% if (bIsGuest) { %>
+                    <A HREF="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')" CLASS="linkplain">New Opportunity</A>
+      <% } else { %>
+                    <A HREF="#" onclick="createOportunity()" CLASS="linkplain">New Opportunity</A>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <A HREF="oportunity_fastedit_f.jsp" CLASS="linkplain">Fast Edit</A>
+      <% } %>
+                  </TD>
+      	        </TR>
               </TABLE>
             </TD>
             <TD WIDTH="3px" ALIGN="right" BACKGROUND="../images/images/graylineright.gif"><IMG style="display:block" SRC="../images/images/spacer.gif" WIDTH="3" BORDER="0"></TD>

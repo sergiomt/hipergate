@@ -33,8 +33,6 @@
 
 package com.knowgate.dfs.chardet ;
 
-import java.lang.* ;
-
 public interface nsICharsetDetectionObserver {
 
 	public void Notify(String charset) ;

@@ -10,7 +10,7 @@
     <TITLE>hipergate :: Edit Contact</TITLE>
     <SCRIPT LANGUAGE="javascript" SRC="../javascript/getparam.js"></SCRIPT>
     <SCRIPT LANGUAGE="javascript" SRC="../javascript/trim.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+    <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--                
       function setURL() {
         contacttext.location = "contact_new.jsp?id_domain=" + getURLParam("id_domain") + "&gu_workarea=" + getURLParam("gu_workarea");

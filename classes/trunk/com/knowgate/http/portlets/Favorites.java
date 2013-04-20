@@ -32,6 +32,7 @@
 
 package com.knowgate.http.portlets;
 
+/*
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -48,14 +49,14 @@ import java.util.Properties;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerConfigurationException;
 
-import javax.portlet.*;
-
 import com.knowgate.debug.DebugFile;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.*;
 import com.knowgate.dataxslt.StylesheetCache;
 import com.knowgate.misc.Gadgets;
-import com.knowgate.hipergate.Product;
+*/
+
+import javax.portlet.*;
 
 public class Favorites extends GenericPortlet {
 

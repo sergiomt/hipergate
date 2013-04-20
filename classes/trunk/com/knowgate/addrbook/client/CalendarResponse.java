@@ -31,16 +31,12 @@
 
 package com.knowgate.addrbook.client;
 
-import java.io.InputStream;
 import java.io.IOException;
 import java.io.ByteArrayOutputStream;
 import java.io.StringBufferInputStream;
 
 import java.net.URL;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import javax.net.ssl.HttpsURLConnection;
 
 import java.util.ArrayList;
 

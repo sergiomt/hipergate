@@ -11,11 +11,11 @@
     <TR>  
       <TD WIDTH="2px" CLASS="subtitle" BACKGROUND="../images/images/graylineleftcorner.gif"><IMG SRC="../images/images/spacer.gif" WIDTH="2" HEIGHT="1" BORDER="0" /></TD>
       <TD BACKGROUND="../images/images/graylinebottom.gif">
-        <TABLE CELLSPACING="0" CELLPADDING="0" BORDER="0" />
+        <TABLE CELLSPACING="0" CELLPADDING="0" BORDER="0">
           <TR>
             <TD COLSPAN="2" CLASS="subtitle" BACKGROUND="../images/images/graylinetop.gif"><IMG SRC="../images/images/spacer.gif" HEIGHT="2" BORDER="0" /></TD>
-	          <TD ROWSPAN="2" CLASS="subtitle" ALIGN="right"><IMG SRC="../skins/{$param_skin}/tab/angle45_24x24.gif" style="display:block" WIDTH="24" HEIGHT="24" BORDER="0" /></TD>
-	        </TR>
+	        <TD ROWSPAN="2" CLASS="subtitle" ALIGN="right"><IMG SRC="../skins/{$param_skin}/tab/angle45_24x24.gif" style="display:block" WIDTH="24" HEIGHT="24" BORDER="0" /></TD>
+	      </TR>
           <TR>
       	    <TD CLASS="subtitle"><IMG SRC="../images/images/spacer.gif" WIDTH="4" BORDER="0" /></TD>
       	    <TD BACKGROUND="../skins/{$param_skin}/tab/tabback.gif" CLASS="subtitle" ALIGN="left" VALIGN="middle">

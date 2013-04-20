@@ -21,5 +21,4 @@
 	      <P>This page has frames but your browser does not support them</P>
       </BODY>
     </NOFRAMES>
-  </FRAMESET>
 </HTML>

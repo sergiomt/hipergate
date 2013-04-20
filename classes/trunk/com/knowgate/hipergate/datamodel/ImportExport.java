@@ -103,7 +103,8 @@ public class ImportExport {
    * @return Count of errors found or zero if operation was successfully completed
    * @throws ImportExportException
    */
-  public int perform (final String sControlCmdLine)
+  @SuppressWarnings("unused")
+public int perform (final String sControlCmdLine)
     throws ImportExportException {
 
     if (DebugFile.trace) {

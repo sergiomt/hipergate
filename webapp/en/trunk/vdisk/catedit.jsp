@@ -206,9 +206,9 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: <%=sHeadStrip%></TITLE>     
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript">
   <!--
     // Posicion actual dentro de la lista de etiquetas de traduccion
     var iLabelIndex = -1;
@@ -252,7 +252,7 @@
     
     function writePos() {
       // Escribir en una capa HTML la posicion actual dentro de la lista de etiquetas
-      var sInnerHTML = '<FONT CLASS="textplain"><B>' + String(iLabelIndex+1) + "/" + String (iMaxLabel+1) + '</B></FONT>'
+      var sInnerHTML = '<FONT CLASS="textplain"><B>' + String(iLabelIndex+1) + "/" + String (iMaxLabel+1) + '</B></FONT>';
       
       if (iLabelIndex>=0) {
         if (navigator.appName=="Microsoft Internet Explorer") {
@@ -289,9 +289,9 @@
     }
   //-->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/layer.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/layer.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
   <!--
     function validate() {
@@ -479,8 +479,8 @@
             
   //-->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
 </HEAD>
 <BODY  SCROLL="no" TOPMARGIN="4" MARGINHEIGHT="4" onLoad="preCache()">
   <TABLE WIDTH="100%"><TR><TD CLASS="striptitle"><FONT CLASS="title1"><%=sHeadStrip%></FONT></TD></TR></TABLE>
@@ -539,7 +539,7 @@
                 <TR><TD>
 		  <SPAN CLASS="lightshadow" STYLE="position:relative;top:-8;left:0;width:48;height=23;" TITLE="Labels are Category titles shown for each language."><FONT CLASS="formstrong"><BIG>LABELS</BIG></FONT></SPAN>
 		  <IMG SRC="../images/images/spacer.gif" WIDTH="24" HEIGHT="23" BORDER="0" oncontextmenu="return false;">
-		  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+		  <SCRIPT TYPE="text/javascript">
 		    <!--
 		    for (var b=0; b<aButtonName.length; b++) {
 		      document.write ('<IMG SRC="' + sSkinPath + aButtonName[b] + '.gif"' + ' WIDTH="26" HEIGHT="23" BORDER="0" VSPACE="3" ALT="' + aButtonTips[b] + '" oncontextmenu="return false;" onmousedown="if (window.event) { if (window.event.button==1) this.src=aButtonDown[' + String(b) + '].src; } else { this.src=aButtonDown[' + String(b) + '].src; } " onmouseout="leaveButton(this,' + String(b) + ')" onmouseup="pressButton(this,' + String(b) + ')">');
@@ -590,7 +590,7 @@
     </TABLE>
   </FORM>
 </BODY>
-<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+<SCRIPT TYPE="text/javascript">
   <!--
     var frm = document.forms[0];
     <%    

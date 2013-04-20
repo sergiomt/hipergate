@@ -95,8 +95,8 @@
 %>
 <HTML>
   <HEAD>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <SCRIPT SRC="../javascript/combobox.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript">
     <!--
 	var frm = window.parent.contacttext.document.forms[1];
 	

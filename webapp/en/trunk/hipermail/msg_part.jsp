@@ -274,7 +274,6 @@
     response.setHeader("Content-Disposition","inline; filename=\"error.txt\"");
     out.write("AuthenticationFailedException " + auth.getMessage());
   }
-  /*
   catch (FolderNotFoundException fnfe) {
     if (oRDBMS!=null) { try {oRDBMS.close();} catch (Exception ignore) {}}
 
@@ -296,7 +295,7 @@
     response.setHeader("Content-Disposition","inline; filename=\"error.txt\"");
     out.write("MessagingException " + me.getMessage());
   }
-  */
+
   if (true) return; // Do not remove this line or you will get an error "getOutputStream() has already been called for this response"
 
 %><%@ include file="../methods/page_epilog.jspf" %>

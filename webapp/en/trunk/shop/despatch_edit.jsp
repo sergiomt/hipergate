@@ -68,17 +68,17 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Edit Despatch Advice</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/datefuncs.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/layer.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/grid.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/simplevalidations.js"></SCRIPT>   
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="true">
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/usrlang.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/datefuncs.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/layer.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/grid.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/simplevalidations.js"></SCRIPT>   
+  <SCRIPT TYPE="text/javascript" DEFER="true">
     <!--
       var taxcookiename = "recenttax";
       

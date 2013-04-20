@@ -502,8 +502,11 @@ dynapi.onLoad(init);
   myLayer.setSize(320,600);
   myLayer.setBgColor('');
   myLayer.setLocation(420,120);
-  myLayer.setHTML('<MAP NAME="fondo_integrador1"><AREA SHAPE=RECT COORDS="270,6,300,26" HREF="javascript:ocultarIntegrador()" onMouseOut="pararInt()" ALT="Close Edition Pannel"></MAP><table cellspacing="0" cellpadding="0"><tr><td oncontextmenu="return false"><img src="../../../../../../images/images/integrador/fondo_integrador.gif" usemap="#fondo_integrador1" width="320" height="600" border="0" galleryimg="no" oncontextmenu="return false"></td></tr></table>');
+  //myLayer.setHTML('<MAP NAME="fondo_integrador1"><AREA SHAPE=RECT COORDS="290,6,300,16" HREF="javascript:ocultarIntegrador()" ALT="[~Cerrar Panel de Edición~]"><AREA SHAPE=RECT COORDS="296,40,302,49" onMouseOut="pararInt()" onMouseOver="subirInt()"><AREA SHAPE=RECT COORDS="296,357,303,367" onMouseOut="pararInt()" onMouseOver="bajarInt()"></MAP><table cellspacing="0" cellpadding="0"><tr><td oncontextmenu="return false"><img src="../images/images/integrador/fondo_integrador.gif" usemap="#fondo_integrador1" width="320" height="400" border="0" galleryimg="no" oncontextmenu="return false"></td></tr></table>');
+    myLayer.setHTML('<MAP NAME="fondo_integrador1"><AREA SHAPE=RECT COORDS="270,6,300,26" HREF="javascript:ocultarIntegrador()" onMouseOut="pararInt()" ALT="[~Cerrar Panel de Edición~]"></MAP><table cellspacing="0" cellpadding="0"><tr><td oncontextmenu="return false"><img src="../../../../../../images/images/integrador/fondo_integrador.gif" usemap="#fondo_integrador1" width="320" height="600" border="0" galleryimg="no" oncontextmenu="return false"></td></tr></table>');
   dynapi.document.addChild(myLayer);
+  //myLayer.css.paddingTop="1px";
+  //myLayer.css.visibility="inherit";
 
   // Layer para el menu de bloques
   myDragLayer = new DynLayer();
@@ -512,9 +515,16 @@ dynapi.onLoad(init);
   myDragLayer.setLocation(20,22);
   myDragLayer.setHTML(integradorHTML);  
   myLayer.addChild(myDragLayer);
+  //myDragLayer.css.paddingTop="1px";
+  //myDragLayer.css.visibility="inherit";
 
   DragEvent.setDragBoundary(myLayer,0,screen.width-20,1000,0);
   DragEvent.enableDragEvents(myLayer);
+  /*
+  myListener = new EventListener(DynAPI.document);
+  myListener.onmousedown=function(e) { e.setBubble(false); }
+  myDragLayer.addEventListener(myListener);
+  */
   a=0;
 }
 

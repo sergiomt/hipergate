@@ -31,31 +31,25 @@
 
 package com.knowgate.syndication.crawler;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 import java.net.URL;
 
-import java.sql.SQLException;
 
 import java.util.Date;
-import java.util.Set;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Properties;
 import java.util.Collections;
 import java.util.ListIterator;
-import java.util.concurrent.ConcurrentHashMap;
 
 import java.text.SimpleDateFormat;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Parser;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.XMLReaderFactory;
@@ -66,14 +60,9 @@ import org.xml.sax.helpers.ParserFactory;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.debug.DebugFile;
 import com.knowgate.debug.StackTraceUtil;
-import com.knowgate.dfs.FileSystem;
 
 import com.knowgate.misc.Gadgets;
 import com.knowgate.misc.NameValuePair;
-
-import com.knowgate.yahoo.Boss;
-import com.knowgate.yahoo.Result;
-import com.knowgate.yahoo.YSearchResponse;
 
 import com.knowgate.storage.Table;
 import com.knowgate.storage.Record;
@@ -82,7 +71,6 @@ import com.knowgate.storage.DataSource;
 import com.knowgate.storage.StorageException;
 import com.knowgate.storage.RecordColumnValueComparatorAsc;
 
-import com.knowgate.clocial.IPInfo;
 import com.knowgate.clocial.UserAccountAlias;
 
 import com.knowgate.syndication.FeedEntry;
@@ -90,26 +78,19 @@ import com.knowgate.syndication.SyndSearch;
 import com.knowgate.syndication.SyndReferer;
 import com.knowgate.syndication.SyndSearchRun;
 
-import com.knowgate.syndication.fetcher.FeedReader;
+import com.knowgate.syndication.fetcher.BingFetcher;
 import com.knowgate.syndication.fetcher.EntriesBatch;
 import com.knowgate.syndication.fetcher.MeneameFetcher;
-import com.knowgate.syndication.fetcher.BacktypeFetcher;
 import com.knowgate.syndication.fetcher.YahooBossFetcher;
 import com.knowgate.syndication.fetcher.BitacorasFetcher;
 import com.knowgate.syndication.fetcher.GenericFeedFetcher;
+import com.knowgate.syndication.fetcher.TwitterJsonFetcher;
 import com.knowgate.syndication.fetcher.FacebookJsonFetcher;
-import com.knowgate.syndication.fetcher.AbstractEntriesFetcher;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONException;
 
 import org.apache.oro.text.regex.MalformedPatternException;
 
 import com.sun.syndication.io.FeedException;
-import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.feed.synd.SyndContent;
-import com.sun.syndication.feed.synd.SyndContentImpl;
 import com.sun.syndication.feed.synd.SyndEntryImpl;
 import com.sun.syndication.fetcher.FetcherException;
 
@@ -126,7 +107,6 @@ public class SearchRunner extends DefaultHandler {
   private String sQry, sDomain;
   private String sCurrentTag, sFetcherId, sFetcherUri;
   private boolean bFetcherIsEnabled;
-  private FileSystem oFs;
   private Properties oEnvProps;
   private ArrayList<NameValuePair> aFetchers;
 
@@ -227,24 +207,25 @@ public class SearchRunner extends DefaultHandler {
 
   	Table oTbl = null;
   	int nNew = 0;
-  	Object oIdSyndEntry = null;
   	RecordColumnValueComparatorAsc oRcvc = new RecordColumnValueComparatorAsc("uri_entry");
   	long lStartMilis = new Date().getTime(), lEndMilis;
 	
 	oBatch = new EntriesBatch(oDts, oEnvProps);
 	for (NameValuePair oNvp : aFetchers) {
-	  if (oNvp.getName().equals("backtype")) {
-	    oBatch.registerFetcher(new BacktypeFetcher (setURLParam1(oNvp.getValue(), sQry), sQry, oEnvProps));
+	  if (oNvp.getName().equals("twittersearch")) {
+	    oBatch.registerFetcher(new TwitterJsonFetcher (oDts, setURLParam1(oNvp.getValue(), sQry), sQry));
 	  } else if (oNvp.getName().equals("bitacoras")) {
-	    oBatch.registerFetcher(new BitacorasFetcher(setURLParam1(oNvp.getValue(), sDomain==null ? sQry : sDomain), sQry, oBatch.getFeedsCache()));	  
+	    oBatch.registerFetcher(new BitacorasFetcher(oDts, setURLParam1(oNvp.getValue(), sDomain==null ? sQry : sDomain), sQry, oBatch.getFeedsCache()));	  
 	  } else if (oNvp.getName().equals("facebookgraph")) {
-	  	oBatch.registerFetcher(new FacebookJsonFetcher(setURLParam1(oNvp.getValue(), sQry), sQry));
+	  	oBatch.registerFetcher(new FacebookJsonFetcher(oDts, setURLParam1(oNvp.getValue(), sQry), sQry));
 	  } else if (oNvp.getName().equals("yahooboss")) {
-		oBatch.registerFetcher(new YahooBossFetcher(sQry, oEnvProps));
+		oBatch.registerFetcher(new YahooBossFetcher(oDts, sQry, oEnvProps));
 	  } else if (oNvp.getName().startsWith("meneame")) {
-		oBatch.registerFetcher(new MeneameFetcher(setURLParam1(oNvp.getValue(), sQry), sQry, oBatch.getFeedsCache()));
+		oBatch.registerFetcher(new MeneameFetcher(oDts, setURLParam1(oNvp.getValue(), sQry), sQry, oBatch.getFeedsCache()));
+	  } else if (oNvp.getName().startsWith("bingsearch")) {
+		oBatch.registerFetcher(new BingFetcher(oDts, sQry, oEnvProps));
 	  } else {
-		oBatch.registerFetcher(new GenericFeedFetcher (setURLParam1(oNvp.getValue(), sQry), oNvp.getName(), sQry, oBatch.getFeedsCache(), oEnvProps));
+		oBatch.registerFetcher(new GenericFeedFetcher (oDts, setURLParam1(oNvp.getValue(), sQry), oNvp.getName(), sQry, oBatch.getFeedsCache(), oEnvProps));
 	  }
 	} // next
 
@@ -310,8 +291,10 @@ public class SearchRunner extends DefaultHandler {
           oFntr.remove("id_acalias");
           oFntr.remove("nm_alias");
         }
-        if (oFntr.isEmpty(DB.gu_account) && !oFntr.isEmpty("nm_service") && !oFntr.isEmpty("nm_alias"))
-          oFntr.put(DB.gu_account, UserAccountAlias.getUserAccountId(oDts, oFntr.getString("nm_service"), oFntr.getString("nm_alias")));
+        if (oFntr.isEmpty(DB.gu_account) && !oFntr.isEmpty("nm_service") && !oFntr.isEmpty("nm_alias")) {
+          String sAccId = UserAccountAlias.getUserAccountId(oDts, oFntr.getString("nm_service"), oFntr.getString("nm_alias"));
+          oFntr.put(DB.gu_account, sAccId);
+        }
         oFntr.store(oTbl);
 	  } // next
       oRst = oTbl.fetch("tx_sought_by_date", sQry+"%");

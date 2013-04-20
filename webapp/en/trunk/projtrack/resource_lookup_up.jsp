@@ -54,9 +54,9 @@
 %>
 <HTML>
   <HEAD>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript">
       <!--
 
       // ------------------------------------------------------

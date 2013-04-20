@@ -67,7 +67,8 @@
   oCel = oRow.createCell(0);
   oCel.setCellValue("Recipients");
   oCel = oRow.createCell(1);
-  oCel.setCellValue(Gadgets.join(oLists.getColumnAsList(0),","));
+  if (oLists.getRowCount()>0)
+    oCel.setCellValue(Gadgets.join(oLists.getColumnAsList(0),","));
   
   oRow = oTotals.createRow(r++);
   oCel = oRow.createCell(0);

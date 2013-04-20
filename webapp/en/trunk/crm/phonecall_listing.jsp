@@ -88,8 +88,8 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: List of calls for an opportunity</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
     <!--
 
@@ -124,7 +124,7 @@
     String sStrip = String.valueOf((i%2)+1); %>
     <TR HEIGHT="16">
       <TD CLASS="strip<% out.write (sStrip); %>" WIDTH="20" ALIGN="center"><IMG SRC="../images/images/addrbook/<% out.write(oCalls.getString(1,i).equals("R") ? "callin.gif" : "callout.gif"); %>" BORDER="0" ALT="<% out.write(oCalls.getString(1,i).equals("R") ? "Received Call" : "Sent Call"); %>"></TD>
-      <TD CLASS="strip<% out.write (sStrip); %>"><% out.write(oCalls.getString(8,i)); %></TD>
+      <TD CLASS="strip<% out.write (sStrip); %>"><% out.write(oCalls.getStringNull(8,i,"")); %></TD>
       <TD CLASS="strip<% out.write (sStrip); %>"><% out.write(oCalls.getDateTime(3,i)); %></TD>
       <TD CLASS="strip<% out.write (sStrip); %>"><% if (!oCalls.isNull(5,i)) { ACLUser oUsr = (ACLUser) oUsers.get(oCalls.get(5,i)); out.write(oUsr.getStringNull(DB.nm_user,"")+" "+oUsr.getStringNull(DB.tx_surname1,"")+" "+oUsr.getStringNull(DB.tx_surname2,"")); } %></TD>
       <TD CLASS="strip<% out.write (sStrip); %>"><% out.write(oCalls.getStringNull(9,i,"")); %></TD>

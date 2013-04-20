@@ -1,5 +1,4 @@
-<%@ page import="java.util.Date,java.net.URLDecoder" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/cookies.jspf" %><%!
+<%@ page import="java.util.Date,java.net.URLDecoder" language="java" session="false" contentType="text/html;charset=UTF-8" %><%@ include file="../methods/cookies.jspf" %><%!
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -159,8 +158,8 @@
 <HTML LANG="<% out.write(sLanguage); %>">
   <HEAD>
     <TITLE>hipergate :: Calendar</TITLE>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+    <SCRIPT TYPE="text/javascript">
       <!--
       var skin = getCookie("skin");
       if (""==skin) skin="xp";

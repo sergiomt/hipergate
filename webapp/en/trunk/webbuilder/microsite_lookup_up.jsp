@@ -45,8 +45,8 @@
 %>
 <HTML>
   <HEAD>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+    <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
     <TITLE>hipergate :: New<%=sTitle%> Step 1 of 2</TITLE>
   </HEAD>
   <!-- -->

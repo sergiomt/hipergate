@@ -260,11 +260,11 @@
   <!-- +---------------------------------------+ -->
 <HTML LANG="<% out.write(sLanguage); %>">
   <HEAD>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" >
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" >
       dynapi.library.setPath('../javascript/dynapi3/');
       dynapi.library.include('dynapi.api.DynLayer');
 
@@ -278,9 +278,9 @@
         menuLayer.setHTML(rightMenuHTML);      
       }
     </SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/floatdiv.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/floatdiv.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" DEFER="defer">
       <!--
         var id_category = "<%=id_category%>";
         var tr_category = escape("<%=tr_category%>");
@@ -457,7 +457,7 @@
       	    var frm = document.forms[0];
       	     for (var i=0;i<frm.elements.length; i++) {
       	       if (frm.elements[i].type=="checkbox")
-      	         frm.elements[i].checked = (frm.elements[i].value==id_item)
+      	         frm.elements[i].checked = (frm.elements[i].value==id_item);
       	     }
       	    deleteProducts();
       	  } // fi
@@ -700,7 +700,7 @@
     <DIV id="divHolder" style="width:100px;height:20px;z-index:200;visibility:hidden;position:absolute;top:31px;left:0px"></DIV>
     <FORM name="divForm"><input type="hidden" name="divField" value=""></FORM>
 
-    <SCRIPT language="JavaScript" type="text/javascript">
+    <SCRIPT type="text/javascript">
       <!--
 
       addMenuOption("View","viewItem(jsItemTp,jsItemId,jsItemTr)",0);

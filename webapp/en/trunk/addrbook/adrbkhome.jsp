@@ -89,9 +89,9 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Collaborative Tools</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js" TYPE="text/javascript"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js" TYPE="text/javascript"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT SRC="../javascript/cookies.js" TYPE="text/javascript"></SCRIPT>
+  <SCRIPT SRC="../javascript/setskin.js" TYPE="text/javascript"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
   <!--
 
     var activity_edition_page = "<% out.write(sFace.equalsIgnoreCase("healthcare") ? "appointment_edit_f.htm" : "meeting_edit_f.htm"); %>";

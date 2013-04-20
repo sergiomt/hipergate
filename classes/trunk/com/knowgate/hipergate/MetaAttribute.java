@@ -45,7 +45,7 @@ import com.knowgate.dataobjs.DBPersist;
 /**
  * <p>Table Meta-Attributes</p>
  * Meta-Attributes are "virtual columns" that may exists for each table on a per
- * WorkArea basis. This class holds only the meta-attribuyes definitions, not the
+ * WorkArea basis. This class holds only the meta-attributes definitions, not the
  * actual data contained on them.
  * @author Sergio Montoro Ten
  * @version 2.1

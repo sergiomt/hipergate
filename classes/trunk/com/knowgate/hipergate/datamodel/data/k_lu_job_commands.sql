@@ -8,6 +8,6 @@ INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('FTP' ,'S
 INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('DUMY','DUMMY TESTING JOB','com.knowgate.scheduler.jobs.DummyJob');
 
 INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('VOID','DO NOTHING','com.knowgate.scheduler.events.DoNothing');
-INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('NOPO','NEW OPORTUNITY','com.knowgate.scheduler.events.DoNothing');
-INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('MOPO','MODIFY OPORTUNITY','com.knowgate.scheduler.events.DoNothing');
+INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('NOPO','NEW OPORTUNITY','com.knowgate.scheduler.events.ExecuteBeanShell');
+INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('MOPO','MODIFY OPORTUNITY','com.knowgate.scheduler.events.ExecuteBeanShell');
 INSERT INTO k_lu_job_commands (id_command,tx_command,nm_class) VALUES ('BEAN','EXECUTE BEAN SHELL SCRIPT','com.knowgate.scheduler.events.ExecuteBeanShell');

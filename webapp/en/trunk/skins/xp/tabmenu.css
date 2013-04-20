@@ -1,0 +1,7 @@
+.actual { font-family: Verdana,Arial,Helvetica,sans-serif;font-size: 8pt;color: black;text-decoration:none; }
+.opcion { font-family: Verdana,Arial,Helvetica,sans-serif;font-size: 8pt;color: #666666;text-decoration:none; }
+.opcion:hover { text-decoration:underline; }
+
+.menu1 { background-color: #ECE4D3; }
+.menu2 { background-color: #EAE5E1; }
+.menu3 { background-color: #cccccc; }

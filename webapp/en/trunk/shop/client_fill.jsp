@@ -44,7 +44,7 @@
 <HTML>
 <HEAD>
 <TITLE>Wait...</TITLE>
-<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+<SCRIPT TYPE="text/javascript">
 <!--
   function setCombo() {
     var opt;

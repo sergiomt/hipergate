@@ -88,7 +88,6 @@ import com.knowgate.hipergate.DBLanguages;
 import com.knowgate.hipergate.Product;
 import com.knowgate.hipergate.ProductLocation;
 
-import com.knowgate.lucene.MailIndexer;
 
 /**
  * <p>A subclass of javax.mail.Folder providing storage for MimeMessages at database
@@ -802,7 +801,8 @@ public class DBFolder extends Folder {
    * @return <b>null</b>
    * @throws MessagingException
    */
-  public Message[] expunge() throws MessagingException {
+  @SuppressWarnings("unused")
+public Message[] expunge() throws MessagingException {
     Statement oStmt = null;
     CallableStatement oCall = null;
     PreparedStatement oUpdt = null;
@@ -984,34 +984,41 @@ public class DBFolder extends Folder {
         // *********************************************************************************
         // Re-assign ordinal position and byte offset for all messages remaining after purge
 
-        DBSubset oMsgSet = new DBSubset(DB.k_mime_msgs, DB.gu_mimemsg+","+DB.pg_message, DB.gu_category+"='"+getCategory().getString(DB.gu_category)+"' ORDER BY "+DB.pg_message, 1000);
-        int iMsgCount = oMsgSet.load(oConn);
+        DBSubset oMsgSet = new DBSubset(DB.k_mime_msgs,
+        		                        DB.gu_mimemsg+","+DB.pg_message, DB.gu_category+"='"+getCategory().getString(DB.gu_category)+
+        		                        "' ORDER BY "+DB.pg_message, 1000);
+        final int iMsgCount = oMsgSet.load(oConn);
 
-        oMBox = new MboxFile(oFile, MboxFile.READ_ONLY);
-        long[] aPositions = oMBox.getMessagePositions();
-        oMBox.close();
+        if (iMsgCount>0) {
+          oMBox = new MboxFile(oFile, MboxFile.READ_ONLY);
+          long[] aPositions = oMBox.getMessagePositions();
+          oMBox.close();
+        
+          if (iMsgCount!=aPositions.length)
+            throw new SQLException("There are "+String.valueOf(iMsgCount)+" messages indexed at folder "+getCategory().getString(DB.gu_category)+" but MBOX file contains "+String.valueOf(aPositions.length)+" messages execute DBFolder.reindexMbox() for reconstructing the index");
 
-        oMaxPg = new BigDecimal(0);
-        oUpdt = oConn.prepareStatement("UPDATE "+DB.k_mime_msgs+" SET "+DB.pg_message+"=?,"+DB.nu_position+"=? WHERE "+DB.gu_mimemsg+"=?");
-        oPart = oConn.prepareStatement("UPDATE "+DB.k_mime_parts+" SET "+DB.pg_message+"=? WHERE "+DB.gu_mimemsg+"=?");
-        oAddr = oConn.prepareStatement("UPDATE "+DB.k_inet_addrs+" SET "+DB.pg_message+"=? WHERE "+DB.gu_mimemsg+"=?");
-        for (int m=0; m<iMsgCount; m++) {
-          String sGuMsg = oMsgSet.getString(0,m);
-          oUpdt.setBigDecimal(1, oMaxPg);
-          oUpdt.setBigDecimal(2, new BigDecimal(aPositions[m]));
-          oUpdt.setString(3, sGuMsg);
-          oUpdt.executeUpdate();
-          oPart.setBigDecimal(1, oMaxPg);
-          oPart.setString(2, sGuMsg);
-          oPart.executeUpdate();
-          oAddr.setBigDecimal(1, oMaxPg);
-          oAddr.setString(2, sGuMsg);
-          oAddr.executeUpdate();
-          oMaxPg = oMaxPg.add(oUnit);
+          oMaxPg = new BigDecimal(0);
+          oUpdt = oConn.prepareStatement("UPDATE "+DB.k_mime_msgs+" SET "+DB.pg_message+"=?,"+DB.nu_position+"=? WHERE "+DB.gu_mimemsg+"=?");
+          oPart = oConn.prepareStatement("UPDATE "+DB.k_mime_parts+" SET "+DB.pg_message+"=? WHERE "+DB.gu_mimemsg+"=?");
+          oAddr = oConn.prepareStatement("UPDATE "+DB.k_inet_addrs+" SET "+DB.pg_message+"=? WHERE "+DB.gu_mimemsg+"=?");
+          for (int m=0; m<iMsgCount; m++) {
+            String sGuMsg = oMsgSet.getString(0,m);
+            oUpdt.setBigDecimal(1, oMaxPg);
+            oUpdt.setBigDecimal(2, new BigDecimal(aPositions[m]));
+            oUpdt.setString(3, sGuMsg);
+            oUpdt.executeUpdate();
+            oPart.setBigDecimal(1, oMaxPg);
+            oPart.setString(2, sGuMsg);
+            oPart.executeUpdate();
+            oAddr.setBigDecimal(1, oMaxPg);
+            oAddr.setString(2, sGuMsg);
+            oAddr.executeUpdate();
+            oMaxPg = oMaxPg.add(oUnit);
+          }
+          oUpdt.close();
+          oPart.close();
+          oAddr.close();
         }
-        oUpdt.close();
-        oPart.close();
-        oAddr.close();
       }
       oConn.commit();
     } catch (SQLException sqle) {
@@ -1043,12 +1050,10 @@ public class DBFolder extends Folder {
    * Delete all messages from this folder and clear MBOX file
    * @throws MessagingException
    */
-  public void wipe() throws MessagingException {
+  @SuppressWarnings("unused")
+public void wipe() throws MessagingException {
     Statement oStmt = null;
     CallableStatement oCall = null;
-    PreparedStatement oUpdt = null;
-    PreparedStatement oPart = null;
-    PreparedStatement oAddr = null;
     ResultSet oRSet;
 
     if (DebugFile.trace) {
@@ -1195,8 +1200,13 @@ public class DBFolder extends Folder {
   /**
    * Get full path to MBOX file containing mime messages
    * @return String
+   * @throws NullPointerException
    */
-  public String getFilePath() {
+  public String getFilePath() throws NullPointerException {
+	if (null==sFolderDir)
+      throw new NullPointerException("DBFolder.getFilePath() directory of MBOX file is not set");
+	if (oCatg.isNull(DB.nm_category))
+	  throw new NullPointerException("DBFolder.getFilePath() MBOX file name is not set");
     return Gadgets.chomp(sFolderDir, File.separator)+oCatg.getString(DB.nm_category)+".mbox";
   }
 
@@ -1205,6 +1215,7 @@ public class DBFolder extends Folder {
   /**
    * Get MBOX file that holds messages for this DBFolder
    * @return java.io.File object representing MBOX file.
+   * @throws NullPointerException
    */
   public File getFile() {
     return new File(getFilePath());
@@ -1234,7 +1245,8 @@ public class DBFolder extends Folder {
 
   // ---------------------------------------------------------------------------
 
-  protected Message getMessage(String sMsgId, int IdType)
+  @SuppressWarnings("unused")
+protected Message getMessage(String sMsgId, int IdType)
     throws MessagingException {
 
     if (DebugFile.trace) {
@@ -1912,8 +1924,6 @@ public class DBFolder extends Folder {
       oStmt.executeUpdate();
       oStmt.close();
       oStmt=null;
-      
-      if (!oConn.getAutoCommit()) oConn.commit();
 
     } catch (SQLException sqle) {
       String sTrace = "";
@@ -1930,23 +1940,33 @@ public class DBFolder extends Folder {
       byOutStrm = null;
     }
 
+    if (DebugFile.trace) DebugFile.writeln("INSERT INTO k_mime_msgs done!");
+
     // *************************************************************************
     // Now that we have saved the main message reference proceed to store
     // its parts into k_mime_parts
 
     try {
       Object oContent = oMsg.getContent();
+
+      if (DebugFile.trace) DebugFile.writeln("message content class is "+oContent.getClass().getName());
+
       if (oContent instanceof MimeMultipart) {
         try {
           saveMimeParts(oConn, oMsg, sMsgCharSeq, sBoundary, sGuMimeMsg, sMessageID, dPgMessage.intValue(), 0);
         } catch (MessagingException msge) {
-          // Close Mbox file rollback and re-throw
-          try { oConn.rollback(); } catch (Exception ignore) {}
+          // Close Mbox file, rollback and re-throw
+          try { if (!oConn.getAutoCommit()) oConn.rollback(); } catch (Exception ignore) {}
           throw new MessagingException(msge.getMessage(), msge.getNextException());
         }
       } // fi (MimeMultipart)
+
     } catch (Exception xcpt) {
       try { if (!oConn.getAutoCommit()) oConn.rollback(); } catch (Exception ignore) {}
+      if (DebugFile.trace) {
+    	try { DebugFile.writeln(StackTraceUtil.getStackTrace(xcpt)); } catch (IOException ignore) { }
+    	DebugFile.decIdent();
+      }
       throw new MessagingException("MimeMessage.getContent() " + xcpt.getMessage(), xcpt);
     }
 
@@ -1968,7 +1988,6 @@ public class DBFolder extends Folder {
     PreparedStatement oAddr = null;
 
     try {
-      oConn = getConnection();
       oAddr = oConn.prepareStatement(sSQL, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
       ResultSet oRSet;
 
@@ -2310,6 +2329,8 @@ public class DBFolder extends Folder {
       oStmt.close();
       oStmt=null;
 
+      if (DebugFile.trace) DebugFile.writeln("autocommit="+oConn.getAutoCommit());
+      
       if (!oConn.getAutoCommit()) oConn.commit();
 
     } catch (SQLException sqle) {
@@ -2777,7 +2798,7 @@ public class DBFolder extends Folder {
   /**
    * <p>Get message GUID, Id, Number, Subject, From and Reply-To from k_mime_msgs table</p>
    * This method is mainly used for testing whether or not a message is already present at current folder.
-   * @param sMsgId String GUID or Id of message to be rerieved
+   * @param sMsgId String GUID or Id of message to be retrieved
    * @return Properties {gu_mimemsg, id_message, pg_message, tx_subject, tx_email_from,	tx_email_reply, nm_from }
    * or <b>null</b> if no message with such sMsgId was found referenced at k_mime_msgs
    * for current folder
@@ -2950,6 +2971,10 @@ public class DBFolder extends Folder {
         DBMimeMessage.delete(oConn, sGuFolder, oMsgs.getString(0,m));
 
       iMsgCount = oInputMbox.getMessageCount();
+      
+      if (!oConn.getAutoCommit()) oConn.commit();
+      
+      oConn = null;
 
       if (DebugFile.trace) DebugFile.writeln(String.valueOf(iMsgCount)+" stored messages");
 
@@ -2989,18 +3014,18 @@ public class DBFolder extends Folder {
       } // next
       oInputMbox.close();
       oInputMbox=null;
-      oConn.commit();
+      
     } catch (FileNotFoundException fnfe) {
-      try {oConn.rollback();} catch (Exception ignore) {}
+      try { if (null!=oConn) if (!oConn.isClosed()) if (!oConn.getAutoCommit()) oConn.rollback(); } catch (Exception ignore) {}
       throw fnfe;
     } catch (IOException ioe) {
-      try {oConn.rollback();} catch (Exception ignore) {}
+      try { if (null!=oConn) if (!oConn.isClosed()) if (!oConn.getAutoCommit()) oConn.rollback(); } catch (Exception ignore) {}
       throw ioe;
     } catch (MessagingException me) {
-      try {oConn.rollback();} catch (Exception ignore) {}
+        try { if (null!=oConn) if (!oConn.isClosed()) if (!oConn.getAutoCommit()) oConn.rollback(); } catch (Exception ignore) {}
       throw me;
     } catch (SQLException sqle) {
-      try {oConn.rollback();} catch (Exception ignore) {}
+        try { if (null!=oConn) if (!oConn.isClosed()) if (!oConn.getAutoCommit()) oConn.rollback(); } catch (Exception ignore) {}
       throw sqle;
     } finally {
       try { if (null!=oInputMbox) oInputMbox.close(); } catch (Exception ignore) {}

@@ -5,8 +5,6 @@ import java.io.FileNotFoundException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
-import java.util.Collection;
-import java.util.Properties;
 
 import java.text.SimpleDateFormat;
 
@@ -47,11 +45,9 @@ import com.sleepycat.db.SecondaryConfig;
 import com.sleepycat.db.SecondaryCursor;
 import com.sleepycat.db.SecondaryDatabase;
 import com.sleepycat.db.DatabaseException;
-import com.sleepycat.db.SecondaryKeyCreator;
-import com.sleepycat.db.SecondaryMultiKeyCreator;
+import com.sleepycat.db.DeadlockException;
 
 import com.sleepycat.bind.EntryBinding;
-import com.sleepycat.bind.serial.ClassCatalog;
 import com.sleepycat.bind.serial.StoredClassCatalog;
 
 public class DBTable implements Table {
@@ -65,10 +61,10 @@ public class DBTable implements Table {
   private StoredClassCatalog oCtg;
   private EntryBinding oKey;
   private Transaction oTrn;
-
     
   private static SimpleDateFormat oTsFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+  @SuppressWarnings("unused")
   private DBTable() { }
 
   // --------------------------------------------------------------------------
@@ -92,7 +88,10 @@ public class DBTable implements Table {
     oCtg = oClassCatalog;
     oKey = oEntryBind;
     try {
-	  oTrn = oRep.isTransactional() ? oRep.getEnvironment().beginTransaction(null,null) : null;
+      if (oRep.isTransactional())
+	    oTrn = oRep.getEnvironment().beginTransaction(null,null);
+      else
+    	oTrn = null;
     } catch (DatabaseException dbe) {
       throw new StorageException(dbe.getMessage(),dbe);
     }
@@ -109,6 +108,30 @@ public class DBTable implements Table {
     try { close(); } catch (StorageException ignore) {}
   }
 
+  // --------------------------------------------------------------------------
+
+  private void abort() throws StorageException {
+
+  	if (DebugFile.trace) {
+  	  DebugFile.writeln("Begin DBTable.abort()");
+  	  DebugFile.incIdent();
+  	}
+  	
+  	if (oTrn!=null) {
+      try {
+	    oTrn.abort();
+	    oTrn = null;
+      } catch (DatabaseException dbe) {
+        throw new StorageException(dbe.getMessage(),dbe);
+      }
+  	} // fi
+
+  	if (DebugFile.trace) {
+  	  DebugFile.decIdent();
+  	  DebugFile.writeln("End DBTable.abort()");
+  	}
+  } // close
+  
   // --------------------------------------------------------------------------
 
   public void close() throws StorageException {
@@ -168,9 +191,16 @@ public class DBTable implements Table {
   public LinkedList<Column> columns() {
   	LinkedList<Column> oLst;
   	try {
+  	  if (null==getDataSource().getMetaData()) return null;
   	  oLst = getDataSource().getMetaData().getColumns(getName());
   	} catch (Exception xcpt) { oLst = null; }
     return oLst;
+  }
+
+  // --------------------------------------------------------------------------
+
+  public Database getDatabase() {
+  	return oPdb;
   }
 
   // --------------------------------------------------------------------------
@@ -196,9 +226,10 @@ public class DBTable implements Table {
   	}
 
 	try {
-	  oPdb.delete(oTrans, new DatabaseEntry(oRec.getPrimaryKey().getBytes()));	
+	  oPdb.delete(oTrans, new DatabaseEntry(oRec.getPrimaryKey().getBytes()));
 	} catch (DatabaseException dbe) {
   	  if (DebugFile.trace) DebugFile.decIdent();
+  	  abort();
 	  throw new StorageException(dbe.getMessage(), dbe);
 	}
 
@@ -233,6 +264,9 @@ public class DBTable implements Table {
   	try {
   	  oOpSt = oPdb.get(oTrn, new DatabaseEntry(sKey.getBytes()), new DatabaseEntry(), LockMode.DEFAULT);
   	  bRetVal = (OperationStatus.SUCCESS==oOpSt);
+  	} catch (DeadlockException dlxc) {
+  	  abort();
+      throw new StorageException(dlxc.getMessage(), dlxc);
   	} catch (Exception xcpt) {
   	  throw new StorageException(xcpt.getMessage(), xcpt);
   	}
@@ -268,6 +302,10 @@ public class DBTable implements Table {
 	    DBEntityBinding oDbeb = new DBEntityBinding(oCtg);
   	    oDbEnt = oDbeb.entryToObject(oDbKey,oDbDat);
   	  }
+  	} catch (DeadlockException dlxc) {
+      if (DebugFile.trace) DebugFile.decIdent();
+      abort();
+      throw new StorageException(dlxc.getMessage(), dlxc);
   	} catch (Exception xcpt) {
   	  if (DebugFile.trace) DebugFile.decIdent();
   	  throw new StorageException(xcpt.getMessage(), xcpt);
@@ -279,6 +317,21 @@ public class DBTable implements Table {
   	}
 
   	return oDbEnt;
+  } // load
+
+  // --------------------------------------------------------------------------
+  
+  public Record load(Object[] aKey) throws StorageException {
+
+	if (aKey.length!=1) throw new StorageException("Berkeley DB does not allow primary key composed of multiple values");
+
+  	return load(aKey[0].toString());
+  } // load
+  
+  // --------------------------------------------------------------------------
+  
+  public Record newRecord() throws StorageException {
+  	return new DBEntity(getName(), columns());
   } // load
 
   // --------------------------------------------------------------------------
@@ -529,6 +582,14 @@ public class DBTable implements Table {
   	  	
   	  oPdb.put(oTrans, oDbKey, oDbDat);
 
+  	} catch (DeadlockException dlxc) {
+      if (DebugFile.trace) {
+    	DebugFile.writeln("DeadlockException "+dlxc.getMessage());
+    	try { DebugFile.writeln(StackTraceUtil.getStackTrace(dlxc)); } catch (java.io.IOException ignore) {}
+    	  DebugFile.decIdent();
+      }
+      abort();
+      throw new StorageException(dlxc.getMessage(), dlxc);  	  
   	} catch (Exception xcpt) {
   	  if (DebugFile.trace) {
   	  	DebugFile.writeln(xcpt.getClass().getName()+" "+xcpt.getMessage());
@@ -580,6 +641,12 @@ public class DBTable implements Table {
         }
         oOst = oCur.getNext(oDbKey, oDbDat, LockMode.DEFAULT);
       } // wend
+      oCur.close();
+      oCur=null;
+  	} catch (DeadlockException dlxc) {
+      if (DebugFile.trace) DebugFile.decIdent();
+      abort();
+      throw new StorageException(dlxc.getMessage(), dlxc);
   	} catch (Exception xcpt) {
   	  if (DebugFile.trace) DebugFile.decIdent();
   	  throw new StorageException(xcpt.getMessage(), xcpt);
@@ -613,7 +680,7 @@ public class DBTable implements Table {
 		
     if (null==sIndexColumn) throw new StorageException("DBTable.fetch() Column name may not be null");
 
-	if (!oInd.containsKey(sIndexColumn)) throw new StorageException("DBTable.fetch() Column "+sIndexColumn+" is not indexed");
+	if (!oInd.containsKey(sIndexColumn)) throw new StorageException("DBTable.fetch() Column "+sIndexColumn+" is not a secondary index");
 
     if (null==sIndexValue) sIndexValue = "";
     
@@ -629,7 +696,6 @@ public class DBTable implements Table {
 	  DBEntityBinding oDbeb = new DBEntityBinding(oCtg);
       DatabaseEntry oDbDat = new DatabaseEntry();
       DatabaseEntry oDbKey = new DatabaseEntry();
-      DatabaseEntry oPkKey;
 
 	  if (sIndexValue.equals("%") || sIndexValue.equalsIgnoreCase("IS NOT NULL")) {
 
@@ -690,8 +756,6 @@ public class DBTable implements Table {
           	  oOst=OperationStatus.KEYEMPTY;
             }
           } // wend
-		  oCur.close();
-		  oCur=null;
 
 	    } else {
 
@@ -701,12 +765,22 @@ public class DBTable implements Table {
             oEst.add(oDbeb.entryToObject(oDbKey,oDbDat)); 
             oOst = oCur.getNextDup(oDbKey, oDbDat, LockMode.DEFAULT);
           } // wend
-          oCur.close();
-          oCur.close();
 
 	    } // fi
+
+	    oCur.close();
+		oCur=null;
+
 	  } // fi 
 
+  	} catch (DeadlockException dlxc) {
+      if (DebugFile.trace) {
+    	DebugFile.writeln(dlxc.getClass().getName()+" "+dlxc.getMessage());
+    	try { DebugFile.writeln(StackTraceUtil.getStackTrace(dlxc)); } catch (Exception ignore) { }
+    	DebugFile.decIdent();
+      }
+      abort();
+      throw new StorageException(dlxc.getMessage(), dlxc);
   	} catch (Exception xcpt) {
   	  if (DebugFile.trace) {
   	    DebugFile.writeln(xcpt.getClass().getName()+" "+xcpt.getMessage());
@@ -755,14 +829,12 @@ public class DBTable implements Table {
 	  DBEntityBinding oDbeb = new DBEntityBinding(oCtg);
       DatabaseEntry oDbDat = new DatabaseEntry();
       DatabaseEntry oDbKey = new DatabaseEntry();;
-      DatabaseEntry oPkKey;
-      boolean bMinExists, bMaxExists;
+      boolean bMinExists;
 
       DBIndex oIdx = oInd.get(sIndexColumn);
 	  if (oIdx.isClosed()) openIndex(sIndexColumn);
 
       oCur = oIdx.getCursor(oTrn);
-	  int r = -1;
 
 	  if (DebugFile.trace) DebugFile.writeln("got SecondaryCursor for "+sIndexColumn);
 
@@ -775,7 +847,8 @@ public class DBTable implements Table {
 	  if (DebugFile.trace) DebugFile.writeln(sIndexColumn+" has "+(bMinExists ? "" : "not")+" a minimum value");
 
 	  if (bMinExists) {
-        oDbKey = new DatabaseEntry(sIndexValueMin.getBytes());
+		oCur = oIdx.getCursor(oTrn);
+		oDbKey = new DatabaseEntry(sIndexValueMin.getBytes());
         oOst = oCur.getSearchKey(oDbKey, oDbDat, LockMode.DEFAULT);
         while (oOst==OperationStatus.SUCCESS) {
           oDbEnt = oDbeb.entryToObject(oDbKey,oDbDat);
@@ -805,6 +878,14 @@ public class DBTable implements Table {
 		oPur=null;
 	  }
 
+  	} catch (DeadlockException dlxc) {
+      if (DebugFile.trace) {
+    	DebugFile.writeln(dlxc.getClass().getName()+" "+dlxc.getMessage());
+    	try { DebugFile.writeln(StackTraceUtil.getStackTrace(dlxc)); } catch (Exception ignore) { }
+    	DebugFile.decIdent();
+      }
+      abort();
+      throw new StorageException(dlxc.getMessage(), dlxc);
   	} catch (Exception xcpt) {
   	  if (DebugFile.trace) {
   	    DebugFile.writeln(xcpt.getClass().getName()+" "+xcpt.getMessage());
@@ -897,12 +978,21 @@ public class DBTable implements Table {
         } // wend
       
 	    oJur.close();
+	    oJur=null;
 	    
 	    for (int sc=nValues-1; sc>=0; sc--) {
 	    	aCurs[sc].close();
 	      aIdxs[sc].close();
 	    }
 	    	  
+  	  } catch (DeadlockException dlxc) {
+    	if (DebugFile.trace) {
+    	  DebugFile.writeln(dlxc.getClass().getName()+" "+dlxc.getMessage());
+  		  try { DebugFile.writeln(StackTraceUtil.getStackTrace(dlxc)); } catch (Exception ignore) { }
+    	  DebugFile.decIdent();
+    	}
+    	abort();
+    	throw new StorageException(dlxc.getMessage(), dlxc);
   	  } catch (Exception xcpt) {
   	    if (DebugFile.trace) {
   	      DebugFile.writeln(xcpt.getClass().getName()+" "+xcpt.getMessage());
@@ -960,9 +1050,8 @@ public class DBTable implements Table {
 	    if (oIdx.isClosed()) openIndex(sOrderByColumn);
 
         oCur = oIdx.getCursor(oTrn);
-	    int r = -1;
 
-        oOst = oOst = oCur.getLast(oDbKey, oDbDat, LockMode.DEFAULT);
+        oOst = oCur.getLast(oDbKey, oDbDat, LockMode.DEFAULT);
         while (oOst==OperationStatus.SUCCESS && iAdded<iRows) {
           if (++iFetched>iOffset) {
             oEst.add(oDbeb.entryToObject(oDbKey,oDbDat));
@@ -971,11 +1060,15 @@ public class DBTable implements Table {
           oOst = oCur.getPrevDup(oDbKey, oDbDat, LockMode.DEFAULT);
         } // wend
         oCur.close();
-        oCur.close();
+        oCur=null;
 	  }
+	} catch (DeadlockException dlxc) {
+	  abort();
+	  throw new StorageException(dlxc.getMessage(), dlxc);
   	} catch (Exception xcpt) {
   	  throw new StorageException(xcpt.getMessage(), xcpt);
   	} finally {
+  	  try { if (oCur!=null) oCur.close(); } catch (Exception ignore) { }
   	  try { if (oPur!=null) oPur.close(); } catch (Exception ignore) { }
   	}
 
@@ -1016,13 +1109,20 @@ public class DBTable implements Table {
     }
 
     try {
-      if (DebugFile.trace) DebugFile.writeln("DBIndex.open("+(oTrn==null ? "null" : "[Transaction]")+","+oRep.getPath()+oPdb.getDatabaseName()+"."+oIdx.getName()+".db"+","+oPdb.getDatabaseName()+"_"+oIdx.getName()+")");
-	  oIdx.open(oRep.getEnvironment().openSecondaryDatabase(oTrn, oRep.getPath()+oPdb.getDatabaseName()+"."+oIdx.getName()+".db",
-                                                            oPdb.getDatabaseName()+"_"+oIdx.getName(), oPdb, oSec));
+      final String sSecDbPath = oRep.getPath()+oPdb.getDatabaseName()+"."+oIdx.getName()+".db";
+      final String sSecIdxName= oPdb.getDatabaseName()+"_"+oIdx.getName();
+      if (DebugFile.trace) DebugFile.writeln("DBIndex.open(openSecondaryDatabase("+oTrn+","+sSecDbPath+","+sSecIdxName+","+oPdb+","+oSec+","+String.valueOf(isReadOnly())+"))");
+	  oIdx.open(oRep.getEnvironment().openSecondaryDatabase(oTrn, sSecDbPath, sSecIdxName, oPdb, oSec));
+	} catch (DeadlockException dle) {
+	  if (DebugFile.trace) DebugFile.writeln("DeadlockException "+String.valueOf(dle.getErrno())+" whilst opening secondary database "+dle.getMessage());
+	  abort();
+	  throw new StorageException(dle.getMessage(), dle);
     } catch (DatabaseException dbe) {
+      if (DebugFile.trace) DebugFile.writeln("DatabaseException "+String.valueOf(dbe.getErrno())+" whilst opening secondary database "+dbe.getMessage());
       throw new StorageException(dbe.getMessage(), dbe);
-    } catch (FileNotFoundException dbe) {
-      throw new StorageException(dbe.getMessage(), dbe);
+    } catch (FileNotFoundException fnf) {
+      if (DebugFile.trace) DebugFile.writeln("FileNotFoundException "+fnf.getMessage());
+      throw new StorageException(fnf.getMessage(), fnf);
     }
 	
   }
@@ -1086,8 +1186,14 @@ public class DBTable implements Table {
         delete(k,oTrd);
       }
       oTrd.commit();
+      oTrd=null;
       
-  	} catch (Exception xcpt) {
+	} catch (DeadlockException dlxc) {
+      try { if (oTrd!=null) oTrd.abort(); } catch (DatabaseException e) { }
+	  abort();
+  	  throw new StorageException(dlxc.getMessage(), dlxc);
+	} catch (Exception xcpt) {
+	  try { if (oTrd!=null) oTrd.abort(); } catch (DatabaseException e) { }
   	  throw new StorageException(xcpt.getMessage(), xcpt);
   	} finally {
   	  try { if (oTrd!=null) oTrd.discard(); } catch (Exception ignore) { }
@@ -1141,8 +1247,10 @@ public class DBTable implements Table {
 	if (isReadOnly()) throw new StorageException("DBTable.truncate() table "+getName()+" is in read-only mode");
 
 	try {
-
       oPdb.truncate(oTrn,false);
+	} catch (DeadlockException dlxc) {
+	  abort();
+	  throw new StorageException(dlxc.getMessage(), dlxc);
   	} catch (Exception xcpt) {
   	  throw new StorageException(xcpt.getMessage(), xcpt);
   	} 

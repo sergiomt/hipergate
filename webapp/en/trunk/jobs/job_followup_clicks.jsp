@@ -1,4 +1,4 @@
-<%@ page import="java.util.Collections,java.util.Comparator,java.util.HashMap,java.util.Date,java.text.SimpleDateFormat,java.net.URLDecoder,java.sql.Timestamp,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.misc.Calendar,com.knowgate.misc.Gadgets,com.knowgate.scheduler.Atom" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.util.ArrayList,java.util.Collections,java.util.Comparator,java.util.HashMap,java.util.Date,java.text.SimpleDateFormat,java.net.URLDecoder,java.sql.Timestamp,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.misc.Calendar,com.knowgate.misc.Gadgets,com.knowgate.scheduler.Atom" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <%
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
@@ -60,8 +60,8 @@
 %><HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Click-through rate</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
 </HEAD>
 <BODY TOPMARGIN="8" MARGINHEIGHT="8">
     <FORM METHOD="post">

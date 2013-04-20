@@ -82,7 +82,7 @@ SELECT b.*,l.gu_owner,l.id_section,l.pg_lookup,l.vl_lookup,l.tr_es,l.tr_en,l.tr_
 ;
 
 CREATE VIEW v_contact_list AS
-SELECT c.gu_contact,ISNULL(c.tx_surname,'') + ', ' + ISNULL(c.tx_name,'') AS full_name,l.tr_es,l.tr_en,d.gu_company,d.nm_legal,c.nu_notes,c.nu_attachs,c.dt_modified, c.bo_private, c.gu_workarea, c.gu_writer, l.gu_owner, c.bo_restricted, c.gu_geozone, c.gu_sales_man, c.id_batch
+SELECT c.gu_contact,ISNULL(c.tx_surname,'') + ', ' + ISNULL(c.tx_name,'') AS full_name,l.tr_es,l.tr_en,d.gu_company,d.nm_legal,c.nu_notes,c.nu_attachs,c.dt_modified, c.bo_private, c.gu_workarea, c.gu_writer, l.gu_owner, c.bo_restricted, c.gu_geozone, c.gu_sales_man, c.id_batch, c.id_ref
 FROM k_contacts c LEFT OUTER JOIN k_companies d ON c.gu_company=d.gu_company LEFT OUTER JOIN k_contacts_lookup l ON l.vl_lookup=c.de_title AND l.gu_owner=c.gu_workarea
 WHERE (l.id_section='de_title' OR l.id_section IS NULL)
 ;

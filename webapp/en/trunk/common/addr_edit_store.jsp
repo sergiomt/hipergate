@@ -279,7 +279,7 @@
 <HTML>
 <HEAD>
   <TITLE>hipergate :: Save Address</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
     <!--      
       if ("<%=noreload%>"=="0") {
         if (window.parent.opener)

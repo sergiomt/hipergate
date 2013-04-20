@@ -1,7 +1,7 @@
-<%@ page import="java.util.HashMap,java.util.Date,java.io.IOException,java.io.File,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.dfs.FileSystem,com.knowgate.misc.Environment,javax.mail.*,javax.mail.internet.MimeMessage,javax.mail.internet.InternetAddress,javax.mail.internet.AddressException,javax.mail.internet.MimeUtility,com.knowgate.hipermail.MailAccount,com.knowgate.hipermail.DBStore,com.knowgate.hipermail.DBFolder,com.knowgate.hipermail.SessionHandler,com.knowgate.hipermail.DBMimeMessage,com.knowgate.hipermail.HeadersHelper,com.knowgate.misc.Gadgets,com.knowgate.debug.Chronometer,com.knowgate.debug.DebugFile,com.knowgate.debug.StackTraceUtil" language="java" session="false" contentType="text/xml;charset=UTF-8" %>
+<%@ page import="java.util.HashSet,java.util.Date,java.io.IOException,java.io.FileNotFoundException,java.io.File,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.dfs.FileSystem,com.knowgate.misc.Environment,javax.mail.*,javax.mail.internet.MimeMessage,javax.mail.internet.InternetAddress,javax.mail.internet.AddressException,javax.mail.internet.MimeUtility,com.knowgate.hipermail.MailAccount,com.knowgate.hipermail.DBStore,com.knowgate.hipermail.DBFolder,com.knowgate.hipermail.SessionHandler,com.knowgate.hipermail.DBMimeMessage,com.knowgate.hipermail.HeadersHelper,com.knowgate.misc.Gadgets,com.knowgate.debug.Chronometer,com.knowgate.debug.DebugFile,com.knowgate.debug.StackTraceUtil" language="java" session="false" contentType="text/xml;charset=UTF-8" %>
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="mail_env.jspf" %><% 
 /*
-  Copyright (C) 2008  Know Gate S.L. All rights reserved.
+  Copyright (C) 2008-2012  Know Gate S.L. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -43,13 +43,12 @@
   
   if (DebugFile.trace) DebugFile.writeln("<JSP:folder_xmlfeed.jsp Begin");
       
-  String nm_folder = nullif(request.getParameter("nm_folder"),"inbox");
-  String only_new = nullif(request.getParameter("only_new"),"false"); // Display all or only new messages
-  String bo_update = nullif(request.getParameter("bo_update"),"0");  // Get mail headers update from server
+  final String nm_folder = nullif(request.getParameter("nm_folder"),"inbox");
+  final String only_new = nullif(request.getParameter("only_new"),"false"); // Display all or only new messages
+  final String bo_update = nullif(request.getParameter("bo_update"),"0");  // Get mail headers update from server
   
-  int iMaxRows = nullif(request.getParameter("maxrows"),100);
-  int iSkip = nullif(request.getParameter("skip"), 0);
-  if (iSkip<0) iSkip = 0;
+  final int iMaxRows = nullif(request.getParameter("maxrows"),100);
+  final int iSkip = Math.max(nullif(request.getParameter("skip"), 0),0);
     
   boolean bUpdate = (bo_update.equalsIgnoreCase("yes") || bo_update.equalsIgnoreCase("true") || bo_update.equalsIgnoreCase("1"));
   boolean bOnlyNew = (only_new.equalsIgnoreCase("yes") || only_new.equalsIgnoreCase("true") || only_new.equalsIgnoreCase("1"));
@@ -86,7 +85,7 @@
 
     if (bOnlyNew) {
       oKset = oFldr.keySet();
-      if (oKset.size()==0) bOnlyNew=false;
+      if (oKset.size()==0) bOnlyNew = false;
     }
     
     sFolderDir = oFldr.getDirectoryPath();
@@ -137,7 +136,8 @@
     oPartialMeter.start();
     
     try {
-      aPopServerMsgsXML = oHndl.listFolderMessages("INBOX");
+      final String INBOX = "INBOX";      
+      aPopServerMsgsXML = oHndl.listFolderMessages(INBOX);
     } catch (Exception e) {  
       oHndl.close();
       if (DebugFile.trace) DebugFile.writeln("<JSP:folder_xmlfeed.jsp " + e.getClass().getName() + " " + e.getMessage() + "\n" + StackTraceUtil.getStackTrace(e));
@@ -186,7 +186,9 @@
       
       } else {
 
-				HashMap oIdMap = new HashMap(iMaxRows*3);
+        if (DebugFile.trace) DebugFile.writeln("<JSP:merging fetched messages with cached messages");
+
+				HashSet<String> oIdMap = new HashSet<String>(iMaxRows*3);
         iCachedCount = aLocalDBMSMsgsXML.length;
         iServerCount = aPopServerMsgsXML.length;
         iFetchCount = (iServerCount+iCachedCount)>iMaxRows ? iMaxRows : (iServerCount+iCachedCount);
@@ -196,21 +198,21 @@
 				int iServerIterator = iServerCount-1;
 				int iCacheIterator  = iCachedCount-1;
 				
-				while (iServerIterator>=0 && iCacheIterator>=0) {
+				while (iServerIterator>=0 || iCacheIterator>=0) {
 				  if (iServerIterator>=0 && iCacheIterator<0) {
 				    sMsgId = Gadgets.substrBetween(aPopServerMsgsXML[iServerIterator], "<id><![CDATA[","]]></id>");
-				    if (!oIdMap.containsKey(sMsgId)) {
+				    if (!oIdMap.contains(sMsgId)) {
               oMsgsXML.append(aPopServerMsgsXML[iServerIterator]);
               oMsgsXML.append("\n");
-              oIdMap.put(sMsgId,null);
+              oIdMap.add(sMsgId);
             }
             iServerIterator--;
 				  } else if (iCacheIterator>=0 && iServerIterator<0) {
 				    sMsgId = Gadgets.substrBetween(aLocalDBMSMsgsXML[iCacheIterator], "<id><![CDATA[","]]></id>");
-				    if (!oIdMap.containsKey(sMsgId)) {            
+				    if (!oIdMap.contains(sMsgId)) {            
               oMsgsXML.append(aLocalDBMSMsgsXML[iCacheIterator]);
               oMsgsXML.append("\n");
-              oIdMap.put(sMsgId,null);
+              oIdMap.add(sMsgId);
             }
             iCacheIterator--;
 				  } else {
@@ -220,18 +222,18 @@
 				    if (sDateServer.length()==0) sDateServer = Gadgets.substrBetween(aPopServerMsgsXML[iServerIterator], "<sent>","</sent>");
 				    if (sDateCached.compareTo(sDateServer)>0) {
 				      sMsgId = Gadgets.substrBetween(aLocalDBMSMsgsXML[iCacheIterator], "<id><![CDATA[","]]></id>");
-				      if (!oIdMap.containsKey(sMsgId)) {
+				      if (!oIdMap.contains(sMsgId)) {
                 oMsgsXML.append(aLocalDBMSMsgsXML[iCacheIterator]);
                 oMsgsXML.append("\n");
-                oIdMap.put(sMsgId,null);
+                oIdMap.add(sMsgId);
               }
               iCacheIterator--;				    
 				    } else {
 				      sMsgId = Gadgets.substrBetween(aPopServerMsgsXML[iServerIterator], "<id><![CDATA[","]]></id>");
-				      if (!oIdMap.containsKey(sMsgId)) {
+				      if (!oIdMap.contains(sMsgId)) {
                 oMsgsXML.append(aPopServerMsgsXML[iServerIterator]);
                 oMsgsXML.append("\n");
-                oIdMap.put(sMsgId,null);
+                oIdMap.add(sMsgId);
               }
               iServerIterator--;				    
 				    }
@@ -243,13 +245,18 @@
 
       if (bExists) oCache.delete();
       oFs.writefilestr(sFolderDir+oMacc.getString(DB.gu_account)+"."+nm_folder+".cache", Gadgets.dechomp(oMsgsXML.toString(),"\n"), "UTF-8");
+			if (!new File(sFolderDir+oMacc.getString(DB.gu_account)+"."+nm_folder+".cache").exists())
+			  throw new FileNotFoundException("Could not write file "+sFolderDir+oMacc.getString(DB.gu_account)+"."+nm_folder+".cache");
 
-    } catch (NullPointerException xcpt) {
+    } catch (FileNotFoundException fnfe) {
+      if (DebugFile.trace) DebugFile.writeln("<JSP:folder_xmlfeed.jsp FileNotFoundException " + fnfe.getMessage() + "\n");
+      out.write("<folder><error>FileNotFoundException " + fnfe.getMessage()+"</error></folder>");    
+    } catch (Exception xcpt) {
       if (DebugFile.trace) DebugFile.writeln("<JSP:folder_xmlfeed.jsp " + xcpt.getClass().getName() + " " + xcpt.getMessage() + "\n" + StackTraceUtil.getStackTrace(xcpt));
       out.write("<folder><error>" + xcpt.getClass().getName() + " HeadersHelper " + xcpt.getMessage()+"</error></folder>");
       if (null!=oHndl) { oHndl.close(); oHndl=null; }
       return;
-    }
+		}
     
   } // (!bExists || bUpdate)
 

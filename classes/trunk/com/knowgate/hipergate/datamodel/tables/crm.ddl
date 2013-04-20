@@ -219,7 +219,7 @@ gu_contact     CHAR(32) NOT NULL,   /* GUID del individuo */
 gu_workarea    CHAR(32) NOT NULL,   /* GUID de la workarea */
 dt_created     DATETIME DEFAULT CURRENT_TIMESTAMP,
 bo_restricted  SMALLINT DEFAULT 0, /* Si tiene restricciones de acceso por grupo o no */
-bo_private     SMALLINT DEFAULT 0, /* Contacto privado del usuario que lo creó */
+bo_private     SMALLINT DEFAULT 0, /* Contacto privado del usuario que lo creï¿½ */
 nu_notes       INTEGER  DEFAULT 0, /* Cuenta de notas asociadas */
 nu_attachs     INTEGER  DEFAULT 0, /* Cuenta de archivos adjuntos */
 bo_change_pwd  SMALLINT DEFAULT 1, /* May user change its own password? */
@@ -228,9 +228,9 @@ tx_pwd         VARCHAR(50)  NULL,  /* New for v2.1 */
 tx_challenge   VARCHAR(100) NULL,  /* New for v2.1 */
 tx_reply       VARCHAR(100) NULL,  /* New for v2.1 */
 dt_pwd_expires DATETIME	    NULL,  /* New for v2.1 */
-dt_modified    DATETIME     NULL,  /* Fecha de Modificación del registro */
+dt_modified    DATETIME     NULL,  /* Fecha de Modificaciï¿½n del registro */
 gu_writer      CHAR(32)     NULL,  /* GUID del usuario propietario del registro */
-gu_company     CHAR(32)     NULL,  /* GUID de la compañía a la que pertenece el individuo */
+gu_company     CHAR(32)     NULL,  /* GUID de la compaï¿½ï¿½a a la que pertenece el individuo */
 id_batch       VARCHAR(32)  NULL,  /* Lote de trabajo del cual provenia la carga del registro */
 id_status      VARCHAR(30)  NULL,  /* Estado, activo, cambio de trabajo, etc. */
 id_ref         VARCHAR(50)  NULL,  /* Identificador externo de registro (para interfaz con otras applicaciones) */
@@ -243,13 +243,13 @@ id_gender      CHAR(1)      NULL,  /* Sexo */
 dt_birth       DATETIME     NULL,  /* Fecha Nacimiento */
 ny_age	       SMALLINT     NULL,  /* Edad */
 id_nationality CHAR(3)      NULL,  /* Country of nationality */
-sn_passport    VARCHAR(16)  NULL,  /* Nº doc identidad legal */
+sn_passport    VARCHAR(16)  NULL,  /* Nï¿½ doc identidad legal */
 tp_passport    CHAR(1)      NULL,  /* Tipo doc identidad legal */
 sn_drivelic    VARCHAR(16)  NULL,  /* Permiso de conducir */
 dt_drivelic    DATETIME     NULL,  /* Fecha expedicion permiso de conducir */
 tx_dept        VARCHAR(70)  NULL,  /* Departamento */
-tx_division    VARCHAR(70)  NULL,  /* División */
-gu_geozone     CHAR(32)     NULL,  /* Zona Geográfica */
+tx_division    VARCHAR(70)  NULL,  /* Divisiï¿½n */
+gu_geozone     CHAR(32)     NULL,  /* Zona Geogrï¿½fica */
 gu_sales_man   CHAR(32)     NULL,  /* Vendedor */
 tx_comments    VARCHAR(254) NULL,  /* Comentarios */
 url_linkedin   CHARACTER VARYING(254) NULL,
@@ -260,7 +260,7 @@ CONSTRAINT pk_contacts PRIMARY KEY (gu_contact),
 CONSTRAINT c1_contacts CHECK (tx_name IS NULL OR LENGTH(tx_name)>0),
 CONSTRAINT c2_contacts CHECK (tx_surname IS NULL OR LENGTH(tx_surname)>0),
 CONSTRAINT c3_contacts CHECK (id_ref IS NULL OR LENGTH(id_ref)>0),
-CONSTRAINT c4_contacts CHECK (de_title IS NULL OR LENGTH(de_title)>0),
+CONSTRAINT c4_contacts CHECK (de_title IS NULL OR LENGTH(de_title)>0)
 )
 GO;
 
@@ -401,6 +401,7 @@ dt_modified     DATETIME          NULL,
 dt_next_action  DATETIME          NULL,
 dt_last_call    DATETIME          NULL,
 lv_interest     SMALLINT          NULL,
+nu_oportunities INTEGER       DEFAULT 1,
 gu_campaign     CHAR(32)          NULL,
 gu_company      CHAR(32)          NULL,
 gu_contact      CHAR(32)          NULL,
@@ -432,6 +433,9 @@ gu_owner   CHAR(32) NOT NULL,
 id_section CHARACTER VARYING(30) NOT NULL,
 pg_lookup  INTEGER  NOT NULL,
 vl_lookup  VARCHAR(255) NULL,
+tp_lookup  VARCHAR(50)  NULL,
+bo_active  SMALLINT     NULL,
+tx_comments VARCHAR(255) NULL,
 tr_es      VARCHAR(50)  NULL,
 tr_en      VARCHAR(50)  NULL,
 tr_de      VARCHAR(50)  NULL,
@@ -493,6 +497,17 @@ CONSTRAINT pk_oportunities_attachs PRIMARY KEY (gu_oportunity,pg_product)
 )
 GO;
 
+CREATE TABLE k_x_oportunity_contacts
+(
+gu_contact    CHAR(32) NOT NULL,
+gu_oportunity CHAR(32) NOT NULL,
+dt_created    DATETIME DEFAULT CURRENT_TIMESTAMP,
+tp_relation   VARCHAR(30)  NULL,
+
+CONSTRAINT pk_x_oportunity_contacts PRIMARY KEY(gu_contact,gu_oportunity)
+)
+GO;
+
 CREATE TABLE k_member_address
 (
 gu_address      CHAR(32) NOT NULL,
@@ -525,6 +540,7 @@ gu_sales_man    CHAR(32) NULL,
 tx_franchise    VARCHAR(100) NULL,
 gu_geozone      CHAR(32) NULL,
 ny_age          SMALLINT NULL,
+id_nationality  CHAR(3)      NULL,
 tx_dept         VARCHAR(70)  NULL,
 tx_division     VARCHAR(70)  NULL,
 tp_location     VARCHAR(16)  NULL,
@@ -549,6 +565,9 @@ other_phone     VARCHAR(16) NULL,
 po_box          VARCHAR(50) NULL,
 tx_email        CHARACTER VARYING(100) NULL,
 url_addr        CHARACTER VARYING(254) NULL,
+url_linkedin    CHARACTER VARYING(254) NULL,
+url_facebook    CHARACTER VARYING(254) NULL,
+url_twitter     CHARACTER VARYING(254) NULL,
 contact_person  VARCHAR(100) NULL,
 tx_salutation   VARCHAR(16)  NULL,
 tx_remarks      VARCHAR(254) NULL,

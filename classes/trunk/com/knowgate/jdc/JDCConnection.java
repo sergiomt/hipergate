@@ -34,9 +34,9 @@ package com.knowgate.jdc;
 
 import java.util.Map;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.concurrent.Executor;
 
 import java.text.ParseException;
 
@@ -53,7 +53,6 @@ import com.knowgate.misc.NameValuePair;
 import com.knowgate.dataobjs.DBBind;
 import com.knowgate.dataobjs.DBTable;
 import com.knowgate.dataobjs.DBColumn;
-import com.knowgate.dataobjs.DBSubset;
 import com.knowgate.dataobjs.DBPersist;
 import com.knowgate.dataobjs.DBRecordSet;
 
@@ -798,7 +797,51 @@ public final class JDCConnection implements Connection,PooledConnection,Table {
       }
     } // bindParameter
     
+    // ---------------------------------------------------------------------------
+
+    /**
+     * @since 7.0
+     */
+    public void abort(Executor oExec) throws SQLException {
+      conn.abort(oExec);
+    }
+
+    // ---------------------------------------------------------------------------
     
+    /**
+     * @since 7.0
+     */
+    public int getNetworkTimeout() throws SQLException {
+      return conn.getNetworkTimeout();
+    }
+
+    // ---------------------------------------------------------------------------
+    
+    /**
+     * @since 7.0
+     */
+    public void setNetworkTimeout(Executor oExec, int iTimeout) throws SQLException {
+      conn.setNetworkTimeout(oExec, iTimeout);
+    }
+    
+    // ---------------------------------------------------------------------------
+    
+    /**
+     * @since 7.0
+     */
+    public String getSchema() throws SQLException {
+      return conn.getSchema();
+    }
+
+    // ---------------------------------------------------------------------------
+    
+    /**
+     * @since 7.0
+     */
+    public void setSchema(String sSchema) throws SQLException {
+      conn.setSchema(sSchema);
+    }
+        
     // ===========================================================================
     // com.knowgate.storage.Table interface implementation
     
@@ -809,7 +852,7 @@ public final class JDCConnection implements Connection,PooledConnection,Table {
     // ---------------------------------------------------------------------------
 
 	/**
-	 * <p>Check whether a register with agiven primary key exists at the underlying table</p>
+	 * <p>Check whether a register with a given primary key exists at the underlying table</p>
 	 * @param sKey Primary Key Value
 	 * @throws StorageException
 	 * @since 7.0
@@ -817,9 +860,22 @@ public final class JDCConnection implements Connection,PooledConnection,Table {
 	public boolean exists(String sKey) throws StorageException {
 	  boolean bRetVal;
 	  DBBind oDbb = (com.knowgate.dataobjs.DBBind) getPool().getDatabaseBinding();
-	  DBTable oDbt = oDbb.getDBTable(getName());	  
+	  DBTable oDbt = oDbb.getDBTable(getName());
+	  String sColName = oDbt.getPrimaryKey().getFirst();
 	  try {
-	    bRetVal = oDbt.existsRegister(this, oDbt.getPrimaryKey().getFirst()+"=?", new Object[]{sKey});
+	      switch (oDbt.getColumnByName(sColName).getType()) {
+	      	case Types.BIGINT:
+	  		  bRetVal = oDbt.existsRegister(this, sColName+"=?", new Object[]{new Long(sKey)});
+	  		  break;
+	      	case Types.INTEGER:
+		  	  bRetVal = oDbt.existsRegister(this, sColName+"=?", new Object[]{new Integer(sKey)});
+		  	  break;	      		
+	      	case Types.SMALLINT:
+		  	  bRetVal = oDbt.existsRegister(this, sColName+"=?", new Object[]{new Short(sKey)});
+		  	  break;	      		
+	      	default:
+		  	  bRetVal = oDbt.existsRegister(this, sColName+"=?", new Object[]{sKey});
+	      }
 	  } catch (SQLException sqle) {
 	  	throw new StorageException(sqle.getMessage(), sqle);
 	  }
@@ -847,6 +903,41 @@ public final class JDCConnection implements Connection,PooledConnection,Table {
       }
 	}
 
+    // ---------------------------------------------------------------------------
+
+	/**
+	 * <p>Load a register by its primary key</p>
+	 * @param aKey Object[] Primary Key Values
+	 * @throws StorageException
+	 * @return DBPersist instance or <b>null</b> if no register with given primary key was found
+	 * @since 7.0
+	 */
+	public Record load(Object[] aKey) throws StorageException {
+      DBPersist oDbp = new DBPersist(getName(), getName());
+      try {
+        if (oDbp.load(this, aKey))
+      	  return oDbp;
+        else
+      	  return null;      
+      } catch (SQLException sqle) {
+      	throw new StorageException(sqle.getMessage(), sqle);
+      }
+	}
+
+    // ---------------------------------------------------------------------------
+
+	/**
+	 * <p>Create a new empty record</p>
+	 * @throws StorageException
+	 * @return DBPersist instance
+	 * @since 7.0
+	 */
+	public Record newRecord() throws StorageException {
+      return new DBPersist(getName(), getName());
+	}
+	
+    // ---------------------------------------------------------------------------
+	
 	/**
 	 * <p>Store record at database</p>
 	 * @param oRec Instance of a DBPersist object to be stored
@@ -861,6 +952,8 @@ public final class JDCConnection implements Connection,PooledConnection,Table {
       }
 	}
 
+    // ---------------------------------------------------------------------------
+	
 	/**
 	 * <p>Store record at database</p>
 	 * @param oRec Instance of a DBPersist object
@@ -874,6 +967,8 @@ public final class JDCConnection implements Connection,PooledConnection,Table {
 	    throw new StorageException("store(AbstractRecord, Transaction) method is not implemented for JDCConnection class");
 	}
 
+    // ---------------------------------------------------------------------------
+	
 	/**
 	 * <p>Delete the given register from the underlying table</p>
 	 * @param oRec Instance of a DBPersist object to be deleted
@@ -888,6 +983,8 @@ public final class JDCConnection implements Connection,PooledConnection,Table {
       }		
 	}
 
+    // ---------------------------------------------------------------------------
+	
 	/**
 	 * <p>Delete registers from the underlying table</p>
 	 * @param sIndexColumn
@@ -895,6 +992,7 @@ public final class JDCConnection implements Connection,PooledConnection,Table {
 	 * @throws StorageException
 	 * @since 7.0
 	 */
+	@SuppressWarnings("unused")
 	public void delete(String sIndexColumn, String sIndexValue) throws StorageException {
 	  PreparedStatement oStmt = null;
 	  ResultSet oRSet = null;
@@ -1066,6 +1164,7 @@ public final class JDCConnection implements Connection,PooledConnection,Table {
 	 * @return RecordSet
 	 * @since 7.0
 	 */
+	@SuppressWarnings("unused")
 	public RecordSet fetch(String sIndexColumn, String sIndexValueMin, 
 					       String sIndexValueMax) throws StorageException {
 	  DBRecordSet oRetVal = new DBRecordSet();
@@ -1073,7 +1172,7 @@ public final class JDCConnection implements Connection,PooledConnection,Table {
 	  ResultSet oRSet = null;
 	  try {
 	    DBPersist oDbp = new DBPersist(getName(), getName());
-	    DBTable oDbt = oDbp.getTable(this);
+	    DBTable oDbt = oDbp.getTable(this); // Do not remove this line
 	    DBColumn oDbc = oDbt.getColumnByName(sIndexColumn);
 	    oStmt = prepareStatement("SELECT * FROM "+getName()+" WHERE "+sIndexColumn+" BETWEEN ? AND ?",
 	  							 ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -1112,6 +1211,7 @@ public final class JDCConnection implements Connection,PooledConnection,Table {
 	 * @return RecordSet
 	 * @since 7.0
 	 */
+	@SuppressWarnings("unused")
 	public RecordSet fetch(String sIndexColumn, Date dtIndexValueMin, 
 					       Date dtIndexValueMax) throws StorageException {
 	  DBRecordSet oRetVal = new DBRecordSet();
@@ -1161,6 +1261,7 @@ public final class JDCConnection implements Connection,PooledConnection,Table {
 	  try {
 	    DBPersist oDbp = new DBPersist(getName(), getName());
 	    DBTable oDbt = oDbp.getTable(this);
+	    if (null==oDbt) throw new StorageException("Table "+getName()+" was not found");
 	    DBColumn oDbc = oDbt.getColumnByName(sIndexColumn);
 	    oStmt = prepareStatement("SELECT * FROM "+getName()+" WHERE "+sIndexColumn+"=?",
 	  				             ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -1207,8 +1308,7 @@ public final class JDCConnection implements Connection,PooledConnection,Table {
 	  ResultSet oRSet = null;
 	  try {
 	    DBPersist oDbp = new DBPersist(getName(), getName());
-	    DBTable oDbt = oDbp.getTable(this);
-	    // DBColumn oDbc = oDbt.getColumnByName(sIndexColumn);
+	    DBTable oDbt = oDbp.getTable(this); // Do not remove this line
 	    String sSQL = "SELECT * FROM "+getName()+" WHERE ";
 	    for (int p=0; p<aPairs.length; p++)
 	      sSQL += (p==0 ? "" : " AND ") + aPairs[p].getName()+"=?";	      

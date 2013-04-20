@@ -43,12 +43,14 @@
   final String BASE_TABLE = "k_examples b";
   final String COLUMNS_LIST = "b.gu_example,b.dt_created,b.dt_modified,b.nm_example,b.nu_example,b.bo_active,b.dt_example,b.tp_example,b.de_example";
 
-  String sLanguage = getNavigatorLanguage(request);  
-  String sSkin = getCookie(request, "skin", "xp");
+  final String sLanguage = getNavigatorLanguage(request);  
+  final String sSkin = getCookie(request, "skin", "xp");
 
-  String id_domain = getCookie(request,"domainid","");
-  String n_domain = getCookie(request,"domainnm","");
-  String gu_workarea = getCookie(request,"workarea","");
+  // hipergate is stateless at server side , sessions are kept in client cookies
+
+  final String id_domain = getCookie(request,"domainid","");
+  final String n_domain = getCookie(request,"domainnm","");
+  final String gu_workarea = getCookie(request,"workarea","");
 
   String screen_width = nullif(request.getParameter("screen_width"),"1024");
 
@@ -62,12 +64,13 @@
   float fScreenRatio = ((float) iScreenWidth) / 1024f;
   if (fScreenRatio<1) fScreenRatio=1;
 
-  String sField = nullif(request.getParameter("field"));
-  String sFind = nullif(request.getParameter("find"));
-  String sWhere = nullif(request.getParameter("where"));
-  String sQuery = nullif(request.getParameter("query"));
+  final String sField = nullif(request.getParameter("field")); // Column sought
+  final String sFind = nullif(request.getParameter("find"));   // Text to be found
+  final String sWhere = nullif(request.getParameter("where")); // An SQL injected WHERE clause
+  final String sQuery = nullif(request.getParameter("query")); // The name of an XML query definition stored at /storage/qbf
 
-  String sStorage = Environment.getProfilePath(GlobalDBBind.getProfileName(), "storage");
+  // Get storage property from /etc/hipergate.cnf file
+  final String sStorage = GlobalDBBind.getPropertyPath("storage");
 
   // **********************************************
 
@@ -125,7 +128,7 @@
     
     if (sWhere.length()>0) {
 
-      // 09. QBF Filtered Listing
+      // 09. Query By Form Filtered Listing
       
       oQBF = new QueryByForm("file://" + sStorage + "qbf" + File.separator + request.getParameter("queryspec") + ".xml");
     
@@ -177,14 +180,16 @@
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript">
     <!--
+    
+    // DynAPI library show right mouse button click context menu
     dynapi.library.setPath('../javascript/dynapi3/');
     dynapi.library.include('dynapi.api.DynLayer');
 
@@ -199,9 +204,9 @@
     }
     //-->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/floatdiv.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/floatdiv.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
         // Global variables for moving the clicked row to the context menu
         
@@ -344,7 +349,7 @@
         // ------------------------------------------------------	
     //-->    
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
     <!--
 	    function setCombos() {
 	      setCookie ("maxrows", "<%=iMaxRows%>");
@@ -443,7 +448,7 @@
       </TABLE>
     </FORM>
     <!-- 22. DynFloat Right-click context menu -->
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <SCRIPT TYPE="text/javascript">
       <!--
       addMenuOption("Open","modifyInstance(jsInstanceId)",1);
       addMenuOption("Clone","clone()",0);

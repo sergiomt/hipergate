@@ -42,9 +42,11 @@ import java.sql.ResultSet;
 
 import java.net.ProtocolException;
 
+import javax.mail.FetchProfile;
 import javax.mail.Session;
 import javax.mail.URLName;
 import javax.mail.Folder;
+import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.StoreClosedException;
 import javax.mail.AuthenticationFailedException;
@@ -63,7 +65,7 @@ import com.knowgate.dfs.FileSystem;
 /**
  * Manages local storage of mail messages at RDBMS and MBOX files
  * @author Sergio Montoro Ten
- * @version 2.2
+ * @version 7.0
  */
 
 public class DBStore extends javax.mail.Store {
@@ -76,10 +78,8 @@ public class DBStore extends javax.mail.Store {
     throws MessagingException {
     super(session, url);
 
-    Class cStore = null;
-
     try {
-      cStore = Class.forName("javax.mail.Store");
+      Class.forName("javax.mail.Store");
     } catch (ClassNotFoundException cnf) {}
 
     oURL = new URLName(url.getProtocol(), url.getHost(), url.getPort(), url.getFile(), url.getUsername(), url.getPassword());
@@ -551,14 +551,15 @@ public class DBStore extends javax.mail.Store {
   // ----------------------------------------------------------------------------------------
 
   /**
-   * Fetch a message from a POP3 or other remote folder into de local cache
+   * Fetch a message from remote folder into local cache
    * @param oIncomingFldr Incoming Folder (POP3, IMAP, or other)
    * @param iMsgNum int Message number
    * @return DBMimeMessage
    * @throws MessagingException
+   * @throws ArrayIndexOutOfBoundsException
    */
   public DBMimeMessage preFetchMessage(Folder oIncomingFldr, int iMsgNum)
-    throws MessagingException {
+    throws MessagingException,ArrayIndexOutOfBoundsException {
 
     if (DebugFile.trace) {
       DebugFile.writeln("Begin DBStore.preFetchMessage([Folder],"+String.valueOf(iMsgNum)+")");
@@ -566,17 +567,24 @@ public class DBStore extends javax.mail.Store {
     }
 
     if (null==oIncomingFldr)
-      throw new MessagingException("Unable to open inbox folder",
+      throw new MessagingException("Unable to open folder",
                                    new NullPointerException("DBStore.preFetchMessage() Folder is null"));
 
     boolean bWasConnected = isConnected();
     if (!bWasConnected) connect();
-    DBFolder oInboxFldr = (DBFolder) getDefaultFolder();
-    oInboxFldr.open(Folder.READ_WRITE);
     boolean bWasOpen = oIncomingFldr.isOpen();
     if (!bWasOpen) oIncomingFldr.open(Folder.READ_ONLY);
     DBMimeMessage oMimeMsg = new DBMimeMessage ((MimeMessage) oIncomingFldr.getMessage(iMsgNum));
+    
+    DBFolder oInboxFldr = (DBFolder) getDefaultFolder();
+    oInboxFldr.open(Folder.READ_WRITE|DBFolder.MODE_MBOX);
     oInboxFldr.appendMessage(oMimeMsg);
+    oInboxFldr.close(false);
+
+    DBFolder oLocalFldr = openDBFolder("inbox", Folder.READ_ONLY|DBFolder.MODE_MBOX);
+    oMimeMsg.setFolder(oInboxFldr);
+    oLocalFldr.close(false);
+    
     if (!bWasOpen) oIncomingFldr.close(false);
     if (!bWasConnected) close();
 
@@ -588,6 +596,79 @@ public class DBStore extends javax.mail.Store {
     return oMimeMsg;
   } // prefetchMessage
 
+  // ----------------------------------------------------------------------------------------
+
+  /**
+   * Fetch a message from remote folder into local cache
+   * @param oIncomingFldr Incoming Folder (POP3, IMAP, or other)
+   * @param sMsgId String Message Id.
+   * @return DBMimeMessage
+   * @throws MessagingException
+   * @throws ArrayIndexOutOfBoundsException
+   */
+  public DBMimeMessage preFetchMessage(Folder oIncomingFldr, String sMsgId)
+    throws MessagingException,ArrayIndexOutOfBoundsException {
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin DBStore.preFetchMessage([Folder],"+sMsgId+")");
+      DebugFile.incIdent();
+    }
+
+    if (null==oIncomingFldr)
+      throw new MessagingException("Unable to open folder",
+                                   new NullPointerException("DBStore.preFetchMessage() Folder is null"));
+
+    boolean bWasConnected = isConnected();
+    if (!bWasConnected) connect();
+    boolean bWasOpen = oIncomingFldr.isOpen();
+    if (!bWasOpen) oIncomingFldr.open(Folder.READ_ONLY);
+    DBMimeMessage oMimeMsg = null;
+    
+    Message[] aMsgs = oIncomingFldr.getMessages();
+    if (null!=aMsgs) {
+      final int nMsgs =  aMsgs.length;
+      if (nMsgs>0) {
+    	FetchProfile oFtchPrfl = new FetchProfile();
+    	oFtchPrfl.add(FetchProfile.Item.CONTENT_INFO);
+    	oIncomingFldr.fetch(aMsgs, oFtchPrfl);
+    	for (int m=0; m<nMsgs; m++) {
+    	  if (DebugFile.trace)
+    	    DebugFile.writeln("reading message "+((MimeMessage)aMsgs[m]).getMessageID());
+    	  if (sMsgId.equals(((MimeMessage)aMsgs[m]).getMessageID())) {
+    		oMimeMsg = new DBMimeMessage ((MimeMessage) oIncomingFldr.getMessage(m+1));
+    		break;
+    	  }
+    	} // next
+      } else {
+        throw new ArrayIndexOutOfBoundsException("Folder "+oIncomingFldr.getName()+" contains no messages");    	  
+      }
+    } else {
+      throw new ArrayIndexOutOfBoundsException("Folder "+oIncomingFldr.getName()+" is empty");
+    }
+    
+    if (null==oMimeMsg)
+      throw new ArrayIndexOutOfBoundsException("No message with id "+sMsgId+" was found at folder "+oIncomingFldr.getName());
+    
+    DBFolder oInboxFldr = (DBFolder) getDefaultFolder();
+    oInboxFldr.open(Folder.READ_WRITE|DBFolder.MODE_MBOX);
+    oInboxFldr.appendMessage(oMimeMsg);
+    oInboxFldr.close(false);
+
+    DBFolder oLocalFldr = openDBFolder("inbox", Folder.READ_ONLY|DBFolder.MODE_MBOX);
+    oMimeMsg.setFolder(oInboxFldr);
+    oLocalFldr.close(false);
+    
+    if (!bWasOpen) oIncomingFldr.close(false);
+    if (!bWasConnected) close();
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End DBStore.preFetchMessage() : " + oMimeMsg.getMessageGuid());
+    }
+
+    return oMimeMsg;
+  } // prefetchMessage
+  
   // ----------------------------------------------------------------------------------------
 
   public static String MBoxDirectory(String sProfile, int iDomainId, String sWorkAreaGu)

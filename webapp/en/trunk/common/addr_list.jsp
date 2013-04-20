@@ -131,11 +131,11 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Address Listing</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/getparam.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript1.2" SRC="../javascript/findit.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
         <%
           // Escribir los guids de las direcciones en Arrays JavaScript
@@ -261,6 +261,7 @@
                 sAddrTp = oLocationTypes.get(sAddrTp).toString();              
             }
             sAddrSt = oAddresses.getStringNull(2,i,"* N/A *");
+            if (sAddrSt.length()==0) sAddrSt = "* N/A *";
             sAddrCt = oAddresses.getStringNull(3,i,"");
             sAddrEm = oAddresses.getStringNull(4,i,"");
             if (sAddrEm.length()>0) sAddrEm = "<A HREF=\"mailto:" + sAddrEm + "\" TITLE=\"Send Message\">" + sAddrEm + "</A>";

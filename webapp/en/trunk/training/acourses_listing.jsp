@@ -1,4 +1,4 @@
-<%@ page import="java.net.URLDecoder,java.io.File,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.QueryByForm" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.net.URLDecoder,java.io.File,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.dataobjs.DBSubset,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.QueryByForm,com.knowgate.workareas.WorkArea" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
 <%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
@@ -45,6 +45,7 @@
   String id_domain = getCookie(request,"domainid","");
   String n_domain = getCookie(request,"domainnm","");
   String gu_workarea = getCookie(request,"workarea","");
+  String id_user = getCookie (request, "userid", null);
 
   String screen_width = request.getParameter("screen_width");
 
@@ -67,9 +68,10 @@
   String sQuery = nullif(request.getParameter("query"));
   String sStatus = nullif(request.getParameter("status"),"all");
   String sCourse = nullif(request.getParameter("course"));
+  String sPermissionsFilter = "";
   
   String sStorage = Environment.getProfilePath(GlobalDBBind.getProfileName(), "storage");
-
+  
   // **********************************************
 
   int iCourseCount = 0;
@@ -111,14 +113,25 @@
   JDCConnection oConn = null;
   QueryByForm oQBF;
   boolean bIsGuest = true;
+  boolean bIsAdmin = false;
   DBSubset oCourses = new DBSubset(DB.k_courses, DB.gu_course+","+DB.nm_course, DB.gu_workarea+"=? AND "+DB.bo_active+"<>0 ORDER BY 2", 100);
   int iCourses = 0;
+  Object[] aFind;
 
   try {
 
     bIsGuest = isDomainGuest (GlobalCacheClient, GlobalDBBind, request, response);
     
-    oConn = GlobalDBBind.getConnection("courselisting", true);
+    oConn = GlobalDBBind.getConnection("courselisting");
+
+    if (!bIsGuest) {
+       bIsAdmin = WorkArea.isAdmin(oConn, gu_workarea, id_user);
+    }
+    
+    if (!bIsAdmin) {
+      sPermissionsFilter = " (  EXISTS (SELECT u."+DB.gu_acourse+" FROM "+DB.k_x_user_acourse+" u WHERE u."+DB.gu_acourse+"=a."+DB.gu_acourse+" AND u."+DB.gu_user+"=? AND u."+DB.bo_user+"<>0) OR "+
+                           "NOT EXISTS (SELECT u."+DB.gu_acourse+" FROM "+DB.k_x_user_acourse+" u WHERE u."+DB.gu_acourse+"=a."+DB.gu_acourse+" AND u."+DB.gu_user+"=?)) AND ";
+    }
 
     iCourses = oCourses.load(oConn, new Object[]{gu_workarea});
 
@@ -128,10 +141,13 @@
 
       oACourses = new DBSubset (oQBF.getBaseObject(),
       			       "gu_course,gu_acourse,id_course,nm_course,bo_active,tx_start,tx_end,nm_tutor,tx_tutor_email",
-      				 "(" + oQBF.getBaseFilter(request) + ") " + sWhere + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
+      				     sPermissionsFilter + " (" + oQBF.getBaseFilter(request) + ") " + sWhere + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
 
       oACourses.setMaxRows(iMaxRows);
-      iCourseCount = oACourses.load (oConn, iSkip);
+      if (sPermissionsFilter.length()==0)
+        iCourseCount = oACourses.load (oConn, iSkip);
+      else
+        iCourseCount = oACourses.load (oConn, new Object[]{id_user,id_user}, iSkip);      	
     }
 
     else if (sFind.length()==0 || sField.length()==0) {
@@ -140,20 +156,30 @@
 
       oACourses = new DBSubset (DB.k_courses + " c," + DB.k_academic_courses + " a",
       			       "c.gu_course,a.gu_acourse,a.id_course,a.nm_course,a.bo_active,a.tx_start,a.tx_end,a.nm_tutor,a.tx_tutor_email",
-      			       "c." + DB.gu_course +"=a." + DB.gu_course + " AND c." + DB.gu_workarea+ "='" + gu_workarea + "' " + (sCourse.length()>0 ? " AND c."+DB.gu_course+"='"+sCourse+"' " : "") + (sStatus.equals("active") ? " AND c.bo_active=1 AND a.bo_active=1" : "") + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
+      				     sPermissionsFilter + " c." + DB.gu_course +"=a." + DB.gu_course + " AND c." + DB.gu_workarea+ "=? " + (sCourse.length()>0 ? " AND c."+DB.gu_course+"='"+sCourse+"' " : "") + (sStatus.equals("active") ? " AND c.bo_active=1 AND a.bo_active=1" : "") + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
 
       oACourses.setMaxRows(iMaxRows);
-      iCourseCount = oACourses.load (oConn, iSkip);
+
+      if (sPermissionsFilter.length()==0)
+        aFind = new Object[]{gu_workarea};
+      else
+        aFind = new Object[]{id_user,id_user,gu_workarea};
+      
+      iCourseCount = oACourses.load (oConn, aFind, iSkip);
     }
     else {
 
       oACourses = new DBSubset (DB.k_courses + " c," + DB.k_academic_courses + " a",
       			       "c.gu_course,a.gu_acourse,a.id_course,a.nm_course,a.bo_active,a.tx_start,a.tx_end,a.nm_tutor,a.tx_tutor_email",
-      			       "c." + DB.gu_course +"=a." + DB.gu_course + " AND c." + DB.gu_workarea+ "='" + gu_workarea + "' " + (sCourse.length()>0 ? " AND c."+DB.gu_course+"='"+sCourse+"' " : "") + "AND a." + sField + " " + DBBind.Functions.ILIKE + " ? " + (sStatus.equals("active") ? " AND c.bo_active=1 AND a.bo_active=1" : "") + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
+      			       sPermissionsFilter + "c." + DB.gu_course +"=a." + DB.gu_course + " AND c." + DB.gu_workarea+ "='" + gu_workarea + "' " + (sCourse.length()>0 ? " AND c."+DB.gu_course+"='"+sCourse+"' " : "") + "AND a." + sField + " " + DBBind.Functions.ILIKE + " ? " + (sStatus.equals("active") ? " AND c.bo_active=1 AND a.bo_active=1" : "") + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), iMaxRows);
 
       oACourses.setMaxRows(iMaxRows);
 
-      Object[] aFind = { "%" + sFind + "%" };
+      if (sPermissionsFilter.length()==0)
+        aFind = new Object[]{ "%" + sFind + "%" };
+      else
+        aFind = new Object[]{ id_user, id_user, "%" + sFind + "%" };
+      	
       iCourseCount = oACourses.load (oConn, aFind, iSkip);
     }
 
@@ -169,18 +195,20 @@
   }
 
   if (null==oConn) return;
-
   oConn = null;
+
+	sendUsageStats(request, "acourses_listing"); 
 %>
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript">
     dynapi.library.setPath('../javascript/dynapi3/');
     dynapi.library.include('dynapi.api.DynLayer');
     var menuLayer,addrLayer;
@@ -193,10 +221,10 @@
       menuLayer.setHTML(rightMenuHTML);
     }
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/dynapi3/rightmenu.js" TYPE="text/javascript"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/dynapi3/floatdiv.js" TYPE="text/javascript"></SCRIPT>
+  <SCRIPT SRC="../javascript/dynapi3/rightmenu.js" TYPE="text/javascript"></SCRIPT>
+  <SCRIPT SRC="../javascript/dynapi3/floatdiv.js" TYPE="text/javascript"></SCRIPT>
 
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
         // Global variables for moving the clicked row to the context menu
 
@@ -204,10 +232,6 @@
         var jsCourseNm;
 
         <%
-          // Write instance primary keys in a JavaScript Array
-          // This Array is used when posting multiple elements
-          // for deletion.
-
           out.write("var jsCourses = new Array(");
 
             for (int i=0; i<iCourseCount; i++) {
@@ -223,7 +247,7 @@
 <% if (!bIsGuest) { %>
 
 	function createCourse() {
-
+  
 	  self.open ("acourse_edit.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&gu_workarea=<%=gu_workarea%>", "editacourse", "directories=no,toolbar=no,menubar=no,width=690,height=540");
 	} // createCourse()
 
@@ -304,9 +328,9 @@
 	  var frm = document.forms[0];
 
 	  if (frm.find.value.length>0)
-	    window.location = "acourses_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=<%=sOrderBy%>&field=" + getCombo(frm.sel_searched) + "&find=" + escape(frm.find.value) + "&status=" + (frm.status[0].checked ? "all" : "active") + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&screen_width=" + String(screen.width);
+	    window.location = "acourses_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&course="+getCombo(frm.sel_course)+"&skip=0&orderby=<%=sOrderBy%>&field=" + getCombo(frm.sel_searched) + "&find=" + escape(frm.find.value) + "&status=" + (frm.status[0].checked ? "all" : "active") + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&screen_width=" + String(screen.width);
 	  else
-	    window.location = "acourses_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&skip=0&orderby=<%=sOrderBy%>&status=" + (frm.status[0].checked ? "all" : "active") + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&screen_width=" + String(screen.width);
+	    window.location = "acourses_listing.jsp?id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&course="+getCombo(frm.sel_course)+"&skip=0&orderby=<%=sOrderBy%>&status=" + (frm.status[0].checked ? "all" : "active") + "&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&screen_width=" + String(screen.width);
 
 	} // findCourse()
 
@@ -340,7 +364,7 @@
       // ----------------------------------------------------
 
       function listStudents() {
-	      window.document.location.href="../crm/contact_listing_f.jsp?face=edu&selected=2&subselected=1&screen_width="+String(screen.width)+"&field=nm_course&find="+escape(jsCourseNm);
+	      window.document.location.href="../crm/contact_listing_f.jsp?face=edu&selected=8&subselected=3&screen_width="+String(screen.width)+"&field=nm_course&find="+escape(jsCourseNm);
       }
 
       // ----------------------------------------------------
@@ -349,23 +373,47 @@
         self.open ("bookings_edit.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>" + "&gu_acourse=" + jsCourseId, "editbookings", "scrollbars=yes,directories=no,toolbar=no,menubar=no,width="+String(screen.width-80)+",height=560");
       }
 
+      // ----------------------------------------------------
+
+      function printStudents() {
+	      self.open ("acourse_print.jsp?gu_acourse=" + jsCourseId, "printstudents", "directories=no,toolbar=no,menubar=no,width=690,height=540");
+      }
+
+      // ----------------------------------------------------
+
+      function exportStudentsToExcel() {
+	      self.open ("acourse_excel.jsp?gu_acourse=" + jsCourseId, "excelstudents", "directories=no,toolbar=no,menubar=no,width=690,height=540");
+      }
+
+<% if (bIsAdmin) { %>
+		  function editPermissions() {
+        self.open ("acourse_users_edit.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>" + "&gu_acourse=" + jsCourseId, "editpermissions", "scrollbars=yes,directories=no,toolbar=no,menubar=no,width=700,height=560");
+		  }
+<% } %>
+
     //-->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
     <!--
-	function setCombos() {
-	  setCookie ("maxrows", "<%=iMaxRows%>");
-	  setCombo(document.forms[0].maxresults, "<%=iMaxRows%>");
-	  setCombo(document.forms[0].sel_searched, "<%=sField%>");
-	  setCombo(document.forms[0].sel_course, getURLParam("course"));
-
-	  document.forms[0].status[0].checked = (getURLParam("status")=="all");
-	} // setCombos()
+	    function setCombos() {
+	      setCookie ("maxrows", "<%=iMaxRows%>");
+	      setCombo(document.forms[0].maxresults, "<%=iMaxRows%>");
+	      setCombo(document.forms[0].sel_searched, "<%=sField%>");
+	      setCombo(document.forms[0].sel_course, getURLParam("course"));
+      
+	      document.forms[0].status[0].checked = (getURLParam("status")=="all");
+	    } // setCombos()
+	    function init() {
+	        	hideRightMenu();
+	          var req = createXMLHttpRequest();
+            req.open("GET","acourse_counters.jsp",true);
+            req.send(null);
+          }
     //-->
   </SCRIPT>
   <TITLE>hipergate :: Calls List</TITLE>
 </HEAD>
-<BODY  TOPMARGIN="8" MARGINHEIGHT="8" onClick="hideRightMenu()">
+<BODY  TOPMARGIN="8" MARGINHEIGHT="8" onClick="init()">
     <%@ include file="../common/tabmenu.jspf" %>
     <FORM METHOD="post">
       <TABLE><TR><TD WIDTH="<%=iTabWidth*iActive%>" CLASS="striptitle"><FONT CLASS="title1">Calls</FONT></TD></TR></TABLE>
@@ -492,6 +540,11 @@
       addMenuSeparator();
       addMenuOption("View Students","listStudents()",0);
       addMenuOption("Edit Registrations","editStudents()",0);
+      addMenuOption("Imprimir Alumnos","printStudents()",0);
+      addMenuOption("Volcar alumnos a Excel","exportStudentsToExcel()",0);
+<% if (bIsAdmin) { %>
+      addMenuOption("Edit permissions","editPermissions()",0);
+<% } %>
       //-->
     </SCRIPT>
     <!-- /RightMenuBody -->

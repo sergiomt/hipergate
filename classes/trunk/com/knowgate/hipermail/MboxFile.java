@@ -543,6 +543,7 @@ public class MboxFile {
      * @param messageNumbers int[]
      * @throws IOException
      * @throws IllegalArgumentException
+     * @throws ArrayIndexOutOfBoundsException
      */
     public void purge(int[] messageNumbers)
          throws IOException,IllegalArgumentException {
@@ -566,11 +567,10 @@ public class MboxFile {
          log.debug("MboxFile.purge("+String.valueOf(count)+" of "+String.valueOf(total)+")");
 
          getChannel();
-         long[] newPositions = null;
          int newIndex = 0;
 
-         newPositions = new long[total-count];
-
+         ArrayList<Long> newPositions = new ArrayList<Long>();
+         
          append = 0;
          for (int index=0; index<total; index++) {
 
@@ -589,9 +589,10 @@ public class MboxFile {
            }
 
            if (perform) {
-               log.debug("FileChannel.map(MapMode.READ_WRITE,"+String.valueOf(next)+","+String.valueOf(size)+")");
-               newPositions[newIndex] = append;
-               newIndex ++;
+
+        	   log.debug("FileChannel.map(MapMode.READ_WRITE,"+String.valueOf(next)+","+String.valueOf(size)+")");
+
+        	   newPositions.add(new Long(append));
 
                if (start!=append) {
                  messageBuffer = channel.map(FileChannel.MapMode.READ_WRITE,start, size);
@@ -606,7 +607,8 @@ public class MboxFile {
                  messageBuffer = null;
                } // fi (-1!=next)
                append+=size;
-           }
+
+           } // fi (perform)
          } // next
          log.debug("FileChannel.truncate("+String.valueOf(append)+")");
          messageBuffer = null;
@@ -616,8 +618,9 @@ public class MboxFile {
            log.debug("MBoxFile.purge() FileChannel.truncate() failed");
          }
 
-         messagePositions = null;
-         messagePositions = newPositions;
+         messagePositions = new long[newPositions.size()];
+         for (int p=0; p<messagePositions.length; p++)
+           messagePositions[p] = newPositions.get(p).longValue();
      } // purge
 
     /**

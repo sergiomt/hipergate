@@ -7,7 +7,6 @@ import javax.jms.Message;
 
 import com.knowgate.storage.Column;
 import com.knowgate.storage.RecordSet;
-import com.knowgate.storage.ErrorLog;
 import com.knowgate.storage.ErrorCode;
 import com.knowgate.storage.DataSource;
 import com.knowgate.storage.StorageException;
@@ -34,7 +33,7 @@ public class DBErrorLog extends DBEntity {
 	DBTable oTbl = null;
 	try {
 	  oTbl = (DBTable) oDts.openTable(this);
-	  put("gu_error", oTbl.createUniqueKey());
+	  put("gu_error", DBTable.createUniqueKey());
 	  put("gu_account", sUid);
 	  put("co_error", new Integer(eCode.intValue()));
 	  put("tx_message", sTxMsg);
@@ -51,7 +50,7 @@ public class DBErrorLog extends DBEntity {
 	DBTable oTbl = null;
 	try {
 	  oTbl = (DBTable) oDts.openTable(this);
-	  put("gu_error", oTbl.createUniqueKey());
+	  put("gu_error", DBTable.createUniqueKey());
 	  put("gu_account", sUid);
 	  put("co_error", new Integer(eCode.intValue()));
 	  if (null!=oStorXcpt) {

@@ -301,7 +301,7 @@
    else
     	out.write("<a href=\"#\" title=\"Home Page\"><img alt=\"Company Logo\" src=\"" + sWrkAGet + sTabMenuWrkA + "/" + sPathLogo + "\" border=\"0\"></a>");
 %>
-	</td><td align=""left>
+	</td><td align="left">
     	<%
     	out.write("<FONT CLASS=\"textsmall\">"+getCookie(request, "usernm", "")+"</FONT>");
     	out.write("<FONT CLASS=\"textsmall\">"+"&nbsp;&nbsp;"+sDaysLeft+"</FONT>");

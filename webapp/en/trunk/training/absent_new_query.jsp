@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Gadgets,com.knowgate.workareas.WorkArea" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
 <% 
 /*
@@ -39,14 +39,23 @@
   String id_user = getCookie (request, "userid", null);
 
   JDCConnection oConn = null;  
-  DBSubset oACourses = new DBSubset ("v_active_courses", "gu_acourse,gu_course,id_acourse,nm_course,tx_start,tx_end", DB.gu_workarea+"=? ORDER BY 2,3", 100);
+  DBSubset oACourses = null;
   int iACourses = 0;
   String sNmACourse;
   
   try {
-    oConn = GlobalDBBind.getConnection("absent_new_query", true);
-    
-    iACourses = oACourses.load(oConn, new Object[]{gu_workarea});
+    oConn = GlobalDBBind.getConnection("absent_new_query");
+
+		if (WorkArea.isAdmin(oConn, gu_workarea, id_user)) {
+      oACourses = new DBSubset ("v_active_courses", "gu_acourse,gu_course,id_acourse,nm_course,tx_start,tx_end", DB.gu_workarea+"=? ORDER BY 2,3", 100);
+      iACourses = oACourses.load(oConn, new Object[]{gu_workarea});
+		} else {
+      oACourses = new DBSubset ("v_active_courses a", "a.gu_acourse,a.gu_course,a.id_acourse,a.nm_course,a.tx_start,a.tx_end",
+																" (  EXISTS (SELECT u."+DB.gu_acourse+" FROM "+DB.k_x_user_acourse+" u WHERE u."+DB.gu_acourse+"=a."+DB.gu_acourse+" AND u."+DB.gu_user+"=? AND u."+DB.bo_user+"<>0) OR "+
+                                "NOT EXISTS (SELECT u."+DB.gu_acourse+" FROM "+DB.k_x_user_acourse+" u WHERE u."+DB.gu_acourse+"=a."+DB.gu_acourse+" AND u."+DB.gu_user+"=?)) AND "+      													
+      													DB.gu_workarea+"=? ORDER BY 2,3", 100);
+      iACourses = oACourses.load(oConn, new Object[]{id_user,id_user,gu_workarea});		
+		}
 
     oConn.close("absent_new_query");
   }

@@ -34,8 +34,6 @@ package com.knowgate.scheduler.jobs;
 import java.io.File;
 import java.io.IOException;
 
-import java.net.MalformedURLException;
-
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -46,16 +44,13 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.mail.Message;
 import javax.mail.URLName;
-import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.MessagingException;
 import javax.mail.StoreClosedException;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.AddressException;
 
 import org.htmlparser.util.ParserException;
 
@@ -83,7 +78,6 @@ import com.knowgate.misc.Gadgets;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBBind;
 import com.knowgate.dataobjs.DBCommand;
-import com.knowgate.dataobjs.DBPersist;
 import com.knowgate.dataobjs.DBSubset;
 import com.knowgate.dataxslt.FastStreamReplacer;
 import com.knowgate.hipermail.DBStore;
@@ -103,7 +97,7 @@ import com.oreilly.servlet.MailMessage;
 /**
  * <p>Send mime mail message from the outbox of an account to a recipients list</p>
  * @author Sergio Montoro Ten
- * @version 6.0
+ * @version 7.0
  */
 
 public class MimeSender extends Job {
@@ -119,6 +113,7 @@ public class MimeSender extends Job {
   private InternetAddress[] aFrom;
   private InternetAddress[] aReply;
   private String[] aBlackList;
+  private String sTargetLists;
   private String sProfile;
   private String sMBoxDir;
   private ACLUser oUser;
@@ -241,13 +236,14 @@ public class MimeSender extends Job {
     
   // ---------------------------------------------------------------------------
 
-  private static String personalizeBody(String sFBody, MimeSender oJob, Atom oAtm) throws NullPointerException {
+  private String personalizeBody(String sFBody, MimeSender oJob, Atom oAtm) throws NullPointerException {
     JDCConnection oConn = null;
     PreparedStatement oStmt = null;
     ResultSet oRSet = null;
     String sPersonalizedBody;
-    String sNm, sSn, sSl, sCo, sEm, sCp, sCn, sIn;
-
+    String sNm="", sSn="", sSl="", sCo="", sEm="", sCp="", sCn="", sIn="", sPw="";
+    boolean bDirectListDataFound = false;
+    
     if (DebugFile.trace) {
       DebugFile.writeln("Begin MimeSender.personalizeBody([Atom])");
       DebugFile.incIdent();
@@ -264,28 +260,65 @@ public class MimeSender extends Job {
 
     try {
       oConn = oJob.getDataBaseBind().getConnection("MimeSender", true);
-      if (DebugFile.trace) {
-        DebugFile.writeln("Connection.prepareStatement(SELECT "+DB.tx_name+","+DB.tx_surname+","+DB.tx_salutation+","+DB.nm_commercial+","+DB.gu_company+","+DB.gu_contact+","+DB.url_addr+" FROM "+DB.k_member_address+" WHERE "+DB.gu_workarea+"='"+oJob.getStringNull(DB.gu_workarea,"null")+"' AND "+DB.tx_email+"='"+sEm+"')");
+
+      if (sTargetLists.length()>0) {
+    	oStmt = oConn.prepareStatement("SELECT m."+DB.tx_name+",m."+DB.tx_surname+",m."+DB.tx_salutation+",c."+DB.nm_commercial+",c."+DB.gu_company+","+DB.gu_contact+" FROM "+
+    								   DB.k_x_list_members+" m LEFT OUTER JOIN "+DB.k_companies+" c ON m."+DB.gu_company+"=c."+DB.gu_company+
+    			                       " WHERE m."+DB.gu_list+" IN "+sTargetLists+" AND m."+DB.tx_email+"=?");
+        oStmt.setString(1, sEm);
+        oRSet = oStmt.executeQuery();
+        if (oRSet.next()) {
+          bDirectListDataFound = true;
+          sNm = oRSet.getString(1); if (oRSet.wasNull()) sNm = "";
+          sSn = oRSet.getString(2); if (oRSet.wasNull()) sSn = "";
+          sSl = oRSet.getString(3); if (oRSet.wasNull()) sSl = "";
+          sCo = oRSet.getString(4); if (oRSet.wasNull()) sCo = "";
+          sCp = oRSet.getString(5); if (oRSet.wasNull()) sCp = "";
+          sCn = oRSet.getString(6); if (oRSet.wasNull()) sCn = "";
+        }
+        oRSet.close();
+        oRSet=null;
+        oStmt.close();
+        oStmt=null;
       }
-      oStmt = oConn.prepareStatement("SELECT "+DB.tx_name+","+DB.tx_surname+","+DB.tx_salutation+","+DB.nm_commercial+","+DB.gu_company+","+DB.gu_contact+","+DB.url_addr+" FROM "+DB.k_member_address+" WHERE "+DB.gu_workarea+"='"+oJob.getString(DB.gu_workarea)+"' AND "+DB.tx_email+"=?",
+
+      if (!bDirectListDataFound) {
+        if (DebugFile.trace) {
+          DebugFile.writeln("Connection.prepareStatement(SELECT "+DB.tx_name+","+DB.tx_surname+","+DB.tx_salutation+","+DB.nm_commercial+","+DB.gu_company+","+DB.gu_contact+","+DB.url_addr+" FROM "+DB.k_member_address+" WHERE "+DB.gu_workarea+"='"+oJob.getStringNull(DB.gu_workarea,"null")+"' AND "+DB.tx_email+"='"+sEm+"')");
+        }
+        oStmt = oConn.prepareStatement("SELECT "+DB.tx_name+","+DB.tx_surname+","+DB.tx_salutation+","+DB.nm_commercial+","+DB.gu_company+","+DB.gu_contact+","+DB.url_addr+" FROM "+DB.k_member_address+" WHERE "+DB.gu_workarea+"='"+oJob.getString(DB.gu_workarea)+"' AND "+DB.tx_email+"=?",
                                      ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-      oStmt.setString(1, sEm);
-      oRSet = oStmt.executeQuery();
-      if (oRSet.next()) {
-        sNm = oRSet.getString(1); if (oRSet.wasNull()) sNm = "";
-        sSn = oRSet.getString(2); if (oRSet.wasNull()) sSn = "";
-        sSl = oRSet.getString(3); if (oRSet.wasNull()) sSl = "";
-        sCo = oRSet.getString(4); if (oRSet.wasNull()) sCo = "";
-        sCp = oRSet.getString(5); if (oRSet.wasNull()) sCp = "";
-        sCn = oRSet.getString(6); if (oRSet.wasNull()) sCn = "";
-        sIn = oRSet.getString(7); if (oRSet.wasNull()) sIn = "";
-      } else {
-        sIn=sCn=sCp=sNm=sSn=sSl=sCo="";
+        oStmt.setString(1, sEm);
+        oRSet = oStmt.executeQuery();
+        if (oRSet.next()) {
+          sNm = oRSet.getString(1); if (oRSet.wasNull()) sNm = "";
+          sSn = oRSet.getString(2); if (oRSet.wasNull()) sSn = "";
+          sSl = oRSet.getString(3); if (oRSet.wasNull()) sSl = "";
+          sCo = oRSet.getString(4); if (oRSet.wasNull()) sCo = "";
+          sCp = oRSet.getString(5); if (oRSet.wasNull()) sCp = "";
+          sCn = oRSet.getString(6); if (oRSet.wasNull()) sCn = "";
+          sIn = oRSet.getString(7); if (oRSet.wasNull()) sIn = "";
+        } else {
+          sIn=sCn=sCp=sNm=sSn=sSl=sCo="";
+        }
+        oRSet.close();
+        oRSet=null;
+        oStmt.close();
+        oStmt=null;
+      } // fi (!bDirectListDataFound)
+      
+      if (sFBody.indexOf("{#Data.Password}")>0 || sFBody.indexOf("{#Datos.Password}")>0) {
+        oStmt = oConn.prepareStatement("SELECT "+DB.tx_pwd+" FROM "+DB.k_contacts+" c,"+DB.k_x_contact_addr+" x, "+DB.k_addresses+" a WHERE a."+DB.gu_workarea+"='"+oJob.getString(DB.gu_workarea)+"' AND a."+DB.tx_email+"=? AND a."+DB.gu_address+"=x."+DB.gu_address+" AND x."+DB.gu_contact+"=c."+DB.gu_contact,
+                  					   ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+    	oStmt.setString(1, sEm);
+        oRSet = oStmt.executeQuery();
+        if (oRSet.next()) {
+    	  sPw = oRSet.getString(1);
+    	  if (oRSet.wasNull()) sPw = "";
+    	} else {
+          sPw="";
+        }
       }
-      oRSet.close();
-      oRSet=null;
-      oStmt.close();
-      oStmt=null;
 
       oConn.close("MimeSender");
       oConn=null;
@@ -293,11 +326,11 @@ public class MimeSender extends Job {
       FastStreamReplacer oRplcr = new FastStreamReplacer(sFBody.length()+256);
       try {
         sPersonalizedBody = oRplcr.replace(new StringBuffer(sFBody), FastStreamReplacer.createMap(
-                             new String[]{"Data.Name","Data.Surname","Data.Salutation","Data.Legal_Name","Address.EMail","Job.Guid","Job.Atom","Data.Company_Guid","Data.Contact_Guid","Address.URL",
-                                          "Datos.Nombre","Datos.Apellidos","Datos.Saludo","Datos.Razon_Social","Direccion.EMail","Lote.Guid","Lote.Atomo","Datos.Guid_Empresa","Datos.Guid_Contacto","Direccion.URL"},
+                             new String[]{"Data.Name","Data.Surname","Data.Salutation","Data.Legal_Name","Data.Password","Address.EMail","Job.Guid","Job.Atom","Data.Company_Guid","Data.Contact_Guid","Address.URL",
+                                          "Datos.Nombre","Datos.Apellidos","Datos.Saludo","Datos.Razon_Social","Datos.Password","Direccion.EMail","Lote.Guid","Lote.Atomo","Datos.Guid_Empresa","Datos.Guid_Contacto","Direccion.URL"},
 
-                             new String[]{sNm,sSn,sSl,sCo,sEm,oJob.getString(DB.gu_job),String.valueOf(oAtm.getInt(DB.pg_atom)),sCp,sCn,sIn,
-                                          sNm,sSn,sSl,sCo,sEm,oJob.getString(DB.gu_job),String.valueOf(oAtm.getInt(DB.pg_atom)),sCp,sCn,sIn}));
+                             new String[]{sNm,sSn,sSl,sCo,sPw,sEm,oJob.getString(DB.gu_job),String.valueOf(oAtm.getInt(DB.pg_atom)),sCp,sCn,sIn,
+                                          sNm,sSn,sSl,sCo,sPw,sEm,oJob.getString(DB.gu_job),String.valueOf(oAtm.getInt(DB.pg_atom)),sCp,sCn,sIn}));
       } catch (IOException ioe) {
         if (DebugFile.trace) DebugFile.writeln("IOException " + ioe.getMessage() + " sending message "+oJob.getParameter("message") + " to " + sEm);
         oJob.log("IOException " + ioe.getMessage() + " sending message "+oJob.getParameter("message") + " to " + sEm);
@@ -345,15 +378,38 @@ public class MimeSender extends Job {
       if (DebugFile.trace) DebugFile.writeln("workarea="+getStringNull(DB.gu_workarea,"null"));
       String sWrkA = getString(DB.gu_workarea);
       try {
-        if (DebugFile.trace) DebugFile.writeln("DBBind="+getDataBaseBind());
-        // Get User, Account and Domain objects
+
+    	if (DebugFile.trace) DebugFile.writeln("DBBind="+getDataBaseBind());
+
         oConn = getDataBaseBind().getConnection("MimeSender.init.1");
+    	
+        // Get User, Account and Domain objects
         iDomainId = ACLDomain.forWorkArea(oConn, sWrkA);
         if (!oUser.load(oConn, new Object[]{getStringNull(DB.gu_writer,null)})) oUser=null;
         if (!oMacc.load(oConn, new Object[]{getParameter("account")})) oMacc=null;
-        // If message is personalized then fill data for each mail address
+
         oConn.setAutoCommit(true);
+
+        // If message is personalized then fill data for each mail address
         if (bPersonalized) resolveAtomsEMails(oConn);
+
+        
+        // Find target lists of this job group
+        if (isNull(DB.gu_job_group)) {
+          sTargetLists = "";
+        } else {
+          DBSubset oLsts = new DBSubset (DB.k_x_adhoc_mailing_list,DB.gu_list,DB.gu_mailing+"=?",10);
+          DBSubset oLst2 = new DBSubset (DB.k_x_pageset_list,DB.gu_list,DB.gu_pageset+"=?",10);
+          oLsts.load(oConn, new Object[]{getString(DB.gu_job_group)});
+          oLst2.load(oConn, new Object[]{getString(DB.gu_job_group)});
+          oLsts.union(oLst2);
+          oLsts.setRowDelimiter("',");
+          if (oLsts.getRowCount()==0)
+            sTargetLists = "";        	  
+          else
+        	sTargetLists = "('"+Gadgets.chomp(Gadgets.dechomp(oLsts.toString(),","),"'")+")";
+        }
+        
         oConn.close("MimeSender.init.1");
         oConn=null;
       } catch (SQLException sqle) {
@@ -415,6 +471,7 @@ public class MimeSender extends Job {
         aReply = new InternetAddress[]{new InternetAddress(oHeaders.getProperty(DB.tx_email_reply, oHeaders.getProperty(DB.tx_email_from)))};
 
         sBody = oDraft.getText();
+        
         if (DebugFile.trace) {
           if (null==sBody)
             DebugFile.writeln("Message body: null");
@@ -436,15 +493,19 @@ public class MimeSender extends Job {
         oUpdt.executeUpdate();
         oUpdt.close();
 
-		DBSubset oBlck = new DBSubset(DB.k_global_black_list, DBBind.Functions.LOWER+"("+DB.tx_email+")",
+		DBSubset oBlck = new DBSubset(DB.k_global_black_list, DB.tx_email,
 		                              DB.id_domain+"=? AND "+DB.gu_workarea+" IN (?,'00000000000000000000000000000000')", 1000);
 		int nBlacklisted = oBlck.load(oConn, new Object[]{new Integer(iDomainId), getString(DB.gu_workarea)});
+        for (int m=0; m<nBlacklisted; m++)
+          oBlck.setElementAt(oBlck.getString(0, m).toLowerCase(), 0, m);
 
 		if (nBlacklisted==0) {
 		  if (getDataBaseBind().exists(oConn, DB.k_grey_list, "U")) {
-		  	DBSubset oGrey = new DBSubset(DB.k_grey_list+" g", DBBind.Functions.LOWER+"("+DB.tx_email+")", null, 1000);
-		    int nGreylisted = oGrey.load(oConn);
+		  	DBSubset oGrey = new DBSubset(DB.k_grey_list+" g", DB.tx_email, null, 1000);		    
+		  	int nGreylisted = oGrey.load(oConn);
 			if (nGreylisted>0) {
+		      for (int m=0; m<nGreylisted; m++)
+		        oGrey.setElementAt(oGrey.getString(0, m).toLowerCase(), 0, m);
 		  	  aBlackList = new String[nGreylisted];
 		      for (int g=0; g<nGreylisted; g++)
 		  	    aBlackList[g] = oGrey.getString(0,g);
@@ -459,11 +520,13 @@ public class MimeSender extends Job {
 		  for (int b=0; b<nBlacklisted; b++)
 		  	aBlackList[b] = oBlck.getString(0,b);
 		  if (getDataBaseBind().exists(oConn, DB.k_grey_list, "U")) {
-		  	DBSubset oGrey = new DBSubset(DB.k_grey_list+" g", DBBind.Functions.LOWER+"("+DB.tx_email+")",
+		  	DBSubset oGrey = new DBSubset(DB.k_grey_list+" g", DB.tx_email,
 		  	                              "NOT EXISTS (SELECT "+DB.tx_email+" FROM "+DB.k_global_black_list+" b WHERE b."+DB.tx_email+"=g."+DB.tx_email+" AND b."+DB.id_domain+"=? AND b."+DB.gu_workarea+" IN (?,'00000000000000000000000000000000'))", 1000);
 		    
 		    int nGreylisted = oGrey.load(oConn, new Object[]{new Integer(iDomainId), getString(DB.gu_workarea)});
 			if (nGreylisted>0) {
+			  for (int m=0; m<nGreylisted; m++)
+			    oGrey.setElementAt(oGrey.getString(0, m).toLowerCase(), 0, m);
 		  	  String[] aBlackGrey = new String[nBlacklisted+nGreylisted];
 		  	  for (int b=0; b<nBlacklisted; b++)
 		  	    aBlackGrey[b] = oBlck.getString(0,b);
@@ -696,7 +759,7 @@ public class MimeSender extends Job {
 	  	  sPBody = sPBody.substring(0, iEndBody)+"<!--WEBBEACON SRC=\""+Gadgets.chomp(sWebBeaconDir,'/')+"web_beacon.jsp?gu_job="+getString(DB.gu_job)+"&pg_atom="+String.valueOf(oAtm.getInt(DB.pg_atom))+"&gu_company="+oAtm.getStringNull(DB.gu_company,"")+"&gu_contact="+oAtm.getStringNull(DB.gu_contact,"")+"&tx_email="+oAtm.getStringNull(DB.tx_email,"")+"\"-->"+sPBody.substring(iEndBody);
 	  	} // fi </body>
 	  } // fi (bo_webbeacon)
-
+	  
       oSentMsg = oDraft.composeFinalMessage(oHndlr.getSession(), oDraft.getSubject(),
                                             sPBody, getParameter("id"),
                                             sFormat, sEncoding, bAttachInlineImages);
@@ -761,12 +824,14 @@ public class MimeSender extends Job {
       	  oBeforeSend = new Boolean (Event.getEvent(oConn, iDomainId, "beforesmtpmime")!=null);
       	  oConn.close("MimeSender.process");
       	}
+		if (DebugFile.trace) DebugFile.writeln("beforesmtpmime event hook is "+(oBeforeSend.booleanValue() ? "activated" : "deactivated"));
       	if (oBeforeSend.booleanValue()) {
 		  HashMap oJobParams = new HashMap(size()*2);
 		  oJobParams.putAll(this);
 		  oJobParams.putAll(oAtm.getItemMap());
 		  oJobParams.put("bin_smtpmessage", oSentMsg);
 		  oConn = getDataBaseBind().getConnection("MimeSender.process");
+		  if (DebugFile.trace) DebugFile.writeln("triggering beforesmtpmime event handler");
 		  Event.trigger(oConn, iDomainId, "beforesmtpmime", oJobParams, getProperties());
       	  oConn.close("MimeSender.process");
       	}

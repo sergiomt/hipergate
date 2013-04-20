@@ -73,7 +73,7 @@ import com.knowgate.workareas.FileSystemWorkArea;
  * <p>Contact</p>
  * <p>Copyright: Copyright (c) KnowGate 2003</p>
  * @author Sergio Montoro Ten
- * @version 6.0
+ * @version 7.0
  */
 
 public class Contact extends DBPersist {
@@ -937,6 +937,25 @@ public class Contact extends DBPersist {
     return WelcomePack.forContact(oConn, getString(DB.gu_contact));
   }
 
+  // ----------------------------------------------------------
+
+  /**
+   * Get Sales Man
+   * @param oConn JDCConnection
+   * @return SalesMan or <b>null</b> if gu_sales_man field is <b>null</b>
+   * @throws SQLException
+   * @since 7.0
+   */
+  public SalesMan getSalesMan(JDCConnection oConn) throws SQLException {
+    if (isNull(DB.gu_sales_man)) {
+      return null;
+    } else {
+      SalesMan oSlm = new SalesMan();
+      oSlm.load(oConn, getString(DB.gu_sales_man));
+      return oSlm;
+    }
+  }
+  
   // ----------------------------------------------------------
 
   /**

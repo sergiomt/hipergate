@@ -2,10 +2,10 @@
 <%@ include file="../../methods/dbbind.jsp" %><%@ include file="../../methods/cookies.jspf" %><%@ include file="../../methods/authusrs.jspf" %><%
 
 	if (session.getAttribute("validated")==null) {
-	  response.sendRedirect (response.encodeRedirectUrl ("../../common/errmsg.jsp?title=Session Expired&desc=Session has expired. Please log in again&resume=_close"));
+	  response.sendRedirect (response.encodeRedirectUrl ("../../common/errmsg.jsp?title=[~Session Expired~]&desc=[~Session has expired. Please log in again~]&resume=_close"));
     return;	
 	} else if (!((Boolean) session.getAttribute("validated")).booleanValue()) {
-	  response.sendRedirect (response.encodeRedirectUrl ("../../common/errmsg.jsp?title=Session Expired&desc=Session has expired. Please log in again&resume=_close"));
+	  response.sendRedirect (response.encodeRedirectUrl ("../../common/errmsg.jsp?title=[~Session Expired~]&desc=[~Session has expired. Please log in again~]&resume=_close"));
     return;	
 	}
 

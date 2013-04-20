@@ -39,8 +39,6 @@
 
 package com.knowgate.dfs.chardet ;
 
-import java.lang.*;
-
 public class nsUCS2LEVerifier extends nsVerifier {
 
 	 static int[]  cclass   ; 

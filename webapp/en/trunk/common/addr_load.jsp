@@ -39,14 +39,15 @@
 %>
 <HTML>
 <HEAD>
-<SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT> 
-<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+<SCRIPT SRC="../javascript/combobox.js"></SCRIPT> 
+<SCRIPT TYPE="text/javascript">
 <!--
 <% 
   String gu_workarea = request.getParameter("gu_workarea");
   String id_language = request.getParameter("id_language");
   String id_section = request.getParameter("id_section");
   String nm_control = request.getParameter("control");
+  String onload = request.getParameter("onload");
   String id_form = nullif(request.getParameter("id_form"), "0");
   if (id_form.length()==0) id_form="0";
   String set_value = request.getParameter("set_value");
@@ -97,7 +98,9 @@
         oConn.close("addr_load");      
     sErrMsg = e.getMessage();    
   }
-  oConn = null;  
+  oConn = null;
+  
+  if (onload!=null) out.write("  window.parent.frames[0]."+onload+"();\n");
 %>
 //-->
 </SCRIPT>

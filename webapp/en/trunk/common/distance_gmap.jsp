@@ -81,11 +81,11 @@
     function onGDirectionsLoad(){ 
       // Use this function to access information about the latest load()
 
-      var frm.nu_km.value = String(gdir.getDistance().meters/1000);
+      document.forms[0].nu_km.value = String(gdir.getDistance().meters/1000);
       
-      setValueAtParent(frm.nu_km.value);
+      setValueAtParent(document.forms[0].nu_km.value);
       
-      frm.submit();
+      document.forms[0].submit();
     } // onGDirectionsLoad
 
     //-->

@@ -33,53 +33,49 @@ package com.knowgate.storage;
 
 import java.sql.SQLException;
 
-import javax.jms.JMSException;
 import javax.naming.NamingException;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 import java.beans.Beans;
 
 import java.lang.reflect.InvocationTargetException;
 
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Properties;
-
-import java.util.concurrent.ConcurrentHashMap;
-
-import com.knowgate.clocial.ModelManager;
-import com.knowgate.dataobjs.DBBind;
-import com.knowgate.dataobjs.DBPersist;
-
-import com.knowgate.berkeleydb.DBEntity;
-import com.knowgate.berkeleydb.DBEnvironment;
 
 import com.knowgate.misc.Environment;
 
 public final class Manager extends Beans {
 
-  private final static String PROFILE = "extranet";
+  private final static String PROFILE = "hipergate";
 
   private Class[] aDataSourceClass;
+  private Class[] aEngineClass2;
+  private Class[] aStringClass1;
+  private Class[] aStringClass2;
   private String sPro;
   private Engine oEng;
   private RecordQueueProducer oRqp;
   private Properties oSyn = new Properties();
 
-  public Manager() throws StorageException,JMSException,NamingException,InstantiationException {
+  public Manager() throws StorageException,NamingException,InstantiationException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
   	this(Engine.DEFAULT, PROFILE);
   }
 
+  public Manager(Engine oDBEngine) throws StorageException,NamingException,InstantiationException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    this(oDBEngine, PROFILE);
+  }
+  
   public Manager(Engine oDBEngine, String sProfile)
-  	throws StorageException,JMSException,NamingException,InstantiationException {
+  	throws StorageException,NamingException,InstantiationException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	aStringClass1 = new Class[]{String.class};
+    aStringClass2 = new Class[]{String.class,String.class};
+    aEngineClass2 = new Class[]{Engine.class,String.class};
     oEng = oDBEngine;
     sPro = sProfile;
-	// oRqp = new RecordQueueProducer(Environment.getProfile(sPro));
-	oRqp = new RecordQueueProducer(sPro);
+    String sRqp = Environment.getProfileVar(sPro, "queue", "com.knowgate.ramqueue.RAMQueueProducer");
+	if (sRqp.equals("com.knowgate.ramqueue.RAMQueueProducer"))
+	  oRqp = (RecordQueueProducer) Class.forName(sRqp).getConstructor(aEngineClass2).newInstance(new Object[]{oDBEngine, sPro});
+	else
+      oRqp = (RecordQueueProducer) Class.forName(sRqp).getConstructor(aStringClass1).newInstance(new Object[]{sPro});
 	oSyn = new Properties();
     oSyn.put("synchronous","true");
     try {
@@ -94,35 +90,6 @@ public final class Manager extends Beans {
   public Properties getProperties() {
     return Environment.getProfile(sPro);
   }
-
-  
-  protected static DataSource createDataSource(Engine eEngine, String sProfileName, boolean bReadOnly)
-  	throws InstantiationException,StorageException,FileNotFoundException,IOException {
-  	
-  	DataSource oDts = null;
-  	
-  	switch (eEngine) {
-  		
-  	  case JDBCRDBMS:
-  	    oDts = new DBBind(sProfileName).connectionPool();
-		break;
-		
-  	  case BERKELYDB:
-  	  	String sPackageBase = Environment.getProfileVar(sProfileName, "package","/com/knowgate/clocial");
-  	  	File oPackDir = new File(SchemaMetaData.getAbsolutePath(sPackageBase)+"tables");
-  	  	if (!oPackDir.exists()) throw new FileNotFoundException("Directory "+oPackDir.getAbsolutePath()+" not found");
-  	  	if (!oPackDir.isDirectory()) throw new FileNotFoundException(oPackDir.getAbsolutePath()+" is not a directory");
-  	  	SchemaMetaData oSmd = new SchemaMetaData();
-		File[] aFiles = oPackDir.listFiles();
-		oSmd.load(oPackDir);
-  	  	oDts = new DBEnvironment(Environment.getProfilePath(sProfileName,"dbenvironment"), oSmd, bReadOnly);
-  	    break;
-
-  	  default:
-  	  	throw new InstantiationException("Invalid ENGINE value");
-  	}
-  	return oDts;
-  } // createDataSource
 
   public DataSource getDataSource() throws StorageException,InstantiationException {
     return DataSourcePool.get(oEng, sPro, false);
@@ -171,7 +138,7 @@ public final class Manager extends Beans {
   }
   
   public void store(Record oRec, boolean bSynchronous)
-  	throws StorageException,JMSException,InstantiationException {
+  	throws StorageException,InstantiationException {
   	if (bSynchronous)
 	  oRqp.store(oRec, oSyn);
 	else
@@ -179,12 +146,12 @@ public final class Manager extends Beans {
   }
 
   public void delete(Record oRec, String[] aKeys)
-  	throws StorageException,JMSException,InstantiationException {
+  	throws StorageException,InstantiationException {
 	oRqp.delete(oRec,aKeys,oSyn);
   }
 
   public RecordSet fetch(String sTableName)
-  	throws StorageException,JMSException,InstantiationException {
+  	throws StorageException,InstantiationException {
     Table oTbl = null;
     RecordSet oRst= null;
     DataSource oDts = null;
@@ -203,7 +170,7 @@ public final class Manager extends Beans {
   }
   
   public RecordSet fetch(String sTableName, String sIndexColumn, String sIndexValue)
-  	throws StorageException,JMSException,InstantiationException {
+  	throws StorageException,InstantiationException {
     Table oTbl = null;
     RecordSet oRst= null;
     DataSource oDts = null;
@@ -246,5 +213,5 @@ public final class Manager extends Beans {
   	}
   	return oRetVal;
   }
-  
+
 }

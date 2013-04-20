@@ -36,8 +36,8 @@
 <HTML>
   <HEAD>
     <TITLE>Wait...</TITLE>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript">
       <!--      
         deleteCookie ("domainid");
         deleteCookie ("domainnm");

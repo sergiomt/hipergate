@@ -86,12 +86,12 @@
 %><HTML>
   <HEAD>
     <TITLE>hipergate :: Edit Duty</TITLE>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/datefuncs.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/simplevalidations.js"></SCRIPT>    
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT SRC="../javascript/combobox.js"></SCRIPT>
+    <SCRIPT SRC="../javascript/trim.js"></SCRIPT>
+    <SCRIPT SRC="../javascript/datefuncs.js"></SCRIPT>
+    <SCRIPT SRC="../javascript/simplevalidations.js"></SCRIPT>    
+    <SCRIPT TYPE="text/javascript">
       <!--
       var skin = getCookie("skin");
       if (""==skin) skin="xp";

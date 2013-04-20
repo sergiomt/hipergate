@@ -1,8 +1,8 @@
 
 CREATE TABLE k_lu_job_commands
 (
-id_command    CHAR(4) NOT NULL,			/* Comando de ejecución */
-tx_command    VARCHAR(254) NULL,		/* Descripción de la acción */
+id_command    CHAR(4) NOT NULL,			/* Comando de ejecuciï¿½n */
+tx_command    VARCHAR(254) NULL,		/* Descripciï¿½n de la acciï¿½n */
 nm_class      CHARACTER VARYING(254) NULL,      /* Nombre de la clase Java que ejecuta la accion */
 
 CONSTRAINT pk_lu_job_commands PRIMARY KEY(id_command)
@@ -45,16 +45,16 @@ CREATE TABLE k_jobs
 (
 gu_job	      CHAR(32)    NOT NULL,	        /* GUID del proceso */
 gu_workarea   CHAR(32)    NOT NULL,		/* GUID de la workarea */
-gu_writer     CHAR(32)    NOT NULL,		/* GUID del usuario que creó el job */
-id_command    CHAR(4)     NOT NULL,		/* Comando de ejecución */
+gu_writer     CHAR(32)    NOT NULL,		/* GUID del usuario que creï¿½ el job */
+id_command    CHAR(4)     NOT NULL,		/* Comando de ejecuciï¿½n */
 id_status     SMALLINT    NOT NULL,  		/* Estado, pendiente, suspendido, abortado, terminado. */
-dt_created    DATETIME    DEFAULT CURRENT_TIMESTAMP, /* Fecha de creación del registro */
+dt_created    DATETIME    DEFAULT CURRENT_TIMESTAMP, /* Fecha de creaciï¿½n del registro */
 tl_job        VARCHAR(100)    NULL,	        /* Titulo descriptivo del job */
 gu_job_group  CHAR(32)        NULL,             /* GUID del lote de proceso */
-tx_parameters VARCHAR(2000)   NULL,		/* Parámetros de ejecución (atributo=valor,atributo=valor,...) */
-dt_execution  DATETIME        NULL,		/* Fecha programada de ejecución */
-dt_finished   DATETIME        NULL,  	        /* Fecha de terminación */
-dt_modified   DATETIME        NULL,	        /* Fecha de modificación del registro */
+tx_parameters VARCHAR(2000)   NULL,		/* Parï¿½metros de ejecuciï¿½n (atributo=valor,atributo=valor,...) */
+dt_execution  DATETIME        NULL,		/* Fecha programada de ejecuciï¿½n */
+dt_finished   DATETIME        NULL,  	        /* Fecha de terminaciï¿½n */
+dt_modified   DATETIME        NULL,	        /* Fecha de modificaciï¿½n del registro */
 nu_sent       INTEGER    DEFAULT 0,
 nu_opened     INTEGER    DEFAULT 0,
 nu_unique     INTEGER    DEFAULT 0,
@@ -247,9 +247,12 @@ CREATE TABLE k_events (
     id_command  CHAR(4)                NOT NULL,
     id_app      INTEGER                NOT NULL,
     gu_workarea CHAR(32)               NULL,
+    fixed_rate  INTEGER                NULL,
     de_event    CHARACTER VARYING(254) NULL,
     tx_parameters VARCHAR(2000)        NULL,
     
-    CONSTRAINT pk_events PRIMARY KEY (id_domain,id_event)
+    CONSTRAINT pk_events PRIMARY KEY (id_domain,id_event),
+    CONSTRAINT c1_events CHECK (fixed_rate IS NULL OR fixed_rate>0)
+
 )
 GO;

@@ -83,9 +83,9 @@
         text-decoration:none;
       }
   </style>
-  <script language="JavaScript" src="../javascript/cookies.js"></script>  
-  <script language="JavaScript" src="../javascript/setskin.js"></script>
-  <script language="JavaScript" type="text/javascript">
+  <script type="text/javascript" src="../javascript/cookies.js"></script>  
+  <script type="text/javascript" src="../javascript/setskin.js"></script>
+  <script type="text/javascript" type="text/javascript">
   <!--
 
       if(getCookie("appletFileShown")=="") {

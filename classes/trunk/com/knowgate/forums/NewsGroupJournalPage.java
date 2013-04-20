@@ -1,6 +1,5 @@
 /*
-  Copyright (C) 2009  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+  Copyright (C) 2009-2011  Know Gate S.L. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -32,14 +31,27 @@
 
 package com.knowgate.forums;
 
+/**
+ * <p>NewsGroupJournal Page</p>
+ * <p>This class must be pre-processed with JiBX and journal-def-jixb.xml</p>
+ * @author Sergio Montoro Ten
+ * @version 5.0
+ */
+
 public class NewsGroupJournalPage {
 
   private int limit;
   private String name;
   private String filter;
   private String inputfile;
+  private String datafile;
   private String outputpattern;
 
+  public NewsGroupJournalPage() {
+    limit = 65535;
+    name = filter = inputfile = datafile = outputpattern = null;
+  }
+  
   public int getLimit() { return limit; }
     	
   public String getName() { return name; }
@@ -47,6 +59,8 @@ public class NewsGroupJournalPage {
   public String getFilter() { return filter; }
 
   public String getInputFilePath() { return inputfile; }
+
+  public String getInputDataPath() { return datafile; }
 
   public String getOutputPattern() { return outputpattern; }
   

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
+    "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
+
+<web-app>
+  <display-name>hipergate</display-name>
+  <description>hipergate Platform</description>
+
+  <servlet>
+        <servlet-name>HttpCalendarServlet</servlet-name>
+        <servlet-class>com.knowgate.http.HttpCalendarServlet</servlet-class>
+
+        <init-param>
+            <param-name>profile</param-name>
+            <param-value>hipergate</param-value>
+        </init-param>
+  </servlet>
+
+  <servlet>
+        <servlet-name>HttpSchedulerServlet</servlet-name>
+        <servlet-class>com.knowgate.http.HttpSchedulerServlet</servlet-class>
+
+        <init-param>
+            <param-name>action</param-name>
+            <param-value>info</param-value>
+        </init-param>
+  </servlet>
+
+  <servlet>
+        <servlet-name>HttpBinaryServlet</servlet-name>
+        <servlet-class>com.knowgate.http.HttpBinaryServlet</servlet-class>
+
+        <init-param>
+            <param-name>jdbcDriverClassName</param-name>
+            <param-value></param-value>
+        </init-param>
+        <init-param>
+            <param-name>jdbcURL</param-name>
+            <param-value></param-value>
+        </init-param>
+        <init-param>
+            <param-name>dbUserName</param-name>
+            <param-value></param-value>
+        </init-param>
+        <init-param>
+            <param-name>dbUserPassword</param-name>
+            <param-value></param-value>
+        </init-param>
+        <init-param>
+            <param-name>id_product</param-name>
+            <param-value></param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>id_location</param-name>
+            <param-value></param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>id_category</param-name>
+            <param-value></param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>id_user</param-name>
+            <param-value></param-value>
+        </init-param>
+    </servlet>
+
+   <servlet>
+        <servlet-name>HttpBLOBServlet</servlet-name>
+        <servlet-class>com.knowgate.http.HttpBLOBServlet</servlet-class>
+
+        <init-param>
+            <param-name>jdbcDriverClassName</param-name>
+            <param-value></param-value>
+        </init-param>
+        <init-param>
+            <param-name>jdbcURL</param-name>
+            <param-value></param-value>
+        </init-param>
+        <init-param>
+            <param-name>dbUserName</param-name>
+            <param-value></param-value>
+        </init-param>
+        <init-param>
+            <param-name>dbUserPassword</param-name>
+            <param-value></param-value>
+        </init-param>
+        <init-param>
+            <param-name>nm_table</param-name>
+            <param-value></param-value>
+        </init-param>
+        <init-param>
+            <param-name>nm_field</param-name>
+            <param-value></param-value>
+        </init-param>
+        <init-param>
+            <param-name>pk_field</param-name>
+            <param-value></param-value>
+        </init-param>
+        <init-param>
+            <param-name>pk_value</param-name>
+            <param-value></param-value>
+        </init-param>
+        <init-param>
+            <param-name>bin_field</param-name>
+            <param-value></param-value>
+        </init-param>
+    </servlet>
+
+  <servlet-mapping>
+        <servlet-name>HttpCalendarServlet</servlet-name>
+        <url-pattern>/servlet/HttpCalendarServlet</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+        <servlet-name>HttpSchedulerServlet</servlet-name>
+        <url-pattern>/servlet/HttpSchedulerServlet</url-pattern>
+  </servlet-mapping>
+      
+  <servlet-mapping>
+        <servlet-name>HttpBinaryServlet</servlet-name>
+        <url-pattern>/servlet/HttpBinaryServlet</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+        <servlet-name>HttpBLOBServlet
+        </servlet-name>
+        <url-pattern>/servlet/HttpBLOBServlet</url-pattern>
+  </servlet-mapping>
+
+    <mime-mapping>
+      <extension>txt</extension>
+      <mime-type>text/plain</mime-type>
+    </mime-mapping>
+
+    <mime-mapping>
+      <extension>html</extension>
+      <mime-type>text/html</mime-type>
+    </mime-mapping>
+
+    <mime-mapping>
+      <extension>htm</extension>
+      <mime-type>text/html</mime-type>
+    </mime-mapping>
+
+    <welcome-file-list>
+      <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+    
+</web-app>

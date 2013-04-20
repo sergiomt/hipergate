@@ -2,7 +2,6 @@ package com.knowgate.clocial;
 
 import java.io.InputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import java.sql.Types;
 
@@ -12,9 +11,7 @@ import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
 import java.util.LinkedList;
-import java.util.Iterator;
 import java.util.HashMap;
-import java.util.Set;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Parser;

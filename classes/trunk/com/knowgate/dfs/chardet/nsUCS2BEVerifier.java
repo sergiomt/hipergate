@@ -39,7 +39,7 @@
 
 package com.knowgate.dfs.chardet ;
 
-import java.lang.*;
+
 
 public class nsUCS2BEVerifier extends nsVerifier {
 

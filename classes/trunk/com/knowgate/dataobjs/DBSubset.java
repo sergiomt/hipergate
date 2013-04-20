@@ -55,24 +55,20 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
-import java.util.Comparator;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.HashMap;
 
 import com.knowgate.debug.DebugFile;
 import com.knowgate.debug.StackTraceUtil;
 import com.knowgate.jdc.JDCConnection;
-import com.knowgate.storage.RecordSet;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.misc.Calendar;
 import com.knowgate.misc.CSVParser;
 import com.knowgate.math.Money;
-
 
 /**
  *
@@ -90,6 +86,8 @@ import com.knowgate.math.Money;
 
 public final class DBSubset extends Vector<Vector<Object>> {
 
+  private static final long serialVersionUID = 70000l;
+	
   /**
    * </p>Contructs a DBSubset.</p>
    * @param sTableName Base table or tables, ie. "k_products" or "k_products p, k_x_cat_objs x"
@@ -125,7 +123,6 @@ public final class DBSubset extends Vector<Vector<Object>> {
 
     if (DebugFile.trace) DebugFile.writeln (sSelect);
 
-    sInsert = "";
     iFetch = iFetchSize;
     iColCount = 0;
     iMaxRows = -1;
@@ -918,7 +915,7 @@ public final class DBSubset extends Vector<Vector<Object>> {
    * @since 7.0
    */
 
-  public Object max (int iCol) throws ArrayIndexOutOfBoundsException {
+  public Comparable max (int iCol) throws ArrayIndexOutOfBoundsException {
   	final int nCount = getRowCount();
   	Comparable oMax = null;
   	for (int iRow=0; iRow<nCount; iRow++) {
@@ -942,7 +939,7 @@ public final class DBSubset extends Vector<Vector<Object>> {
    * @since 7.0
    */
 
-  public Object min (int iCol) throws ArrayIndexOutOfBoundsException {
+  public Comparable min (int iCol) throws ArrayIndexOutOfBoundsException {
   	final int nCount = getRowCount();
   	Comparable oMin = null;
   	for (int iRow=0; iRow<nCount; iRow++) {
@@ -1381,17 +1378,17 @@ public final class DBSubset extends Vector<Vector<Object>> {
   /**
    * Get DBSubset row as a Map interface
    * @param iRow int Row position [0..getRowCount()-1]
-   * @return Map
+   * @return HashMap<String,Object>
    * @throws ArrayIndexOutOfBoundsException
    * @throws IllegalStateException if DBSubset has not been loaded
    */
-  public Map getRowAsMap (int iRow)
+  public HashMap<String,Object> getRowAsMap (int iRow)
     throws ArrayIndexOutOfBoundsException,IllegalStateException {
     if (super.isEmpty())
       throw new IllegalStateException("DBSubset.getRowAsMap("+String.valueOf(iRow)+") DBSubset not loaded");
 
     Vector oRow = (Vector) super.get(iRow);
-    HashMap oRetVal = new HashMap(iColCount*2);
+    HashMap<String,Object> oRetVal = new HashMap(iColCount*2);
 
     for (int iCol=0; iCol<iColCount; iCol++) {
       oRetVal.put(ColNames[iCol], oRow.get(iCol));
@@ -3462,7 +3459,10 @@ public final class DBSubset extends Vector<Vector<Object>> {
   // ----------------------------------------------------------
 
   public class DBSubsetDateGroup extends ArrayList<Integer> {
-    private Date dtFrom;
+
+	private static final long serialVersionUID = 70000l;
+
+	private Date dtFrom;
     private Date dtTo;
     
 	public DBSubsetDateGroup(Date dtStart, Date dtEnd) {
@@ -3470,7 +3470,7 @@ public final class DBSubset extends Vector<Vector<Object>> {
 	  dtTo = dtEnd;
 	}
 	public Date getDateFrom() {
-	  return dtFrom;
+		return dtFrom;
 	}
 	public Date getDateTo() {
 	  return dtTo;
@@ -3867,7 +3867,6 @@ public final class DBSubset extends Vector<Vector<Object>> {
   private String sColList;
   private String sFilter;
   private String sSelect;
-  private String sInsert;
   private String sColDelim;
   private String sRowDelim;
   private String sTxtQualifier;

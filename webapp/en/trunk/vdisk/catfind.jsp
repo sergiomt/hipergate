@@ -122,8 +122,8 @@
 <HTML LANG="<% out.write(sLanguage); %>">
   <HEAD>
     <TITLE>hipergate :: Search Results</TITLE>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+    <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+    <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
   </HEAD>
   
   <BODY  TOPMARGIN="4" MARGINHEIGHT="4">

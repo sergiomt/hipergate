@@ -147,11 +147,11 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: <%=sHeadStrip%></TITLE>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
   <!--
     function validate() {
@@ -323,7 +323,7 @@
             <TD ALIGN="right" WIDTH="90" VALIGN="top"><FONT CLASS="formstrong">Groups</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
               <TABLE CELLSPACING="0" CELLPADDING="0" BACKGROUND="../skins/<%=sSkin%>/fondoc.gif">
-                <TR HEIGHT="20"><TD WIDTH="8">&nbsp;</TD><TD><FONT CLASS="textsmallfront">All Groups</FONT></TD><TD WIDTH="50"</TD><TD><FONT CLASS="textsmallfront">Belongs to</FONT></TD><TD WIDTH="8">&nbsp;</TD></TR>
+                <TR HEIGHT="20"><TD WIDTH="8">&nbsp;</TD><TD><FONT CLASS="textsmallfront">All Groups</FONT></TD><TD WIDTH="50"></TD><TD><FONT CLASS="textsmallfront">Belongs to</FONT></TD><TD WIDTH="8">&nbsp;</TD></TR>
                 <TR><TD WIDTH="8">&nbsp;</TD><TD><SELECT NAME="groups" CLASS="textsmall" STYLE="width:148" SIZE="9" MULTIPLE><%=oGrps.toString()%></SELECT></TD><TD ALIGN="center" VALIGN="middle"><INPUT TYPE="button" NAME="AddGrps" VALUE="++ >>" TITLE="Add" STYLE="width:40" onclick="addGrps()"><BR><BR><INPUT TYPE="button" NAME="RemGrps" VALUE="<< - -" TITLE="Remove" STYLE="width:40" onclick="remGrps()"></TD><TD><SELECT NAME="group2" CLASS="textsmall" STYLE="width:148" SIZE="9" MULTIPLE><%=sGrpx%></SELECT><INPUT TYPE="hidden" NAME="memberof" VALUE=""></TD><TD WIDTH="8">&nbsp;</TD></TR>
                 <TR HEIGHT="8"><TD COLSPAN="5"></TD></TR>
               </TABLE>

@@ -41,7 +41,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.knowgate.debug.DebugFile;
 import com.knowgate.storage.DataSource;
-import com.knowgate.storage.StorageException;
 
 import com.knowgate.clocial.StorageManager;
 import com.knowgate.clocial.Redirect;

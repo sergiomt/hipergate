@@ -49,7 +49,6 @@
     
     bKVersion = oDBB.exists(oConn, DB.k_version, "U");
 
-
     oConn.close("setup3");
   }
   catch (SQLException e) {
@@ -75,14 +74,14 @@
 <HTML>
 <HEAD>
   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/layer.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/registration.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/layer.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/registration.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript">
   <!--      
 
     function skipRegistration() {
@@ -132,11 +131,11 @@
 <INPUT TYPE="hidden" NAME="version" VALUE="<%=iInstalledVersion%>">
 <INPUT TYPE="button" NAME="bback" VALUE="Previous" onclick="window.document.location.href='setup2.jsp';"> 
 &nbsp;&nbsp;
-<% if (iInstalledVersion==21000 || iInstalledVersion==30000 || iInstalledVersion==40000 || iInstalledVersion==50000) { %>
+<% if (iInstalledVersion==21000 || iInstalledVersion==30000 || iInstalledVersion==40000 || iInstalledVersion==50000 || iInstalledVersion==55000 || iInstalledVersion==60000) { %>
   <INPUT TYPE="submit" VALUE="Update from version <%=sInstalledVersion%>" onclick="showLayer('processing')">
   &nbsp;&nbsp;
   <INPUT TYPE="button" NAME="bdrop" VALUE="Erase datamodel" onclick="confirmDrop()">
-<% } else if (iInstalledVersion==55000) { %>
+<% } else if (iInstalledVersion==70000) { %>
   &nbsp;&nbsp;
   <INPUT TYPE="button" NAME="bdrop" VALUE="Erase datamodel" onclick="confirmDrop()">
   <BR><BR>

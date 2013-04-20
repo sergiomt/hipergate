@@ -95,9 +95,9 @@
       	  oItem.put (DB.gu_workarea, gu_workarea);
       	  oItem.put (DB.nm_company, nullif(request.getParameter("nm_company")));
       	  if (oAddr.getItemMap().containsKey(DB.work_phone))
-      	    oItem.put (DB.work_phone, oAddr.get(DB.work_phone));
+      	    oItem.put (DB.work_phone, oAddr.getStringNull(DB.work_phone,null));
       	  if (oAddr.getItemMap().containsKey(DB.tx_email))
-      	    oItem.put (DB.tx_email, oAddr.get(DB.tx_email));
+      	    oItem.put (DB.tx_email, oAddr.getStringNull(DB.tx_email,null));
       	  
       	  oRecent.add (oConn, oItem);
         }
@@ -117,10 +117,10 @@
       	  oItem.put (DB.nm_company, nullif(request.getParameter("nm_company")));
       
       	  if (oAddr.getItemMap().containsKey(DB.work_phone))
-      	    oItem.put (DB.work_phone, oAddr.get(DB.work_phone));
+      	    oItem.put (DB.work_phone, oAddr.getStringNull(DB.work_phone,null));
       
       	  if (oAddr.getItemMap().containsKey(DB.tx_email))
-      	    oItem.put (DB.tx_email, oAddr.get(DB.tx_email));
+      	    oItem.put (DB.tx_email, oAddr.getStringNull(DB.tx_email,null));
       	  
       	  oRecent.add (oConn, oItem);
         }
@@ -145,7 +145,7 @@
     
     oConn.close("addr_edit");
   }
-  catch (NullPointerException e) {  
+  catch (Exception e) {  
     if (oConn!=null)
       if (!oConn.isClosed()) oConn.close("addr_edit");
     response.sendRedirect (response.encodeRedirectUrl ("errmsg.jsp?title=Error&desc=" + e.getLocalizedMessage() + "&resume=../blank.htm"));  
@@ -156,14 +156,14 @@
 <HTML LANG="<%=sLanguage.toUpperCase()%>">
 <HEAD>
   <TITLE>hipergate :: Edit Address</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>  
-    <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>  
+    <SCRIPT TYPE="text/javascript">
       <!--        
 
       function lookup(odctrl) {

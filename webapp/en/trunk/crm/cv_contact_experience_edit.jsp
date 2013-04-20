@@ -23,7 +23,7 @@
             				<TD ALIGN="left" WIDTH="460">
               					<INPUT TYPE="hidden" NAME="id_sector" VALUE="<%=oContactEx.getStringNull(DB.id_sector,"")%>">&nbsp;
               					<SELECT NAME="sel_id_sector"><OPTION VALUE=""></OPTION><% out.write(sIdSectorLookUp); %></SELECT>&nbsp;
-              					<A HREF="javascript:lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Show companies activities"></A>
+              					<A HREF="javascript:lookup(4)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Show company activities"></A>
             				</TD>
           				</TR>
           				<TR>

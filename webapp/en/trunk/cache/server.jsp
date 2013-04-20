@@ -1,6 +1,4 @@
-<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<jsp:useBean id="CacheCoordinatorHttp" scope="application" class="java.util.TreeMap"/>
-<%
+<%@ page language="java" session="false" contentType="text/html;charset=UTF-8" %><jsp:useBean id="CacheCoordinatorHttp" scope="application" class="java.util.TreeMap"/><%
   /*
      Copyright (C) 2003  Know Gate S.L. All rights reserved.
                          C/Oña, 107 1º2 28050 Madrid (Spain)

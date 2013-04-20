@@ -71,6 +71,7 @@ CREATE TABLE k_academic_courses (
   nu_confirmed   INTEGER       NULL,
   nu_alumni      INTEGER       NULL,
   gu_address     CHAR(32)      NULL,
+  gu_supplier    CHAR(32)      NULL,
   nm_tutor       VARCHAR(200)  NULL,
   tx_tutor_email CHARACTER VARYING(100) NULL,
   de_course     VARCHAR(2000)  NULL,

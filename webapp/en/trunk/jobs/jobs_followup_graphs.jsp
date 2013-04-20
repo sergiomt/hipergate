@@ -2,21 +2,35 @@
 <jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="jobs_followup_graphs.jspf" %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <TITLE>hipergate :: Statistics</TITLE>
-  <LINK REL="stylesheet" TYPE="text/css" HREF="../javascript/dijit/themes/soria/soria.css" />
-  <LINK REL="stylesheet" TYPE="text/css" HREF="../javascript/dijit/themes/soria/soria_rtl.css" />
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dojo/dojo.js" djConfig="parseOnLoad: true"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/layer.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <TITLE>Mailing Graphs</TITLE>
+  <LINK REL="stylesheet" TYPE="text/css" HREF="../skins/xp/styles.css">
+  <LINK REL="stylesheet" TYPE="text/css" HREF="../javascript/dijit/themes/tundra/tundra.css" />
+  <LINK REL="stylesheet" TYPE="text/css" HREF="../javascript/dijit/themes/tundra/tundra_rtl.css" />
+  <LINK REL="stylesheet" TYPE="text/css" HREF="../javascript/dijit/themes/tundra/Dialog.css" />
+  <LINK REL="stylesheet" TYPE="text/css" HREF="../javascript/dijit/themes/tundra/Dialog_rtl.css" />
+  <LINK REL="stylesheet" TYPE="text/css" HREF="../javascript/dijit/themes/tundra/Menu.css" />
+  <LINK REL="stylesheet" TYPE="text/css" HREF="../javascript/dijit/themes/tundra/Menu_rtl.css" />
+  <STYLE TYPE="text/css">
+    body { 
+	    font: 12px Verdana,Arial,Helvetica,clean,sans-serif;
+      color:black;
+    }
+  </STYLE>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/dojo/dojo.js" djConfig="parseOnLoad:true"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/layer.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
   <!--
-
+		  dojo.require("dojo.html");
+		  dojo.require("dojo._base.xhr");
+      dojo.require("dijit.layout.BorderContainer");
+  	  dojo.require("dijit.layout.TabContainer");
+      dojo.require("dijit.layout.ContentPane");
       dojo.require("dojox.charting.Chart2D");
       dojo.require("dojox.charting.plot2d.Pie");
-      dojo.require("dojox.charting.themes.MiamiNice");
+      dojo.require("dojox.charting.themes.IndigoNation");
 			dojo.require("dojox.charting.action2d.Highlight");
       dojo.require("dojox.charting.action2d.MoveSlice");
       dojo.require("dojox.charting.action2d.Tooltip");
@@ -34,13 +48,13 @@
 	      var frm = document.forms[0];
 
         if (!isDate(frm.dt_from.value,"d") && frm.dt_from.value.length>0) {
-	  			alert ("La fecha no es valida");
+	  			alert ("date is not valid");
 	  			frm.dt_from.setFocus();
 	  			return false;
 				}
 
         if (!isDate(frm.dt_to.value,"d") && frm.dt_to.value.length>0) {
-	  			alert ("La fecha no es valida");
+	  			alert ("date is not valid");
 	  			frm.dt_to.setFocus();
 	  			return false;
 				}
@@ -49,6 +63,7 @@
       }
       
       function showClickthrough() {
+      	<% if (nClickDays>0) { %>
       	if (!bClickthroughRendered) {
       		bClickthroughRendered=true;
           c = new dojox.charting.Chart2D("clicksChart");
@@ -65,18 +80,20 @@
               fixUpper: "none",
               min: 0
           });
-          c.setTheme(dojox.charting.themes.MiamiNice);
-          c.addSeries("Visitas", [<% for (int v=0; v<nClickDays; v++) out.write((v==0 ? "" : ",")+String.valueOf(aVisits[v])); %>]);
+          c.setTheme(dojox.charting.themes.IndigoNation);
+          c.addSeries("Visitors", [<% for (int v=0; v<nClickDays; v++) out.write((v==0 ? "" : ",")+String.valueOf(aVisits[v])); %>]);
           c.addSeries("Hits", [<% for (int c=0; c<nClickDays; c++) out.write((c==0 ? "" : ",")+String.valueOf(aClicks[c])); %>]);
           c.render();
+          document.getElementById("clickthrough").replaceChild(document.getElementById("clicksChart"), document.getElementById("clickthrough_dummy"));
       	}
+      <% } %>
       }
       
       function showReferers() {
       	if (!bReferersRendered) {
       		bReferersRendered = true;
           c = new dojox.charting.Chart2D("referersChart");
-          c.setTheme(dojox.charting.themes.MiamiNice).addPlot("default", {
+          c.setTheme(dojox.charting.themes.IndigoNation).addPlot("default", {
               type: "Pie",
               font: "normal normal 8pt Arial",
               fontColor: "black",
@@ -85,7 +102,7 @@
           });
           
           c.addSeries("Referers", [<%
-            out.write("{y:"+String.valueOf(nOtherReferers)+",text:\"Other\",stroke:\"black\",tooltip:\"Other "+String.valueOf(nOtherReferers)+"%\"}");
+            out.write("{y:"+String.valueOf(nOtherReferers)+",text:\"Otros\",stroke:\"black\",tooltip:\"Otros "+String.valueOf(nOtherReferers)+"%\"}");
             for (NameValuePair vp : aTopReferers)
               out.write(",{y:" + vp.getValue() + ",text:\"" + (Integer.parseInt(vp.getValue())>=5 ? vp.getName() : "") + "\",stroke:\"black\",tooltip:\"" + oMailings.getStringNull(3,oMailings.find(2,vp.getName()),vp.getName()).replace('"',' ') + " " + vp.getValue() + " %\"}");
           %>]);
@@ -93,6 +110,7 @@
           var a2 = new dojox.charting.action2d.Highlight(c, "default");
           var a3 = new dojox.charting.action2d.Tooltip(c, "default");
           c.render();
+          document.getElementById("referrers").replaceChild(document.getElementById("referersChart"), document.getElementById("referrers_dummy"));
       	}
       }
     
@@ -113,13 +131,15 @@
               min: 0,
               labels: [<% for (int d=0; d<nUrls; d++) out.write((d==0 ? "" : ",")+"{value: "+String.valueOf(d+1)+", text: \""+Gadgets.left(oUrls.getStringNull(2,d,"").replace('"',' '),96)+"\"}"); %>]
           });
-          c.setTheme(dojox.charting.themes.MiamiNice);
+          c.setTheme(dojox.charting.themes.IndigoNation);
           c.addSeries("URLs", [<% for (int v=0; v<nUrls; v++) out.write((v==0 ? "" : ",")+oUrls.get(3,v)); %>]);
           c.render();
-      	}      	
+          document.getElementById("urls").replaceChild(document.getElementById("urlsChart"), document.getElementById("urls_dummy"));
+				}      	
       } // showPopularUrls
 
       function showPopularNewsletters() {
+      	<% if (nDocCount>0) { %>
       	if (!bUnpopularNewsletters) {
       		bUnpopularNewsletters=true;
           c = new dojox.charting.Chart2D("popularChart");
@@ -140,13 +160,16 @@
                           for (int d=0; d<nTopDocs; d++)
                             out.write((d==0 ? "" : ",")+"{value: "+String.valueOf(d+1)+", text: \""+Gadgets.left(oMailings.getStringNull(3,d,"").replace('"',' '),80)+"\"}"); %>]
           });
-          c.setTheme(dojox.charting.themes.MiamiNice);
+          c.setTheme(dojox.charting.themes.IndigoNation);
           c.addSeries("URLs", [<% for (int v=0; v<nTopDocs; v++) out.write((v==0 ? "" : ",")+String.valueOf(oMailings.getFloat(8,v))); %>]);
           c.render();
+          document.getElementById("mostpopular").replaceChild(document.getElementById("popularChart"), document.getElementById("mostpopular_dummy"));      	
       	}      	
-      } // showPopularUrls
+        <% } %>
+      } // showPopularUrl
 
       function showUnpopularNewsletters() {
+      	<% if (nDocCount>0) { %>
       	if (!bPopularNewsletters) {
       		bPopularNewsletters=true;
           c = new dojox.charting.Chart2D("unpopularChart");
@@ -172,7 +195,7 @@
                             }
                           } %>]
           });
-          c.setTheme(dojox.charting.themes.MiamiNice);
+          c.setTheme(dojox.charting.themes.IndigoNation);
           c.addSeries("URLs", [<% b1st = true;
                                   for (int v=nBottomDocs-1; v>=0; v--) {
                                     if (oMailings.getFloat(8,v)>0f) {
@@ -182,42 +205,21 @@
                                   }
                               %>]);
           c.render();
+          document.getElementById("lesspopular").replaceChild(document.getElementById("unpopularChart"), document.getElementById("lesspopular_dummy"));
       	}      	
+        <% } %>
       } // showUnpopularUrls
-
-      function showByHour() {
-      	if (!bByHour) {
-      		bByHour=true;
-          c = new dojox.charting.Chart2D("byHourChart");
-          c.addPlot("default", {
-              type: "Columns",
-              gap: 2              
-          }).addAxis("x", {
-              fixLower: "none",
-              fixUpper: "none",
-              labels: [<% for (int v=0; v<nReadedByHour; v++) out.write((v==0 ? "" : ",")+"{value: "+String.valueOf(v+1)+", text: \""+oReadedByHour.get(1,v)+"\"}"); %>]
-          }).addAxis("y", {
-              vertical: true,
-              fixLower: "none",
-              fixUpper: "none",
-              min: 0,
-          });
-          c.setTheme(dojox.charting.themes.MiamiNice);
-          c.addSeries("Hour", [<% for (int v=0; v<nReadedByHour; v++) out.write((v==0 ? "" : ",")+String.valueOf(oReadedByHour.getInt(0,v))); %>]);
-          c.render();
-      	}      	
-      } // showPopularUrls
 
   //-->
   </SCRIPT>
 </HEAD>
-<BODY TOPMARGIN="8" MARGINHEIGHT="8" STYLE="font-family:Arial,Helvetica,sans-serif">
+<BODY TOPMARGIN="8" MARGINHEIGHT="8" CLASS="tundra">
 	<%@ include file="../common/tabmenu.jspf" %>
   <FORM METHOD="post">
-    <TABLE><TR><TD WIDTH="98%" CLASS="striptitle"><FONT CLASS="title1">Statistics<% if (nullif(request.getParameter("dt_from")).length()>0) out.write("&nbsp;desde&nbsp;"+request.getParameter("dt_from")); %><% if (nullif(request.getParameter("dt_to")).length()>0) out.write("&nbsp;hasta&nbsp;"+request.getParameter("dt_to")); %></FONT></TD></TR></TABLE>  
+    <TABLE><TR><TD WIDTH="98%" CLASS="striptitle"><FONT CLASS="title1">Gr&aacute;ficas comparativas de env&iacute;os<% if (nullif(request.getParameter("dt_from")).length()>0) out.write("&nbsp;desde&nbsp;"+request.getParameter("dt_from")); %><% if (nullif(request.getParameter("dt_to")).length()>0) out.write("&nbsp;hasta&nbsp;"+request.getParameter("dt_to")); %></FONT></TD></TR></TABLE>  
     <TABLE SUMMARY="Top controls and filters" CELLSPACING="2" CELLPADDING="2">
       <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
-      <TR
+      <TR>
       	<TD>&nbsp;&nbsp;<IMG SRC="../images/images/wlink.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="URL"></TD>
         <TD COLSPAN="7">
         	<A HREF="urls_followup_list.jsp?selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>" CLASS="linkplain">Listing by URL</A>
@@ -239,36 +241,37 @@
     </TABLE>
   </FORM>
 
-  <TABLE CELLSPACING=2 CELLPADDING=2><TR><TD CLASS=textstrong>Web click-through (Clickthrough)</FONT></TD><TD BGCOLOR=#7f9599 CLASS=textplain><FONT COLOR=white>Hits</FONT></TD><TD BGCOLOR=#45b8cc CLASS=textplain><FONT COLOR=white>Unique visitors</FONT></TD></TR></TABLE>
-  <DIV ID="clicksChart" STYLE="width: 800px; height: 240px;"></DIV>
-  <TABLE WIDTH="800"><TR><TD BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR></TABLE>
-  <TABLE CELLSPACING=2 CELLPADDING=2><TR><TD CLASS=textstrong>Top referrers</FONT></TD></TR></TABLE>
-  <BR/>
+  <DIV dojoType="dijit.layout.BorderContainer" style="width:980px;height:480px">
+  <DIV dojoType="dijit.layout.TabContainer" region="center">
+    <DIV dojoType="dijit.layout.ContentPane" title="Clickthrough" id="clickthrough">
+      <TABLE CELLSPACING=2 CELLPADDING=2>
+      	<TR>
+      		<TD CLASS=textstrong>Clickthrough</FONT></TD>
+      		<TD BGCOLOR=#93a4d0 CLASS=textplain><FONT COLOR=white>Hits</FONT></TD>
+      		<TD BGCOLOR=#3b4152 CLASS=textplain><FONT COLOR=white>Unique visitors</FONT></TD>
+        </TR>
+      </TABLE>
+    <DIV ID="clickthrough_dummy"></DIV></DIV>
+    <DIV dojoType="dijit.layout.ContentPane" title="Referrers" id="referrers"><TABLE CELLSPACING=2 CELLPADDING=2><TR><TD CLASS=textstrong>Top referrers</FONT></TD></TR></TABLE><DIV ID="referrers_dummy"></DIV></DIV>
+    <DIV dojoType="dijit.layout.ContentPane" title="URLs" id="urls"><TABLE CELLSPACING=2 CELLPADDING=2><TR><TD CLASS=textstrong>Clicks towards most visited URLs</FONT></TD></TR></TABLE><DIV ID="urls_dummy"></DIV></DIV>
+    <DIV dojoType="dijit.layout.ContentPane" title="Most popular" id="mostpopular"><TABLE CELLSPACING=2 CELLPADDING=2><TR><TD CLASS=textstrong>Most popular newsletters (percentage)</FONT></TD></TR></TABLE><DIV ID="mostpopular_dummy"></DIV></DIV>
+    <DIV dojoType="dijit.layout.ContentPane" title="Less popular" id="lesspopular"><TABLE CELLSPACING=2 CELLPADDING=2><TR><TD CLASS=textstrong>Less popular newsletters (percentage)</FONT></TD></TR></TABLE><DIV ID="lesspopular_dummy"></DIV></DIV>
+  </DIV></DIV>
+  <DIV ID="clicksChart" STYLE="width: 800px; height: 240px;"></DIV></DIV>
   <DIV ID="referersChart" STYLE="width: 600px; height: 270px;"></DIV>
-  <BR/><BR/><BR/>
-  <TABLE WIDTH="800"><TR><TD BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR></TABLE>
-  <TABLE CELLSPACING=2 CELLPADDING=2><TR><TD CLASS=textstrong>Clicks towards most vosoted URLs</FONT></TD></TR></TABLE>
-  <DIV ID="urlsChart" STYLE="width: 960px; height: 400px;"></DIV>
-  <TABLE WIDTH="800"><TR><TD BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR></TABLE>
-  <TABLE CELLSPACING=2 CELLPADDING=2><TR><TD CLASS=textstrong>Most popular newsletters (percentage)</FONT></TD></TR></TABLE>
-  <DIV ID="popularChart" STYLE="width: 960px; height: 400px;"></DIV>
-  <TABLE WIDTH="800"><TR><TD BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR></TABLE>
-  <TABLE CELLSPACING=2 CELLPADDING=2><TR><TD CLASS=textstrong>Less popular newsletters (percentage)</FONT></TD></TR></TABLE>
+  <DIV ID="urlsChart" STYLE="width: 960px; height: 400px;"></DIV> 
+  <DIV ID="popularChart" STYLE="width: 960px; height: 400px;"></DIV>  
   <DIV ID="unpopularChart" STYLE="width: 960px; height: 400px;"></DIV>
-  <TABLE WIDTH="800"><TR><TD BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR></TABLE>
-  <TABLE CELLSPACING=2 CELLPADDING=2><TR><TD CLASS=textstrong>Readed emails by hour</FONT></TD></TR></TABLE>
-  <DIV ID="byHourChart" STYLE="width: 800px; height: 240px;"></DIV>
+
 </BODY>
-<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+<SCRIPT TYPE="text/javascript">
   <!--
-      
       dojo.addOnLoad(function() {
-      	showClickthrough();
+      	showClickthrough(); 	
       	showReferers();
-        <% if (nUrls>0) { %> showPopularUrls(); <% } else { %> document.getElementById("urlsChart").style.height="80px"; document.getElementById("urlsChart").innerHTML="<FONT class=textplain>No data at the database for this chart</FONT>"; <% } %>
+        <% if (nUrls>0) { %> showPopularUrls(); <% } else { %> document.getElementById("urlsChart").style.height="80px"; document.getElementById("urlsChart").innerHTML="<FONT class=textplain>No existen datos en la BB.DD. para esta gr&aacute;fica</FONT>"; <% } %>
       	showPopularNewsletters();
       	showUnpopularNewsletters();
-      	showByHour();
       });
   //-->
 </SCRIPT>

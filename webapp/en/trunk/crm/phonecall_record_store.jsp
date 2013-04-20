@@ -1,5 +1,5 @@
 <%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.PhoneCall,com.knowgate.crm.Contact,com.knowgate.crm.Company,com.knowgate.hipergate.Address" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%
+<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/reqload.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003-2008  Know Gate S.L. All rights reserved.
                            C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -45,6 +45,9 @@
   String gu_workarea = request.getParameter("gu_workarea");
   String gu_company = request.getParameter("gu_company");
   String gu_oportunity = request.getParameter("gu_oportunity");
+  String telf = nullif(request.getParameter("telf"));
+  String tx_other_phone = nullif(request.getParameter("tx_other_phone"));
+  String tp_location = nullif(request.getParameter("tp_location"));
 
   String id_user = getCookie (request, "userid", null);
   
@@ -86,12 +89,15 @@
 	  if (request.getParameter("tx_surname").length()==0)
 	    oCnt.remove(DB.tx_surname);
 	  else
-	    oCnt.replace(DB.tx_surname, request.getParameter("tx_surname"));	    
-	  oCnt.replace(DB.de_title, request.getParameter("de_title"));
+	    oCnt.replace(DB.tx_surname, request.getParameter("tx_surname"));
+	  if (request.getParameter("de_title").length()==0)
+	    oCnt.remove(DB.de_title);
+	  else
+	    oCnt.replace(DB.de_title, request.getParameter("de_title"));
 	  oCnt.replace(DB.id_status, request.getParameter("id_contact_status"));
 	  oCnt.store(oConn);
     
-    if (request.getParameter("telf").equals("O") && request.getParameter("tx_other_phone").length()>0 && request.getParameter("tp_location").length()>0) {
+    if (telf.equals("O") && tx_other_phone.length()>0 && tp_location.length()>0) {
       Address oAdr = oCnt.getAddress(oConn, request.getParameter("tp_location"));
       if (oAdr!=null) {
         oAdr.replace(request.getParameter("tp_phone"),request.getParameter("tx_other_phone"));
@@ -104,6 +110,9 @@
 
 		if (gu_oportunity!=null) {
 		  DBCommand.executeUpdate(oConn, "UPDATE "+DB.k_oportunities+" SET "+DB.dt_last_call+"=(SELECT MAX("+DB.dt_start+") FROM "+DB.k_phone_calls+" WHERE "+DB.gu_phonecall+"='"+oPhn.getString(DB.gu_phonecall)+"') WHERE "+DB.gu_oportunity+"='"+gu_oportunity+"'");
+		  if (request.getParameter("lv_interest")!=null)
+		    if (request.getParameter("lv_interest").length()>0)
+		      DBCommand.executeUpdate(oConn, "UPDATE "+DB.k_oportunities+" SET "+DB.lv_interest+"="+request.getParameter("lv_interest")+" WHERE "+DB.gu_oportunity+"='"+gu_oportunity+"'");
 		}
 
     DBAudit.log(oConn, PhoneCall.ClassId, "NPHN", id_user, oPhn.getString(DB.gu_phonecall), request.getParameter("gu_contact"), 0, 0, null, null);

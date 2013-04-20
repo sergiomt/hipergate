@@ -54,6 +54,10 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.stream.StreamResult;
 
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+
 import com.knowgate.debug.DebugFile;
 import com.knowgate.misc.Gadgets;
 
@@ -65,7 +69,7 @@ import com.knowgate.misc.Gadgets;
  * StylesheetCache is a WeakHashMap so cached stylesheets can be automatically
  * garbage collected is memory runs low.
  * @author Sergio Montoro Ten
- * @version 1.0
+ * @version 7.0
  */
 public class StylesheetCache {
 
@@ -105,7 +109,7 @@ public class StylesheetCache {
     TransformerFactory oFactory;
     Templates oTemplates;
     StreamSource oStreamSrc;
-    SheetEntry oSheet = (SheetEntry) oCache.get(sFilePath);
+    SheetEntry oSheet = oCache.get(sFilePath);
 
     if (null!=oSheet) {
       if (DebugFile.trace) {
@@ -121,8 +125,10 @@ public class StylesheetCache {
       if (DebugFile.trace) DebugFile.writeln("TransformerFactory.newInstance()");
       oFactory = TransformerFactory.newInstance();
       if (DebugFile.trace) DebugFile.writeln("new StreamSource("+sFilePath+")");
-      oStreamSrc = new StreamSource(sFilePath);
-      if (DebugFile.trace) DebugFile.writeln("TransformerFactory.newTemplates(StreamSource)");
+      File oFlSrc = new File(sFilePath);
+      oStreamSrc = new StreamSource(oFlSrc);
+      oStreamSrc.setSystemId(oFlSrc);
+      if (DebugFile.trace) DebugFile.writeln("TransformerFactory.newTemplates("+oFlSrc.toURL().toExternalForm()+")");
       oTemplates = oFactory.newTemplates(oStreamSrc);
       oSheet = new SheetEntry(lastMod, oTemplates);
       if (DebugFile.trace) DebugFile.writeln("WeakHashMap.put("+sFilePath+", SheetEntry)");
@@ -379,13 +385,29 @@ public class StylesheetCache {
 
     ByteArrayOutputStream oOutputStream = new ByteArrayOutputStream();
 
-    TransformerFactory oFactory = TransformerFactory.newInstance();
-    StreamSource oStreamSrc = new StreamSource(oStyleSheetStream);
-    Templates oTemplates = oFactory.newTemplates(oStreamSrc);
-    Transformer oTransformer = oTemplates.newTransformer();
+    Transformer oTransformer;
+    final String sXSLSystemId = oProps.getProperty("XSLSystemId");
+
+    if (sXSLSystemId==null) {
+      TransformerFactory oFactory = TransformerFactory.newInstance();
+      StreamSource oStreamSrc = new StreamSource(oStyleSheetStream);
+      Templates oTemplates = oFactory.newTemplates(oStreamSrc);
+      oTransformer = oTemplates.newTransformer();
+    } else {
+      if (oCache.containsKey(sXSLSystemId)) {
+    	oTransformer = StylesheetCache.newTransformer(sXSLSystemId);
+      } else {
+        TransformerFactory oFactory = TransformerFactory.newInstance();
+        StreamSource oStreamSrc = new StreamSource(oStyleSheetStream);
+        oStreamSrc.setSystemId(oProps.getProperty("XSLSystemId"));
+        Templates oTemplates = oFactory.newTemplates(oStreamSrc);
+        oTransformer = oTemplates.newTransformer();    	  
+      }
+    }
 
     if (null!=oProps) setParameters(oTransformer, oProps);
     StreamSource oStreamSrcXML = new StreamSource(oXMLInputStream);
+    if (oProps.getProperty("XMLSystemId")!=null) oStreamSrcXML.setSystemId(oProps.getProperty("XMLSystemId"));
     StreamResult oStreamResult = new StreamResult(oOutputStream);
     if (DebugFile.trace) DebugFile.writeln("Transformer.transform(StreamSource,StreamResult)");
     oTransformer.transform(oStreamSrcXML, oStreamResult);
@@ -487,6 +509,40 @@ public class StylesheetCache {
 
   // ---------------------------------------------------------------------------
 
+  /**
+   * Validate an XML document using an XSD schema
+   * @param oXsd InputStream to XSD schema
+   * @param oXml InputStream to XML document
+   * @return String An empty string if validation was successful or text describing the error found
+   * @since 7.0
+   */
+  
+  public String validate(InputStream oXsd, InputStream oXml) {
+    String sRetVal;
+	try {
+	  SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+	  Schema schema = factory.newSchema(new StreamSource(oXsd));
+	  Validator validator = schema.newValidator();
+	  validator.validate(new StreamSource(oXml));
+	  sRetVal = "";
+	} catch (Exception xcpt) {
+      sRetVal = xcpt.getMessage();
+	}	
+	return sRetVal;
+  }
+  
+  // ---------------------------------------------------------------------------
+  
+  /**
+   * Clear XLS Stylesheets cache
+   * @since 7.0
+   */
+  public static void clearCache () {
+    oCache.clear();
+  }
+  
+  // ---------------------------------------------------------------------------
+
   static class SheetEntry {
     long lastModified;
     Templates templates;
@@ -497,5 +553,5 @@ public class StylesheetCache {
     }
   } // SheetEntry
 
-  private static WeakHashMap oCache = new WeakHashMap();
+  private static WeakHashMap<String,SheetEntry> oCache = new WeakHashMap<String,SheetEntry>();
 } // StylesheetCache

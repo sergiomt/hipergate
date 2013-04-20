@@ -43,7 +43,6 @@
   Timestamp tsFrom31 = new Timestamp(dtTo.getTime()-nLastDays*86400000l);
 
   int nDocCount = 0;
-  int nReadedByHour = 0;
   int nMsgsByJob = 0;
   int nUserAgents = 0;
   int nClicks = 0;
@@ -66,12 +65,6 @@
   DBSubset oPagesets = new DBSubset(DB.k_pagesets,
 																		DB.gu_pageset+" AS "+DB.gu_mailing+",-1 AS "+DB.pg_mailing+","+DB.nm_pageset+" AS "+DB.nm_mailing+",'' AS "+DB.tx_subject+",0 AS nu_messages"+",0 AS nu_opened,"+DB.dt_created+" AS "+DB.dt_execution+",0 AS nu_clicks, 0 AS pct_populatity",
 																		DB.gu_pageset+" IN (SELECT "+DB.gu_job_group+" FROM "+DB.k_jobs+" WHERE "+DB.gu_workarea+"=? AND ("+DB.dt_execution+" BETWEEN ? AND ? OR "+DB.dt_finished+" BETWEEN ? AND ?)) ", 500);
-  
-  DBSubset oReadedByHour = new DBSubset(DB.k_jobs+" j,"+DB.k_jobs_atoms_by_hour+" h",
-    																	  "SUM(h."+DB.nu_msgs+"),h."+DB.dt_hour,
-  																	    "j."+DB.gu_job+"=h."+DB.gu_job+" AND "+
-																			  "(j."+DB.dt_execution+" BETWEEN ? AND ? OR j."+DB.dt_finished+" BETWEEN ? AND ?) AND "+
-																			  "j."+DB.gu_job+" IN (SELECT "+DB.gu_job+" FROM "+DB.k_jobs+" WHERE "+DB.gu_workarea+"=?) GROUP BY 2 ORDER BY 2", 24);
   
   DBSubset oUserAgents = new DBSubset(DB.k_jobs+" j,"+DB.k_jobs_atoms_by_agent+" a", "a."+DB.id_agent+",SUM(a."+DB.nu_msgs+")",
 																			"(j."+DB.dt_execution+" BETWEEN ? AND ? OR j."+DB.dt_finished+" BETWEEN ? AND ?) AND "+
@@ -108,7 +101,7 @@
 	  float fMaxInt = 0f;
 	  float fTotInt = 0f;
 
-		nDocCount = oMailings.getRowCount();
+		nDocCount = oMailings.getRowCount();		
 		PreparedStatement oPcnt = oConn.prepareStatement("SELECT SUM("+DB.nu_sent+"),SUM("+DB.nu_opened+"),SUM("+DB.nu_clicks+") FROM "+DB.k_jobs+" WHERE "+DB.gu_job_group+"=?");
 		for (int d=0; d<nDocCount; d++) {
 		  oPcnt.setString(1, oMailings.getString(0,d));
@@ -132,10 +125,6 @@
 		for (int d=0; d<nDocCount; d++) {
 			oMailings.setElementAt(new Float(((100f*oMailings.getInt(5,d))/(float)oMailings.getInt(4,d)/fMaxInt)*100f), 8, d);
 		}
-
-    if (oConn.getDataBaseProduct()==JDCConnection.DBMS_POSTGRESQL) {
-      nReadedByHour = oReadedByHour.load(oConn, new Object[]{tsFrom,tsTo,tsFrom,tsTo,gu_workarea});
-    }
     
 		if (null==GlobalCacheClient.getDBSubset("UserAgents["+gu_workarea+","+tsFrom.toString()+","+tsTo.toString())) {
       nUserAgents = oUserAgents.load(oConn, new Object[]{tsFrom,tsTo,tsFrom,tsTo,gu_workarea});
@@ -153,7 +142,7 @@
 		  
 		  for (int r=0; r<oReferers1.getRowCount(); r++) {
 		    int rPct = (100*oReferers1.getInt(0,r))/nClicks;
-		    if (rPct>=4) {		      
+		    if (rPct>=4) {
 		      int iRef = oMailings.find(0,oReferers1.getString(1,r));
 		      if (iRef>=0)
 		        aTopReferers.add(new NameValuePair(oMailings.getString(2,iRef), String.valueOf(rPct)));

@@ -1,13 +1,7 @@
 package com.knowgate.berkeleydb;
 
-import java.io.IOException;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 import java.util.LinkedList;
-import java.util.HashMap;
+
 import java.util.Date;
 
 import java.text.SimpleDateFormat;
@@ -18,10 +12,6 @@ import com.knowgate.storage.Connection;
 import com.knowgate.storage.Column;
 import com.knowgate.storage.AbstractRecord;
 import com.knowgate.storage.StorageException;
-
-import com.sleepycat.bind.EntityBinding;
-import com.sleepycat.bind.serial.ClassCatalog;
-import com.sleepycat.bind.serial.SerialSerialBinding;
 
 public class DBEntity extends AbstractRecord {
 

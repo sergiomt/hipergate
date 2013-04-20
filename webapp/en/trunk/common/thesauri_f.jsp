@@ -42,5 +42,4 @@
 	<P>This page use frames, but your web browser does not handle them</P>
       </BODY>
     </NOFRAMES>
-  </FRAMESET>
 </HTML>

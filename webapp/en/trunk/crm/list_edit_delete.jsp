@@ -2,7 +2,7 @@
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
+                      C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -91,7 +91,7 @@
 <HTML>
 <HEAD>
 <TITLE>Wait...</TITLE>
-<SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>
+<SCRIPT TYPE='text/javascript'>
 window.document.location='list_listing.jsp?selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>';
 </SCRIPT>
 </HEAD>

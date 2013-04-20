@@ -36,7 +36,6 @@ import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBPersist;
 
-import com.knowgate.misc.Gadgets;
 import com.knowgate.debug.DebugFile;
 
 import java.sql.SQLException;

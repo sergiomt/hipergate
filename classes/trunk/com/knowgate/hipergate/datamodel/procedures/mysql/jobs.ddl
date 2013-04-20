@@ -55,7 +55,7 @@ BEGIN
   DECLARE AtomPg INT;
   DECLARE WrkAGu CHAR(32) DEFAULT NULL;
   DECLARE Done INT DEFAULT 0;
-  DECLARE Atoms CURSOR FOR SELECT pg_atom FROM k_job_atoms WHERE gu_job=IdJob;
+  DECLARE Atoms CURSOR FOR SELECT pg_atom FROM k_job_atoms WHERE gu_job=IdJob AND id_status<>3;
   DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET Done=1;
   SELECT gu_workarea INTO WrkAGu FROM k_jobs WHERE gu_job=IdJob;
   OPEN Atoms;

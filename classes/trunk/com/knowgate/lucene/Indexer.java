@@ -1,6 +1,5 @@
 /*
-  Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+  Copyright (C) 2003-2011  Know Gate S.L. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -58,29 +57,79 @@ import java.io.File;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.NIOFSDirectory;
+import org.apache.lucene.store.db.DbDirectory;
 import org.apache.lucene.document.DateTools;
-import org.apache.lucene.document.DateTools.Resolution;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Index;
-import org.apache.lucene.document.Field.Store;
-import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.StopAnalyzer;
+import org.apache.lucene.util.Version;
 
 import com.knowgate.debug.DebugFile;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.dfs.FileSystem;
 
+
 /**
  * <p>Data Feeder from hipergate tables for Lucene</p>
  * @author Sergio Montoro Ten
- * @version 4.0
- * @see http://lucene.apache.org/java/2_3_0/api/core/index.html
+ * @version 7.0
+ * @see http://lucene.apache.org/java/3_0_1/api/all/overview-summary.html
  */
 
 public class Indexer {
 
   public final static String DEFAULT_ANALYZER = "org.apache.lucene.analysis.StopAnalyzer";
+
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Open Lucene Directory
+   * @param sDirectoryPath String Full path to Directory location.
+   * Use a disk path for opening a NIOFSDirectory o preffix the
+   * path with bdb:// for opening a Berkely DB DbDirectory like "bdb:///opt/storage/db/"
+   * @throws IOException
+   * @since 7.0
+   */
+  public static Directory openDirectory(String sDirectoryPath)
+    throws IOException {
+	Directory oDir;
+    if (sDirectoryPath.startsWith("bdb://")) {
+      oDir = DBDirectory.open(sDirectoryPath.substring(6));
+    } else if (sDirectoryPath.startsWith("file://"))  {
+      oDir = new NIOFSDirectory(new File(sDirectoryPath.substring(7)));
+    } else {
+      oDir = new NIOFSDirectory(new File(sDirectoryPath));    
+    }
+    return oDir;
+  }
+
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Instantiate a subclass of org.apache.lucene.analysis.Analyzer
+   * @param oProps Properties Must contain a property named "analyzer" which is
+   * the full class name of the desired Analyzer subclass. If no analyzer property
+   * is set then org.apache.lucene.analysis.StopAnalyzer is instantiated by default.
+   * @throws ClassNotFoundException
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @since 7.0
+   */
+  public static Analyzer instantiateAnalyzer(Properties oProps)
+    throws ClassNotFoundException,InstantiationException,IllegalAccessException {	
+    Analyzer oAnal;
+	String sClassName = oProps.getProperty("analyzer", DEFAULT_ANALYZER);
+    if (DebugFile.trace) DebugFile.writeln("Class.forName(" + sClassName + ")");
+	if (sClassName.equals("org.apache.lucene.analysis.StopAnalyzer"))
+	  oAnal = new StopAnalyzer(Version.LUCENE_33);
+	else
+	  oAnal = ((Analyzer) Class.forName(sClassName).newInstance());
+    return oAnal;
+  }
 
   // ---------------------------------------------------------------------------
 
@@ -151,14 +200,10 @@ public class Indexer {
     }
 
     if (DebugFile.trace)
-      DebugFile.writeln("Class.forName(" + oProps.getProperty("analyzer" , DEFAULT_ANALYZER) + ")");
-
-    Class oAnalyzer = Class.forName(oProps.getProperty("analyzer" , DEFAULT_ANALYZER));
-
-    if (DebugFile.trace)
       DebugFile.writeln("new IndexWriter(...)");
 
-    IndexWriter oIWrt = new IndexWriter(sDirectory, (Analyzer) oAnalyzer.newInstance(), true);
+    Directory oFsDir = openDirectory(sDirectory);
+    IndexWriter oIWrt = new IndexWriter(oFsDir, instantiateAnalyzer(oProps), IndexWriter.MaxFieldLength.LIMITED);
 
     if (DebugFile.trace) DebugFile.writeln("IndexWriter.optimize()");
 
@@ -167,6 +212,7 @@ public class Indexer {
     if (DebugFile.trace) DebugFile.writeln("IndexWriter.close()");
 
     oIWrt.close();
+    oFsDir.close();
 
     if (DebugFile.trace) {
       DebugFile.decIdent();
@@ -213,7 +259,7 @@ public class Indexer {
            IllegalArgumentException, NoSuchFieldException,
            IllegalAccessException, InstantiationException {
 
-    String sGuid, sContainer, sTitle, sAuthor, sComments, sText;
+    String sGuid, sThread, sContainer, sTitle, sAuthor, sComments, sText;
     Date dtCreated;
     BigDecimal dNumber;
     int iNumber, iSize;
@@ -253,10 +299,6 @@ public class Indexer {
       throw new NoSuchFieldException ("Cannot find dburl property");
     }
 
-    if (DebugFile.trace) DebugFile.writeln("Class.forName(" + oProps.getProperty("analyzer" , DEFAULT_ANALYZER) + ")");
-
-    Class oAnalyzer = Class.forName(oProps.getProperty("analyzer" , DEFAULT_ANALYZER));
-
     if (DebugFile.trace) DebugFile.writeln("Class.forName(" + oProps.getProperty("driver") + ")");
 
     Class oDriver = Class.forName(oProps.getProperty("driver"));
@@ -270,9 +312,11 @@ public class Indexer {
       File[] aFiles = oDir.listFiles();
       if (null!=aFiles) {
         if (aFiles.length>0) {
-          IndexReader oReader = IndexReader.open(sDirectory);      
+          Directory oFsDir = openDirectory(sDirectory);
+          IndexReader oReader = IndexReader.open(oFsDir);      
           int iDeleted = oReader.deleteDocuments(new Term("workarea", sWorkArea));
           oReader.close();
+          oFsDir.close();
         }
       }
     } else {
@@ -283,7 +327,8 @@ public class Indexer {
 
     if (DebugFile.trace) DebugFile.writeln("new IndexWriter("+sDirectory+",[Analyzer], true)");
 
-    IndexWriter oIWrt = new IndexWriter(sDirectory, (Analyzer) oAnalyzer.newInstance(), true);
+    Directory oFsDir = openDirectory(sDirectory);
+    IndexWriter oIWrt = new IndexWriter(oFsDir, instantiateAnalyzer(oProps), IndexWriter.MaxFieldLength.LIMITED);
 
     if (DebugFile.trace)
       DebugFile.writeln("DriverManager.getConnection(" + oProps.getProperty("dburl") + ", ...)");
@@ -323,17 +368,18 @@ public class Indexer {
       if (DebugFile.trace)
         DebugFile.writeln("Statement.executeQuery(SELECT g.gu_workarea,c.nm_category,m.gu_msg,m.tx_subject,m.dt_published," + IfNull(oConn) + "(b.nm_author,'')," + IfNull(oConn) + "(b.tx_msg,'') FROM k_newsmsgs m, k_categories c, k_newsgroups g, k_x_cat_objs x WHERE m.id_status=0 AND m.gu_msg=x.gu_object AND x.gu_category=g.gu_newsgrp AND c.gu_category=g.gu_newsgrp AND g.gu_workarea='"+sWorkArea+"')");
 
-      oRSet = oStmt.executeQuery("SELECT g.gu_workarea,c.nm_category,m.gu_msg,m.tx_subject,m.dt_published," + IfNull(oConn) + "(m.nm_author,'')," + IfNull(oConn) + "(m.tx_msg,'') FROM k_newsmsgs m, k_categories c, k_newsgroups g, k_x_cat_objs x WHERE m.id_status=0 AND m.gu_msg=x.gu_object AND x.gu_category=g.gu_newsgrp AND c.gu_category=g.gu_newsgrp AND g.gu_workarea='"+sWorkArea+"'");
+      oRSet = oStmt.executeQuery("SELECT g.gu_workarea,c.nm_category,m.gu_msg,m.gu_thread_msg,m.tx_subject,m.dt_published," + IfNull(oConn) + "(m.nm_author,'')," + IfNull(oConn) + "(m.tx_msg,'') FROM k_newsmsgs m, k_categories c, k_newsgroups g, k_x_cat_objs x WHERE m.id_status=0 AND m.gu_msg=x.gu_object AND x.gu_category=g.gu_newsgrp AND c.gu_category=g.gu_newsgrp AND g.gu_workarea='"+sWorkArea+"'");
 
       while (oRSet.next()) {
         sWorkArea = oRSet.getString(1);
         sContainer = oRSet.getString(2);
         sGuid = oRSet.getString(3);
-        sTitle = oRSet.getString(4);
-        dtCreated = oRSet.getDate(5);
-        sAuthor = oRSet.getString(6);
-        sText = oRSet.getString(7);
-        NewsMessageIndexer.addNewsMessage(oIWrt, sGuid, sWorkArea, sContainer, sTitle, sAuthor, dtCreated, sText);
+        sThread = oRSet.getString(4);        
+        sTitle = oRSet.getString(5);
+        dtCreated = oRSet.getDate(6);
+        sAuthor = oRSet.getString(7);
+        sText = oRSet.getString(8);
+        NewsMessageIndexer.addNewsMessage(oIWrt, sGuid, sThread, sWorkArea, sContainer, sTitle, sAuthor, dtCreated, sText);
       } // wend
       oRSet.close();
     }
@@ -378,10 +424,9 @@ public class Indexer {
     	ContactRecord arrayContactos[] = contacts.values().toArray(new ContactRecord[contacts.size()]);
     	for(int i=0;i<arrayContactos.length;i++){
     		ContactIndexer.addDocument(oIWrt,arrayContactos[i]);
-    	}
-    	
-    	
+    	}    	    	
       }
+
     //Fin i2E
       else if (sTableName.equalsIgnoreCase("k_mime_msgs")) {
 
@@ -448,6 +493,7 @@ public class Indexer {
     if (DebugFile.trace) DebugFile.writeln("IndexWriter.close()");
 
     oIWrt.close();
+    oFsDir.close();
 
     if (DebugFile.trace) {
       DebugFile.decIdent();
@@ -523,9 +569,9 @@ public class Indexer {
       if (null==oFieldValue) oFieldValue = "";
       
       if (oFieldValue.getClass().getName().equals("java.util.Date"))
-      	oDoc.add(new Field(sFieldName, DateTools.dateToString((Date) oFieldValue,  DateTools.Resolution.SECOND), Field.Store.YES, Field.Index.UN_TOKENIZED));
+      	oDoc.add(new Field(sFieldName, DateTools.dateToString((Date) oFieldValue,  DateTools.Resolution.SECOND), Field.Store.YES, Field.Index.NOT_ANALYZED));
       else
-      	oDoc.add(new Field(sFieldName, (String) oFieldValue, Field.Store.YES, Field.Index.UN_TOKENIZED));
+      	oDoc.add(new Field(sFieldName, (String) oFieldValue, Field.Store.YES, Field.Index.NOT_ANALYZED));
     } // wend
 
 	// ******************************************************
@@ -536,7 +582,7 @@ public class Indexer {
       sFieldName = (String) oTxts.next();
       oFieldValue = oTexts.get(sFieldName);
       if (null==oFieldValue) oFieldValue = "";
-      oDoc.add(new Field(sFieldName, (String) oFieldValue, Field.Store.YES, Field.Index.TOKENIZED));
+      oDoc.add(new Field(sFieldName, (String) oFieldValue, Field.Store.YES, Field.Index.ANALYZED));
     } // wend
 
 	// *********************************************
@@ -547,7 +593,7 @@ public class Indexer {
       sFieldName = (String) oUnStor.next();
       oFieldValue = oUnStored.get(sFieldName);
       if (null==oFieldValue) oFieldValue = "";
-      oDoc.add(new Field(sFieldName, (String) oFieldValue, Field.Store.NO, Field.Index.TOKENIZED));
+      oDoc.add(new Field(sFieldName, (String) oFieldValue, Field.Store.NO, Field.Index.ANALYZED));
     } // wend
     oIWrt.addDocument(oDoc);
   } // add
@@ -575,11 +621,13 @@ public class Indexer {
 
     Class oAnalyzer = Class.forName((sAnalyzer==null) ? DEFAULT_ANALYZER : sAnalyzer);
 
-    IndexWriter oIWrt = new IndexWriter(sDirectory, (Analyzer) oAnalyzer.newInstance(), true);
+    NIOFSDirectory oFsDir = new NIOFSDirectory(new File(sDirectory));
+    IndexWriter oIWrt = new IndexWriter(oFsDir, (Analyzer) oAnalyzer.newInstance(), IndexWriter.MaxFieldLength.LIMITED);
 
     add (oIWrt, oKeywords, oTexts, oUnStored);
 
     oIWrt.close();
+    oFsDir.close();
   } // add
 
   // ---------------------------------------------------------------------------
@@ -635,8 +683,6 @@ public class Indexer {
       try { oFS.mkdirs(sDirectory); } catch (Exception e) { throw new IOException(e.getClass().getName()+" "+e.getMessage()); }
     }
 
-    Class oAnalyzer = Class.forName(oProps.getProperty("analyzer" , DEFAULT_ANALYZER));
-
     HashMap oKeys = new HashMap(11);
     oKeys.put("workarea" , sWorkArea==null ? "" : sWorkArea);
     oKeys.put("container", sContainer==null ? "" : sContainer);
@@ -649,10 +695,13 @@ public class Indexer {
     HashMap oUnstor = new HashMap(11);
     oUnstor.put("comments", sComments==null ? "" : sComments);
     oUnstor.put("text", sText==null ? "" : sText);
+        
+    Directory oFsDir = openDirectory(sDirectory);
+    IndexWriter oIWrt = new IndexWriter(oFsDir, instantiateAnalyzer(oProps), IndexWriter.MaxFieldLength.LIMITED);
 
-    IndexWriter oIWrt = new IndexWriter(sDirectory, (Analyzer) oAnalyzer.newInstance(), true);
     add(oIWrt, oKeys, oTexts, oUnstor);
     oIWrt.close();
+    oFsDir.close();
   } // add
 
   // ---------------------------------------------------------------------------
@@ -691,11 +740,13 @@ public class Indexer {
       try { oFS.mkdirs(sDirectory); } catch (Exception e) { throw new IOException(e.getClass().getName()+" "+e.getMessage()); }
     } // fi
 
-    IndexReader oReader = IndexReader.open(sDirectory);
+    NIOFSDirectory oFsDir = new NIOFSDirectory(new File(sDirectory));
+    IndexReader oReader = IndexReader.open(oFsDir);
 
     int iDeleted = oReader.deleteDocuments(new Term("guid", sGuid));
 
     oReader.close();
+    oFsDir.close();
 
     return iDeleted;
   } // delete

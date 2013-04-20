@@ -38,26 +38,23 @@ import java.util.Properties;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import org.apache.lucene.store.Directory;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.document.DateTools;
-import org.apache.lucene.document.DateTools.Resolution;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Field.Index;
-import org.apache.lucene.document.Field.Store;
 
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.projtrack.Bug;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.dfs.FileSystem;
-import org.apache.lucene.analysis.Analyzer;
 import java.io.File;
 
 /**
  * Indexer subclass for hipergate bugs
  * @author Sergio Montoro Ten
- * @version 3.0
+ * @version 7.0
  */
 public class BugIndexer extends Indexer {
 
@@ -95,31 +92,31 @@ public class BugIndexer extends Indexer {
              NullPointerException {
 
     Document oDoc = new Document();
-    oDoc.add (new Field("workarea" , sWorkArea, Field.Store.YES, Field.Index.UN_TOKENIZED));
-    oDoc.add (new Field("container", sProject , Field.Store.YES, Field.Index.UN_TOKENIZED));
-    oDoc.add (new Field("guid"     , sGuid    , Field.Store.YES, Field.Index.UN_TOKENIZED));
-    oDoc.add (new Field("number"   , String.valueOf(iNumber), Field.Store.YES, Field.Index.UN_TOKENIZED));
-    oDoc.add (new Field("title"    , sTitle, Field.Store.YES, Field.Index.TOKENIZED));
-    oDoc.add (new Field("created"  , DateTools.dateToString(dtCreated, DateTools.Resolution.SECOND), Field.Store.YES, Field.Index.UN_TOKENIZED));
-    oDoc.add (new Field("writer"   , sWriter, Field.Store.YES, Field.Index.UN_TOKENIZED));
-    if (null!=sStatus)     oDoc.add (new Field("status"   , sStatus, Field.Store.YES, Field.Index.UN_TOKENIZED));
-    if (null!=sType)       oDoc.add (new Field("type"     , sType  , Field.Store.YES, Field.Index.UN_TOKENIZED));
-    if (null!=oPriority)   oDoc.add (new Field("priority" , oPriority.toString(), Field.Store.YES, Field.Index.UN_TOKENIZED));
-    if (null!=oSeverity)   oDoc.add (new Field("severity" , oSeverity.toString(), Field.Store.YES, Field.Index.UN_TOKENIZED));
-    if (null!=sReportedBy) oDoc.add (new Field("author"   , sReportedBy, Field.Store.YES, Field.Index.TOKENIZED));
+    oDoc.add (new Field("workarea" , sWorkArea, Field.Store.YES, Field.Index.NOT_ANALYZED));
+    oDoc.add (new Field("container", sProject , Field.Store.YES, Field.Index.NOT_ANALYZED));
+    oDoc.add (new Field("guid"     , sGuid    , Field.Store.YES, Field.Index.NOT_ANALYZED));
+    oDoc.add (new Field("number"   , String.valueOf(iNumber), Field.Store.YES, Field.Index.NOT_ANALYZED));
+    oDoc.add (new Field("title"    , sTitle, Field.Store.YES, Field.Index.ANALYZED));
+    oDoc.add (new Field("created"  , DateTools.dateToString(dtCreated, DateTools.Resolution.SECOND), Field.Store.YES, Field.Index.NOT_ANALYZED));
+    oDoc.add (new Field("writer"   , sWriter, Field.Store.YES, Field.Index.NOT_ANALYZED));
+    if (null!=sStatus)     oDoc.add (new Field("status"   , sStatus, Field.Store.YES, Field.Index.NOT_ANALYZED));
+    if (null!=sType)       oDoc.add (new Field("type"     , sType  , Field.Store.YES, Field.Index.NOT_ANALYZED));
+    if (null!=oPriority)   oDoc.add (new Field("priority" , oPriority.toString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+    if (null!=oSeverity)   oDoc.add (new Field("severity" , oSeverity.toString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+    if (null!=sReportedBy) oDoc.add (new Field("author"   , sReportedBy, Field.Store.YES, Field.Index.ANALYZED));
     if (null==sComments)
-      oDoc.add (new Field("comments", "", Field.Store.NO, Field.Index.TOKENIZED));
+      oDoc.add (new Field("comments", "", Field.Store.NO, Field.Index.ANALYZED));
     else
-      oDoc.add (new Field("comments", sComments, Field.Store.NO, Field.Index.TOKENIZED));
+      oDoc.add (new Field("comments", sComments, Field.Store.NO, Field.Index.ANALYZED));
     if (null==sText) {
-      oDoc.add (new Field("text", "", Field.Store.NO, Field.Index.TOKENIZED));
-      oDoc.add (new Field("abstract", "", Field.Store.YES, Field.Index.TOKENIZED));
+      oDoc.add (new Field("text", "", Field.Store.NO, Field.Index.ANALYZED));
+      oDoc.add (new Field("abstract", "", Field.Store.YES, Field.Index.ANALYZED));
     } else {
-      oDoc.add (new Field("text", sText, Field.Store.NO, Field.Index.TOKENIZED));
+      oDoc.add (new Field("text", sText, Field.Store.NO, Field.Index.ANALYZED));
       if (sText.length()>80)
-        oDoc.add (new Field("abstract", sText.substring(0,80).replace('\n',' ').replace('\r',' '), Field.Store.YES, Field.Index.TOKENIZED));
+        oDoc.add (new Field("abstract", sText.substring(0,80).replace('\n',' ').replace('\r',' '), Field.Store.YES, Field.Index.ANALYZED));
       else
-        oDoc.add (new Field("abstract", sText.replace('\n',' ').replace('\r',' '), Field.Store.YES, Field.Index.TOKENIZED));
+        oDoc.add (new Field("abstract", sText.replace('\n',' ').replace('\r',' '), Field.Store.YES, Field.Index.ANALYZED));
     }
     oIWrt.addDocument(oDoc);
   } // addBug
@@ -234,11 +231,11 @@ public class BugIndexer extends Indexer {
        try { oFS.mkdirs(sDirectory); } catch (Exception e) { throw new IOException(e.getClass().getName()+" "+e.getMessage()); }
     }  // fi
 
-    Class oAnalyzer = Class.forName(oProps.getProperty("analyzer" , DEFAULT_ANALYZER));
-
-    IndexWriter oIWrt = new IndexWriter(sDirectory, (Analyzer) oAnalyzer.newInstance(), true);
+    Directory oFsDir = Indexer.openDirectory(sDirectory);
+    IndexWriter oIWrt = new IndexWriter(oFsDir, Indexer.instantiateAnalyzer(oProps), IndexWriter.MaxFieldLength.LIMITED);
     addBug(oIWrt, oCon, sWorkArea, oBug);
     oIWrt.close();
+    oFsDir.close();
   } // addBug
 
   /**

@@ -63,8 +63,8 @@
   <STYLE>
     .boton  { background-color:orange;color:white;font-family:Verdana,Arial,Helvetica,sans-serif;font-size:8pt;height:24px; }
   </STYLE>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
 </HEAD>
 <BODY bgcolor="white">
 <P align="center">&nbsp;</P>

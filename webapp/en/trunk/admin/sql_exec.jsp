@@ -1,4 +1,4 @@
-<%@ page import="java.sql.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %><%
+<%@ page import="java.sql.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.storage.Column" language="java" session="false" contentType="text/html;charset=UTF-8" %><%
 /*
   Copyright (C) 2004  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -85,7 +85,9 @@
           oRSet = oStmt.executeQuery(Statements[s]);
         else if (UCaseStmt.startsWith("INSERT") || UCaseStmt.startsWith("UPDATE"))
           iRow = oStmt.executeUpdate(Statements[s]);
-        else {
+        else if (UCaseStmt.startsWith("DESC")) {
+          oRSet = oStmt.executeQuery("SELECT * FROM "+UCaseStmt.substring(5)+" WHERE 1=0");          
+        } else {
           if (oDriver.getName().equals("oracle.jdbc.driver.OracleDriver")) {
             oStmt.execute(Gadgets.removeChar(Statements[s], (char)13));
             iRow = 0;
@@ -111,15 +113,24 @@
           }
           oResults.append("</TR>");       
 	
-	  iRow = 0;
-	  while (oRSet.next() && (iRow<iMaxRows)) {
-            oResults.append("<TR>");
-            for (int f=1; f<=iColCount; f++)
-	      if (oMDat.getColumnType(f)!=java.sql.Types.LONGVARBINARY && oMDat.getColumnType(f)!=java.sql.Types.BLOB)
-                oResults.append("<TD CLASS=\"strip2\">"+oRSet.getObject(f)+"</TD>");
-            oResults.append("</TR>");
-	    iRow++;
-	  }  // wend
+	        iRow = 0;
+	        if (UCaseStmt.startsWith("DESC")) {
+            for (int f=1; f<=iColCount; f++) {
+              oResults.append("<TD CLASS=\"strip2\">"+Column.typeName(oMDat.getColumnType(f)));
+              if (oMDat.getColumnType(f)==java.sql.Types.CHAR || oMDat.getColumnType(f)==java.sql.Types.VARCHAR)
+                oResults.append("("+String.valueOf(oMDat.getPrecision(f))+")");
+              oResults.append((oMDat.isNullable(f)==1 ? "" : " NOT")+" NULL</TD>");
+	          }
+	        } else {
+	        	while (oRSet.next() && (iRow<iMaxRows)) {
+              oResults.append("<TR>");
+              for (int f=1; f<=iColCount; f++)
+	              if (oMDat.getColumnType(f)!=java.sql.Types.LONGVARBINARY && oMDat.getColumnType(f)!=java.sql.Types.BLOB)
+                  oResults.append("<TD CLASS=\"strip2\">"+oRSet.getObject(f)+"</TD>");
+              oResults.append("</TR>");
+	            iRow++;
+	          }  // wend
+          } // fi
         } // fi (oRSet!=null && Statements.length==1)
       
         if (oRSet!=null) oRSet.close(); 
@@ -149,8 +160,8 @@
 
 %><HTML>
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
 </HEAD>
 <BODY >
 <BR>

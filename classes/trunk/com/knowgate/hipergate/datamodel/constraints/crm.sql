@@ -53,7 +53,6 @@ ALTER TABLE k_contacts_attrs ADD CONSTRAINT f1_contacts_attrs FOREIGN KEY (gu_ob
 ALTER TABLE k_oportunities ADD CONSTRAINT f1_oportunities FOREIGN KEY (gu_writer) REFERENCES k_users(gu_user);
 ALTER TABLE k_oportunities ADD CONSTRAINT f2_oportunities FOREIGN KEY (gu_company) REFERENCES k_companies(gu_company);
 ALTER TABLE k_oportunities ADD CONSTRAINT f3_oportunities FOREIGN KEY (gu_contact) REFERENCES k_contacts(gu_contact);
-ALTER TABLE k_oportunities ADD CONSTRAINT f4_oportunities FOREIGN KEY (gu_campaign) REFERENCES k_campaigns(gu_campaign);
 
 ALTER TABLE k_oportunities_lookup ADD CONSTRAINT f1_oportunities_lookup  FOREIGN KEY(gu_owner) REFERENCES k_workareas(gu_workarea);
 
@@ -63,6 +62,9 @@ ALTER TABLE k_oportunities_changelog ADD CONSTRAINT f1_oportunities_changelog FO
 
 ALTER TABLE k_oportunities_attachs ADD CONSTRAINT f1_oportunities_attachs FOREIGN KEY (gu_oportunity) REFERENCES k_oportunities(gu_oportunity);
 ALTER TABLE k_oportunities_attachs ADD CONSTRAINT f2_oportunities_attachs FOREIGN KEY (gu_writer) REFERENCES k_users(gu_user);
+
+ALTER TABLE k_x_oportunity_contacts ADD CONSTRAINT f1_x_oportunity_contacts FOREIGN KEY (gu_oportunity) REFERENCES k_oportunities(gu_oportunity);
+ALTER TABLE k_x_oportunity_contacts ADD CONSTRAINT f2_x_oportunity_contacts FOREIGN KEY (gu_contact) REFERENCES k_contacts(gu_contact);
 
 ALTER TABLE k_sales_men ADD CONSTRAINT f1_sales_men FOREIGN KEY (gu_sales_man) REFERENCES k_users(gu_user);
 ALTER TABLE k_sales_men ADD CONSTRAINT f2_sales_men FOREIGN KEY (gu_geozone) REFERENCES k_thesauri(gu_term);

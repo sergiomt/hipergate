@@ -1,5 +1,7 @@
 (?:https?://)?twitter\.com/([a-z0-9_-]+)/statuses/.*
 (?:https?://)?twitter\.com/([a-z0-9_-]+)/status/.*
+(?:https?://)?twitter\.com/#!/([a-z0-9_-]+)/status/.*
+(?:https?://)?twitter\.com/#!/([a-z0-9_-]+)
 (?:https?://)?twitter\.com/([a-z0-9_-]+)
 (?:https?://)?retwite\.appspot\.com/([a-z0-9_-]+)
 (?:https?://)?([a-z0-9-]+)\.blogspot\.com

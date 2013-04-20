@@ -80,7 +80,8 @@ public class ActivityAudience extends DBPersist {
 	return bRetVal;
   }
 
-  public boolean load(JDCConnection oConn, String sGuActivityAudience) throws SQLException {
+  @SuppressWarnings("unused")
+public boolean load(JDCConnection oConn, String sGuActivityAudience) throws SQLException {
     if (true) throw new UnsupportedOperationException("Method load() must have two arguments for ActivityAudience");
     return false;
   }

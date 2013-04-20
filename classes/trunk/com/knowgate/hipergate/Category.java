@@ -55,7 +55,6 @@ import java.sql.DatabaseMetaData;
 
 import com.knowgate.debug.DebugFile;
 import com.knowgate.acl.ACL;
-import com.knowgate.acl.PasswordRecord;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBBind;
@@ -1175,7 +1174,7 @@ public class Category  extends DBPersist {
   public void setLabel(Connection oConn, String sTr) throws SQLException {
 	
 	if (null==sTr) throw new NullPointerException("Category.setLabel() Label string may not be null");
-	if (null==sTr) throw new NullPointerException("Category.setLabel() Label string may not be empty");
+	if (sTr.length()==0) throw new NullPointerException("Category.setLabel() Label string may not be empty");
 
     sTr = Gadgets.left(sTr,30);
     
@@ -1328,7 +1327,7 @@ public class Category  extends DBPersist {
       DebugFile.incIdent();
     }
     	
-	if (null!=sOrderBy)
+	if (null==sOrderBy)
 	  sOrderClause = "";
 	else
 	  sOrderClause = " ORDER BY " + (sOrderBy.equalsIgnoreCase(DB.od_position) ? "x." : "p.") + sOrderBy;
@@ -2273,7 +2272,12 @@ public class Category  extends DBPersist {
    * @throws SQLException
    */
   public static String create(JDCConnection oConn, Object[] Values) throws SQLException {
-    Category oCatg = new Category ();
+	if (DebugFile.trace) {
+	  DebugFile.writeln("Begin Category.create([Connection], Object[])" );
+	  DebugFile.incIdent();
+	}
+
+	Category oCatg = new Category ();
 
     oCatg.put (DB.gu_owner, Values[1]);
     oCatg.put (DB.nm_category, Values[2]);
@@ -2295,6 +2299,11 @@ public class Category  extends DBPersist {
     else
       oCatg.setIsRoot(oConn, true);
 
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End Category.create() : " + oCatg.getStringNull(DB.gu_category,"null"));
+    }
+    
     // Recuperar el identificador unico de la categoria recien escrita
     return oCatg.getString(DB.gu_category);
   } // create()

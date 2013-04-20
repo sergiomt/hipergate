@@ -1,4 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.io.File,java.io.FileInputStream,java.io.InputStreamReader,java.sql.SQLException,com.oreilly.servlet.MultipartRequest,org.apache.oro.text.regex.MalformedPatternException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.datamodel.ImportLoader,com.knowgate.crm.ContactLoader,com.knowgate.debug.DebugFile" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.io.File,java.io.FileInputStream,java.io.InputStreamReader,java.sql.SQLException,com.oreilly.servlet.MultipartRequest,org.apache.oro.text.regex.MalformedPatternException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.hipergate.datamodel.ImportLoader,com.knowgate.crm.ContactLoader,com.knowgate.crm.OportunityLoader,com.knowgate.debug.DebugFile" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%!
 
   final static int TYPE_TEXT = 0;
@@ -116,6 +116,8 @@
     } else if (id_type.equals("COMPANIES")) {
        oImpLoad = new ContactLoader(oConn);
        iFlags |= ContactLoader.WRITE_COMPANIES|ContactLoader.WRITE_ADDRESSES;;
+    } else if (id_type.equals("OPORTUNITIES")) {
+       oImpLoad = new OportunityLoader();
     }
       
     oConn.close("textloader2");
@@ -145,9 +147,9 @@
 <HTML>
 <HEAD>
   <TITLE>hipergate :: Contact Loader</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
       function validate() {
 	return window.confirm("You are about to import the selected file. Are you sure that you want to proceed?");

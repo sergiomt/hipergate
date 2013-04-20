@@ -11,10 +11,10 @@
   <FRAMESET NAME="usrtop" ROWS="80,*" BORDER="0" FRAMEBORDER="0">
     <FRAME NAME="topnavigation" FRAMEBORDER="no" MARGINWIDTH="0" MARGINHEIGHT="0" NORESIZE SRC="salesman_edit_top.jsp?gu_sales_man=<% out.write (request.getParameter("gu_sales_man")); %>&n_sales_man=<% out.write (Gadgets.URLEncode(request.getParameter("n_sales_man"))); %>">
     <FRAME NAME="yearobjectives" FRAMEBORDER="no" MARGINWIDTH="0 marginheight=" NORESIZE>
+  </FRAMESET>
     <NOFRAMES>
       <BODY>
 	<P>This page contains frames, but you browser does not support them.</P>
       </BODY>
     </NOFRAMES>
-  </FRAMESET>
 </HTML>

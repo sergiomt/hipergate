@@ -19,6 +19,8 @@ BEGIN
 
     DELETE FROM k_x_adhoc_mailing_list WHERE gu_list=bk;
 
+    DELETE FROM k_x_pageset_list WHERE gu_list=bk;
+
     DELETE FROM k_lists WHERE gu_list=bk;
   END IF;
 
@@ -31,6 +33,8 @@ BEGIN
   DELETE FROM k_x_campaign_lists WHERE gu_list=$1;
 
   DELETE FROM k_x_adhoc_mailing_list WHERE gu_list=$1;
+
+  DELETE FROM k_x_pageset_list WHERE gu_list=$1;
 
   DELETE FROM k_x_cat_objs WHERE gu_object=$1;
   UPDATE k_activities SET gu_list=NULL WHERE gu_list=$1;
@@ -242,43 +246,65 @@ DECLARE
   GuCompany     CHAR(32);
   GuContact     CHAR(32);
   GuWorkArea    CHAR(32);
+  GuGeoZone     CHAR(32);
   TxName        VARCHAR(100);
   TxSurname     VARCHAR(100);
-  DeTitle       VARCHAR(50);
+  DeTitle       VARCHAR(70);
   TrTitle       VARCHAR(50);
   DtBirth       TIMESTAMP;
   SnPassport    VARCHAR(16);
   IdGender      CHAR(1);
   NyAge         SMALLINT;
+  IdNationality CHAR(3);
   TxDept        VARCHAR(70);
   TxDivision    VARCHAR(70);
+  NmLegal       VARCHAR(70);
+  NmCommercial  VARCHAR(70);
+  IdLegal       VARCHAR(16);
+  IdSector      VARCHAR(16);
   TxComments    VARCHAR(254);
+  UrlLinkedIn	VARCHAR(254);
+  UrlFacebook	VARCHAR(254);
+  UrlTwitter	VARCHAR(254);
 
 BEGIN
-  SELECT gu_contact,gu_company,gu_workarea,
+  SELECT gu_contact,gu_company,gu_workarea,gu_geozone,
          CASE WHEN char_length(tx_name)=0 THEN NULL ELSE tx_name END,
          CASE WHEN char_length(tx_surname)=0 THEN NULL ELSE tx_surname END,
-         de_title,dt_birth,sn_passport,id_gender,ny_age,tx_dept,tx_division,tx_comments
-  INTO   GuContact,GuCompany,GuWorkArea,TxName,TxSurname,DeTitle,DtBirth,SnPassport,IdGender,NyAge,TxDept,TxDivision,TxComments
+         de_title,dt_birth,sn_passport,id_gender,ny_age,id_nationality,tx_dept,tx_division,tx_comments,url_linkedin,url_facebook,url_twitter
+  INTO   GuContact,GuCompany,GuWorkArea,GuGeoZone,TxName,TxSurname,DeTitle,DtBirth,SnPassport,IdGender,NyAge,IdNationality,TxDept,TxDivision,TxComments,UrlLinkedIn,UrlFacebook,UrlTwitter
   FROM k_contacts WHERE gu_contact=NEW.gu_contact;
   
+  IF GuCompany IS NOT NULL THEN
+    SELECT nm_commercial,nm_legal,id_legal,id_sector INTO NmCommercial,NmLegal,IdLegal,IdSector FROM k_companies WHERE gu_company=GuCompany;
+  ELSE
+    NmLegal := NULL;
+    NmCommercial := NULL;
+    IdLegal := NULL;
+    IdSector := NULL;
+  END IF;
+
   IF DeTitle IS NOT NULL THEN
     SELECT tr_en INTO TrTitle FROM k_contacts_lookup WHERE gu_owner=GuWorkArea AND id_section=''de_title'' AND vl_lookup=DeTitle;
     IF NOT FOUND THEN
-      UPDATE k_member_address SET gu_contact=GuContact,gu_company=GuCompany,tx_name=TxName,tx_surname=TxSurname,
-                                  de_title=DeTitle,tr_title=NULL,dt_birth=DtBirth,sn_passport=SnPassport,id_gender=IdGender,
-                                  ny_age=NyAge,tx_dept=TxDept,tx_division=TxDivision,tx_comments=TxComments
+      UPDATE k_member_address SET gu_contact=GuContact,gu_company=GuCompany,gu_geozone=GuGeoZone,tx_name=TxName,tx_surname=TxSurname,
+                                  nm_legal=NmLegal,nm_commercial=NmCommercial,id_legal=IdLegal,id_sector=IdSector,
+                                  de_title=DeTitle,tr_title=NULL,dt_birth=DtBirth,sn_passport=SnPassport,id_gender=IdGender,id_nationality=IdNationality,
+                                  ny_age=NyAge,tx_dept=TxDept,tx_division=TxDivision,tx_comments=TxComments,url_linkedin=UrlLinkedIn,url_facebook=UrlFacebook,url_twitter=UrlTwitter
       WHERE gu_address=NEW.gu_address;
     ELSE
-      UPDATE k_member_address SET gu_contact=GuContact,gu_company=GuCompany,tx_name=TxName,tx_surname=TxSurname,de_title=DeTitle,
-                                  tr_title=TrTitle,dt_birth=DtBirth,sn_passport=SnPassport,id_gender=IdGender,ny_age=NyAge,
-                                  tx_dept=TxDept,tx_division=TxDivision,tx_comments=TxComments
+      UPDATE k_member_address SET gu_contact=GuContact,gu_company=GuCompany,gu_geozone=GuGeoZone,tx_name=TxName,tx_surname=TxSurname,de_title=DeTitle,
+                                  nm_legal=NmLegal,nm_commercial=NmCommercial,id_legal=IdLegal,id_sector=IdSector,
+                                  tr_title=TrTitle,dt_birth=DtBirth,sn_passport=SnPassport,id_gender=IdGender,ny_age=NyAge,id_nationality=IdNationality,
+                                  tx_dept=TxDept,tx_division=TxDivision,tx_comments=TxComments,url_linkedin=UrlLinkedIn,url_facebook=UrlFacebook,url_twitter=UrlTwitter
       WHERE gu_address=NEW.gu_address;
     END IF;
   ELSE
-      UPDATE k_member_address SET gu_contact=GuContact,gu_company=GuCompany,tx_name=TxName,tx_surname=TxSurname,
-                                  de_title=NULL,tr_title=NULL,dt_birth=DtBirth,sn_passport=SnPassport,id_gender=IdGender,
-                                  ny_age=NyAge,tx_dept=TxDept,tx_division=TxDivision,tx_comments=TxComments
+      UPDATE k_member_address SET gu_contact=GuContact,gu_company=GuCompany,gu_geozone=GuGeoZone,tx_name=TxName,tx_surname=TxSurname,
+                                  nm_legal=NmLegal,nm_commercial=NmCommercial,id_legal=IdLegal,id_sector=IdSector,
+                                  de_title=NULL,tr_title=NULL,dt_birth=DtBirth,sn_passport=SnPassport,id_gender=IdGender,ny_age=NyAge,
+																	id_nationality=IdNationality,tx_dept=TxDept,tx_division=TxDivision,tx_comments=TxComments,
+																	url_linkedin=UrlLinkedIn,url_facebook=UrlFacebook,url_twitter=UrlTwitter
       WHERE gu_address=NEW.gu_address;
   END IF;
 
@@ -305,7 +331,7 @@ DECLARE
   GuSalesMan    CHAR(32);
   TxFranchise   VARCHAR(100);
   GuGeoZone     CHAR(32);
-  DeCompany	VARCHAR(254);
+  DeCompany	    VARCHAR(254);
 
 BEGIN
   SELECT nm_legal,id_legal,nm_commercial,id_sector,id_status,id_ref,tp_company,nu_employees,im_revenue,gu_sales_man,tx_franchise,gu_geozone,de_company
@@ -327,43 +353,64 @@ CREATE FUNCTION k_sp_upd_cont() RETURNS OPAQUE AS '
 DECLARE
   GuCompany     CHAR(32);
   GuWorkArea    CHAR(32);
+  GuGeoZone     CHAR(32);
   TxName        VARCHAR(100);
   TxSurname     VARCHAR(100);
-  DeTitle       VARCHAR(50);
+  DeTitle       VARCHAR(70);
   TrTitle       VARCHAR(50);
   DtBirth       TIMESTAMP;
   SnPassport    VARCHAR(16);
   IdGender      CHAR(1);
+  IdNationality CHAR(3);
   NyAge         SMALLINT;
   TxDept        VARCHAR(70);
   TxDivision    VARCHAR(70);
+  NmLegal       VARCHAR(70);
+  NmCommercial  VARCHAR(70);
+  IdLegal       VARCHAR(16);
+  IdSector      VARCHAR(16);
   TxComments    VARCHAR(254);
+  UrlLinkedIn	VARCHAR(254);
+  UrlFacebook	VARCHAR(254);
+  UrlTwitter	VARCHAR(254);
 
 BEGIN
-  SELECT gu_company,gu_workarea,
+  SELECT gu_company,gu_workarea,gu_geozone,
          CASE WHEN char_length(tx_name)=0 THEN NULL ELSE tx_name END,
          CASE WHEN char_length(tx_surname)=0 THEN NULL ELSE tx_surname END,
-         de_title,dt_birth,sn_passport,id_gender,ny_age,tx_dept,tx_division,tx_comments
-  INTO   GuCompany,GuWorkArea,TxName,TxSurname,DeTitle,DtBirth,SnPassport,IdGender,NyAge,TxDept,TxDivision,TxComments
+         de_title,dt_birth,sn_passport,id_gender,ny_age,id_nationality,tx_dept,tx_division,tx_comments,url_linkedin,url_facebook,url_twitter
+  INTO   GuCompany,GuWorkArea,GuGeoZone,TxName,TxSurname,DeTitle,DtBirth,SnPassport,IdGender,NyAge,IdNationality,TxDept,TxDivision,TxComments,UrlLinkedIn,UrlFacebook,UrlTwitter
   FROM k_contacts WHERE gu_contact=NEW.gu_contact;
+
+  IF GuCompany IS NOT NULL THEN
+    SELECT nm_commercial,nm_legal,id_legal,id_sector INTO NmCommercial,NmLegal,IdLegal,IdSector FROM k_companies WHERE gu_company=GuCompany;
+  ELSE
+    NmLegal := NULL;
+    NmCommercial := NULL;
+    IdLegal := NULL;
+    IdSector := NULL;
+  END IF;
   
   IF DeTitle IS NOT NULL THEN
     SELECT tr_en INTO TrTitle FROM k_contacts_lookup WHERE gu_owner=GuWorkArea AND id_section=''de_title'' AND vl_lookup=DeTitle;
     IF NOT FOUND THEN
-      UPDATE k_member_address SET gu_company=GuCompany,tx_name=TxName,tx_surname=TxSurname,
-                                  de_title=DeTitle,tr_title=NULL,dt_birth=DtBirth,sn_passport=SnPassport,id_gender=IdGender,
-                                  ny_age=NyAge,tx_dept=TxDept,tx_division=TxDivision,tx_comments=TxComments
+      UPDATE k_member_address SET gu_company=GuCompany,gu_geozone=GuGeoZone,tx_name=TxName,tx_surname=TxSurname,
+                                  nm_legal=NmLegal,nm_commercial=NmCommercial,id_legal=IdLegal,id_sector=IdSector,
+                                  de_title=substring(DeTitle,1,50),tr_title=NULL,dt_birth=DtBirth,sn_passport=SnPassport,id_gender=IdGender,id_nationality=IdNationality,
+                                  ny_age=NyAge,tx_dept=TxDept,tx_division=TxDivision,tx_comments=TxComments,url_linkedin=UrlLinkedIn,url_facebook=UrlFacebook,url_twitter=UrlTwitter
       WHERE gu_contact=NEW.gu_contact;
     ELSE
-      UPDATE k_member_address SET gu_company=GuCompany,tx_name=TxName,tx_surname=TxSurname,de_title=DeTitle,
-                                  tr_title=TrTitle,dt_birth=DtBirth,sn_passport=SnPassport,id_gender=IdGender,ny_age=NyAge,
-                                  tx_dept=TxDept,tx_division=TxDivision,tx_comments=TxComments
+      UPDATE k_member_address SET gu_company=GuCompany,gu_geozone=GuGeoZone,tx_name=TxName,tx_surname=TxSurname,de_title=substring(DeTitle,1,50),
+                                  nm_legal=NmLegal,nm_commercial=NmCommercial,id_legal=IdLegal,id_sector=IdSector,
+                                  tr_title=TrTitle,dt_birth=DtBirth,sn_passport=SnPassport,id_gender=IdGender,ny_age=NyAge,id_nationality=IdNationality,
+                                  tx_dept=TxDept,tx_division=TxDivision,tx_comments=TxComments,url_linkedin=UrlLinkedIn,url_facebook=UrlFacebook,url_twitter=UrlTwitter
       WHERE gu_contact=NEW.gu_contact;
     END IF;
   ELSE
-      UPDATE k_member_address SET gu_company=GuCompany,tx_name=TxName,tx_surname=TxSurname,
-                                  de_title=NULL,tr_title=NULL,dt_birth=DtBirth,sn_passport=SnPassport,id_gender=IdGender,
-                                  ny_age=NyAge,tx_dept=TxDept,tx_division=TxDivision,tx_comments=TxComments
+      UPDATE k_member_address SET gu_company=GuCompany,gu_geozone=GuGeoZone,tx_name=TxName,tx_surname=TxSurname,
+                                  nm_legal=NmLegal,nm_commercial=NmCommercial,id_legal=IdLegal,id_sector=IdSector,
+                                  de_title=NULL,tr_title=NULL,dt_birth=DtBirth,sn_passport=SnPassport,id_gender=IdGender,id_nationality=IdNationality,
+                                  ny_age=NyAge,tx_dept=TxDept,tx_division=TxDivision,tx_comments=TxComments,url_linkedin=UrlLinkedIn,url_facebook=UrlFacebook,url_twitter=UrlTwitter
       WHERE gu_contact=NEW.gu_contact;
   END IF;
 
@@ -464,8 +511,8 @@ BEGIN
       SELECT tr_es INTO TrTitle FROM k_contacts_lookup WHERE gu_owner=m.gu_workarea AND id_section=''de_title'' AND vl_lookup=m.de_title;
     END IF;
     BEGIN
-      INSERT INTO k_member_address (  gu_address,  ix_address,  gu_workarea,  gu_company,  gu_contact,  dt_created,  dt_modified,  bo_private,gu_writer,nm_commercial,nm_legal,id_legal,id_sector,  id_status,  tx_name,  tx_surname,  de_title,tr_title,  id_ref,  dt_birth,  id_gender,  sn_passport,  tx_comments,tp_company,nu_employees,im_revenue,  gu_sales_man,tx_franchise,  gu_geozone,  ny_age,  tx_dept,  tx_division,  tp_location,  tp_street,  nm_street,  nu_street,  tx_addr1,  tx_addr2,full_addr  ,  id_country,  nm_country,  id_state,  nm_state,  mn_city,  zipcode,  work_phone,  direct_phone,  home_phone,  mov_phone,  fax_phone,  other_phone,  po_box,  tx_email,  url_addr,  contact_person,  tx_salutation,  tx_remarks)
-      VALUES                       (m.gu_address,m.ix_address,m.gu_workarea,m.gu_company,m.gu_contact,m.dt_created,m.dt_modified,m.bo_private,m.gu_user,NmCommercial ,NmLegal ,IdLegal ,IdSector ,m.id_status,m.tx_name,m.tx_surname,m.de_title,TrTitle ,m.id_ref,m.dt_birth,m.id_gender,m.sn_passport,m.tx_comments,TpCompany ,NuEmployees ,ImRevenue ,m.gu_sales_man,TxFranchise ,m.gu_geozone,m.ny_age,m.tx_dept,m.tx_division,m.tp_location,m.tp_street,m.nm_street,m.nu_street,m.tx_addr1,m.tx_addr2,m.full_addr,m.id_country,m.nm_country,m.id_state,m.nm_state,m.mn_city,m.zipcode,m.work_phone,m.direct_phone,m.home_phone,m.mov_phone,m.fax_phone,m.other_phone,m.po_box,m.tx_email,m.url_addr,m.contact_person,m.tx_salutation,m.tx_remarks);
+      INSERT INTO k_member_address (  gu_address,  ix_address,  gu_workarea,  gu_company,  gu_contact,  dt_created,  dt_modified,  bo_private,gu_writer,nm_commercial,nm_legal,id_legal,id_sector,  id_status,  tx_name,  tx_surname,de_title               ,tr_title,  id_ref,  dt_birth,  id_gender,  sn_passport,  tx_comments,tp_company,nu_employees,im_revenue,  gu_sales_man,tx_franchise,  gu_geozone,  ny_age,  tx_dept,  tx_division,  tp_location,  tp_street,  nm_street,  nu_street,  tx_addr1,  tx_addr2,full_addr  ,  id_country,  nm_country,  id_state,  nm_state,  mn_city,  zipcode,  work_phone,  direct_phone,  home_phone,  mov_phone,  fax_phone,  other_phone,  po_box,  tx_email,  url_addr,  contact_person,  tx_salutation,  tx_remarks)
+      VALUES                       (m.gu_address,m.ix_address,m.gu_workarea,m.gu_company,m.gu_contact,m.dt_created,m.dt_modified,m.bo_private,m.gu_user,NmCommercial ,NmLegal ,IdLegal ,IdSector ,m.id_status,m.tx_name,m.tx_surname,substr(m.de_title,1,50),TrTitle ,m.id_ref,m.dt_birth,m.id_gender,m.sn_passport,m.tx_comments,TpCompany ,NuEmployees ,ImRevenue ,m.gu_sales_man,TxFranchise ,m.gu_geozone,m.ny_age,m.tx_dept,m.tx_division,m.tp_location,m.tp_street,m.nm_street,m.nu_street,m.tx_addr1,m.tx_addr2,m.full_addr,m.id_country,m.nm_country,m.id_state,m.nm_state,m.mn_city,m.zipcode,m.work_phone,m.direct_phone,m.home_phone,m.mov_phone,m.fax_phone,m.other_phone,m.po_box,m.tx_email,m.url_addr,m.contact_person,m.tx_salutation,m.tx_remarks);
       nRowCount:=nRowCount+1;
     EXCEPTION
       WHEN INTEGRITY_CONSTRAINT_VIOLATION OR UNIQUE_VIOLATION THEN

@@ -138,4 +138,6 @@
     }
     response.sendRedirect (response.encodeRedirectUrl ("captchaerror.jsp?desc=" + Gadgets.URLEncode(e.getClass().getName()+" "+e.getMessage())));  
   }
+  
+  // Make sure that there is not any space nor life feed after % > end tag
 %>

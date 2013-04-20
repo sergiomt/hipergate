@@ -64,7 +64,7 @@
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title="+e.getClass().getName()+"&desc=" + e.getMessage() + "&resume="+Gadgets.URLEncode(sBackUrl)));
     return;
   }
-  
+
   // ******************************************
   // Re-build Lucene full text index for Folder
   

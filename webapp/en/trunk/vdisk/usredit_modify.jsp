@@ -254,9 +254,8 @@
     <TITLE>Wait...</TITLE>
     <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache">
     <META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
-    <SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>
-    <!--
+    <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT TYPE='text/javascript'>
       function redirect() {
         window.opener.location = 'domusrs.jsp?id_domain=<%=id_domain%>&n_domain=' + escape('<%=n_domain%>') + '&show=users&maxrows=10&skip=0';
         self.close();
@@ -272,7 +271,6 @@
         out.write ("      setCookie (\"authstr\",\"" + ACL.encript(oUsr.getString(DB.tx_pwd),ENCRYPT_ALGORITHM) + "\");");
       }      
 %>
-    -->
     </SCRIPT>
   </HEAD>
   <BODY onLoad="redirect()"></BODY>

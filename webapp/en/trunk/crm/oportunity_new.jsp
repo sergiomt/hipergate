@@ -35,7 +35,7 @@
 */
     
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
-  
+    
   response.addHeader ("Pragma", "no-cache");
   response.addHeader ("cache-control", "no-store");
   response.setIntHeader("Expires", 0);
@@ -62,9 +62,10 @@
     sStreetLookUp = DBLanguages.getHTMLSelectLookUp (oConn, DB.k_addresses_lookup, gu_workarea, DB.tp_street, sLanguage);
     sStatusLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_oportunities_lookup, gu_workarea, DB.id_status, sLanguage);
     sOriginLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_oportunities_lookup, gu_workarea, DB.tp_origin, sLanguage);
-    sObjectiveLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_oportunities_lookup, gu_workarea, DB.id_objetive, sLanguage);
     sCountriesLookUp = GlobalDBLang.getHTMLCountrySelect(oConn, sLanguage);
 
+    %><%@ include file="oportunity_listbox.jspf" %><%
+    
     oConn.close("oportunity_new");
   }
   catch (SQLException e) {  
@@ -80,17 +81,17 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: New Opportunity</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript">
     <!--
     
     var allcaps = <%=String.valueOf(bAllCaps)%>;
@@ -103,13 +104,13 @@
             setCombo(frm.sel_country, "us");
           else
             setCombo(frm.sel_country, getUserLanguage());
-	  loadstates();
+	          loadstates();
         }
       }
       
     //-->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
 
       // ------------------------------------------------------
@@ -120,17 +121,23 @@
           if (httpreq.readyState == 4) {
             if (httpreq.status == 200) {
 	      var vl,lb;
-	      var scmb = document.forms[0].sel_state;
+	      var frm = window.document.forms[0];
+	      var scmb = frm.sel_state;
     	      var lkup = httpreq.responseXML.getElementsByTagName("lookup");
 	      if (lkup) {
     	        for (var l = 0; l < lkup.length; l++) {
     	          vl = getElementText(lkup[l], "value");
     	          lb = getElementText(lkup[l], "label");
-		  comboPush (scmb, lb, vl, false, false);
+		            comboPush (scmb, lb, vl, false, false);
 	      } // next (l)
-	      httpreq = false;
 	      sortCombo(scmb);
 	      } // fi (lkup)
+	      httpreq = null;
+	      if (adrxml!=null) {
+	        frm.nm_state.value = nullif(getElementText(adrxml, "nm_state"));
+  	        frm.id_state.value = nullif(getElementText(adrxml, "id_state"));
+		          setCombo(frm.sel_state, frm.id_state.value);
+	      }
             } // fi (status == 200)
 	  } // fi (readyState == 4)
       } // processStatesList
@@ -153,10 +160,11 @@
       // ------------------------------------------------------
 
       var addrreq = null;
+      var adrxml = null;
 
       function loadContactData() {
 	      var frm = window.document.forms[0];
-	      var txt = ltrim(rtrim(frm.tx_email.value));
+	      var txt = frm.tx_email.value.trim();
 	      if (txt.length>0) {
 	      if (!check_email(txt)) {
 	        alert ("email address is not valid");
@@ -169,6 +177,11 @@
     	        var adrxml = addrreq.responseXML.getElementsByTagName("MemberAddress");
 	            if (adrxml) {
       	        adrxml = adrxml[0];
+      	        frm.id_country.value = nullif(getElementText(adrxml, "id_country"));
+ 	              if (frm.id_country.value.length==0) frm.id_country.value = "es";
+  	            setCombo(frm.sel_country, frm.id_country.value);
+  	            frm.nm_country.value = nullif(getElementText(adrxml, "nm_country"));
+  	            if (frm.nm_country.value.length==0) frm.nm_country.value = "España";
       	        frm.gu_address.value = nullif(getElementText(adrxml, "gu_address"));
       	        frm.ix_address.value = nullif(getElementText(adrxml, "ix_address"));
       	        frm.gu_contact.value = nullif(getElementText(adrxml, "gu_contact"));
@@ -176,12 +189,7 @@
       	        frm.nm_legal.value = nullif(getElementText(adrxml, "nm_legal"));
       	        frm.tx_name.value = nullif(getElementText(adrxml, "tx_name"));
       	        frm.tx_surname.value = nullif(getElementText(adrxml, "tx_surname"));
-      	        frm.nm_country.value = nullif(getElementText(adrxml, "nm_country"));
-      	        frm.id_country.value = nullif(getElementText(adrxml, "id_country"));
-  		          setCombo(frm.sel_country, frm.id_country.value);
-      	        frm.nm_state.value = nullif(getElementText(adrxml, "nm_state"));
-      	        frm.id_state.value = nullif(getElementText(adrxml, "id_state"));
-  		          setCombo(frm.sel_state, frm.id_state.value);
+      	        frm.sn_passport.value = nullif(getElementText(adrxml, "sn_passport"));
       	        frm.mn_city.value = nullif(getElementText(adrxml, "mn_city"));
       	        frm.tp_street.value = nullif(getElementText(adrxml, "tp_street"));
   		          setCombo(frm.sel_street, frm.tp_street.value);
@@ -192,7 +200,13 @@
       	        frm.direct_phone.value = nullif(getElementText(adrxml, "direct_phone"));
       	        frm.home_phone.value = nullif(getElementText(adrxml, "home_phone"));
       	        frm.mov_phone.value = nullif(getElementText(adrxml, "mov_phone"));
+      	        if (nullif(getElementText(adrxml, "id_nationality")).length==0)
+        	        setCombo(frm.id_nationality, "es");
+      	        else
+      	          setCombo(frm.id_nationality, nullif(getElementText(adrxml, "id_nationality")));
+      	        setCombo(frm.id_gender, nullif(getElementText(adrxml, "id_gender")));
   	            addrreq = false;
+  	      	    loadstates();
 	            } // fi (adrxml)
             }
 	          document.getElementById("continue").style.display = "none";
@@ -262,11 +276,10 @@
       function validate() {
         var frm = window.document.forms[0];
 
-      	var txt = ltrim(frm.tl_oportunity.value);
+      	var txt = frm.tl_oportunity.value.trim();
       	
       	if (txt.length==0) {
-      	  alert ("Opportunity title is mandtory");
-      	  return false;	  
+      		txt = frm.tl_oportunity.value = getComboText(frm.sel_objetive);
       	}
       
       	if (hasForbiddenChars(txt)) {
@@ -307,7 +320,7 @@
       	  return false;	  
       	}
 
-      	txt = ltrim(rtrim(frm.tx_email.value));
+      	txt = frm.tx_email.value.trim();
       	if (txt.length>0)
       	  if (!check_email(txt)) {
       	    alert ("email address is not valid");
@@ -325,6 +338,8 @@
       	frm.id_status.value = getCombo(frm.sel_status);
       	frm.tp_origin.value = getCombo(frm.sel_origin);
         frm.bo_private.value = frm.chk_private.checked ? "1" : "0";
+      	frm.id_state.value = getCombo(frm.sel_state);
+      	frm.nm_state.value = getComboText(frm.sel_state);
 
         return true;
       } // validate;
@@ -446,6 +461,14 @@
             </TD>
           </TR>
           <TR>
+            <TD ALIGN="right"><FONT CLASS="formplain">Id. Card.</FONT></TD>
+            <TD ALIGN="left">
+              <INPUT TYPE="text" NAME="sn_passport" MAXLENGTH="16" SIZE="16" <%=bAllCaps ? "STYLE=\"text-transform:uppercase\"" : ""%>>
+							&nbsp;&nbsp;&nbsp;&nbsp;<FONT CLASS="formplain">Gender</FONT>&nbsp;
+              <SELECT name="id_gender"><OPTION VALUE=""></OPTION><OPTION VALUE="M">Hombre</OPTION><OPTION VALUE="F">Mujer</OPTION></SELECT>
+            </TD>
+          </TR>
+          <TR>
             <TD ALIGN="right" WIDTH="140">
               <FONT CLASS="formplain">Telephones:</FONT>
             </TD>
@@ -470,7 +493,7 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Address Type:</FONT></TD>
+            <TD ALIGN="right" WIDTH="140"></TD>
             <TD ALIGN="left" WIDTH="460">
               <TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="0" BORDER="0"><TR>
                 <TD ALIGN="left">
@@ -518,11 +541,21 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="140"><FONT CLASS="formplain">Country:</FONT></TD>
+            <TD ALIGN="right" WIDTH="140">
+              <DIV id="country" STYLE="display:none"><FONT CLASS="formplain">Country:</FONT></DIV>
+              <DIV id="nationality" STYLE="display:block"><FONT CLASS="formplain">Nationality</FONT></DIV>
+            </TD>
             <TD ALIGN="left" WIDTH="460">
-	      <SELECT CLASS="combomini" NAME="sel_country" onchange="loadstates()"><OPTION VALUE=""></OPTION><%=sCountriesLookUp%></SELECT>
-              <INPUT TYPE="hidden" NAME="id_country" VALUE="">
-              <INPUT TYPE="hidden" NAME="nm_country" VALUE="">
+              <DIV id="country_select" STYLE="display:none">
+	              <SELECT CLASS="combomini" NAME="sel_country" onchange="loadstates()"><OPTION VALUE=""></OPTION><%=sCountriesLookUp%></SELECT>
+                <INPUT TYPE="hidden" NAME="id_country" VALUE="">
+                <INPUT TYPE="hidden" NAME="nm_country" VALUE="">
+              </DIV>
+              <DIV id="nationality_select" STYLE="display:block">
+	              <SELECT CLASS="combomini" NAME="id_nationality"><OPTION VALUE=""></OPTION><%=sCountriesLookUp%></SELECT>
+                <INPUT TYPE="hidden" NAME="id_country" VALUE="">
+                <INPUT TYPE="hidden" NAME="nm_country" VALUE="">
+              </DIV>
             </TD>
           </TR>
           <TR>

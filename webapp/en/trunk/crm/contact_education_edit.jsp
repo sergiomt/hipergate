@@ -112,13 +112,13 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Qualifications of&nbsp;<%=sFullName%></TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
       
       // ------------------------------------------------------
@@ -148,7 +148,7 @@
       } // validate;
     //-->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
     <!--
       function setCombos() {
         var frm = document.forms[0];
@@ -157,7 +157,7 @@
         setCombo(frm.gu_institution,"<% out.write(oObj.getStringNull(DB.gu_institution,"")); %>");
 
 <% if (!oObj.isNull(DB.bo_completed)) { %>
-        setCheckedValue(frm.bo_completed,<% out.write(String.valueOf(oObj.getShort(DB.bo_completed))); %>)
+        setCheckedValue(frm.bo_completed,<% out.write(String.valueOf(oObj.getShort(DB.bo_completed))); %>);
 <% } %>
         
         return true;
@@ -175,7 +175,7 @@
     <TR><TD><IMG SRC="../images/images/spacer.gif" HEIGHT="4" WIDTH="1" BORDER="0"></TD></TR>
     <TR><TD CLASS="striptitle"><FONT CLASS="title1">Qualifications of&nbsp;<%=sFullName%></FONT></TD></TR>
   </TABLE>
-  <FORM NAME="" METHOD="post" ACTION="contact_education_store.jsp" onSubmit="return validate()">
+  <FORM NAME="" METHOD="post" ACTION="contact_education_store.jsp">
     <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
     <INPUT TYPE="hidden" NAME="gu_contact" VALUE="<%=gu_contact%>">
     <INPUT TYPE="hidden" NAME="gu_writer" VALUE="<%=id_user%>">

@@ -1,4 +1,5 @@
 CREATE PROCEDURE k_sp_del_meeting @MeetingId CHAR(32) AS
+  UPDATE k_activities SET gu_meeting=NULL WHERE gu_meeting=@MeetingId
   DELETE k_x_meeting_contact WHERE gu_meeting=@MeetingId
   DELETE k_x_meeting_fellow WHERE gu_meeting=@MeetingId
   DELETE k_x_meeting_room WHERE gu_meeting=@MeetingId

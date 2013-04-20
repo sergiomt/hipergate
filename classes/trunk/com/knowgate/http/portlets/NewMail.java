@@ -58,7 +58,6 @@ import com.knowgate.hipermail.MailAccount;
 import com.knowgate.hipermail.SessionHandler;
 import com.knowgate.dataobjs.*;
 import com.knowgate.dataxslt.StylesheetCache;
-import com.knowgate.misc.Gadgets;
 import com.knowgate.dfs.FileSystem;
 
 public class NewMail extends GenericPortlet {
@@ -73,7 +72,8 @@ public class NewMail extends GenericPortlet {
 
   // ---------------------------------------------------------------------------
 
-  public String render(RenderRequest req, String sEncoding)
+  @SuppressWarnings("unused")
+public String render(RenderRequest req, String sEncoding)
     throws PortletException, IOException, IllegalStateException {
 
      if (DebugFile.trace) {

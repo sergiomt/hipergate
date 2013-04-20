@@ -49,43 +49,38 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import java.sql.SQLException;
+import java.sql.Connection;
 
-import com.knowgate.dataobjs.DBBind;
-import com.knowgate.jdc.JDCConnection;
+import javax.sql.DataSource;
+
 import com.knowgate.debug.DebugFile;
 
 /**
  * <p>Rule Engine</p>
  * @author Sergio Montoro Ten
- * @version 1.0
+ * @version 2.0
  */
 public class RuleEngine {
-  private static HashMap oEngines = new HashMap(11);
+  private static HashMap<String,RuleEngine> oEngines = new HashMap<String,RuleEngine>(11);
 
-  private HashMap oProps = new HashMap(11);
-  private HashMap oPaths = new HashMap(11);
-  private HashMap oDbbs = new HashMap(11);
+  private HashMap<String,Properties> oProps = new HashMap<String,Properties>(11);
+  private HashMap<String,File> oPaths = new HashMap<String,File>(11);
+  private HashMap<String,DataSource> oDbbs = new HashMap<String,DataSource>(11);
   private HashMap oAsrt = new HashMap(29);
 
-  private String sDefaultProfileName;
-  private String sDefaultBindingName;
+  private String sDefaultProfileName = "default";
+  private String sDefaultBindingName = "default";
 
   private RuleEngine() {
     sDefaultProfileName = null;
     sDefaultBindingName = null;
   }
 
-  protected RuleEngine(String sPropertiesPath, String sProfile)
-    throws FileNotFoundException, IOException {
-    loadDefaultProperties(sProfile, sPropertiesPath);
-    setDefaultDataBaseBind(new DBBind(sProfile));
-  }
-
-  protected RuleEngine(Properties oProperties, String sProfile)
+  protected RuleEngine(Properties oProperties, DataSource oDataSrc)
     throws FileNotFoundException, IOException {
 
     if (DebugFile.trace) {
-      DebugFile.writeln("new RuleEngine([oProperties], "+sProfile+")");
+      DebugFile.writeln("new RuleEngine([oProperties],[DataSource])");
       DebugFile.incIdent();
       Enumeration oKeys = oProperties.keys();
       while (oKeys.hasMoreElements()) {
@@ -94,8 +89,8 @@ public class RuleEngine {
       } // wend
     }
 
-    setDefaultProperties(oProperties, sProfile);
-    setDefaultDataBaseBind(new DBBind(sProfile));
+    setDefaultProperties(oProperties);
+    setDefaultDataBaseBind(oDataSrc);
 
     if (DebugFile.trace) DebugFile.decIdent();
   }
@@ -108,11 +103,11 @@ public class RuleEngine {
     return oEngines.containsKey(sEngineName);
   }
 
-  public static RuleEngine getEngine(String sEngineName, String sPropertiesPath, String sProfileName)
+  public static RuleEngine getEngine(String sEngineName, Properties oProps, DataSource oDataSrc)
     throws FileNotFoundException, IOException {
 
   if (DebugFile.trace) {
-    DebugFile.writeln("Begin RuleEngine.getEngine("+sEngineName+","+sPropertiesPath+","+sProfileName+")");
+    DebugFile.writeln("Begin RuleEngine.getEngine("+sEngineName+",[DataSource])");
     DebugFile.incIdent();
   }
 
@@ -122,8 +117,8 @@ public class RuleEngine {
       oEngine = (RuleEngine) oEngines.get(sEngineName);
     } else {
       if (DebugFile.trace) DebugFile.writeln("instantiating new engine");
-      oEngine = new RuleEngine(sPropertiesPath, sProfileName);
-      oEngines.put(oEngine, sEngineName);
+      oEngine = new RuleEngine(oProps, oDataSrc);
+      oEngines.put(sEngineName, oEngine);
     }
 
     if (DebugFile.trace) {
@@ -134,31 +129,22 @@ public class RuleEngine {
     return oEngine;
   } // getEngine
 
-  public static void closeEngine(String sEngineName) {
+  public void close() {
     if (DebugFile.trace) {
-      DebugFile.writeln("Begin RuleEngine.closeEngine("+sEngineName+")");
+      DebugFile.writeln("Begin RuleEngine.close()");
       DebugFile.incIdent();
     }
 
-    if (existsEngine(sEngineName)) {
-      Iterator oKeys = oEngines.keySet().iterator();
-      while (oKeys.hasNext()) {
-        String sKey = oKeys.next().toString();
-        if (sKey.equals(sEngineName))
-          ((DBBind) oEngines.get(sKey)).close();
-      } // wend
-    } // fi
-
     if (DebugFile.trace) {
       DebugFile.decIdent();
-      DebugFile.writeln("End RuleEngine.closeEngine()");
+      DebugFile.writeln("End RuleEngine.close()");
     }
   } // closeEngine
 
   public static void closeAll() {
       Iterator oKeys = oEngines.keySet().iterator();
       while (oKeys.hasNext()) {
-        ((DBBind) oEngines.get(oKeys.next().toString())).close();
+        oEngines.get(oKeys.next()).close();
       } // wend
   } // closeAll
 
@@ -328,31 +314,18 @@ public class RuleEngine {
     saveProperties(sDefaultProfileName);
   }
 
-  public void setDataBaseBind(DBBind oDbb) {
-    oDbbs.put(oDbb.getProfileName(), oDbb);
+  public DataSource getDefaultDataBaseBind() {
+    return oDbbs.get(sDefaultBindingName);
   }
 
-  public void setDefaultDataBaseBind(DBBind oDbb) {
-    sDefaultBindingName = oDbb.getProfileName();
-    setDataBaseBind(oDbb);
+  public void setDefaultDataBaseBind(DataSource oDatSrc) {
+    oDbbs.put(sDefaultBindingName, oDatSrc);
   }
-
-  public void setDefaultDataBaseBind(String sProfileName) {
-    sDefaultBindingName = sProfileName;
-  }
-
-  public DBBind getDataBaseBind(String sProfileName) {
-    return (DBBind) oDbbs.get(sProfileName);
-  }
-
-  public DBBind getDefaultDataBaseBind() {
-    return (DBBind) oDbbs.get(sDefaultBindingName);
-  }
-
-  public JDCConnection getConnection(String sCaller)
+  
+  public Connection getConnection(String sCaller)
     throws SQLException {
-    JDCConnection oRetObj;
-    oRetObj = getDefaultDataBaseBind().getConnection(sCaller);
+    Connection oRetObj;
+    oRetObj = getDefaultDataBaseBind().getConnection();
     return oRetObj;
   }
 

@@ -18,11 +18,16 @@ CREATE OR REPLACE PROCEDURE k_sp_del_contact (ContactId CHAR) IS
 
 BEGIN
   UPDATE k_sms_audit SET gu_contact=NULL WHERE gu_contact=ContactId;
+  DELETE k_phone_calls WHERE gu_contact=ContactId;
+  DELETE k_x_meeting_contact WHERE gu_contact=ContactId;
   DELETE k_x_activity_audience WHERE gu_contact=ContactId;
+  DELETE k_x_course_bookings WHERE gu_contact=ContactId;
+  DELETE k_x_course_alumni WHERE gu_alumni=ContactId;
   DELETE k_contact_education WHERE gu_contact=ContactId;
   DELETE k_contact_languages WHERE gu_contact=ContactId;
   DELETE k_contact_computer_science WHERE gu_contact=ContactId;
   DELETE k_contact_experience WHERE gu_contact=ContactId;
+  DELETE k_admission WHERE gu_contact=ContactId;
   DELETE k_x_duty_resource WHERE nm_resource=ContactId;
   DELETE k_welcome_packs_changelog WHERE gu_pack IN (SELECT gu_pack FROM k_welcome_packs WHERE gu_contact=ContactId);
   DELETE k_welcome_packs WHERE gu_contact=ContactId;
@@ -41,6 +46,7 @@ BEGIN
   DELETE k_x_contact_addr WHERE gu_contact=ContactId;
 
   FOR a IN 1..k_tmp_del_addr.COUNT LOOP
+    UPDATE k_x_activity_audience SET gu_address=NULL WHERE gu_address=k_tmp_del_addr(a);
     DELETE k_addresses WHERE gu_address=k_tmp_del_addr(a);
   END LOOP;
 
@@ -57,10 +63,11 @@ BEGIN
     DELETE k_bank_accounts WHERE nu_bank_acc=k_tmp_del_bank(a) AND gu_workarea=GuWorkArea;
   END LOOP;
 
-  /* Los productos que contienen la referencia a los ficheros adjuntos no se borran desde aquí,
-     hay que llamar al método Java de borrado de Product para eliminar también los ficheros físicos,
-     de este modo la foreign key de la base de datos actua como protección para que no se queden ficheros basura */
+  /* Los productos que contienen la referencia a los ficheros adjuntos no se borran desde aquï¿½,
+     hay que llamar al mï¿½todo Java de borrado de Product para eliminar tambiï¿½n los ficheros fï¿½sicos,
+     de este modo la foreign key de la base de datos actua como protecciï¿½n para que no se queden ficheros basura */
 
+  DELETE k_x_oportunity_contacts WHERE gu_oportunity IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_contact=ContactId);
   DELETE k_oportunities_attachs WHERE gu_oportunity IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_contact=ContactId);
   DELETE k_oportunities_changelog WHERE gu_oportunity IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_contact=ContactId);
   DELETE k_oportunities_attrs WHERE gu_object IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_contact=ContactId);
@@ -95,7 +102,7 @@ BEGIN
   
   SELECT gu_workarea INTO GuWorkArea FROM k_companies WHERE gu_company=CompanyId;
 
-  /* Borrar las direcciones de la compañia */
+  /* Borrar las direcciones de la compaï¿½ia */
   FOR addr IN ( SELECT gu_address FROM k_x_company_addr WHERE gu_company=CompanyId) LOOP
     k_tmp_del_addr.extend;
     k_tmp_del_addr(k_tmp_del_addr.count) := addr.gu_address;
@@ -107,7 +114,7 @@ BEGIN
     DELETE k_addresses WHERE gu_address=k_tmp_del_addr(a);
   END LOOP;
 
-  /* Borrar las cuentas bancarias de la compañia */
+  /* Borrar las cuentas bancarias de la compaï¿½ia */
 
   FOR bank IN ( SELECT nu_bank_acc FROM k_x_company_bank WHERE gu_company=CompanyId) LOOP
     k_tmp_del_bank.extend;
@@ -121,6 +128,7 @@ BEGIN
   END LOOP;
 
   /* Borrar las oportunidades */
+  DELETE k_x_oportunity_contacts WHERE gu_oportunity IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_company=CompanyId);
   DELETE k_oportunities_attachs WHERE gu_oportunity IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_company=CompanyId);
   DELETE k_oportunities_changelog WHERE gu_oportunity IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_company=CompanyId);
   DELETE k_oportunities_attrs WHERE gu_object IN (SELECT gu_oportunity FROM k_oportunities WHERE gu_company=CompanyId);
@@ -129,7 +137,7 @@ BEGIN
   /* Borrar las referencias de PageSets */
   
   UPDATE k_pagesets SET gu_company=NULL WHERE gu_company=CompanyId;
-  /* Borrar el enlace con categorías */
+  /* Borrar el enlace con categorï¿½as */
   
   DELETE k_x_cat_objs WHERE gu_object=CompanyId AND id_class=91;
 
@@ -140,11 +148,18 @@ END k_sp_del_company;
 GO;
 
 CREATE OR REPLACE PROCEDURE k_sp_del_oportunity (OportunityId CHAR) IS
+  GuContact CHAR(32);
 BEGIN
+  SELECT gu_contact INTO GuContact FROM k_oportunities WHERE gu_oportunity=OportunityId;
+  UPDATE k_phone_calls SET gu_oportunity=NULL WHERE gu_oportunity=OportunityId;
+  DELETE k_x_oportunity_contacts WHERE gu_oportunity=OportunityId;
   DELETE k_oportunities_attachs WHERE gu_oportunity=OportunityId;
   DELETE k_oportunities_changelog WHERE gu_oportunity=OportunityId;
   DELETE k_oportunities_attrs WHERE gu_object=OportunityId;
   DELETE k_oportunities WHERE gu_oportunity=OportunityId;
+  IF GuContact IS NOT NULL THEN
+    UPDATE k_oportunities SET nu_oportunities=(SELECT COUNT(*) FROM k_oportunities WHERE gu_contact=GuContact) WHERE gu_contact=GuContact;    
+  END IF;
 END k_sp_del_oportunity;
 GO;
 
@@ -161,6 +176,7 @@ CREATE OR REPLACE PROCEDURE k_sp_del_supplier (SupplierId CHAR) IS
 BEGIN
   SELECT gu_address INTO GuAddress FROM k_suppliers WHERE gu_supplier=SupplierId;
   DELETE k_x_duty_resource WHERE nm_resource=SupplierId;
+  UPDATE k_academic_courses SET gu_supplier=NULL WHERE gu_supplier=SupplierId;
   DELETE k_suppliers WHERE gu_supplier=SupplierId;
   DELETE k_addresses WHERE gu_address=GuAddress;
 END k_sp_del_supplier;

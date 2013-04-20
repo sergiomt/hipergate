@@ -1,7 +1,5 @@
 package com.knowgate.clocial;
 
-import java.util.Date;
-
 import com.knowgate.storage.*;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.clocial.Serials;
@@ -32,6 +30,27 @@ public class UserAccountAlias extends RecordDelegator {
     return sNmService.toLowerCase()+":"+sNmAlias.toLowerCase();
   }
 
+  public static String getUserAccountId(DataSource oDts, String sUrl)
+    throws StorageException {
+	String sGuAccount;
+	Table oTbl = null;
+	try  {
+	  oTbl = oDts.openTable(new UserAccountAlias(oDts));
+	  RecordSet oRSet = oTbl.fetch("url_addr", sUrl);
+	  oTbl.close();
+	  oTbl=null;
+	  if (oRSet.size()>0) {
+        sGuAccount = oRSet.get(0).getString("gu_account");
+	  } else {
+		sGuAccount = null;
+	  }
+	} catch (Exception xcpt) {
+	  if (null!=oTbl) { try { oTbl.close(); } catch (Exception ignore) {} }
+	  throw new StorageException(xcpt.getMessage(), xcpt);
+	}
+	return sGuAccount;
+  } // getUserAccountId
+  
   public static String getUserAccountId(DataSource oDts, String sNmService, String sNmAlias)
   	throws StorageException {
   	String sGuAccount;
@@ -49,6 +68,9 @@ public class UserAccountAlias extends RecordDelegator {
 	    oAcc.put("id_domain", 0);
 	    oAcc.put("nm_domain", "N/A");
 	    oAcc.put("bo_active", false);
+	    oAcc.put("bo_change_pwd", (short) 1);
+	    oAcc.put("bo_searchable", (short) 1);
+	    oAcc.put("nu_login_attempts", 0);
 	    oAcc.put("tx_nickname", oAcc.getUniqueNickName(oTbl,sNmAlias));
 	    oAcc.store(oTbl);
 	    oTbl.close();

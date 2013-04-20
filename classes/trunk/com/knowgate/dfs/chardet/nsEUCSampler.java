@@ -32,7 +32,6 @@
  * ***** END LICENSE BLOCK ***** */
 
 package com.knowgate.dfs.chardet ;
-import java.lang.* ;
 
 public class nsEUCSampler {
 

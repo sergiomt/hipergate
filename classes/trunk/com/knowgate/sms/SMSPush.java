@@ -32,7 +32,6 @@
 
 package com.knowgate.sms;
 
-import java.util.Date;
 import java.util.Properties;
 
 import java.io.IOException;

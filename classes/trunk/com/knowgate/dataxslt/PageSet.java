@@ -36,7 +36,6 @@ import java.lang.ClassNotFoundException;
 import java.lang.IllegalAccessException;
 import java.lang.StringBuffer;
 
-import java.util.LinkedList;
 import java.util.Vector;
 import java.util.Properties;
 
@@ -381,7 +380,6 @@ public class PageSet extends DOMDocument {
   public Page page(String sPageId) throws DOMException,NullPointerException {
 
     Node oPagesNode;
-    Element oContainers;
     NodeList oNodeList;
     Page oCurrent;
     Page oRetVal = null;
@@ -440,7 +438,6 @@ public class PageSet extends DOMDocument {
    */
   public Vector<Page> pages() throws DOMException {
     Node oPagesNode;
-    Element oContainers;
     NodeList oNodeList;
     Vector<Page> oLinkVctr;
 
@@ -487,9 +484,8 @@ public class PageSet extends DOMDocument {
    * @return vector of Page objects
    * @throws DOMException If <addresses> node is not found
    */
-  public Vector addresses() throws DOMException {
+  public Vector<Page> addresses() throws DOMException {
     Node oPagesNode;
-    Element oContainers;
     NodeList oNodeList;
     Vector oLinkVctr;
 
@@ -531,6 +527,7 @@ public class PageSet extends DOMDocument {
 
   //-----------------------------------------------------------
 
+  /*
   private LinkedList matchChildsByTag(Node oParent, String sPattern) {
     // Get a list of pointers to nodes with child <tag>
     // matches a regular expression pattern.
@@ -570,7 +567,7 @@ public class PageSet extends DOMDocument {
 
     return oList;
   }  // matchChildsByTag
-
+  */
 
   //-----------------------------------------------------------
 
@@ -725,15 +722,11 @@ public class PageSet extends DOMDocument {
     InputStream oXMLStream = null;
     String sTransformed;
     StringBuffer oPostTransform;
-    String sKey;
     String sMedia;
     String sXSLFile;
-    Object sVal;
     Page oCurrentPage;
 
     int iCloseHead, iOpenBody, iCloseBody;
-    int iReaded;
-    char CharBuffer[] = new char[8192];
     String sCharBuffer;
     long lElapsed = 0;
 
@@ -991,14 +984,10 @@ public class PageSet extends DOMDocument {
     InputStream oXMLStream = null;
     String sTransformed;
     StringBuffer oPostTransform;
-    String sKey;
     String sMedia;
-    Object sVal;
     Page oCurrentPage;
 
     int iCloseHead, iOpenBody, iCloseBody;
-    int iReaded;
-    char CharBuffer[] = new char[8192];
     String sCharBuffer;
     long lElapsed = 0;
 
@@ -1162,7 +1151,7 @@ public class PageSet extends DOMDocument {
 
         oPostTransform.append("\n<!--End " + sCtrlPath + "-->\n");
 
-        oPostTransform.append(sTransformed.substring(iCloseBody));
+        oPostTransform.append(sTransformed.substring(iCloseBody+1));
       }
       else {
         oPostTransform = new StringBuffer("Page " + ((Page)vPages.get(c)).getTitle() + " could not be rendered.");
@@ -1269,8 +1258,6 @@ public class PageSet extends DOMDocument {
     if (DebugFile.trace) {
       DebugFile.writeln("Begin Pageset.save("+sFilePath+")");
     }
-	
-	File oFOut = new File(sFilePath);
 	
     FileOutputStream oOutFile = new FileOutputStream(sFilePath,false);
 

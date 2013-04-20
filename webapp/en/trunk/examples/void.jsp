@@ -1,8 +1,7 @@
-<%@ page import="java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*" language="java" session="false" contentType="text/plain;charset=UTF-8" %>
+<%@ page import="java.sql.PreparedStatemnet,com.knowgate.jdc.JDCConnection,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/plain;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><% 
 /*
-  Copyright (C) 2003-2010  Know Gate S.L. All rights reserved.
-                           C/Oña, 107 1º2 28050 Madrid (Spain)
+  Copyright (C) 2003-2011  Know Gate S.L. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -32,8 +31,13 @@
   if not, visit http://www.hipergate.org or mail to info@hipergate.org
 */
 
-  final String PAGE_NAME = "void_name";
+  final String PAGE_NAME = "contact_update_ref";
 
+  final String gu_contact = request.getParameter("gu_contact");
+  final String id_ref = Gadgets.removeChars(request.getParameter("id_ref")," \n\t");
+
+  if (autenticateSession(GlobalDBBind, request, response)<0) return;
+ 
   JDCConnection oConn = null;  
     
   try {
@@ -41,7 +45,7 @@
     
     oConn.setAutoCommit(false);
     
-    /* TO DO: Your database access stuff */
+    Prepared
     
     oConn.commit();
       

@@ -52,8 +52,8 @@
 
 <HTML>
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
   <TITLE>hipergate :: Search contact</TITLE>
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8">

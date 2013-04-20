@@ -6,8 +6,6 @@ import com.knowgate.dataobjs.DB;
 import com.knowgate.storage.DataSource;
 import com.knowgate.storage.RecordDelegator;
 
-import com.knowgate.misc.Gadgets;
-
 public class SyndReferer extends RecordDelegator {
 
   private static final String tableName = DB.k_syndreferers;

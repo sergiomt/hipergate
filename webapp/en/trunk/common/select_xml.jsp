@@ -1,6 +1,5 @@
 <%@ page import="com.knowgate.debug.StackTraceUtil,java.util.Date,java.io.IOException,java.net.URLDecoder,java.sql.Timestamp,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*" language="java" session="false" contentType="text/xml;charset=UTF-8" %>
-<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
-<% 
+<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><% 
 /*
   Get a query resultset in a format suitable for filling a combobox using XMLHttpRequest
   
@@ -60,6 +59,9 @@
   String tx_order = request.getParameter("tx_order");
   String tx_where = request.getParameter("tx_where");
 
+  if (nm_table==null)
+    throw new NullPointerException("select_xml.jsp parameter nm_table is required "+request.getHeader("referer"));
+    
   String sWhere = "";
   if (nm_table.equals("v_prod_cat"))
     sWhere = DB.gu_category+"=? "; 

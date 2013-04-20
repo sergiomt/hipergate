@@ -34,18 +34,19 @@ package com.knowgate.scheduler.events;
 import java.util.Map;
 import java.util.Properties;
 
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.ResultSet;
-
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.scheduler.Event;
+import com.knowgate.dataobjs.DBBind;
 import com.knowgate.hipermail.SendMail;
 
 public final class NotifyByMail extends Event {
 
   public NotifyByMail() { }
+
+  public NotifyByMail(DBBind oDbb) {
+    super(oDbb);
+  }
 
   public void trigger (JDCConnection oConn, Map oParameters, Properties oEnvironment) throws Exception {
 	

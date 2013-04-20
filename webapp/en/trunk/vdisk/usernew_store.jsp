@@ -406,8 +406,7 @@
     <TITLE>Wait...</TITLE>
     <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache">
     <META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
-    <SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>
-    <!--
+    <SCRIPT TYPE='text/javascript'>
       function redirect() {
       	if (window.opener) {
           if (!window.opener.closed)
@@ -424,7 +423,6 @@
         self.close();
 <% } %>
       }
-    -->
     </SCRIPT>
   </HEAD>
   <BODY onLoad="redirect()"></BODY>

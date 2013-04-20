@@ -32,8 +32,6 @@
 package com.knowgate.marketing;
 
 import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Arrays;
 
@@ -55,7 +53,6 @@ import com.knowgate.misc.Gadgets;
 import com.knowgate.crm.ContactLoader;
 import com.knowgate.crm.DistributionList;
 import com.knowgate.dataobjs.DB;
-import com.knowgate.hipergate.Address;
 import com.knowgate.hipergate.DBLanguages;
 import com.knowgate.hipergate.datamodel.ColumnList;
 import com.knowgate.hipergate.datamodel.ImportLoader;
@@ -69,11 +66,13 @@ public final class ActivityAudienceLoader implements ImportLoader {
   	private Object[] aValues;
   	private HashMap oOriginsMap;
   	private PreparedStatement oAcAuInsr;
+  	private PreparedStatement oAcAuUpdt;
   	private PreparedStatement oAcAuLook;
 
     // ---------------------------------------------------------------------------
 
-    private final static String SQLAcAuInsr = "INSERT INTO k_x_activity_audience (gu_contact,gu_address,gu_list,gu_writer,dt_created,dt_modified,id_ref,tp_origin,bo_confirmed,dt_confirmed,bo_paid,dt_paid,im_paid,id_transact,tp_billing,bo_went,bo_allows_ads,id_data1,de_data1,tx_data1,id_data2,de_data2,tx_data2,id_data3,de_data3,tx_data3,id_data4,de_data4,tx_data4,id_data5,de_data5,tx_data5,id_data6,de_data6,tx_data6,id_data7,de_data7,tx_data7,id_data8,de_data8,tx_data8,id_data9,de_data9,tx_data9,gu_activity) VALUES (?,?,NULL,?,?,NULL,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    private final static String SQLAcAuInsr = "INSERT INTO k_x_activity_audience (gu_contact,gu_address,gu_list,gu_writer,dt_created,dt_modified,id_ref,tp_origin,bo_confirmed,dt_confirmed,bo_paid,dt_paid,im_paid,id_transact,tp_billing,bo_went,bo_allows_ads,id_data1,de_data1,tx_data1,id_data2,de_data2,tx_data2,id_data3,de_data3,tx_data3,id_data4,de_data4,tx_data4,id_data5,de_data5,tx_data5,id_data6,de_data6,tx_data6,id_data7,de_data7,tx_data7,id_data8,de_data8,tx_data8,id_data9,de_data9,tx_data9,gu_activity) VALUES (?,?,?,?,?,NULL,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    private final static String SQLAcAuUpdt = "UPDATE k_x_activity_audience SET gu_address=?,gu_list=?,gu_writer=?,dt_modified=?,id_ref=?,tp_origin=?,bo_confirmed=?,dt_confirmed=?,bo_paid=?,dt_paid=?,im_paid=?,id_transact=?,tp_billing=?,bo_went=?,bo_allows_ads=?,id_data1=?,de_data1=?,tx_data1=?,id_data2=?,de_data2=?,tx_data2=?,id_data3=?,de_data3=?,tx_data3=?,id_data4=?,de_data4=?,tx_data4=?,id_data5=?,de_data5=?,tx_data5=?,id_data6=?,de_data6=?,tx_data6=?,id_data7=?,de_data7=?,tx_data7=?,id_data8=?,de_data8=?,tx_data8=?,id_data9=?,de_data9=?,tx_data9=? WHERE gu_activity=? AND gu_contact=?";
 
     // ---------------------------------------------------------------------------
 
@@ -83,7 +82,7 @@ public final class ActivityAudienceLoader implements ImportLoader {
 		oDstLst = new DistributionList();
 		oDstLst.put (DB.tp_list, DistributionList.TYPE_STATIC);		
 		oCntLdr = new ContactLoader();
-		oAcAuInsr = oAcAuLook = null;
+		oAcAuUpdt = oAcAuInsr = oAcAuLook = null;
 		oOriginsMap = new HashMap();
 	}
 
@@ -206,6 +205,7 @@ public final class ActivityAudienceLoader implements ImportLoader {
     	}
 
 		oAcAuInsr = oConn.prepareStatement(SQLAcAuInsr);
+		oAcAuUpdt = oConn.prepareStatement(SQLAcAuUpdt);
     	oAcAuLook = oConn.prepareStatement("SELECT NULL FROM k_activity_audience_lookup WHERE gu_owner=? AND id_section=? AND vl_lookup=?",ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 
 		oCntLdr.prepare(oConn, oCols);
@@ -221,6 +221,8 @@ public final class ActivityAudienceLoader implements ImportLoader {
 	public void close() throws SQLException {
 		if (oAcAuLook!=null) oAcAuLook.close();
 		oAcAuLook=null;
+		if (oAcAuUpdt!=null) oAcAuUpdt.close();
+		oAcAuUpdt=null;
 		if (oAcAuInsr!=null) oAcAuInsr.close();
 		oAcAuInsr=null;
 		oCntLdr.close();
@@ -288,7 +290,7 @@ public final class ActivityAudienceLoader implements ImportLoader {
     // ---------------------------------------------------------------------------
 
     /**
-     * Store properties curently held in RAM into the database
+     * Store properties currently held in RAM into the database
      * @param oConn Opened JDBC connection
      * @param sWorkArea String GUID of WorkArea to which inserted data will belong
      * @param iFlags int A boolean combination of {MODE_APPEND|MODE_APPENDUPDATE|WRITE_COMPANIES|WRITE_CONTACTS+WRITE_ADDRESSES|WRITE_LOOKUPS|NO_DUPLICATED_MAILS}
@@ -301,7 +303,6 @@ public final class ActivityAudienceLoader implements ImportLoader {
 	public void store(Connection oConn, String sWorkArea, int iFlags)
 		throws SQLException, IllegalArgumentException, NullPointerException {
 
-    	int iAffected;
     	Timestamp tsNow = new Timestamp(new Date().getTime());
 
 		if (test(iFlags,WRITE_ADDRESSES) && !test(iFlags,WRITE_CONTACTS)) {
@@ -315,13 +316,8 @@ public final class ActivityAudienceLoader implements ImportLoader {
 		if (oAcAuInsr==null || oAcAuLook==null)
       		throw new SQLException("Invalid command sequece. Must call ActivityAudienceLoader.prepare() before ActivityAudienceLoader.store()");
 
-    	if (test(iFlags,ImportLoader.MODE_UPDATE) && !test(iFlags,ImportLoader.MODE_APPENDUPDATE))
-      		throw new IllegalArgumentException("ActivityAudienceLoader.store() only MODE_APPEND or MODE_APPENDUPDATE are supported for audience loading");
-
     	if (null==sWorkArea)
       		throw new NullPointerException("ActivityAudienceLoader.store() Default WorkArea cannot be null");
-
-		if (!test(iFlags,MODE_APPEND)) iFlags |= MODE_APPEND;
 
 		if (DebugFile.trace)	{
       		DebugFile.writeln("Begin ActivityAudienceLoader.store([Connection],"+sWorkArea+","+String.valueOf(iFlags)+")");
@@ -337,97 +333,188 @@ public final class ActivityAudienceLoader implements ImportLoader {
       		oRow.append('}');
       		DebugFile.writeln(oRow.toString());
     	}
-		
-		if (test(iFlags,WRITE_CONTACTS)) {	
-			oCntLdr.store(oConn, sWorkArea, iFlags);
-			oAcAuInsr.setObject(1, oCntLdr.get(ContactLoader.gu_contact), Types.CHAR);
-			if (test(iFlags,WRITE_ADDRESSES))
-			  oAcAuInsr.setObject(2, oCntLdr.get(ContactLoader.gu_address), Types.CHAR);
-			else
-			  oAcAuInsr.setNull(2, Types.CHAR);
-		}	else	{
-			oAcAuInsr.setObject(1, get(gu_contact), Types.CHAR);
-			if (test(iFlags,WRITE_ADDRESSES))
-			  oAcAuInsr.setObject(2, get(gu_address), Types.CHAR);
-			else
-			  oAcAuInsr.setNull(2, Types.CHAR);			
-		}
+    	
+    	if (test(iFlags,ImportLoader.MODE_UPDATE) && !test(iFlags,ImportLoader.MODE_APPENDUPDATE)) {
+    		oAcAuUpdt.setObject(1, getColNull(gu_address), Types.CHAR);
+    		if (aValues[gu_list]==null)
+    	      oAcAuUpdt.setNull(2, Types.CHAR);
+      		else
+      		  oAcAuUpdt.setObject(2, aValues[gu_list], Types.CHAR);
+    		oAcAuUpdt.setObject(3, getColNull(gu_writer), Types.CHAR);
+    		oAcAuUpdt.setTimestamp(4, tsNow);
+    		oAcAuUpdt.setObject(5, getColNull(id_ref), Types.VARCHAR);
+    		oAcAuUpdt.setObject(6, getColNull(tp_origin), Types.VARCHAR);
+    		if (aValues[bo_confirmed]==null)
+    			oAcAuUpdt.setNull(7, Types.SMALLINT);
+    		else
+    			oAcAuUpdt.setObject(7, aValues[bo_confirmed], Types.SMALLINT);
+    		if (aValues[dt_confirmed]==null)
+    			oAcAuUpdt.setNull(8, Types.TIMESTAMP);
+    		else
+    			oAcAuUpdt.setObject(8, aValues[dt_confirmed], Types.TIMESTAMP);
+    		if (aValues[bo_paid]==null)
+    			oAcAuUpdt.setNull(9, Types.SMALLINT);
+    		else
+    			oAcAuUpdt.setObject(9, aValues[bo_paid], Types.SMALLINT);
+    		if (aValues[dt_paid]==null)
+    			oAcAuUpdt.setNull(10, Types.TIMESTAMP);
+    		else
+    			oAcAuUpdt.setObject(10, aValues[dt_paid], Types.TIMESTAMP);
+    		if (aValues[im_paid]==null)
+    			oAcAuUpdt.setNull(11, Types.DECIMAL);
+    		else
+    			oAcAuUpdt.setObject(11, aValues[im_paid], Types.DECIMAL);
+    		oAcAuUpdt.setObject(12, getColNull(id_transact), Types.VARCHAR);
+    		oAcAuUpdt.setObject(13, getColNull(tp_billing), Types.VARCHAR);
+    		if (aValues[bo_went]==null)
+    			oAcAuUpdt.setNull(14, Types.SMALLINT);
+    		else
+    			oAcAuUpdt.setObject(14, aValues[bo_went], Types.SMALLINT);
+    		if (aValues[bo_allows_ads]==null)
+    			oAcAuUpdt.setNull(15, Types.SMALLINT);
+    		else
+    			oAcAuUpdt.setObject(15, aValues[bo_allows_ads], Types.SMALLINT);
+    		oAcAuUpdt.setObject(16, getColNull(id_data1), Types.VARCHAR);
+    		oAcAuUpdt.setObject(17, getColNull(de_data1), Types.VARCHAR);
+    		oAcAuUpdt.setObject(18, getColNull(tx_data1), Types.VARCHAR);
+    		oAcAuUpdt.setObject(19, getColNull(id_data2), Types.VARCHAR);
+    		oAcAuUpdt.setObject(20, getColNull(de_data2), Types.VARCHAR);
+    		oAcAuUpdt.setObject(21, getColNull(tx_data2), Types.VARCHAR);
+    		oAcAuUpdt.setObject(22, getColNull(id_data3), Types.VARCHAR);
+    		oAcAuUpdt.setObject(23, getColNull(de_data3), Types.VARCHAR);
+    		oAcAuUpdt.setObject(24, getColNull(tx_data3), Types.VARCHAR);
+    		oAcAuUpdt.setObject(25, getColNull(id_data4), Types.VARCHAR);
+    		oAcAuUpdt.setObject(26, getColNull(de_data4), Types.VARCHAR);
+    		oAcAuUpdt.setObject(27, getColNull(tx_data4), Types.VARCHAR);
+    		oAcAuUpdt.setObject(28, getColNull(id_data5), Types.VARCHAR);
+    		oAcAuUpdt.setObject(29, getColNull(de_data5), Types.VARCHAR);
+    		oAcAuUpdt.setObject(30, getColNull(tx_data5), Types.VARCHAR);
+    		oAcAuUpdt.setObject(31, getColNull(id_data6), Types.VARCHAR);
+    		oAcAuUpdt.setObject(32, getColNull(de_data6), Types.VARCHAR);
+    		oAcAuUpdt.setObject(33, getColNull(tx_data6), Types.VARCHAR);
+    		oAcAuUpdt.setObject(34, getColNull(id_data7), Types.VARCHAR);
+    		oAcAuUpdt.setObject(35, getColNull(de_data7), Types.VARCHAR);
+    		oAcAuUpdt.setObject(36, getColNull(tx_data7), Types.VARCHAR);
+    		oAcAuUpdt.setObject(37, getColNull(id_data8), Types.VARCHAR);
+    		oAcAuUpdt.setObject(38, getColNull(de_data8), Types.VARCHAR);
+    		oAcAuUpdt.setObject(39, getColNull(tx_data8), Types.VARCHAR);
+    		oAcAuUpdt.setObject(40, getColNull(id_data9), Types.VARCHAR);
+    		oAcAuUpdt.setObject(41, getColNull(de_data9), Types.VARCHAR);
+    		oAcAuUpdt.setObject(42, getColNull(tx_data9), Types.VARCHAR);
+    		oAcAuUpdt.setObject(43, getColNull(gu_activity), Types.CHAR);
+    		oAcAuUpdt.setObject(44, getColNull(gu_contact), Types.CHAR);
 
-		oAcAuInsr.setObject(3, getColNull(gu_writer), Types.CHAR);
-		oAcAuInsr.setTimestamp(4, tsNow);
-		oAcAuInsr.setObject(5, getColNull(id_ref), Types.VARCHAR);
-		oAcAuInsr.setObject(6, getColNull(tp_origin), Types.VARCHAR);
-		if (aValues[bo_confirmed]==null)
-			oAcAuInsr.setNull(7, Types.SMALLINT);
-		else
-			oAcAuInsr.setObject(7, aValues[bo_confirmed], Types.SMALLINT);
-		if (aValues[dt_confirmed]==null)
-			oAcAuInsr.setNull(8, Types.TIMESTAMP);
-		else
-			oAcAuInsr.setObject(8, aValues[dt_confirmed], Types.TIMESTAMP);
-		if (aValues[bo_paid]==null)
-			oAcAuInsr.setNull(9, Types.SMALLINT);
-		else
-			oAcAuInsr.setObject(9, aValues[bo_paid], Types.SMALLINT);
-		if (aValues[dt_paid]==null)
-			oAcAuInsr.setNull(10, Types.TIMESTAMP);
-		else
-			oAcAuInsr.setObject(10, aValues[dt_paid], Types.TIMESTAMP);
-		if (aValues[im_paid]==null)
-			oAcAuInsr.setNull(11, Types.DECIMAL);
-		else
-			oAcAuInsr.setObject(11, aValues[im_paid], Types.DECIMAL);
-		oAcAuInsr.setObject(12, getColNull(id_transact), Types.VARCHAR);
-		oAcAuInsr.setObject(13, getColNull(tp_billing), Types.VARCHAR);
-		if (aValues[bo_went]==null)
-			oAcAuInsr.setNull(14, Types.SMALLINT);
-		else
-			oAcAuInsr.setObject(14, aValues[bo_went], Types.SMALLINT);
-		if (aValues[bo_allows_ads]==null)
-			oAcAuInsr.setNull(15, Types.SMALLINT);
-		else
-			oAcAuInsr.setObject(15, aValues[bo_allows_ads], Types.SMALLINT);
-		oAcAuInsr.setObject(16, getColNull(id_data1), Types.VARCHAR);
-		oAcAuInsr.setObject(17, getColNull(de_data1), Types.VARCHAR);
-		oAcAuInsr.setObject(18, getColNull(tx_data1), Types.VARCHAR);
-		oAcAuInsr.setObject(19, getColNull(id_data2), Types.VARCHAR);
-		oAcAuInsr.setObject(20, getColNull(de_data2), Types.VARCHAR);
-		oAcAuInsr.setObject(21, getColNull(tx_data2), Types.VARCHAR);
-		oAcAuInsr.setObject(22, getColNull(id_data3), Types.VARCHAR);
-		oAcAuInsr.setObject(23, getColNull(de_data3), Types.VARCHAR);
-		oAcAuInsr.setObject(24, getColNull(tx_data3), Types.VARCHAR);
-		oAcAuInsr.setObject(25, getColNull(id_data4), Types.VARCHAR);
-		oAcAuInsr.setObject(26, getColNull(de_data4), Types.VARCHAR);
-		oAcAuInsr.setObject(27, getColNull(tx_data4), Types.VARCHAR);
-		oAcAuInsr.setObject(28, getColNull(id_data5), Types.VARCHAR);
-		oAcAuInsr.setObject(29, getColNull(de_data5), Types.VARCHAR);
-		oAcAuInsr.setObject(30, getColNull(tx_data5), Types.VARCHAR);
-		oAcAuInsr.setObject(31, getColNull(id_data6), Types.VARCHAR);
-		oAcAuInsr.setObject(32, getColNull(de_data6), Types.VARCHAR);
-		oAcAuInsr.setObject(33, getColNull(tx_data6), Types.VARCHAR);
-		oAcAuInsr.setObject(34, getColNull(id_data7), Types.VARCHAR);
-		oAcAuInsr.setObject(35, getColNull(de_data7), Types.VARCHAR);
-		oAcAuInsr.setObject(36, getColNull(tx_data7), Types.VARCHAR);
-		oAcAuInsr.setObject(37, getColNull(id_data8), Types.VARCHAR);
-		oAcAuInsr.setObject(38, getColNull(de_data8), Types.VARCHAR);
-		oAcAuInsr.setObject(39, getColNull(tx_data8), Types.VARCHAR);
-		oAcAuInsr.setObject(40, getColNull(id_data9), Types.VARCHAR);
-		oAcAuInsr.setObject(41, getColNull(de_data9), Types.VARCHAR);
-		oAcAuInsr.setObject(42, getColNull(tx_data9), Types.VARCHAR);
-		oAcAuInsr.setObject(43, getColNull(gu_activity), Types.CHAR);
-		try {
-		  oAcAuInsr.executeUpdate();
-		} catch (SQLException sqle) {
-		  if (DebugFile.trace) {
-		  	DebugFile.writeln("SQLException "+sqle.getMessage());
-			try { DebugFile.writeln(StackTraceUtil.getStackTrace(sqle)); } catch (java.io.IOException ignore) {}
-    	  }
-		  oAcAuInsr.close();
-		  oAcAuInsr = oConn.prepareStatement(SQLAcAuInsr);
-		  throw new SQLException("ActivityAudienceLoader INSERT INTO k_x_activity_audience gu_contact="+oCntLdr.get(ContactLoader.gu_contact)+", gu_activity="+getColNull(gu_activity)+
-		  	                     ", gu_address="+oCntLdr.get(ContactLoader.gu_address)+" "+
-		  	                     sqle.getMessage(),sqle.getSQLState(), sqle.getErrorCode(), sqle.getCause());
-		}
+    		try {
+    		  oAcAuUpdt.executeUpdate();
+      		} catch (SQLException sqle) {
+      		  if (DebugFile.trace) {
+      		  	DebugFile.writeln("SQLException "+sqle.getMessage());
+      			try { DebugFile.writeln(StackTraceUtil.getStackTrace(sqle)); } catch (java.io.IOException ignore) {}
+          	  }
+      		  oAcAuUpdt.close();
+      		  oAcAuUpdt = oConn.prepareStatement(SQLAcAuUpdt);
+      		  throw new SQLException("ActivityAudienceLoader UPDATE k_x_activity_audience gu_contact="+getColNull(gu_contact)+", gu_activity="+getColNull(gu_activity)+
+      		  	                     ", gu_address="+getColNull(gu_address)+" "+
+      		  	                     sqle.getMessage(),sqle.getSQLState(), sqle.getErrorCode(), sqle.getCause());
+      		}    		
+    		
+    	} else {
+    		if (!test(iFlags,MODE_APPEND)) iFlags |= MODE_APPEND;
+    		
+    		if (test(iFlags,WRITE_CONTACTS)) {	
+    			oCntLdr.store(oConn, sWorkArea, iFlags);
+    			oAcAuInsr.setObject(1, oCntLdr.get(ContactLoader.gu_contact), Types.CHAR);
+    			if (test(iFlags,WRITE_ADDRESSES))
+    			  oAcAuInsr.setObject(2, oCntLdr.get(ContactLoader.gu_address), Types.CHAR);
+    			else
+    			  oAcAuInsr.setNull(2, Types.CHAR);
+    		} else {
+    			oAcAuInsr.setObject(1, get(gu_contact), Types.CHAR);
+    			if (test(iFlags,WRITE_ADDRESSES))
+    			  oAcAuInsr.setObject(2, get(gu_address), Types.CHAR);
+    			else
+    			  oAcAuInsr.setNull(2, Types.CHAR);			
+    		}
+    		if (aValues[gu_list]==null)
+      		  oAcAuInsr.setNull(3, Types.CHAR);
+    		else
+    		  oAcAuInsr.setObject(3, aValues[gu_list], Types.CHAR);
+    		oAcAuInsr.setObject(4, getColNull(gu_writer), Types.CHAR);
+    		oAcAuInsr.setTimestamp(5, tsNow);
+    		oAcAuInsr.setObject(6, getColNull(id_ref), Types.VARCHAR);
+    		oAcAuInsr.setObject(7, getColNull(tp_origin), Types.VARCHAR);
+    		if (aValues[bo_confirmed]==null)
+    			oAcAuInsr.setNull(8, Types.SMALLINT);
+    		else
+    			oAcAuInsr.setObject(8, aValues[bo_confirmed], Types.SMALLINT);
+    		if (aValues[dt_confirmed]==null)
+    			oAcAuInsr.setNull(9, Types.TIMESTAMP);
+    		else
+    			oAcAuInsr.setObject(9, aValues[dt_confirmed], Types.TIMESTAMP);
+    		if (aValues[bo_paid]==null)
+    			oAcAuInsr.setNull(10, Types.SMALLINT);
+    		else
+    			oAcAuInsr.setObject(10, aValues[bo_paid], Types.SMALLINT);
+    		if (aValues[dt_paid]==null)
+    			oAcAuInsr.setNull(11, Types.TIMESTAMP);
+    		else
+    			oAcAuInsr.setObject(11, aValues[dt_paid], Types.TIMESTAMP);
+    		if (aValues[im_paid]==null)
+    			oAcAuInsr.setNull(12, Types.DECIMAL);
+    		else
+    			oAcAuInsr.setObject(12, aValues[im_paid], Types.DECIMAL);
+    		oAcAuInsr.setObject(13, getColNull(id_transact), Types.VARCHAR);
+    		oAcAuInsr.setObject(14, getColNull(tp_billing), Types.VARCHAR);
+    		if (aValues[bo_went]==null)
+    			oAcAuInsr.setNull(15, Types.SMALLINT);
+    		else
+    			oAcAuInsr.setObject(15, aValues[bo_went], Types.SMALLINT);
+    		if (aValues[bo_allows_ads]==null)
+    			oAcAuInsr.setNull(16, Types.SMALLINT);
+    		else
+    			oAcAuInsr.setObject(16, aValues[bo_allows_ads], Types.SMALLINT);
+    		oAcAuInsr.setObject(17, getColNull(id_data1), Types.VARCHAR);
+    		oAcAuInsr.setObject(18, getColNull(de_data1), Types.VARCHAR);
+    		oAcAuInsr.setObject(19, getColNull(tx_data1), Types.VARCHAR);
+    		oAcAuInsr.setObject(20, getColNull(id_data2), Types.VARCHAR);
+    		oAcAuInsr.setObject(21, getColNull(de_data2), Types.VARCHAR);
+    		oAcAuInsr.setObject(22, getColNull(tx_data2), Types.VARCHAR);
+    		oAcAuInsr.setObject(23, getColNull(id_data3), Types.VARCHAR);
+    		oAcAuInsr.setObject(24, getColNull(de_data3), Types.VARCHAR);
+    		oAcAuInsr.setObject(25, getColNull(tx_data3), Types.VARCHAR);
+    		oAcAuInsr.setObject(26, getColNull(id_data4), Types.VARCHAR);
+    		oAcAuInsr.setObject(27, getColNull(de_data4), Types.VARCHAR);
+    		oAcAuInsr.setObject(28, getColNull(tx_data4), Types.VARCHAR);
+    		oAcAuInsr.setObject(29, getColNull(id_data5), Types.VARCHAR);
+    		oAcAuInsr.setObject(30, getColNull(de_data5), Types.VARCHAR);
+    		oAcAuInsr.setObject(31, getColNull(tx_data5), Types.VARCHAR);
+    		oAcAuInsr.setObject(32, getColNull(id_data6), Types.VARCHAR);
+    		oAcAuInsr.setObject(33, getColNull(de_data6), Types.VARCHAR);
+    		oAcAuInsr.setObject(34, getColNull(tx_data6), Types.VARCHAR);
+    		oAcAuInsr.setObject(35, getColNull(id_data7), Types.VARCHAR);
+    		oAcAuInsr.setObject(36, getColNull(de_data7), Types.VARCHAR);
+    		oAcAuInsr.setObject(37, getColNull(tx_data7), Types.VARCHAR);
+    		oAcAuInsr.setObject(38, getColNull(id_data8), Types.VARCHAR);
+    		oAcAuInsr.setObject(39, getColNull(de_data8), Types.VARCHAR);
+    		oAcAuInsr.setObject(40, getColNull(tx_data8), Types.VARCHAR);
+    		oAcAuInsr.setObject(41, getColNull(id_data9), Types.VARCHAR);
+    		oAcAuInsr.setObject(42, getColNull(de_data9), Types.VARCHAR);
+    		oAcAuInsr.setObject(43, getColNull(tx_data9), Types.VARCHAR);
+    		oAcAuInsr.setObject(44, getColNull(gu_activity), Types.CHAR);
+    		try {
+    		  oAcAuInsr.executeUpdate();
+    		} catch (SQLException sqle) {
+    		  if (DebugFile.trace) {
+    		  	DebugFile.writeln("SQLException "+sqle.getMessage());
+    			try { DebugFile.writeln(StackTraceUtil.getStackTrace(sqle)); } catch (java.io.IOException ignore) {}
+        	  }
+    		  oAcAuInsr.close();
+    		  oAcAuInsr = oConn.prepareStatement(SQLAcAuInsr);
+    		  throw new SQLException("ActivityAudienceLoader INSERT INTO k_x_activity_audience gu_contact="+oCntLdr.get(ContactLoader.gu_contact)+", gu_activity="+getColNull(gu_activity)+
+    		  	                     ", gu_address="+oCntLdr.get(ContactLoader.gu_address)+" "+
+    		  	                     sqle.getMessage(),sqle.getSQLState(), sqle.getErrorCode(), sqle.getCause());
+    		}    		
+    	}
 
 		if (aValues[gu_list]!=null && aValues[gu_contact]!=null) {
           oDstLst.replace (DB.gu_workarea, sWorkArea);
@@ -563,6 +650,7 @@ public final class ActivityAudienceLoader implements ImportLoader {
 
     // ----------------------------------------------------------------------
 
+    public static final int MODE_UPDATE = ImportLoader.MODE_UPDATE;
     public static final int MODE_APPEND = ImportLoader.MODE_APPEND;
     public static final int MODE_APPENDUPDATE = ImportLoader.MODE_APPENDUPDATE;
     public static final int WRITE_LOOKUPS = ImportLoader.WRITE_LOOKUPS;

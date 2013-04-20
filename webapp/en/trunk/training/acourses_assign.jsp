@@ -50,6 +50,8 @@
   
   String sStorage = Environment.getProfilePath(GlobalDBBind.getProfileName(), "storage");
 
+  String sChecked, sGuCourse, sIdCourse, sNmCourse, sTxStart, sTxEnd, sIdClassroom, sStrip;
+
   // **********************************************
 
   String sOrderBy;
@@ -71,10 +73,10 @@
 
   JDCConnection oConn = null;
   boolean bIsGuest = true;
-  DBSubset oCourses = new DBSubset(DB.v_active_courses, DB.gu_acourse+","+DB.id_acourse+","+DB.nm_acourse+","+DB.tx_start+","+DB.tx_end, DB.gu_workarea+"=? ORDER BY 2", 100);
-  DBSubset oStuding = new DBSubset(DB.k_x_course_alumni, DB.gu_acourse+","+DB.gu_alumni+","+DB.tp_register+","+DB.id_classroom,
-  				   DB.gu_alumni+"=?", 10);  
-  int iCourses = 0, iStuding = 0;
+  DBSubset oCourses = new DBSubset(DB.v_active_courses, "c."+DB.gu_acourse+",c."+DB.id_acourse+",c."+DB.nm_acourse+",c."+DB.tx_start+",c."+DB.tx_end, DB.gu_workarea+"=? AND NOT EXISTS (SELECT b."+DB.gu_acourse+" FROM b."+DB.k_x_course_bookings+" WHERE "+DB.gu_contact+"=?) AND NOT EXISTS (SELECT b."+DB.gu_acourse+" FROM b."+DB.k_x_course_alumni+" WHERE "+DB.gu_alumni+"=?) ORDER BY 2", 100);
+  DBSubset oBookings = new DBSubset(DB.k_x_course_bookings+" b,"+DB.k_academic_courses+" a", "b."+DB.gu_acourse+",b."+DB.gu_contact+",b."+DB.tp_register+",b."+DB.id_classroom+",b."+DB.bo_confirmed+",b."+DB.bo_paid+",b."+DB.bo_canceled+",b."+DB.bo_waiting+",a."+DB.nm_course, DB.gu_contact+"=?", 10);  
+  DBSubset oStuding = new DBSubset(DB.k_x_course_alumni+" b,"+DB.k_academic_courses+" a", "b."+DB.gu_acourse+",b."+DB.gu_alumni+",b."+DB.tp_register+",b."+DB.id_classroom+",a."+DB.nm_course, DB.gu_alumni+"=?", 10);
+  int iCourses = 0, iStuding = 0, iBookings = 0;
   int iFound;
   
   try {
@@ -86,6 +88,8 @@
     iCourses = oCourses.load(oConn, new Object[]{gu_workarea});
 
     iStuding = oStuding.load(oConn, new Object[]{sFind});
+    
+    iBookings = oBookings.load(oConn, new Object[]{sFind});
     
     oConn.close("acourseassign");
   }
@@ -104,12 +108,12 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript1.2" SRC="../javascript/findit.js"></SCRIPT>    
 
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
         // ----------------------------------------------------
 
@@ -134,7 +138,7 @@
 
     //-->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
     <!--
 	function validate() {
 	  var frm = document.forms[0];
@@ -153,7 +157,7 @@
 	          alert ("Gruop name contains forbidden characters");
 	          return false;
 	        }
-		frm.classrooms.value += (frm.classrooms.value.length==0 ? "" : ",") + cls;
+		      frm.classrooms.value += (frm.classrooms.value.length==0 ? "" : ",") + cls;
 	      }
 	    }
 	  } // next
@@ -187,8 +191,36 @@
       </TR>
       <TR><TD COLSPAN="2" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       </TABLE>
-      <!-- End Top Menu -->
-      <TABLE CELLSPACING="1" CELLPADDING="0">
+      <TABLE SUMMARY="Bookings" CELLSPACING="1" CELLPADDING="0">
+        <TR>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Call</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>At waiting list</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Confirmed</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Paid</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Amount</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Date</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Cancelled</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Accepted</B></TD>
+        </TR>
+<%
+	  for (int b=0; b<iBookings; b++) {
+      sStrip = String.valueOf((b%2)+b);
+      sGuCourse = oBookings.getString(0,b);
+	    sNmCourse = oBookings.getString(8,b);
+      out.write("<TR CLASS=\"strip"+String.valueOf((b%2)+1)+"\">\n");
+      out.write("<TD>"+sNmCourse+"</TD>\n");
+      out.write("<TD ALIGN=\"center\"><INPUT TYPE=\"checkbox\" NAME=\""+sFind+"_waiting\" onclick=\"clickWaiting('"+sFind+"')\" VALUE=\"1\" "+(oBookings.getShort(7,b)!=0 ? "CHECKED" : "")+"></TD>\n");
+      out.write("<TD ALIGN=\"center\"><INPUT TYPE=\"checkbox\" NAME=\""+sFind+"_confirmed\" VALUE=\"1\" "+(oBookings.getShort(4,b)!=0 ? "CHECKED" : "")+"></TD>\n");
+      out.write("<TD ALIGN=\"center\"><INPUT TYPE=\"checkbox\" NAME=\""+sFind+"_paid\" onclick=\"clickPaid('"+sFind+"')\" VALUE=\"1\" "+(oBookings.getShort(5,b)!=0 ? "CHECKED" : "")+"></TD>\n");
+      out.write("<TD ALIGN=\"center\"><INPUT TYPE=\"text\" MAXLENGTH=\"10\" SIZE=\"5\" NAME=\""+sFind+"_amount\" onfocus=\"if (!document.forms[0].elements['"+sFind+"_paid'].checked) document.forms[0].elements['"+sFind+"_canceled'].focus();\" VALUE=\""+(aBooks[b].isNull(DB.im_paid) ? "" : oFmt2.format(aBooks[b].amount().doubleValue()))+"\"></TD>\n");
+      out.write("<TD ALIGN=\"center\"><INPUT TYPE=\"text\" MAXLENGTH=\"10\" SIZE=\"8\" NAME=\""+sFind+"_date\" onfocus=\"if (!document.forms[0].elements['"+sFind+"_paid'].checked) document.forms[0].elements['"+sFind+"_canceled'].focus();\" VALUE=\""+(aBooks[b].isNull(DB.dt_paid) ? "" : aBooks[b].getDateShort(DB.dt_paid))+"\"></TD>\n");
+      out.write("<TD ALIGN=\"center\"><INPUT TYPE=\"checkbox\" NAME=\""+sFind+"_canceled\" VALUE=\"1\" onclick=\"clickCancel('"+sFind+"')\" "+(oBookings.getShort(6,b)!=0 ? "CHECKED" : "")+"></TD>\n");
+      int iAlumni = oStuding.find(0,sGuCourse);
+      out.write("<TD ALIGN=\"center\"><INPUT TYPE=\"hidden\" NAME=\"alumni_"+String.valueOf(b)+"\" VALUE=\""+(iAlumni>=0 ? "1" : "0")+"\"><A HREF=\"#\" onclick=\"switchAlumni('"+sFind+"',"+String.valueOf(b)+")\"><IMG ID=\""+sFind+"_buttonAlumni\" SRC=\"../images/images/"+(iAlumni>=0 ? "corrected" : "pending")+".gif\" WIDTH=\"16\" HEIGHT=\"16\" BORDER=\"0\"></A></TD>\n");
+      out.write("</TR>\n");
+	 } %>
+      </TABLE>
+      <TABLE SUMMARY="All courses" CELLSPACING="1" CELLPADDING="0">
         <TR>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Order by this field"></A>&nbsp;<B>Id.</B></TD>
@@ -198,8 +230,6 @@
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<B>Room/Group</B></TD>
         </TR>
 <%
-
-	  String sChecked, sGuCourse, sIdCourse, sNmCourse, sTxStart, sTxEnd, sIdClassroom, sStrip;
 	  for (int i=0; i<iCourses; i++) {
             sGuCourse = oCourses.getString(0,i);
             sIdCourse = oCourses.getString(1,i);
@@ -207,13 +237,13 @@
             sTxStart = oCourses.getStringNull(3,i,"");
             sTxEnd = oCourses.getStringNull(4,i,"");
 
-	    iFound = oStuding.find(0, sGuCourse);
-	    if (iFound>=0) {
-	      sChecked = " CHECKED";
-	      sIdClassroom = oStuding.getStringNull(3,iFound,"");
-	    } else {
-	      sChecked = "";
-	      sIdClassroom = "";
+	          iFound = oStuding.find(0, sGuCourse);
+	          if (iFound>=0) {
+	            sChecked = " CHECKED";
+	            sIdClassroom = oStuding.getStringNull(3,iFound,"");
+	          } else {
+	            sChecked = "";
+	            sIdClassroom = "";
             }
             
             sStrip = String.valueOf((i%2)+1);

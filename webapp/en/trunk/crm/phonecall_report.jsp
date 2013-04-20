@@ -242,8 +242,8 @@
 <HTML>
 <HEAD>
   <TITLE>hipergate :: Telemarketing effectiveness</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
 </HEAD>
 <BODY>
   <DIV class="cxMnu1" style="width:190px"><DIV class="cxMnu2">

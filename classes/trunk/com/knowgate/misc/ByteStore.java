@@ -34,6 +34,7 @@ import com.knowgate.debug.DebugFile;
  * @author Sebastian Schaffert
  * @version
  */
+@SuppressWarnings("serial")
 public class ByteStore implements Serializable {
 
     byte[] bytes;

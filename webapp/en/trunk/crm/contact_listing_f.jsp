@@ -9,11 +9,11 @@
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
     <TITLE>hipergate :: Contact Listing</TITLE>
     <SCRIPT LANGUAGE="javascript" SRC="../javascript/getparam.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+    <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
       function setURL() {
       if (getURLParam("field")!=null && getURLParam("find")!=null)
-        contactslist.location = "contact_listing.jsp?salesman=<%=nullif(request.getParameter("salesman"))%>&private=<%=nullif(request.getParameter("private"),"0")%>&field=<%=request.getParameter("field")%>&find=<%=request.getParameter("find")%>&selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>&screen_width=" + screen.width + "&where=" + escape("<%=nullif(request.getParameter("where"))%>") + "&query=<%=nullif(request.getParameter("gu_query"))%>&orderby=<%=nullif(request.getParameter("orderby"),"0")%>";
+        contactslist.location = "contact_listing.jsp?salesman=<%=nullif(request.getParameter("salesman"))%>&private=<%=nullif(request.getParameter("private"),"0")%>&field=<%=request.getParameter("field")%>&find="+(getURLParam("find")==null || getURLParam("find")=="null" ? "" : getURLParam("find"))+"&selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>&screen_width=" + screen.width + "&where=" + escape("<%=nullif(request.getParameter("where"))%>") + "&query=<%=nullif(request.getParameter("gu_query"))%>&orderby=<%=nullif(request.getParameter("orderby"),"0")%>";
       else
         this.frames['contactslist'].document.location = "contact_listing.jsp?salesman=<%=nullif(request.getParameter("salesman"))%>&private=<%=nullif(request.getParameter("private"),"0")%>&selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>&screen_width=" + screen.width + "&where=" + escape("<%=nullif(request.getParameter("where"))%>") + "&query=<%=nullif(request.getParameter("gu_query"))%>&orderby=<%=nullif(request.getParameter("orderby"),"0")%>";
       }

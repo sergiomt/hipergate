@@ -190,11 +190,11 @@
 %><HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Weekly Calendar</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/combobox.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
       var activity_edition_page = "<% out.write(sFace.equalsIgnoreCase("healthcare") ? "appointment_edit_f.htm" : "meeting_edit_f.htm"); %>";
 
@@ -256,7 +256,7 @@
       // ------------------------------------------------------	
     //-->    
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
       function setCombos() {
         var frm = document.forms[0];        
@@ -390,7 +390,7 @@
 	      for (int m=0; m<nMeets; m++) {
 	        Meeting oMeet = aMeetings[m];
 					if (bItsMe || oMeet.getShort(DB.bo_private)==(short)0) {
-	          out.write("<FONT CLASS=\"textsmall\">"+(0==m ? "" : "<BR>")+oMeet.getHour()+":"+oMeet.getMinute()+"-"+oMeet.getHourEnd()+":"+oMeet.getMinuteEnd()+"&nbsp;<A CLASS=\"linksmall\" TITLE=\""+oMeet.getStringNull(DB.de_meeting,"").replace('\n',' ').replace('\r',' ')+"\" HREF=\"#\" onclick=\"modifyMeeting('"+oMeet.getString(DB.gu_meeting)+"'); return false;\">"+oMeet.getStringNull(DB.tx_meeting,"")+"</A></FONT><FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"javascript:deleteMeeting('" + oMeet.getString(DB.gu_meeting) + "','" + oMeet.getStringNull(DB.tx_meeting,"Untitled").replace((char)39,'´') + "')\" TITLE=\"Delete\">x</A>]</FONT>");
+	          out.write("<FONT CLASS=\"textsmall\">"+(0==m ? "" : "<BR>")+oMeet.getHour()+":"+oMeet.getMinute()+"-"+oMeet.getHourEnd()+":"+oMeet.getMinuteEnd()+"&nbsp;<A CLASS=\"linksmall\" TITLE=\""+oMeet.getStringNull(DB.de_meeting,"").replace('\n',' ').replace('\r',' ').replace('"',' ')+"\" HREF=\"#\" onclick=\"modifyMeeting('"+oMeet.getString(DB.gu_meeting)+"'); return false;\">"+oMeet.getStringNull(DB.tx_meeting,"")+"</A></FONT><FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"javascript:deleteMeeting('" + oMeet.getString(DB.gu_meeting) + "','" + oMeet.getStringNull(DB.tx_meeting,"Untitled").replace('"',' ').replace((char)39,'´') + "')\" TITLE=\"Delete\">x</A>]</FONT>");
 	        } else {
 	          out.write("<FONT CLASS=\"textsmall\">"+(0==m ? "" : "<BR>")+oMeet.getHour()+":"+oMeet.getMinute()+"-"+oMeet.getHourEnd()+":"+oMeet.getMinuteEnd()+"</FONT><IMG SRC=\"../images/images/addrbook/smalllock.gif\" BORDER=\"0\">");
 	        }
@@ -412,7 +412,7 @@
 	      for (int m=0; m<nMeets; m++) {
 	        Meeting oMeet = aMeetings[m];
 					if (bItsMe || oMeet.getShort(DB.bo_private)==(short)0) {
-	          out.write("<FONT CLASS=\"textsmall\">"+(0==m ? "" : "<BR>")+oMeet.getHour()+":"+oMeet.getMinute()+"-"+oMeet.getHourEnd()+":"+oMeet.getMinuteEnd()+"&nbsp;<A CLASS=\"linksmall\" TITLE=\""+oMeet.getStringNull(DB.de_meeting,"").replace('\n',' ').replace('\r',' ')+"\" HREF=\"#\" onclick=\"modifyMeeting('"+oMeet.getString(DB.gu_meeting)+"'); return false;\">"+oMeet.getStringNull(DB.tx_meeting,"")+"</A></FONT><FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"javascript:deleteMeeting('" + oMeet.getString(DB.gu_meeting) + "','" + oMeet.getStringNull(DB.tx_meeting,"Untitled").replace((char)39,'´') + "')\" TITLE=\"Delete\">x</A>]</FONT>");
+	          out.write("<FONT CLASS=\"textsmall\">"+(0==m ? "" : "<BR>")+oMeet.getHour()+":"+oMeet.getMinute()+"-"+oMeet.getHourEnd()+":"+oMeet.getMinuteEnd()+"&nbsp;<A CLASS=\"linksmall\" TITLE=\""+oMeet.getStringNull(DB.de_meeting,"").replace('\n',' ').replace('\r',' ').replace('"',' ')+"\" HREF=\"#\" onclick=\"modifyMeeting('"+oMeet.getString(DB.gu_meeting)+"'); return false;\">"+oMeet.getStringNull(DB.tx_meeting,"")+"</A></FONT><FONT CLASS=\"microlink\">&nbsp;[<A CLASS=\"microlink\" HREF=\"javascript:deleteMeeting('" + oMeet.getString(DB.gu_meeting) + "','" + oMeet.getStringNull(DB.tx_meeting,"Untitled").replace('"',' ').replace((char)39,'´') + "')\" TITLE=\"Delete\">x</A>]</FONT>");
 	        } else {
 	          out.write("<FONT CLASS=\"textsmall\">"+(0==m ? "" : "<BR>")+oMeet.getHour()+":"+oMeet.getMinute()+"-"+oMeet.getHourEnd()+":"+oMeet.getMinuteEnd()+"</FONT><IMG SRC=\"../images/images/addrbook/smalllock.gif\" BORDER=\"0\">");
 	        }

@@ -36,7 +36,6 @@ import java.io.InputStream;
 
 import java.sql.SQLException;
 import java.sql.CallableStatement;
-import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -497,7 +496,7 @@ public final class ACL {
         case INVALID_PASSWORD:
           return "Invalid password";
         case ACCOUNT_DEACTIVATED:
-          return "User not found";
+          return "Account deactivated";
         case SESSION_EXPIRED:
           return "Session expired";
         case DOMAIN_NOT_FOUND:

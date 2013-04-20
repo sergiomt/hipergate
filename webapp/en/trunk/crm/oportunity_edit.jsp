@@ -1,7 +1,6 @@
 <%@ page import="java.util.Date,java.text.SimpleDateFormat,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.crm.*,com.knowgate.hipergate.DBLanguages,com.knowgate.misc.Gadgets,com.knowgate.workareas.WorkArea" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/customattrs.jspf" %>
-<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
-<%
+<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -46,7 +45,7 @@
   String n_domain = request.getParameter("n_domain");
   String id_user = getCookie (request, "userid", null);
   String gu_workarea = getCookie(request,"workarea",null);
-  String sSkin = getCookie(request, "skin", "default");
+  String sSkin = getCookie(request, "skin", "xp");
   String sLanguage = getNavigatorLanguage(request);
   int iAppMask = Integer.parseInt(getCookie(request, "appmask", "0"));
     
@@ -87,6 +86,8 @@
   boolean bIsGuest = true;
   boolean bAllCaps = false;
   boolean bHasMailAccount = false;
+  boolean bUseSecondaryContacts = (gu_list.length()==0 && gu_oportunity.length()>0);
+  int nSecondaryContacts = 0;
   
   try {    
     bIsGuest = isDomainGuest (GlobalCacheClient, GlobalDBBind, request, response);
@@ -115,6 +116,8 @@
 
         iNuEMails = oEMails.load(oConn, new Object[]{gu_workarea,gu_contact,gu_company});
         for (int e=0; e<iNuEMails; e++) sTxEMails += "<OPTION VALUE=\""+oEMails.getString(0,e)+"\" "+(e==0 ? "SELECTED" : "")+">"+oEMails.getString(0,e)+"</OPTION>";
+        
+        if (bUseSecondaryContacts) nSecondaryContacts = oOprt.countSecondaryContacts(oConn);
       } // fi (bLoaded)
       
       bHasMailAccount = DBCommand.queryExists(oConn, DB.k_user_mail, DB.gu_user+"='"+id_user+"'");
@@ -130,11 +133,12 @@
       oComp.load(oConn, aComp);
     }
 
-    sStatusLookUp = DBLanguages.getHTMLSelectLookUp (oConn, DB.k_oportunities_lookup, gu_workarea, DB.id_status, sLanguage);
-    sOriginLookUp = DBLanguages.getHTMLSelectLookUp (oConn, DB.k_oportunities_lookup, gu_workarea, DB.tp_origin, sLanguage);
-    sObjectiveLookUp = DBLanguages.getHTMLSelectLookUp (oConn, DB.k_oportunities_lookup, gu_workarea, DB.id_objetive, sLanguage);
-    sCauseLookUp = DBLanguages.getHTMLSelectLookUp (oConn, DB.k_oportunities_lookup, gu_workarea, DB.tx_cause, sLanguage);
+    sStatusLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_oportunities_lookup, gu_workarea, DB.id_status, sLanguage);
+    sOriginLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_oportunities_lookup, gu_workarea, DB.tp_origin, sLanguage);
+    sCauseLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_oportunities_lookup, gu_workarea, DB.tx_cause, sLanguage);
 
+    %><%@ include file="oportunity_listbox.jspf" %><%
+    
 		DBSubset oSalesMen = new DBSubset (DB.k_sales_men+" m,"+DB.k_users+" u",
 		                                   "m."+DB.gu_sales_man+",u."+DB.nm_user+",u."+DB.tx_surname1+",u."+DB.tx_surname2,
 		                                   "m."+DB.gu_sales_man+"=u."+DB.gu_user+" AND m."+DB.gu_workarea+"=? ORDER BY 2,3,4", 100);
@@ -162,7 +166,7 @@
     	gu_writer=oOprt.getString(DB.gu_writer);
     }catch(Exception e){}
     
-   	if(gu_writer!=null){
+   	if (gu_writer!=null){
 	    oStmt = oConn.prepareStatement("SELECT " +  DB.tx_nickname + " FROM " + DB.k_users + " WHERE " + DB.gu_user + "=?");
 	    oStmt.setString(1, gu_writer);
 	    oRSet = oStmt.executeQuery();
@@ -189,26 +193,28 @@
     return;
   }       
 %>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//<%=sLanguage.toUpperCase()%>">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//en">
 <HTML LANG="<%=sLanguage.toUpperCase()%>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>    
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>      
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>    
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>      
   <TITLE>hipergate :: Edit Opportunity</TITLE>
-
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <SCRIPT TYPE="text/javascript">
       <!--        
-        function lookup(odctrl) {
+
+      var allcaps = <%=String.valueOf(bAllCaps)%>;
+      
+      function lookup(odctrl) {
         
         switch(parseInt(odctrl)) {
           case 1:
-            window.open("../common/lookup_f.jsp?nm_table=k_oportunities_lookup&id_language=" + getUserLanguage() + "&id_section=id_objetive&tp_control=2&nm_control=sel_objetive&nm_coding=id_objetive", "lookupobjective", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
+            window.open("oportunity_lookups.jsp", "lookupobjective", "scrollbars=yes,toolbar=no,directories=no,menubar=no,resizable=yes,width=960,height=520");
             break;
           case 2:
             window.open("../common/lookup_f.jsp?nm_table=k_oportunities_lookup&id_language=" + getUserLanguage() + "&id_section=id_status&tp_control=2&nm_control=sel_status&nm_coding=id_status", "lookupstatus", "toolbar=no,directories=no,menubar=no,resizable=no,width=480,height=520");
@@ -259,9 +265,12 @@
       	var dtn;
       	var dtm;
       
-      	txt = ltrim(frm.tl_oportunity.value);
+      	txt = frm.tl_oportunity.value = ltrim(frm.tl_oportunity.value);
+      	if (txt.length==0)
+      		frm.tl_oportunity.value=getComboText(document.forms[0].sel_objetive);
+      	if (allcaps) frm.tl_oportunity.value=frm.tl_oportunity.value.toUpperCase();
       	
-      	if (txt.length==0) {
+      	if (frm.tl_oportunity.value.length==0) {
       	  alert ("Opportunity title is mandtory");
       	  return false;	  
       	}
@@ -371,21 +380,21 @@
     tabbed panel by Jamie Jaworski taken from builder.com
     http://builder.cnet.com/webbuilding/0-7701-8-5056260-1.html?tag=st.bl.3882.dir1.7701-8-5056260-1
     -->    
-    <SCRIPT language="JavaScript">
+    <SCRIPT TYPE="text/javascript">
       <!--
         function selectTab(n) {
         	
-        	var panelID = "p1"
-        	var numDiv = 2
+        	var panelID = "p1";
+        	var numDiv = 2;
         	// iterate all tab-panel pairs
         	for(var i=0; i < numDiv; i++) {
-        		var panelDiv = window.document.getElementById(panelID+"panel"+i)
-        		var tabDiv = document.getElementById(panelID+"tab"+i)
-        		z = panelDiv.style.zIndex
+        		var panelDiv = window.document.getElementById(panelID+"panel"+i);
+        		var tabDiv = document.getElementById(panelID+"tab"+i);
+        		z = panelDiv.style.zIndex;
         		// if this is the one clicked and it isn't in front, move it to the front
-        		if (z != numDiv && i == n) { z = numDiv }
+        		if (z != numDiv && i == n) { z = numDiv; }
         		// in all other cases move it to the original position
-        		else { z = (numDiv-i) }
+        		else { z = (numDiv-i); }
         		panelDiv.style.zIndex = z;
         		tabDiv.style.zIndex = z;
         	}
@@ -414,7 +423,7 @@
       }
 
       .panel {
-      font-family: sans-serif; font-size: 12px; position:absolute; border: 2px; border-color:#999999; border-style:outset; width:600px; height:470px; left:0px; top:24px; margin:0px; padding:6px;
+      font-family: sans-serif; font-size: 12px; position:absolute; border: 2px; border-color:#999999; border-style:outset; width:600px; height:500px; left:0px; top:24px; margin:0px; padding:6px;
       }
       -->
     </STYLE>                
@@ -426,7 +435,7 @@
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Update"> Update</SPAN>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
   </DIV></DIV>
-      <TABLE>
+      <TABLE BORDER="0">
         <TR HEIGHT="18">
 <% if (gu_contact.length()>0) { %>
         	  <TD><IMG SRC="../images/images/note16x16.gif" HEIGHT="18" WIDTH="15" BORDER="0" ALT="View Notes"></TD>
@@ -436,7 +445,7 @@
 <% if (gu_oportunity.length()>0 && (iAppMask & (1<<CollabTools))!=0) { %>
         	  <TD><IMG SRC="../images/images/crm/newmeeting18.gif" HEIGHT="18" WIDTH="18" BORDER="0" ALT="New Visit"></TD>
         	  <TD><A HREF="#" CLASS="linkplain" onclick="createVisit()">Organize Visit</A></TD>
-        	  <TD><SELECT CLASS="combomini" NAME="sel_salesmen"><OPTION VALUE="" SELECTED="selected">For myself</OPTION><OPTGROUP LABEL="For another salesman"><%=sSalesMen%></OPTGROUP></SELECT></TD>
+        	  <TD COLSPAN="2"><SELECT CLASS="combomini" NAME="sel_salesmen"><OPTION VALUE="" SELECTED="selected">For myself</OPTION><OPTGROUP LABEL="For another salesman"><%=sSalesMen%></OPTGROUP></SELECT></TD>
 <% } %>
         </TR>
         <TR>
@@ -448,29 +457,29 @@
 <% if (gu_oportunity.length()>0 && (iAppMask & (1<<Hipermail))!=0) { %>
         	  <TD><IMG SRC="../images/images/sendmail16.gif" HEIGHT="18" WIDTH="18" BORDER="0" ALT="New e-mail"></TD>
         	  <TD><A HREF="#" CLASS="linkplain" onclick="sendEMail()">Send Proposal</A></TD>
-        	  <TD><SELECT CLASS="combomini" NAME="sel_email"><OPTION VALUE=""><%=sTxEMails%></SELECT></TD>
+        	  <TD COLSPAN="2"><SELECT CLASS="combomini" NAME="sel_email"><OPTION VALUE=""><%=sTxEMails%></SELECT></TD>
 <% } %>
         </TR>
 <% if (gu_oportunity.length()>0 && gu_contact.length()>0) { %>
         <TR HEIGHT="18">
         	  <TD><IMG SRC="../images/images/addrbook/telephone16.gif" HEIGHT="16" WIDTH="16" BORDER="0" ALT="View Calls"></TD>
         	  <TD><A HREF="phonecall_listing.jsp?id_domain=<%=id_domain%>&n_domain=<%=Gadgets.URLEncode(n_domain)%>&gu_workarea=<%=gu_workarea%>&gu_contact=<%=gu_contact%>&gu_oportunity=<%=gu_oportunity%>" CLASS="linkplain">View calls</A></TD>
-        	  <TD COLSPAN="4"></TD>
+        	  <TD WIDTH="8"></TD>
+        	  <TD><% if (nSecondaryContacts>0) out.write("<IMG SRC=\"../images/images/contactos.gif\" WIDTH=\"20\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"List Other Contacts\">"); %></TD>
+        	  <TD><% if (nSecondaryContacts>0) out.write("<A CLASS=\"linksmall\" HREF=\"oportunity_sec_list.jsp?id_domain="+id_domain+"&gu_workarea="+gu_workarea+"&gu_oportunity="+gu_oportunity+"\">"+Gadgets.replace("List another NNN contacts", "NNN", String.valueOf(nSecondaryContacts))+"</A>");  %></TD>
+        	  <TD><% if (bUseSecondaryContacts) out.write("<IMG SRC=\"../images/images/contactos_add.gif\" WIDTH=\"20\" HEIGHT=\"16\" BORDER=\"0\" ALT=\"Add Contact\">"); %></TD>
+						<TD><% if (bUseSecondaryContacts) out.write("<A CLASS=\"linksmall\" HREF=\"oportunity_sec_edit.jsp?id_domain="+id_domain+"&gu_workarea="+gu_workarea+"&gu_oportunity="+gu_oportunity+"\">Add another contact</A>"); %></TD>
         </TR>
 <% } %>
-	<%/** Inicio I2E 20-01-2010 **/ %>
-	<!--
-	    <TR HEIGHT="18">
+	    <!--
+	      <TR HEIGHT="18">
         	  <TD><IMG SRC="../images/images/training/diploma16.gif" HEIGHT="16" WIDTH="16" BORDER="0" ALT="View Admission"></TD>
         	  <TD><A HREF="admission_edit.jsp?id_domain=<%=id_domain%>&n_domain=<%=Gadgets.URLEncode(n_domain)%>&gu_workarea=<%=gu_workarea%>&gu_contact=<%=gu_contact%>&gu_oportunity=<%=gu_oportunity%>" CLASS="linkplain">Show Admission</A></TD>
         	  <TD WIDTH="8"></TD>
-        	  <%/** Inicio I2E 01-02-2010 **/ %>
         	  <TD><IMG SRC="../images/images/training/student16.gif" HEIGHT="16" WIDTH="16" BORDER="0" ALT="View Registration"></TD>
         	  <TD><A HREF="../training/registration_edit.jsp?id_domain=<%=id_domain%>&n_domain=<%=Gadgets.URLEncode(n_domain)%>&gu_workarea=<%=gu_workarea%>&gu_contact=<%=gu_contact%>&gu_oportunity=<%=gu_oportunity%>" CLASS="linkplain">Show Enrollment</A></TD>
-        	  <%/** Fin I2E **/ %>
         </TR>
-  -->
-  <%/** Fin I2E **/ %>
+      -->
       </TABLE>
   <DIV style="background-color:transparent; position: relative;width:600px;height:496px">
   <DIV id="p1panel0" class="panel" style="background-color:#eee;z-index:2">
@@ -484,6 +493,7 @@
     <INPUT TYPE="hidden" NAME="gu_writer" VALUE="<%=id_user%>">
     <INPUT TYPE="hidden" NAME="gu_list" VALUE="<%=gu_list%>">
     <INPUT TYPE="hidden" NAME="id_former_status" VALUE="<%=oOprt.getStringNull(DB.id_status,"")%>">
+    <INPUT TYPE="hidden" NAME="nu_oportunities" VALUE="<% if (oOprt.isNull(DB.nu_oportunities)) out.write("1"); else out.write(String.valueOf(oOprt.getInt(DB.nu_oportunities))); %>">
 
 <% if ((iAppMask & (1<<Marketing))==0) { %>
     <INPUT TYPE="hidden" NAME="gu_campaign" VALUE="<%=oOprt.getStringNull(DB.gu_campaign,"")%>">
@@ -493,7 +503,7 @@
         <TABLE ALIGN="center">
           <TR>
             <TD ALIGN="right" WIDTH="175"><FONT CLASS="formplain">Opportunity for</FONT></TD>
-            <TD ALIGN="left" WIDTH="420" CLASS="formplain">
+            <TD ALIGN="left" WIDTH="420" CLASS="formplain"><TABLE><TR><TD VALIGN="middle">
               &nbsp;<I>
               <%
                 if (de_list!=null)
@@ -506,8 +516,8 @@
                     out.write (" (<A HREF=\"company_edit.jsp?id_domain="+ id_domain + "&n_domain=" + Gadgets.URLEncode(n_domain) + "&gu_company=" + gu_company + "&n_company=" + Gadgets.URLEncode(oComp.getString(DB.nm_legal)) + "&gu_workarea=" + gu_workarea + "&noreload=1\">" + oComp.getString(DB.nm_legal) + "</A>)");
                 }
               %>
-              </I>
-            </TD>
+              </I></TD>
+            </TR></TABLE></TD>
           </TR>
 		  <!-- Inicio I2E 2009-12-15 -->	         
           <TR>
@@ -550,7 +560,7 @@
             <TD ALIGN="right" WIDTH="175"><FONT CLASS="formstrong">Objective:</FONT></TD>
             <!-- Fin I2E -->
             <TD ALIGN="left" WIDTH="420">
-              <SELECT NAME="sel_objetive" onChange="if (document.forms[0].tl_oportunity.value.length==0) document.forms[0].tl_oportunity.value=getComboText(document.forms[0].sel_objetive);"><OPTION VALUE=""></OPTION><%=sObjectiveLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Objectives List"></A>
+              <SELECT NAME="sel_objetive"><OPTION VALUE=""></OPTION><%=sObjectiveLookUp%></SELECT>&nbsp;<A HREF="javascript:lookup(1)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View Objectives List"></A>
               <INPUT TYPE="hidden" NAME="id_objetive" VALUE="<%=oOprt.getStringNull(DB.id_objetive,"")%>">
             </TD>
           </TR>
@@ -582,12 +592,11 @@
           </TR>
           <TR>
             <TD ALIGN="right" WIDTH="175"><FONT CLASS="formplain">Interest Degree</FONT></TD>
-            <TD ALIGN="left" WIDTH="420">
+            <TD ALIGN="left" WIDTH="420"><FONT CLASS="formplain">
             	<INPUT TYPE="radio" NAME="lv_interest" VALUE="0">&nbsp;None&nbsp;&nbsp;&nbsp;
             	<INPUT TYPE="radio" NAME="lv_interest" VALUE="1">&nbsp;Few&nbsp;&nbsp;&nbsp;
             	<INPUT TYPE="radio" NAME="lv_interest" VALUE="2">&nbsp;Average&nbsp;&nbsp;&nbsp;
-            	<INPUT TYPE="radio" NAME="lv_interest" VALUE="3">&nbsp;Much&nbsp;&nbsp;&nbsp;
-            	
+            <INPUT TYPE="radio" NAME="lv_interest" VALUE="3">&nbsp;Much&nbsp;&nbsp;&nbsp;</FONT>            	
             </TD>
           </TR>
           <TR>

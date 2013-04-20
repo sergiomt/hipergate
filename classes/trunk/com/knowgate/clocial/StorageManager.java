@@ -14,22 +14,22 @@ import com.knowgate.storage.RecordSet;
 import com.knowgate.storage.DataSource;
 import com.knowgate.storage.DataSourcePool;
 import com.knowgate.storage.StorageException;
-import com.knowgate.storage.RecordQueueProducer;
 
+import com.knowgate.jmsqueue.JMSQueueProducer;
 import com.knowgate.misc.Environment;
 
 public class StorageManager {
   
   private final String PROFILE = "extranet";
   
-  private RecordQueueProducer oRqp;
+  private JMSQueueProducer oRqp;
   private Properties oSyn = new Properties();
   
   public StorageManager()
   	throws StorageException,JMSException,NamingException,InstantiationException {
   	MetaData oMDat = MetaData.getDefaultSchema();
     DataSource oDts = DataSourcePool.get(Engine.DEFAULT, PROFILE, true);
-	oRqp = new RecordQueueProducer(Environment.getProfile(PROFILE));
+	oRqp = new JMSQueueProducer(Environment.getProfile(PROFILE));
 	if (null!=oDts) DataSourcePool.free(oDts);
 	oSyn = new Properties();
     oSyn.put("synchronous","true");

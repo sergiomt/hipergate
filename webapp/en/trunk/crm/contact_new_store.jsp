@@ -41,9 +41,9 @@
 
   String sLanguage = getNavigatorLanguage(request);
       
-  String id_domain = request.getParameter("id_domain");
-  String n_domain = request.getParameter("n_domain");
-  String gu_workarea = request.getParameter("gu_workarea");
+  String id_domain = nullif(request.getParameter("id_domain"),getCookie(request,"domainid",""));
+  String gu_workarea = nullif(request.getParameter("gu_workarea"),getCookie(request,"workarea",""));
+  String gu_oportunity = nullif(request.getParameter("gu_oportunity"));
   String courses = nullif(request.getParameter("courses"),"");
   
   String gu_company, gu_contact, gu_address;
@@ -103,13 +103,9 @@
 
     gu_address = oAddr.getString(DB.gu_address);
 
-    if (com.knowgate.debug.DebugFile.trace)
-      com.knowgate.debug.DebugFile.writeln("INSERT INTO " + DB.k_x_contact_addr + "(" + DB.gu_contact + "," + DB.gu_address + ") VALUES ('" + gu_contact + "','" + gu_address + "')");
-      
-    oStmt = oConn.createStatement();    
-    oStmt.executeUpdate("INSERT INTO " + DB.k_x_contact_addr + "(" + DB.gu_contact + "," + DB.gu_address + ") VALUES ('" + gu_contact + "','" + gu_address + "')");
-    oStmt.close();
-
+    if (!DBCommand.queryExists(oConn,DB.k_x_contact_addr,DB.gu_contact+"='"+gu_contact+"' AND "+DB.gu_address+"='"+gu_address+"'"))
+    	oCont.addAddress(oConn, gu_address);
+	
 	  if (!oAddr.isNull(DB.nm_state)) {
       if (null==DBCommand.queryStr(oConn, "SELECT "+DB.gu_geozone+" FROM "+DB.k_contacts+" WHERE "+DB.gu_contact+"='"+gu_contact+"'")) {
         oPtmt = oConn.prepareStatement("SELECT "+DB.gu_term+" FROM "+DB.k_thesauri+" WHERE "+DB.id_domain+"=? AND "+DB.id_language+"=? AND "+DB.tx_term+"=?");
@@ -140,7 +136,18 @@
       }
       oPtmt.close();
     } // fi (courses!="")
-    
+
+    // *********************************
+    // Assign contact to opportunity
+
+    if (gu_oportunity.length()>0) {
+    	DBPersist oXoc = new DBPersist(DB.k_x_oportunity_contacts, "OportunityContacts");
+    	oXoc.put(DB.gu_oportunity, gu_oportunity);
+    	oXoc.put(DB.gu_contact, gu_contact);
+    	if (nullif(request.getParameter("tp_relation")).length()>0) oXoc.put(DB.tp_relation, request.getParameter("tp_relation"));
+      oXoc.store(oConn);
+    }
+
     // *********************************
     // Add Contact to Recently Used list
 
@@ -226,6 +233,6 @@
   oConn = null;
   
   // Refresh parent and close window, or put your own code here
-  out.write ("<HTML><HEAD><TITLE>Wait...</TITLE><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>window.parent.opener.location.reload(true); window.parent.close();<" + "/SCRIPT" +"></HEAD></HTML>");
+  out.write ("<HTML><HEAD><TITLE>Wait...</TITLE><" + "SCRIPT LANGUAGE='JavaScript' TYPE='text/javascript'>if (window.parent) { window.parent.opener.location.reload(true); window.parent.close(); } else if (\""+gu_oportunity+"\"!=\"\") { document.location = \"oportunity_edit.jsp?gu_oportunity="+gu_oportunity+"&gu_workarea="+gu_workarea+"&id_domain="+id_domain+"\" }<" + "/SCRIPT" +"></HEAD></HTML>");
 
 %>

@@ -80,7 +80,7 @@
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
     <TITLE>hipergate :: Corporate Chart Tree</TITLE>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <SCRIPT TYPE="text/javascript">
     <!--
           
     document.write ('<LINK REL="stylesheet" TYPE="text/css" HREF="../skins/xp/styles.css">');
@@ -113,10 +113,10 @@
   //-->
   </SCRIPT>
 
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/treemenu.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/treemenu.js"></SCRIPT>
 
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
   <!--
     
     var treeMenu = new TreeMenu();   // This is the main menu.  
@@ -183,7 +183,7 @@
   //-->
   </SCRIPT>
 
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/scroller.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/scroller.js"></SCRIPT>
     
 </HEAD>
   <FRAMESET NAME="orgtop" COLS="270,*" >

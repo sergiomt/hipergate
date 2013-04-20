@@ -32,14 +32,12 @@
 
 package com.knowgate.lucene;
 
-import java.sql.SQLException;
-import java.util.Comparator;
 import java.util.Properties;
 import java.io.File;
 import java.io.IOException;
 
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Hits;
+import org.apache.lucene.store.Directory;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.BooleanClause;
@@ -55,7 +53,7 @@ import com.knowgate.misc.Gadgets;
 /**
  * Search into a Lucene full text index for contacts
  * @author Alfonso Marín López
- * @version 1.0
+ * @version 7.0
  */
 public class ContactSearcher {
 
@@ -127,12 +125,12 @@ public class ContactSearcher {
 				DebugFile.writeln(e.getMessage());
 		} 
 	}
-    IndexSearcher oSearch = new IndexSearcher(sSegments);
+	Directory oFsDir = Indexer.openDirectory(sSegments);
+    IndexSearcher oSearch = new IndexSearcher(oFsDir);
     
     Document oDoc;
 
     ContactRecord aRetArr[] = null;
-    //Recorremos los resultados y los vamos añadiendo al map
     
       TopDocs oTopSet = oSearch.search(oQry, null, 20);
       if (oTopSet.scoreDocs!=null) {
@@ -150,6 +148,7 @@ public class ContactSearcher {
       }
    
     oSearch.close();
+    oFsDir.close();
 
     if (DebugFile.trace) {
       DebugFile.decIdent();

@@ -1,5 +1,6 @@
 CREATE FUNCTION k_sp_del_meeting (CHAR) RETURNS INTEGER AS '
 BEGIN
+  UPDATE k_activities SET gu_meeting=NULL WHERE gu_meeting=$1;
   DELETE FROM k_x_meeting_contact WHERE gu_meeting=$1;
   DELETE FROM k_x_meeting_fellow WHERE gu_meeting=$1;
   DELETE FROM k_x_meeting_room WHERE gu_meeting=$1;

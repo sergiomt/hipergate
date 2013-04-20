@@ -39,6 +39,9 @@ import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.Types;
 
+import java.util.Map;
+import java.util.Iterator;
+
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBPersist;
@@ -59,7 +62,7 @@ public class Atom extends DBPersist {
 
   /**
    * <p>Load Atom from an open ResultSet</p>
-   * When loading an Atom standard alises are created for several database fields.<br>
+   * When loading an Atom standard aliases are created for several database fields.<br>
    * These aliases allow referencing database fields from document templates with a
    * user friendly syntax.<br>
    * When processing the Atom, all document references will be resolved to actual database
@@ -72,6 +75,7 @@ public class Atom extends DBPersist {
    * <tr><td>tx_surname</td><td>Data.Surname</td><td>Datos.Apellidos</td></tr>
    * <tr><td>tx_salutation</td><td>Data.Salutation</td><td>Datos.Saludo</td></tr>
    * <tr><td>nm_commercial</td><td>Data.Legal_Name</td><td>Datos.Razon_Social</td></tr>
+   * <tr><td>tx_pwd</td><td>Data.Password</td><td>Datos.Password</td></tr>
    * <tr><td>url_addr</td><td>Address.URL</td><td>Direccion.URL</td></tr>
    * <tr><td>tx_email</td><td>Address.EMail</td><td>Direccion.EMail</td></tr>
    * <tr><td>tp_street</td><td>Address.Street_Type</td><td>Direccion.Tipo_Via</td></tr>
@@ -95,12 +99,11 @@ public class Atom extends DBPersist {
 
     int iCols = oMetaData.getColumnCount();
     String sCol;
-    Object oCol;
 
     for (int c=1; c<=iCols; c++) {
 
       sCol = oMetaData.getColumnName(c);
-      oCol = oRow.getObject(c);
+      oRow.getObject(c);
 
       if (!oRow.wasNull()) {
 
@@ -132,6 +135,12 @@ public class Atom extends DBPersist {
           put("Data.Salutation", oRow.getString(c));
           put("Datos.Saludo", oRow.getString(c));
         }
+        else if (sCol.equalsIgnoreCase(DB.tx_pwd)) {
+
+            put(DB.tx_pwd, oRow.getString(c));
+            put("Data.Password", oRow.getString(c));
+            put("Datos.Password", oRow.getString(c));
+          }
         else if (sCol.equalsIgnoreCase(DB.nm_commercial)) {
 
           put(DB.nm_commercial, oRow.getString(c));
@@ -230,14 +239,202 @@ public class Atom extends DBPersist {
           parseParameters(oRow.getString(c));
 
         else
-          put(oMetaData.getColumnName(c).toLowerCase(), oRow.getObject(c));
+          put(oMetaData.getColumnName(c).toLowerCase(), oRow.getString(c));
+
+      } // fi (wasNull())
+    } // next (c)
+  }
+  
+  // ----------------------------------------------------------
+
+  /**
+   * <p>Load Atom from an open ResultSet</p>
+   * When loading an Atom standard aliases are created for several database fields.<br>
+   * These aliases allow referencing database fields from document templates with a
+   * user friendly syntax.<br>
+   * When processing the Atom, all document references will be resolved to actual database
+   * values for corresponding fields.<br>
+   * <table border=1 cellpadding=4>
+   * <tr><td><b>Database Field</b></td><td><b>English Alias</b></td><td><b>Spanish Alias</b></td></tr>
+   * <tr><td>gu_company</td><td>Data.Company_Guid</td><td>Datos.Guid_Empresa</td></tr>
+   * <tr><td>gu_contact</td><td>Data.Contact_Guid</td><td>Datos.Guid_Contacto</td></tr>
+   * <tr><td>tx_name</td><td>Data.Name</td><td>Datos.Nombre</td></tr>
+   * <tr><td>tx_surname</td><td>Data.Surname</td><td>Datos.Apellidos</td></tr>
+   * <tr><td>tx_salutation</td><td>Data.Salutation</td><td>Datos.Saludo</td></tr>
+   * <tr><td>nm_commercial</td><td>Data.Legal_Name</td><td>Datos.Razon_Social</td></tr>
+   * <tr><td>tx_pwd</td><td>Data.Password</td><td>Datos.Password</td></tr>
+   * <tr><td>url_addr</td><td>Address.URL</td><td>Direccion.URL</td></tr>
+   * <tr><td>tx_email</td><td>Address.EMail</td><td>Direccion.EMail</td></tr>
+   * <tr><td>tp_street</td><td>Address.Street_Type</td><td>Direccion.Tipo_Via</td></tr>
+   * <tr><td>nm_street</td><td>Address.Street_Name</td><td>Direccion.Nombre_Via</td></tr>
+   * <tr><td>nu_street</td><td>Address.Street_Num</td><td>Direccion.Numero_Via</td></tr>
+   * <tr><td>tx_addr1</td><td>Address.Line1</td><td>Direccion.Linea1</td></tr>
+   * <tr><td>tx_addr2</td><td>Address.Line2</td><td>Direccion.Linea2</td></tr>
+   * <tr><td>nm_country</td><td>Address.Country</td><td>Direccion.Pais</td></tr>
+   * <tr><td>nm_state</td><td>Address.State</td><td>Direccion.Provincia</td></tr>
+   * <tr><td>mn_city</td><td>Address.City</td><td>Direccion.Ciudad</td></tr>
+   * <tr><td>zipcode</td><td>Address.Zipcode</td><td>Direccion.Codigo_Postal</td></tr>
+   * <tr><td>fax_phone</td><td>Address.Fax_Phone</td><td>Direccion.Telf_Fax</td></tr>
+   * <tr><td>work_phone</td><td>Address.Proffesional_Phone</td><td>Direccion.Telf_Profesional</td></tr>
+   * </table>
+   * @param oRow Open ResultSet positioned at the row that must be loaded in this Atom
+   * @param oMetaData ResultSetMetaData
+   * @throws SQLException
+   * @since 7.0
+   */
+  public Atom(Map<String,Object> mCols) throws SQLException {
+    super(DB.k_job_atoms, "Atom");
+
+    String sCol;
+    Object oCol;
+
+    Iterator<String> oKeys = mCols.keySet().iterator();    
+    while (oKeys.hasNext()) {
+
+      sCol = oKeys.next();
+      oCol = mCols.get(sCol);
+
+      if (oCol!=null) {
+
+        if (sCol.equalsIgnoreCase(DB.gu_company)) {
+          put(DB.gu_company, oCol.toString());
+          put("Data.Company_Guid", oCol.toString());
+          put("Datos.Guid_Empresa", oCol.toString());        	
+        }
+        else if (sCol.equalsIgnoreCase(DB.gu_contact)) {
+          put(DB.gu_contact, oCol.toString());
+          put("Data.Contact_Guid", oCol.toString());
+          put("Datos.Guid_Contacto", oCol.toString());
+        }
+        else if (sCol.equalsIgnoreCase(DB.tx_name)) {
+
+          put(DB.tx_name, oCol.toString());
+          put("Data.Name", oCol.toString());
+          put("Datos.Nombre", oCol.toString());
+        }
+        else if (sCol.equalsIgnoreCase(DB.tx_surname)) {
+
+          put(DB.tx_surname, oCol.toString());
+          put("Data.Surname", oCol.toString());
+          put("Datos.Apellidos", oCol.toString());
+        }
+        else if (sCol.equalsIgnoreCase(DB.tx_salutation)) {
+
+          put(DB.tx_salutation, oCol.toString());
+          put("Data.Salutation", oCol.toString());
+          put("Datos.Saludo", oCol.toString());
+        }
+        else if (sCol.equalsIgnoreCase(DB.nm_commercial)) {
+
+          put(DB.nm_commercial, oCol.toString());
+          put("Data.Legal_Name", oCol.toString());
+          put("Datos.Razon_Social", oCol.toString());
+        }
+        else if (sCol.equalsIgnoreCase(DB.tx_pwd)) {
+          put(DB.tx_pwd, oCol.toString());
+          put("Data.Password", oCol.toString());
+          put("Datos.Password", oCol.toString());
+        }
+        else if (sCol.equalsIgnoreCase(DB.tx_email)) {
+
+          put(DB.tx_email, oCol.toString());
+          put("Address.EMail", oCol.toString());
+          put("Direccion.EMail", oCol.toString());
+        }
+        else if (sCol.equalsIgnoreCase(DB.tp_street)) {
+
+          put(DB.tp_street, oCol.toString());
+          put("Address.Street_Type", oCol.toString());
+          put("Direccion.Tipo_Via", oCol.toString());
+        }
+        else if (sCol.equalsIgnoreCase(DB.nm_street)) {
+
+          put(DB.nm_street, oCol.toString());
+          put("Address.Street_Name", oCol.toString());
+          put("Direccion.Nombre_Via", oCol.toString());
+        }
+        else if (sCol.equalsIgnoreCase(DB.nu_street)) {
+
+          put(DB.nu_street, oCol.toString());
+          put("Address.Street_Num", oCol.toString());
+          put("Direccion.Numero_Via", oCol.toString());
+        }
+        else if (sCol.equalsIgnoreCase(DB.tx_addr1)) {
+
+          put(DB.tx_addr1, oCol.toString());
+          put("Address.Line1", oCol.toString());
+          put("Direccion.Linea1", oCol.toString());
+        }
+        else if (sCol.equalsIgnoreCase(DB.tx_addr2)) {
+
+          put(DB.tx_addr2, oCol.toString());
+          put("Address.Line2", oCol.toString());
+          put("Direccion.Linea2", oCol.toString());
+        }
+        else if (sCol.equalsIgnoreCase(DB.nm_country)) {
+
+          put(DB.nm_country, oCol.toString());
+          put("Address.Country", oCol.toString());
+          put("Direccion.Pais", oCol.toString());
+        }
+        else if (sCol.equalsIgnoreCase(DB.nm_state)) {
+
+          put(DB.nm_state, oCol.toString());
+          put("Address.State", oCol.toString());
+          put("Direccion.Provincia", oCol.toString());
+        }
+        else if (sCol.equalsIgnoreCase(DB.mn_city)) {
+
+          put(DB.mn_city, oCol.toString());
+          put("Address.City", oCol.toString());
+          put("Direccion.Ciudad", oCol.toString());
+        }
+        else if (sCol.equalsIgnoreCase(DB.zipcode)) {
+
+          put(DB.zipcode, oCol.toString());
+          put("Address.Zipcode", oCol.toString());
+          put("Direccion.Codigo_Postal", oCol.toString());
+        }
+        else if (sCol.equalsIgnoreCase(DB.work_phone)) {
+
+          put(DB.work_phone, oCol.toString());
+          put("Address.Proffesional_Phone", oCol.toString());
+          put("Direccion.Telf_Profesional", oCol.toString());
+        }
+        else if (sCol.equalsIgnoreCase(DB.fax_phone)) {
+
+          put(DB.fax_phone, oCol.toString());
+          put("Address.Fax_Phone", oCol.toString());
+          put("Direccion.Telf_Fax", oCol.toString());
+        }
+        else if (sCol.equalsIgnoreCase(DB.mov_phone)) {
+
+          put(DB.mov_phone, oCol.toString());
+          put("Address.Mobile_Phone", oCol.toString());
+          put("Direccion.Telf_Movil", oCol.toString());
+        }
+        else if (sCol.equalsIgnoreCase(DB.url_addr)) {
+
+          put(DB.url_addr, oCol.toString());
+          put("Address.URL", oCol.toString());
+          put("Direccion.URL", oCol.toString());
+        }
+        else if (sCol.equalsIgnoreCase(DB.tx_parameters))
+
+          // Si el campo recibido se llama tx_parameters
+          // parsearlo para convertir en propiedades del objeto Atom
+          // los campos empotrados dentro del texto.
+          parseParameters((String) oCol);
+
+        else
+          put(sCol.toLowerCase(), oCol);
 
       } // fi (wasNull())
     } // next (c)
   }
 
   // ----------------------------------------------------------
-
+  
   private void parseParameters(String sTxParams) {
     String aVariable[];
     String aParams[] = Gadgets.split(sTxParams, ",");

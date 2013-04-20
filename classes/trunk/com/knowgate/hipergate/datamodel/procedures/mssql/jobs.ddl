@@ -51,7 +51,7 @@ GO;
 CREATE PROCEDURE k_sp_resolve_atoms @IdJob CHAR(32) AS
   DECLARE @WrkAGu CHAR(32)
   DECLARE @AtomPg INTEGER
-  DECLARE Atoms CURSOR LOCAL STATIC FOR SELECT pg_atom FROM k_job_atoms WHERE gu_job = @IdJob
+  DECLARE Atoms CURSOR LOCAL STATIC FOR SELECT pg_atom FROM k_job_atoms WHERE gu_job = @IdJob AND id_status<>3
 
   SET @WrkAGu=NULL
   SELECT @WrkAGu=gu_workarea FROM k_jobs WHERE gu_job=@IdJob

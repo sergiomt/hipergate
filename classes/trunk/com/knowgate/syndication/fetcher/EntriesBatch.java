@@ -37,9 +37,12 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.HashMap;
 
+import com.knowgate.dfs.FileSystem;
 import com.knowgate.misc.Gadgets;
+import com.knowgate.dataobjs.DB;
 import com.knowgate.debug.DebugFile;
 import com.knowgate.storage.DataSource;
+import com.knowgate.storage.Engine;
 import com.knowgate.syndication.FeedEntry;
 import com.knowgate.syndication.fetcher.BDBFeedInfoCache;
 
@@ -50,7 +53,7 @@ import com.sun.syndication.fetcher.impl.FeedFetcherCache;
  */
 public class EntriesBatch {
 
-  private BDBFeedInfoCache oCache;
+  private FeedFetcherCache oCache;
   private String sDir;     // Path of directory for caching RSS feeds
   private Properties oPrp; // Environment properties
   private DataSource oDts; // DataSource where indexes will be stored
@@ -71,6 +74,12 @@ public class EntriesBatch {
   	}
   	else {
   	  sDir = Gadgets.chomp(oPrp.getProperty("storage"),File.separator)+"syndication";
+  	  if (!new File(sDir).exists()) {
+  		try { new FileSystem().mkdirs("file://"+sDir); }
+  		catch (Exception xcpt) {
+  		  if (DebugFile.trace) DebugFile.writeln("Could not create directory "+sDir+" "+xcpt.getClass().getName()+" "+xcpt.getMessage());
+  		}
+  	  }
   	}
   	oCache = null;
     mEntries = new HashMap<String,FeedEntry>(500);
@@ -78,10 +87,9 @@ public class EntriesBatch {
   }
 
   public void close() {
-	if (oCache!=null) {
-	  oCache.close();
-	  oCache=null;
-	}
+	if (oCache instanceof BDBFeedInfoCache)
+	  ((BDBFeedInfoCache) oCache).close();
+	oCache=null;
 	mEntries.clear();
 	mEntries=null;
 	aFetchers.clear();
@@ -142,15 +150,15 @@ public class EntriesBatch {
   	return bContains;
   } // contains
 
-  /**
-   * Get full path to directory where RSS feeds cache is kept
-   */
-  private String getFeedsCacheDirectory() {
-  	return sDir;
-  }
 
-  public BDBFeedInfoCache getFeedsCache() {
-  	if (null==oCache && sDir!=null) oCache = new BDBFeedInfoCache(sDir);
+  public FeedFetcherCache getFeedsCache() {
+  	if (null==oCache && sDir!=null) {
+  	  Engine oEng = oDts.getEngine();
+  	  if (oEng.equals(Engine.BERKELYDB))
+  	    oCache = new BDBFeedInfoCache(sDir);
+  	  else if (oEng.equals(Engine.JDBCRDBMS))
+  		oCache = new DBFeedInfoCache(oDts);
+  	}
   	return oCache;
   }
 
@@ -225,10 +233,9 @@ public class EntriesBatch {
       }
     } // next  	
 
-	if (oCache!=null) {
-	  oCache.close();
-	  oCache=null;
-	}  	
+	if (oCache instanceof BDBFeedInfoCache)
+	  ((BDBFeedInfoCache) oCache).close();
+	oCache=null;
 
   	if (DebugFile.trace) {
       int nMapping = 0;
@@ -243,8 +250,15 @@ public class EntriesBatch {
 
     for (AbstractEntriesFetcher f : aFetchers) {
       for (FeedEntry e : f.entries()) {
-		if (!mEntries.containsKey(e.getURL()))
-		  mEntries.put(e.getURL(), e);
+    	String sUrl = e.getURL();
+    	if (sUrl.length()>0) {
+          if (!mEntries.containsKey(sUrl))
+    	    mEntries.put(e.getURL(), e);    		
+    	} else {
+    	  if (DebugFile.trace) {
+    	    DebugFile.writeln("EntriesBatch.mapReduce() NullPointerException URL of "+f.getSourceType()+" entry "+e.getString(DB.tl_entry,"")+" is null");
+    	  }
+    	}
       }
     } // next
 		

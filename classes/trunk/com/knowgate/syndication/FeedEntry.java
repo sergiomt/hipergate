@@ -36,29 +36,20 @@ import java.net.URL;
 import java.io.IOException;
 
 import java.util.Date;
-import java.util.ArrayList;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.PreparedStatement;
-
-import com.knowgate.jdc.JDCConnection;
 
 import com.knowgate.dataobjs.DB;
 import com.knowgate.misc.Gadgets;
 
 import com.knowgate.debug.DebugFile;
-import com.knowgate.debug.StackTraceUtil;
-import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndEntryImpl;
 
 import com.knowgate.clocial.Serials;
 
-import com.knowgate.storage.Table;
-import com.knowgate.storage.Engine;
 import com.knowgate.storage.DataSource;
+import com.knowgate.storage.Engine;
 import com.knowgate.storage.RecordDelegator;
 import com.knowgate.storage.StorageException;
+import com.knowgate.storage.Table;
 
 /**
  * Store a SyndEntry object at either a RDBMS or a NoSQL engine
@@ -80,14 +71,13 @@ public class FeedEntry extends RecordDelegator {
   }
   
   public SyndEntryImpl getEntry() throws IOException,ClassNotFoundException {
-  	SyndEntryImpl oRetVal;
   	if (!containsKey(DB.bin_entry))
       put(DB.bin_entry, new SyndEntryImpl());
     return (SyndEntryImpl) get(DB.bin_entry);
   }
 
   public String getURL() {
-    return getString(DB.url_addr);
+    return getString(DB.url_addr,"");
   }
 
   public void putEntry(SyndEntryImpl oEntry) throws IllegalArgumentException {
@@ -134,5 +124,14 @@ public class FeedEntry extends RecordDelegator {
   	  put(DB.dt_published, oEntry.getPublishedDate());
   	if (oEntry.getUpdatedDate()!=null) put(DB.dt_modified, oEntry.getUpdatedDate());
   	put(DB.bin_entry, oEntry);
-  } // putEntry 
+  } // putEntry
+  
+  public String store(Table oTbl) throws StorageException {
+	DataSource oDts = oTbl.getDataSource();
+	if (oDts.getEngine().equals(Engine.JDBCRDBMS)) {
+	  if (isNull("id_syndentry"))
+		put ("id_syndentry", oDts.nextVal("seq_"+DB.k_syndentries));
+	}
+	return super.store(oTbl);
+  }    
 }

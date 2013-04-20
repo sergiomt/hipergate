@@ -1,0 +1,437 @@
+<!--
+.backplane      { background-color:silver }
+
+.linkplain      { color:darkblue;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:9pt }
+.linkstrong      { color:darkblue;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:9pt;font-weight:bold }
+.linksmall      { color:darkblue;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:8pt }
+.linknodecor    { color:darkblue;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:9pt;text-decoration:none }
+
+.textplain      { color:black;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:9pt;text-decoration:none }
+.textstrong     { color:black;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:9pt;text-decoration:none;font-weight:bold }
+.textsmall      { color:black;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:8pt;text-decoration:none }
+.textbigstrong  { color:black;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:11pt;text-decoration:none;font-weight:bold }
+.textplaininv   { color:white;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:9pt;text-decoration:none }
+.textsmallinv   { color:white;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:8pt;text-decoration:none }
+.textsmallfront { background-color:floralwhite;color:black;font-family:Verdana,Arial,Helvetica,sans-serif;font-size:8pt }
+.textcode       { color:black;font-family:Courier New,Courier,monospace;font-size:14px }
+.textplainlight { color:dimgray;font-family:Arial,Verdana,Helvetica,sans-serif;font-size:9pt; }
+
+.calendarday    { color:darkblue;font-family:Verdana,Arial,Helvetica,sans-serif;font-size:8pt;text-decoration:none }
+.selectsmall    { color:black;font-family:Verdana,Arial,Helvetica,sans-serif;font-size:7pt }
+
+.formback       { background-color:#CECEFF; }
+.formfront      { background-image:url(formbg.jpg);background-repeat:repeat-x;background-color:#d8d8d8; }
+
+.formplain      { color:black;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:10pt }
+.formstrong     { color:black;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:10pt;font-weight:bold }
+.forminvstrong  { color:whitesmoke;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:10pt;font-weight:bold }
+
+.pushbutton     { font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:9pt;width:100px }
+.anotherbutton  { font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:9pt;width:100px }
+.closebutton    { font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:9pt;width:100px }
+.minibutton     { font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:8pt;height:20px }
+
+.title1         { color:#2222B2;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:11pt;font-weight:bold }
+.title1inv      { color:white;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:11pt;font-weight:bold }
+.title2         { color:#2222B2;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:10pt;font-weight:bold }
+
+.subtitle       { background-color:#5757c7;color:white;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:10pt;font-weight:bold }
+
+.stripheader	  { background-color:#034E7A }
+.striptitle	    { background-image:url(gloss_sm.png)  }
+.strip1	        { background-color:white;color:black;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:9pt; }
+.strip2	        { background-color:whitesmoke;color:black;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:9pt; }
+.stripr	        { background-color:tomato;color:black;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:9pt; }
+.striplv0	      { background-color:white;color:dimgray;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:9pt; }
+.striplv1	      { background-color:#dadada;color:black;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:9pt; }
+.striplv2	      { background-color:#c0cada;color:black;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:9pt; }
+.striplv3	      { background-color:#b0bada;color:black;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:9pt; }
+
+.tableheader    { background-color:white;color:black;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:9pt;height:20px; }
+.tabletr        { background-color:#EFEBDE;color:black;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:9pt; }
+.tabletd        { background-color:white;color:black;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:9pt; }
+.tableborder    { border-style:solid;border-width:1px;border-color:#EFEBDE }
+
+.lightshadow    { }
+
+.poptip         { background-color:white;border-width:4px;padding:2; }
+
+.flatinput      { color:black;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:9pt;border:none }
+.combomini      { font-family:Verdana,sans-serif,Arial,Helvetica;font-size:7pt;height:18px; }
+.textmini       { height:18px;font-family:Verdana,sans-serif,Arial,Helvetica;font-size:7pt }
+
+.actual 	{ font-family:Trebuchet MS,Verdana,Arial,Helvetica,sans-serif;font-size:8pt;color:black;text-decoration:none }
+.opcion 	{ font-family:Trebuchet MS,Verdana,Arial,Helvetica,sans-serif;font-size:8pt;color:#333333;text-decoration:none }
+.opcion:hover   { text-decoration:underline }
+
+.menu1    { background-color:white }
+.menu2 		{ background-color:#EFF0E8 }
+.menu3 		{ background-image:url(menu_gradient.png) }
+.menu4 		{ background-image:url(menu_gradient2.png) }
+.menu5 		{ background-image:url(menu_gradient5.png) }
+.menu6 		{ background-color:#DCDCDC }
+.menu7 		{ background-image:url(menu_gradient7.png) }
+.menu8 		{ background-image:url(menu_gradient8.png) }
+
+body            { background-color:white;
+		  color:black;
+		  margin-top:0px;
+		}
+
+input.ttu	{ text-transform:uppercase; }
+
+input.ttl	{ text-transform:lowercase; }
+
+/* Context (right-click) menus */
+
+.rightMenuSkin1	{ font:menutext;position:absolute;text-align:left;font-family:Trebuchet MS,Arial,Helvetica,sans-serif;font-size:10pt;width:120px;background-color:menu;border:1 solid buttonface;visibility:hidden;border:2 outset buttonhighlight; }
+.rightMenuItems	{ padding-left:15px; padding-right:10px; font-size:8pt; }
+
+
+.menuE,.menuD,.menuEo,.menuDo,.menuCP { 
+  font-family:Trebuchet MS,Tahoma,Arial,Helvetica,sans-serif;
+  font-size:8pt;
+  padding-left:18px;
+  padding-top:2px;
+  padding-bottom:2px;
+  margin:1px;
+  }
+.menuE	{ color:#000000;background-color:#D6D3CE;text-decoration:none; }
+.menuEo { color:#FFFFFF;background-color:#08246B; }
+.menuD	{ color:#848484;background-color:#D6D3CE; }
+.menuDo	{ color:#848484;background-color:#08246B; }
+.menuCP { color:#000000;background-color:#D6D3CE;text-decoration:none;font-weight:bolder; }
+.menuDiv{ visibility:hidden;position:absolute;top:-1000px; }
+
+.cxMnu1 { 
+  border-top:1px solid #D6D3CE;
+  border-left:1px solid #D6D3CE;
+  border-right:1px solid #424142;
+  border-bottom:1px solid #424142;
+}
+.cxMnu2 {
+  font-family:Trebuchet MS,Tahoma,Verdana,Arial,Helvetica,sans-serif;
+  font-size:8pt;
+  border-top:1px solid #fff;
+  border-left:1px solid #fff;
+  background-color:#EFEBDE;
+  border-right:1px solid #848284;
+  border-bottom:1px solid #848284;
+}
+.cmMnuOptOffNorm,.cmMnuOptOnNorm,.cmMnuOptOffBold,.cmMnuOptOnBold,.cmMnuOptOffDisb,.cmMnuOptOnDisb {
+  padding-top:2px;
+  padding-bottom:2px;
+  padding-left:18px;
+  cursor:default;
+}
+.cmMnuOptOffBold,.cmMnuOptOnBold {
+  font-weight:bolder;
+}
+.cmMnuOptOffNorm,.cmMnuOptOffBold {
+  color:#333;
+  background-color:transparent;
+}
+.cmMnuOptOnNorm,.cmMnuOptOnBold {
+  color:#fff;
+  background-color:#08246B;
+}
+.cmMnuOptOffDisb {
+  color:#848284;
+  background-color:transparent;
+}
+.cmMnuOptOnDisb {
+  color:#848284;
+  background-color:#08246B;
+}
+.cmMnuSp {
+  background-color:#848284;
+  margin-top:6px;
+  margin-bottom:6px;
+  margin-left:2px;
+  margin-right:2px;
+  border-bottom:1px solid #fff;
+}
+
+/* Horizontal (allweb) Menus */
+
+.hmMnuOff,.hmMnuOn {
+  font-family:Trebuchet MS,Arial,Helvetica,sans-serif;
+  font-size:10pt;
+  cursor:default;
+  padding:2px;
+}
+.hmMnuOff {
+  color:black;
+  background-color:transparent;
+}
+.hmMnuOn {
+  color:#fff;
+  background-color:#887842;
+}
+
+/* Login Page */
+
+.aplicacion { font-family:Verdana,Helvetica,sans-serif; font-size: 10px; color:#000080 }
+.ayuda  { font-family:Trebuchet MS,Arial,Helvetica,sans-serif; font-size:10px; color:black }
+.login  { font-family:Verdana,Arial,Helvetica,sans-serif; font-size:10px; color:white; }
+.box    { font-family:Trebuchet MS,Arial,Helvetica,sans-serif; font-size:11px;color:#000080; background-color:#e1e5ea;height:16px;border:2px;border-color:white;border-style:solid }
+.boton  { background-color:orange;color:white;font-family:Verdana,Arial,Helvetica,sans-serif;font-size:10pt;height:26px;width:100px }
+
+/* 
+================================================
+begin password strength metter style
+================================================
+*/
+
+.strengthMeter {
+	border: 1px solid #B5B8C8;
+	margin: 3px 0 3px 0;
+	background-image: url(meter_background.gif);
+}
+.strengthMeter-focus {
+	border: 1px solid #000;
+}
+.scoreBar {
+	background-image: url(meter.gif);
+	height: 12px;
+	width: 0;
+	line-height: 1px;
+	font-size: 1px;
+	border: 0px;
+}
+
+/* 
+================================================
+end password strength metter style
+================================================
+*/
+
+/* 
+================================================
+begin autosuggest, inquisitor style
+================================================
+*/
+
+div.autosuggest
+{
+	position: absolute;
+	background-image: url(inq/as_pointer.gif);
+	background-position: top;
+	background-repeat: no-repeat;
+	padding: 10px 0 0 0;
+}
+
+div.autosuggest div.as_header,
+div.autosuggest div.as_footer
+{
+	position: relative;
+	height: 6px;
+	padding: 0 6px;
+	background-image: url(inq/ul_corner_tr.gif);
+	background-position: top right;
+	background-repeat: no-repeat;
+	overflow: hidden;
+}
+div.autosuggest div.as_footer
+{
+	background-image: url(inq/ul_corner_br.gif);
+}
+
+div.autosuggest div.as_header div.as_corner,
+div.autosuggest div.as_footer div.as_corner
+{
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 6px;
+	width: 6px;
+	background-image: url(inq/ul_corner_tl.gif);
+	background-position: top left;
+	background-repeat: no-repeat;
+}
+div.autosuggest div.as_footer div.as_corner
+{
+	background-image: url(inq/ul_corner_bl.gif);
+}
+div.autosuggest div.as_header div.as_bar,
+div.autosuggest div.as_footer div.as_bar
+{
+	height: 6px;
+	overflow: hidden;
+	background-color: #333;
+}
+
+
+div.autosuggest ul
+{
+	list-style: none;
+	margin: 0 0 -4px 0;
+	padding: 0;
+	overflow: hidden;
+	background-color: #333;
+}
+
+div.autosuggest ul li
+{
+	color: #ccc;
+	padding: 0;
+	margin: 0 4px 4px;
+	text-align: left;
+}
+
+div.autosuggest ul li a
+{
+	color: #ccc;
+	display: block;
+	text-decoration: none;
+	background-color: transparent;
+	text-shadow: #000 0px 0px 5px;
+	position: relative;
+	padding: 0;
+	width: 100%;
+}
+div.autosuggest ul li a:hover
+{
+	background-color: #444;
+}
+div.autosuggest ul li.as_highlight a:hover
+{
+	background-color: #1B5CCD;
+}
+
+div.autosuggest ul li a span
+{
+	display: block;
+	padding: 3px 6px;
+	font-weight: bold;
+}
+
+div.autosuggest ul li a span small
+{
+	font-weight: normal;
+	color: #999;
+}
+
+div.autosuggest ul li.as_highlight a span small
+{
+	color: #ccc;
+}
+
+div.autosuggest ul li.as_highlight a
+{
+	color: #fff;
+	background-color: #1B5CCD;
+	background-image: url(inq/hl_corner_br.gif);
+	background-position: bottom right;
+	background-repeat: no-repeat;
+}
+
+div.autosuggest ul li.as_highlight a span
+{
+	background-image: url(inq/hl_corner_bl.gif);
+	background-position: bottom left;
+	background-repeat: no-repeat;
+}
+
+div.autosuggest ul li a .tl,
+div.autosuggest ul li a .tr
+{
+	background-image: transparent;
+	background-repeat: no-repeat;
+	width: 6px;
+	height: 6px;
+	position: absolute;
+	top: 0;
+	padding: 0;
+	margin: 0;
+}
+div.autosuggest ul li a .tr
+{
+	right: 0;
+}
+
+div.autosuggest ul li.as_highlight a .tl
+{
+	left: 0;
+	background-image: url(inq/hl_corner_tl.gif);
+	background-position: bottom left;
+}
+
+div.autosuggest ul li.as_highlight a .tr
+{
+	right: 0;
+	background-image: url(inq/hl_corner_tr.gif);
+	background-position: bottom right;
+}
+
+
+
+div.autosuggest ul li.as_warning
+{
+	font-weight: bold;
+	text-align: center;
+}
+
+div.autosuggest ul em
+{
+	font-style: normal;
+	color: #6EADE7;
+}
+
+/* 
+================================================
+end autosuggest, inquisitor style
+================================================
+*/
+
+/* 
+================================================
+begin proto!multiselect styles
+================================================
+*/
+ul.holder { margin: 0; border: 1px solid #999; overflow: hidden; height: auto !important; height: 1%; padding: 4px 5px 0; }
+*:first-child+html ul.holder { padding-bottom: 2px; } * html ul.holder { padding-bottom: 2px; } /* ie7 and below */
+ul.holder li { float: left; list-style-type: none; margin: 0 5px 4px 0; }
+ul.holder li.bit-box, ul.holder li.bit-input input { font: 11px "Trebuchet MS", "Arial"; }
+ul.holder li.bit-box { -moz-border-radius: 6px; -webkit-border-radius: 6px; border-radius: 6px; border: 1px solid #CAD8F3; background: #DEE7F8; padding: 1px 5px 2px; }
+ul.holder li.bit-box-focus { border-color: #598BEC; background: #598BEC; color: #fff; }
+ul.holder li.bit-input input { width: 150px; margin: 0; border: none; outline: 0; padding: 3px 0 2px; } /* no left/right padding here please */
+ul.holder li.bit-input input.smallinput { width: 20px; }
+
+/* Facebook demo CSS */      
+form ol { font: 11px "Trebuchet MS", "Arial"; margin: 0; padding: 0; }
+form ol li.input-text { margin-bottom: 10px; list-style-type: none; border-bottom: 1px dotted #999; padding-bottom: 10px; }
+form ol li.input-text label { font-weight: bold; cursor: pointer; display: block; font-size: 13px; margin-bottom: 10px; }
+form ol li.input-text input { width: 400px; padding: 5px 5px 6px; font: 11px "Trebuchet MS", "Arial"; border: 1px solid #999; }
+form ul.holder { width: 400px; }
+#facebook-list ul.holder li.bit-box, #apple-list ul.holder li.bit-box { padding-right: 15px; position: relative; }
+#apple-list ul.holder li.bit-input { margin: 0; }
+#apple-list ul.holder li.bit-input input.smallinput { width: 5px; }
+ul.holder li.bit-hover { background: #BBCEF1; border: 1px solid #6D95E0; }
+ul.holder li.bit-box-focus { border-color: #598BEC; background: #598BEC; color: #fff; }
+ul.holder li.bit-box a.closebutton { position: absolute; right: 4px; top: 5px; display: block; width: 7px; height: 7px; font-size: 1px; background: url('close.gif'); }
+ul.holder li.bit-box a.closebutton:hover { background-position: 7px; }
+ul.holder li.bit-box-focus a.closebutton, ul.holder li.bit-box-focus a.closebutton:hover { background-position: bottom; }
+
+/* Autocompleter */
+
+#facebook-auto { display: none; position: absolute; width: 412px; background: #eee; }
+#facebook-auto .default { padding: 5px 7px; border: 1px solid #ccc; border-width: 0 1px 1px; }
+#facebook-auto ul { display: none; margin: 0; padding: 0; overflow: auto; }
+#facebook-auto ul li { padding: 5px 12px; z-index: 1000; cursor: pointer; margin: 0; list-style-type: none; border: 1px solid #ccc; border-width: 0 1px 1px; font: 11px "Lucida Grande", "Verdana"; }
+#facebook-auto ul li em { font-weight: bold; font-style: normal; background: #ccc; }
+#facebook-auto ul li.auto-focus { background: #4173CC; color: #fff; }
+#facebook-auto ul li.auto-focus em { background: none; }
+
+#demo ul.holder li.bit-input input { padding: 2px 0 1px; border: 1px solid #999; }
+#add a { color: #666; }
+#add-test { width: 100px; padding: 2px; }
+#button_container { margin-left: 70px; margin-bottom: 30px;}
+
+/* 
+================================================
+end proto!multiselect styles
+================================================
+*/
+
+-->

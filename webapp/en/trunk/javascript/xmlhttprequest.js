@@ -68,7 +68,7 @@ function loadComboCallback() {
       var opt = res.getElementsByTagName("option");
       var len = opt.length;
       for (var o=0; o<len; o++) {
-        cmb[cmb.length] = new Option(opt[o].firstChild.nodeValue, opt[o].attributes.item("value").value, false, false);        	
+        cmb[cmb.length] = new Option(opt[o].firstChild.nodeValue, opt[o].getAttribute("value"), false, false);        	
       }
       PrivateSelectRequest = false;
     }

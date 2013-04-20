@@ -14,7 +14,7 @@ function findit (sValue) {
       sValue = parse[1];
       
     if (sValue == "") {        
-        alert("The string to be searched may not be empty");
+        alert("[~The string to be searched may not be empty~]");
         return;
     }
     
@@ -34,9 +34,9 @@ function findit (sValue) {
         }
         else {
             if (g_pos == '0')
-                alert(sValue + " not found");
+                alert(sValue + "[~ not found~]");
             else
-                alert("No more occurences of " + sValue + " where found");
+                alert("[~No more occurences of ~]" + sValue + "[~ where found~]");
             g_pos=0;
         }
     }

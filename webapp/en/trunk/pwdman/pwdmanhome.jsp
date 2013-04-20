@@ -113,16 +113,16 @@
       float:left;right:340px;margin-left:8px;clear:right;text-align:left;visibility:hidden;
     }
   </STYLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/layer.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/layer.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript">
   <!--
 
     // ----------------------------------------------------------------
@@ -527,7 +527,7 @@
     <INPUT TYPE="submit" VALUE="Set">
   </FORM>
 <% } else {
-     if (bSession) {
+	   if (bSession) {
 		   if (oCatgs!=null) { %>
   <FORM METHOD="post" NAME="fcats" ACTION="category_delete.jsp">
   <DIV CLASS="columnleft">
@@ -563,9 +563,11 @@
 		   sTemplates += "<OPTGROUP LABEL=\"Predefined Services\">";
 		   final int nBrands = aBrands.length;
 		   for (int b=0; b<nBrands; b++) {
-		     oRec.load(aBrands[b].getPath());
-		     sTemplates += "<OPTION VALUE=\"brands"+File.separator+""+aBrands[b].getName()+"\">"+oRec.getName()+"</OPTION>";		   
-		   } // for
+			   if (!aBrands[b].isDirectory() && !aBrands[b].isHidden()) {
+	 	       oRec.load(aBrands[b].getPath());
+		       sTemplates += "<OPTION VALUE=\"brands"+File.separator+""+aBrands[b].getName()+"\">"+oRec.getName()+"</OPTION>";		   
+			   }
+			 } // for
 		   sTemplates += "</OPTGROUP>";
 		 } // fi
 
@@ -573,7 +575,7 @@
 		   sTemplates += "<OPTGROUP LABEL=\"Generic Services\">";       
 		   final int nTemplates = aTemplates.length;
 		   for (int p=0; p<nTemplates; p++) {
-		     if (!aTemplates[p].isDirectory()) {
+		     if (!aTemplates[p].isDirectory() && !aTemplates[p].isHidden()) {
 		       oRec.load(aTemplates[p].getPath());
 		       sTemplates += "<OPTION VALUE=\""+aTemplates[p].getName()+"\">"+oRec.getName()+"</OPTION>";
 		     } // fi

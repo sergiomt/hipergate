@@ -1,4 +1,4 @@
-<%@ page contentType="image/jpeg" import="java.net.URLDecoder,java.io.IOException,java.io.OutputStream,java.io.File,java.io.FileInputStream,java.io.FileOutputStream,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets" language="java" session="false" contentType="image/jpeg" %><%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%
+<%@ page contentType="image/jpeg" import="java.net.URLDecoder,java.io.IOException,java.io.OutputStream,java.io.File,java.io.FileInputStream,java.io.FileOutputStream" language="java" session="false" contentType="image/jpeg" %><%
 String sServletPath = request.getRealPath(request.getServletPath());
 sServletPath = sServletPath.substring(0,sServletPath.lastIndexOf(File.separator));
 sServletPath = sServletPath.substring(0,sServletPath.lastIndexOf(File.separator));

@@ -98,15 +98,11 @@
   															 "l."+DB.gu_list+",l."+DB.tx_subject+",l."+DB.de_list,
   															 "x."+DB.gu_mailing+"=? AND x."+DB.gu_list+"=l."+DB.gu_list, 20);
   int iSelec = 0;
-  DBSubset oLists = new DBSubset(DB.k_lists, DB.gu_list +"," + DB.tp_list + "," + DB.gu_query + "," + DB.tx_subject + "," + DB.de_list, DB.tp_list+"<>4 AND "+DB.gu_workarea + "=? ORDER BY 4", 100 );
-  int iListCount = 0;
   JDCConnection oConn = null;  
   StringBuffer oBuffer = new StringBuffer();
 
   try {
     oConn = GlobalDBBind.getConnection("listlisting");
-
-    iListCount = oLists.load (oConn, new Object[]{gu_workarea});
 
     iSelec = oSelec.load (oConn, new Object[]{gu_pageset});
 
@@ -133,7 +129,6 @@
     oConn.close("listlisting"); 
   }
   catch (SQLException e) {  
-    oLists = null;
     if (null!=oConn) oConn.close("listlisting");
     response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=SQLException&desc=" + e.getLocalizedMessage() + "&resume=_back"));
     return;
@@ -142,12 +137,12 @@
 
 %><HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript">
     <!--
     
     var jsList;
@@ -195,8 +190,8 @@
 
   //-->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="listtreemenu.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" SRC="listtreemenu.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
         function programJob() {
           var frm = document.forms[0];
@@ -313,7 +308,7 @@
       </DIV>
   </FORM>
 </BODY>
-<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+<SCRIPT TYPE="text/javascript">
   <!--
     var treeMenu = new TreeMenu();  
 <%  out.write(oBuffer.toString()); %>

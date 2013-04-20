@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2003-2011  Know Gate S.L. All rights reserved.
+  Copyright (C) 2003-2012  Know Gate S.L. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -35,6 +35,8 @@ import com.knowgate.storage.Column;
 import com.knowgate.storage.StorageException;
 
 public class IntegrityViolationException extends StorageException {
+
+  private static final long serialVersionUID = 70000l;
 
   public IntegrityViolationException (Column c, Object v) {
   	super("Integrity constraint violation. Value '"+(v==null ? "null" : v)+"' of column "+c.getName()+" does not match constraint "+c.getConstraint());

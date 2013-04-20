@@ -99,15 +99,11 @@
   
   if (tp_recipient.equals("from")) {
     sWhere = "m." + DB.gu_workarea + "=? AND m." + DB.bo_deleted + "<>1 AND m." + DB.gu_parent_msg + " IS NULL AND " +
-             DB.gu_mimemsg + " IN (SELECT " + DB.gu_mimemsg + " FROM " + DB.k_inet_addrs + " WHERE " + DB.tp_recipient + "='from' AND " + DB.gu_contact + "=?) AND " +
-             DB.gu_mimemsg + " IN (SELECT " + DB.gu_mimemsg + " FROM " + DB.k_inet_addrs + " WHERE (" + DB.tp_recipient + "='to' OR " + DB.tp_recipient + "='cc' OR " + DB.tp_recipient + "='bcc') AND " + DB.gu_user + "=?) ";
+             DB.gu_mimemsg + " IN (SELECT " + DB.gu_mimemsg + " FROM " + DB.k_inet_addrs + " WHERE " + DB.tp_recipient + "='from' AND " + DB.gu_contact + "=?) ";
     vParams.add(gu_contact);
-    vParams.add(id_user);  
   } else {
     sWhere = "m." + DB.gu_workarea + "=? AND m." + DB.bo_deleted + "<>1 AND m." + DB.gu_parent_msg + " IS NULL AND " +
-             DB.gu_mimemsg + " IN (SELECT " + DB.gu_mimemsg + " FROM " + DB.k_inet_addrs + " WHERE " + DB.tp_recipient + "='from' AND " + DB.gu_user + "=?) AND " +
              DB.gu_mimemsg + " IN (SELECT " + DB.gu_mimemsg + " FROM " + DB.k_inet_addrs + " WHERE (" + DB.tp_recipient + "='to' OR " + DB.tp_recipient + "='cc' OR " + DB.tp_recipient + "='bcc') AND " + DB.gu_contact + "=?) ";
-    vParams.add(id_user);
     vParams.add(gu_contact);
   }
 
@@ -217,11 +213,11 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>Sent and received messages</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
 
       // ------------------------------------------------------
@@ -309,7 +305,7 @@
 	}
     //-->    
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
     <!--
 	function setCombos() {
 	  var frm = document.forms[0];

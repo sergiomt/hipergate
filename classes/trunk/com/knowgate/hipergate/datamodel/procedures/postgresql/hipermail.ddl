@@ -82,6 +82,7 @@ GO;
 
 CREATE FUNCTION k_sp_del_adhoc_mailing (CHAR) RETURNS INTEGER AS '
 BEGIN
+  UPDATE k_activities SET gu_mailing=NULL WHERE gu_mailing=$1;
   DELETE FROM k_x_adhoc_mailing_list WHERE gu_mailing=$1;
   DELETE FROM k_adhoc_mailings WHERE gu_mailing=$1;
   RETURN 0;

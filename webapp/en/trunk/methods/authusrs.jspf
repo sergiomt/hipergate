@@ -172,11 +172,11 @@
     // Get User GUID and authentication string from cookies
     
     short iStatus = -255;
-    String sDomainNm = getCookie (req, "domainnm", "");
-    String sWorkArea = getCookie (req, "workarea", "");
-    String sWorkAreaNm = getCookie (req, "workareanm", "");
-    String sUserId  = getCookie (req, "userid", "");
-    String sAuthStr = getCookie (req, "authstr", "");
+    String sDomainNm = getCookie (req, "domainnm", req.getParameter("domainnm"));
+    String sWorkArea = getCookie (req, "workarea", req.getParameter("workarea"));
+    String sWorkAreaNm = getCookie (req, "workareanm", req.getParameter("workareanm"));
+    String sUserId  = getCookie (req, "userid", req.getParameter("userid"));
+    String sAuthStr = getCookie (req, "authstr", req.getParameter("authstr"));
 
     if (sUserId.length()==0) {
       com.knowgate.debug.DebugFile.writeln("user guid cookie not found");
@@ -301,8 +301,8 @@
   short verifyUserAccessRights (com.knowgate.dataobjs.DBBind dbb, HttpServletRequest req, HttpServletResponse res)
     throws ClassNotFoundException,InstantiationException,ServletException,java.rmi.RemoteException,java.io.UnsupportedEncodingException {
     short iStatus = (short) 0;
-    String sCookieWorkArea = getCookie (req, "workarea", "");
-    String sCookieUserId  = getCookie (req, "userid", "");
+    String sCookieWorkArea = getCookie (req, "workarea", req.getParameter("workarea"));
+    String sCookieUserId  = getCookie (req, "userid", req.getParameter("userid"));
     String sRequestedWorArea = req.getParameter("gu_workarea");
     com.knowgate.jdc.JDCConnection oConn = null;
 

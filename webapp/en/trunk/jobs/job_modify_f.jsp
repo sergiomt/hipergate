@@ -14,9 +14,9 @@
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
     <TITLE>hipergate :: Edit Task</TITLE>
   </HEAD>
-  <FRAMESET NAME="jobmodifyframe" ROWS="280px,70px" BORDER="0" FRAMEBORDER="0">
-    <FRAME NAME="jobmodify" FRAMEBORDER="no" MARGINWIDTH="16" MARGINHEIGHT="0" NORESIZE SRC="job_modify.jsp?gu_job=<%=request.getParameter("gu_job")%>">
-    <FRAME NAME="jobprogress" FRAMEBORDER="no" MARGINWIDTH="16" MARGINHEIGHT="0" NORESIZE SRC="job_progress.jsp?gu_job=<%=request.getParameter("gu_job")%>">
+  <FRAMESET NAME="jobmodifyframe" ROWS="280px,70px">
+    <FRAME NAME="jobmodify" SRC="job_modify.jsp?gu_job=<%=request.getParameter("gu_job")%>">
+    <FRAME NAME="jobprogress" SRC="job_progress.jsp?gu_job=<%=request.getParameter("gu_job")%>">
   </FRAMESET>
   <NOFRAMES>
     <BODY>

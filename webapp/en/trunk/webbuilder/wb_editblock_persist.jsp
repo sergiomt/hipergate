@@ -54,9 +54,13 @@
   String id_metablock = nullif(request.getParameter("id_metablock"),"");
   String nm_metablock = nullif(request.getParameter("nm_metablock"),"");
   String sBlockXML = new String("\t<block id=\"" + sBlockId + "\">\n\t  <metablock>" + id_metablock + "</metablock>\n\t  <tag>" + nm_metablock + "</tag>\n\t  <paragraphs>\n\t    <paragraph id=\"REMOVABLE\"></paragraph>\n\t  </paragraphs>\n\t  <images>\n\t    <image id=\"REMOVABLE\"></image>\n\t  </images>\n\t  <zone/>\n\t</block>");
+
+  Microsite oMicrosite = MicrositeFactory.getInstance(sFileTemplate);
+  PageSet oPageSet = new PageSet(sFileTemplate,sFilePageSet);
+  MetaBlock oMetablock = oMicrosite.container(oPageSet.page(gu_page).container()).metablock(id_metablock);
+  boolean bAllowHTML = oMetablock.allowHTML();
   
   XMLDocument oXMLDocument = new XMLDocument(sFilePageSet);
-
   oXMLDocument.removeNode("pageset/pages/page[@guid=\"" + gu_page + "\"]/blocks/block[@id=\"" + sBlockId + "\"]");
   oXMLDocument.addNode("pageset/pages/page[@guid=\"" + gu_page + "\"]/blocks/block",sBlockXML);
   int removeParagraph = 0;  
@@ -127,6 +131,7 @@
       if (sField.indexOf("text")!=-1)
       {
        sCurrentItemText = sValue.trim();
+       if (bAllowHTML) sCurrentItemText = Gadgets.XHTMLEncode(sCurrentItemText);
       }
       if (sField.indexOf("url")!=-1)
       {

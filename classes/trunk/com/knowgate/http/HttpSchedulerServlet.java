@@ -36,6 +36,8 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import java.sql.SQLException;
 
@@ -43,29 +45,32 @@ import com.knowgate.dataobjs.DBBind;
 import com.knowgate.debug.DebugFile;
 import com.knowgate.debug.StackTraceUtil;
 import com.knowgate.jdc.JDCConnection;
-import com.knowgate.jdc.JDCActivityInfo;
-import com.knowgate.jdc.JDCProcessInfo;
 import com.knowgate.scheduler.Job;
 import com.knowgate.misc.Environment;
 import com.knowgate.misc.Gadgets;
+import com.knowgate.scheduler.EventDaemon;
 import com.knowgate.scheduler.SchedulerDaemon;
 
 /**
  * @author Sergio Montoro Ten
- * @version 5.0
+ * @version 7.0
  */
 
 public class HttpSchedulerServlet extends HttpServlet {
+ 
+  private static final long serialVersionUID = 700l;
 
   // ---------------------------------------------------------------------------
 
-  private SchedulerDaemon oDaemon;
+  private EventDaemon oEventDaemon;
+  private SchedulerDaemon oSchedDaemon;
   private String sProfile;
 
   // ---------------------------------------------------------------------------
 
   public HttpSchedulerServlet() {
-    oDaemon=null;
+    oSchedDaemon=null;
+    oEventDaemon=null;
     sProfile=null;
   }
 
@@ -107,13 +112,15 @@ public class HttpSchedulerServlet extends HttpServlet {
   // ---------------------------------------------------------------------------
 
   public void destroy() {
-    if (DebugFile.trace) {
+
+	if (DebugFile.trace) {
       DebugFile.writeln("Begin HttpSchedulerServlet.destroy()");
       DebugFile.incIdent();
     }
-    if (null!=oDaemon) {
+
+	if (null!=oSchedDaemon) {
       try {
-        oDaemon.stopAll();
+        oSchedDaemon.stopAll();
       }
       catch (IllegalStateException ise) {
         if (DebugFile.trace)
@@ -123,8 +130,13 @@ public class HttpSchedulerServlet extends HttpServlet {
         if (DebugFile.trace)
           DebugFile.writeln("SQLException " + sql.getMessage());
       }
-      oDaemon = null;
+      oSchedDaemon = null;
     }
+    
+    if (null!=oEventDaemon) {
+      oEventDaemon.close();
+    }
+
     if (DebugFile.trace) {
       DebugFile.decIdent();
       DebugFile.writeln("End HttpSchedulerServlet.destroy()");
@@ -170,44 +182,51 @@ public class HttpSchedulerServlet extends HttpServlet {
       DebugFile.incIdent();
     }
 
-    if ((null!=oDaemon) && sAction.equals("restart")) {
-      try {
-        oDaemon.stopAll();
-        oDaemon = null;
-      } catch (Exception xcpt) {
-        writeXML(response, "<scheduler><error><![CDATA["+xcpt.getClass().getName()+" "+xcpt.getMessage()+"]]></error></scheduler>");
-      }
-      if (null!=oDaemon) {
-        if (DebugFile.trace) {
+    if (sAction.equals("restart")) {
+      if (null!=oSchedDaemon) {
+        try {
+          oSchedDaemon.stopAll();
+          oSchedDaemon = null;
+        } catch (Exception xcpt) {
+          writeXML(response, "<scheduler><error><![CDATA["+xcpt.getClass().getName()+" "+xcpt.getMessage()+"]]></error></scheduler>");
+        }
+        if (null!=oSchedDaemon) {
+          if (DebugFile.trace) {
           DebugFile.writeln("HttpSchedulerServlet.doGet("+sAction+") : No scheduler instance found. Re-start failed");
           DebugFile.decIdent();
-        }
+          }
         return;
+        }
+      } // fi (null!=oSchedDaemon)
+
+      if (null!=oEventDaemon) {
+    	oEventDaemon.close();
+    	oEventDaemon.run();
       }
     } // fi (restart)
 
     String sStatus = "", sSize = "", sLive = "", sQueue = "", sStartDate = "", sStopDate = "", sRunning = "";
 
     if (sAction.equals("start") || sAction.equals("restart")) {
-      if (null==oDaemon) {
+
+      if (null==oSchedDaemon) {
         try {
-          oDaemon = new SchedulerDaemon(sProfile);
-          if (DebugFile.trace) {
+          oSchedDaemon = new SchedulerDaemon(sProfile);
+          if (DebugFile.trace)
             DebugFile.writeln("SchedulerDaemon.start()");
-          }
-          oDaemon.start();
-          sStatus = "start";
+          oSchedDaemon.start();
+          sStatus = "running";
         }
         catch (Exception xcpt) {
           if (DebugFile.trace) {
             DebugFile.writeln("HttpSchedulerServlet.doGet("+sAction+") : "+xcpt.getClass().getName()+" "+xcpt.getMessage());
           }
-          if (oDaemon!=null) {
-            try { oDaemon.stopAll(); }
+          if (oSchedDaemon!=null) {
+            try { oSchedDaemon.stopAll(); }
             catch (Exception ignore) {
               DebugFile.writeln("HttpSchedulerServlet.doGet("+sAction+") : " + ignore.getClass().getName() + " " + ignore.getMessage());
             }
-            oDaemon=null;
+            oSchedDaemon=null;
           }
           bError = true;
           writeXML(response, "<scheduler><error><![CDATA["+xcpt.getClass().getName()+" "+xcpt.getMessage()+"]]></error></scheduler>");
@@ -219,17 +238,56 @@ public class HttpSchedulerServlet extends HttpServlet {
           }
           return;
         }
-      }
-      else {
+      } else {
+    	if (sAction.equals("restart")) {
+          oSchedDaemon.haltAll();
+          if (DebugFile.trace)
+            DebugFile.writeln("SchedulerDaemon.start()");
+          oSchedDaemon.start();          
+    	} else {
+          if (DebugFile.trace)
+            DebugFile.writeln("SchedulerDaemon was already started");
+    	}
         sStatus = "running";
       }
-    }
-    else if (sAction.equals("stop")) {
-      if (null!=oDaemon) {
+      
+      if (null==oEventDaemon) {
+    	try {
+		  oEventDaemon = new EventDaemon(sProfile);
+	      oEventDaemon.run();
+		} catch (IOException e) {
+	      if (DebugFile.trace) DebugFile.writeln("IOException "+e.getMessage());
+		}
+      } else {
+      	if (sAction.equals("restart")) {
+      	  oEventDaemon.close();
+		  try {
+			oEventDaemon = new EventDaemon(sProfile);
+		  } catch (IOException e) {
+            if (DebugFile.trace) DebugFile.writeln("IOException "+e.getMessage());
+		  }
+	      oEventDaemon.run();
+      	} else {
+          if (DebugFile.trace)
+        	DebugFile.writeln("EventDaemon was already started");      	
+      	}
+      }
+
+    } else if (sAction.equals("reload")) {
+      if (null!=oEventDaemon) oEventDaemon.close();
+	  try {
+		oEventDaemon = new EventDaemon(sProfile);
+	  } catch (IOException e) {
+	    if (DebugFile.trace) DebugFile.writeln("IOException "+e.getMessage());
+	  }
+      oEventDaemon.run();
+
+    } else if (sAction.equals("stop")) {
+      if (null!=oSchedDaemon) {
         try {
-          oDaemon.stopAll();
-          if (null!=oDaemon.stopDate()) sStopDate = oDaemon.stopDate().toString();
-          oDaemon=null;
+          oSchedDaemon.stopAll();
+          if (null!=oSchedDaemon.stopDate()) sStopDate = oSchedDaemon.stopDate().toString();
+          oSchedDaemon=null;
           sStatus = "stop";
         } catch (Exception xcpt) {
             bError = true;
@@ -237,9 +295,9 @@ public class HttpSchedulerServlet extends HttpServlet {
             try { DebugFile.writeln(StackTraceUtil.getStackTrace(xcpt)); } catch (Exception ignore) {}
             writeXML(response, "<scheduler><error><![CDATA["+xcpt.getMessage()+"]]></error></scheduler>");
         }
-        if (null!=oDaemon) {
-          if (oDaemon.isAlive()) { try { oDaemon.stop(); } catch (Exception ignore) {} }
-          oDaemon=null;
+        if (null!=oSchedDaemon) {
+          if (oSchedDaemon.isAlive()) { try { oSchedDaemon.stop(); } catch (Exception ignore) {} }
+          oSchedDaemon=null;
         }
         if (sStatus.length()==0) {
           if (DebugFile.trace) {
@@ -252,29 +310,36 @@ public class HttpSchedulerServlet extends HttpServlet {
       else {
         sStatus = "stopped";
       }
+      
+      if (oEventDaemon!=null) {
+    	oEventDaemon.close();
+    	oEventDaemon=null;
+      }
     }
+
     else if (sAction.equals("info")) {
-      if (null==oDaemon) {
+      if (null==oSchedDaemon) {
         sStatus = "stopped";
       } else {
-        if (oDaemon.isAlive())
+        if (oSchedDaemon.isAlive())
           sStatus = "running";
         else
           sStatus = "death";
-        if (null!=oDaemon.threadPool()) {
-          sSize = String.valueOf(oDaemon.threadPool().size());
-          sLive = String.valueOf(oDaemon.threadPool().livethreads());
+        if (null!=oSchedDaemon.threadPool()) {
+          sSize = String.valueOf(oSchedDaemon.threadPool().size());
+          sLive = String.valueOf(oSchedDaemon.threadPool().livethreads());
         }
-        if (null!=oDaemon.atomQueue())
-          sQueue = String.valueOf(oDaemon.atomQueue().size());
+        if (null!=oSchedDaemon.atomQueue())
+          sQueue = String.valueOf(oSchedDaemon.atomQueue().size());
       }
     }
+
     else if (sAction.equals("abort")) {
       if (DebugFile.trace) DebugFile.writeln("aborting job "+sId);
       if (null!=sId) {
-        if (null!=oDaemon) {
+        if (null!=oSchedDaemon) {
       	  try {
-      	    oDaemon.abortJob(sId);
+      	    oSchedDaemon.abortJob(sId);
       	  } catch (Exception xcpt) {
               bError = true;
               DebugFile.writeln("HttpSchedulerServlet.doGet(abort) : " + xcpt.getClass().getName() + " " + xcpt.getMessage());
@@ -299,20 +364,22 @@ public class HttpSchedulerServlet extends HttpServlet {
 		  }                    
         } // fi
       } // fi
-    } 
+
+    }
+
     else if (sAction.equals("stats")) {
-      if (null==oDaemon) {
+      if (null==oSchedDaemon) {
         writeXML(response, "<scheduler><error><![CDATA[Job scheduler is not currently running]]></error></scheduler>");
       } else {
-        writeXML(response, "<scheduler><stats><![CDATA["+oDaemon.databaseBind().connectionPool().dumpStatistics()+"]]></stats></scheduler>");      	
+        writeXML(response, "<scheduler><stats><![CDATA["+oSchedDaemon.databaseBind().connectionPool().dumpStatistics()+"]]></stats></scheduler>");      	
       }
     } // fi
 
-    if (null!=oDaemon) {
-      if (null!=oDaemon.startDate()) sStartDate = oDaemon.startDate().toString();
-      if (null!=oDaemon.stopDate() ) sStopDate = oDaemon.stopDate().toString();
-      if (null!=oDaemon.threadPool())
-        sRunning = String.valueOf(oDaemon.threadPool().getRunningTimeMS());
+    if (null!=oSchedDaemon) {
+      if (null!=oSchedDaemon.startDate()) sStartDate = oSchedDaemon.startDate().toString();
+      if (null!=oSchedDaemon.stopDate() ) sStopDate = oSchedDaemon.stopDate().toString();
+      if (null!=oSchedDaemon.threadPool())
+        sRunning = String.valueOf(oSchedDaemon.threadPool().getRunningTimeMS());
     }
 
     if (!bError) writeXML(response, "<scheduler><error/><status>"+sStatus+"</status><startdate>"+sStartDate+"</startdate><stopdate>"+sStopDate+"</stopdate><runningtime>"+sRunning+"</runningtime><poolsize>"+sSize+"</poolsize><livethreads>"+sLive+"</livethreads><queuelength>"+sQueue+"</queuelength></scheduler>");

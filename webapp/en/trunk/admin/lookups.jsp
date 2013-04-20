@@ -98,18 +98,18 @@
   oCountries.sortBy(iColPos);
   
   if (-1==iColPos) iColPos = 1;
-%><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//<%=sLanguage.toUpperCase()%>">
+%><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//en">
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
   <TITLE>hipergate :: Lookup values fastedit</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--      
       var sections = new Array(null,
       			       new Array("tx_dept","tx_email_from","nm_from"),
@@ -117,7 +117,7 @@
       			       new Array("id_sector","id_status","tp_company"),
       			       new Array("de_title","id_status","tp_passport"),
       			       new Array("de_title","tp_passport"),
-      			       new Array("id_objective","tp_oportunity","tp_origin"),
+      			       new Array("id_objetive","tp_oportunity","tp_origin","tx_cause"),
       			       new Array("tp_room")
       			       );
 
@@ -160,15 +160,16 @@
         var doit = false;
         
         for (var l=0; l<lok; l++) {
-          doit |= frm.elements["chk"+String(l)].checked;
-          if (doit)
+          if (frm.elements["chk"+String(l)].checked) {          	
+            doit = true;
             frm.elements["vl_lookup"+String(l)].value="";
+          }
         } // next
-	if (doit) {
-	  frm.submit();
-	} else {
-	  alert ("You must select at least one value to be deleted");
-	}
+	      if (doit) {
+	        frm.submit();
+	      } else {
+	        alert ("You must select at least one value to be deleted");
+	      }
       } // deleteValues()
 
       function setCombos() {

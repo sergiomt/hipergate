@@ -43,10 +43,12 @@ import java.io.FileInputStream;
 
 import org.apache.lucene.analysis.*;
 import org.apache.lucene.index.*;
+import org.apache.lucene.store.Directory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Index;
 import org.apache.lucene.document.Field.Store;
+import org.apache.lucene.util.Version;
 
 import org.apache.oro.text.regex.*;
 
@@ -55,7 +57,7 @@ import com.knowgate.debug.DebugFile;
 /**
  * <p>Simple HTML crawler for Lucene</p>
  * @author Sergio Montoro Ten
- * @version 4.0
+ * @version 7.0
  * @see http://lucene.apache.org/java/2_3_0/api/core/index.html
  */
 
@@ -162,10 +164,10 @@ public class Crawler {
 
     Document oDoc = new Document();
 
-    oDoc.add (new Field("subpath", sRelativePath, Field.Store.YES, Field.Index.UN_TOKENIZED));
-    oDoc.add (new Field("name", sName, Field.Store.YES, Field.Index.UN_TOKENIZED));
-    oDoc.add (new Field("title", sTitle, Field.Store.YES, Field.Index.TOKENIZED));
-    oDoc.add (new Field("text" , Util.substitute(oMatcher, oTagPattern, new StringSubstitution(""), sHTMLText, Util.SUBSTITUTE_ALL), Field.Store.NO, Field.Index.TOKENIZED));
+    oDoc.add (new Field("subpath", sRelativePath, Field.Store.YES, Field.Index.NOT_ANALYZED));
+    oDoc.add (new Field("name", sName, Field.Store.YES, Field.Index.NOT_ANALYZED));
+    oDoc.add (new Field("title", sTitle, Field.Store.YES, Field.Index.ANALYZED));
+    oDoc.add (new Field("text" , Util.substitute(oMatcher, oTagPattern, new StringSubstitution(""), sHTMLText, Util.SUBSTITUTE_ALL), Field.Store.NO, Field.Index.ANALYZED));
 
     return oDoc;
   } // makeHTMLDocument
@@ -195,8 +197,6 @@ public class Crawler {
     int iBuffer;
     char[] aBuffer;
     String sBuffer;
-    String sText;
-    Document oDoc;
 
     sBasePath += sSeparator;
 
@@ -252,7 +252,8 @@ public class Crawler {
       DebugFile.incIdent();
     }
 
-    IndexWriter oIWrt = new IndexWriter(sIndexDirectory, new SimpleAnalyzer(), bRebuild);
+    Directory oFsDir = Indexer.openDirectory(sIndexDirectory);
+    IndexWriter oIWrt = new IndexWriter(oFsDir, new StopAnalyzer(Version.LUCENE_33), IndexWriter.MaxFieldLength.UNLIMITED);
 
     if (sBasePath.endsWith(sSeparator)) sBasePath = sBasePath.substring(0, sBasePath.length()-1);
 
@@ -260,6 +261,7 @@ public class Crawler {
 
     oIWrt.optimize();
     oIWrt.close();
+    oFsDir.close();
 
     if (DebugFile.trace) {
       DebugFile.decIdent();

@@ -7,7 +7,12 @@
 
 package com.knowgate.math.webservices;
 
-public class CurrencyConvertorSoap_BindingStub extends org.apache.axis.client.Stub implements com.knowgate.math.webservices.CurrencyConvertorSoap_PortType {
+import javax.xml.rpc.Service;
+import javax.xml.namespace.QName;
+
+import org.apache.axis.encoding.ser.*;
+
+public class CurrencyConvertorSoap_BindingStub extends org.apache.axis.client.Stub implements CurrencyConvertorSoap_PortType {
     private java.util.Vector cachedSerClasses = new java.util.Vector();
     private java.util.Vector cachedSerQNames = new java.util.Vector();
     private java.util.Vector cachedSerFactories = new java.util.Vector();
@@ -42,34 +47,33 @@ public class CurrencyConvertorSoap_BindingStub extends org.apache.axis.client.St
          this(null);
     }
 
-    public CurrencyConvertorSoap_BindingStub(java.net.URL endpointURL, javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {
+    public CurrencyConvertorSoap_BindingStub(java.net.URL endpointURL, Service service) throws org.apache.axis.AxisFault {
          this(service);
          super.cachedEndpoint = endpointURL;
     }
 
-    public CurrencyConvertorSoap_BindingStub(javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {
+    public CurrencyConvertorSoap_BindingStub(Service service) throws org.apache.axis.AxisFault {
         if (service == null) {
             super.service = new org.apache.axis.client.Service();
         } else {
             super.service = service;
         }
         ((org.apache.axis.client.Service)super.service).setTypeMappingVersion("1.2");
-            java.lang.Class cls;
-            javax.xml.namespace.QName qName;
-            javax.xml.namespace.QName qName2;
-            java.lang.Class beansf = org.apache.axis.encoding.ser.BeanSerializerFactory.class;
-            java.lang.Class beandf = org.apache.axis.encoding.ser.BeanDeserializerFactory.class;
-            java.lang.Class enumsf = org.apache.axis.encoding.ser.EnumSerializerFactory.class;
-            java.lang.Class enumdf = org.apache.axis.encoding.ser.EnumDeserializerFactory.class;
-            java.lang.Class arraysf = org.apache.axis.encoding.ser.ArraySerializerFactory.class;
-            java.lang.Class arraydf = org.apache.axis.encoding.ser.ArrayDeserializerFactory.class;
-            java.lang.Class simplesf = org.apache.axis.encoding.ser.SimpleSerializerFactory.class;
-            java.lang.Class simpledf = org.apache.axis.encoding.ser.SimpleDeserializerFactory.class;
-            java.lang.Class simplelistsf = org.apache.axis.encoding.ser.SimpleListSerializerFactory.class;
-            java.lang.Class simplelistdf = org.apache.axis.encoding.ser.SimpleListDeserializerFactory.class;
-            qName = new javax.xml.namespace.QName("http://www.webserviceX.NET/", "Currency");
+            Class cls = Currency.class;
+            QName qName;
+            QName qName2;
+            Class beansf = BeanSerializerFactory.class;
+            Class beandf = BeanDeserializerFactory.class;
+            Class enumsf = EnumSerializerFactory.class;
+            Class enumdf = EnumDeserializerFactory.class;
+            Class arraysf = ArraySerializerFactory.class;
+            Class arraydf = ArrayDeserializerFactory.class;
+            Class simplesf = SimpleSerializerFactory.class;
+            Class simpledf = SimpleDeserializerFactory.class;
+            Class simplelistsf = SimpleListSerializerFactory.class;
+            Class simplelistdf = SimpleListDeserializerFactory.class;
+            qName = new QName("http://www.webserviceX.NET/", "Currency");
             cachedSerQNames.add(qName);
-            cls = com.knowgate.math.webservices.Currency.class;
             cachedSerClasses.add(cls);
             cachedSerFactories.add(enumsf);
             cachedDeserFactories.add(enumdf);

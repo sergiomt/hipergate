@@ -1,8 +1,7 @@
-<%@ page import="java.text.SimpleDateFormat,java.util.Enumeration,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.marketing.Activity,com.knowgate.addrbook.Meeting,com.knowgate.hipermail.AdHocMailing,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.workareas.FileSystemWorkArea,com.oreilly.servlet.MultipartRequest" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.text.SimpleDateFormat,java.util.Enumeration,java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.marketing.Activity,com.knowgate.marketing.ActivityTag,com.knowgate.addrbook.Meeting,com.knowgate.hipermail.AdHocMailing,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.workareas.FileSystemWorkArea,com.oreilly.servlet.MultipartRequest" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/multipartreqload.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003-2009  Know Gate S.L. All rights reserved.
-                           C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -75,6 +74,7 @@
   String id_template = oReq.getParameter("id_template");
   String lists = oReq.getParameter("lists");
   String rooms = oReq.getParameter("rooms");
+  String tags = oReq.getParameter("tags");
 
   String[] aFellows = Gadgets.split(oReq.getParameter("fellows"),',');
 
@@ -203,6 +203,10 @@
 		} // fi (bMeeting)
 
     oActy.store(oConn);
+
+    if (tags.length()>0) {
+      ActivityTag.storeMultiple(oConn, oActy.getString(DB.gu_activity), null, Gadgets.split(tags, "###"));
+    }    
     
     Enumeration oFileNames = oReq.getFileNames();
 

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.FileNotFoundException;
 
 import java.net.URL;
@@ -18,14 +17,11 @@ import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
 import java.util.LinkedList;
-import java.util.Iterator;
 import java.util.HashMap;
-import java.util.Set;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Parser;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.XMLReaderFactory;
@@ -37,7 +33,6 @@ import com.knowgate.debug.DebugFile;
 import com.knowgate.debug.StackTraceUtil;
 
 import com.knowgate.storage.Column;
-import com.knowgate.storage.Record;
 
 public final class SchemaMetaData extends DefaultHandler {
 
@@ -54,7 +49,7 @@ public final class SchemaMetaData extends DefaultHandler {
   	  oTableCatalog = new LinkedList<String>();
     }
 
-    public SchemaMetaData(String sPackagePath) throws FileNotFoundException, IOException {
+    public SchemaMetaData(String sPackagePath) throws FileNotFoundException, IOException, ClassNotFoundException {
       oColumnCatalog = new HashMap<String,LinkedList<Column>>();
       oRecordCatalog = new LinkedList<String>();
   	  oTableCatalog = new LinkedList<String>();
@@ -62,14 +57,16 @@ public final class SchemaMetaData extends DefaultHandler {
     }
 
     protected static String getAbsolutePath(String sPackagePath)
-  	  throws FileNotFoundException {
+  	  throws FileNotFoundException, ClassNotFoundException {
       URL oPackURL;
     
-      if (sPackagePath.endsWith("com/knowgate/clocial"))
-        oPackURL = new com.knowgate.clocial.ModelManager().getClass().getResource("/com/knowgate/clocial");
-      else
+      if (sPackagePath.endsWith("com/knowgate/clocial")) {
+        Class oModMan = Class.forName("com.knowgate.clocial.ModelManager");
+    	oPackURL = oModMan.getResource("/com/knowgate/clocial");
+      } else {
         oPackURL = ClassLoader.class.getResource(sPackagePath.startsWith("/") ? sPackagePath : "/" + sPackagePath);
-	  
+      }
+      
       if (null==oPackURL)
         throw new FileNotFoundException("Could not find "+sPackagePath+" at CLASSPATH");
     
@@ -440,7 +437,8 @@ public final class SchemaMetaData extends DefaultHandler {
               if (sPojoClass.length()>0) {
               	String sCls = sPojoClass.indexOf('.')>0 ? sPojoClass : sPackageName+"."+sPojoClass;
                 if (DebugFile.trace) DebugFile.writeln("Getting Class.forName("+sCls+")");
-                Class oCls = Class.forName(sCls);
+                @SuppressWarnings("unused")
+				Class oCls = Class.forName(sCls);
             	oColumnCatalog.put(sCls, oColDefs);
                 oRecordCatalog.add(sCls);
               }

@@ -3,6 +3,10 @@ ALTER TABLE k_domains ADD CONSTRAINT f2_domains FOREIGN KEY (gu_admins) REFERENC
 
 ALTER TABLE k_users ADD CONSTRAINT f2_users FOREIGN KEY (id_domain) REFERENCES k_domains (id_domain);
 
+ALTER TABLE k_user_accounts ADD CONSTRAINT f2_user_accounts FOREIGN KEY (id_domain) REFERENCES k_domains (id_domain);
+
+ALTER TABLE k_user_account_alias ADD CONSTRAINT f2_user_account_alias FOREIGN KEY (gu_account) REFERENCES k_user_accounts (gu_account);
+
 ALTER TABLE k_user_mail ADD CONSTRAINT f1_user_mail FOREIGN KEY (gu_user) REFERENCES k_users (gu_user);
 
 ALTER TABLE k_user_pwd ADD CONSTRAINT f1_user_pwd FOREIGN KEY (gu_user) REFERENCES k_users (gu_user);

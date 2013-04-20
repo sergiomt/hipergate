@@ -79,11 +79,11 @@
 <HTML>
   <HEAD>
     <TITLE>hipergate :: Report Incident</TITLE>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>    
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT SRC="../javascript/trim.js"></SCRIPT>
+    <SCRIPT SRC="../javascript/combobox.js"></SCRIPT>
+    <SCRIPT SRC="../javascript/usrlang.js"></SCRIPT>    
+    <SCRIPT TYPE="text/javascript">
       <!--
       var skin = getCookie("skin");
       if (""==skin) skin="xp";

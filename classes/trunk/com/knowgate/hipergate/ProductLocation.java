@@ -39,6 +39,9 @@ import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 import java.net.URL;
 import java.net.MalformedURLException;
@@ -49,6 +52,12 @@ import com.knowgate.dataobjs.DB;
 import com.knowgate.dataobjs.DBPersist;
 import com.knowgate.dfs.FileSystem;
 import com.knowgate.misc.Gadgets;
+import com.knowgate.storage.Column;
+import com.knowgate.storage.Engine;
+import com.knowgate.storage.Factory;
+import com.knowgate.storage.Record;
+import com.knowgate.storage.Table;
+import com.knowgate.storage.StorageException;
 
 /**
  * <p>Product Location</p>
@@ -60,7 +69,7 @@ import com.knowgate.misc.Gadgets;
  * <li>For Physical Products, ProductLocations represent stock of Product at different warehouses.
  * </ul>
  * @author Sergio Montoro Ten
- * @version 2.2
+ * @version 7.0
  */
 public class ProductLocation extends DBPersist {
 
@@ -672,20 +681,20 @@ public class ProductLocation extends DBPersist {
   /**
    * Move a File from a temporary directory up to the final location referenced
    * by ProductLocation URL.
-   * @param oConn Database Connection
+   * @param oConn DataSource Connection
    * @param oFileSys FileSystem object used for moving the file.<br>
-   * If FileSystem requieres additional parameters (such as user authentification for FTP)
+   * If FileSystem requires additional parameters (such as user authentication for FTP)
    * it will be taken from hipergate.cnf file by using Environment singleton.
-   * @param sSourcePath Source Directory. For example: "file:///tmp/archivos/"
+   * @param sSourcePath Source Directory. For example: "file:///tmp/archives/"
    * @param sSourceFile Original File Name. For example: "notes.pdf"
    * @param sTargetPath Target Directory. For example: "ftp://saturno/opt/storage/"
    * @param sTargetFile Final File Name. For Example: "notes-13-05-03.pdf"
    * @throws Exception
    * @throws IOException
-   * @throws SQLException
+   * @throws StorageException
    * @see com.knowgate.misc.Environment
    */
-  public void upload(JDCConnection oConn, FileSystem oFileSys, String sSourcePath, String sSourceFile, String sTargetPath, String sTargetFile) throws Exception,IOException,SQLException {
+  public void upload(Table oConn, FileSystem oFileSys, String sSourcePath, String sSourceFile, String sTargetPath, String sTargetFile) throws Exception,IOException,StorageException {
     String sFileSep = System.getProperty("file.separator");
 
     if (DebugFile.trace) {
@@ -693,10 +702,29 @@ public class ProductLocation extends DBPersist {
       DebugFile.incIdent();
     }
 
-    if (!sSourcePath.endsWith(sFileSep)) sSourcePath += sFileSep;
-    if (!sTargetPath.endsWith(sFileSep)) sTargetPath += sFileSep;
-
-    oFileSys.move(sSourcePath+sSourceFile, sTargetPath+sTargetFile);
+    if (sSourcePath.startsWith("file://") || sSourcePath.startsWith("ftp://")) {
+      if (!sSourcePath.endsWith(sFileSep)) sSourcePath += sFileSep;
+      if (sTargetPath.startsWith("file://") || sTargetPath.startsWith("ftp://")) {
+        if (!sTargetPath.endsWith(sFileSep)) sTargetPath += sFileSep;
+        oFileSys.move(sSourcePath+sSourceFile, sTargetPath+sTargetFile);
+      } else if (sTargetPath.startsWith("bdb://")) {
+    	LinkedList<Column> oColumnsList;
+    	if (!oColsMap.containsKey(sTargetPath)) {
+    	  oColumnsList = new LinkedList<Column>();
+    	  oColumnsList.add(new Column(sTargetPath, DB.gu_location, Types.CHAR, 32, 0, false, true, null, null, true, 0));
+    	  oColumnsList.add(new Column(sTargetPath, DB.bin_file, Types.BLOB, 2147483647, 0, false, false, null, null, false, 1));
+    	  oColsMap.put(sTargetPath, oColumnsList);
+    	} else {
+    	  oColumnsList = oColsMap.get(sTargetPath);
+    	}
+    	Record oRec = Factory.createRecord(Engine.BERKELYDB, sTargetPath, oColumnsList);
+    	oRec.setPrimaryKey(getString(DB.gu_location));
+    	oRec.put("bin_file", oFileSys.readfilebin(sSourcePath+sSourceFile));
+    	oRec.store(oConn);
+      }
+    } else {
+      
+    }
 
     if (DebugFile.trace) {
       DebugFile.decIdent();
@@ -748,9 +776,9 @@ public class ProductLocation extends DBPersist {
 
   // ----------------------------------------------------------
 
-   public static final short ClassId = 16;
-
-  // ----------------------------------------------------------
+  private static HashMap<String,LinkedList<Column>> oColsMap = new HashMap<String,LinkedList<Column>>();
+  
+  public static final short ClassId = 16;
 
   public static final int CONTAINER_FILE = 1;
   public static final int CONTAINER_HTTP = 2;

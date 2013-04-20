@@ -31,37 +31,67 @@
 
 package com.knowgate.storage;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import java.util.HashMap;
 import java.util.LinkedList;
 
-import com.knowgate.dataobjs.DBBind;
-import com.knowgate.dataobjs.DBPersist;
-
-import com.knowgate.berkeleydb.DBEntity;
-import com.knowgate.berkeleydb.DBEnvironment;
+import java.lang.reflect.InvocationTargetException;
 
 import com.knowgate.misc.Environment;
 
 public final class Factory {
   
+  private static HashMap<String,SchemaMetaData> oSch = new HashMap<String,SchemaMetaData>();
+		  
   public static DataSource createDataSource(Engine eEngine, String sProfileName, boolean bReadOnly)
-  	throws InstantiationException,StorageException {
-  	switch (eEngine) {
+  	throws InstantiationException, StorageException, ClassNotFoundException, IllegalAccessException,
+  	       IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, NullPointerException {
+  	  Class oCls;
+	  Object oObj;
+  	  switch (eEngine) {
+
   	  case JDBCRDBMS:
-  	    return new DBBind(sProfileName).connectionPool();
+  		oCls = Class.forName("com.knowgate.dataobjs.DBBind");
+  		oObj = oCls.getConstructor(String.class).newInstance(sProfileName);
+  		return (DataSource) oCls.getMethod("connectionPool").invoke(oObj);
+
   	  case BERKELYDB:
-  	  	return new DBEnvironment(Environment.getProfilePath(sProfileName,"dbenvironment"), bReadOnly);
+  		SchemaMetaData oSmd;
+  		try {
+  	      oCls = Class.forName("com.knowgate.berkeleydb.DBEnvironment");
+    	  final String sPackageBase = Environment.getProfileVar(sProfileName, "package");
+    	  if (null==sPackageBase) throw new NullPointerException("Property package is required at "+sProfileName+".cnf file");
+    	  if (oSch.containsKey(sPackageBase)) {
+    		  oSmd = oSch.get(sPackageBase);
+    	  } else {
+        	File oPackDir = new File(SchemaMetaData.getAbsolutePath(sPackageBase)+"tables");
+          	if (!oPackDir.exists()) throw new FileNotFoundException("Directory "+oPackDir.getAbsolutePath()+" not found");
+          	if (!oPackDir.isDirectory()) throw new FileNotFoundException(oPackDir.getAbsolutePath()+" is not a directory");
+          	oSmd = new SchemaMetaData();
+        	oSmd.load(oPackDir);
+        	oSch.put(sPackageBase, oSmd);
+    	  }    	  
+    	  return (DataSource) oCls.getConstructor(String.class, oSmd.getClass(), boolean.class).newInstance(Environment.getProfilePath(sProfileName,"dbenvironment"), oSmd, bReadOnly);    		
+  		} catch (IOException ioe) { throw new StorageException(ioe.getMessage(), ioe); }
+
   	  default:
   	  	throw new InstantiationException("Invalid ENGINE value");
   	}
   }
 
   public static Record createRecord(Engine eEngine, String sTableName, LinkedList<Column> oColumnsList)
-  	throws InstantiationException,StorageException {
+  	throws InstantiationException, StorageException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+  	Class oCls;
   	switch (eEngine) {
   	  case JDBCRDBMS:
-  	    return new DBPersist(sTableName,sTableName);
+  		oCls = Class.forName("com.knowgate.dataobjs.DBPersist");
+  		return (Record) oCls.getConstructor(String.class,String.class).newInstance(sTableName,sTableName);
   	  case BERKELYDB:
-  	  	return new DBEntity(sTableName,oColumnsList);
+        oCls = Class.forName("com.knowgate.berkeleydb.DBEntity");
+      	return (Record) oCls.getConstructor(String.class,oColumnsList.getClass()).newInstance(sTableName,oColumnsList);
   	  default:
   	  	throw new InstantiationException("Invalid ENGINE value");
   	}

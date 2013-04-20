@@ -118,10 +118,10 @@
 <HTML>
 	<HEAD>
     <TITLE>hipergate :: Six-monthly Calendar</TITLE>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript">
       <!--
         var wcaldays = new Array(<% out.write(String.valueOf(aWCalDays[0])); for (int a=1; a<nWCalDays; a++) out.write(","+String.valueOf(aWCalDays[a])); %>);
 

@@ -124,8 +124,8 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE><%=oCont.getStringNull(DB.tx_name,"")+" "+oCont.getStringNull(DB.tx_surname,"")%></TITLE>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
 </HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8">
   <TABLE><TR><TD CLASS="striptitle"><FONT CLASS="title1">Report of <%=oCont.getStringNull(DB.tx_name,"")+" "+oCont.getStringNull(DB.tx_surname,"")%></FONT></TD></TR></TABLE>  

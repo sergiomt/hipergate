@@ -41,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.math.BigDecimal;
 
 import com.knowgate.storage.Column;
+import com.knowgate.storage.RDBMS;
 import com.knowgate.debug.DebugFile;
 
 
@@ -51,6 +52,8 @@ import com.knowgate.debug.DebugFile;
  */
 
 public final class DBColumn extends Column {
+
+  private static final long serialVersionUID = 70000l;
 
   public DBColumn() {}
 
@@ -77,12 +80,12 @@ public final class DBColumn extends Column {
    */
   public void setSqlType(short iType) {
     setType(iType);
-    setTypeName(DBColumn.typeName(getSqlType()));
+    setTypeName(Column.typeName(getSqlType()));
   }
 
   public void setSqlType(int iType) {
     setType(iType);
-    setTypeName(DBColumn.typeName(getSqlType()));
+    setTypeName(Column.typeName(getSqlType()));
   }
 
   /**
@@ -93,6 +96,14 @@ public final class DBColumn extends Column {
 
   // -------------------------------------------------
 
+  /**
+   * Try to convert an input String into the type of object that this column holds
+   * @param sIn String
+   * @return Object
+   * @throws NumberFormatException
+   * @throws ParseException
+   * @throws NullPointerException
+   */
   public Object convert(String sIn)
     throws NumberFormatException,ParseException,NullPointerException {
     if (sIn==null) return null;
@@ -135,16 +146,81 @@ public final class DBColumn extends Column {
 
   //-----------------------------------------------------------
 
-  /*
-  private String sName;
-  private int iPosition;
-  private String sTableName;
-  private short iSQLType;
-  private String sSQLTypeName;
-  private int iMaxSize;
-  private int iDecimalDigits;
-  private boolean bNullable;
-  */
+  /**
+   * Get SQL script definition for this column.
+   * @param eRDBMS Target database management system
+   * @return String like "column_name VARCHAR2(30) NOT NULL DEFAULT '0'"
+   * @since 7.0
+   */
+  public String sqlScriptDef(RDBMS eRDBMS)  {
+    String sTypedef = getName() + " ";
+	switch (getSqlType()) {
+      case Types.TIMESTAMP:
+    	sTypedef += Timestamp[eRDBMS.intValue()];
+    	break;
+      case Types.DECIMAL:
+      case Types.NUMERIC:
+    	sTypedef += getSqlTypeName()+"("+String.valueOf(getPrecision())+","+String.valueOf(getDecimalDigits())+")";
+    	break;
+      case Types.VARCHAR:
+  	    sTypedef += VarChar[eRDBMS.intValue()]+"("+String.valueOf(getPrecision())+")";
+  	    break;
+      case Types.LONGVARCHAR:
+        sTypedef += LongVarChar[eRDBMS.intValue()];
+    	break;
+      case Types.LONGVARBINARY:
+        sTypedef += LongVarBinary[eRDBMS.intValue()];
+      	break;
+      case Types.BLOB:
+        sTypedef += Blob[eRDBMS.intValue()];
+      	break;
+      case Types.CLOB:
+        sTypedef += Clob[eRDBMS.intValue()];
+      	break;
+      default:
+    	sTypedef += getSqlTypeName();
+    }
+	sTypedef += (isNullable() ? " NULL" : " NOT NULL");
+	if (getDefaultValue()!=null) {
+	  sTypedef += " DEFAULT ";
+	  switch (getSqlType()) {
+        case Types.BIGINT:
+        case Types.INTEGER:
+          if (getDefaultValue().equals("SERIAL") || getDefaultValue().equals("serial"))
+        	sTypedef += Serial[eRDBMS.intValue()];
+          else
+        	sTypedef += getDefaultValue();
+          break;
+        case Types.TIMESTAMP:
+          if (getDefaultValue().equals("CURRENT_TIMESTAMP") || getDefaultValue().equals("current_timestamp"))
+        	sTypedef += CurrentTimeStamp[eRDBMS.intValue()];
+          else
+          	sTypedef += getDefaultValue();
+          break;
+        case Types.CHAR:
+        case Types.VARCHAR:
+        case Types.NCHAR:
+        case Types.NVARCHAR:
+          sTypedef += "'" + getDefaultValue() + "'";
+          break;
+        default:
+          sTypedef += getDefaultValue();
+          break;
+	  }	
+	} // fi	
+	return sTypedef;
+  } // sqlScriptDef
+  
+  //-----------------------------------------------------------
+
+  private static final String CurrentTimeStamp[] = { null, "CURRENT_TIMESTAMP", "CURRENT_TIMESTAMP", "GETDATE()", null, "SYSDATE" };
+  private static final String Timestamp[] = { null, "TIMESTAMP", "TIMESTAMP", "DATETIME", null, "DATE" };
+  private static final String LongVarChar[] = { null, "MEDIUMTEXT", "TEXT", "NTEXT", null, "LONG" };
+  private static final String LongVarBinary[] = { null, "MEDIUMBLOB", "BYTEA", "IMAGE", null, "LONG RAW" };
+  private static final String Serial[] = { null, "AUTO_INCREMENT", "", "IDENTITY", null, "" };
+  private static final String VarChar[] = { null, "VARCHAR", "VARCHAR", "NVARCHAR", null, "VARCHAR2" };
+  private static final String Blob[] = { null, "MEDIUMBLOB", "BYTEA", "IMAGE", null, "BLOB" };
+  private static final String Clob[] = { null, "MEDIUMTEXT", "TEXT", "NTEXT", null, "CLOB" };
 
   private SimpleDateFormat oDtFmt;
   

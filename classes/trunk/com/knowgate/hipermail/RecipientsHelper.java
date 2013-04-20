@@ -51,7 +51,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import com.sun.mail.dsn.MultipartReport;
-import com.sun.mail.dsn.Report;
 import com.sun.mail.dsn.DispositionNotification;
 
 import com.knowgate.jdc.JDCConnection;

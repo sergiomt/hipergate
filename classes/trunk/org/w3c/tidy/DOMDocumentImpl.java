@@ -110,13 +110,9 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
                                             throws DOMException
     {
         Node node = new Node(Node.StartEndTag, null, 0, 0, tagName, tt);
-        if (node != null) {
-            if (node.tag == null)           // Fix Bug 121206
-              node.tag = tt.xmlTags;
-            return (org.w3c.dom.Element)node.getAdapter();
-        }
-        else
-            return null;
+        if (node.tag == null)           // Fix Bug 121206
+          node.tag = tt.xmlTags;
+        return (org.w3c.dom.Element) node.getAdapter();
     }
 
     /**
@@ -135,10 +131,7 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
     {
         byte[] textarray = Lexer.getBytes(data);
         Node node = new Node(Node.TextNode, textarray, 0, textarray.length);
-        if (node != null)
-            return (org.w3c.dom.Text)node.getAdapter();
-        else
-            return null;
+        return (org.w3c.dom.Text)node.getAdapter();
     }
 
     /**

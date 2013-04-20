@@ -70,14 +70,14 @@
   
   oConn = null;      
 %>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//<%=sLanguage.toUpperCase()%>">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//en">
 <HTML LANG="<%=sLanguage.toUpperCase()%>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/datefuncs.js"></SCRIPT>        
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/usrlang.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/datefuncs.js"></SCRIPT>        
   <TITLE>hipergate :: Add Note</TITLE>
 
     <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">

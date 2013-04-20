@@ -8,10 +8,10 @@
 %><HTML>
   <HEAD>
     <TITLE>hipergate :: Project Management</TITLE>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>  
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>  
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript">
       <!--        
         var sWorkArea;

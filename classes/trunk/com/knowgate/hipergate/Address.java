@@ -54,7 +54,7 @@ import com.knowgate.misc.Gadgets;
  * A generic postal address object for being associated to any other objects
  * that may require address information.
  * @author Sergio Montoro Ten
- * @version 3.0
+ * @version 7.0
  */
 public class Address extends DBPersist {
 
@@ -227,7 +227,8 @@ public class Address extends DBPersist {
   public boolean store(JDCConnection oConn) throws SQLException {
     java.sql.Timestamp dtNow = new java.sql.Timestamp(DBBind.getTime());
 
-    if (null==get(DB.gu_address)) put(DB.gu_address, Gadgets.generateUUID());
+    if (isNull(DB.gu_address)) put(DB.gu_address, Gadgets.generateUUID());
+	if (isNull(DB.bo_active)) put(DB.bo_active, (short)1);
 
     replace(DB.dt_modified, dtNow);
 

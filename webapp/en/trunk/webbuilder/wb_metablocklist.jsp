@@ -97,9 +97,9 @@
 <HTML>
 <HEAD>
 <TITLE>hipergate :: Block Types</TITLE>
-<SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-<SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+<SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+<SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
+<SCRIPT TYPE="text/javascript">
   <!--
     function openEdit(id,nm) { 
 	    window.opener.document.location = "<%=sURLEditBlock%>&nm_metablock=" + escape(nm) + "&doctype=<%=sDocType%>&page=<%=sPage%>&id_domain=<%=id_domain%>&n_domain=<%=n_domain%>&id_metablock="+id;

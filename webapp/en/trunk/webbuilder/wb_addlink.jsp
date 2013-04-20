@@ -65,8 +65,8 @@
 <html>
 <head>
 <TITLE>hipergate :: Link to page</TITLE>
-<SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-<SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+<SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+<SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
 <SCRIPT LANGUAGE="JavaScript">
 function setOpenerItem(value){window.opener.setItem('<%=sItemId%>',value);window.close();};
 </SCRIPT>

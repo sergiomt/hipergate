@@ -35,8 +35,6 @@ package com.knowgate.hipergate;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
-import java.util.ListIterator;
-
 import java.sql.Date;
 import java.sql.Connection;
 import java.sql.SQLException;

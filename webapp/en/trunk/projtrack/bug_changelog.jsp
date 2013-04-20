@@ -46,8 +46,8 @@
 <HTML>
 <HEAD>
   <TITLE>hipergate :: Incident History</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
 <HEAD>
 <BODY  TOPMARGIN="8" MARGINHEIGHT="8">
   <DIV class="cxMnu1" style="width:290px"><DIV class="cxMnu2">

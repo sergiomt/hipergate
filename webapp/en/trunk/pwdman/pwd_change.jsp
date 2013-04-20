@@ -42,14 +42,14 @@
     <TITLE>Wait...</TITLE>
     <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache">
     <META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript">
     <!--
       function redirect() {
         setCookie ("authstr","<%=ACL.encript(request.getParameter("tx_pwd_new1"),ENCRYPT_ALGORITHM)%>");
         document.location = "pwdmanhome.jsp?selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>";
       }      
-    -->
+    // -->
     </SCRIPT>
   </HEAD>
   <BODY onLoad="redirect()"></BODY>

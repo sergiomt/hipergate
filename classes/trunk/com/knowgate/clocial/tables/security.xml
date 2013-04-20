@@ -136,7 +136,7 @@
     <Column name="nm_alias" type="VARCHAR" maxlength="100" nullable="false" indexed="true"></Column>
     <Column name="nm_display" type="VARCHAR" maxlength="100" nullable="true"></Column>
     <Column name="nm_ascii" type="VARCHAR" maxlength="100" nullable="true" indexed="true"></Column>
-    <Column name="url_addr" type="VARCHAR" maxlength="254" nullable="true"></Column>
+    <Column name="url_addr" type="VARCHAR" maxlength="254" nullable="true" indexed="true"></Column>
   </Record>
   <Record table="k_workareas" pojo="">
     <Column name="gu_workarea" type="CHAR" maxlength="32" nullable="false" constraint="primary key" indexed="true" default="GUID"></Column>

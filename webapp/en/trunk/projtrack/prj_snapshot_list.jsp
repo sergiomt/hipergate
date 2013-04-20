@@ -79,8 +79,8 @@
 <HTML LANG="<%=sLanguage%>">
   <HEAD>
     <TITLE>hipergate :: Project Snapshots</TITLE>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   </HEAD>
   <BODY TOPMARGIN="0" MARGINHEIGHT="0">
     <DIV class="cxMnu1" style="width:120px"><DIV class="cxMnu2">

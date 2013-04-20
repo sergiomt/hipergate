@@ -2,7 +2,7 @@
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/OÃ±a, 107 1Âº2 28050 Madrid (Spain)
+                      C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -63,21 +63,21 @@
   
   <!-- +----------------------------------------+ -->
   <!-- | Pre-Home de productos de una categoria | -->
-  <!-- | Â© KnowGate 2001                        | -->
+  <!-- | © KnowGate 2001                        | -->
   <!-- +----------------------------------------+ -->
 <HTML>
   <HEAD>
 <% if (sLabel.length()>0) out.write("    <META HTTP-EQUIV=\"refresh\" content=\"0; url=catprods.jsp?id_category=" + sCatg + "&tr_category=" + Gadgets.URLEncode(sLabel) + "\""); %>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" DEFER="defer">
       <!--
         function viewProducts() {
           var dipuwnd = window.parent.frames[1];
 
 	  if (dipuwnd.id_category.length==0)
-	    alert ("Debe seleccionar primero una categorÃ­a en el Ã¡rbol");
+	    alert ("Debe seleccionar primero una categoría en el árbol");
 	  else	                      
             window.document.location.href = "catprods.jsp?id_category=" + dipuwnd.id_category + "&tr_category=" + escape(dipuwnd.tr_category);
         }

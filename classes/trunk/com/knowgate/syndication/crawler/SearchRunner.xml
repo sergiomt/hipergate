@@ -1,4 +1,7 @@
 <fetchers>
+  <fetcher id="twittersearch" enabled="true">
+  	<uri>http://search.twitter.com/search.json?q=$1</uri>
+  </fetcher>
   <fetcher id="twingly" enabled="true">
   	<uri>http://www.twingly.com/search.rss?q=link%3a$1</uri>
   </fetcher>
@@ -17,28 +20,25 @@
   <fetcher id="friendfeed" enabled="true">
   	<uri>http://friendfeed.com/search?q=$1&amp;format=atom</uri>
   </fetcher>
-  <fetcher id="icerocket" enabled="true">
-  	<uri>http://www.icerocket.com/search?tab=blog&amp;rss=1&amp;q=$1</uri>
-  </fetcher>
-  <fetcher id="bingnews" enabled="true">
-  	<uri>http://api.bing.com/rss.aspx?Source=News&amp;Market=es-ES&amp;Version=2.0&amp;News.SortBy=Date&amp;Query=$1</uri>
-  </fetcher>
   <fetcher id="bingsearch" enabled="true">
   	<uri>http://www.bing.com/search?format=rss&amp;q=$1</uri>
   </fetcher>
   <fetcher id="facebookgraph" enabled="true">
   	<uri>https://graph.facebook.com/search?limit=100&amp;q=$1</uri>
   </fetcher>
+  <!--
+  <fetcher id="icerocket" enabled="true">
+  	<uri>http://www.icerocket.com/search?tab=blog&amp;rss=1&amp;q=$1</uri>
+  </fetcher>
+  <fetcher id="topsy" enabled="true">
+  	<uri>http://otter.topsy.com/searchdate.rss?q=$1&amp;window=d12&amp;apikey=N6PQWMAC5E4HLZIZBULAAAAAABPBRGSYRJIQAAAAAAAFQGYA</uri>
+  </fetcher>
+  <fetcher id="bingnews" enabled="true">
+  	<uri>http://api.bing.com/rss.aspx?Source=News&amp;Market=es-ES&amp;Version=2.0&amp;News.SortBy=Date&amp;Query=$1</uri>
+  </fetcher>
   <fetcher id="yahooboss" enabled="true">
   	<uri></uri>
   </fetcher>
-  <fetcher id="topsy" enabled="true">
-  	<uri>http://otter.topsy.com/searchdate.rss?q=$1&amp;window=d12</uri>
-  </fetcher>
-  <fetcher id="backtype" enabled="false">
-  	<uri>http://backtweets.com/search.xml</uri>
-  </fetcher>
-  <!--
   <fetcher id="boardtracker" enabled="false">
   	<uri>http://www.boardtracker.com/srss/?q=$1&amp;p=1&amp;c=1&amp;o=0&amp;d=4&amp;s=&amp;a=&amp;ai=&amp;b=&amp;t=0</uri>
   </fetcher>

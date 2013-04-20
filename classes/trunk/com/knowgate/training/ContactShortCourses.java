@@ -55,10 +55,8 @@ public class ContactShortCourses extends DBPersist {
 	public boolean store(JDCConnection oConn) throws SQLException {
 		if (isNull(DB.ix_scourse)) {
 			Integer oMaxDg = DBCommand.queryMaxInt(oConn, DB.ix_scourse,DB.k_contact_short_courses, DB.gu_contact + "='"+ getString(DB.gu_contact) + "'");
-			if (null == oMaxDg) {
-				oMaxDg = new Integer(1);
-			}
-			put(DB.ix_scourse, oMaxDg);
+			if (null == oMaxDg) oMaxDg = new Integer(1);
+			put(DB.ix_scourse, oMaxDg.intValue());
 		}
 		if (!AllVals.containsKey(DB.gu_scourse)) {
 			put(DB.gu_scourse, Gadgets.generateUUID());

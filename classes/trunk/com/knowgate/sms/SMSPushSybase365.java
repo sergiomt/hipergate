@@ -38,14 +38,10 @@ import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import java.sql.SQLException;
 
 import java.net.URL;
-import java.net.URLEncoder;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 

@@ -33,15 +33,20 @@
 package com.knowgate.acl;
 
 import java.io.File;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.FileInputStream;
-import java.io.BufferedInputStream;
-import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.io.IOException;
+import java.io.BufferedInputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.FileNotFoundException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 import com.knowgate.misc.Base64Encoder;
 import com.knowgate.misc.Base64Decoder;
+import com.knowgate.misc.Gadgets;
 
 public class PasswordRecordLine {
 
@@ -143,30 +148,40 @@ public class PasswordRecordLine {
   } // setValue
 
   public byte[] getBinaryValue() {
-  	return Base64Decoder.decodeToBytes(ValueText);
+	int i2ndSlash = ValueText.indexOf('/',1);
+  	return Base64Decoder.decodeToBytes(ValueText.substring(++i2ndSlash));
+  }
+
+  public Object getObjectValue() throws IOException, ClassNotFoundException {
+	ByteArrayInputStream oBai = new ByteArrayInputStream(getBinaryValue());
+	ObjectInputStream oOis = new ObjectInputStream(oBai);
+	Object oObj = oOis.readObject();
+	oOis.close();
+	oBai.close();
+	return oObj;
   }
 
   public void setBinaryValue(String sName, byte[] byValue) {
     ValueType = TYPE_BIN;
-    ValueText = "/"+sName+"/"+Base64Encoder.encode(byValue);
+    ValueFileName = sName;
+    ValueText = "/"+sName+"/"+Gadgets.removeChar(Base64Encoder.encode(byValue),'\n');
   }
 
   public void setBinaryValue(String sName, InputStream oInStrm)
   	throws IOException {
     ValueType = TYPE_BIN;
-    StringBuffer oBuffer = new StringBuffer();
+    ValueFileName = sName;
     ByteArrayOutputStream oBy = new ByteArrayOutputStream();    
     int by = oInStrm.read();
     while (by!=-1) {
       oBy.write(by);      
       by = oInStrm.read();
     } // wend
-    ValueText = "/"+sName+"/"+Base64Encoder.encode(oBy.toByteArray());
+    ValueText = "/"+sName+"/"+Gadgets.removeChar(Base64Encoder.encode(oBy.toByteArray()),'\n');
   } // setBinaryValue
 
   public void setBinaryValue(File oFile)
   	throws FileNotFoundException, IOException {
-    ValueType = TYPE_BIN;
     FileInputStream oFio = new FileInputStream(oFile);
     BufferedInputStream oBio = new BufferedInputStream(oFio);
     setBinaryValue(oFile.getName(), oBio);
@@ -174,11 +189,18 @@ public class PasswordRecordLine {
     oFio.close();
   }
 
+  public void setObjectValue(Serializable oObj)
+	throws FileNotFoundException, IOException {
+	ByteArrayOutputStream oBos = new ByteArrayOutputStream();
+	ObjectOutputStream oOos = new ObjectOutputStream(oBos);
+	oOos.writeObject(oObj);	
+	setBinaryValue(oObj.getClass().getName(), oBos.toByteArray()); 
+	oOos.close();
+	oBos.close();
+  }
+  
   public String toString() {
-  	if (TYPE_BIN==ValueType)
-  	  return ValueId+"|"+ValueType+"|"+ValueLabel+"|"+"/"+ValueFileName+"/"+ValueText;
-  	else
-  	  return ValueId+"|"+ValueType+"|"+ValueLabel+"|"+(ValueText==null ? "" : ValueText);
+  	return ValueId+"|"+ValueType+"|"+ValueLabel+"|"+(ValueText==null ? "" : ValueText);
   }
 
   public static final char TYPE_NAME = '!';

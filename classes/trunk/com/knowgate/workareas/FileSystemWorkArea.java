@@ -43,8 +43,10 @@ import com.enterprisedt.net.ftp.FTPException;
 public class FileSystemWorkArea extends FileSystem {
   private Properties oPropsCNF;
 
+  @SuppressWarnings("unused")
   private FileSystemWorkArea() { oPropsCNF= null; }
 
+  @SuppressWarnings("unused")
   private FileSystemWorkArea(String sUser, String sPwd) { oPropsCNF= null; }
 
   public FileSystemWorkArea(Properties oEnvProps) {

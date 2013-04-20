@@ -1,8 +1,5 @@
 <%@ page import="java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
-<%@ include file="../methods/nullif.jspf" %>
-<%@ include file="../methods/cookies.jspf" %>
-<%
+<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/cookies.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -56,9 +53,9 @@
 <html>
 <head>
 <title>hipergate :: Load Images</title>
-<script language="JavaScript" src="../javascript/cookies.js"></script>  
-<script language="JavaScript" src="../javascript/setskin.js"></script>
-<script language="JavaScript1.2" type="text/javascript">
+<script type="text/javascript" src="../javascript/cookies.js"></script>  
+<script type="text/javascript" src="../javascript/setskin.js"></script>
+<script type="text/javascript">
   <!--
     function processUpload(form)
     {

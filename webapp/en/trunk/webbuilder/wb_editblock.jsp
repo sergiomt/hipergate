@@ -307,12 +307,12 @@
     _editors = new Object();
     // -->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT> 
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/htmlarea/htmlarea.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/htmlarea/lang/<%=sLanguage%>.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT> 
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/htmlarea/htmlarea.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/htmlarea/lang/es.js"></SCRIPT>
   <SCRIPT LANGUAGE="Javascript" TYPE="text/javascript">
     <!--
     HTMLArea.init();
@@ -331,7 +331,7 @@
     ];
     // -->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
      <!--
       
      // **********************************************
@@ -375,7 +375,7 @@
        for (i=0; i<document.forms[0].length; i++)
          if (document.forms[0].elements[i].name==itemName) {
            if (itemName.indexOf(".text")!=-1 && htmlAreaEnabled) {
-             _editors[itemName].setHTML(itemName,itemValue);
+             _editors[itemName].setHTML(itemValue);
            } else {
              document.forms[0].elements[i].value = itemValue;
            }
@@ -387,10 +387,13 @@
      function getItem(itemName)
      {
        var i;
-       for (i=0; i<document.forms[0].length; i++)
-       {
-         if (document.forms[0].elements[i].name==itemName)
-         return (document.forms[0].elements[i].value);
+       for (i=0; i<document.forms[0].length; i++) {
+         if (document.forms[0].elements[i].name==itemName) {
+           if (itemName.indexOf(".text")!=-1 && htmlAreaEnabled) {
+             return _editors[itemName].getHTML();
+           } else
+             return (document.forms[0].elements[i].value);
+         }
        }
      }
      
@@ -456,10 +459,63 @@
        document.location.href="wb_resort.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&gu_pageset=<%=gu_pageset%>&gu_page=<%=gu_page%>&doctype=<%=sDocType%>&id_metablock=<%=id_metablock%>&nm_metablock=<%=nm_metablock%>&file_pageset=" + escape(document.forms[0].file_pageset.value) + "&file_template=" + escape(document.forms[0].file_template.value);
      }
 
+     // -------------------------------------------------------
+
+     function submitChanges() {
+       var frm = document.forms[0];
+       if (htmlAreaEnabled && <%=String.valueOf(bAllowHTML)%>) {
+<%      if (vParagraphs.size()>0) { 
+				  for (int i=0; i<vParagraphs.size(); i++) {
+             int iParPos = ((Integer)vParagraphsState.elementAt(i)).intValue();
+             String sParId = "";
+             if (iParPos<0) {
+               sParId = (String)(vParagraphs.elementAt(i));
+             } else {
+               Paragraph oParCur = (Paragraph) oBlock.paragraphs().elementAt(iParPos);
+               sParId = oParCur.id();
+             } %>
+             frm.elements["Paragraph.<%=sParId%>.text"].value = _editors["Paragraph.<%=sParId%>.text"].getHTML();
+                         var wDoc = "<"+"w"+":"+"WordDocument"+">";
+						 if (frm.elements["Paragraph.<%=sParId%>.text"].value.indexOf(wDoc)>0) {
+						   alert ("Paragraph <%=sParId%>. It is not allowed to paste Word contents into HTML documents");
+						   return false;
+						 }
+						 var cData = "<"+"!"+"[CDATA[";
+						 if (frm.elements["Paragraph.<%=sParId%>.text"].value.indexOf(cData)>0) {
+						   alert ("Párrafo <%=sParId%>. Paragraph does not have a valid HTML format");
+						   return false;
+						 }<%      } } %>
+       } // fi
+       frm.submit();
+     } // submitChanges
+
+     // -------------------------------------------------------
+
+     function setCombos() {
+       var frm = document.forms[0];
+       scroll(0,0);
+       if (htmlAreaEnabled && <%=String.valueOf(bAllowHTML)%>) {
+<%      if (vParagraphs.size()>0) { 
+				  for (int i=0; i<vParagraphs.size(); i++) {
+      			 String sCurText = "";
+             int iParPos = ((Integer)vParagraphsState.elementAt(i)).intValue();
+             String sParId = "";
+             if (iParPos<0) {
+               sParId = (String)(vParagraphs.elementAt(i));
+             } else {
+               Paragraph oParCur = (Paragraph) oBlock.paragraphs().elementAt(iParPos);
+               sParId = oParCur.id();
+        			 try { sCurText = oParCur.text(); } catch (NullPointerException e) { sCurText = ""; }
+             }
+             if (sCurText.length()==0) out.write("cleanParagraph(\""+sParId+"\");\n");
+           } } %>
+       } // fi
+     }
+
     -->
   </SCRIPT>
 </head>
-<body topmargin="0" marginheight="0" onload="scroll(0,0);">
+<body topmargin="0" marginheight="0" onload="setCombos()">
 <table cellspacing="0" cellpadding="0" border="0" width="99%">
   <tr>
     <td valign="top" bgcolor="#ffffff">
@@ -478,7 +534,7 @@
 <% if (bIsGuest) { %>
       <a class="linkplain" href="#" onclick="alert('Your credential level as Guest does not allow you to perform this action')">Guardar</a>
 <% } else { %>
-      <a class="linkplain" href="javascript:document.forms[0].submit()">Save</a>
+      <a class="linkplain" href="#" onclick="submitChanges()">Save</a>
 <% } %>
       &nbsp;&nbsp;<img src="../images/images/back.gif" border="0" align="middle">&nbsp;<a class="linkplain" href="#" onclick="if (window.confirm('Are you sure?Changes will be lost and original data wil be restored. ')) document.location = 'wb_document.jsp?id_domain=<%=id_domain%>&doctype=<%=sDocType%>&gu_workarea=<%=gu_workarea%>&gu_pageset=<%=gu_pageset%>&page=<%=sPage%>';">Back</a>
       &nbsp;&nbsp;<img src="../images/images/resort.gif" border="0" align="middle">&nbsp;<a class="linkplain" href="javascript:reSort()">Reorder</a>
@@ -553,7 +609,7 @@
     <td colspan="3" class="formplain">
       <input type="hidden" name="Paragraph.<%=sCurId%>.id" value="<%=sCurId%>"> 
       <textarea rows="<%=bAllowHTML ? "7" : "5"%>" cols="88" id="Paragraph.<%=sCurId%>.text" name="Paragraph.<%=sCurId%>.text" WRAP="soft" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);"><%=sCurText%></textarea>
-      <script language="JavaScript" type="text/javascript">if (htmlAreaEnabled && <%=String.valueOf(bAllowHTML)%>) { var e = new HTMLArea(HTMLArea.getElementById("textarea","Paragraph.<%=sCurId%>.text"), config); e.generate(); _editors["Paragraph.<%=sCurId%>.text"]=e; } </script>
+      <script type="text/javascript">if (htmlAreaEnabled && <%=String.valueOf(bAllowHTML)%>) { var t = "Paragraph.<%=sCurId%>.text"; var e = new HTMLArea(HTMLArea.getElementById('textarea',t), config); e.generate(); _editors[t]=e; } </script>
     </td>
   </tr>
   <tr>

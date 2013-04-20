@@ -35,8 +35,6 @@ import java.io.IOException;
 import java.io.FileInputStream;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 
 import java.util.Properties;
@@ -52,11 +50,12 @@ import com.knowgate.acl.ACL;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.jdc.JDCConnectionPool;
 import com.knowgate.storage.StorageException;
-import com.knowgate.crm.Contact;
 import com.knowgate.training.Curriculum;
 
 public class OAuth2Servlet extends HttpServlet {
 
+  private static long serialVersionUID = 700l;
+  
   private String jdbcDriverClassName;
   private String jdbcURL;
   private String dbUserName;
@@ -264,7 +263,7 @@ public class OAuth2Servlet extends HttpServlet {
 	  	if (oConn!=null) { try { if (!oConn.isClosed()) oConn.close("OAuth2Servlet"); } catch (Exception ignore) {} }
 	  	throw new ServletException(xcpt.getMessage(), xcpt);
 	  }
-	}
+	} // fi (response_type=="resource") {
 	
 	if (grant_type.equals("authorization_code") || grant_type.equals("password")) {
 	  if (code.length()==0) {
@@ -316,7 +315,44 @@ public class OAuth2Servlet extends HttpServlet {
 
   public void doPost(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException {
-    doGet(request, response);
+	
+	String response_type = nil(request.getParameter("response_type"));
+	String access_token = nil(request.getParameter("access_token"));
+	String refresh_token = nil(request.getParameter("refresh_token"));    
+	String client_id = nil(request.getParameter("client_id"));
+	String resource_type = nil(request.getParameter("resource_type"));
+	String resource_id = nil(request.getParameter("resource_id"));
+	String resource_data = nil(request.getParameter("resource_data"));
+	String redirect_uri = nil(request.getParameter("redirect_uri"));
+	String scope = nil(request.getParameter("scope"));
+	String state = nil(request.getParameter("state"));
+	String code = nil(request.getParameter("code"));
+
+	OAuthAccess oAa;
+	
+	if (response_type.equals("status")) {
+	  if (!resource_type.equalsIgnoreCase("Curriculum")) {
+	    redirect(response, HttpServletResponse.SC_FOUND, redirect_uri, "error=invalid_request&error_description=Invalid+Resource+type&state="+response.encodeURL(state));
+		return;
+	  }
+      oAa = oAccCache.get(access_token);
+	  if (null==oAa) {
+		redirect(response, HttpServletResponse.SC_FOUND, redirect_uri, "error=access_denied&error_description=Invalid+or+expired+session+for+access_token+"+access_token+"&state="+response.encodeURL(state));
+		return;
+	  }
+	  oAa.refresh();
+	  JDCConnection oConn = null;
+	  try {
+	    if (resource_type.equalsIgnoreCase("Curriculum")) {
+	    }
+	  } catch (Exception xcpt) {
+		if (oConn!=null) { try { if (!oConn.isClosed()) oConn.close("OAuth2Servlet"); } catch (Exception ignore) {} }
+		throw new ServletException(xcpt.getMessage(), xcpt);
+	  }
+	} else {
+	  redirect(response, HttpServletResponse.SC_FOUND, redirect_uri, "error=invalid_request&error_description=Parameter+response_type+must+be+status&state="+response.encodeURL(state));
+	  return;
+	}
   }
       
   public static OAuthAccessCache getCache() {

@@ -123,7 +123,7 @@
       oJobs.setMaxRows(iMaxRows);
       iInstanceCount = oJobs.load (oConn, iSkip);
   		oWarn = new DBSubset(DB.k_jobs+" j,"+DB.k_job_atoms+" a", "DISTINCT(j."+DB.gu_job+")",
-  												 "j."+DB.gu_job+" IN ('"+Gadgets.join(oJobs.getColumnAsList(0),"','")+"') AND "+
+  												 "j."+DB.gu_job+" IN ('"+(iInstanceCount>0 ? Gadgets.join(oJobs.getColumnAsList(0),"','") : "")+"') AND "+
   												 "j."+DB.gu_job+"=a."+DB.gu_job+" AND "+
   												 "a."+DB.id_status+" IN (-1,2,3,4) AND "+
   												 "NOT EXISTS (SELECT b."+DB.tx_email+" FROM "+DB.k_global_black_list+" b WHERE b."+DB.gu_workarea+"=j."+DB.gu_workarea+" AND a."+DB.tx_email+"=b."+DB.tx_email+") "+
@@ -142,12 +142,12 @@
 
 %><HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
         var jsInstanceId;
         var jsInstanceNm;

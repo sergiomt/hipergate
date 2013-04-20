@@ -171,17 +171,17 @@ try {
     oDir = new File (Environment.getProfileVar(sCnf, "storage"));
     
     if (!oDir.exists())
-      sError = "Directory does not exist " + Environment.getProfileVar(sCnf, "storage");
+      sError = "Directory does not exist " + Gadgets.escapeChars(Environment.getProfileVar(sCnf, "storage"),"\\",'\\');
 
     oDir = new File (Environment.getProfileVar(sCnf, "workareasput"));
     
     if (!oDir.exists())
-      sError = "Directory does not exist " + Environment.getProfileVar(sCnf, "workareasput");
+      sError = "Directory does not exist " + Gadgets.escapeChars(Environment.getProfileVar(sCnf, "workareasput"), "\\",'\\');
 
     oDir = new File (Environment.getProfileVar(sCnf, "temp"));
     
     if (!oDir.exists())
-      sError = "Directory does not exist " + Environment.getProfileVar(sCnf, "temp");
+      sError = "Directory does not exist " + Gadgets.escapeChars(Environment.getProfileVar(sCnf, "temp"), "\\",'\\');
     
 }
 catch (IOException ioe) {
@@ -208,9 +208,9 @@ catch (SQLException sql) {
 <HTML>
 <HEAD>
   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript">
   <!--
     function setErrorLevel() {
       <%

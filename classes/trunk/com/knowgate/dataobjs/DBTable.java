@@ -57,8 +57,10 @@ import java.util.ListIterator;
 
 import com.knowgate.debug.*;
 import com.knowgate.jdc.*;
+import com.knowgate.misc.Gadgets;
 
 import com.knowgate.storage.Column;
+import com.knowgate.storage.RDBMS;
 
 /**
  * <p>A database table as a Java Object</p>
@@ -128,7 +130,7 @@ public class DBTable {
     boolean bFound;
     Object oVal;
     DBColumn oDBCol;
-    ListIterator oColIterator;
+    ListIterator<DBColumn> oColIterator;
     PreparedStatement oStmt = null;
     ResultSet oRSet = null;
 
@@ -179,7 +181,7 @@ public class DBTable {
         if (DebugFile.trace) DebugFile.writeln("  binding primary key " + PKValues[p] + ".");
 
         oConn.bindParameter(oStmt, p+1, PKValues[p]);
-        //oStmt.setObject(p+1, PKValues[p]);
+
       } // next
 
       if (DebugFile.trace) DebugFile.writeln("  Connection.executeQuery()");
@@ -198,9 +200,13 @@ public class DBTable {
         c = 1;
         while (oColIterator.hasNext()) {
           oVal = oRSet.getObject(c++);
-          oDBCol = (DBColumn) oColIterator.next();
-          if (null!=oVal)
+          oDBCol = oColIterator.next();
+          if (oRSet.wasNull()) {
+          	if (DebugFile.trace) DebugFile.writeln("Value of column "+oDBCol.getName()+" is NULL");
+          } else {
             AllValues.put(oDBCol.getName(), oVal);
+          	if (DebugFile.trace) DebugFile.writeln("Value of column "+oDBCol.getName()+" is "+oVal);
+          }// fi
         }
       }
 
@@ -251,7 +257,8 @@ public class DBTable {
     DBColumn oCol;
     String sCol;
     String sSQL = "";
-    ListIterator oColIterator;
+    ListIterator<DBColumn> oColIterator;
+    ListIterator<String> oKeyIterator;
     int iAffected = 0;
     PreparedStatement oStmt = null;
 
@@ -283,14 +290,15 @@ public class DBTable {
         oColIterator = oColumns.listIterator();
 
         while (oColIterator.hasNext()) {
-          oCol = (DBColumn) oColIterator.next();
+          oCol = oColIterator.next();
           sCol = oCol.getName().toLowerCase();
 
           if (!oPrimaryKeys.contains(sCol) &&
               (sCol.compareTo(DB.dt_created)!=0)) {
 
             if (DebugFile.trace) {
-              if (oCol.getSqlType()==java.sql.Types.CHAR || oCol.getSqlType()==java.sql.Types.VARCHAR) {
+              if (oCol.getSqlType()==java.sql.Types.CHAR  || oCol.getSqlType()==java.sql.Types.VARCHAR ||
+                  oCol.getSqlType()==java.sql.Types.NCHAR || oCol.getSqlType()==java.sql.Types.NVARCHAR ) {
 
                 if (AllValues.get(sCol)!=null) {
                   DebugFile.writeln("Binding " + sCol + "=" + AllValues.get(sCol).toString());
@@ -316,9 +324,9 @@ public class DBTable {
             } // endif (!oPrimaryKeys.contains(sCol))
           } // wend
 
-        oColIterator = oPrimaryKeys.listIterator();
-        while (oColIterator.hasNext()) {
-          sCol = (String) oColIterator.next();
+        oKeyIterator = oPrimaryKeys.listIterator();
+        while (oKeyIterator.hasNext()) {
+          sCol = oKeyIterator.next();
           oCol = getColumnByName(sCol);
 
           if (DebugFile.trace) DebugFile.writeln("PreparedStatement.setObject (" + String.valueOf(c) + "," + AllValues.get(sCol) + "," + oCol.getSqlTypeName() + ")");
@@ -821,7 +829,9 @@ public class DBTable {
    */
 
   public LinkedList<Column> getColumns() {
-    return oColumns;
+	LinkedList<Column> oCols = new LinkedList<Column>();
+	oCols.addAll(oColumns);
+	return oCols;
   }
 
   // ---------------------------------------------------------------------------
@@ -996,7 +1006,7 @@ public class DBTable {
       String sSetAllCols = "";
       String sSetNoPKCols = "";
 
-      oColumns = new LinkedList<Column>();
+      oColumns = new LinkedList<DBColumn>();
 	  oIndexes = new LinkedList<DBIndex>();
       oPrimaryKeys = new LinkedList<String>();
 
@@ -1225,10 +1235,14 @@ public class DBTable {
         switch (iDBMS) {
       	case JDCConnection.DBMS_POSTGRESQL:
       	  oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+      	  if (DebugFile.trace)
+            DebugFile.writeln("Statement.executeQuery(SELECT indexname,indexdef FROM pg_indexes WHERE tablename='"+sName+"')");
       	  oRSet = oStmt.executeQuery("SELECT indexname,indexdef FROM pg_indexes WHERE tablename='"+sName+"'");
       	  while (oRSet.next()) {
       	  	String sIndexName = oRSet.getString(1);
       	  	String sIndexDef = oRSet.getString(2);
+        	if (DebugFile.trace)
+              DebugFile.writeln("index name "+sIndexName+", index definition "+sIndexDef);
       	  	int lPar = sIndexDef.indexOf('(');
       	  	int rPar = sIndexDef.indexOf(')');
       	  	if (lPar>0 && rPar>0) {      	  	  
@@ -1242,10 +1256,14 @@ public class DBTable {
       	  break;
       	case JDCConnection.DBMS_MYSQL:
       	  oStmt = oConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+      	  if (DebugFile.trace)
+              DebugFile.writeln("Statement.executeQuery(SELECT COLUMN_NAME,COLUMN_KEY FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME ='"+sName+"' AND COLUMN_KEY!='')");
       	  oRSet = oStmt.executeQuery("SELECT COLUMN_NAME,COLUMN_KEY FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME ='"+sName+"' AND COLUMN_KEY!=''");
       	  while (oRSet.next()) {
       	  	String sIndexName = oRSet.getString(1);
       	  	String sIndexType = oRSet.getString(2);
+        	if (DebugFile.trace)
+                DebugFile.writeln("index name "+sIndexName+", index type "+sIndexType);
       	  	oIndexes.add(new DBIndex(sIndexName, new String[]{sIndexName},
       	  	             sIndexType.equalsIgnoreCase("PRI") || sIndexType.equalsIgnoreCase("UNI")));
       	  } //wend
@@ -1275,13 +1293,39 @@ public class DBTable {
       }
 
   } // readColumns
+  
   // ----------------------------------------------------------
 
+  /**
+   * Get SQL DDL creation script for this table
+   * @param eRDBMS
+   * @return String like "CREATE TABLE table_name ( ... ) "
+   * @since 7.0
+   */
+  public String sqlScriptDef(RDBMS eRDBMS)  {
+    String sDDL = "CREATE TABLE "+getName()+"(";
+    for (DBColumn c : oColumns)
+      sDDL += c.sqlScriptDef(eRDBMS)+",";
+    if (getPrimaryKey().size()>0)
+      sDDL += "CONSTRAINT pk_"+getName()+" PRIMARY KEY ("+Gadgets.join(getPrimaryKey(), ",")+"),";
+    for (int c=0; c<oColumns.size(); c++) {
+      if (oColumns.get(c).getForeignKey()!=null)
+        sDDL += "CONSTRAINT f"+String.valueOf(c+1)+"_"+getName()+" "+oColumns.get(c).getForeignKey()+",";
+      else if (oColumns.get(c).getConstraint()!=null)
+        sDDL += "CONSTRAINT c"+String.valueOf(c+1)+"_"+getName()+" CHECK ("+oColumns.get(c).getForeignKey()+"),";
+    }    
+    sDDL = Gadgets.dechomp(sDDL, ',');
+    sDDL += ")";
+    return sDDL;
+  } // sqlScriptDef
+
+  // ----------------------------------------------------------
+  
   private String sCatalog;
   private String sSchema;
   private String sName;
   private int iHashCode;
-  private LinkedList<Column> oColumns;
+  private LinkedList<DBColumn> oColumns;
   private LinkedList<DBIndex> oIndexes;
   private LinkedList<String> oPrimaryKeys;
 

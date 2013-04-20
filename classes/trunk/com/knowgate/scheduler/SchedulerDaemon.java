@@ -48,7 +48,6 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.FileNotFoundException;
 
 import com.knowgate.debug.DebugFile;
@@ -243,7 +242,7 @@ public class SchedulerDaemon extends Thread {
 
     // This is the queue consumer object
     // it grants that only one atom is
-    // poped from the queue at a time.
+    // popped from the queue at a time.
     if (DebugFile.trace) DebugFile.writeln("new AtomConsumer([JDCconnection], [AtomQueue])");
 
     oCsr = new AtomConsumer(oDbb, oQue);
@@ -308,8 +307,8 @@ public class SchedulerDaemon extends Thread {
             oUpdt.close();
           } // fi
 
-          // ***************************************************
-          // Count jobs running or pending of begining execution
+          // ****************************************************
+          // Count jobs running or pending of beginning execution
 
           if (DebugFile.trace) DebugFile.writeln("Statement.executeQuery(SELECT COUNT(*) FROM k_jobs WHERE id_status=" + String.valueOf(Job.STATUS_PENDING) + " AND ("+DB.dt_execution+" IS NULL OR "+DB.dt_execution+"<="+DBBind.Functions.GETDATE+")) on connection with process id. "+oJcn.pid());
 
@@ -331,11 +330,17 @@ public class SchedulerDaemon extends Thread {
         if (bContinue) {
 
 		  try {
-		    oJcn = oDbb.getConnection("SchedulerDaemon.AtomFeeder");
+
+			oJcn = oDbb.getConnection("SchedulerDaemon.AtomFeeder");
             oJcn.setAutoCommit(true);
             oFdr.loadAtoms(oJcn, oThreadPool.size());
+            oJcn.close("SchedulerDaemon.AtomFeeder");
+
+            oJcn = oDbb.getConnection("SchedulerDaemon.AtomFeeder");
+            oJcn.setAutoCommit(true);            
             oFdr.feedQueue(oJcn, oQue);
 		    oJcn.close("SchedulerDaemon.AtomFeeder");
+
 		    oJcn=null;
 		  } finally {
 		  	try { if (null!=oJcn) oJcn.close("SchedulerDaemon.AtomFeeder"); } catch (Exception ignore) { }
@@ -493,14 +498,15 @@ public class SchedulerDaemon extends Thread {
       oStmt.close();
     }
   }
-
+  
   // ---------------------------------------------------------------------------
 
   private static void suspendJobs(JDCConnection oCon, Object[] aJobs) throws SQLException {
     if (DebugFile.trace) {
 	  DebugFile.writeln("Begin SchedulerDaemon.suspendJobs([JDCConnection], Object[])");
 	  DebugFile.incIdent();
-	}    int nJobs;
+	}
+    int nJobs;
 
     if (null==aJobs) nJobs=0; else nJobs = aJobs.length;
     if (nJobs>0) {
@@ -640,7 +646,6 @@ public class SchedulerDaemon extends Thread {
   public static void main(String[] argv)
     throws ClassNotFoundException, SQLException, IOException {
 
-    DBBind oGlobalDBBind = new DBBind();
     SchedulerDaemon TheDaemon;
 
     if (argv.length<1 || argv.length>2)
@@ -651,12 +656,16 @@ public class SchedulerDaemon extends Thread {
 
     else {
 
+      DBBind oGlobalDBBind = new DBBind();
+    	
       TheDaemon = new SchedulerDaemon(argv[0]);
 
       if (argv.length==2)
         TheDaemon.registerCallback(new SystemOutNotify());
 
       TheDaemon.start();
+      
+      oGlobalDBBind.close();
     }
   }
 } // SchedulerDaemon

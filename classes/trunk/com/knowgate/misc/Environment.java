@@ -55,7 +55,9 @@ import com.knowgate.debug.*;
  */
 
 public class Environment {
-  public static String DEFAULT_PROFILES_DIR = (System.getProperty("os.name").equals("Windows XP") ? "C:\\Windows\\" : (System.getProperty("os.name").startsWith("Windows") ? "C:\\WINNT\\" : "/etc/"));
+  public static String DEFAULT_PROFILES_DIR = (System.getProperty("os.name").equals("Windows XP") ?		
+		  "C:\\Windows\\" : (System.getProperty("os.name").startsWith("Windows") ? "C:\\WINNT\\" :
+		  "/etc/"));
 
   private Environment() { }
 

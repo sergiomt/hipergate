@@ -40,16 +40,15 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.RangeQuery;
+import org.apache.lucene.search.TermRangeQuery;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.analysis.SimpleAnalyzer;
+import org.apache.lucene.store.Directory;
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.DateTools.Resolution;
 import org.apache.lucene.document.Document;
@@ -61,7 +60,7 @@ import com.knowgate.misc.Gadgets;
 /**
  * Search into a Lucene full text index for e-mails
  * @author Sergio Montoro Ten
- * @version 3.0
+ * @version 7.0
  */
 public class MailSearcher {
 
@@ -129,25 +128,25 @@ public class MailSearcher {
       oQry.add(new TermQuery(new Term("title",Gadgets.ASCIIEncode(sSubject))),BooleanClause.Occur.MUST);
    
     if (dtFromDate!=null && dtToDate!=null)
-	  oQry.add(new RangeQuery(new Term("created",DateTools.dateToString(dtFromDate, DateTools.Resolution.DAY)),
-	  						  new Term("created",DateTools.dateToString(dtToDate, DateTools.Resolution.DAY)), true), BooleanClause.Occur.MUST);    
+	  oQry.add(new TermRangeQuery("created",DateTools.dateToString(dtFromDate, DateTools.Resolution.DAY),
+	  						      DateTools.dateToString(dtToDate, DateTools.Resolution.DAY), true, true), BooleanClause.Occur.MUST);    
     else if (dtFromDate!=null)
-	  oQry.add(new RangeQuery(new Term("created",DateTools.dateToString(dtFromDate, DateTools.Resolution.DAY)),
-	  						  new Term("created",DateTools.dateToString(new Date(299,11,31), DateTools.Resolution.DAY)), true), BooleanClause.Occur.MUST);    
+	  oQry.add(new TermRangeQuery("created",DateTools.dateToString(dtFromDate, DateTools.Resolution.DAY), null, true, false), BooleanClause.Occur.MUST);    
+
     else if (dtToDate!=null)
-	  oQry.add(new RangeQuery(new Term("created",DateTools.dateToString(new Date(79,11,31), DateTools.Resolution.DAY)),
-	  						  new Term("created",DateTools.dateToString(dtToDate, DateTools.Resolution.DAY)), true), BooleanClause.Occur.MUST);
+	  oQry.add(new TermRangeQuery("created",null,DateTools.dateToString(dtToDate, DateTools.Resolution.DAY), false, true), BooleanClause.Occur.MUST);
 
     if (null!=sText)
       oQry.add(new TermQuery(new Term("text",sText)),BooleanClause.Occur.SHOULD);
 
 	String sSegments = Gadgets.chomp(sLuceneIndexPath,File.separator)+"k_mime_msgs"+File.separator+sWorkArea;	
     if (DebugFile.trace) DebugFile.writeln("new IndexSearcher("+sSegments+")");
-    IndexSearcher oSearch = new IndexSearcher(sSegments);
 
-    if (iLimit>0) {
+    Directory oFsDir = Indexer.openDirectory(sSegments);
+    IndexSearcher oSearch = new IndexSearcher(oFsDir);
+
       if (DebugFile.trace) DebugFile.writeln("IndexSearcher.search("+oQry.toString()+", null, "+String.valueOf(iLimit)+")");
-      TopDocs oTopSet = oSearch.search(oQry, null, iLimit);
+      TopDocs oTopSet = oSearch.search(oQry, null, iLimit>0 ? iLimit : 2147483647);
       if (oTopSet.scoreDocs!=null) {
         ScoreDoc[] oTopDoc = oTopSet.scoreDocs;
         int iDocCount = oTopDoc.length;
@@ -163,26 +162,10 @@ public class MailSearcher {
       } else {
         aRetArr = null;
       }
-    } else {
-      if (DebugFile.trace) DebugFile.writeln("IndexSearcher.search("+oQry.toString()+")");
-      Hits oHitSet = oSearch.search(oQry);
-      int iHitCount = oHitSet.length();
-      if (DebugFile.trace) DebugFile.writeln("hit count is "+String.valueOf(iHitCount));
-      if (iHitCount>0) {
-        aRetArr = new MailRecord[iHitCount];
-        for (int h=0; h<iHitCount; h++) {
-          Document oDoc = oHitSet.doc(h);
-          if (DebugFile.trace) DebugFile.writeln("found "+oDoc.get("guid")+" "+oDoc.get("title")+" created by "+" "+oDoc.get("author")+" at date "+oDoc.get("created"));
-          String[] aAbstract = Gadgets.split(oDoc.get("abstract"), '¨');
-          aRetArr[h] = new MailRecord(aAbstract[0], aAbstract[1], aAbstract[2],
-                                      aAbstract[3], aAbstract[4], aAbstract[5],
-                                      oDoc.get("container"));
-        } // next
-      } else {
-        aRetArr = null;
-      }
-    } // fi (iLimit>0)
 
+    oSearch.close();
+    oFsDir.close();
+    
     if (oSortBy!=null && aRetArr!=null) {
       Arrays.sort(aRetArr, oSortBy);
     }

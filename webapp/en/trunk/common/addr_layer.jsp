@@ -1,6 +1,5 @@
 <%@ page import="java.net.URLDecoder,java.util.HashMap,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.misc.Gadgets,com.knowgate.hipergate.Address,com.knowgate.hipergate.RecentlyUsed" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/cookies.jspf" %>
-<jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%
+<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/cookies.jspf" %><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><%
 /*
   Copyright (C) 2003-2008  Know Gate S.L. All rights reserved.
                            C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -102,7 +101,7 @@
 	  oItem.put (DB.work_phone, oAddresses.get(DB.work_phone,0));
 
 	if (!oAddresses.isNull(DB.tx_email, 0))
-	  oItem.put (DB.tx_email, oAddresses.get(DB.tx_email,0));
+	  oItem.put (DB.tx_email, oAddresses.getString(DB.tx_email,0));
 	  
 	oRecent.add (oConn, oItem);
       }
@@ -166,9 +165,9 @@
 			if (sAddrEm.length()>0)  {
 			  if (((iAppMask & (1<<Hipermail))!=0)) {
           if (sLinkTable.equals(DB.k_x_contact_addr))
-            sAddrEm = "<A HREF=\"../hipermail/msg_new_f.jsp?to="+sAddrEm+"&gu_contact="+sLinkValue+"\" TARGET=\"_blank\" TITLE=\"Send Message\">" + sAddrEm + "</A>";
+            sAddrEm = "<A HREF=\"../hipermail/msg_new_f.jsp?folder=drafts&to="+sAddrEm+"&gu_contact="+sLinkValue+"\" TARGET=\"_blank\" TITLE=\"Send Message\">" + sAddrEm + "</A>";
 					else
-            sAddrEm = "<A HREF=\"../hipermail/msg_new_f.jsp?to="+sAddrEm+"\" TARGET=\"_blank\" TITLE=\"Send Message\">" + sAddrEm + "</A>";						
+            sAddrEm = "<A HREF=\"../hipermail/msg_new_f.jsp?folder=drafts&to="+sAddrEm+"\" TARGET=\"_blank\" TITLE=\"Send Message\">" + sAddrEm + "</A>";						
 		    } else {
           sAddrEm = "<A HREF=\"mailto:" + sAddrEm + "\" TITLE=\"Send Message\">" + sAddrEm + "</A>";
         }
@@ -208,7 +207,7 @@
 <HEAD>
   <TITLE>hipergate :: Address</TITLE>
   <LINK REL="stylesheet" TYPE="text/css" HREF="../skins/xp/styles.css" />
-  <SCRIPT TYPE="text/javascript" LANGUAGE="JavaScript">
+  <SCRIPT TYPE="text/javascript">
     <!--
       var nums = new Array(<% for (int i=0; i<iAddressCount; i++) out.write((i>0 ? "," : "")+"\""+Gadgets.URLEncode(oAddresses.getStringNull(11,i,""))+"\""); %>);
       var guids= new Array(<% for (int i=0; i<iAddressCount; i++) out.write((i>0 ? "," : "")+"\""+oAddresses.getString(0,i)+"\""); %>);
@@ -216,9 +215,9 @@
       function sendSms(a) {
       	var qry = "?nu_msisdn="+nums[a]+"&gu_address="+guids[a];
 <%      if (sLinkTable.equals(DB.k_x_contact_addr)) { %>
-				  qry += "&gu_contact=<%=sLinkValue%>"
+				  qry += "&gu_contact=<%=sLinkValue%>";
 <%      } else if (sLinkTable.equals(DB.k_x_company_addr)) { %>
-				  qry += "&gu_company=<%=sLinkValue%>"
+				  qry += "&gu_company=<%=sLinkValue%>";
 <%      }  %>
 	
 				window.open("../common/sms_edit.jsp"+qry,null,"directories=no,toolbar=no,scrollbars=yes,menubar=no,width=400,height=320");
@@ -227,9 +226,9 @@
   </SCRIPT>
 </HEAD>
 <BODY marginheight="0" marginwidth="0" topmargin="0" leftmargin="0" class="textsmall">
-  <SCRIPT language="JavaScript" type="text/javascript">
-  	<!--
-  	var aGuids = new Array(<% for (int i=0; i<iAddressCount; i++) { out.write((0==i ? "" : ",")+"\""+oAddresses.getString(0,i)+"\""); } %>);
+  <SCRIPT type="text/javascript">
+
+    var aGuids = new Array(<% for (int i=0; i<iAddressCount; i++) { out.write((0==i ? "" : ",")+"\""+oAddresses.getString(0,i)+"\""); } %>);
     parent.addrLayer.setHTML('<table bgcolor="floralwhite" cellpadding="4" cellspacing="0" width="200" border="1"><tr height="100"><td valign="top" class="textsmall"><%=sResult%><br><a href="javascript:hideDiv()">Close</a></td></tr></table>');
     parent.addrLayer.setVisible(true);
     parent.document.body.style.cursor = "default";
@@ -237,7 +236,7 @@
     function showGoogleMap(n) {
     	window.open("../common/google_map.jsp?gu_address="+aGuids[n],"google_map_"+aGuids[n],"directories=no,toolbar=no,scrollbars=yes,menubar=no,width=540,height=400");
     }
-    -->
+
   </SCRIPT>
 </BODY>
 </HTML>

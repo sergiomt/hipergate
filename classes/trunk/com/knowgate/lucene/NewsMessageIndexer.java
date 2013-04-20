@@ -1,6 +1,5 @@
 /*
-  Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+  Copyright (C) 2003-2011  Know Gate S.L. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -39,15 +38,12 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Properties;
 
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.store.Directory;
 import org.apache.lucene.document.DateTools;
-import org.apache.lucene.document.DateTools.Resolution;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Field.Index;
-import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.Document;
 
 
@@ -58,7 +54,7 @@ import com.knowgate.misc.Gadgets;
 /**
  * Indexer subclass for hipergate forum messages
  * @author Sergio Montoro Ten
- * @version 3.0
+ * @version 7.0
  */
 public class NewsMessageIndexer extends Indexer {
 
@@ -66,34 +62,65 @@ public class NewsMessageIndexer extends Indexer {
   }
 
   public static void addNewsMessage(IndexWriter oIWrt,
-                                    String sGuid, String sWorkArea,
-                                    String sContainer, String sTitle,
-                                    String sAuthor, Date dtCreated,
-                                    String sText)
+                                    String sGuid, String sThread,
+                                    String sWorkArea, String sContainer,
+                                    String sTitle, String sAuthor,
+                                    Date dtCreated, String sText)
     throws ClassNotFoundException, IOException, IllegalArgumentException,
              NoSuchFieldException, IllegalAccessException, InstantiationException,
              NullPointerException {
 
+	if (null==sGuid) throw new NullPointerException("NewsMessageIndexer.addNewsMessage() Message GUID may not be null");
+	if (null==sWorkArea) throw new NullPointerException("NewsMessageIndexer.addNewsMessage() Message WorkArea may not be null");
+	if (null==sContainer) throw new NullPointerException("NewsMessageIndexer.addNewsMessage() Message Container may not be null");
+	if (null==dtCreated) throw new NullPointerException("NewsMessageIndexer.addNewsMessage() Message Creation Date may not be null");
+	
     Document oDoc = new Document();
-    oDoc.add (new Field ("workarea" , sWorkArea, Field.Store.YES, Field.Index.UN_TOKENIZED));
-    oDoc.add (new Field ("container", sContainer, Field.Store.YES, Field.Index.UN_TOKENIZED));
-    oDoc.add (new Field ("guid"     , sGuid, Field.Store.YES, Field.Index.UN_TOKENIZED));
-    oDoc.add (new Field ("created"  , DateTools.dateToString(dtCreated, DateTools.Resolution.SECOND), Field.Store.YES, Field.Index.UN_TOKENIZED));
-    oDoc.add (new Field ("title"    , sTitle, Field.Store.YES, Field.Index.TOKENIZED));
-    oDoc.add (new Field ("author"   , sAuthor, Field.Store.YES, Field.Index.TOKENIZED));
-    oDoc.add (new Field ("text"     , sText, Field.Store.NO, Field.Index.TOKENIZED));
-    if (sText.length()>80)
-      oDoc.add (new Field("abstract", sText.substring(0,80), Field.Store.YES, Field.Index.TOKENIZED));
-    else
-      oDoc.add (new Field("abstract", sText, Field.Store.YES, Field.Index.TOKENIZED));
+    oDoc.add (new Field ("workarea" , sWorkArea, Field.Store.YES, Field.Index.NOT_ANALYZED));
+    oDoc.add (new Field ("container", sContainer, Field.Store.YES, Field.Index.NOT_ANALYZED));
+    oDoc.add (new Field ("guid"     , sGuid, Field.Store.YES, Field.Index.NOT_ANALYZED));
+    oDoc.add (new Field ("thread"   , sThread, Field.Store.YES, Field.Index.NOT_ANALYZED));
+    oDoc.add (new Field ("created"  , DateTools.dateToString(dtCreated, DateTools.Resolution.SECOND), Field.Store.YES, Field.Index.NOT_ANALYZED));
+    oDoc.add (new Field ("title"    , null==sTitle ? "" : sTitle, Field.Store.YES, Field.Index.ANALYZED));    
+    oDoc.add (new Field ("author"   , null==sAuthor ? "" : sAuthor, Field.Store.YES, Field.Index.ANALYZED));
+    if (null==sText) {
+      oDoc.add (new Field ("text"   , "", Field.Store.NO, Field.Index.ANALYZED));
+      oDoc.add (new Field("abstract", "", Field.Store.YES, Field.Index.ANALYZED));
+    } else {
+      oDoc.add (new Field ("text"   , Gadgets.ASCIIEncode(sText).toLowerCase(), Field.Store.NO, Field.Index.ANALYZED));
+      if (sText.length()>80)
+        oDoc.add (new Field("abstract", sText.substring(0,80), Field.Store.YES, Field.Index.ANALYZED));
+      else
+        oDoc.add (new Field("abstract", sText, Field.Store.YES, Field.Index.ANALYZED));
+    }
     oIWrt.addDocument(oDoc);
   } // addNewsMessage
 
+  public static void addNewsMessage(Properties oProps, String sGuid, String sThread, String sWorkArea, String sContainer, String sTitle, String sAuthor, Date dtCreated, String sText)
+    throws ClassNotFoundException, IOException, IllegalArgumentException, NoSuchFieldException, IllegalAccessException, InstantiationException, NullPointerException {
 
-  public static void addOrReplaceNewsMessage(Properties oProps, String sGuid, String sWorkArea,
-                                             String sContainer, String sTitle,
-                                             String sAuthor, Date dtCreated,
-                                              String sText)
+    String sDirectory = oProps.getProperty("luceneindex");
+
+	if (null==sDirectory) {
+	  if (DebugFile.trace) DebugFile.decIdent();
+	    throw new NoSuchFieldException ("Cannot find luceneindex property");
+    }
+
+	sDirectory = Gadgets.chomp(sDirectory, File.separator) + "k_newsmsgs" + File.separator + sWorkArea;
+
+	if (DebugFile.trace) DebugFile.writeln("index directory is " + sDirectory);
+
+    Directory oFsDir = Indexer.openDirectory(sDirectory);
+		
+    IndexWriter oIWrt = new IndexWriter(oFsDir, Indexer.instantiateAnalyzer(oProps), IndexWriter.MaxFieldLength.LIMITED);
+			
+    addNewsMessage(oIWrt, sGuid, sThread, sWorkArea, sContainer, sTitle, sAuthor, dtCreated, sText);
+			
+	oIWrt.close();
+	oFsDir.close();			
+  } // addNewsMessage
+
+  public static void addOrReplaceNewsMessage(Properties oProps, String sGuid, String sThread, String sWorkArea, String sContainer, String sTitle, String sAuthor, Date dtCreated, String sText)
     throws ClassNotFoundException, IOException, IllegalArgumentException, 
              NoSuchFieldException, IllegalAccessException, InstantiationException, NullPointerException {
 
@@ -127,26 +154,25 @@ public class NewsMessageIndexer extends Indexer {
 	  }	
     }
 
-
-    if (DebugFile.trace)
-      DebugFile.writeln("Class.forName(" + oProps.getProperty("analyzer" , DEFAULT_ANALYZER) + ")");
-
-    Class oAnalyzer = Class.forName(oProps.getProperty("analyzer" , DEFAULT_ANALYZER));
-
-    if (DebugFile.trace)
-      DebugFile.writeln("new IndexWriter(...)");
-
+    Directory oFsDir = Indexer.openDirectory(sDirectory);
+    
 	if (!bNewIndex) {
-      IndexReader oIRdr = IndexReader.open(sDirectory);
+	  if (DebugFile.trace) DebugFile.writeln("new IndexReader(...)");
+      IndexReader oIRdr = IndexReader.open(oFsDir,false);
+	  if (DebugFile.trace) DebugFile.writeln("IndexReader.deleteDocuments("+sGuid+")");
       oIRdr.deleteDocuments(new Term("guid",sGuid));
       oIRdr.close();
 	}
 
-    IndexWriter oIWrt = new IndexWriter(sDirectory, (Analyzer) oAnalyzer.newInstance(), bNewIndex);
+    if (DebugFile.trace)
+        DebugFile.writeln("new IndexWriter(...)");
 	
-	addNewsMessage(oIWrt, sGuid, sWorkArea, sContainer, sTitle, sAuthor, dtCreated, sText);
+    IndexWriter oIWrt = new IndexWriter(oFsDir, Indexer.instantiateAnalyzer(oProps), IndexWriter.MaxFieldLength.LIMITED);
+	
+	addNewsMessage(oIWrt, sGuid, sThread, sWorkArea, sContainer, sTitle, sAuthor, dtCreated, sText);
 	
 	oIWrt.close();
+	oFsDir.close();
 	
   } // addOrReplaceNewsMessage
 }

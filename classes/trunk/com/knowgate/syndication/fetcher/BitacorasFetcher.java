@@ -2,6 +2,7 @@ package com.knowgate.syndication.fetcher;
 
 import com.knowgate.misc.Gadgets;
 import com.knowgate.debug.DebugFile;
+import com.knowgate.storage.DataSource;
 
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndContent;
@@ -10,8 +11,8 @@ import com.sun.syndication.fetcher.impl.FeedFetcherCache;
 
 public class BitacorasFetcher extends GenericFeedFetcher {
 
-  	public BitacorasFetcher(String sFeedUrl, String sQueryString, FeedFetcherCache oFeedCache) {
-  	  super(sFeedUrl, "bitacoras", sQueryString, oFeedCache, null);
+  	public BitacorasFetcher(DataSource oDts, String sFeedUrl, String sQueryString, FeedFetcherCache oFeedCache) {
+  	  super(oDts, sFeedUrl, "bitacoras", sQueryString, oFeedCache, null);
   	}
 
     protected boolean preFetch(SyndEntry oEntr) {

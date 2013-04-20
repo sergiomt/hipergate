@@ -38,9 +38,6 @@ import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 
 import java.sql.SQLException;
-import java.sql.Timestamp;
-
-import java.util.Date;
 
 import com.knowgate.dataxslt.Page;
 import com.knowgate.dataobjs.DB;

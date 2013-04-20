@@ -62,7 +62,7 @@ GO;
 CREATE PROCEDURE k_sp_resolve_atoms (IdJob CHAR) IS
   WrkAGu CHAR(32);
   AtomPg NUMBER(11);
-  CURSOR Atoms IS SELECT pg_atom FROM k_job_atoms WHERE gu_job=IdJob;
+  CURSOR Atoms IS SELECT pg_atom FROM k_job_atoms WHERE gu_job=IdJob AND id_status<>3;
 BEGIN
   SELECT gu_workarea INTO WrkAGu FROM k_jobs WHERE gu_job=IdJob;
   OPEN Atoms;

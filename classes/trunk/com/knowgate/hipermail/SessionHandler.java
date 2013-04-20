@@ -62,7 +62,6 @@ import javax.mail.Transport;
 import javax.mail.Folder;
 import javax.mail.Flags;
 import javax.mail.FetchProfile;
-import javax.mail.FetchProfile.Item;
 
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -620,18 +619,26 @@ public class SessionHandler {
     HeadersHelper oHlpr = new HeadersHelper();
     String [] aMsgsXml = null;
 
+    if (DebugFile.trace) DebugFile.writeln("getting "+sFolderName+" folder");
+
     Folder oFldr = getFolder(sFolderName);
 
+    if (DebugFile.trace) DebugFile.writeln("opening "+sFolderName+" folder");
+    
 	oFldr.open (Folder.READ_ONLY);
 
+    if (DebugFile.trace) DebugFile.writeln(sFolderName+" opened in read only mode");
+	
+	Message[] aMsgsObj = oFldr.getMessages();
+
+	int iTotalCount = 0;
+	if (null!=aMsgsObj) iTotalCount = aMsgsObj.length;
+
 	int iDeleted = 0;
-	int iTotalCount = oFldr.getMessageCount();
 
 	if (iTotalCount>0) {
 
       if (DebugFile.trace) DebugFile.writeln("Folder.getMessages("+String.valueOf(iTotalCount)+")");
-
-      Message[] aMsgsObj = oFldr.getMessages();
 
       FetchProfile oFtchPrfl = new FetchProfile();
       oFtchPrfl.add(FetchProfile.Item.ENVELOPE);
@@ -670,10 +677,15 @@ public class SessionHandler {
       	DebugFile.writeln(String.valueOf(iTotalCount-iDeleted)+" messages to XML in "+String.valueOf(oChMeter.stop())+" ms");
       }
 
-	} // fi (iTotalCount>0)
+	} else {
+	  if (DebugFile.trace)
+        DebugFile.writeln("No messages found at folder "+sFolderName);		
+	}// fi (iTotalCount>0)
+
 	oFldr.close(false);
 
     if (DebugFile.trace) {
+      DebugFile.writeln(String.valueOf(iTotalCount)+" messages fetched in "+String.valueOf(oChMeter.stop()/1000l)+" seconds");
       DebugFile.decIdent();
       if (null==aMsgsXml)
         DebugFile.writeln("End SessionHandler.listFolderMessages() : 0");
@@ -756,7 +768,10 @@ public class SessionHandler {
 
 	  if (iDeleted>0) aMsgsHdr = Arrays.copyOfRange(aMsgsHdr, 0, iTotalCount-iDeleted);
 
-	} // fi (iTotalCount>0)
+	} else {
+	  if (DebugFile.trace) DebugFile.writeln("No message headers found at folder "+sFolderName);
+	}// fi (iTotalCount>0)
+
 	oFldr.close(false);
 
     if (DebugFile.trace) {

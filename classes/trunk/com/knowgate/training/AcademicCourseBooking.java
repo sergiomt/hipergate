@@ -181,7 +181,7 @@ public class AcademicCourseBooking extends DBPersist {
 	Invoice oInvc = new Invoice();
 	oInvc.put(DB.bo_active, (short) 1);
 	oInvc.put(DB.gu_shop, sGuShop);
-	oInvc.put(DB.id_currency, oProd.get(DB.id_currency));
+	oInvc.put(DB.id_currency, oProd.getStringNull(DB.id_currency,"978"));
 	oInvc.put(DB.id_legal, oComp.getString(DB.id_legal));
 	oInvc.put(DB.de_order, Gadgets.left(getStringNull(DB.nm_course,"")+"/"+oCntc.getStringNull(DB.tx_name,"")+" "+oCntc.getStringNull(DB.tx_surname,""),100));	
 	oInvc.put(DB.gu_company, oComp.getString(DB.gu_company));
@@ -220,7 +220,7 @@ public class AcademicCourseBooking extends DBPersist {
 		
     if (isNull(DB.gu_contact))
       throw new IllegalStateException("AcademicCourseBooking.getContact() gu_contact not set");
-
+    
 	Contact oCntc = new Contact(oConn, getString(DB.gu_contact));
 	if (oCntc.isNull(DB.sn_passport))
 	  throw new SQLException("Legal document number not set for Contact "+getString(DB.gu_contact)+" at bookig for academic course "+getString(DB.gu_acourse));
@@ -238,12 +238,18 @@ public class AcademicCourseBooking extends DBPersist {
 	  }
 	}
 
+	if (oProd.isNull(DB.id_currency))
+	  throw new IllegalStateException("Could not generate invoice because currency for product is not set");
+
+    if (oCntc.isNull(DB.sn_passport))
+	  throw new IllegalStateException("Could not generate invoice because the identity document of contact is not set");
+	
 	DBSubset oAddrs = oCntc.getAddresses(oConn);
 	DBSubset oBanks = oCntc.getActiveBankAccounts(oConn);
 	
 	Invoice oInvc = new Invoice();
 	oInvc.put(DB.gu_shop, sGuShop);
-	oInvc.put(DB.id_currency, oProd.get(DB.id_currency));
+	oInvc.put(DB.id_currency, oProd.getStringNull(DB.id_currency,"978"));
 	oInvc.put(DB.id_legal, oCntc.getString(DB.sn_passport));
 	oInvc.put(DB.de_order, Gadgets.left(getStringNull(DB.nm_acourse,"")+"/"+oCntc.getStringNull(DB.tx_name,"")+" "+oCntc.getStringNull(DB.tx_surname,""),100));	
 	oInvc.put(DB.gu_contact, oCntc.getString(DB.gu_contact));

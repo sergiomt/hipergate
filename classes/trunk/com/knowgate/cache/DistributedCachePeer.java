@@ -41,11 +41,6 @@ import java.util.Date;
 import java.util.Properties;
 import java.util.Iterator;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
 import java.net.URL;
 import java.net.MalformedURLException;
 

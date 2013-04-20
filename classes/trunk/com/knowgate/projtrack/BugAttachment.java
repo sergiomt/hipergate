@@ -167,10 +167,6 @@ public class BugAttachment {
 
     File oFile = new File(sFilePath);
 
-    if (oFile==null) {
-      if (DebugFile.trace) DebugFile.decIdent();
-      throw new FileNotFoundException(sFilePath);
-    }
     if (!oFile.exists()) {
       if (DebugFile.trace) DebugFile.decIdent();
       throw new FileNotFoundException(sFilePath);

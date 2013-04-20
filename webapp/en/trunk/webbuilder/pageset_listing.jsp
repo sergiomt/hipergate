@@ -171,15 +171,15 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
 
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
     dynapi.library.setPath('../javascript/dynapi3/');
     dynapi.library.include('dynapi.api.DynLayer');
 
@@ -195,8 +195,8 @@
       menuLayer.setHTML(rightMenuHTML);
     }
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
     	var jsPageSetId;
     	var jsPageSetName;
@@ -511,7 +511,7 @@
 
     //-->    
   </SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
 	function setCombos() {
 	  var frm = document.forms[0];
@@ -573,8 +573,7 @@
         </TD>
       <TR>
         <TD COLSPAN="<% if (sDocType.equals("newsletter")) out.write("8"); else out.write("6");%>">
-          <FONT CLASS="textplain"><B>View</B>&nbsp;<INPUT TYPE="radio" NAME="chk_doctype" <% if (sDocType.equals("newsletter")) out.write("CHECKED"); else out.write("onClick=\"window.document.location.href='pageset_listing.jsp?selected=' + getURLParam('selected') + '&subselected=' + getURLParam('subselected') + '&doctype=newsletter'\""); %>>Newsletters&nbsp;&nbsp;<INPUT TYPE="radio" NAME="chk_doctype" <% if (sDocType.equals("website")) out.write("CHECKED"); else out.write("onClick=\"window.document.location.href='pageset_listing.jsp?selected=' + getURLParam('selected') + '&subselected=' + getURLParam('subselected') + '&doctype=website'\""); %>>WebSites&nbsp;&nbsp;
-          	<!--<INPUT TYPE="radio" NAME="chk_doctype" <% if (sDocType.equals("survey")) out.write("CHECKED"); else out.write("onClick=\"window.document.location.href='pageset_listing.jsp?selected=' + getURLParam('selected') + '&subselected=' + getURLParam('subselected') + '&doctype=survey'\""); %>>Questionnaires</FONT>-->
+          <FONT CLASS="textplain"><B>View</B>&nbsp;<INPUT TYPE="radio" NAME="chk_doctype" <% if (sDocType.equals("newsletter")) out.write("CHECKED"); else out.write("onClick=\"window.document.location.href='pageset_listing.jsp?selected=' + getURLParam('selected') + '&subselected=' + getURLParam('subselected') + '&doctype=newsletter'\""); %>>Newsletters&nbsp;&nbsp;<INPUT TYPE="radio" NAME="chk_doctype" <% if (sDocType.equals("website")) out.write("CHECKED"); else out.write("onClick=\"window.document.location.href='pageset_listing.jsp?selected=' + getURLParam('selected') + '&subselected=' + getURLParam('subselected') + '&doctype=website'\""); %>>WebSites&nbsp;&nbsp;<INPUT TYPE="radio" NAME="chk_doctype" <% if (sDocType.equals("survey")) out.write("CHECKED"); else out.write("onClick=\"window.document.location.href='pageset_listing.jsp?selected=' + getURLParam('selected') + '&subselected=' + getURLParam('subselected') + '&doctype=survey'\""); %>>Questionnaires</FONT>
         </TD>
       <TR>
     </TABLE>
@@ -670,7 +669,7 @@
                out.write ("</TD>");
              }
              out.write ("<TD "+sTdClass+">");
-             out.write ("&nbsp;" + aStatus[i]);
+             out.write ("&nbsp;" + nullif(aStatus[i]));
              out.write ("</TD>");
              out.write ("<TD "+sTdClass+" ALIGN=\"center\">");
              out.write ("<INPUT VALUE=\"1\" TYPE=\"checkbox\" NAME=\"" + sCompId + "\">");

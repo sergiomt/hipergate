@@ -33,7 +33,7 @@
 
 package com.knowgate.dfs.chardet ;
 
-import java.lang.*;
+
 
 public abstract class nsVerifier {
 
@@ -59,14 +59,14 @@ public abstract class nsVerifier {
 
          return (byte) ( 0xFF & 
 	     (((v.states()[((
-		   (s*v.stFactor()+(((v.cclass()[((b&0xFF)>>v.eidxSft4bits)]) 
-		   >> ((b & v.eSftMsk4bits) << v.eBitSft4bits)) 
-		   & v.eUnitMsk4bits ))&0xFF)
-		>> v.eidxSft4bits) ]) >> (((
-		   (s*v.stFactor()+(((v.cclass()[((b&0xFF)>>v.eidxSft4bits)]) 
-		   >> ((b & v.eSftMsk4bits) << v.eBitSft4bits)) 
-		   & v.eUnitMsk4bits ))&0xFF) 
-		& v.eSftMsk4bits) << v.eBitSft4bits)) & v.eUnitMsk4bits )
+		   (s*v.stFactor()+(((v.cclass()[((b&0xFF)>>nsVerifier.eidxSft4bits)]) 
+		   >> ((b & nsVerifier.eSftMsk4bits) << nsVerifier.eBitSft4bits)) 
+		   & nsVerifier.eUnitMsk4bits ))&0xFF)
+		>> nsVerifier.eidxSft4bits) ]) >> (((
+		   (s*v.stFactor()+(((v.cclass()[((b&0xFF)>>nsVerifier.eidxSft4bits)]) 
+		   >> ((b & nsVerifier.eSftMsk4bits) << nsVerifier.eBitSft4bits)) 
+		   & nsVerifier.eUnitMsk4bits ))&0xFF) 
+		& nsVerifier.eSftMsk4bits) << nsVerifier.eBitSft4bits)) & nsVerifier.eUnitMsk4bits )
 	 ) ;
 
      }

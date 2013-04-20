@@ -9,7 +9,7 @@
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
     <TITLE>hipergate :: Distribution Lists</TITLE>
     <SCRIPT LANGUAGE="javascript" SRC="../javascript/getparam.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+    <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
       function setURL() {
         listslist.location = "list_listing.jsp?selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected") + "&screen_width=" + screen.width + "&where=" + escape("<%=nullif(request.getParameter("where"))%>");

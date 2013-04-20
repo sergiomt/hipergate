@@ -224,6 +224,8 @@ public class AcademicCourse extends DBPersist {
 		  } // gu_owner==null
 		  oProd.replace(DB.gu_owner, getString(DB.gu_owner));
 		  oProd.replace(DB.nm_product, getString(DB.nm_course));
+		  if (oProd.isNull(DB.id_currency))
+		    oProd.put(DB.id_currency, getStringNull(DB.id_currency,"978"));
 		  if (!isNull(DB.id_course))
 		    oProd.replace(DB.id_ref, getString(DB.id_course));
 		  if (!isNull(DB.gu_address))
@@ -284,7 +286,7 @@ public class AcademicCourse extends DBPersist {
     throws SQLException {
     AcademicCourseAlumni[] aAlmni = null;
     DBSubset oAlmni = new DBSubset(DB.k_x_course_alumni,
-                                   new AcademicCourseAlumni().getTable(oConn).getColumnsStr(),
+                                   new AcademicCourseAlumni().getTable(oConn).getColumnsStr()+","+DB.dt_created,
                                    DB.gu_acourse+"=? ORDER BY "+DB.gu_alumni,50);
     int nBooks = oAlmni.load(oConn, new Object[]{get(DB.gu_acourse)});
     if (nBooks>0) {
@@ -304,7 +306,7 @@ public class AcademicCourse extends DBPersist {
     throws SQLException {
     AcademicCourseBooking[] aBooks = null;
     DBSubset oBooks = new DBSubset(DB.k_x_course_bookings,
-                                   new AcademicCourseBooking().getTable(oConn).getColumnsStr(),
+                                   new AcademicCourseBooking().getTable(oConn).getColumnsStr()+","+DB.dt_created,
                                    DB.gu_acourse+"=? ORDER BY "+DB.dt_created,50);
     int nBooks = oBooks.load(oConn, new Object[]{get(DB.gu_acourse)});
     if (nBooks>0) {
@@ -323,7 +325,7 @@ public class AcademicCourse extends DBPersist {
     throws SQLException {
     AcademicCourseBooking[] aBooks = null;
     DBSubset oBooks = new DBSubset(DB.k_x_course_bookings,
-                                   new AcademicCourseBooking().getTable(oConn).getColumnsStr(),
+                                   new AcademicCourseBooking().getTable(oConn).getColumnsStr()+","+DB.dt_created,
                                    DB.gu_acourse+"=? AND "+DB.bo_canceled+"<>1 "+
                                    "ORDER BY "+DB.dt_created,50);
     int nBooks = oBooks.load(oConn, new Object[]{get(DB.gu_acourse)});
@@ -343,7 +345,7 @@ public class AcademicCourse extends DBPersist {
     throws SQLException {
     AcademicCourseBooking[] aBooks = null;
     DBSubset oBooks = new DBSubset(DB.k_x_course_bookings,
-                                   new AcademicCourseBooking().getTable(oConn).getColumnsStr(),
+                                   new AcademicCourseBooking().getTable(oConn).getColumnsStr()+","+DB.dt_created,
                                    DB.gu_acourse+"=? AND "+DB.bo_canceled+"<>1 "+
                                    "ORDER BY "+DB.dt_created,50);
     int nBooks = oBooks.load(oConn, new Object[]{get(DB.gu_acourse)});
@@ -363,7 +365,7 @@ public class AcademicCourse extends DBPersist {
     throws SQLException {
     AcademicCourseBooking[] aBooks = null;
     DBSubset oBooks = new DBSubset(DB.k_x_course_bookings,
-                                   new AcademicCourseBooking().getTable(oConn).getColumnsStr(),
+                                   new AcademicCourseBooking().getTable(oConn).getColumnsStr()+","+DB.dt_created,
                                    DB.gu_acourse+"=? AND "+DB.bo_confirmed+"<>0 "+
                                    "ORDER BY "+DB.dt_created,50);
     int nBooks = oBooks.load(oConn, new Object[]{get(DB.gu_acourse)});
@@ -384,7 +386,7 @@ public class AcademicCourse extends DBPersist {
     throws SQLException {
     AcademicCourseBooking[] aBooks = null;
     DBSubset oBooks = new DBSubset(DB.k_x_course_bookings,
-                                   new AcademicCourseBooking().getTable(oConn).getColumnsStr(),
+                                   new AcademicCourseBooking().getTable(oConn).getColumnsStr()+","+DB.dt_created,
                                    DB.gu_acourse+"=? AND "+DB.bo_confirmed+"<>1 "+
                                    "ORDER BY "+DB.dt_created,50);
     int nBooks = oBooks.load(oConn, new Object[]{get(DB.gu_acourse)});
@@ -404,7 +406,7 @@ public class AcademicCourse extends DBPersist {
     throws SQLException {
     AcademicCourseBooking[] aBooks = null;
     DBSubset oBooks = new DBSubset(DB.k_x_course_bookings,
-                                   new AcademicCourseBooking().getTable(oConn).getColumnsStr(),
+                                   new AcademicCourseBooking().getTable(oConn).getColumnsStr()+","+DB.dt_created,
                                    DB.gu_acourse+"=? AND "+DB.bo_waiting+"<>0 "+
                                    "ORDER BY "+DB.dt_created,50);
     int nBooks = oBooks.load(oConn, new Object[]{get(DB.gu_acourse)});
@@ -424,7 +426,7 @@ public class AcademicCourse extends DBPersist {
     throws SQLException {
     AcademicCourseBooking[] aBooks = null;
     DBSubset oBooks = new DBSubset(DB.k_x_course_bookings,
-                                   new AcademicCourseBooking().getTable(oConn).getColumnsStr(),
+                                   new AcademicCourseBooking().getTable(oConn).getColumnsStr()+","+DB.dt_created,
                                    DB.gu_acourse+"=? AND "+DB.bo_paid+"<>0 "+
                                    "ORDER BY "+DB.dt_created,50);
     int nBooks = oBooks.load(oConn, new Object[]{get(DB.gu_acourse)});
@@ -445,7 +447,7 @@ public class AcademicCourse extends DBPersist {
     throws SQLException {
     AcademicCourseBooking[] aBooks = null;
     DBSubset oBooks = new DBSubset(DB.k_x_course_bookings,
-                                   new AcademicCourseBooking().getTable(oConn).getColumnsStr(),
+                                   new AcademicCourseBooking().getTable(oConn).getColumnsStr()+","+DB.dt_created,
                                    DB.gu_acourse+"=? AND "+DB.bo_paid+"<>1 "+
                                    "ORDER BY "+DB.dt_created,50);
     int nBooks = oBooks.load(oConn, new Object[]{get(DB.gu_acourse)});

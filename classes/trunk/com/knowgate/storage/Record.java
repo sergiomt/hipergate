@@ -32,6 +32,7 @@
 package com.knowgate.storage;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import java.util.Map;
 import java.util.Date;
@@ -46,6 +47,8 @@ public interface Record extends Map,Serializable {
   public LinkedList<Column> columns();
 
   public void delete(Table oConn) throws StorageException;
+
+  public boolean load(Table oConn, Object[] aKey) throws StorageException;
   
   public boolean load(Table oConn, String sKey) throws StorageException;
 
@@ -75,6 +78,8 @@ public interface Record extends Map,Serializable {
 
   public Date getDate(String sKey, Date dtDefault);
 
+  public BigDecimal getDecimal(String sKey);
+  
   public String getString(String sKey);
 
   public String getString(String sKey, String sDefault);

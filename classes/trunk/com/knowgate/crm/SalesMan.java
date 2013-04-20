@@ -46,9 +46,9 @@ import com.knowgate.acl.ACLUser;
 
 /**
  * <p>Sales Man</p>
- * <p>Copyright: Copyright (c) KnowGate 2003</p>
+ * <p>Copyright: Copyright (c) KnowGate 2003-2012</p>
  * @author Sergio Montoro Ten
- * @version 2.2
+ * @version 7.0
  */
 public class SalesMan extends DBPersist {
 
@@ -67,6 +67,20 @@ public class SalesMan extends DBPersist {
     return oUser;
   }
 
+  /**
+   * Load sales man and initialize internal user instance
+   * @param oConn JDCConnection
+   * @param sGuSalesMan String Sales man GUID
+   * @return boolean
+   * @throws SQLException
+   */
+  public boolean load(JDCConnection oConn, String sGuSalesMan) throws SQLException {
+    boolean bRetVal = super.load(oConn, sGuSalesMan);
+    if (bRetVal)
+      oUser = new ACLUser(oConn, getString(DB.gu_sales_man));
+    return bRetVal;
+  }
+  
   /**
    * Load sales man and initialize internal user instance
    * @param oConn JDCConnection

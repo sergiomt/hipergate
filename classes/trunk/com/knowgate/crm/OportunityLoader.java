@@ -68,7 +68,12 @@ public class OportunityLoader implements ImportLoader {
     private HashMap<String,String> oStatusTranslations = null;
     private HashMap<String,String> oObjectiveTranslations = null;
     private HashMap<String,String> oOriginTranslations = null;
-   
+
+    public OportunityLoader() {
+      aValues = new Object[ColumnNames.length];
+      Arrays.fill(aValues, null);
+    }
+
 	public int columnCount() {
 	  return aValues.length;
 	}
@@ -114,12 +119,10 @@ public class OportunityLoader implements ImportLoader {
     // ---------------------------------------------------------------------------
 
 	public void prepare(Connection oConn, ColumnList oCols) throws SQLException {
-      aValues = new Object[ColumnNames.length];
-      Arrays.fill(aValues, null);
       oStatusMap = new HashMap<String,String>();
       oObjectiveMap = new HashMap<String,String>();
       oOriginMap = new HashMap<String,String>();
-	  oOprtInst = oConn.prepareStatement("INSERT INTO "+DB.k_oportunities+"(gu_writer,gu_workarea,bo_private,dt_created,dt_modified,dt_next_action,dt_last_call,lv_interest,gu_campaign,gu_company,gu_contact,tx_company,tx_contact,tl_oportunity,tp_oportunity,tp_origin,im_revenue,im_cost,id_status,id_objetive,tx_cause,tx_note,gu_oportunity) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+	  oOprtInst = oConn.prepareStatement("INSERT INTO "+DB.k_oportunities+"(gu_writer,gu_workarea,bo_private,dt_created,dt_modified,dt_next_action,dt_last_call,lv_interest,gu_campaign,gu_company,gu_contact,tx_company,tx_contact,tl_oportunity,tp_oportunity,tp_origin,im_revenue,im_cost,id_status,id_objetive,tx_cause,tx_note,gu_oportunity,nu_oportunities) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1)");
 	  oOprtUpdt = oConn.prepareStatement("UPDATE "+DB.k_oportunities+" SET gu_writer=?,gu_workarea=?,bo_private=?,dt_created=?,dt_modified=?,dt_next_action=?,dt_last_call=?,lv_interest=?,gu_campaign=?,gu_company=?,gu_contact=?,tx_company=?,tx_contact=?,tl_oportunity=?,tp_oportunity=?,tp_origin=?,im_revenue=?,im_cost=?,id_status=?,id_objetive=?,tx_cause=?,tx_note=? WHERE gu_oportunity=?");
 	  oContGuid = oConn.prepareStatement("SELECT "+DB.gu_contact+" FROM "+DB.k_contacts+" WHERE "+DB.gu_workarea+"=? AND ("+DB.sn_passport+"=? OR "+DB.id_ref+"=?)");
 	  oMmbrGuid = oConn.prepareStatement("SELECT "+DB.gu_contact+" FROM "+DB.k_member_address+" WHERE "+DB.gu_workarea+"=? AND "+DB.tx_email+"=?");
@@ -132,6 +135,8 @@ public class OportunityLoader implements ImportLoader {
     // ---------------------------------------------------------------------------
 
 	public void close() throws SQLException {
+	  Arrays.fill(aValues, null);
+
 	  if (oStatusMap!=null) oStatusMap.clear();
 	  if (oObjectiveMap!=null) oObjectiveMap.clear();
 	  if (oOriginMap!=null) oOriginMap.clear();
@@ -250,23 +255,37 @@ public class OportunityLoader implements ImportLoader {
       throws SQLException {
       ResultSet oRSet;
       String sContGuid;
+
+      if (DebugFile.trace) {
+        DebugFile.writeln("Begin OportunityLoader.getContactGuid([Connection],"+sContactPassport+","+sContactEmail+","+sContactIdRef+","+sWorkArea+")");
+        DebugFile.incIdent();
+      }
+
       oContGuid.setString(1, sWorkArea);
       oContGuid.setString(2, sContactPassport);
-      oContGuid.setString(1, sContactIdRef);
+      oContGuid.setString(3, sContactIdRef);
       oRSet = oContGuid.executeQuery();
       if (oRSet.next()) {
       	sContGuid = oRSet.getString(1);
+      	oRSet.close();
       } else {
       	oRSet.close();
         oMmbrGuid.setString(1, sWorkArea);
         oMmbrGuid.setString(2, sContactEmail);
+        oRSet = oMmbrGuid.executeQuery();
 		if (oRSet.next())
       	  sContGuid = oRSet.getString(1);
       	else
       	  sContGuid = null;
       	oRSet.close();      	
       }
-	  return sContGuid;      
+
+      if (DebugFile.trace) {
+        DebugFile.decIdent();
+        DebugFile.writeln("End OportunityLoader.getContactGuid() : "+sContGuid);
+      }
+      
+    return sContGuid;      
   } // getContactGuid
 
   // ---------------------------------------------------------------------------
@@ -465,9 +484,8 @@ public class OportunityLoader implements ImportLoader {
         oOprtUpdt.setString(21, getColNull(tx_cause));
         oOprtUpdt.setString(22, getColNull(tx_note));
         if (aValues[gu_oportunity]==null)
-          oOprtUpdt.setString(23, Gadgets.generateUUID());
-        else
-          oOprtUpdt.setString(23, getColNull(gu_oportunity));
+          aValues[gu_oportunity]=Gadgets.generateUUID();
+        oOprtUpdt.setString(23, getColNull(gu_oportunity));
         iAffected = oOprtUpdt.executeUpdate();        
       }
       
@@ -565,13 +583,11 @@ public class OportunityLoader implements ImportLoader {
         oOprtInst.setString(21, getColNull(tx_cause));
         oOprtInst.setString(22, getColNull(tx_note));
         if (aValues[gu_oportunity]==null)
-          oOprtInst.setString(23, Gadgets.generateUUID());
-        else
-          oOprtInst.setString(23, getColNull(gu_oportunity));
+          aValues[gu_oportunity]=Gadgets.generateUUID();
+        oOprtInst.setString(23, getColNull(gu_oportunity));
         iAffected = oOprtInst.executeUpdate();
 	  }
-
-	}
+	} // store
 	
   // ---------------------------------------------------------------------------
 

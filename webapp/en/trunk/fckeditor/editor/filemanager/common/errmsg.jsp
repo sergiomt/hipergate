@@ -41,8 +41,8 @@ request.setCharacterEncoding("UTF-8");
 <HEAD>
   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
   <TITLE>hipergate :: <% out.write(sTitle); %></TITLE>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../../../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT SRC="../../../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript">
   <!--
       var sSkinCookieValue = getCookie("skin");
     
@@ -84,7 +84,7 @@ request.setCharacterEncoding("UTF-8");
 <% if (!sResume.equals("_none")) { %>
         <TR><TD ALIGN="center">
           <FORM>
-            <INPUT TYPE="button" CLASS="pushbutton" VALUE="OK" onclick="resume()">
+            <INPUT TYPE="button" CLASS="pushbutton" VALUE="[~Aceptar~]" onclick="resume()">
           </FORM>
         </TD></TR>
 <% } %>

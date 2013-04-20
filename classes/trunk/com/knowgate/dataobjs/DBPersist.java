@@ -33,11 +33,9 @@
 package com.knowgate.dataobjs;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.FileNotFoundException;
 import java.io.File;
 import java.io.ObjectOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 import java.sql.SQLException;
@@ -45,6 +43,7 @@ import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Time;
+import java.sql.Array;
 import java.sql.Timestamp;
 
 import java.lang.ClassNotFoundException;
@@ -95,10 +94,12 @@ import com.knowgate.storage.AbstractRecord;
  * It is the programmer's responsability to pass an open database connection on each method call
  * and to commit or rollback transaction involving the usage of a DBPersist object.
  * @author Sergio Montoro Ten
- * @version 6.0
+ * @version 7.0
  */
 
 public class DBPersist extends AbstractRecord {
+
+  private static final long serialVersionUID = 70000l;
 
   /**
    * Create instance for reading and writing register from a table
@@ -929,6 +930,47 @@ public class DBPersist extends AbstractRecord {
   } // getTimestamp
 
   /**
+   * <p>Get value for an _int4[] field<p>
+   * @param sKey Field Name
+   * @throws SQLException
+   * @return Field value or <b>null</b>.
+   * @since 7.0
+   */
+
+  public Integer[] getIntegerArray(String sKey) throws SQLException {
+    Array oArr = (Array) getItemMap().get(sKey);
+
+    if (null!=oArr) {
+      return (Integer[]) oArr.getArray();
+    } else {
+      return null;    	
+    }
+  } // getIntegerArray
+
+  /**
+   * <p>Get value for an _int4[] field<p>
+   * @param sKey Field Name
+   * @throws SQLException
+   * @return Field value or <b>null</b>.
+   * @since 7.0
+   */
+
+  public int[] getIntArray(String sKey) throws SQLException {
+    Array oArr = (Array) getItemMap().get(sKey);
+
+    if (null!=oArr) {
+      Integer[] aArr = (Integer[]) oArr.getArray();
+      final int l = aArr.length;
+      int[] aRetVal = new int[l];
+      for (int a=0; a<l; a++)
+        aRetVal[a] = aArr[a].intValue();
+      return aRetVal;
+    } else {
+      return null;    	
+    }
+  } // getIntegerArray
+  
+  /**
    * @return Field Names Set
    * @deprecated Use keySet() instead
    */
@@ -1018,7 +1060,9 @@ public class DBPersist extends AbstractRecord {
       try {
         oTable = DBBind.getTable(getTableName());
       } catch (IllegalStateException ise) {
-        oTable = new DBBind().getTable(getTableName());      	
+    	DBBind oDbb = new DBBind();
+        oTable = DBBind.getTable(getTableName());
+        oDbb.close();
       }
     }
     return oTable;
@@ -1300,41 +1344,45 @@ public class DBPersist extends AbstractRecord {
 	if (null==oObj) {
       AllVals.put(sKey, null);
 	} else {
-      DBColumn oCol = getTable().getColumnByName(sKey.toString());
-      if (oCol!=null) {
-	    if (oCol.getSqlType()==java.sql.Types.BINARY || oCol.getSqlType()==java.sql.Types.VARBINARY || oCol.getSqlType()==java.sql.Types.LONGVARBINARY) {
-	      Class[] aInts = oObj.getClass().getInterfaces();
-	      if (null==aInts) {
-            AllVals.put(sKey, oObj);
+	  if (oObj instanceof String || oObj instanceof Short || oObj instanceof Integer || oObj instanceof Float || oObj instanceof Double || oObj instanceof BigDecimal || oObj instanceof Date || oObj instanceof Timestamp) {
+		  AllVals.put(sKey, oObj);  
+	  } else {
+	      DBColumn oCol = getTable().getColumnByName(sKey.toString());
+	      if (oCol!=null) {
+		    if (oCol.getSqlType()==java.sql.Types.BINARY || oCol.getSqlType()==java.sql.Types.VARBINARY || oCol.getSqlType()==java.sql.Types.LONGVARBINARY) {
+		      Class[] aInts = oObj.getClass().getInterfaces();
+		      if (null==aInts) {
+	            AllVals.put(sKey, oObj);
+		      } else {
+		      	boolean bIsSerializable = false;
+		      	for (int i=0; i<aInts.length && !bIsSerializable; i++)
+		      	  bIsSerializable |= aInts[i].getName().equals("java.io.Serializable");
+		      	if (bIsSerializable) {
+		      	  try {
+	                ByteArrayOutputStream oBOut = new ByteArrayOutputStream();
+				    ObjectOutputStream oOOut = new ObjectOutputStream(oBOut);
+				    oOOut.writeObject(oObj);
+				    byte[] aBytes = oBOut.toByteArray();
+				    if (aBytes!=null) {
+	    			  if (!bHasLongVarBinaryData) LongVarBinaryValsLen = new HashMap();
+	    			  LongVarBinaryValsLen.put(sKey, new Long(aBytes.length));
+	    			  AllVals.put(sKey, aBytes);
+	    			  bHasLongVarBinaryData = true;
+				    }
+				    oOOut.close();
+				    oBOut.close();              
+		      	  } catch (IOException neverthrown) { }
+		      	} else {
+	              AllVals.put(sKey, oObj);
+		      	}
+		      }
+		    } else {
+	          AllVals.put(sKey, oObj);
+		    }
 	      } else {
-	      	boolean bIsSerializable = false;
-	      	for (int i=0; i<aInts.length && !bIsSerializable; i++)
-	      	  bIsSerializable |= aInts[i].getName().equals("java.io.Serializable");
-	      	if (bIsSerializable) {
-	      	  try {
-                ByteArrayOutputStream oBOut = new ByteArrayOutputStream();
-			    ObjectOutputStream oOOut = new ObjectOutputStream(oBOut);
-			    oOOut.writeObject(oObj);
-			    byte[] aBytes = oBOut.toByteArray();
-			    if (aBytes!=null) {
-    			  if (!bHasLongVarBinaryData) LongVarBinaryValsLen = new HashMap();
-    			  LongVarBinaryValsLen.put(sKey, new Long(aBytes.length));
-    			  AllVals.put(sKey, aBytes);
-    			  bHasLongVarBinaryData = true;
-			    }
-			    oOOut.close();
-			    oBOut.close();              
-	      	  } catch (IOException neverthrown) { }
-	      	} else {
-              AllVals.put(sKey, oObj);
-	      	}
-	      }
-	    } else {
-          AllVals.put(sKey, oObj);
-	    }
-      } else {
-        AllVals.put(sKey, oObj);
-      }
+	        AllVals.put(sKey, oObj);
+	      } // fi		  
+	  }
 	}
     return oPrevious;
   }
@@ -1359,7 +1407,7 @@ public class DBPersist extends AbstractRecord {
   public void put(String sKey, int iVal) {
     AllVals.put(sKey, new Integer(iVal));
   }
-
+  
   /**
    * <p>Set value at internal collection</p>
    * @param sKey Field Name
@@ -1437,7 +1485,7 @@ public class DBPersist extends AbstractRecord {
   }
 
   /**
-   * <p>Set value at internal collection</p>
+   * <p>Put float value at internal collection</p>
    * @param sKey Field Name
    * @param fVal Field Value
    */
@@ -1447,7 +1495,7 @@ public class DBPersist extends AbstractRecord {
   }
 
   /**
-   * <p>Set value at internal collection</p>
+   * <p>Put Money value at internal collection</p>
    * @param sKey Field Name
    * @param mVal Field Value
    * @since 3.0
@@ -1511,6 +1559,16 @@ public class DBPersist extends AbstractRecord {
     bHasLongVarBinaryData = true;
   } // put
 
+  /**
+   * <p>Put Array value at internal collection</p>
+   * @param sKey Field Name
+   * @param aVal Field Value
+   * @since 7.0
+   */
+  public void put(String sKey, Array aVal) {    
+	AllVals.put(sKey, aVal);
+  }
+  
   /**
    * <p>Set value at internal collection</p>
    * @param sKey Field Name

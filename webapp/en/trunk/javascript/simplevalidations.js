@@ -32,21 +32,6 @@ function isIntValue(str) {
 //---------------------------------------------------------
 
 function isFloatValue(str) {
-  // BOI, followed by one of these two patterns:
-  // (a) one or more digits, followed by ., followed by zero or more digits
-  // (b) zero or more digits, followed by ., followed by one or more digits
-  // ... followed by EOI.
-  var reFloat = /^((\d+(\.\d*)?)|((\d*\.)?\d+))$/
-
-
-  // BOI, followed by an optional + or -, followed by one of these two patterns:
-  // (a) one or more digits, followed by ., followed by zero or more digits
-  // (b) zero or more digits, followed by ., followed by one or more digits
-  // ... followed by EOI.
-  //var reSignedFloat = /^(((+|-)?\d+(\.\d*)?)|((+|-)?(\d*\.)?\d+))$/ 
-  //nota : la anterior sintaxis para expresiones regulares da error
-  var reSignedFloat = /^(([+-]?\d+(\.\d*)?)|([+-]?(\d*\.)?\d+))$/
-
 
   var len;
   var txt;
@@ -69,9 +54,11 @@ function isFloatValue(str) {
   txt = (parse==null ? "" : parse[1]);
   
   for (var c=0; c<len; c++) {
-    if ((txt.charCodeAt(c)<48 || txt.charCodeAt(c)>57) && ((txt.charAt(c)=='.' && dot) || (txt.charAt(c)==',' && dot) || (txt.charAt(c)=='-' && c>0)))
+    if ((txt.charCodeAt(c)<48 || txt.charCodeAt(c)>57) || 
+       (txt.charAt(c)=='.' && dot) || (txt.charAt(c)==',' && dot) || (txt.charAt(c)=='-' && c>0) ||
+       (c==len-1 && txt.charCodeAt(c)<48))
       return false;
-    dot = (txt.charAt(c)=='.' || txt.charAt(c)==',');
+    if (!dot) dot = (txt.charAt(c)=='.' || txt.charAt(c)==',');
   }    
   return true;
 
@@ -184,7 +171,7 @@ function CadenaNumerica_Var(cadena) {
 //---------------------------------------------------------
 
 /**
-  * Valida la primera letra de un NIF español
+  * Valida la primera letra de un NIF espaï¿½ol
 */        
 function validarNIF (nif) {
      var letra;

@@ -76,12 +76,12 @@
 <HTML>
   <HEAD>
     <TITLE>hipergate :: Queries</TITLE>
-    <SCRIPT LANGUAGE="JavaScript1.2" SRC="../javascript/cookies.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript1.2" SRC="../javascript/setskin.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript1.2" SRC="../javascript/datefuncs.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript1.2" SRC="../javascript/trim.js"></SCRIPT>    
-    <SCRIPT LANGUAGE="JavaScript1.2" SRC="../javascript/combobox.js"></SCRIPT>    
-    <SCRIPT LANGUAGE="JavaScript1.2" DEFER="defer">
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>    
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>    
+    <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
 
       function showCalendar(ctrl) {       

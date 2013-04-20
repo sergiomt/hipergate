@@ -63,6 +63,7 @@
   String sTitleLookUp = "";
   String sUsersCombo = null;    
   String sIdPrevStatus = null;
+  Short oLvInt = new Short((short)0);
   DBSubset oUsrs = null;
   DBSubset oOprs = new DBSubset (DB.k_oportunities, DB.gu_oportunity+","+DB.gu_contact,
   															 DB.gu_workarea+"=? AND "+DB.gu_campaign+"=? AND "+DB.id_status+"='PTE_LLAMAR' AND "+DB.gu_contact+" IS NOT NULL", 1);
@@ -97,6 +98,8 @@
 	    }
 	    nm_campaign = nullif(DBCommand.queryStr(oConn, "SELECT "+DB.nm_campaign+" FROM "+DB.k_campaigns+" WHERE "+DB.gu_campaign+"='"+gu_campaign+"'"));
 	  } else {
+	  	oLvInt = DBCommand.queryShort(oConn, "SELECT "+DB.lv_interest+" FROM "+DB.k_oportunities+" WHERE "+DB.gu_oportunity+"='"+gu_oportunity+"'");
+	  	if (null==oLvInt) oLvInt = new Short((short)0);
 	  	sIdPrevStatus = nullif(DBCommand.queryStr(oConn, "SELECT "+DB.id_status+" FROM "+DB.k_oportunities+" WHERE "+DB.gu_oportunity+"='"+gu_oportunity+"'"));
 		  if (ENABLE_ONGOING_CALLS_HANDLING) {
 	      DBCommand.executeUpdate(oConn, "UPDATE "+DB.k_oportunities+" SET "+DB.id_status+"='ENCURSO' WHERE "+DB.gu_oportunity+"='"+gu_oportunity+"' AND "+DB.gu_workarea+"='"+gu_workarea+"'");
@@ -169,15 +172,15 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: New Call</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
 
 			var req;
@@ -260,6 +263,11 @@
 	        }
         }
 
+<% if (iAdrs==1) { %>
+	      if (frm.tx_phone.value.length==0)
+	        frm.tx_phone.value="<%=oAdrs.getString(2,0)%>";
+<% } %>
+
         if (frm.tx_phone.value.length==0) {
 	  	    alert ("The number that was called is required");
 	        return false;
@@ -269,7 +277,7 @@
       } // validate;
     //-->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
     <!--
       function setCombos() {
         var frm = document.forms[0];
@@ -279,9 +287,10 @@
         setCombo (frm.sel_users,getURLParam("gu_user"));
         setCombo(frm.sel_status,"<%=oCont.getStringNull(DB.id_status,"")%>");
         setCombo(frm.sel_title,"<%=oCont.getStringNull(DB.de_title,"")%>");
+        setCheckedValue(frm.lv_interest, <%=String.valueOf(oLvInt.shortValue())%>);
 
         return true;
-      } // validate;
+      } // validate
     //-->
   </SCRIPT>    
 </HEAD>
@@ -365,7 +374,7 @@
               <INPUT TYPE="hidden" NAME="tx_phone" VALUE="">
 <%					  for (int a=0; a<iAdrs; a++) {
 							  if (!oAdrs.isNull(2,a)) {
-							    out.write("<INPUT TYPE=\"radio\" VALUE=\"P\" NAME=\"telf\" onclick=\"document.forms[0].tx_phone.value='"+oAdrs.getString(2,a)+"'\">&nbsp;");
+							    out.write("<INPUT TYPE=\"radio\" VALUE=\"P\" NAME=\"telf\" onclick=\"document.forms[0].tx_phone.value='"+oAdrs.getString(2,a)+"'\" "+(iAdrs==1 ? "CHECKED" : "")+">&nbsp;");
 							    if (!oAdrs.isNull(1,a))
 							      out.write(nullif((String)oLocationLookUp.get(oAdrs.get(1,a)),oAdrs.getString(1,a))+"&nbsp;");							      
 							    out.write("Work Phone&nbsp;"+oAdrs.getString(2,a)+"<BR/>");

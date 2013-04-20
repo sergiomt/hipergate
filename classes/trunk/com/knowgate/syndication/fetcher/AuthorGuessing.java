@@ -37,6 +37,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import org.apache.oro.text.regex.Pattern;
@@ -46,6 +47,12 @@ import org.apache.oro.text.regex.MalformedPatternException;
 
 import com.knowgate.misc.Gadgets;
 import com.knowgate.debug.DebugFile;
+import com.knowgate.storage.DataSource;
+import com.knowgate.storage.Record;
+import com.knowgate.storage.StorageException;
+import com.knowgate.storage.Table;
+import com.knowgate.clocial.UserAccount;
+import com.knowgate.clocial.UserAccountAlias;
 
 public class AuthorGuessing {
 
@@ -68,7 +75,7 @@ public class AuthorGuessing {
           while ((sLine=oBr.readLine())!=null) {
             if (DebugFile.trace) DebugFile.writeln("compiling regular expression "+sLine);
             try {
-              oPats.add(oP5c.compile(sLine, oP5c.CASE_INSENSITIVE_MASK));
+              oPats.add(oP5c.compile(sLine, Perl5Compiler.CASE_INSENSITIVE_MASK));
             } catch (MalformedPatternException mpe) {
               if (DebugFile.trace) DebugFile.writeln("AbstractEntriesFetcher.init() Malformed URL pattern "+mpe.getMessage());
                 throw new IllegalArgumentException("Malformed URL pattern "+mpe.getMessage());
@@ -94,7 +101,7 @@ public class AuthorGuessing {
     } // init
 
     /**
-     * Extract author nickname from a URL
+     * Try to extract author nickname from a URL
      */
     public static String extractAuthorFromURL(String sUrl) {
       if (DebugFile.trace) DebugFile.writeln("AbstractEntriesFetcher.matchesAuthor("+sUrl+")");
@@ -120,5 +127,29 @@ public class AuthorGuessing {
       } // next
       return sInferedAuthor;
     } // extractAuthorFromURL
+
+    public static Record lookupAuthor(DataSource oDts, String sAuthor, String sService)
+      throws StorageException, InstantiationException {
+      Record oAccount;
+      String sGuAccount;
+      if (null==sService)
+        sGuAccount = UserAccountAlias.getUserAccountId(oDts, sAuthor);
+      else
+        sGuAccount = UserAccountAlias.getUserAccountId(oDts, sService, sAuthor);
+
+      if (null==sGuAccount) {
+        oAccount = null;
+      } else {
+    	try {
+    	  oAccount = new UserAccount(oDts);
+    	  Table oTbl = oDts.openTable(oAccount);
+    	  oAccount = oTbl.load(sGuAccount);
+    	  oTbl.close();
+    	} catch (SQLException sqle) {
+    	  throw new StorageException(sqle.getMessage(), sqle);
+    	}
+      }
+      return oAccount;
+    }
 
 }

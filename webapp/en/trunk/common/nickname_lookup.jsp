@@ -3,8 +3,8 @@
   int iIdDomain = Integer.parseInt(request.getParameter("domainid"));
   String sNickName = request.getParameter("nickname");
 
-  if (null==sTxEmail) {
-    out.write ("error NullPointerException parameter email is required");
+  if (null==sNickName) {
+    out.write ("Error NullPointerException parameter nickname is required");
     return;
   }
 

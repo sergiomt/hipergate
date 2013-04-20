@@ -148,8 +148,8 @@
 <HTML>
   <HEAD>
     <TITLE>hipergate :: Incident Listing</TITLE>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+    <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
   </HEAD>
   
   <!-- Black and white page (printer friendly styles) -->

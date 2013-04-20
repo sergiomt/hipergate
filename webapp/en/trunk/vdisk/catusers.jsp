@@ -1,7 +1,5 @@
 <%@ page import="java.sql.Connection,java.sql.ResultSet,java.sql.SQLException,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.hipergate.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/cookies.jspf" %>
-<%@ include file="../methods/dbbind.jsp" %>
-<%
+<%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/dbbind.jsp" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -78,11 +76,11 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Edit permissions of Category per User</TITLE>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
     
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
   <!--
     function validate() {
       var frm = window.document.forms[0];

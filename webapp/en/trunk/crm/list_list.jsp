@@ -63,8 +63,8 @@
   fScreenRatio = ((float) iScreenWidth) / 800f;
   if (fScreenRatio<1) fScreenRatio=1;
         
-  String sField = request.getParameter("field")==null ? "" : request.getParameter("field");
-  String sCateg = request.getParameter("gu_category")==null ? "" : request.getParameter("gu_category");
+  final String sField = request.getParameter("field")==null ? "" : request.getParameter("field");
+  final String sCateg = request.getParameter("gu_category")==null ? "" : request.getParameter("gu_category");
 
   boolean bHasAccounts = false;
   String sGuRootCategory = null;    
@@ -114,15 +114,15 @@
 
     DBSubset oChlds = new DBSubset (DB.k_cat_expand, DB.gu_category, DB.gu_rootcat+"=?", 20);
     int iChlds = oChlds.load(oConn, new Object[]{sCateg});
-    sCateg = "'"+sCateg+"'";
+    String sSubCategs = "'"+sCateg+"'";
     for (int c=0; c<iChlds; c++) {
-      sCateg += ",'"+oChlds.getString(0,c)+"'";
+      sSubCategs += ",'"+oChlds.getString(0,c)+"'";
     }
 
     oLists = new DBSubset (DB.k_lists+" l,"+DB.k_x_cat_objs+" c", 
     			                 "l.gu_list,l.tp_list,l.gu_query,l.tx_subject,l.de_list",
     			                 "l."+DB.gu_list+"=c."+DB.gu_object+" AND "+DB.id_class+"="+String.valueOf(DistributionList.ClassId)+" AND "+
-    			                 "c."+DB.gu_category+" IN ("+sCateg+") AND "+
+    			                 "c."+DB.gu_category+" IN ("+sSubCategs+") AND "+
     		                   "l."+DB.tp_list + "<>" + String.valueOf(DistributionList.TYPE_BLACK) + " AND l." + DB.gu_workarea + "='"+gu_workarea+"' " + (iOrderBy>0 ? " ORDER BY " + sOrderBy : ""), 100);
     iListCount = oLists.load (oConn);
 
@@ -138,17 +138,17 @@
 
 %><HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>  
 
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" >
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" >
     dynapi.library.setPath('../javascript/dynapi3/');
     dynapi.library.include('dynapi.api.DynLayer');
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" >
+  <SCRIPT TYPE="text/javascript" >
     var menuLayer,addrLayer;
     dynapi.onLoad(init);
     function init() {
@@ -159,9 +159,9 @@
       menuLayer.setHTML(rightMenuHTML);
     }
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
 
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
         // Variables globales para traspasar la instancia clickada al menu contextual
         var jsListId;
@@ -211,7 +211,46 @@
                   } // fi(chi!="")
                 } // fi (confirm)
 	      } // deleteLists()
-	
+
+      // ----------------------------------------------------
+  	
+      function moveLists() {	  
+        var offset = 0;
+        var frm = document.forms[0];
+        var chi = frm.checkeditems;
+       
+        if (frm.sel_category_move.selectedIndex<=0) {
+          alert ("You must select a target category");
+          frm.sel_category_move.focus();
+          return false;
+        }
+
+        if (getCombo(frm.sel_category)==getCombo(frm.sel_category_move)) {
+          alert ("The target category cannot be the same as the source one");
+          frm.sel_category_move.focus();
+          return false;
+        }
+
+        if (window.confirm("Are you sure that you want to move the selected lists?")) {
+        	  
+          chi.value = "";	  	  
+          
+          frm.action = "list_edit_move.jsp?selected=&subselected=";
+        	  
+          for (var i=0;i<jsLists.length; i++) {
+                while (frm.elements[offset].type!="checkbox") offset++;
+      	      if (frm.elements[offset].checked)
+                  chi.value += jsLists[i] + ",";
+                offset++;
+          } // next()
+    
+          if (chi.value.length>0) {
+            chi.value = chi.value.substr(0,chi.value.length-1);
+                frm.submit();
+              } // fi(chi!="")
+            } // fi (confirm)
+      } // moveLists()
+	      
         // ----------------------------------------------------
 
 	      function modifyList(id,nm) {	  
@@ -285,7 +324,7 @@
         window.open("prj_create.jsp?gu_workarea=<%=gu_workarea%>&gu_list=" + gu + "&de_list=" + escape(de), "addproject", "directories=no,toolbar=no,menubar=no,width=540,height=280");       
 <% } %>
       } // createProject
-
+      
       // ------------------------------------------------------
 
 <% if (bHasAccounts) { %>
@@ -357,15 +396,17 @@
       <INPUT TYPE="hidden" NAME="id_domain" VALUE="<%=id_domain%>">
       <INPUT TYPE="hidden" NAME="n_domain" VALUE="<%=n_domain%>">
       <INPUT TYPE="hidden" NAME="gu_workarea" VALUE="<%=gu_workarea%>">
+      <INPUT TYPE="hidden" NAME="gu_category" VALUE="<%=sCateg%>">
       <INPUT TYPE="hidden" NAME="checkeditems">
       
-      <TABLE CELLSPACING="2" CELLPADDING="2">
+      <TABLE CELLSPACING="2" CELLPADDING="2" BORDER="0">
         <TR>
           <TD>&nbsp;&nbsp;<IMG SRC="../images/images/back.gif" WIDTH="16" HEIGHT="16" BORDER="0"></TD>
           <TD><A HREF="list_listing.jsp?selected=2&subselected=3" TARGET="_top" CLASS="linkplain">Listing</A></TD>
+          <TD><IMG SRC="../images/images/spacer.gif" WIDTH="16" HEIGHT="1" BORDER="0" ALT=""></TD>
           <TD COLSPAN="2"></TD>
         </TR>
-        <TR><TD COLSPAN="4" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
+        <TR><TD COLSPAN="5" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
         <TR>
         <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
         <TD VALIGN="middle">
@@ -375,7 +416,8 @@
           <A HREF="#" onclick="createList();return false;" CLASS="linkplain">New</A>
 <% } %>
         </TD>
-        <TD>&nbsp;&nbsp;<IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
+        <TD></TD>
+        <TD ALIGN="right"><IMG SRC="../images/images/papelera.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="Delete"></TD>
         <TD>
 <% if (bIsGuest) { %>
           <A HREF="#" onclick="alert ('Your priviledge level as guest does not allow you to perform this action')" CLASS="linkplain">Delete</A>
@@ -386,7 +428,7 @@
         </TR>
         <TR>
         <TD>&nbsp;&nbsp;<IMG SRC="../images/images/tree/menu_root.gif" WIDTH="18" HEIGHT="18" BORDER="0"></TD>
-				<TD COLSPAN="3"><SELECT name="sel_category" class="combomini" onchange="document.location='list_list.jsp?field=<%=sField%>&screen_width=<%=screen_width%>&gu_category='+this.options[this.selectedIndex].value"><%
+			<TD><SELECT name="sel_category" class="combomini" onchange="top.listtree.selectCategory(this.options[this.selectedIndex].value);"><%
 
     		  out.write ("<OPTION VALUE=\"" + sGuRootCategory + "\"></OPTION>");
     			for (int c=0; c<iCatgs; c++) {		    
@@ -397,8 +439,21 @@
         	}                            
 					
 		 	  %></SELECT></TD>
+		 	  <TD></TD>
+		 	  <TD ALIGN="right"><IMG SRC="../images/images/movefiles.gif" WIDTH="24" HEIGHT="16" BORDER="0" ALT="Move to another category"></TD>
+			  <TD><SELECT name="sel_category_move" class="combomini"><%
+
+    		  out.write ("<OPTION VALUE=\"" + sGuRootCategory + "\"></OPTION>");
+    			for (int c=0; c<iCatgs; c++) {		    
+        	  out.write ("<OPTION VALUE=\"" + oCatgs.getString(0,c) + "\">");
+        		for (int s=1; s<oCatgs.getInt(2,c); s++) out.write("&nbsp;&nbsp;&nbsp;");
+        		out.write (oCatgs.getString(5,c));
+            out.write ("</OPTION>");
+        	}                            
+					
+		 	  %></SELECT>&nbsp;<A HREF="#" CLASS="linkplain" onclick="moveLists()">Move</A><TD>
 			  </TR>
-        <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
+        <TR><TD COLSPAN="5" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       </TABLE>
       <TABLE CELLSPACING="1" CELLPADDING="0">
         <TR>

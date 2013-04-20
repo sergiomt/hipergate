@@ -123,11 +123,11 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/combobox.js"></SCRIPT>
   <TITLE>Categories fast edit</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" LANGUAGE="text/javascript">
+  <SCRIPT LANGUAGE="text/javascript">
   <!--
     function validate () {
       var frm = document.forms[0];

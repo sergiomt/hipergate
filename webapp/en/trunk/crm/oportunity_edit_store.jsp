@@ -53,7 +53,7 @@
   String gu_meeting = null;
   boolean bCreateMeeting = nullif(request.getParameter("chk_meeting")).equals("1");
   boolean bOnWonOptions = false;
-  String sOpCode = gu_oportunity.length()>0 ? "NOPO" : "MOPO";
+  final String sOpCode = gu_oportunity.length()>0 ? "NOPO" : "MOPO";
     
   JDCConnection oConn = null;  
   ResultSet oRSet;
@@ -73,20 +73,28 @@
     if (gu_list.length()==0) {
       if (gu_oportunity.length()>0 && request.getParameter("id_status").equals("GANADA")) {
         String sPreviousStatus = DBCommand.queryStr(oConn, "SELECT "+DB.id_status+" FROM "+DB.k_oportunities+" WHERE "+DB.gu_oportunity+"='"+gu_oportunity+"'");
-        bOnWonOptions = !sPreviousStatus.equals("GANADA");
+        if (sPreviousStatus!=null) bOnWonOptions = !sPreviousStatus.equals("GANADA");
       }
       oOprt.store(oConn);    
 
-			Date dtStart = DBCommand.queryMaxDate(oConn, DB.dt_start,
-			                                      DB.k_oportunities+" AS s INNER JOIN "+DB.k_phone_calls+" AS r ON r.gu_oportunity = s.gu_oportunity",
-			                                      "s."+DB.gu_oportunity+"='"+oOprt.getString(DB.gu_oportunity)+"'");
-			if (dtStart!=null) {
-        PreparedStatement oUlc = oConn.prepareStatement("UPDATE k_oportunities SET dt_last_call = ? WHERE gu_oportunity=?");
-        oUlc.setTimestamp(1, new Timestamp(dtStart.getTime()));
-        oUlc.setString(2, oOprt.getString(DB.gu_oportunity));
-        oUlc.executeUpdate();
-        oUlc.close();
+			Timestamp dtStart = null;
+      PreparedStatement oUpdt = oConn.prepareStatement("SELECT MAX(dt_start) FROM k_oportunities AS s INNER JOIN k_phone_calls AS r ON r.gu_oportunity = s.gu_oportunity WHERE s.gu_oportunity=?");
+      oUpdt.setString(1, oOprt.getString(DB.gu_oportunity));
+      oRSet = oUpdt.executeQuery();
+      if (oRSet.next()) {
+        dtStart = oRSet.getTimestamp(1);
+        if (oRSet.wasNull()) dtStart = null;
       }
+      oRSet.close();
+      oUpdt.close();
+			if (null!=dtStart) {
+			  oUpdt = oConn.prepareStatement("UPDATE k_oportunities SET dt_last_call=? WHERE gu_oportunity=?");
+        oUpdt.setTimestamp(1, dtStart);
+        oUpdt.setString(2, oOprt.getString(DB.gu_oportunity));
+				oUpdt.executeUpdate();
+        oRSet.close();
+        oUpdt.close();
+			}
 
 			if (!id_status.equals(id_former_status)) {
 				PreparedStatement oClog = oConn.prepareStatement("INSERT INTO k_oportunities_changelog (gu_oportunity,nm_column,dt_modified,gu_writer,id_former_status,id_new_status,tx_value) VALUES (?,'id_status',?,?,?,?,?)");

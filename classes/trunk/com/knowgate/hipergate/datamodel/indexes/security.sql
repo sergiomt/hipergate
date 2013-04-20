@@ -9,5 +9,7 @@ CREATE INDEX i1_user_mail ON k_user_mail (gu_user);
 
 CREATE INDEX i1_user_pwd ON k_user_pwd (gu_user);
 
+CREATE INDEX i1_user_accounts ON k_user_accounts (tx_main_email);
+
 CREATE INDEX i1_webbeacons ON k_webbeacons (gu_user);
 CREATE INDEX i1_webbeacon_pages ON k_webbeacon_pages (gu_object);

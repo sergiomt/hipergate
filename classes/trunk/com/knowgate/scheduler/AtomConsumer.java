@@ -55,7 +55,6 @@ public class AtomConsumer {
 
   private AtomQueue oQueue;
   private DBBind oDbb;
-  private PreparedStatement oStmt;
 
   // ----------------------------------------------------------
 

@@ -7,10 +7,11 @@ import com.knowgate.dataobjs.DB;
 
 import com.knowgate.clocial.Serials;
 
-import com.knowgate.storage.Table;
 import com.knowgate.storage.DataSource;
+import com.knowgate.storage.Engine;
 import com.knowgate.storage.RecordDelegator;
 import com.knowgate.storage.StorageException;
+import com.knowgate.storage.Table;
 
 public class SyndSearchRequest extends RecordDelegator {
 
@@ -28,4 +29,13 @@ public class SyndSearchRequest extends RecordDelegator {
     put ("nu_milis", nMilis);
     if (null!=sGuAccount) put ("gu_account", sGuAccount);
   }
+
+  public String store(Table oTbl) throws StorageException {
+	DataSource oDts = oTbl.getDataSource();
+	if (oDts.getEngine().equals(Engine.JDBCRDBMS)) {
+	  if (isNull("id_request"))
+		put ("id_request", oDts.nextVal("seq_"+DB.k_syndsearch_request));
+	}
+	return super.store(oTbl);
+  }	  
 }

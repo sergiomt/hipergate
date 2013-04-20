@@ -83,8 +83,9 @@ public abstract class Question {
           sName.indexOf(39 )>=0 || sName.indexOf('¡')>=0 || sName.indexOf('¿')>=0) {
       }
       throw new IllegalArgumentException("Question name contains invalid characters");
+    } else {
+      name = sName;
     }
-    name = sName;
   }
 
   public String getCaption() { return caption; }

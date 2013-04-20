@@ -57,10 +57,7 @@ import com.knowgate.dataobjs.DBSubset;
 import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.hipergate.DBLanguages;
 
-import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.SAXParseException;
 
 public class Curriculum {
@@ -184,10 +181,12 @@ public class Curriculum {
   	oXML.append("</experience>");
   	
   	oXML.append("<education>");
-  	oDbss = new DBSubset(DB.k_contact_education, "gu_degree,dt_created,bo_completed,gu_institution,nm_center,tp_degree,id_degree,lv_degree,ix_degree,tx_dt_from,tx_dt_to", DB.gu_contact+"=? ORDER BY tx_dt_from", 10);
+  	oDbss = new DBSubset(DB.k_contact_education+" e,"+DB.k_education_degree+" d",
+  					     "e.gu_degree,e.dt_created,e.bo_completed,e.gu_institution,e.nm_center,e.tp_degree,d.nm_degree,e.id_degree,e.lv_degree,e.ix_degree,e.tx_dt_from,e.tx_dt_to",
+  						 "e."+DB.gu_degree+"=d."+DB.gu_degree+" AND "+DB.gu_contact+"=? ORDER BY 10", 10);
 	oDbss.load(oConn, new Object[]{sGuContact});
 	String sEdu = fkcode(oConn, oDbss.toXML("  ","degree"), "gu_institution", DB.k_education_institutions, DB.gu_institution, DB.nm_institution, sWrkA);
-  	sEdu = fkcode(oConn, sEdu, "id_degree", DB.k_education_degree, DB.id_degree, DB.nm_degree, sWrkA);
+  	// sEdu = fkcode(oConn, sEdu, "id_degree", DB.k_education_degree, DB.id_degree, DB.nm_degree, sWrkA);
   	sEdu = decode(oConn, sEdu, DB.k_education_degree_lookup, DB.tp_degree, sWrkA);
   	oXML.append(sEdu);
   	oXML.append("</education>");

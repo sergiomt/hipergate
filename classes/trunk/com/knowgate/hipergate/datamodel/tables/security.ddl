@@ -33,7 +33,6 @@ CREATE TABLE k_domains
 )
 GO;
 
-
 CREATE TABLE k_users
 (
     /* Basic User data */ 
@@ -126,6 +125,69 @@ CREATE TABLE k_user_mail
 )    
 GO;
 
+CREATE TABLE k_user_accounts
+(
+  gu_account        CHAR(32) NOT NULL,
+  id_domain         INTEGER  NOT NULL,
+  dt_created        DATETIME DEFAULT CURRENT_TIMESTAMP,
+  tx_nickname       VARCHAR(50) NOT NULL,
+  tx_pwd            VARCHAR(50) NULL,
+  tx_pwd_sign       VARCHAR(50) NULL,
+  bo_change_pwd     SMALLINT DEFAULT 1,
+  bo_searchable     SMALLINT DEFAULT 1,
+  bo_active         SMALLINT DEFAULT 1,
+  nu_login_attempts INTEGER NULL,
+  len_quota         DECIMAL(28) NULL,
+  max_quota         DECIMAL(28) NULL,
+  tp_account        CHAR(1) NULL,
+  id_account        CHAR(10) NULL,
+  dt_last_update    DATETIME NULL,
+  dt_last_visit     DATETIME NULL,
+  dt_cancel         DATETIME NULL,
+  tx_main_email     VARCHAR(100) NULL,
+  tx_alt_email      VARCHAR(100) NULL,
+  nm_user           VARCHAR(100) NULL,
+  tx_surname1       VARCHAR(100) NULL,
+  tx_surname2       VARCHAR(100) NULL,
+  full_name         VARCHAR(300) NULL,
+  nm_ascii          VARCHAR(300) NULL,
+  tx_challenge      VARCHAR(100) NULL,
+  tx_reply          VARCHAR(100) NULL,
+  dt_pwd_expires    DATETIME NULL,
+  gu_company        CHAR(32) NULL,
+  nm_company        VARCHAR(70) NULL,
+  de_title          VARCHAR(70) NULL,
+  id_country        CHAR(2) NULL,
+  id_gender         CHAR(1) NULL,
+  dt_birth          DATETIME NULL,
+  ny_age            SMALLINT NULL,
+  marital_status    CHAR(1) NULL,
+  tx_education      VARCHAR(100) NULL,
+  icq_id            VARCHAR(50) NULL,
+  sn_passport       VARCHAR(16) NULL,
+  tp_passport       CHAR(1) NULL,
+  mov_phone         VARCHAR(16) NULL,
+  tx_comments       VARCHAR(254) NULL,
+  gu_image          CHAR(32),
+  jv_recent_searches LONGVARBINARY NULL,
+  CONSTRAINT pk_user_accounts PRIMARY KEY (gu_account)
+)
+GO;
+
+CREATE TABLE k_user_account_alias
+(
+    id_acalias VARCHAR(150) NOT NULL,
+	  gu_account CHAR(32) NULL,
+    dt_created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    nm_service VARCHAR(50) NOT NULL,
+    nm_alias VARCHAR(100) NOT NULL,
+    nm_display VARCHAR(100) NULL,
+    nm_ascii VARCHAR(100) NULL,
+    url_addr VARCHAR(254) NULL,
+    CONSTRAINT pk_user_account_alias PRIMARY KEY (id_acalias)
+)
+GO;
+
 CREATE TABLE k_user_pwd
 (
     gu_pwd        CHAR(32)      NOT NULL,
@@ -204,6 +266,7 @@ CREATE TABLE k_workareas
     bo_allcaps       SMALLINT     DEFAULT 0,
     bo_dup_id_docs   SMALLINT     DEFAULT 1,
     bo_cnt_autoref   SMALLINT     DEFAULT 0,
+    bo_acrs_oprt     SMALLINT     DEFAULT 0,
         
     CONSTRAINT pk_workareas PRIMARY KEY (gu_workarea),
     CONSTRAINT u1_workareas UNIQUE (nm_workarea,id_domain)
@@ -212,14 +275,14 @@ GO;
 
 CREATE TABLE k_x_app_workarea
 (
-    id_app      INTEGER  NOT NULL,    /* Id. de la aplicación */
+    id_app      INTEGER  NOT NULL,    /* Id. de la aplicaciï¿½n */
     gu_workarea CHAR(32) NOT NULL,    /* CHAR(32) de la workarea */
     gu_admins   CHAR(32) NULL,        /* CHAR(32) del grupo de administradores de la workarea */
     gu_powusers CHAR(32) NULL,        /* CHAR(32) del grupo de power users de la workarea */
     gu_users    CHAR(32) NULL,        /* CHAR(32) del grupo de usuarios comunes de la workarea */
     gu_guests   CHAR(32) NULL,        /* CHAR(32) del grupo de invitados de la workarea */
     gu_other    CHAR(32) NULL,        /* CHAR(32) del grupo de otros de la workarea */
-    path_files  VARCHAR(255) NULL,    /* Ruta a ficheros físicos asociados */
+    path_files  VARCHAR(255) NULL,    /* Ruta a ficheros fï¿½sicos asociados */
 
     CONSTRAINT pk_x_app_workarea PRIMARY KEY(id_app,gu_workarea)  
 )

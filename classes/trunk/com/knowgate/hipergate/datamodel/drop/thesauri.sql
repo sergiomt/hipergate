@@ -18,6 +18,7 @@ ALTER TABLE k_bank_accounts DROP CONSTRAINT f1_bank_accounts;
 
 ALTER TABLE k_bank_accounts_lookup DROP CONSTRAINT f1_bank_accounts_lookup;
 
+DROP TABLE k_urls;
 DROP TABLE k_distances_cache;
 DROP TABLE k_bank_accounts;
 DROP TABLE k_bank_accounts_lookup;

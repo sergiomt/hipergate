@@ -52,7 +52,6 @@ import com.knowgate.misc.Gadgets;
 import com.knowgate.debug.DebugFile;
 import com.knowgate.debug.StackTraceUtil;
 import com.knowgate.misc.MD5;
-import com.knowgate.dfs.FileSystem;
 
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -219,6 +218,20 @@ public class HeadersHelper extends DefaultHandler {
     return HeadersHelper.getContentID(oMsg);
   }
 
+  // ---------------------------------------------------------------------------
+
+  public static String getMessageID(MimeMessage oMsg)
+    throws UnsupportedEncodingException,MessagingException {
+    return decodeMessageId(oMsg);
+  }
+
+  // ---------------------------------------------------------------------------
+
+  public String getMessageID()
+    throws UnsupportedEncodingException,MessagingException {
+    return HeadersHelper.getMessageID(oMsg);
+  }
+  
   // ---------------------------------------------------------------------------
 
   public static String getDisposition(MimeMessage oMsg)

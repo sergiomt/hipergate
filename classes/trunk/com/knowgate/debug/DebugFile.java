@@ -348,7 +348,7 @@ public final class DebugFile {
   public static short dumpTo = DUMP_TO_FILE;
 
   /**
-   * Activate/Deactive trace output
+   * Activate/Deactivate trace output
    */
-  public static final boolean trace = true;
+  public static final boolean trace = false;
   }

@@ -79,13 +79,13 @@
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/simplevalidations.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/usrlang.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/simplevalidations.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
     <!--
 
@@ -251,7 +251,7 @@
             </TD>
           </TR>
           <TR>
-            <TD ALIGN="right" WIDTH="200"><FONT CLASS="formplain">[~Provincia:~]</FONT></TD>
+            <TD ALIGN="right" WIDTH="200"><FONT CLASS="formplain">State:</FONT></TD>
             <TD ALIGN="left" WIDTH="460">
               <A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="[~Ver provincias~]"></A>&nbsp;<SELECT CLASS="combomini" NAME="sel_state"></SELECT>
               <INPUT TYPE="hidden" NAME="id_state" MAXLENGTH="16" VALUE="<%=oInfo.getStringNull(DB.id_state,"")%>">
@@ -308,7 +308,7 @@
             <TD ALIGN="right" WIDTH="200"><FONT CLASS="formplain">[~¿Quieres tener hijos?~]</FONT></TD>
             <TD ALIGN="left" WIDTH="370">
               <INPUT TYPE="hidden" NAME="bo_wantchilds">
-	      <INPUT TYPE="radio" NAME="chk_wantchilds" <% if (oInfo.isNull(DB.bo_wantchilds)) out.write("CHECKED"); else out.write((oInfo.getString(DB.bo_wantchilds).equals("Y") ? "CHECKED" : "")); %>>&nbsp;<FONT CLASS="formplain">[~Si~]</FONT>&nbsp;&nbsp;&nbsp;<INPUT TYPE="radio" NAME="chk_wantschilds" <% if (!oInfo.isNull(DB.bo_wantchilds)) out.write((oInfo.getString(DB.bo_wantchilds).equals("N") ? "CHECKED" : "")); %>>&nbsp;<FONT CLASS="formplain">[~No~]</FONT>
+	      <INPUT TYPE="radio" NAME="chk_wantchilds" <% if (oInfo.isNull(DB.bo_wantchilds)) out.write("CHECKED"); else out.write((oInfo.getString(DB.bo_wantchilds).equals("Y") ? "CHECKED" : "")); %>>&nbsp;<FONT CLASS="formplain">[~Si~]</FONT>&nbsp;&nbsp;&nbsp;<INPUT TYPE="radio" NAME="chk_wantschilds" <% if (!oInfo.isNull(DB.bo_wantchilds)) out.write((oInfo.getString(DB.bo_wantchilds).equals("N") ? "CHECKED" : "")); %>>&nbsp;<FONT CLASS="formplain">No</FONT>
             </TD>
           </TR>
           <TR>

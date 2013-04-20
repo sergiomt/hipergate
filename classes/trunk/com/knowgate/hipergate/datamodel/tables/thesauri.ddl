@@ -117,8 +117,8 @@ CREATE TABLE k_addresses
     nm_country     VARCHAR(50)  NULL,
     id_state       VARCHAR(16)  NULL,
     nm_state       VARCHAR(30)  NULL,
-    mn_city	   VARCHAR(50)  NULL,
-    zipcode	   VARCHAR(30)  NULL,
+    mn_city	       VARCHAR(50)  NULL,
+    zipcode	       VARCHAR(30)  NULL,
     work_phone     VARCHAR(16)  NULL,
     direct_phone   VARCHAR(16)  NULL,
     home_phone     VARCHAR(16)  NULL,
@@ -188,9 +188,9 @@ CREATE TABLE k_bank_accounts
   nm_bank         VARCHAR(50)   NULL,
   tx_addr         VARCHAR(100)  NULL,
   nm_cardholder	  VARCHAR(100)  NULL,				/* Titular de la cuenta o la tarjeta */
-  nu_card         CHAR(16)      NULL,				/* Nº de la tarjeta */
+  nu_card         CHAR(16)      NULL,				/* Nï¿½ de la tarjeta */
   tp_card         VARCHAR(30)   NULL,				/* Tipo de la tarjeta  (MASTERCARD,VISA,AMEX,...) */
-  tx_expire       VARCHAR(10)   NULL,				/* Fecha Expiración de la Tarjeta */
+  tx_expire       VARCHAR(10)   NULL,				/* Fecha Expiraciï¿½n de la Tarjeta */
   nu_pin          VARCHAR(7)    NULL,				/* Pin de la Tarjeta */
   nu_cvv2         VARCHAR(4)    NULL,
   im_credit_limit DECIMAL(14,4) NULL,

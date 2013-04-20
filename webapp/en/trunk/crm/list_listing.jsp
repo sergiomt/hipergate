@@ -1,7 +1,6 @@
 <%@ page import="java.net.URLDecoder,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.acl.*,com.knowgate.dataobjs.*,com.knowgate.crm.DistributionList,com.knowgate.hipergate.Category,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="../methods/authusrs.jspf" %>
-<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
-<%
+<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -202,17 +201,17 @@
 
 %><HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>  
 
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" >
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" >
     dynapi.library.setPath('../javascript/dynapi3/');
     dynapi.library.include('dynapi.api.DynLayer');
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript">
+  <SCRIPT TYPE="text/javascript">
     var menuLayer,addrLayer;
     dynapi.onLoad(init);
     function init() {
@@ -224,9 +223,9 @@
       menuLayer.setHTML(rightMenuHTML);
     }
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
 
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
         // Variables globales para traspasar la instancia clickada al menu contextual
         var jsListId;
@@ -277,7 +276,40 @@
                   } // fi(chi!="")
                 } // fi (confirm)
 	      } // deleteLists()
+
+        // ----------------------------------------------------
 	
+	      function moveLists() {	  
+	        var offset = 0;
+	        var frm = document.forms[0];
+	        var chi = frm.checkeditems;
+	       
+	        if (frm.sel_category_move.selectedIndex<=0) {
+	          alert ("You must select a target category");
+	          frm.sel_category_move.focus();
+	          return false;
+	        }
+
+	        if (window.confirm("Are you sure that you want to move the selected lists?")) {
+	        	  
+	          chi.value = "";	  	  
+	          
+	          frm.action = "list_edit_move.jsp?gu_category=&selected=" + getURLParam("selected") + "&subselected=" + getURLParam("subselected");
+	        	  
+	          for (var i=0;i<jsLists.length; i++) {
+                    while (frm.elements[offset].type!="checkbox") offset++;
+          	      if (frm.elements[offset].checked)
+                      chi.value += jsLists[i] + ",";
+                    offset++;
+	          } // next()
+        
+	          if (chi.value.length>0) {
+	            chi.value = chi.value.substr(0,chi.value.length-1);
+                    frm.submit();
+                  } // fi(chi!="")
+                } // fi (confirm)
+	      } // moveLists()
+	      
         // ----------------------------------------------------
 
 	      function modifyList(id,nm) {	  
@@ -428,7 +460,7 @@
       
     //-->    
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
     <!--
 	  function setCombos() {
 	    setCookie ("maxrows", "<%=iMaxRows%>");
@@ -451,7 +483,7 @@
       <INPUT TYPE="hidden" NAME="where" VALUE="<%=sWhere%>">
       <INPUT TYPE="hidden" NAME="checkeditems">
       
-      <TABLE CELLSPACING="2" CELLPADDING="2">
+      <TABLE CELLSPACING="2" CELLPADDING="2" BORDER="0">
         <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
         <TR>
         <TD>&nbsp;&nbsp;<IMG SRC="../images/images/new16x16.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="New"></TD>
@@ -472,7 +504,7 @@
         </TD>
         <TD VALIGN="bottom">&nbsp;&nbsp;<IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Find List"></TD>
         <TD VALIGN="middle">
-          <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>"&nbsp;<A HREF="javascript:findList()" CLASS="linkplain" TITLE="Search">Search</A>	  
+          <INPUT CLASS="textmini" TYPE="text" NAME="find" MAXLENGTH="50" VALUE="<%=sFind%>">&nbsp;<A HREF="javascript:findList()" CLASS="linkplain" TITLE="Search">Search</A>	  
         </TD>
         <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/findundo16.gif" HEIGHT="16" BORDER="0" ALT="Discard Find Filter"></TD>
         <TD VALIGN="bottom">
@@ -483,7 +515,7 @@
         <TR>
         <TD>&nbsp;&nbsp;<IMG SRC="../images/images/tree/menu_root.gif" WIDTH="18" HEIGHT="18" BORDER="0"></TD>
         <TD><A HREF="list_tree_f.htm?selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>&top_parent_cat=<%=sGuRootCategory%>" TARGET="_top" CLASS="linkplain">Tree</A></TD>
-				<TD COLSPAN="6"><SELECT name="sel_category" class="combomini" onchange="document.location='list_listing.jsp?selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>&find=<%=Gadgets.URLEncode(sFind)%>&field=<%=sField%>&screen_width='+String(screen.width)+'&categ='+(this.selectedIndex<=0 ? '' : this.options[this.selectedIndex].value)"><%
+				<TD COLSPAN="4"><SELECT name="sel_category" class="combomini" onchange="document.location='list_listing.jsp?selected=<%=request.getParameter("selected")%>&subselected=<%=request.getParameter("subselected")%>&find=<%=Gadgets.URLEncode(sFind)%>&field=<%=sField%>&screen_width='+String(screen.width)+'&categ='+(this.selectedIndex<=0 ? '' : this.options[this.selectedIndex].value)"><%
 
     		  out.write ("<OPTION VALUE=\"" + sGuRootCategory + "\"></OPTION>");
     			for (int c=0; c<iCatgs; c++) {		    
@@ -494,6 +526,18 @@
         	}                            
 					
 		 	  %></SELECT></TD>
+            <TD VALIGN="bottom">&nbsp;&nbsp;&nbsp;<IMG SRC="../images/images/movefiles.gif" WIDTH="24" HEIGHT="16" BORDER="0" ALT="Move to another category"></TD>
+			<TD><SELECT name="sel_category_move" class="combomini"><%
+
+    		  out.write ("<OPTION VALUE=\"" + sGuRootCategory + "\"></OPTION>");
+    			for (int c=0; c<iCatgs; c++) {		    
+        	  out.write ("<OPTION VALUE=\"" + oCatgs.getString(0,c) + "\">");
+        		for (int s=1; s<oCatgs.getInt(2,c); s++) out.write("&nbsp;&nbsp;&nbsp;");
+        		out.write (oCatgs.getString(5,c));
+            out.write ("</OPTION>");
+        	}                            
+					
+		 	  %></SELECT>&nbsp;<A HREF="#" CLASS="linkplain" onclick="moveLists()">Move</A></TD>
 			  </TR>
         <TR><TD COLSPAN="8" BACKGROUND="../images/images/loginfoot_med.gif" HEIGHT="3"></TD></TR>
       </TABLE>

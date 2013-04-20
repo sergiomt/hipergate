@@ -48,6 +48,7 @@ GO;
 
 CREATE PROCEDURE k_sp_del_adhoc_mailing (AdHocId CHAR(32))
 BEGIN
+  UPDATE k_activities SET gu_mailing=NULL WHERE gu_mailing=AdHocId;
   DELETE FROM k_x_adhoc_mailing_list WHERE gu_mailing=AdHocId;
   DELETE FROM k_adhoc_mailings WHERE gu_mailing=AdHocId;
 END

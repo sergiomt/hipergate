@@ -55,7 +55,9 @@
   EducationDegree oObj = new EducationDegree();
   
   String sTypeLookUp = "";
-    
+  /* Inicio i2e 2009-01-18 */ 
+  String sCountriesLookUp = null;
+  /* Fin i2e */ 
   JDCConnection oConn = null;
     
   try {
@@ -63,7 +65,9 @@
     oConn = GlobalDBBind.getConnection(PAGE_NAME, true);  
 
     sTypeLookUp  = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_education_degree_lookup, gu_workarea, "tp_degree", sLanguage);
-    
+    /* Inicio i2e 2009-01-18 */
+    sCountriesLookUp = GlobalDBLang.getHTMLCountrySelect(oConn, sLanguage);    
+	/* fin i2e */ 
     if (null!=gu_degree) oObj.load(oConn, new Object[]{gu_degree});
     
     oConn.close(PAGE_NAME);
@@ -82,12 +86,12 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Qualification</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
       
       // ------------------------------------------------------
@@ -121,18 +125,19 @@
 	      }
         
         frm.tp_degree.value = getCombo(frm.sel_type);
-
         return true;
       } // validate;
     //-->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
     <!--
       function setCombos() {
         var frm = document.forms[0];
         
-        setCombo(frm.sel_type,"<% out.write(oObj.getStringNull(DB.tp_degree,"")); %>");
-        
+        setCombo(frm.sel_type,"<% out.write(oObj.getStringNull(DB.tp_degree,""));%>");
+        <% /* Inicio i2e 2009-01-18 */ %>
+        setCombo(frm.id_country,"<% out.write(oObj.getStringNull(DB.id_country,"").trim());%>");
+        <% /* Fin i2e */ %>
         return true;
       } // validate;
     //-->
@@ -172,6 +177,14 @@
             <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Code</FONT></TD>
             <TD ALIGN="left" WIDTH="370"><INPUT TYPE="text" NAME="id_degree" MAXLENGTH="32" SIZE="9" VALUE="<%=oObj.getStringNull("id_degree","")%>"></TD>
           </TR>
+          <% /* Inicio i2e 2009-01-18 */ %>
+           <TR>
+                <TD ALIGN="right" WIDTH="90"><FONT CLASS="formplain">Country:</FONT></TD>
+                <TD ALIGN="left" WIDTH="370">
+	    	      <SELECT NAME="id_country"><OPTION VALUE=""></OPTION><%=sCountriesLookUp%></SELECT>
+                </TD>
+          </TR>
+          <% /* Fin i2e */ %>
           <TR>
             <TD COLSPAN="2"><HR></TD>
           </TR>

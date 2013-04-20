@@ -229,8 +229,8 @@ CREATE TABLE k_lu_prod_types
 (
     id_prod_type   VARCHAR(5) NOT NULL,
     de_prod_type   VARCHAR(254) NULL,
-    nm_icon	   VARCHAR(254) NULL,
-    mime_type      VARCHAR(50)  NULL,
+    nm_icon	       VARCHAR(254) NULL,
+    mime_type      VARCHAR(100) NULL,
 
     CONSTRAINT pk_lu_prod_types PRIMARY KEY (id_prod_type)
 )
@@ -269,5 +269,13 @@ tr_pl      VARCHAR(50)  NULL,
 tr_vn      VARCHAR(50)  NULL,
 
 CONSTRAINT pk_lu_meta_attrs PRIMARY KEY (gu_owner,nm_table,id_section)
+)
+GO;
+
+CREATE TABLE k_lu_first_names
+(
+tx_name VARCHAR(100) NOT NULL,
+id_gender CHAR(1)    NOT NULL,
+CONSTRAINT pk_lu_first_names PRIMARY KEY (tx_name)
 )
 GO;

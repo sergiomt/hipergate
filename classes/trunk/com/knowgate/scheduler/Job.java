@@ -36,7 +36,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Properties;
 
-import java.sql.Connection;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -61,10 +60,7 @@ import com.knowgate.dataobjs.DBBind;
 import com.knowgate.dataobjs.DBPersist;
 import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.dataxslt.db.PageSetDB;
-import com.knowgate.crm.MemberAddress;
-import com.knowgate.hipergate.Address;
 import com.knowgate.crm.GlobalBlackList;
-import com.knowgate.misc.Gadgets;
 
 import com.oreilly.servlet.MailMessage;
 
@@ -74,6 +70,9 @@ import com.oreilly.servlet.MailMessage;
  * @version 5.0
  */
 public abstract class Job extends DBPersist {
+
+  private static final long serialVersionUID = 500l;
+
   private Properties oParams;
   private Properties oEnvProps;
   private File oLogFile;
@@ -846,7 +845,6 @@ public abstract class Job extends DBPersist {
 	final int nCols = aAddrCols.length;
 	String[] aAddrVals = new String[nCols];
     String sSQL;
-    String sMailAddr;
 
 	String[] aBlackList = GlobalBlackList.forWorkArea(oConn, getString(DB.gu_workarea));
 	if (null!=aBlackList) Arrays.sort(aBlackList, String.CASE_INSENSITIVE_ORDER);

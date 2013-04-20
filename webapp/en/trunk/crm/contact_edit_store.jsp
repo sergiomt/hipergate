@@ -110,7 +110,7 @@
 	  oItem.put (DB.nm_company, nm_company);	  
 	  oRecent.add (oConn, oItem);
     
-    DBAudit.log(oConn, oContact.ClassId, sOpCode, id_user, oContact.getString(DB.gu_contact), oContact.getStringNull(DB.gu_company,""), 0, 0, oContact.getString(DB.tx_name)+" "+oContact.getString(DB.tx_surname), request.getParameter("nm_legal"));
+    DBAudit.log(oConn, oContact.ClassId, sOpCode, id_user, oContact.getString(DB.gu_contact), oContact.getStringNull(DB.gu_company,""), 0, 0, oContact.getStringNull(DB.tx_name,"")+" "+oContact.getStringNull(DB.tx_surname,""), request.getParameter("nm_legal"));
 
     oConn.commit();
         

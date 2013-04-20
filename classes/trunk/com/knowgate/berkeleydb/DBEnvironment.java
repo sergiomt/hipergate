@@ -1,18 +1,45 @@
+/*
+  Copyright (C) 2003-2011  Know Gate S.L. All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. The end-user documentation included with the redistribution,
+     if any, must include the following acknowledgment:
+     "This product includes software parts from hipergate
+     (http://www.hipergate.org/)."
+     Alternately, this acknowledgment may appear in the software itself,
+     if and wherever such third-party acknowledgments normally appear.
+
+  3. The name hipergate must not be used to endorse or promote products
+     derived from this software without prior written permission.
+     Products derived from this software may not be called hipergate,
+     nor may hipergate appear in their name, without prior written
+     permission.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+  You should have received a copy of hipergate License with this code;
+  if not, visit http://www.hipergate.org or mail to info@hipergate.org
+*/
+
 package com.knowgate.berkeleydb;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.FileNotFoundException;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.Random;
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Collection;
-import java.util.Collections;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -35,7 +62,6 @@ import com.sleepycat.db.DatabaseException;
 import com.sleepycat.db.EnvironmentConfig;
 import com.sleepycat.db.Transaction;
 import com.sleepycat.db.Environment;
-import com.sleepycat.db.SecondaryConfig;
 import com.sleepycat.db.SecondaryDatabase;
 import com.sleepycat.db.SecondaryKeyCreator;
 import com.sleepycat.db.SecondaryMultiKeyCreator;
@@ -43,7 +69,6 @@ import com.sleepycat.db.Sequence;
 import com.sleepycat.db.SequenceConfig;
 
 import com.sleepycat.bind.EntryBinding;
-import com.sleepycat.bind.serial.ClassCatalog;
 import com.sleepycat.bind.serial.SerialBinding;
 import com.sleepycat.bind.serial.StoredClassCatalog;
 
@@ -168,27 +193,6 @@ public class DBEnvironment implements DataSource {
   
   // --------------------------------------------------------------------------
 
-  public static void runRecovery(String sDbEnv) throws DatabaseException,FileNotFoundException {
-	if (DebugFile.trace) {
-	  DebugFile.writeln("Begin DBEnvironment.runRecovery("+sDbEnv+")");
-	  DebugFile.incIdent();
-	}
-    EnvironmentConfig oEcn = new EnvironmentConfig();
-    oEcn.setAllowCreate(true);
-    oEcn.setInitializeLocking(true);
-    oEcn.setInitializeLogging(true);
-    oEcn.setTransactional(true);
-    oEcn.setRunRecovery(true);
-    Environment oRco = new Environment(new File(sDbEnv), oEcn);
-    oRco.close();
-	if (DebugFile.trace) {
-	  DebugFile.decIdent();
-	  DebugFile.writeln("End DBEnvironment.runRecovery("+sDbEnv+")");
-	}
-  } // runRecovery
-
-  // --------------------------------------------------------------------------
-
   public void open(String sDbEnv, String sUser, String sPassw, boolean bReadOnlyMode)
   	throws StorageException {
 
@@ -262,6 +266,8 @@ public class DBEnvironment implements DataSource {
 	  // For Berkeley DB Java Only
 	  // oJcc = oEnv.openDatabase(null, CLASS_CATALOG, bReadOnly ? oDro : oDfg);
 
+	  if (DebugFile.trace) DebugFile.writeln("Environment.openDatabase("+getPath()+CLASS_CATALOG+".db"+")");
+	  
 	  oJcc = oEnv.openDatabase(null, getPath()+CLASS_CATALOG+".db", CLASS_CATALOG, oCtf);
 
       oCtg = new StoredClassCatalog(oJcc);
@@ -270,8 +276,16 @@ public class DBEnvironment implements DataSource {
 	  } catch (ClassNotFoundException neverthrown) { }
 
 	} catch (DatabaseException dbe) {
+      if (DebugFile.trace) {
+    	  DebugFile.writeln("DatabaseException "+dbe.getMessage());
+    	  DebugFile.decIdent();
+      }
 	  throw new StorageException(dbe.getMessage(), dbe);
 	} catch (FileNotFoundException fnf) {
+	  if (DebugFile.trace) {
+	    DebugFile.writeln("FileNotFoundException "+fnf.getMessage());
+	    DebugFile.decIdent();
+	  }
 	  throw new StorageException(fnf.getMessage(), fnf);
 	}
 
@@ -284,12 +298,11 @@ public class DBEnvironment implements DataSource {
 
   // --------------------------------------------------------------------------
 
-  public Table openTable(Properties oConnectionProperties)
+  public DBTable openTable(Properties oConnectionProperties)
   	throws StorageException,IllegalArgumentException {
   	DBTable oDbc = null;
   	Database oPdb = null;
   	Database oFdb = null;
-  	SecondaryDatabase[] aSdb = null;
   	String[] aIdxs = null;
   	String sIdx = null;
   	String sRel = null;
@@ -306,8 +319,8 @@ public class DBEnvironment implements DataSource {
   	
   	try {
 
-      sRo = oConnectionProperties.getProperty("readonly");
       // For Berkeley DB Java
+      // sRo = oConnectionProperties.getProperty("readonly");
       // if (null!=sRo) bRo = (sRo.equalsIgnoreCase("true") || sRo.equalsIgnoreCase("1")) || oCfg.getReadOnly();
 	  
       sFdb = oConnectionProperties.getProperty("foreigndatabase");
@@ -381,7 +394,7 @@ public class DBEnvironment implements DataSource {
   	throws StorageException,IllegalArgumentException {
     Properties oProps = new Properties();
     oProps.put("name", sName);
-    oProps.put("readonly", "true");
+    oProps.put("readonly", "false");
     return openTable(oProps);
   } // openTable
 
@@ -395,7 +408,7 @@ public class DBEnvironment implements DataSource {
   	}
     Properties oProps = new Properties();
     oProps.put("name", sName);
-    oProps.put("readonly", "true");
+    oProps.put("readonly", "false");
     if (aIndexes!=null) {
       String sIndexes = "";
       for (int i=0; i<aIndexes.length; i++) {
@@ -428,9 +441,8 @@ public class DBEnvironment implements DataSource {
     oProps.put("readonly", "false");
     String sIndexes = "";
   	for (Column c : oRec.columns()) {
-      if (c.isIndexed()) {
+      if (c.isIndexed() && !c.isPrimaryKey())
         sIndexes += (sIndexes.length()==0 ? "" : ",") + c.getName();
-      } // fi
   	} // next
     if (sIndexes.length()>0) oProps.put("indexes", sIndexes);
   	Table oRetVal = openTable(oProps);
@@ -442,10 +454,11 @@ public class DBEnvironment implements DataSource {
   	
   	return oRetVal;
   } // openTable
-
+  
  // --------------------------------------------------------------------------
 
-  public long nextVal(String sSequenceName) throws StorageException {
+  @SuppressWarnings("unused")
+public long nextVal(String sSequenceName) throws StorageException {
   	long iRetVal = -1l;
   	SequenceConfig oQqg = new SequenceConfig();
   	oQqg.setAutoCommitNoSync(true);

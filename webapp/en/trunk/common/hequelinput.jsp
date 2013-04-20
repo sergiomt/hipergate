@@ -4,14 +4,14 @@
   <HEAD>
     <TITLE>hipergate ::</TITLE>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>  
+    <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+    <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>  
   </HEAD>
   <BODY  LEFTMARGIN="8" TOPMARGIN="8">
     <FORM name="hequelform" METHOD="POST" ACTION="hequelexec.jsp" TARGET="hequelresults">
       <TEXTAREA name="cmdline" ROWS="16" COLS="80"></TEXTAREA>
       <BR>
-      <INPUT TYPE="submit" VALUE="[~Ejecutar~]">
+      <INPUT TYPE="submit" VALUE="Execute">
     </FORM>
   </BODY>
 </HTML>

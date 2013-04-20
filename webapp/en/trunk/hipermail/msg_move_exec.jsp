@@ -1,5 +1,4 @@
-<%@ page import="javax.mail.*,javax.mail.internet.*,java.util.Enumeration,java.util.Date,java.util.Properties,java.io.File,java.io.IOException,java.io.UnsupportedEncodingException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.Timestamp,com.sun.mail.dsn.MultipartReport,com.knowgate.debug.DebugFile,com.knowgate.debug.StackTraceUtil,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.dfs.FileSystem,com.knowgate.misc.Gadgets,com.knowgate.hipermail.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="mail_env.jspf" %><%
+<%@ page import="javax.mail.*,javax.mail.internet.*,java.util.Enumeration,java.util.Date,java.util.Properties,java.io.File,java.io.IOException,java.io.UnsupportedEncodingException,java.net.URLDecoder,java.sql.SQLException,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.Timestamp,com.sun.mail.dsn.MultipartReport,com.knowgate.debug.DebugFile,com.knowgate.debug.StackTraceUtil,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.DB,com.knowgate.dataobjs.DBBind,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.dfs.FileSystem,com.knowgate.misc.Gadgets,com.knowgate.hipermail.*" language="java" session="false" contentType="text/html;charset=UTF-8" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%@ include file="mail_env.jspf" %><%
 /*
   Copyright (C) 2004  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -77,9 +76,9 @@
 
     oRDBMS = DBStore.open(oHndlr.getSession(), sProfile, sMBoxDir, id_user, tx_pwd);
     
-    oLocalFldr = oRDBMS.openDBFolder(sFolder, Folder.READ_WRITE);
+    oLocalFldr = oRDBMS.openDBFolder(sFolder, Folder.READ_WRITE|DBFolder.MODE_MBOX);
 
-    oTargetFldr = oRDBMS.openDBFolder(sTarget, Folder.READ_WRITE);
+    oTargetFldr = oRDBMS.openDBFolder(sTarget, Folder.READ_WRITE|DBFolder.MODE_MBOX);
     
     if (sFolder.equals("inbox")) {
       
@@ -103,9 +102,6 @@
         if (DebugFile.trace)
           DebugFile.writeln("<JSP:Connection.prepareStatement(SELECT " + DB.gu_mimemsg + " FROM " + DB.k_mime_msgs + " WHERE " + DB.id_message + "=? AND " + DB.gu_category + "='"+((DBFolder)oLocalFldr).getCategory().getString(DB.gu_category)+"')");
     
-        oStmt = oRDBMS.getConnection().prepareStatement("SELECT " + DB.gu_mimemsg + " FROM " + DB.k_mime_msgs + " WHERE " + DB.id_message + "=? AND " + DB.gu_category + "='"+((DBFolder)oLocalFldr).getCategory().getString(DB.gu_category)+"'",
-        					        ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-
         out.write("<HTML>\n<HEAD><SCRIPT LANGUAGE=\"JavaScript\" SRC=\"../javascript/cookies.js\"></SCRIPT><SCRIPT LANGUAGE=\"JavaScript\" SRC=\"../javascript/setskin.js\"></SCRIPT><SCRIPT LANGUAGE=\"JavaScript\" TYPE=\"text/javascript\">function setLabHTML(txt) { var doc=window.parent.frames[0].document; if ((navigator.appCodeName==\"Mozilla\") && (navigator.appName!=\"Microsoft Internet Explorer\")) doc.getElementById(\"lab1\").innerHTML = txt; else if (doc.layers) doc[\"lab1\"].innerHTML = txt; else doc.all[\"lab1\"].innerHTML=txt; }</SCRIPT>\n");
 
 	      if (DebugFile.trace) DebugFile.writeln("<JSP:message count="+aMsgNums.length);
@@ -146,7 +142,11 @@
 	  
 	      if (null!=oPop3Msg) {
 	        if (DebugFile.trace) DebugFile.writeln("<JSP:searching message " + oPop3Msg.getMessageID());
-            
+          
+       	  oConn = GlobalDBBind.getConnection("k_mime_msgs_id_message",true);
+       
+          oStmt = oConn.prepareStatement("SELECT " + DB.gu_mimemsg + " FROM " + DB.k_mime_msgs + " WHERE " + DB.id_message + "=? AND " + DB.gu_category + "='"+((DBFolder)oLocalFldr).getCategory().getString(DB.gu_category)+"'",
+        					                       ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 	        oStmt.setString(1, oPop3Msg.getMessageID());
 
 	        oRSet = oStmt.executeQuery();
@@ -159,9 +159,13 @@
 	          if (DebugFile.trace) DebugFile.writeln("<JSP:message guid for " + oPop3Msg.getMessageID() + " not found");
 	        }
 	    
+	    		oStmt.close();
+	    		oStmt=null;
 	        oRSet.close();
 	        oRSet = null;
-	  	    
+	  	    oConn.close("k_mime_msgs_id_message");
+	  	    oConn=null;
+
 	        if (sMsgGuid==null) {
 	          if (DebugFile.trace) DebugFile.writeln("source message not cached, reading from remote folder");
 	    
@@ -303,14 +307,10 @@
 
   if (DebugFile.trace) DebugFile.writeln("<JSP:msg_move.exec.jsp Done!");
 
-%>
-</HEAD>
+%></HEAD>
 <BODY BGCOLOR="linen" onload="<% if (sErrMsg.length()>0) { %> alert ('<%=Gadgets.escapeChars(sErrMsg.replace('\n',' ').replace((char)39,(char)32),"\\",'\\')%>'); <% } %>">
-
 <!--
-<% if (sReloadUrl!=null) { %>window.parent.parent.frames[3].document.location.href='<%=sReloadUrl%>' + '&screen_width=' + String(screen.width); window.parent.document.location.href='../common/blank.htm';<% } %>">
+<% if (sReloadUrl!=null) { %>window.parent.parent.frames[3].document.location.href='<%=sReloadUrl%>' + '&screen_width=' + String(screen.width); window.parent.document.location.href='../common/blank.htm';<% } %>
 -->
-
 </BODY>
-</HTML>
-<%@ include file="../methods/page_epilog.jspf" %>
+</HTML><%@ include file="../methods/page_epilog.jspf" %>

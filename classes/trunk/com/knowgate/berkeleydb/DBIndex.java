@@ -2,11 +2,8 @@ package com.knowgate.berkeleydb;
 
 import com.sleepycat.db.Transaction;
 import com.sleepycat.db.DatabaseException;
-import com.sleepycat.db.SecondaryConfig;
 import com.sleepycat.db.SecondaryCursor;
 import com.sleepycat.db.SecondaryDatabase;
-import com.sleepycat.db.SecondaryKeyCreator;
-import com.sleepycat.db.SecondaryMultiKeyCreator;
 
 import com.knowgate.debug.DebugFile;
 

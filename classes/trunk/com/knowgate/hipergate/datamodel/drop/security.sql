@@ -14,6 +14,10 @@ DROP TABLE k_user_pwd;
 
 DROP TABLE k_user_mail;
 
+DROP TABLE k_user_account_alias;
+
+DROP TABLE k_user_accounts;
+
 DROP TABLE k_lu_permissions;
 
 DROP TABLE k_x_app_workarea;

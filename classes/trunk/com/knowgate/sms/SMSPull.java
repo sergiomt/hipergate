@@ -31,10 +31,6 @@
 
 package com.knowgate.sms;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-
-import java.util.Date;
 import java.util.Properties;
 
 import java.sql.Connection;
@@ -85,7 +81,8 @@ public class SMSPull {
 
     Properties oDbBind = Environment.getProfile(sDataSource);
     try {
-      Class cDriver = Class.forName(oDbBind.getProperty("driver"));
+      @SuppressWarnings("unused")
+	  Class cDriver = Class.forName(oDbBind.getProperty("driver"));
     } catch (ClassNotFoundException cnfe) {
       if (DebugFile.trace)DebugFile.decIdent();
       throw new SQLException("SMSPull.connect() Could not find class for driver "+oDbBind.getProperty("driver"));

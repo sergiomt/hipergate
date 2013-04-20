@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2003-2010  Know Gate S.L. All rights reserved.
+  Copyright (C) 2003-2011  Know Gate S.L. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -76,8 +76,9 @@ import com.knowgate.scheduler.Job;
 /**
  * <p>WorkArea</p>
  * @author Sergio Montoro Ten
- * @version 5.0
+ * @version 7.0
  */
+@SuppressWarnings("serial")
 public class WorkArea extends DBPersist {
 
   private static WeakHashMap oParams;
@@ -1168,6 +1169,7 @@ public class WorkArea extends DBPersist {
    */
   public static boolean allCaps(Connection oConn, String sWorkArea) throws SQLException {
 	String sKey = sWorkArea+":"+DB.bo_allcaps;
+	if (oParams==null) oParams = new WeakHashMap();
 	if (oParams.containsKey(sKey)) {
 	  return ((Boolean) oParams.get(sKey)).booleanValue();
 	} else {
@@ -1197,6 +1199,7 @@ public class WorkArea extends DBPersist {
    */
   public static boolean allowDuplicatedIdentityDocuments(Connection oConn, String sWorkArea) throws SQLException {
 	String sKey = sWorkArea+":"+DB.bo_dup_id_docs;
+	if (oParams==null) oParams = new WeakHashMap();
 	if (oParams.containsKey(sKey)) {
 	  return ((Boolean) oParams.get(sKey)).booleanValue();
 	} else {
@@ -1226,6 +1229,7 @@ public class WorkArea extends DBPersist {
    */
   public static boolean autoNumericContactReferences(Connection oConn, String sWorkArea) throws SQLException {
 	String sKey = sWorkArea+":"+DB.bo_cnt_autoref;
+	if (oParams==null) oParams = new WeakHashMap();
 	if (oParams.containsKey(sKey)) {
 	  return ((Boolean) oParams.get(sKey)).booleanValue();
 	} else {
@@ -1242,8 +1246,38 @@ public class WorkArea extends DBPersist {
 		return false;
 	  }
     } 
-  } // allowDuplicatedIdentityDocuments
+  } // autoNumericContactReferences
 
+  // ----------------------------------------------------------
+
+  /**
+   * Whether academic courses must be added to objetives lookup of opportunities
+   * @param oConn Connection
+   * @param sWorkArea String WorkArea GUID
+   * @throws SQLException
+   * @since 7.0
+   */
+  public static boolean saveAcademicCoursesAsOportunityObjetives(Connection oConn, String sWorkArea) throws SQLException {
+	String sKey = sWorkArea+":"+DB.bo_acrs_oprt;
+	if (oParams==null) oParams = new WeakHashMap();
+	if (oParams.containsKey(sKey)) {
+	  return ((Boolean) oParams.get(sKey)).booleanValue();
+	} else {
+      Short oAcrsOprt = DBCommand.queryShort(oConn, "SELECT "+DB.bo_acrs_oprt+" FROM "+DB.k_workareas+" WHERE "+DB.gu_workarea+"='"+sWorkArea+"'");
+	  if (oAcrsOprt==null) {
+	  	oParams.put(sKey, new Boolean(false));
+	    return false;
+	  }
+	  else if (oAcrsOprt.shortValue()!=(short)0) {
+	  	oParams.put(sKey, new Boolean(true));
+		return true;
+	  } else {
+	  	oParams.put(sKey, new Boolean(false));
+		return false;
+	  }
+    } 
+  } // saveAcademicCoursesAsOportunityObjetives
+  
   // ----------------------------------------------------------
 
   /**
@@ -1976,6 +2010,7 @@ public class WorkArea extends DBPersist {
       DebugFile.incIdent();
     }
 
+	if (oParams==null) oParams = new WeakHashMap();
 	if (oParams.containsKey("tx_date_format")) {
       sRetVal = (String) oParams.get("tx_date_format");
 	} else {
@@ -2037,6 +2072,7 @@ public class WorkArea extends DBPersist {
       DebugFile.incIdent();
     }
 
+	if (oParams==null) oParams = new WeakHashMap();
 	if (oParams.containsKey("sdf_date_format")) {
       oRetVal = (SimpleDateFormat) oParams.get("sdf_date_format");
 	} else {

@@ -74,8 +74,8 @@
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
     <TITLE>hipergate :: Project Tree</TITLE>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript">
     <!--
     var skin = getCookie("skin");
     if (""==skin) skin="xp";
@@ -111,10 +111,10 @@
   //-->
   </SCRIPT>
 
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/treemenu.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/scroller.js" DEFER=true></SCRIPT>  
+  <SCRIPT SRC="../javascript/treemenu.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/scroller.js" DEFER=true></SCRIPT>  
 
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
   <!--
     
     var treeMenu = new TreeMenu();   // This is the main menu.  

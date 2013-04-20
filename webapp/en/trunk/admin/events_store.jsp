@@ -73,12 +73,17 @@
       if (request.getParameter("de_"+s).length()>0)
         oObj.replace(DB.de_event, request.getParameter("de_"+s));
       else
-      	oObj.remove(DB.de_event);      
+      	oObj.remove(DB.de_event);
+      if (request.getParameter("rt_"+s).equals("0"))
+        oObj.remove(DB.fixed_rate);
+      else
+        oObj.replace(DB.fixed_rate, new Integer(request.getParameter("rt_"+s)));
       oObj.store(oConn);
       oConn.commit();
     } // next
 
-		if (request.getParameter("id").length()>0) {
+    if (request.getParameter("id").length()>0) {
+      oObj.replace(DB.bo_active, nullif(request.getParameter("chk"),"0"));
       oObj.replace(DB.id_event, request.getParameter("id").toLowerCase());
       if (request.getParameter("wrk").length()>0)
         oObj.replace(DB.gu_workarea, request.getParameter("wrk"));
@@ -92,10 +97,14 @@
       if (request.getParameter("de").length()>0)
         oObj.replace(DB.de_event, request.getParameter("de"));
       else
-      	oObj.remove(DB.de_event);      
+        oObj.remove(DB.de_event);      
+      if (request.getParameter("rt").equals("0"))
+        oObj.remove(DB.fixed_rate);
+      else
+        oObj.replace(DB.fixed_rate, new Integer(request.getParameter("rt")));
       oObj.store(oConn);
       oConn.commit();
-		}
+	}
 
     oConn.close(PAGE_NAME);
 

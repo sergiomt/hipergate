@@ -55,7 +55,7 @@
   SimpleDateFormat oFmt = new SimpleDateFormat("yyyy-MM-dd");
 
   String[] aDiscardList = Gadgets.split(request.getParameter("gu_discard"),',');
-  String[] aInsertList = Gadgets.split(request.getParameter("chekeditems"),',');
+  String[] aInsertList = Gadgets.split(request.getParameter("checkeditems"),',');
   String[] aPayments = Gadgets.split(request.getParameter("payments"),'|');
   int nPayments = 0;
   if (null!=aPayments) nPayments = aPayments.length;

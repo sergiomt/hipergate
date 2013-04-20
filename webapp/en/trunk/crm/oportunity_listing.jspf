@@ -1,5 +1,7 @@
 <%
 
+  if (autenticateSession(GlobalDBBind, request, response)<0) return;
+  
   response.addHeader ("Pragma", "no-cache");
   response.addHeader ("cache-control", "no-store");
   response.setIntHeader("Expires", 0);
@@ -29,7 +31,9 @@
   String sFind = nullif(request.getParameter("find")); 
   String sCampaignId = nullif(request.getParameter("gu_campaign"));
   String sSalesManId = nullif(request.getParameter("gu_sales_man"));
-  String sObjetiveId = nullif(request.getParameter("gu_objetive"));
+  String sOriginId = nullif(request.getParameter("tp_origin"));
+  String sZoneId = nullif(request.getParameter("gu_geozone"));
+  String sObjetiveId = nullif(request.getParameter("id_objetive"));
   String sFullName = "";
 
   String sObjectiveLookUp = "";
@@ -132,7 +136,6 @@
       nPortlets = oPortlets.load (oConn, new Object[]{id_user,gu_workarea});
     }
 
-    sObjectiveLookUp = DBLanguages.getHTMLSelectLookUp (oConn, DB.k_oportunities_lookup, gu_workarea, DB.id_objetive, sLanguage);
     sStatusLookUp = DBLanguages.getHTMLSelectLookUp (GlobalCacheClient, oConn, DB.k_oportunities_lookup, gu_workarea, DB.id_status, sLanguage);
     oStatusLookUp = DBLanguages.getLookUpMap(oConn, DB.k_oportunities_lookup, gu_workarea, DB.id_status, sLanguage);
     oCausesLookUp = DBLanguages.getLookUpMap(oConn, DB.k_oportunities_lookup, gu_workarea, DB.tx_cause, sLanguage);
@@ -169,75 +172,97 @@
     } // next
     
     if (sWhere.length()>0) {
-      sFilterClause = "(b." + DB.gu_workarea + "='" + gu_workarea + "' AND (" + sPrivate + ")) " + sWhere;
+      sFilterClause = "(b." + DB.gu_workarea + "=? AND (" + sPrivate + ")) " + sWhere;
       oOportunities = new DBSubset (DB.k_oportunities + " b", 
       				    "b." + DB.gu_oportunity + ",b." + DB.id_status+ ",b." + DB.tl_oportunity + "," + DBBind.Functions.ISNULL + "(b." + DB.tx_contact + ",b." + DB.tx_company + "),b." + DB.dt_next_action + ",b." + DB.gu_contact + ",b." + DB.gu_company + ",b." + DB.im_revenue + ",b." + DB.gu_campaign + ",b." + DB.lv_interest + ",b." + DB.id_objetive + ",b." + DB.dt_last_call + ",b." + DB.tx_note + ",b." + DB.tx_cause,
       				    sFilterClause + (iOrderBy>0 ? " ORDER BY " + sOrderBy + ",10 DESC" : " ORDER BY 10 DESC"), iMaxRows);     				 
       oOportunities.setMaxRows(iMaxRows);
-      iOportunityCount = oOportunities.load (oConn);
-		  oStatusSummary = new DBSubset (DB.k_oportunities, "COUNT("+DB.id_status+"),"+DB.id_status, sFilterClause + " GROUP BY "+DB.id_status, 10);
-      oStatusSummary.load (oConn);
-		  oCausesSummary = new DBSubset (DB.k_oportunities, "COUNT("+DB.tx_cause+"),"+DB.tx_cause, sFilterClause + " GROUP BY "+DB.tx_cause, 10);
-      oCausesSummary.load (oConn);
-      oRevenueSummary = new DBSubset (DB.k_oportunities, "SUM("+DB.im_revenue+")", sFilterClause, 1);
-      oRevenueSummary.load(oConn);
+      iOportunityCount = oOportunities.load (oConn, new Object[]{gu_workarea});
+		  oStatusSummary = new DBSubset (DB.k_oportunities+" b", "COUNT("+DB.id_status+"),"+DB.id_status, sFilterClause + " GROUP BY "+DB.id_status, 10);
+      oStatusSummary.load (oConn, new Object[]{gu_workarea});
+		  oCausesSummary = new DBSubset (DB.k_oportunities+" b", "COUNT("+DB.tx_cause+"),"+DB.tx_cause, sFilterClause + " GROUP BY "+DB.tx_cause, 10);
+      oCausesSummary.load (oConn, new Object[]{gu_workarea});
+      oRevenueSummary = new DBSubset (DB.k_oportunities+" b", "SUM("+DB.im_revenue+")", sFilterClause, 1);
+      oRevenueSummary.load(oConn, new Object[]{gu_workarea});
+    }
+    else if (sContactId.length()>0) {
+		  sFilterClause = DB.gu_workarea + "=? AND (" + sPrivate + ") AND " + DB.gu_contact + "=? "+
+      				       (sStatusId.length()>0 && !sStatusId.equals("*") ? " AND "+DB.id_status+" IN ('"+sStatusId+"') " : "") +
+      				       (sCampaignId.length()>0 ? " AND "+DB.gu_campaign+"='"+sCampaignId+"' " : "") +
+      				       (sObjetiveId.length()>0 ? " AND "+DB.id_objetive+"='"+sObjetiveId+"' " : "") +
+      				       (sOriginId.length()>0 ? " AND "+DB.tp_origin+"='"+sOriginId+"' " : "") +
+      				       (sSalesManId.length()>0 ? " AND (EXISTS (SELECT NULL FROM "+DB.k_contacts+" c WHERE c."+DB.gu_sales_man+"='"+sSalesManId+"' AND c."+DB.gu_contact+"=b."+DB.gu_contact+") OR EXISTS (SELECT NULL FROM "+DB.k_companies+" k WHERE k."+DB.gu_sales_man+"='"+sSalesManId+"' AND k."+DB.gu_company+"=b."+DB.gu_company+")) " : "") +
+      				       (sZoneId.length()>0 ? " AND (EXISTS (SELECT NULL FROM "+DB.k_contacts+" c WHERE c."+DB.gu_geozone+"='"+sZoneId+"' AND c."+DB.gu_contact+"=b."+DB.gu_contact+")) " : "");
+      oOportunities = new DBSubset (DB.k_oportunities + " b", 
+      				 DB.gu_oportunity + "," + DB.id_status+ ",tl_oportunity,"+DBBind.Functions.ISNULL + "(tx_contact,tx_company),dt_next_action,gu_contact,gu_company,im_revenue,gu_campaign,lv_interest,id_objetive,dt_last_call,tx_note,tx_cause,dt_created",
+							 sFilterClause + (iOrderBy>0 ? " ORDER BY " + sOrderBy + ",10 DESC" : " ORDER BY 10 DESC"), iMaxRows);     				       
+      oOportunities.setMaxRows(iMaxRows);
+      iOportunityCount = oOportunities.load (oConn, new Object[]{gu_workarea,sContactId}, iSkip);
+		  oStatusSummary = new DBSubset (DB.k_oportunities + " b", "COUNT("+DB.id_status+"),"+DB.id_status, sFilterClause + " GROUP BY "+DB.id_status, 10);
+      // oStatusSummary.load (oConn, new Object[]{gu_workarea,sContactId});
+		  oCausesSummary = new DBSubset (DB.k_oportunities + " b", "COUNT("+DB.tx_cause+"),"+DB.tx_cause, sFilterClause + " GROUP BY "+DB.tx_cause, 10);
+      // oCausesSummary.load (oConn, new Object[]{gu_workarea,sContactId});
+      oRevenueSummary = new DBSubset (DB.k_oportunities + " b", "SUM("+DB.im_revenue+")", sFilterClause, 1);
+      // oRevenueSummary.load(oConn, new Object[]{gu_workarea,sContactId});
     }
     else if (sFind.length()==0 || sField.length()==0) {		  
-		  sFilterClause = DB.gu_workarea + "='" + gu_workarea + "' AND (" + sPrivate + ") " +
+		  sFilterClause = DB.gu_workarea + "=? AND (" + sPrivate + ") " +
       				       (sStatusId.length()>0 ? " AND "+DB.id_status+"='"+sStatusId+"' " : "") +
       				       (sCampaignId.length()>0 ? " AND "+DB.gu_campaign+"='"+sCampaignId+"' " : "") +
       				       (sObjetiveId.length()>0 ? " AND "+DB.id_objetive+"='"+sObjetiveId+"' " : "") +
       				       (sSalesManId.length()>0 ? " AND (EXISTS (SELECT NULL FROM "+DB.k_contacts+" c WHERE c."+DB.gu_sales_man+"='"+sSalesManId+"' AND c."+DB.gu_contact+"=b."+DB.gu_contact+") OR EXISTS (SELECT NULL FROM "+DB.k_companies+" k WHERE k."+DB.gu_sales_man+"='"+sSalesManId+"' AND k."+DB.gu_company+"=b."+DB.gu_company+")) " : "");
       oOportunities = new DBSubset (DB.k_oportunities + " b", 
       				 DB.gu_oportunity + "," + DB.id_status+ ",tl_oportunity,"+DBBind.Functions.ISNULL + "(tx_contact,tx_company),dt_next_action,gu_contact,gu_company,im_revenue,gu_campaign,lv_interest,id_objetive,dt_last_call,tx_note,tx_cause",
-							 sFilterClause + (iOrderBy>0 ? " ORDER BY " + sOrderBy + ",10 DESC" : " ORDER BY 10 DESC"), iMaxRows);     				       
-      oOportunities.setMaxRows(iMaxRows);      
-      iOportunityCount = oOportunities.load (oConn, iSkip);
+							 sFilterClause + (iOrderBy>0 ? " ORDER BY " + sOrderBy + ",10 DESC" : " ORDER BY 10 DESC"), iMaxRows);
+      oOportunities.setMaxRows(iMaxRows);
+      iOportunityCount = oOportunities.load (oConn, new Object[]{gu_workarea}, iSkip);
 		  oStatusSummary = new DBSubset (DB.k_oportunities + " b", "COUNT("+DB.id_status+"),"+DB.id_status, sFilterClause + " GROUP BY "+DB.id_status, 10);
-      oStatusSummary.load (oConn);
+      oStatusSummary.load (oConn, new Object[]{gu_workarea});
 		  oCausesSummary = new DBSubset (DB.k_oportunities + " b", "COUNT("+DB.tx_cause+"),"+DB.tx_cause, sFilterClause + " GROUP BY "+DB.tx_cause, 10);
-      oCausesSummary.load (oConn);
+      oCausesSummary.load (oConn, new Object[]{gu_workarea});
       oRevenueSummary = new DBSubset (DB.k_oportunities + " b", "SUM("+DB.im_revenue+")", sFilterClause, 1);
-      oRevenueSummary.load(oConn);
+      oRevenueSummary.load(oConn, new Object[]{gu_workarea});
     }
     else {           
       if (sField.equals(DB.dt_next_action)) {
         SimpleDateFormat oDtFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        sFilterClause = DB.gu_workarea + "='" + gu_workarea + "' AND (" + sPrivate + ") " + " AND " +
+        sFilterClause = DB.gu_workarea + "=? AND (" + sPrivate + ") " + " AND " +
       				          DB.dt_next_action + " BETWEEN " + DBBind.escape(oDtFmt.parse(sFind+" 00:00:00"),"ts") + " AND " + DBBind.escape(oDtFmt.parse(sFind+" 23:59:59"),"ts") + " " +
       				         (sStatusId.length()>0 ? " AND "+DB.id_status+"='"+sStatusId+"' " : "") +
 											 (sCampaignId.length()>0 ? " AND "+DB.gu_campaign+"='"+sCampaignId+"' " : "") +
+        				       (sObjetiveId.length()>0 ? " AND "+DB.id_objetive+"='"+sObjetiveId+"' " : "") +
       				 				 (sSalesManId.length()>0 ? " AND (EXISTS (SELECT NULL FROM "+DB.k_contacts+" c WHERE c."+DB.gu_sales_man+"='"+sSalesManId+"' AND c."+DB.gu_contact+"=b."+DB.gu_contact+") OR EXISTS (SELECT NULL FROM "+DB.k_companies+" k WHERE k."+DB.gu_sales_man+"='"+sSalesManId+"' AND k."+DB.gu_company+"=b."+DB.gu_company+")) " : "");
         oOportunities = new DBSubset (DB.k_oportunities + " b", 
       				                        DB.gu_oportunity + "," + DB.id_status+ ",tl_oportunity,"+DBBind.Functions.ISNULL + "(tx_contact,tx_company),dt_next_action,gu_contact,gu_company,im_revenue,gu_campaign,lv_interest,id_objetive,dt_last_call,tx_note,tx_cause",
 																			sFilterClause + (iOrderBy>0 ? " ORDER BY " + sOrderBy + ",10 DESC" : " ORDER BY 10 DESC"), iMaxRows);
         oOportunities.setMaxRows(iMaxRows);
-        iOportunityCount = oOportunities.load (oConn,iSkip);
+        iOportunityCount = oOportunities.load (oConn, new Object[]{gu_workarea},iSkip);
 		    oStatusSummary = new DBSubset (DB.k_oportunities+" b", "COUNT("+DB.id_status+"),"+DB.id_status, sFilterClause + " GROUP BY "+DB.id_status, 10);
-        oStatusSummary.load (oConn);
+        oStatusSummary.load (oConn, new Object[]{gu_workarea});
 		    oCausesSummary = new DBSubset (DB.k_oportunities+" b", "COUNT("+DB.tx_cause+"),"+DB.tx_cause, sFilterClause + " GROUP BY "+DB.tx_cause, 10);
-        oCausesSummary.load (oConn);
+        oCausesSummary.load (oConn, new Object[]{gu_workarea});
         oRevenueSummary = new DBSubset (DB.k_oportunities+" b", "SUM("+DB.im_revenue+")", sFilterClause, 1);
-        oRevenueSummary.load(oConn);
+        oRevenueSummary.load(oConn, new Object[]{gu_workarea});
       } else if (sField.equals(DB.gu_campaign)) {
       	int iCampaign = oCampaigns.findi(1, sFind);
       	if (iCampaign>=0) {
-      	  sFilterClause = DB.gu_workarea + "='" + gu_workarea + "' AND (" + sPrivate + ") " + " AND " +
+      	  sFilterClause = DB.gu_workarea + "=? AND (" + sPrivate + ") " + " AND " +
       				            DB.gu_campaign + "=? " +      				                          
       				           (sStatusId.length()>0 ? " AND "+DB.id_status+"='"+sStatusId+"' " : "") +
 												 (sCampaignId.length()>0 ? " AND "+DB.gu_campaign+"='"+sCampaignId+"' " : "") +      				                          
+        				         (sObjetiveId.length()>0 ? " AND "+DB.id_objetive+"='"+sObjetiveId+"' " : "") +
       				 					 (sSalesManId.length()>0 ? " AND (EXISTS (SELECT NULL FROM "+DB.k_contacts+" c WHERE c."+DB.gu_sales_man+"='"+sSalesManId+"' AND c."+DB.gu_contact+"=b."+DB.gu_contact+") OR EXISTS (SELECT NULL FROM "+DB.k_companies+" k WHERE k."+DB.gu_sales_man+"='"+sSalesManId+"' AND k."+DB.gu_company+"=b."+DB.gu_company+")) " : "");
           oOportunities = new DBSubset (DB.k_oportunities + " b", 
       				                          DB.gu_oportunity + "," + DB.id_status+ ",tl_oportunity,"+DBBind.Functions.ISNULL + "(tx_contact,tx_company),dt_next_action,gu_contact,gu_company,im_revenue,gu_campaign,lv_interest,id_objetive,dt_last_call,tx_note,tx_cause",
 																				sFilterClause + (iOrderBy>0 ? " ORDER BY " + sOrderBy + ",10 DESC" : " ORDER BY 10 DESC"), iMaxRows);
           oOportunities.setMaxRows(iMaxRows);
-          iOportunityCount = oOportunities.load (oConn,new Object[]{oCampaigns.get(0,iCampaign)},iSkip);
+          iOportunityCount = oOportunities.load (oConn,new Object[]{gu_workarea, oCampaigns.get(0,iCampaign)},iSkip);
 		      oStatusSummary = new DBSubset (DB.k_oportunities+" b", "COUNT("+DB.id_status+"),"+DB.id_status, sFilterClause + " GROUP BY "+DB.id_status, 10);
-          oStatusSummary.load (oConn,new Object[]{oCampaigns.get(0,iCampaign)});
+          oStatusSummary.load (oConn,new Object[]{gu_workarea, oCampaigns.get(0,iCampaign)});
 		      oCausesSummary = new DBSubset (DB.k_oportunities+" b", "COUNT("+DB.tx_cause+"),"+DB.tx_cause, sFilterClause + " GROUP BY "+DB.tx_cause, 10);
-          oCausesSummary.load (oConn,new Object[]{oCampaigns.get(0,iCampaign)});
+          oCausesSummary.load (oConn,new Object[]{gu_workarea, oCampaigns.get(0,iCampaign)});
           oRevenueSummary = new DBSubset (DB.k_oportunities+" b", "SUM("+DB.im_revenue+")", sFilterClause, 1);
-          oRevenueSummary.load(oConn,new Object[]{oCampaigns.get(0,iCampaign)});
+          oRevenueSummary.load(oConn,new Object[]{gu_workarea, oCampaigns.get(0,iCampaign)});
         } else {
         	iOportunityCount = 0;
         }
@@ -246,16 +271,17 @@
         if (oFullName.load(oConn, new Object[]{sFind})>0)
           sFullName = (oFullName.getStringNull(0,0,"")+" "+oFullName.getStringNull(1,0,"")).trim();
 
-        sFilterClause = DB.gu_workarea + "='" + gu_workarea + "' AND (" + sPrivate + ") " + " AND " +
+        sFilterClause = DB.gu_workarea + "=? AND (" + sPrivate + ") " + " AND " +
       				          sField + " " + DBBind.Functions.ILIKE + " ? " +
       				         (sStatusId.length()>0 ? " AND "+DB.id_status+"='"+sStatusId+"' " : "") +
 											 (sCampaignId.length()>0 ? " AND "+DB.gu_campaign+"='"+sCampaignId+"' " : "") +      				                        
+        				       (sObjetiveId.length()>0 ? " AND "+DB.id_objetive+"='"+sObjetiveId+"' " : "") +
       				 				 (sSalesManId.length()>0 ? " AND (EXISTS (SELECT NULL FROM "+DB.k_contacts+" c WHERE c."+DB.gu_sales_man+"='"+sSalesManId+"' AND c."+DB.gu_contact+"=b."+DB.gu_contact+") OR EXISTS (SELECT NULL FROM "+DB.k_companies+" k WHERE k."+DB.gu_sales_man+"='"+sSalesManId+"' AND k."+DB.gu_company+"=b."+DB.gu_company+")) " : "");
         oOportunities = new DBSubset (DB.k_oportunities + " b", 
       				                        DB.gu_oportunity + "," + DB.id_status+ ",tl_oportunity,"+DBBind.Functions.ISNULL + "(tx_contact,tx_company),dt_next_action,gu_contact,gu_company,im_revenue,gu_campaign,lv_interest,id_objetive,dt_last_call,tx_note,tx_cause",
 																			sFilterClause + (iOrderBy>0 ? " ORDER BY " + sOrderBy + ",10 DESC" : " ORDER BY 10 DESC"), iMaxRows);          			 
         oOportunities.setMaxRows(iMaxRows);
-        Object[] aFind = { '%' + sFind + '%' };
+        Object[] aFind = { gu_workarea, '%' + sFind + '%' };
         iOportunityCount = oOportunities.load (oConn,aFind,iSkip);
 		    oStatusSummary = new DBSubset (DB.k_oportunities+" b", "COUNT("+DB.id_status+"),"+DB.id_status, sFilterClause + " GROUP BY "+DB.id_status, 10);
         oStatusSummary.load (oConn,aFind);
@@ -267,7 +293,7 @@
     }
     oConn.close("oportunitylisting"); 
   }
-  catch (SQLException e) {  
+  catch (Exception e) {  
     oOportunities = null;
     if (oConn!=null)
       if (!oConn.isClosed())

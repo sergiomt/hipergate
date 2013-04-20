@@ -1,8 +1,7 @@
 <%@ page import="java.io.File,java.io.IOException,java.net.URLDecoder,com.knowgate.acl.*" language="java" session="false" contentType="text/plain;charset=UTF-8" %>
 <%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><% 
 /*
-  Copyright (C) 2003-2009  Know Gate S.L. All rights reserved.
-                           C/Oña, 107 1º2 28050 Madrid (Spain)
+  Copyright (C) 2003-2009  Know Gate S.L. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions

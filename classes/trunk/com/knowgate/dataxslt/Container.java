@@ -43,7 +43,7 @@ import dom.DOMSubDocument;
 /**
  * <p>Microsite Container</p>
  * @author Sergio Montoro Ten
- * @version 1.0
+ * @version 7.0
  */
 public class Container extends DOMSubDocument {
 
@@ -90,7 +90,7 @@ public class Container extends DOMSubDocument {
 
   // ----------------------------------------------------------
 
-  public Vector metablocks() {
+  public Vector<MetaBlock> metablocks() {
     Node oMetaBlksNode = null;
     NodeList oNodeList;
     Vector oLinkVctr;
@@ -110,4 +110,14 @@ public class Container extends DOMSubDocument {
   } // metablocks()
 
   // ----------------------------------------------------------
+
+  public MetaBlock metablock(String sId) {
+    for (MetaBlock mb : metablocks()) {
+      if (mb.id().equals(sId)) return mb;
+    }
+    return null;
+  }
+
+  // ----------------------------------------------------------
+
 }

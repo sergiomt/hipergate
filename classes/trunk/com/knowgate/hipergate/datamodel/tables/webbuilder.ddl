@@ -23,6 +23,7 @@ id_language    CHAR(2)      DEFAULT 'xx',
 bo_urgent      SMALLINT     DEFAULT 0,
 path_data      VARCHAR(254) NOT NULL,
 gu_microsite   CHAR(32)         NULL,
+tp_pageset     VARCHAR(30)      NULL,
 id_status      VARCHAR(30)      NULL,
 dt_modified    DATETIME         NULL,
 gu_company     CHAR(32)         NULL,
@@ -69,6 +70,13 @@ tr_pl      VARCHAR(50)  NULL,
 tr_vn      VARCHAR(50)  NULL,
 
 CONSTRAINT pk_pagesets_lookup PRIMARY KEY (gu_owner,id_section,pg_lookup)
+)
+GO;
+
+CREATE TABLE k_x_pageset_list (
+  gu_list CHAR(32)    NOT NULL,
+  gu_pageset CHAR(32) NOT NULL,
+  CONSTRAINT pk_x_pageset_list PRIMARY KEY (gu_list,gu_pageset)
 )
 GO;
 

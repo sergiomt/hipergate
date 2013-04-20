@@ -56,15 +56,12 @@ import javax.mail.internet.MimeBodyPart;
 import org.htmlparser.beans.StringBean;
 
 import org.apache.lucene.index.Term;
+import org.apache.lucene.store.Directory;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.DateTools;
-import org.apache.lucene.document.DateTools.Resolution;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Field.Index;
-import org.apache.lucene.document.Field.Store;
 
 import com.knowgate.debug.DebugFile;
 import com.knowgate.misc.Gadgets;
@@ -76,7 +73,7 @@ import org.htmlparser.util.ParserException;
 /**
  * Indexer subclass for e-mail messages
  * @author Sergio Montoro Ten
- * @version 3.0
+ * @version 7.0
  */
 public class MailIndexer extends Indexer {
 
@@ -166,18 +163,18 @@ public class MailIndexer extends Indexer {
     }
 
     Document oDoc = new Document();
-    oDoc.add (new Field ("workarea" , sWorkArea, Field.Store.YES, Field.Index.UN_TOKENIZED));
-    oDoc.add (new Field ("container", sContainer, Field.Store.YES, Field.Index.UN_TOKENIZED));
-    oDoc.add (new Field ("guid"     , sGuid, Field.Store.YES, Field.Index.UN_TOKENIZED));
-    oDoc.add (new Field ("number"   , dNumber.toString(), Field.Store.YES, Field.Index.UN_TOKENIZED));
-    oDoc.add (new Field ("created"  , DateTools.dateToString(dtSent, DateTools.Resolution.SECOND), Field.Store.YES, Field.Index.UN_TOKENIZED));
-    oDoc.add (new Field ("size"     , Gadgets.leftPad(String.valueOf(iSize),'0',10), Field.Store.YES, Field.Index.UN_TOKENIZED));
-    oDoc.add (new Field ("title"    , Gadgets.ASCIIEncode(sSubject), Field.Store.YES, Field.Index.TOKENIZED));
-    oDoc.add (new Field ("author"   , Gadgets.ASCIIEncode(sAuthor), Field.Store.YES, Field.Index.TOKENIZED));
-    oDoc.add (new Field ("abstract" , sAbstract, Field.Store.YES, Field.Index.TOKENIZED));
-    oDoc.add (new Field ("recipients",sRecipients, Field.Store.YES, Field.Index.TOKENIZED));
-    oDoc.add (new Field ("comments" , sComments, Field.Store.NO, Field.Index.TOKENIZED));
-    oDoc.add (new Field ("text"     , sText, Field.Store.NO, Field.Index.TOKENIZED));
+    oDoc.add (new Field ("workarea" , sWorkArea, Field.Store.YES, Field.Index.NOT_ANALYZED));
+    oDoc.add (new Field ("container", sContainer, Field.Store.YES, Field.Index.NOT_ANALYZED));
+    oDoc.add (new Field ("guid"     , sGuid, Field.Store.YES, Field.Index.NOT_ANALYZED));
+    oDoc.add (new Field ("number"   , dNumber.toString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+    oDoc.add (new Field ("created"  , DateTools.dateToString(dtSent, DateTools.Resolution.SECOND), Field.Store.YES, Field.Index.NOT_ANALYZED));
+    oDoc.add (new Field ("size"     , Gadgets.leftPad(String.valueOf(iSize),'0',10), Field.Store.YES, Field.Index.NOT_ANALYZED));
+    oDoc.add (new Field ("title"    , Gadgets.ASCIIEncode(sSubject), Field.Store.YES, Field.Index.ANALYZED));
+    oDoc.add (new Field ("author"   , Gadgets.ASCIIEncode(sAuthor), Field.Store.YES, Field.Index.ANALYZED));
+    oDoc.add (new Field ("abstract" , sAbstract, Field.Store.YES, Field.Index.ANALYZED));
+    oDoc.add (new Field ("recipients",sRecipients, Field.Store.YES, Field.Index.ANALYZED));
+    oDoc.add (new Field ("comments" , sComments, Field.Store.NO, Field.Index.ANALYZED));
+    oDoc.add (new Field ("text"     , sText, Field.Store.NO, Field.Index.ANALYZED));
 
     if (DebugFile.trace) DebugFile.writeln("IndexWriter.addDocument([Document])");
 
@@ -237,10 +234,6 @@ public class MailIndexer extends Indexer {
     if (null==oProps.getProperty("dburl"))
       throw new NoSuchFieldException ("Cannot find dburl property");
 
-    if (DebugFile.trace) DebugFile.writeln("Class.forName(" + oProps.getProperty("analyzer" , DEFAULT_ANALYZER) + ")");
-
-    Class oAnalyzer = Class.forName(oProps.getProperty("analyzer" , DEFAULT_ANALYZER));
-
     if (DebugFile.trace) DebugFile.writeln("Class.forName(" + oProps.getProperty("driver") + ")");
 
     Class oDriver = Class.forName(oProps.getProperty("driver"));
@@ -255,9 +248,11 @@ public class MailIndexer extends Indexer {
       File[] aSegments = oDir.listFiles();
       if (null!=aSegments) {
 	    if (aSegments.length>0) {
-          IndexReader oReader = IndexReader.open(sDirectory);
+	      Directory oRdDir = Indexer.openDirectory(sDirectory);
+          IndexReader oReader = IndexReader.open(oRdDir);
           int iDeleted = oReader.deleteDocuments(new Term("container", sFolder));
           oReader.close();
+          oRdDir.close();
 	    } // fi 
       } // fi
     } else {
@@ -268,7 +263,8 @@ public class MailIndexer extends Indexer {
 
     if (DebugFile.trace) DebugFile.writeln("new IndexWriter("+sDirectory+",[Analyzer], true)");
 
-    IndexWriter oIWrt = new IndexWriter(sDirectory, (Analyzer) oAnalyzer.newInstance(), true);
+    Directory oFsDir = Indexer.openDirectory(sDirectory);
+    IndexWriter oIWrt = new IndexWriter(oFsDir, Indexer.instantiateAnalyzer(oProps), IndexWriter.MaxFieldLength.LIMITED);
 
     if (DebugFile.trace)
       DebugFile.writeln("DriverManager.getConnection(" + oProps.getProperty("dburl") + ", ...)");
@@ -349,6 +345,7 @@ public class MailIndexer extends Indexer {
     if (DebugFile.trace) DebugFile.writeln("IndexWriter.close()");
 
     oIWrt.close();
+    oFsDir.close();
 
     if (DebugFile.trace) {
       DebugFile.decIdent();

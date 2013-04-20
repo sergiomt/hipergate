@@ -147,8 +147,8 @@
 %>  
 <HTML LANG="<% out.write(id_language); %>">
   <HEAD>
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-    <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
+    <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+    <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
     </SCRIPT>
     <TITLE>Categor&iacute;as Personales</TITLE>

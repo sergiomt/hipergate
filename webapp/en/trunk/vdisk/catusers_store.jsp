@@ -1,11 +1,6 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.Connection,java.sql.SQLException,com.knowgate.hipergate.*" language="java" session="false" %>
-<jsp:useBean id="GlobalDBBind" scope="application" class="hipergate.DBBind"/>
-<%@ include file="../methods/cookies.jspf" %>
-<%@ include file="../methods/authusrs.jspf" %>
-<%
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.Connection,java.sql.SQLException,com.knowgate.hipergate.*" language="java" session="false" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions

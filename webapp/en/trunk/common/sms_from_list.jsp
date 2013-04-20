@@ -80,9 +80,9 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Senders</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
             
         <%          
@@ -101,7 +101,7 @@
         function selectAll() {          
           var frm = document.forms[0];
 				  for (var e=0;e<frm.elements.length; e++)
-            if (frm.elements[e].type=="checkbox") frm.elements[e].click();s          
+            if (frm.elements[e].type=="checkbox") frm.elements[e].click();          
         } // selectAll()
 
         // ----------------------------------------------------

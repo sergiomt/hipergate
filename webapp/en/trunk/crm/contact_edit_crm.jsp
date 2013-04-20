@@ -86,6 +86,9 @@
     <INPUT TYPE="hidden" NAME="nu_attachs" VALUE="<%=oCont.get(DB.nu_attachs)!=null ? String.valueOf(oCont.getInt(DB.nu_attachs)) : "0" %>">    
     <INPUT TYPE="hidden" NAME="bo_restricted" VALUE="<%=oCont.get(DB.bo_restricted)!=null ? String.valueOf(oCont.getShort(DB.bo_restricted)) : "0" %>">    
     <INPUT TYPE="hidden" NAME="noreload" VALUE="<%=nullif(request.getParameter("noreload"),"0")%>">
+    <INPUT TYPE="hidden" NAME="id_batch" VALUE="<%=oCont.getStringNull("id_batch","")%>">
+    <INPUT TYPE="hidden" NAME="tx_nickname" VALUE="<%=oCont.getStringNull(DB.tx_nickname,"")%>">
+    <INPUT TYPE="hidden" NAME="tx_pwd" VALUE="<%=oCont.getStringNull(DB.tx_pwd,"")%>">
 
     <TABLE WIDTH="100%">
       <TR><TD>

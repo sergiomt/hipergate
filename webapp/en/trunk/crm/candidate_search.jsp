@@ -5,13 +5,13 @@
 <%final String sLanguage = getNavigatorLanguage(request); %>
 <HTML LANG="<%=sLanguage.toUpperCase()%>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/usrlang.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/datefuncs.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/usrlang.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/combobox.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/datefuncs.js"></SCRIPT>
 <%	
 	response.addHeader ("Pragma", "no-cache");
 	response.addHeader ("cache-control", "no-store");
@@ -54,24 +54,23 @@
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="location.reload(true)"><IMG src="../images/images/toolmenu/locationreload.gif" width="16" style="vertical-align:middle" height="16" border="0" alt="Refresh"> Refresh</SPAN>
     <SPAN class="hmMnuOff" onMouseOver="this.className='hmMnuOn'" onMouseOut="this.className='hmMnuOff'" onClick="window.print()"><IMG src="../images/images/toolmenu/windowprint.gif" width="16" height="16" style="vertical-align:middle" border="0" alt="Print"> Print</SPAN>
   	</DIV></DIV>
-<SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
-  <!--
+<SCRIPT TYPE="text/javascript" DEFER="defer">
 	var cadena ='';  	
 
 	var gu_workarea = <%=gu_workarea%>;
 	
 	function add(id){
 		var tbody = document.getElementById(id).getElementsByTagName("TBODY")[0];
-		var row = document.createElement("TR")
-	 	var td1 = document.createElement("TD")
+		var row = document.createElement("TR");
+	 	var td1 = document.createElement("TD");
 	 	var valor = document.getElementById("valor").value.toLowerCase();
 		document.getElementById("valor").value='';
-	  	td1.appendChild(document.createTextNode(valor))
-	  	var td2 = document.createElement("TD")
+	  	td1.appendChild(document.createTextNode(valor));
+	  	var td2 = document.createElement("TD");
 	  	var obligatorio = "";
 	  	if (document.getElementById("obligatorio").checked) obligatorio="*";
 	  	document.getElementById("obligatorio").checked = false;
-	  	td2.appendChild (document.createTextNode(obligatorio))
+	  	td2.appendChild (document.createTextNode(obligatorio));
 	  	row.appendChild(td1);
 	  	row.appendChild(td2);
 	  	tbody.appendChild(row);
@@ -92,7 +91,6 @@
 		 window.location.href ="candidate_search.jsp?gu_workarea=<%=gu_workarea%>&cadena="+cadena;	
 	}
   
--->
   </SCRIPT>
 <FORM NAME="" METHOD="get">
    		
@@ -183,8 +181,6 @@
 		<TD>No results</TD>
 		</TR>
 	<%} %>
-	</TABLE>
-   	
-   	
+	</TABLE>   	
 </BODY>
 </HTML>

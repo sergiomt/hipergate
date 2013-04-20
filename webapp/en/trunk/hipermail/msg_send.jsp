@@ -321,8 +321,8 @@
 %>
 <HTML>
 	<HEAD>
-		<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
-		<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+		<SCRIPT TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
+		<SCRIPT TYPE="text/javascript">
 			<!--
 		    function startSchedulerIfNecessary() {
 <%     if (bIsPersonalizedMail || oRecp.hasLists()) { %>		    	

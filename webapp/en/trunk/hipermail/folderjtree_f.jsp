@@ -172,9 +172,9 @@
 <HTML>
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript">
     <!--
     // User-defined tree menu data.
 
@@ -204,8 +204,8 @@
 
   //-->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="mailfolders.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT SRC="mailfolders.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript">
   <!--
     var treeMenu = new TreeMenu();   // This is the main menu.  
 <%  out.write(oBuffer.toString()); %>        

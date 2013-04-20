@@ -33,18 +33,14 @@
 package com.knowgate.addrbook;
 
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 
 import com.knowgate.jdc.JDCConnection;
-import com.knowgate.misc.Gadgets;
 import com.knowgate.debug.DebugFile;
 import com.knowgate.dataobjs.DB;
-import com.knowgate.dataobjs.DBPersist;
-import com.knowgate.dataobjs.DBBind;
 import com.knowgate.dataobjs.DBSubset;
 import com.knowgate.hipergate.Address;
 
@@ -56,7 +52,6 @@ import com.knowgate.hipergate.Address;
  
 public class WeekPlan {
 
-    private static final long DayMilis = 86400000l;
     private static final long WeekMilis = 604800000l;
     
     private Time oMddyTime;	

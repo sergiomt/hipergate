@@ -31,37 +31,23 @@
 
 package com.knowgate.syndication.fetcher;
 
-import java.io.IOException;
-
-import java.net.URL;
-
-import java.util.Map;
 import java.util.Properties;
 import java.util.ListIterator;
 
-import com.knowgate.misc.Gadgets;
-
 import com.knowgate.debug.DebugFile;
 import com.knowgate.debug.StackTraceUtil;
-
-import com.knowgate.dfs.FileSystem;
-
 import com.knowgate.storage.DataSource;
 
-import com.knowgate.syndication.FeedEntry;
-
 import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.feed.synd.SyndContent;
-import com.sun.syndication.feed.synd.SyndContentImpl;
 import com.sun.syndication.feed.synd.SyndEntryImpl;
 
 import com.sun.syndication.fetcher.impl.FeedFetcherCache;
 
 public class GenericFeedFetcher extends AbstractEntriesFetcher {
 
-  	public GenericFeedFetcher(String sFeedUrl, String sFeedSourceType, String sQueryString,
+  	public GenericFeedFetcher(DataSource oDts, String sFeedUrl, String sFeedSourceType, String sQueryString,
   							  FeedFetcherCache oFeedsCache, Properties oEnvProps) {
-  	  super(sFeedUrl, sFeedSourceType, sQueryString, oFeedsCache, oEnvProps);
+  	  super(oDts, sFeedUrl, sFeedSourceType, sQueryString, oFeedsCache, oEnvProps);
   	}
 
 	private String getUriDesc(String sUri, SyndEntryImpl oEntr) {
@@ -90,6 +76,7 @@ public class GenericFeedFetcher extends AbstractEntriesFetcher {
   	  int nFetched = 0;
 
 	  try {
+		if (DebugFile.trace) DebugFile.writeln("retrieveFeed("+getURL()+")");
   	    SyndFeed oFeed = retrieveFeed();
 	    ListIterator oIter = oFeed.getEntries().listIterator();
         while (oIter.hasNext()) {
@@ -97,7 +84,6 @@ public class GenericFeedFetcher extends AbstractEntriesFetcher {
           String sUri = oEntr.getUri();
 
        	  if (DebugFile.trace) DebugFile.writeln("fetching "+sUri);
-          
 
 	      if (DebugFile.trace) {
 		    DebugFile.writeln("Fetched "+oEntr.getLink()+" from "+getSourceType()+" for query string "+getQueryString());

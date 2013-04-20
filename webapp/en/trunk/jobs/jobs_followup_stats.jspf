@@ -66,7 +66,7 @@
 																		"ORDER BY "+DB.dt_execution, 500);
 
   DBSubset oPagesets = new DBSubset(DB.k_pagesets,
-																		DB.gu_pageset+" AS "+DB.gu_mailing+",-1 AS "+DB.pg_mailing+","+DB.nm_pageset+" AS "+DB.nm_mailing+",'' AS "+DB.tx_subject+",0 AS nu_messages"+",0 AS nu_opened,"+DB.dt_created+" AS "+DB.dt_execution+",0 AS nu_clicks",
+																		DB.gu_pageset+" AS "+DB.gu_mailing+",-1 AS "+DB.pg_mailing+","+DB.nm_pageset+" AS "+DB.nm_mailing+","+DB.tx_subject+",0 AS nu_messages"+",0 AS nu_opened,"+DB.dt_created+" AS "+DB.dt_execution+",0 AS nu_clicks",
 																		DB.gu_pageset+" IN (SELECT "+DB.gu_job_group+" FROM "+DB.k_jobs+" WHERE "+DB.gu_workarea+"=? AND ("+DB.dt_execution+" BETWEEN ? AND ? OR "+DB.dt_finished+" BETWEEN ? AND ?)) "+
 																		"ORDER BY "+DB.dt_created, 500);
 
@@ -160,7 +160,10 @@
       oDistinctRecipients.load(oConn, new Object[]{tsFrom,tsTo,tsFrom,tsTo,gu_workarea});
   	  GlobalCacheClient.putDBSubset("k_distinct_recipients","DistinctRecipients["+gu_workarea+","+tsFrom.toString()+","+tsTo.toString(),oDistinctRecipients);
       if (oDistinctRecipients.getRowCount()>0)
-        nDistinctRecipients = oDistinctRecipients.getInt(0,0);
+        if (oDistinctRecipients.isNull(0,0))
+          nDistinctRecipients = 0;
+        else
+          nDistinctRecipients = oDistinctRecipients.getInt(0,0);
       else
         nDistinctRecipients = 0;
     } else {
@@ -175,7 +178,10 @@
   	    GlobalCacheClient.expire("DistinctRecipients["+gu_workarea+","+tsFrom.toString()+","+tsTo.toString());
   	    GlobalCacheClient.putDBSubset("k_distinct_recipients","DistinctRecipients["+gu_workarea+","+tsFrom.toString()+","+tsTo.toString(),oDistinctRecipients);
         if (oDistinctRecipients.getRowCount()>0)
-          nDistinctRecipients = oDistinctRecipients.getInt(0,0);
+          if (oDistinctRecipients.isNull(0,0))
+            nDistinctRecipients = 0;
+          else
+            nDistinctRecipients = oDistinctRecipients.getInt(0,0);
         else
           nDistinctRecipients = 0;
       }

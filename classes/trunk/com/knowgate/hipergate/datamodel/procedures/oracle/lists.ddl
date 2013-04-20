@@ -21,6 +21,8 @@ BEGIN
   DELETE k_x_campaign_lists WHERE gu_list=bk;
 
   DELETE k_x_adhoc_mailing_list WHERE gu_list=bk;
+
+  DELETE k_x_pageset_list WHERE gu_list=bk;
   
   DELETE k_lists WHERE gu_list=bk;
 
@@ -37,6 +39,8 @@ EXCEPTION
     DELETE k_x_campaign_lists WHERE gu_list=ListId;
 
     DELETE k_x_adhoc_mailing_list WHERE gu_list=ListId;
+
+    DELETE k_x_pageset_list WHERE gu_list=ListId;
 
     DELETE k_lists WHERE gu_list=ListId;
 END k_sp_del_list;
@@ -176,7 +180,7 @@ DECLARE
   GuSalesMan    CHAR(32);
   TxFranchise   VARCHAR2(100);
   GuGeoZone     CHAR(32);
-  DeCompany	VARCHAR2(254);
+  DeCompany	    VARCHAR2(254);
 
 BEGIN
   SELECT gu_company,nm_legal,id_legal,nm_commercial,id_sector,id_status,id_ref,tp_company,nu_employees,im_revenue,gu_sales_man,tx_franchise,gu_geozone,de_company INTO GuCompany,NmLegal,IdLegal,NmCommercial,IdSector,IdStatus,IdRef,TpCompany,NuEmployees,ImRevenue,GuSalesMan,TxFranchise,GuGeoZone,DeCompany FROM k_companies WHERE gu_company=:new.gu_company;
@@ -193,19 +197,23 @@ DECLARE
   GuWorkArea    CHAR(32);
   TxName        VARCHAR2(100);
   TxSurname     VARCHAR2(100);
-  DeTitle       VARCHAR2(50);
+  DeTitle       VARCHAR2(70);
   TrTitle       VARCHAR2(50);
   DtBirth	DATE;
   SnPassport    VARCHAR2(16);
   IdGender      CHAR(1);
   NyAge         NUMBER;
+  IdNationality CHAR(3);
   TxDept        VARCHAR2(70);
   TxDivision    VARCHAR2(70);
   TxComments	VARCHAR2(254);
-
+  UrlLinkedIn	VARCHAR2(254);
+  UrlFacebook	VARCHAR2(254);
+  UrlTwitter    VARCHAR2(254);
+  
 BEGIN
-  SELECT gu_contact,gu_company,gu_workarea,tx_name,tx_surname,de_title,dt_birth,sn_passport,id_gender,ny_age,tx_dept,tx_division,tx_comments 
-  INTO   GuContact,GuCompany,GuWorkArea,TxName,TxSurname,DeTitle,DtBirth,SnPassport,IdGender,NyAge,TxDept,TxDivision,TxComments FROM k_contacts 
+  SELECT gu_contact,gu_company,gu_workarea,tx_name,tx_surname,de_title,dt_birth,sn_passport,id_gender,ny_age,id_nationality,tx_dept,tx_division,tx_comments,url_linkedin,url_facebook,url_twitter
+  INTO   GuContact,GuCompany,GuWorkArea,TxName,TxSurname,DeTitle,DtBirth,SnPassport,IdGender,NyAge,IdNationality,TxDept,TxDivision,TxComments,UrlLinkedIn,UrlFacebook,UrlTwitter FROM k_contacts 
   WHERE gu_contact=:new.gu_contact;
 
   IF LENGTH(TxName)=0 THEN TxName:=NULL; END IF;
@@ -217,11 +225,15 @@ BEGIN
     TrTitle := NULL;
   END IF;
   
-  UPDATE k_member_address SET gu_contact=GuContact,gu_company=GuCompany,tx_name=TxName,tx_surname=TxSurname,de_title=DeTitle,tr_title=TrTitle,dt_birth=DtBirth,sn_passport=SnPassport,id_gender=IdGender,ny_age=NyAge,tx_dept=TxDept,tx_division=TxDivision,tx_comments=TxComments WHERE gu_address=:new.gu_address;
+  UPDATE k_member_address SET gu_contact=GuContact,gu_company=GuCompany,tx_name=TxName,tx_surname=TxSurname,de_title=DeTitle,tr_title=TrTitle,dt_birth=DtBirth,sn_passport=SnPassport,
+                              id_gender=IdGender,ny_age=NyAge,id_nationality=IdNationality,tx_dept=TxDept,tx_division=TxDivision,tx_comments=TxComments,url_linkedin=UrlLinkedIn,url_facebook=UrlFacebook,url_twitter=UrlTwitter
+                              WHERE gu_address=:new.gu_address;
 EXCEPTION
   WHEN NO_DATA_FOUND THEN
 
-    UPDATE k_member_address SET gu_contact=GuContact,gu_company=GuCompany,tx_name=TxName,tx_surname=TxSurname,de_title=DeTitle,tr_title=NULL,dt_birth=DtBirth,sn_passport=SnPassport,id_gender=IdGender,ny_age=NyAge,tx_dept=TxDept,tx_division=TxDivision,tx_comments=TxComments WHERE gu_address=:new.gu_address;
+    UPDATE k_member_address SET gu_contact=GuContact,gu_company=GuCompany,tx_name=TxName,tx_surname=TxSurname,de_title=DeTitle,tr_title=NULL,dt_birth=DtBirth,sn_passport=SnPassport,
+                                id_gender=IdGender,ny_age=NyAge,id_nationality=IdNationality,tx_dept=TxDept,tx_division=TxDivision,tx_comments=TxComments,url_linkedin=UrlLinkedIn,url_facebook=UrlFacebook,url_twitter=UrlTwitter
+                                WHERE gu_address=:new.gu_address;
 END k_tr_ins_cont_addr;
 GO;
 
@@ -235,7 +247,7 @@ CREATE OR REPLACE TRIGGER k_tr_upd_cont AFTER UPDATE ON k_contacts FOR EACH ROW
 DECLARE
   TxName        VARCHAR2(100);
   TxSurname     VARCHAR2(100);
-  DeTitle       VARCHAR2(50);
+  DeTitle       VARCHAR2(70);
   TrTitle       VARCHAR2(50);
 BEGIN
 
@@ -249,10 +261,14 @@ BEGIN
     TrTitle := NULL;
   END IF;
   
-  UPDATE k_member_address SET gu_company=:new.gu_company,tx_name=TxName,tx_surname=TxSurname,de_title=DeTitle,tr_title=TrTitle,dt_birth=:new.dt_birth,sn_passport=:new.sn_passport,id_gender=:new.id_gender,ny_age=:new.ny_age,tx_dept=:new.tx_dept,tx_division=:new.tx_division,tx_comments=:new.tx_comments WHERE gu_contact=:new.gu_contact;
+  UPDATE k_member_address SET gu_company=:new.gu_company,tx_name=TxName,tx_surname=TxSurname,de_title=DeTitle,tr_title=TrTitle,dt_birth=:new.dt_birth,sn_passport=:new.sn_passport,
+                              id_gender=:new.id_gender,ny_age=:new.ny_age,id_nationality=:new.id_nationality,tx_dept=:new.tx_dept,tx_division=:new.tx_division,tx_comments=:new.tx_comments,
+                              url_linkedin=:new.url_linkedin,url_facebook=:new.url_facebook,url_twitter=:new.url_twitter WHERE gu_contact=:new.gu_contact;
 EXCEPTION
   WHEN NO_DATA_FOUND THEN
 
-    UPDATE k_member_address SET gu_company=:new.gu_company,tx_name=TxName,tx_surname=TxSurname,de_title=DeTitle,tr_title=NULL,dt_birth=:new.dt_birth,sn_passport=:new.sn_passport,id_gender=:new.id_gender,ny_age=:new.ny_age,tx_dept=:new.tx_dept,tx_division=:new.tx_division,tx_comments=:new.tx_comments WHERE gu_contact=:new.gu_contact;
+    UPDATE k_member_address SET gu_company=:new.gu_company,tx_name=TxName,tx_surname=TxSurname,de_title=DeTitle,tr_title=NULL,dt_birth=:new.dt_birth,sn_passport=:new.sn_passport,
+                                id_gender=:new.id_gender,ny_age=:new.ny_age,id_nationality=:new.id_nationality,tx_dept=:new.tx_dept,tx_division=:new.tx_division,tx_comments=:new.tx_comments,
+                                url_linkedin=:new.url_linkedin,url_facebook=:new.url_facebook,url_twitter=:new.url_twitter WHERE gu_contact=:new.gu_contact;
 END k_tr_upd_cont;
 GO;

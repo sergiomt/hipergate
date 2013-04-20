@@ -1,7 +1,5 @@
-<%@ page import="javax.mail.*,javax.mail.internet.*,java.util.HashMap,java.util.Properties,java.io.IOException,java.io.UnsupportedEncodingException,java.net.URLDecoder,java.net.MalformedURLException,java.sql.Statement,java.sql.SQLException,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.dataxslt.FastStreamReplacer,com.knowgate.hipermail.*" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/>
-<%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %>
-<%!
+<%@ page import="javax.mail.*,javax.mail.internet.*,java.util.HashMap,java.util.Properties,java.io.IOException,java.io.UnsupportedEncodingException,java.net.URLDecoder,java.net.MalformedURLException,java.sql.Statement,java.sql.SQLException,com.knowgate.debug.DebugFile,com.knowgate.jdc.JDCConnection,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.misc.Environment,com.knowgate.misc.Gadgets,com.knowgate.dataxslt.FastStreamReplacer,com.knowgate.hipermail.*,com.knowgate.misc.Gadgets" language="java" session="false" contentType="text/html;charset=UTF-8" %>
+<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><%@ include file="../methods/page_prolog.jspf" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/nullif.jspf" %><%!
 /*
   Copyright (C) 2004  Know Gate S.L. All rights reserved.
                       C/Oña 107 1º2 28050 Madrid (Spain)
@@ -42,6 +40,8 @@
   response.addHeader ("cache-control", "private");
 
   if (autenticateSession(GlobalDBBind, request, response)<0) return;
+
+  if (DebugFile.trace) DebugFile.writeln("<JSP:Begin msg_frame.jsp");
 
   String sGuAccount = request.getParameter("gu_account");
   String sGuUser = getCookie(request, "userid", "");
@@ -95,13 +95,19 @@
     
     oFolder.open(Folder.READ_ONLY);
     
-    oMsg = oFolder.getMessageByID (sMsgId);
+    oMsg = (DBMimeMessage) oFolder.getMessage(iMsgNum);
+    if (null==oMsg)
+      oMsg = oFolder.getMessageByID (sMsgId);
+    else if (!sMsgId.equals(oMsg.getMessageID()))
+      oMsg = oFolder.getMessageByID (sMsgId);
     
     if (oMsg!=null) {
 
       sText = oMsg.getText();
       
-      String sContentId = nullif(oMsg.getContentType());
+      String sContentId = nullif(oMsg.getMessageContentType());
+      
+      if (DebugFile.trace) DebugFile.writeln("<JSP:content/type="+sContentId);
       
       if (sContentId.toUpperCase().startsWith("TEXT/PLAIN"))
         sText = Gadgets.replace(sText,"\n","<BR>");
@@ -113,31 +119,48 @@
       boolean bFooter = false;
 
       if (null!=oParts) {
+        if (DebugFile.trace && oParts.getCount()==0) DebugFile.writeln("<JSP:zero parts found for message "+sMsgId);
         for (int p=0; p<oParts.getCount(); p++) {
+          if (DebugFile.trace) DebugFile.writeln("<JSP:Multipart.getBodyPart("+String.valueOf(p)+")");
+          
           BodyPart oPart =  oParts.getBodyPart(p);
+
           sContentId = nullif(((MimePart)oPart).getContentID()).toUpperCase();
 
-          if (nullif(oPart.getDisposition()).equalsIgnoreCase("inline") && (sContentId.startsWith("TEXT/PLAIN") || sContentId.startsWith("TEXT/HTML"))) {
+          if (DebugFile.trace) DebugFile.writeln("<JSP:ContentID="+sContentId);
+
+					String sDisposition = nullif(oPart.getDisposition());
+
+          if (DebugFile.trace) DebugFile.writeln("<JSP:Disposition="+sDisposition);
+					
+          if (sDisposition.equalsIgnoreCase("inline") && (sContentId.startsWith("TEXT/PLAIN") || sContentId.startsWith("TEXT/HTML"))) {
             if (!bFooter) {
               out.write("<BR><HR><BR>");
               bFooter = true;    
             }
             try {             
+          		if (DebugFile.trace) DebugFile.writeln("<JSP:DBMimePartgetText()");
              sText = ((DBMimePart)oPart).getText();
-    	     out.write (sText);
-    	    }
-    	    catch (SQLException sqle) { }    	   
+    	       out.write (sText);
+    	      }
+    	      catch (SQLException sqle) {
+              if (DebugFile.trace) DebugFile.writeln("SQLException"+sqle.getMessage());
+    	      }    	   
           } // fi
         } // next
-      } // fi (oParts)
+      } else {
+        if (DebugFile.trace) DebugFile.writeln("<JSP:no parts found for message "+sMsgId);      	
+      }// fi (oParts)
+    } else {
+      out.write("<FONT FACE=\"Arial,Helvetica,sans.serif\">Message number "+String.valueOf(iMsgNum)+" with unique identifier "+Gadgets.HTMLEncode(sMsgId)+" was not found at mail folder "+oFolder.getName()+"<FONT>");
     }
-    
+
     oFolder.close(false);
     oRDBMS.close();
   }
   catch (MessagingException e) {  
     try { if (oRDBMS!=null) oRDBMS.close(); } catch (Exception ignore) {}      
-    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=MessagingException&desc=" + e.getLocalizedMessage() + "&resume=../blank.htm"));
+    response.sendRedirect (response.encodeRedirectUrl ("../common/errmsg.jsp?title=MessagingException&desc=" + e.getMessage() + "&resume=../blank.htm"));
     return;
   }
   catch (UnsupportedEncodingException uee) {
@@ -147,5 +170,7 @@
   }    
 
   out.flush();
+
+  if (DebugFile.trace) DebugFile.writeln("<JSP:End msg_frame.jsp");
 
 %><%@ include file="../methods/page_epilog.jspf" %>

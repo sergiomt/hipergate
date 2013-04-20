@@ -311,7 +311,7 @@ public class Microsite extends DOMDocument {
 
   // ----------------------------------------------------------
 
-  public Vector containers() {
+  public Vector<Container> containers() {
     // Devuelve un vector con los contenedores de este Microsite
     Node oTopNode;
     Element oContainers;
@@ -347,7 +347,7 @@ public class Microsite extends DOMDocument {
 
         // Crear el vector
         iContainers = oNodeList.getLength();
-        oLinkVctr = new Vector(iContainers);
+        oLinkVctr = new Vector<Container>(iContainers);
 
         // Convertir los nodos DOM en objetos de tipo Container
         for (int i = 0; i < iContainers; i++)

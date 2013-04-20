@@ -4,8 +4,6 @@
 
 package com.oreilly.servlet;
 
-import java.io.*;
-import java.net.*;
 import java.rmi.*;
 import java.rmi.server.*;
 import java.rmi.registry.*;

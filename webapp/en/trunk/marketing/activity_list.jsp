@@ -101,9 +101,9 @@
 
   // 07. Order by column
 
-  sOrderBy = nullif(request.getParameter("orderby"),"10");    
-  iOrderBy = Integer.parseInt(sOrderBy);
-  if (10==iOrderBy) sOrderBy += " DESC";
+  sOrderBy = nullif(request.getParameter("orderby"),"10");
+  iOrderBy = Integer.parseInt(sOrderBy.indexOf(' ')>0 ? sOrderBy.substring(0,sOrderBy.indexOf(' ')) : sOrderBy);
+   if (3==iOrderBy || 10==iOrderBy) sOrderBy = String.valueOf(iOrderBy)+" DESC";
 
   // **********************************************
 
@@ -169,13 +169,13 @@
 %>
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/simplevalidations.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/dynapi.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript">
     <!--
     dynapi.library.setPath('../javascript/dynapi3/');
     dynapi.library.include('dynapi.api.DynLayer');
@@ -191,9 +191,9 @@
     }
     //-->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/dynapi3/floatdiv.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/rightmenu.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/dynapi3/floatdiv.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
         // Global variables for moving the clicked row to the context menu
         
@@ -331,7 +331,7 @@
         // ------------------------------------------------------	
     //-->    
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
     <!--
 	    function setCombos() {
 	      setCookie ("maxrows", "<%=iMaxRows%>");
@@ -394,14 +394,16 @@
         </TR>
         <TR>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(4);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==2 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;<B>Title</B></TD>
+          <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(3);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==3 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Ordenar por este campo"></A>&nbsp;<B>Creation</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif">&nbsp;<A HREF="javascript:sortBy(10);" oncontextmenu="return false;"><IMG SRC="../skins/<%=sSkin + (iOrderBy==10 ? "/sortedfld.gif" : "/sortablefld.gif")%>" WIDTH="14" HEIGHT="10" BORDER="0" ALT="Sort by this field"></A>&nbsp;<B>Start date</B></TD>
           <TD CLASS="tableheader" BACKGROUND="../skins/<%=sSkin%>/tablehead.gif"><A HREF="#" onclick="selectAll()" TITLE="Select All"><IMG SRC="../images/images/selall16.gif" BORDER="0" ALT="Select All"></A></TD></TR>
 <%
-	        String sActivityId, sActivityTl, sActivityDtStart, sStrip;
+	        String sActivityId, sActivityTl, sActivityDtCreated, sActivityDtStart, sStrip;
 
 	        for (int i=0; i<iActivitiesCount; i++) {
             sActivityId = oActivities.getString(0,i);
             sActivityTl = oActivities.getStringNull(3,i,"");
+            sActivityDtCreated = oActivities.getDateShort(2,i);
             if (oActivities.isNull(9,i))
               sActivityDtStart = "";
             else
@@ -411,13 +413,14 @@
 %>            
             <TR HEIGHT="14">
               <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<A HREF="#" oncontextmenu="jsActivityId='<%=sActivityId%>'; jsActivityNm='<%=sActivityTl.replace((char)39,'´')%>'; return showRightMenu(event);" onclick="modifyActivity('<%=sActivityId%>')" TITLE="Click right mouse button to show context menu"><%=sActivityTl%></A></TD>
+              <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<%=sActivityDtCreated%></TD>
               <TD CLASS="strip<% out.write (sStrip); %>">&nbsp;<%=sActivityDtStart%></TD>
               <TD CLASS="strip<% out.write (sStrip); %>" ALIGN="center"><INPUT VALUE="1" TYPE="checkbox" NAME="<% out.write (sActivityId); %>"></TD>
             </TR>
 <%        } // next(i) %>          	  
       </TABLE>
     </FORM>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    <SCRIPT TYPE="text/javascript">
       <!--
       addMenuOption("Open","modifyActivity(jsActivityId)",1);
       addMenuOption("Clone","clone()",0);

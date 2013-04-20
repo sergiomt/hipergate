@@ -37,10 +37,15 @@ import java.util.Properties;
 
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.scheduler.Event;
+import com.knowgate.dataobjs.DBBind;
 
 public final class DoNothing extends Event {
 	
   public DoNothing() { }
+
+  public DoNothing(DBBind oDbb) {
+    super(oDbb);
+  }
 
   public void trigger (JDCConnection oConn, Map oParameters, Properties oEnvironment) throws Exception { }
 	

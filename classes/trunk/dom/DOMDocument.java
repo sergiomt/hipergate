@@ -212,8 +212,7 @@ public class DOMDocument {
       Node oCurrentNode = null;
 
       for (oCurrentNode=getFirstElement(oParent); oCurrentNode!=null; oCurrentNode=getNextElement(oCurrentNode)) {
-        if (getAttribute(oCurrentNode, sAttrName).equals(sAttrValue));
-          break;
+        if (getAttribute(oCurrentNode, sAttrName).equals(sAttrValue)) break;
       } // next(iNode)
 
       return (Element) oCurrentNode;
@@ -613,7 +612,7 @@ public class DOMDocument {
     //---------------------------------------------------------
 
   public Vector<DOMSubDocument> filterChildsByName(Element oParent, String sChildsName) {
-    Element oContainers;
+
     NodeList oNodeList;
     Vector<DOMSubDocument> oLinkVctr;
 

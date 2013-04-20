@@ -39,8 +39,6 @@
 
 package com.knowgate.dfs.chardet ;
 
-import java.lang.*;
-
 public class nsISO2022KRVerifier extends nsVerifier {
 
 	 static int[]  cclass   ; 

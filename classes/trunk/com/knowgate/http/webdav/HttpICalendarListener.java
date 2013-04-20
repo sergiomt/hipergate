@@ -1,16 +1,13 @@
 package com.knowgate.http.webdav;
 
-import javax.servlet.http.HttpServlet;
-import com.knowgate.debug.DebugFile;
-
-import org.apache.slide.event.UriModifiedListener;
-import org.apache.slide.event.UriModifiedEvent;
+// import org.apache.slide.event.UriModifiedListener;
+// import org.apache.slide.event.UriModifiedEvent;
 
 /**
  * @author Sergio Montoro Ten
  * @version 1.0
  */
-public class HttpICalendarListener extends HttpServlet implements UriModifiedListener {
+public class HttpICalendarListener /* extends HttpServlet implements UriModifiedListener */ {
 
   private static final long serialVersionUID = 1l;
 
@@ -21,6 +18,7 @@ public class HttpICalendarListener extends HttpServlet implements UriModifiedLis
 
   // ---------------------------------------------------------------------------
 
+  /*
   public void modified (UriModifiedEvent oEvnt) {
     if (DebugFile.trace) {
       DebugFile.writeln("Begin HttpICalendarSubscriber.modified("+oEvnt.getUri().toString()+")");
@@ -32,6 +30,7 @@ public class HttpICalendarListener extends HttpServlet implements UriModifiedLis
       DebugFile.writeln("End HttpICalendarSubscriber.modified()");
     }
   }
+  */
 
   // ---------------------------------------------------------------------------
 

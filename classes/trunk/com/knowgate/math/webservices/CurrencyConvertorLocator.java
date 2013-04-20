@@ -7,6 +7,7 @@
 
 package com.knowgate.math.webservices;
 
+@SuppressWarnings("serial")
 public class CurrencyConvertorLocator extends org.apache.axis.client.Service implements com.knowgate.math.webservices.CurrencyConvertor {
 
     public CurrencyConvertorLocator() {

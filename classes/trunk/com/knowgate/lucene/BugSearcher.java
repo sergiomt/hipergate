@@ -40,18 +40,15 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.RangeQuery;
+import org.apache.lucene.search.TermRangeQuery;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.analysis.SimpleAnalyzer;
+import org.apache.lucene.store.Directory;
 import org.apache.lucene.document.DateTools;
-import org.apache.lucene.document.DateTools.Resolution;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.ParseException;
 
@@ -61,7 +58,7 @@ import com.knowgate.misc.Gadgets;
 /**
  * Search into a Lucene full text index for bugs
  * @author Sergio Montoro Ten
- * @version 4.0
+ * @version 7.0
  */
 public class BugSearcher {
 
@@ -155,14 +152,12 @@ public class BugSearcher {
 	  	oQry.add(new TermQuery(new Term("severity",sSeverity)),BooleanClause.Occur.MUST);
 
     if (dtFromDate!=null && dtToDate!=null)
-	  oQry.add(new RangeQuery(new Term("created",DateTools.dateToString(dtFromDate, DateTools.Resolution.DAY)),
-	  						  new Term("created",DateTools.dateToString(dtToDate, DateTools.Resolution.DAY)), true), BooleanClause.Occur.MUST);    
+	  oQry.add(new TermRangeQuery("created",DateTools.dateToString(dtFromDate, DateTools.Resolution.DAY),
+	  						                DateTools.dateToString(dtToDate, DateTools.Resolution.DAY), true, true), BooleanClause.Occur.MUST);    
     else if (dtFromDate!=null)
-	  oQry.add(new RangeQuery(new Term("created",DateTools.dateToString(dtFromDate, DateTools.Resolution.DAY)),
-	  						  new Term("created",DateTools.dateToString(new Date(299,11,31), DateTools.Resolution.DAY)), true), BooleanClause.Occur.MUST);    
+	  oQry.add(new TermRangeQuery("created",DateTools.dateToString(dtFromDate, DateTools.Resolution.DAY), null, true, false), BooleanClause.Occur.MUST);    
     else if (dtToDate!=null)
-	  oQry.add(new RangeQuery(new Term("created",DateTools.dateToString(new Date(79,11,31), DateTools.Resolution.DAY)),
-	  						  new Term("created",DateTools.dateToString(dtToDate, DateTools.Resolution.DAY)), true), BooleanClause.Occur.MUST);
+	  oQry.add(new TermRangeQuery("created",null,DateTools.dateToString(dtToDate, DateTools.Resolution.DAY), false, true), BooleanClause.Occur.MUST);
     if (null!=sText)
       if (sText.length()>0)
 	  	oQry.add(new TermQuery(new Term("text",sText)),BooleanClause.Occur.SHOULD);
@@ -173,19 +168,18 @@ public class BugSearcher {
 
 	String sSegments = Gadgets.chomp(sLuceneIndexPath,File.separator)+"k_bugs"+File.separator+sWorkArea;	
     if (DebugFile.trace) DebugFile.writeln("new IndexSearcher("+sSegments+")");
-    IndexSearcher oSearch = new IndexSearcher(sSegments);
+	Directory oFsDir = Indexer.openDirectory(sSegments);
+    IndexSearcher oSearch = new IndexSearcher(oFsDir);
     
     Document oDoc;
 
-    if (iLimit>0) {
-      TopDocs oTopSet = oSearch.search(oQry, null, iLimit);
+      TopDocs oTopSet = oSearch.search(oQry, null, iLimit>0 ? iLimit : 2147483647);
       if (oTopSet.scoreDocs!=null) {
         ScoreDoc[] oTopDoc = oTopSet.scoreDocs;
         int iDocCount = oTopDoc.length;
         aRetArr = new BugRecord[iDocCount];
         for (int d=0; d<iDocCount; d++) {
           oDoc = oSearch.doc(oTopDoc[d].doc);
-          String[] aAbstract = Gadgets.split(oSearch.doc(oTopDoc[d].doc).get("abstract"), '¨');
           aRetArr[d] = new BugRecord(oTopDoc[d].score,
           			   Integer.parseInt(oDoc.get("number")),
                        oDoc.get("guid"), oDoc.get("container"), oDoc.get("title"),
@@ -196,24 +190,9 @@ public class BugSearcher {
       } else {
         aRetArr = null;
       }
-    } else {
-      Hits oHitSet = oSearch.search(oQry);
-      int iHitCount = oHitSet.length();
-      if (iHitCount>0) {
-        aRetArr = new BugRecord[iHitCount];
-        for (int h=0; h<iHitCount; h++) {
-          oDoc = oHitSet.doc(h);
-          aRetArr[h] = new BugRecord(oHitSet.score(h),
-          			   Integer.parseInt(oDoc.get("number")),
-                       oDoc.get("guid"), oDoc.get("container"), oDoc.get("title"),
-                       oDoc.get("author"), oDoc.get("created"), oDoc.get("type"),
-                       oDoc.get("status"), oDoc.get("priority"),
-                       oDoc.get("severity"), oDoc.get("abstract"));
-        } // next
-      } else {
-        aRetArr = null;
-      }
-    } // fi (iLimit>0)
+
+    oSearch.close();
+    oFsDir.close();
 
     if (oSortBy!=null) {
       Arrays.sort(aRetArr, oSortBy);

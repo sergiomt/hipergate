@@ -1,6 +1,4 @@
-<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.Supplier" language="java" session="false" contentType="text/html;charset=UTF-8" %>
-<%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %>
-<jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
+<%@ page import="java.io.IOException,java.net.URLDecoder,java.sql.SQLException,com.knowgate.jdc.*,com.knowgate.dataobjs.*,com.knowgate.acl.*,com.knowgate.hipergate.*,com.knowgate.crm.Supplier" language="java" session="false" contentType="text/html;charset=UTF-8" %><%@ include file="../methods/dbbind.jsp" %><%@ include file="../methods/cookies.jspf" %><%@ include file="../methods/authusrs.jspf" %><%@ include file="../methods/clientip.jspf" %><%@ include file="../methods/nullif.jspf" %><jsp:useBean id="GlobalCacheClient" scope="application" class="com.knowgate.cache.DistributedCachePeer"/><jsp:useBean id="GlobalDBLang" scope="application" class="com.knowgate.hipergate.DBLanguages"/><% 
 /*  
   Copyright (C) 2008  Know Gate S.L. All rights reserved.
                       C/Oña, 107 1º2 28050 Madrid (Spain)
@@ -42,13 +40,15 @@
   String sSkin = getCookie(request, "skin", "xp");
   String sLanguage = getNavigatorLanguage(request);
   
+  String id_domain = getCookie(request,"domainid","");
   String gu_workarea = request.getParameter("gu_workarea");
   String gu_supplier = nullif(request.getParameter("gu_supplier"));
   
   Supplier oSupp = new Supplier();
   Address oAddr = new Address();
+  Term oTerm = new Term();
     
-  String sStatusLookUp = "", sTypeLookUp = "", sCountriesLookUp = null, sStreetLookUp = null;
+  String sStatusLookUp = "", sTypeLookUp = "", sCountriesLookUp = null, sStreetLookUp = null, sTerms = "";
 
   boolean bIsGuest = true;
 
@@ -68,8 +68,17 @@
     if (gu_supplier.length()>0) {
       oSupp.load(oConn, gu_supplier);
       oAddr=oSupp.getAddress();
+      if (!oSupp.isNull(DB.gu_geozone))
+        oTerm.load(oConn, new Object[]{oSupp.getString(DB.gu_geozone)});
     }
+
+    sTerms = GlobalCacheClient.getString("[" + id_domain + "," + gu_workarea + ",geozone,thesauri]");
     
+    if (null==sTerms) {
+      sTerms = GlobalDBLang.getHTMLTermSelect(oConn, Integer.parseInt(id_domain), gu_workarea);
+      GlobalCacheClient.put ("[" + id_domain + "," + gu_workarea + ",geozone,thesauri]", sTerms);      
+    } // fi (sTerms)
+
     oConn.close("supplier_edit");
   }
   catch (SQLException e) {  
@@ -86,14 +95,14 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Edit supplier</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>  
   <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript" DEFER="defer">
     <!--
 
@@ -105,7 +114,6 @@
       
       // ------------------------------------------------------
 
-              
       function lookup(odctrl) {
 	      var frm = window.document.forms[0];
         
@@ -143,6 +151,13 @@
         
           sortCombo(frm.sel_state);
         }  
+      }
+
+      // ------------------------------------------------------
+              
+      function lookupZone() {
+        var frm = window.document.forms[0];      
+        window.open("../common/thesauri_f.jsp?id_domain=<%=id_domain%>&gu_workarea=<%=gu_workarea%>&id_scope=geozones&nm_control=nm_geozone&nm_coding=gu_geozone", "", "toolbar=no,directories=no,menubar=no,resizable=no,width=" + String(Math.floor(600*(screen.width/800))) + ",height=" + String(Math.floor(520*(screen.height/600))));
       }
       
       // ------------------------------------------------------
@@ -195,20 +210,30 @@
 
 	      frm.id_status.value = getCombo(frm.sel_status);
 	      frm.tp_supplier.value = getCombo(frm.sel_type);
+	      frm.gu_geozone.value = getCombo(frm.sel_geozone);
         
         return true;
       } // validate;
     //-->
   </SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript1.2" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
     <!--
       function setCombos() {
         var frm = document.forms[0];
         
+        setCombo  (frm.sel_country, "<%=oAddr.getStringNull(DB.id_country,"").trim()%>");
         setCombo(frm.sel_street,"<% out.write(oAddr.getStringNull(DB.tp_street,"")); %>");
+        setCombo(frm.sel_geozone,"<% out.write(oSupp.getStringNull(DB.gu_geozone,"")); %>");
+
+        loadstates(frm.id_state.value);
+        
+        if (frm.sel_country.options.selectedIndex>0) {
+	        frm.id_country.value = getCombo(frm.sel_country);
+	        frm.nm_country.value = getComboText(frm.sel_country);
+        }
 
         return true;
-      } // validate;
+      } // setCombos()
     //-->
   </SCRIPT> 
 </HEAD>
@@ -262,10 +287,18 @@
               <A HREF="javascript:lookup(2)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="Status List"></A>
             </TD>
           </TR>
+          <TR>
+            <TD ALIGN="right" WIDTH="110"><FONT CLASS="formplain">Zone</FONT></TD>
+            <TD ALIGN="left" WIDTH="370">
+            <INPUT TYPE="hidden" NAME="gu_geozone" VALUE="<%=oSupp.getStringNull(DB.gu_geozone,"")%>">
+            <INPUT TYPE="hidden" NAME="nm_geozone" SIZE="40" VALUE="<%=oTerm.getStringNull(DB.tx_term,"")%>">
+            <SELECT NAME="sel_geozone"><OPTION VALUE=""></OPTION><% out.write (sTerms); %></SELECT>&nbsp;<A HREF="#" onclick="lookupZone()"><IMG SRC="../images/images/find16.gif" BORDER="0"></A>            
+            </TD>
+          </TR>
 <% if (sLanguage.equalsIgnoreCase("es")) { %>
           <TR>
             <TD ALIGN="right" WIDTH="140">
-              <A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View street types"></A>&nbsp;
+              <!-- <A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View street types"></A>&nbsp; -->
               <SELECT CLASS="combomini" NAME="sel_street"><OPTION VALUE=""></OPTION><%=sStreetLookUp%></SELECT>
             </TD>
             <TD ALIGN="left" WIDTH="460">
@@ -285,7 +318,7 @@
               <INPUT TYPE="text" NAME="nm_street" MAXLENGTH="100" SIZE="40" VALUE="<%=oAddr.getStringNull(DB.nm_street,"")%>">
               <INPUT TYPE="hidden" NAME="tp_street" VALUE="<%=oAddr.getStringNull(DB.tp_street,"")%>">
               <SELECT CLASS="combomini" NAME="sel_street"><OPTION VALUE=""></OPTION><%=sStreetLookUp%></SELECT>
-              <A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View street types"></A>              
+              <!-- <A HREF="javascript:lookup(3)"><IMG SRC="../images/images/find16.gif" HEIGHT="16" BORDER="0" ALT="View street types"></A> -->
             </TD>
           </TR>
 <% } %>

@@ -2,7 +2,6 @@ package com.knowgate.clocial;
 
 import java.sql.SQLException;
 
-import java.util.Date;
 
 import com.knowgate.misc.Gadgets;
 import com.knowgate.debug.DebugFile;

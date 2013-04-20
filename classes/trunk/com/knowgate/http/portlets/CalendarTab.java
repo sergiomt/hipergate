@@ -37,7 +37,10 @@ import java.io.IOException;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 
+import java.text.SimpleDateFormat;
+
 import java.util.Date;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Enumeration;
 
@@ -89,7 +92,9 @@ public class CalendarTab  extends GenericPortlet {
     String sOutput;
     String sDomainId = req.getProperty("domain");
     String sWorkAreaId = req.getProperty("workarea");
+    String sLanguageId = req.getProperty("language");
     String sUserId = req.getProperty("user");
+    String sPublicId = req.getProperty("public");
     String sTemplatePath = req.getProperty("template");
     String sStorage = req.getProperty("storage");
     String sZone = req.getProperty("zone");
@@ -136,7 +141,7 @@ public class CalendarTab  extends GenericPortlet {
 
     String sXML;
 
-    int iToDo = 0, iMeetings = 0;
+    int iToDo = 0, iMeetings = 0, iPublic = 0;
 
     if (req.getWindowState().equals(WindowState.MINIMIZED)) {
       if (DebugFile.trace) DebugFile.writeln ("WindowState.MINIMIZED");
@@ -145,7 +150,9 @@ public class CalendarTab  extends GenericPortlet {
     else {
       if (DebugFile.trace) DebugFile.writeln ("WindowState.NORMAL");
 
-      String sTodayXML, sToDoXML;
+      String sTodayXML, sToDoXML, sPublicXML;
+
+      SimpleDateFormat oFmt = new SimpleDateFormat("EEE dd MMM HH:mm", new Locale(sLanguageId==null ? "en" : "es"));
 
       Date dt00 = new Date();
       Date dt23 = new Date();
@@ -167,6 +174,10 @@ public class CalendarTab  extends GenericPortlet {
                                          "m." + DB.gu_meeting + ",m." + DB.gu_fellow + ",m." + DB.tp_meeting + ",m." + DB.tx_meeting + ", m." + DB.dt_start + ",m." + DB.dt_end,
                                          "m." + DB.gu_meeting + "=f." + DB.gu_meeting + " AND f." + DB.gu_fellow + "=? AND m." + DB.dt_start + " BETWEEN ? AND ? ORDER BY m." + DB.dt_start, 10);
 
+      DBSubset oPublic = new DBSubset (DB.k_meetings + " m," + DB.k_x_meeting_fellow + " f",
+              "m." + DB.gu_meeting + ",m." + DB.gu_fellow + ",m." + DB.tp_meeting + ",m." + DB.tx_meeting + ", m." + DB.dt_start + ",m." + DB.dt_end,
+              "m." + DB.gu_meeting + "=f." + DB.gu_meeting + " AND f." + DB.gu_fellow + "=? AND m." + DB.dt_start + ">=? ORDER BY m." + DB.dt_start, 10);
+      
       JDCConnection oCon = null;
 
       try  {
@@ -195,14 +206,28 @@ public class CalendarTab  extends GenericPortlet {
           oMeetings.setElementAt(String.valueOf(oTo.getHours())+":"+Gadgets.leftPad(String.valueOf(oTo.getMinutes()),'0',2), 5, m);
         }
 
+        if (sPublicId!=null) {
+          if (sPublicId.length()>0) {
+        	oPublic.setMaxRows(10);
+            iPublic = oPublic.load(oCon, new Object[]{sPublicId, new Timestamp(dt00.getTime())});
+          }
+        }
+        for (int p=0; p<iPublic; p++) {
+          if (oPublic.isNull(3,p)) oPublic.setElementAt("untitled", 3,p);
+          oPublic.setElementAt(oFmt.format(oPublic.getDate(4,p)), 4, p);
+          oPublic.setElementAt(oFmt.format(oPublic.getDate(5,p)), 5, p);
+        }
+        
         oCon.close("CalendarTab_today");
         oCon = null;
 
         sTodayXML = oMeetings.toXML("","meeting");
+        sPublicXML = oPublic.toXML("","meeting");
       }
       catch (SQLException e) {
         sToDoXML = "<todo></todo>";
         sTodayXML = "<today></today>";
+        sPublicXML = "<public></public>";
 
         try {
           if (null != oCon)
@@ -218,10 +243,17 @@ public class CalendarTab  extends GenericPortlet {
         sXML += "<todo/>\n";
 
       if (iMeetings>0)
-        sXML += "<today>\n"+sTodayXML+"</today>\n</calendar>";
+        sXML += "<today>\n"+sTodayXML+"</today>\n";
       else
-        sXML += "<today/>\n</calendar>";
-     }
+        sXML += "<today/>\n";
+
+      if (iPublic>0)
+          sXML += "<public>\n"+sPublicXML+"</public>";
+        else
+          sXML += "<public/>";
+
+      sXML += "\n</calendar>";
+    }
 
      try {
        if (DebugFile.trace) DebugFile.writeln("new ByteArrayInputStream(" + String.valueOf(sXML.length()) + ")");

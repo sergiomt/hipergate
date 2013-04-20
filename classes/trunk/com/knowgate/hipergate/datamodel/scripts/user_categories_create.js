@@ -123,7 +123,7 @@ try {
       CategoryLabel.create (DefaultConnection, new Object[] { sCatgId, "vn", "tạm thời", null });
       CategoryLabel.create (DefaultConnection, new Object[] { sCatgId, "uk", "тимчасовий", null });
       CategoryLabel.create (DefaultConnection, new Object[] { sCatgId, "ru", "Временный", null });
-      CategoryLabel.create (DefaultConnection, new Object[] { sCatgId, "cn", "	临时", null });
+      CategoryLabel.create (DefaultConnection, new Object[] { sCatgId, "cn", "临时", null });
       CategoryLabel.create (DefaultConnection, new Object[] { sCatgId, "tw", "臨時", null });
       
       // Create e-mails Category

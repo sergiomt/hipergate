@@ -1,6 +1,5 @@
 /*
-  Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
+  Copyright (C) 2003-2011  Know Gate S.L. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -36,32 +35,23 @@ import java.util.Date;
 import java.util.Comparator;
 import java.text.SimpleDateFormat;
 
+/**
+ * @author Sergio Montoro Ten
+ * @version 7.0
+ */
+
 public class NewsMessageRecord {
-
-  public static class CompareAuthor implements Comparator {
-    public int compare(Object o1, Object o2) {
-      if (((BugRecord)o1).getAuthor()==null) return -1;
-      return ((BugRecord)o1).getAuthor().compareTo(((BugRecord)o2).getAuthor());
-    }
-  }
-
-  public static class CompareTitle implements Comparator {
-    public int compare(Object o1, Object o2) {
-      if (((BugRecord)o1).getTitle()==null) return -1;
-      return ((BugRecord)o1).getTitle().compareTo(((BugRecord)o2).getTitle());
-    }
-  }
 
   public static class CompareDate implements Comparator {
     public int compare(Object o1, Object o2) {
-      if (((BugRecord)o1).getDate()==null) return -1;
-      return ((BugRecord)o1).getDate().compareTo(((BugRecord)o2).getDate());
+      if (((NewsMessageRecord)o1).getDate()==null) return -1;
+      return ((NewsMessageRecord)o1).getDate().compareTo(((NewsMessageRecord)o2).getDate());
     }
   }
 
   public static class CompareScore implements Comparator {
     public int compare(Object o1, Object o2) {
-	  return new Float(((BugRecord)o1).getScore()-((BugRecord)o2).getScore()).intValue();
+	  return new Float(((NewsMessageRecord)o1).getScore()-((NewsMessageRecord)o2).getScore()).intValue();
     }
   }
 
@@ -69,6 +59,7 @@ public class NewsMessageRecord {
   private float score;
   private String wrka;
   private String guid;
+  private String thrd;
   private String group;
   private String title;
   private String author;
@@ -78,11 +69,12 @@ public class NewsMessageRecord {
   public NewsMessageRecord() { }
   
 
-  public NewsMessageRecord(float fScore, String sWrkA, String sGuid, String sGroup, String sTitle,
+  public NewsMessageRecord(float fScore, String sWrkA, String sGuid, String sThread, String sGroup, String sTitle,
                            String sAuthor, Date dtCreated, String sAbstract) {
 	score = fScore;
     wrka = sWrkA;
     guid = sGuid;
+    thrd = sThread;
     group = sGroup;
     title = sTitle;
     author = sAuthor;
@@ -131,6 +123,7 @@ public class NewsMessageRecord {
     oBuffer.append("<NewsMessageRecord>");
     oBuffer.append("<nu_score>"+String.valueOf(score)+"</nu_score>");
     oBuffer.append("<gu_msg>"+guid+"</gu_msg>");
+    oBuffer.append("<gu_thread_msg>"+thrd+"</gu_thread_msg>");
     oBuffer.append("<gu_newsgrp>"+group+"</gu_newsgrp>");
     oBuffer.append("<nm_author><![CDATA["+author+"]]></nm_author>");
     oBuffer.append("<dt_published>"+getDateAsString()+"</dt_published>");

@@ -169,8 +169,8 @@
 <HTML>
 <HEAD>
 <TITLE>Wait...</TITLE>
-<SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
-<SCRIPT LANGUAGE="JavaScript" DEFER>
+<SCRIPT SRC="../javascript/getparam.js"></SCRIPT>
+<SCRIPT DEFER>
 <!--
   WAB_Frame = top.frames[0];
   entrydata = unescape(getURLParam("entrydata"));

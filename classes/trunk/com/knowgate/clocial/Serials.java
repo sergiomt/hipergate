@@ -1,6 +1,8 @@
 package com.knowgate.clocial;
 
 public final class Serials {
+	
+  public static final long ErrorLog     = 600000101200000000l;
   public static final long IPInfo       = 600000101200000001l;
   public static final long Redirect     = 600000101200000002l;
   public static final long RedirectReq  = 600000101200000003l;

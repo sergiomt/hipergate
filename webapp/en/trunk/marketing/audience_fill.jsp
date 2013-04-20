@@ -107,8 +107,8 @@
 %><HTML>
 <HEAD>
 <TITLE>Wait...</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+<SCRIPT TYPE="text/javascript">
 <!--
   function setCombos() {
     var opt;

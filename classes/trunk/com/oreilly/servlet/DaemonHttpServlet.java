@@ -25,6 +25,7 @@ import javax.servlet.http.*;
  * @author <b>Jason Hunter</b>, Copyright &#169; 1998
  * @version 1.0, 98/09/18
  */
+@SuppressWarnings("serial")
 public abstract class DaemonHttpServlet extends HttpServlet {
 
   /**

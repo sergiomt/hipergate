@@ -37,7 +37,6 @@ import java.sql.SQLException;
 
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
-import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.dataobjs.DBPersist;
 import com.knowgate.misc.Gadgets;
 
@@ -143,4 +142,6 @@ public class EducationDegree extends DBPersist {
   } // getIdFromRef
   
   public static final short ClassId = 67;
+  private static final long serialVersionUID = 67l;
+  
 }

@@ -316,6 +316,10 @@ public class Column implements Serializable {
         return "LONGVARBINARY";
       case Types.LONGVARCHAR:
         return "LONGVARCHAR";
+      case Types.NCHAR:
+        return "NCHAR";
+      case Types.NVARCHAR:
+        return "NVARCHAR";
       case Types.NULL:
         return "NULL";
       case Types.NUMERIC:
@@ -334,6 +338,8 @@ public class Column implements Serializable {
         return "VARBINARY";
       case Types.VARCHAR:
         return "VARCHAR";
+      case Types.ARRAY:
+          return "ARRAY";
       default:
         return "OTHER";
     }
@@ -373,8 +379,10 @@ public class Column implements Serializable {
       iSQLType = Types.TIMESTAMP;
     else if (sToken.equalsIgnoreCase("DATETIME"))
       iSQLType = Types.TIMESTAMP;
+    else if (sToken.equalsIgnoreCase("NCHAR"))
+      iSQLType = Types.NCHAR;
     else if (sToken.equalsIgnoreCase("NVARCHAR"))
-      iSQLType = Types.VARCHAR;
+      iSQLType = Types.NVARCHAR;
     else if (sToken.equalsIgnoreCase("VARCHAR2"))
       iSQLType = Types.VARCHAR;
     else if (sToken.equalsIgnoreCase("LONGVARCHAR"))

@@ -38,7 +38,7 @@
 %>
 <HTML>
 <HEAD>
-<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+<SCRIPT TYPE="text/javascript">
   <!--
   function setList() {
     var doc = parent.frames[0].document;

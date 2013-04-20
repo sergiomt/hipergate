@@ -23,7 +23,7 @@ public class JDCLockConflict {
 	}
 
 	public int getWaitingOnPID() {
-		return iCurrentPID;
+		return iWaitingOnPID;
 	}
 
 	public String getQuery() {

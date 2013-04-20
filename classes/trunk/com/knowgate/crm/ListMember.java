@@ -37,6 +37,9 @@ import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.Timestamp;
+
+import java.util.Date;
 
 import com.knowgate.debug.DebugFile;
 import com.knowgate.jdc.JDCConnection;
@@ -69,7 +72,7 @@ import com.knowgate.misc.Gadgets;
  * <tr><td>DIRECT</td><td align="middle">95</td><td>References k_list_members</td><td align="middle">NULL</td><td align="middle">Member GUID</td></tr>
  * </table>
  * @author Sergio Montoro Ten
- * @version 2.0
+ * @version 7.0
  */
 
 public class ListMember {
@@ -542,12 +545,12 @@ public class ListMember {
       else
         sActive = "null";
 
-      sSQL = "UPDATE " + DB.k_x_list_members + " SET " + DB.tx_email + "='" + oMember.getStringNull(DB.tx_email,"null") + "'," + DB.tx_name + "=?," + DB.tx_surname + "=?," + DB.tx_salutation + "=?,"+ DB.bo_active + "=" + sActive + "," + DB.id_format + "='" + oMember.getStringNull(DB.id_format, "TXT") + "'," + DB.dt_modified + "=" + DBBind.escape(new java.util.Date(), "ts") + " WHERE " + DB.gu_list + "='" + sListGUID + "' AND (" + DB.gu_contact + "='" + oMember.getStringNull(DB.gu_member,"null") + "' OR " + DB.gu_company + "=? OR " + DB.tx_email + "='" + oMember.getStringNull(DB.tx_email,"null") + "')";
+      sSQL = "UPDATE " + DB.k_x_list_members + " SET " + DB.tx_email + "='" + oMember.getStringNull(DB.tx_email,"null") + "'," + DB.tx_name + "=?," + DB.tx_surname + "=?," + DB.tx_salutation + "=?,"+ DB.bo_active + "=" + sActive + "," + DB.id_format + "='" + oMember.getStringNull(DB.id_format, "TXT") + "'," + DB.dt_modified + "=? WHERE " + DB.gu_list + "='" + sListGUID + "' AND (" + DB.gu_contact + "='" + oMember.getStringNull(DB.gu_member,"null") + "' OR " + DB.gu_company + "=? OR " + DB.tx_email + "='" + oMember.getStringNull(DB.tx_email,"null") + "')";
 
       DebugFile.writeln("Connection.prepareStatement(" + sSQL + ")");
     }
 
-    sSQL = "UPDATE " + DB.k_x_list_members + " SET " + DB.tx_email + "=?," + DB.tx_name + "=?," + DB.tx_surname + "=?," + DB.tx_salutation + "=?,"+ DB.bo_active + "=?," + DB.id_format + "=?," + DB.dt_modified + "=" + DBBind.escape(new java.util.Date(), "ts") + " WHERE " + DB.gu_list + "=? AND (" + DB.gu_contact + "=? OR " + DB.gu_company + "=? OR " + DB.tx_email + "=?)";
+    sSQL = "UPDATE " + DB.k_x_list_members + " SET " + DB.tx_email + "=?," + DB.tx_name + "=?," + DB.tx_surname + "=?," + DB.tx_salutation + "=?,"+ DB.bo_active + "=?," + DB.id_format + "=?," + DB.dt_modified + "=? WHERE " + DB.gu_list + "=? AND (" + DB.gu_contact + "=? OR " + DB.gu_company + "=? OR " + DB.tx_email + "=?)";
 
     oStmt = oConn.prepareStatement(sSQL);
 
@@ -563,7 +566,9 @@ public class ListMember {
 
     oStmt.setString(6, oMember.getStringNull(DB.id_format, "TXT"));
 
-    oStmt.setString(7, sListGUID);
+    oStmt.setTimestamp(7, new Timestamp(new Date().getTime()));
+
+    oStmt.setString(8, sListGUID);
 
     if (oMember.getItemMap().containsKey(DB.tp_member)) {
 
@@ -574,15 +579,15 @@ public class ListMember {
         if (DebugFile.trace)
           DebugFile.writeln("gu_contact=" + oMember.getStringNull(DB.gu_member,"null") + " , gu_company=null");
 
-        oStmt.setString(8, oMember.getString(DB.gu_member));
-        oStmt.setString(9, null);
+        oStmt.setString(9, oMember.getString(DB.gu_member));
+        oStmt.setString(10, null);
       }
       else {
         if (DebugFile.trace)
           DebugFile.writeln("gu_contact=null, gu_company=" + oMember.getStringNull(DB.gu_member,"null"));
 
-        oStmt.setString(8, null);
-        oStmt.setString(9, oMember.getString(DB.gu_member));
+        oStmt.setString(9, null);
+        oStmt.setString(10, oMember.getString(DB.gu_member));
       }
     }
     else {
@@ -591,11 +596,11 @@ public class ListMember {
       if (DebugFile.trace)
         DebugFile.writeln("gu_contact=null, gu_company=" + oMember.getStringNull(DB.gu_member,"null"));
 
-      oStmt.setString(8, null);
-      oStmt.setString(9, oMember.getString(DB.gu_member));
+      oStmt.setString(9, null);
+      oStmt.setString(10, oMember.getString(DB.gu_member));
     }
 
-    oStmt.setString(10, oMember.getString(DB.tx_email));
+    oStmt.setString(11, oMember.getString(DB.tx_email));
 
     if (DebugFile.trace) DebugFile.writeln("PreparedStatement.executeUpdate()");
 

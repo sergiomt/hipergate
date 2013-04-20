@@ -33,7 +33,7 @@ package com.knowgate.dataobjs;
 
 /**
  * <p>Static final variables for table and field names</p>
- * @version 6.0
+ * @version 7.0
  */
 
 public final class DB {
@@ -187,6 +187,7 @@ public final class DB {
   public static final String k_oportunities = "k_oportunities";
   public static final String k_oportunities_lookup = "k_oportunities_lookup";
   public static final String k_oportunities_attrs = "k_oportunities_attrs";
+  public static final String k_x_oportunity_contacts = "k_x_oportunity_contacts";
   public static final String k_welcome_packs = "k_welcome_packs";
   public static final String k_welcome_packs_lookup = "k_welcome_packs_lookup";
   public static final String k_welcome_packs_changelog = "k_welcome_packs_changelog";
@@ -202,7 +203,9 @@ public final class DB {
   public static final String k_x_activity_audience = "k_x_activity_audience";
   public static final String k_activity_audience_lookup = "k_activity_audience_lookup";
   public static final String k_activity_attachs = "k_activity_attachs";
+  public static final String k_activity_tags = "k_activity_tags";
   public static final String k_syndfeeds = "k_syndfeeds";
+  public static final String k_syndfeeds_info_cache = "k_syndfeeds_info_cache";
   public static final String k_syndentries = "k_syndentries";
   public static final String k_syndreferers = "k_syndreferers";
   public static final String k_syndsearches = "k_syndsearches";
@@ -212,6 +215,7 @@ public final class DB {
   public static final String k_microsites = "k_microsites";
   public static final String k_pagesets = "k_pagesets";
   public static final String k_pagesets_lookup = "k_pagesets_lookup";
+  public static final String k_x_pageset_list = "k_x_pageset_list";
   public static final String k_pageset_pages = "k_pageset_pages";
   public static final String k_pageset_datasheets = "k_pageset_datasheets";
   public static final String k_pageset_answers = "k_pageset_answers";
@@ -478,6 +482,7 @@ public final class DB {
   public static final String bo_allcaps = "bo_allcaps";
   public static final String bo_dup_id_docs = "bo_dup_id_docs";
   public static final String bo_cnt_autoref = "bo_cnt_autoref";
+  public static final String bo_acrs_oprt = "bo_acrs_oprt";
 
   // k_queries
   public static final String gu_query = "gu_query";
@@ -514,6 +519,7 @@ public final class DB {
   public static final String id_section = "id_section";
   public static final String pg_lookup = "pg_lookup";
   public static final String vl_lookup = "vl_lookup";
+  public static final String tp_lookup = "tp_lookup";
   public static final String tr_ = "tr_";
 
   // k_images
@@ -859,6 +865,7 @@ public final class DB {
   public static final String id_nationality = "id_nationality";
   public static final String url_facebook = "url_facebook";
   public static final String url_linkedin = "url_linkedin";
+  public static final String url_twitter = "url_twitter";
 
   // k_sales_men
   public static final String gu_sales_man = "gu_sales_man";
@@ -898,6 +905,8 @@ public final class DB {
   public static final String im_cost = "im_cost";
   public static final String nu_elapsed = "nu_elapsed";
   public static final String lv_interest = "lv_interest";
+  public static final String nu_oportunities = "nu_oportunities";
+  public static final String tp_relation = "tp_relation";
 
   // k_contact_notes
   public static final String gu_note = "gu_note";
@@ -937,8 +946,10 @@ public final class DB {
   public static final String bo_reminder = "bo_reminder";
   public static final String gu_mailing = "gu_mailing";
   public static final String dt_mailing = "dt_mailing";
-  public static final String url_activity = "url_activity";
-  	
+  public static final String url_activity = "url_activity";  	
+  public static final String tp_tag = "tp_tag";
+  public static final String nm_tag = "nm_tag";
+  
   // k_microsites
   public static final String gu_microsite = "gu_microsite";
   public static final String id_app = "id_app";
@@ -964,6 +975,7 @@ public final class DB {
   // k_events
   public static final String id_event = "id_event";
   public static final String de_event = "de_event";
+  public static final String fixed_rate = "fixed_rate";
 
   // k_jobs
   public static final String gu_job = "gu_job";
@@ -1234,6 +1246,7 @@ public final class DB {
   
   /**i2e 20-01-2010**/
   //k_admission
+  public static final String gu_admission = "gu_admission";
   public static final String id_objetive_1 = "id_objetive_1";
   public static final String id_objetive_2 = "id_objetive_2";
   public static final String id_objetive_3 = "id_objetive_3";

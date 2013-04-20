@@ -5,9 +5,9 @@
 <html>
 <head>
 <TITLE>hipergate :: Remove</TITLE>
-<SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
-<SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascrip">
+<SCRIPT SRC="../javascript/cookies.js"></SCRIPT>
+<SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
+<SCRIPT TYPE="text/javascrip">
   <!--
     window.blur();
   //-->

@@ -21,23 +21,6 @@ ALTER TABLE k_bugs DROP CONSTRAINT f1_bugs;
 
 ALTER TABLE k_bugs_attach DROP CONSTRAINT f1_bugs_attach;
 
-DROP INDEX k_projects.ix1_projects;
-DROP INDEX k_projects.ix2_projects;
-DROP INDEX k_projects.ix3_projects;
-DROP INDEX k_projects.ix4_projects;
-
-DROP INDEX k_project_expand.i1_project_expand;
-DROP INDEX k_project_expand.i2_project_expand;
-DROP INDEX k_project_expand.i3_project_expand;
-DROP INDEX k_project_expand.i4_project_expand;
-
-DROP INDEX k_duties.ix1_duties;
-DROP INDEX k_duties.ix2_duties;
-
-DROP INDEX k_bugs.i1_bugs;
-DROP INDEX k_bugs.i2_bugs;
-DROP INDEX k_bugs.i3_bugs;
-
 DROP TABLE k_bugs_track;
 DROP TABLE k_bugs_attach;
 DROP TABLE k_bugs_lookup;

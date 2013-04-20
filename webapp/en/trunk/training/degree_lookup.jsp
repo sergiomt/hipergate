@@ -89,9 +89,9 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript">
     <!--
 <%          
           out.write("      var jsInstances = new Array(");
@@ -191,7 +191,9 @@
 <%        } // next %>
       </TABLE>
       <HR>
-      <CENTER><INPUT TYPE="submit" VALUE="Save" ACCESSKEY="s" CLASS="pushbutton">&nbsp;&nbsp;<INPUT TYPE="button" VALUE="Close" ACCESSKEY="c" CLASS="closebutton" onclick="window.close()"></CENTER>
+      <% /* Inicio i2e 2009-01-18 */ %>
+      <CENTER><INPUT TYPE="button" VALUE="Close" ACCESSKEY="c" CLASS="closebutton" onclick="window.close()"></CENTER>
+      <% /* fin i2e 2009-01-18 */ %>
     </FORM>
 </BODY>
 </HTML>

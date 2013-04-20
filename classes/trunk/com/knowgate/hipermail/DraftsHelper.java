@@ -39,7 +39,6 @@ import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import javax.mail.internet.InternetAddress;
 import javax.mail.MessagingException;
 import javax.mail.Message.RecipientType;
 import javax.mail.internet.MimeBodyPart;
@@ -48,7 +47,6 @@ import com.knowgate.debug.DebugFile;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.misc.Gadgets;
 import com.knowgate.dataobjs.DB;
-import com.knowgate.dataobjs.DBCommand;
 
 /**
  * <p>Helper methods for composing new e-mails</p>

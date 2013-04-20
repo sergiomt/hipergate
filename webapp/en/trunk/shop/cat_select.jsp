@@ -65,9 +65,9 @@
 <HTML>
 <HEAD>
 <TITLE>Wait...</TITLE>
-<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
-<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+<SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+<SCRIPT TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>
+<SCRIPT TYPE="text/javascript">
 <!--
   function setCombo() {
  	  	
@@ -85,7 +85,7 @@
       clearCombo (doc.forms[<%=id_form%>].sel_product);
     	var prods = rxml.getElementsByTagName("option");
     	for (var p = 0; p < prods.length; p++) {
-        comboPush (doc.forms[<%=id_form%>].sel_product, getElementValue(prods[p]), prods[p].attributes.item(0).value, false, false);
+        comboPush (doc.forms[<%=id_form%>].sel_product, getElementValue(prods[p]), prods[p].getAttribute("value"), false, false);
       } // next
 	  } // fi
 

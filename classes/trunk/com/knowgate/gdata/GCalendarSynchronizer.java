@@ -49,8 +49,6 @@ import java.util.ArrayList;
 import com.google.gdata.data.DateTime;
 import com.google.gdata.data.PlainTextConstruct;
 import com.google.gdata.data.extensions.When;
-import com.google.gdata.data.extensions.Where;
-import com.google.gdata.data.extensions.ExtendedProperty;
 import com.google.gdata.data.extensions.BaseEventEntry.Visibility;
 
 import com.google.gdata.util.AuthenticationException;
@@ -60,17 +58,14 @@ import com.google.gdata.data.calendar.EventWho;
 import com.google.gdata.data.calendar.CalendarFeed;
 import com.google.gdata.data.calendar.CalendarEventFeed;
 import com.google.gdata.data.calendar.CalendarEntry;
-import com.google.gdata.data.calendar.IcalUIDProperty;
 import com.google.gdata.data.calendar.CalendarEventEntry;
 
 import com.google.gdata.client.calendar.CalendarQuery;
-import com.google.gdata.client.calendar.CalendarQuery.ExtendedPropertyMatch;
 import com.google.gdata.client.calendar.CalendarService;
 
 import com.knowgate.misc.Gadgets;
 import com.knowgate.debug.DebugFile;
 import com.knowgate.dataobjs.DB;
-import com.knowgate.dataobjs.DBBind;
 import com.knowgate.dataobjs.DBSubset;
 import com.knowgate.dataobjs.DBCommand;
 import com.knowgate.addrbook.Meeting;
@@ -156,51 +151,55 @@ public class GCalendarSynchronizer {
 	  oPrec = (PasswordRecord) oCache.get(sUser+"[gmail]");
 	}
 	
-	if (null==oPrec) {
-	  oPrec = new PasswordRecord();
-	  if (DebugFile.trace)
-	    DebugFile.writeln("JDCConnection.prepareStatement(SELECT "+DB.gu_pwd+" FROM "+DB.k_user_pwd+" WHERE "+DB.gu_user+"='"+sUser+"' AND "+DB.id_pwd+"='gmail'");
-	  oStmt = oConn.prepareStatement("SELECT "+DB.gu_pwd+" FROM "+DB.k_user_pwd+" WHERE "+DB.gu_user+"=? AND "+DB.id_pwd+"='gmail'",
-	  								 ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-	  oStmt.setString(1, sUser);
-	  oRSet = oStmt.executeQuery();
-	  if (oRSet.next())
-	  	oPrec.load(oConn, oRSet.getString(1));
-	  oRSet.close();
-	  oStmt.close();
-	  if (oPrec.getValueOf("cal")==null)
-	  	oPrec = new PasswordRecord();
-	  else if (oPrec.getValueOf("cal").length()==0)
-	  	oPrec = new PasswordRecord();
-	  if (oCache!=null) oCache.put(sUser+"[gmail]", oPrec);
-	} else {
-	  if (DebugFile.trace)
-	    DebugFile.writeln("cache hit for GMail account of user "+sUser);
-	}
+	try {
+		  if (null==oPrec) {
+		    oPrec = new PasswordRecord();
+		    if (DebugFile.trace)
+		      DebugFile.writeln("JDCConnection.prepareStatement(SELECT "+DB.gu_pwd+" FROM "+DB.k_user_pwd+" WHERE "+DB.gu_user+"='"+sUser+"' AND "+DB.id_pwd+"='gmail'");
+		    oStmt = oConn.prepareStatement("SELECT "+DB.gu_pwd+" FROM "+DB.k_user_pwd+" WHERE "+DB.gu_user+"=? AND "+DB.id_pwd+"='gmail'",
+		    								 ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+		    oStmt.setString(1, sUser);
+		    oRSet = oStmt.executeQuery();
+		    if (oRSet.next())
+		    	oPrec.load(oConn, oRSet.getString(1));
+		    oRSet.close();
+		    oStmt.close();
+		    String sCal = (String) oPrec.getValueOf("cal");
+		    if (sCal==null)
+		    	oPrec = new PasswordRecord();
+		    else if (sCal.length()==0)
+		    	oPrec = new PasswordRecord();
+		    if (oCache!=null) oCache.put(sUser+"[gmail]", oPrec);
+		  } else {
+		    if (DebugFile.trace)
+		      DebugFile.writeln("cache hit for GMail account of user "+sUser);
+		  }
 
-	if (oPrec.lines().size()>0) {
-	  if (DebugFile.trace)
-	    DebugFile.writeln("CalendarService.setUserCredentials("+oPrec.getValueOf("user")+", ...)");
-  	  oCalSrv.setUserCredentials(oPrec.getValueOf("user"), oPrec.getValueOf("pwd"));
-	  URL feedUrl = new URL("https://www.google.com/calendar/feeds/default/allcalendars/full");
-	  CalendarFeed oFeed = oCalSrv.getFeed(feedUrl, CalendarFeed.class);
-	  for (int i = 0; i < oFeed.getEntries().size() && !bCalendarFound; i++) {
-  	    CalendarEntry oCalendar = oFeed.getEntries().get(i);
-  	    bCalendarFound = oCalendar.getTitle().getPlainText().equals(oPrec.getValueOf("cal"));
-	  } // next
-	  if (bCalendarFound) {
-	  	sEMail = oPrec.getValueOf("user");
-	  } else {
-	    if (oCache!=null) {
-	      oCache.expire(sUser+"[gmail]");
-	      oCache.put(sUser+"[gmail]", new PasswordRecord());	  	
-	    }
-	  }
-	} else {
-	  if (DebugFile.trace)
-	    DebugFile.writeln("PasswordRecord has not any line with a GMail account");	  
-	}
-
+	   
+		  if (oPrec.lines().size()>0) {
+		    if (DebugFile.trace)
+		      DebugFile.writeln("CalendarService.setUserCredentials("+oPrec.getValueOf("user")+", ...)");
+	    	  oCalSrv.setUserCredentials((String) oPrec.getValueOf("user"), (String) oPrec.getValueOf("pwd"));
+		    URL feedUrl = new URL("https://www.google.com/calendar/feeds/default/allcalendars/full");
+		    CalendarFeed oFeed = oCalSrv.getFeed(feedUrl, CalendarFeed.class);
+		    for (int i = 0; i < oFeed.getEntries().size() && !bCalendarFound; i++) {
+	    	    CalendarEntry oCalendar = oFeed.getEntries().get(i);
+	    	    bCalendarFound = oCalendar.getTitle().getPlainText().equals(oPrec.getValueOf("cal"));
+		    } // next
+		    if (bCalendarFound) {
+		    	sEMail = (String) oPrec.getValueOf("user");
+		    } else {
+		      if (oCache!=null) {
+		        oCache.expire(sUser+"[gmail]");
+		        oCache.put(sUser+"[gmail]", new PasswordRecord());	  	
+		      }
+		    }
+		  } else {
+		    if (DebugFile.trace)
+		      DebugFile.writeln("PasswordRecord has not any line with a GMail account");	  
+		  }
+	} catch (ClassNotFoundException neverthrown) { }
+	  
 	if (DebugFile.trace) {
 	  DebugFile.decIdent();
 	  DebugFile.writeln("End GCalendarSynchronizer.connect() : "+String.valueOf(bCalendarFound));

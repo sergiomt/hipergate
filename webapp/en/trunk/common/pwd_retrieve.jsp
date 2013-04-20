@@ -44,8 +44,7 @@
 	    bCheckChallenge = oUser.checkChallengeReply(oConn, sReply);
 	  }
   
-    DBAudit.log(oConn, ACLUser.ClassId, "RPWD", sUserId, oUser.getStringNull(DB.tx_main_email,""), oUser.getStringNull(DB.tx_alt_email,""), 0,
-    					  getClientIP(request), (bCheckChallenge ? null : "Wrong challenge reply"), null);
+    DBAudit.log(oConn, ACLUser.ClassId, "RPWD", sUserId, sUserId, null, 0, getClientIP(request), oUser.getStringNull(DB.tx_main_email,""), (bCheckChallenge ? null : "Wrong challenge reply"));
     
     oConn.close("pwd_retrive");
   }
@@ -84,8 +83,8 @@
 <HTML>
   <HEAD>
     <TITLE>Retrieve Password</TITLE>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+    <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
   </HEAD>
 	<BODY TOPMARGIN="8" MARGINHEIGHT="8">
     <TABLE WIDTH="100%">

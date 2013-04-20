@@ -60,8 +60,8 @@ import com.knowgate.cache.DistributedCachePeer;
 
 /**
  * <p>Display static tables as HTML elements like &lt;SELECT&gt;.</p>
- * This class is a singleton memory cache for frecuently accessed static tables.
- * @version 4.0
+ * This class is a singleton memory cache for frequently accessed static tables.
+ * @version 7.0
  */
 
 public class DBLanguages {
@@ -79,7 +79,7 @@ public class DBLanguages {
    * @since 4.0
    */
   public static final String[] SupportedLanguages = new String[] {"en","es","fr","de","it","pt","ca","ja","cn","tw","fi","ru","pl","nl","th","ko","sk","cs","uk","no"};
-
+  
   public DBLanguages() {
     oTranslations = null;
     oCountries = null;
@@ -285,7 +285,7 @@ public class DBLanguages {
    * <p>Get country translated name given its 2 letter ISO code.</p>
    * @param oConn Database Connection
    * @param sCountryId 2 characters code of country as at k_lu_countries table
-   * @param sIdLanguage 2 characters code of derired language for displaying
+   * @param sIdLanguage 2 characters code of desired language for displaying
    * @return Country name for the given language or <b>null</b> if no country with such code is found
    * @throws SQLException
    * @since 4.0
@@ -379,7 +379,7 @@ public class DBLanguages {
       								  DB.id_scope + "='all') ORDER BY 2", 10);
       int iRoots = oRoots.load (oConn, new Object[]{new Integer(iIdDomain), sGuWorkArea});
     
-      LinkedList oTerms = new LinkedList();
+      LinkedList<Term> oTerms = new LinkedList<Term>();
       
       for (int r=0; r<iRoots; r++) {
         Term oRoot = new Term();
@@ -392,9 +392,9 @@ public class DBLanguages {
 
       StringBuffer oTermsBuff = new StringBuffer();
     
-      ListIterator oIter = oTerms.listIterator();
+      ListIterator<Term> oIter = oTerms.listIterator();
       while (oIter.hasNext()) {
-        Term oChld = (Term) oIter.next();
+        Term oChld = oIter.next();
 
         oTermsBuff.append("<OPTION VALUE=\"" + oChld.getString(DB.gu_term) + "\">");
         for (int s=1; s<oChld.level(); s++)
@@ -410,7 +410,65 @@ public class DBLanguages {
     
     return oTermsBuff.toString();
   } // getHTMLTermSelect
+
+  // ----------------------------------------------------------
+
+  /**
+   * Get list of thesauri terms for a given Domain WorkArea and Scope
+   * @param oConn JDCConnection
+   * @param iIdDomain int Domain Unique Identifier
+   * @param sGuWorkArea String WorkArea GUID
+   * @return <OPTION VALUE="guid1">Term 1<OPTION VALUE="guid2">Term 2<OPTION ...
+   * throws SQLException
+   * @since 7.0
+   */
+  public String getHTMLTermSelect(JDCConnection oConn,
+  								  int iIdDomain, String sGuWorkArea, String sScope)
+    throws SQLException {
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin DBLanguages.getHTMLTermSelect([DistributedCachePeer], [JDCConnection], "+String.valueOf(iIdDomain)+","+sGuWorkArea+", "+sScope+")");
+      DebugFile.incIdent();
+    }
+
+      DBSubset oRoots = new DBSubset (DB.k_thesauri_root,
+      								  DB.gu_rootterm + "," + DB.tx_term,
+      								  DB.id_domain + "=? AND " + DB.gu_workarea + "=? AND " +
+      								  DB.id_scope + "=? ORDER BY 2", 10);
+      int iRoots = oRoots.load (oConn, new Object[]{new Integer(iIdDomain), sGuWorkArea, sScope});
     
+      LinkedList<Term> oTerms = new LinkedList<Term>();
+      
+      for (int r=0; r<iRoots; r++) {
+        Term oRoot = new Term();
+        if (oRoot.load(oConn, iIdDomain, oRoots.getString(1,r))) {
+      
+          oTerms.addLast(oRoot);
+          oTerms.addAll (oRoot.getChilds(oConn, Term.SCOPE_ALL));
+        } // fi
+      } // next (r)
+
+      StringBuffer oTermsBuff = new StringBuffer();
+    
+      ListIterator<Term> oIter = oTerms.listIterator();
+      while (oIter.hasNext()) {
+        Term oChld = oIter.next();
+
+        oTermsBuff.append("<OPTION VALUE=\"" + oChld.getString(DB.gu_term) + "\">");
+        for (int s=1; s<oChld.level(); s++)
+          oTermsBuff.append(" ");
+        oTermsBuff.append(oChld.getString(DB.tx_term));
+        oTermsBuff.append("</OPTION>");
+      } // wend
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End DBLanguages.getHTMLTermSelect() : " + oTermsBuff.toString());
+    }
+    
+    return oTermsBuff.toString();
+  } // getHTMLTermSelect
+  
   // ----------------------------------------------------------
 
   /**
@@ -978,6 +1036,109 @@ public class DBLanguages {
   // ----------------------------------------------------------
 
   /**
+   * <p>Add a lookup value for a given section</p>
+   * This methods checks whether the lookup value exists and, if not, then inserts it.<br>
+   * If lookup value already exists then it is not updated.
+   * @param oConn JDCConnection
+   * @param sLookupTableName String Name of Lookup Table
+   * @param sGuOwner String GUID of Owner WorkArea
+   * @param sIdSection String Lookup Section name
+   * @param sVlLookUp String Lookup Internal Value
+   * @param oTranslatMap HashMap with one entry for each language.
+   * Language codes must be those from id_language column of k_lu_languages table.
+   * @return boolean <b>true</b> if value was added, <b>false</b> if it already existed
+   * @throws SQLException
+   * @since 7.0
+   */
+
+  public static boolean addLookup (Connection oConn, String sLookupTableName,
+                                   String sGuOwner, String sIdSection, boolean bActive,
+                                   String sVlLookUp, String sTpLookUp, String sTxComments,
+                                   HashMap<String,String> oTranslatMap)
+    throws SQLException {
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin DBLanguages.addLookup([Connection], " + sLookupTableName + "," + sGuOwner + "," + sIdSection + "," + sVlLookUp + ", [HashMap])");
+      DebugFile.incIdent();
+      DebugFile.writeln("Connection.prepareStatement(SELECT NULL FROM "+sLookupTableName+" WHERE "+DB.gu_owner+"='"+sGuOwner+"' AND "+DB.id_section+"='"+sIdSection+"' AND "+DB.vl_lookup+"='"+sVlLookUp+"')");
+    }
+                                               	
+    ResultSet oRSet;
+    PreparedStatement oStmt = oConn.prepareStatement("SELECT NULL FROM "+sLookupTableName+" WHERE "+DB.gu_owner+"=? AND "+DB.id_section+"=? AND "+DB.vl_lookup+"=?",
+                                                     ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+    oStmt.setString(1, sGuOwner);
+    oStmt.setString(2, sIdSection);
+    oStmt.setString(3, sVlLookUp);
+    oRSet = oStmt.executeQuery();
+    boolean bAlreadyExists = oRSet.next();
+    oRSet.close();
+    oStmt.close();
+
+    if (!bAlreadyExists) {
+      if (DebugFile.trace) DebugFile.writeln("lookup does not already exists");
+      
+      HashMap<String,String> oTrColumnMap = new HashMap<String,String>(197);
+      oStmt = oConn.prepareStatement("SELECT * FROM "+sLookupTableName+" WHERE 1=0");
+      oRSet = oStmt.executeQuery();
+      ResultSetMetaData oMDat = oRSet.getMetaData();
+      for (int c=1; c<oMDat.getColumnCount(); c++) {
+      	oTrColumnMap.put(oMDat.getColumnName(c).toLowerCase(),oMDat.getColumnName(c).toLowerCase());
+      }
+      oRSet.close();
+      oStmt.close();
+
+      int iQuestMarks = 1;
+      String sSQL = "INSERT INTO "+sLookupTableName+"("+DB.gu_owner+","+DB.id_section+","+DB.pg_lookup+","+DB.vl_lookup+","+DB.bo_active+","+DB.tp_lookup+","+DB.tx_comments;
+      Iterator oKeys = oTranslatMap.keySet().iterator();
+      while (oKeys.hasNext()) {
+      	String sColName = DB.tr_+oKeys.next();
+      	if (oTrColumnMap.containsKey(sColName.toLowerCase())) {
+          sSQL += ","+sColName;
+          iQuestMarks++;
+      	}
+      } // wend
+
+      sSQL += ") VALUES (?,?,?,?,?,?,?";
+      for (int q=1; q<iQuestMarks; q++) sSQL += ",?";
+      sSQL += ")";
+      if (DebugFile.trace) DebugFile.writeln("Connection.prepareStatement("+sSQL+")");
+      oStmt = oConn.prepareStatement(sSQL);
+      int iParam = 1;
+      oStmt.setString(iParam++, sGuOwner);
+      oStmt.setString(iParam++, sIdSection);
+      oStmt.setInt(iParam++, nextLookuUpProgressive(oConn, sLookupTableName, sGuOwner, sIdSection));
+      oStmt.setString(iParam++, sVlLookUp);
+      oStmt.setShort(iParam++, (short) (bActive ? 1 : 0));
+      if (null==sTpLookUp)
+        oStmt.setNull(iParam++, Types.VARCHAR);
+      else
+        oStmt.setString(iParam++, sTpLookUp);
+      if (null==sTxComments)
+        oStmt.setNull(iParam++, Types.VARCHAR);
+      else
+        oStmt.setString(iParam++, sTxComments);
+      oKeys = oTranslatMap.keySet().iterator();
+      while (oKeys.hasNext()) {
+      	String sColLang = (String) oKeys.next();
+      	if (oTrColumnMap.containsKey((DB.tr_+sColLang).toLowerCase()))
+          oStmt.setObject(iParam++, oTranslatMap.get(sColLang), Types.VARCHAR);
+      } // wend
+      if (DebugFile.trace) DebugFile.writeln("PreparedStatement.executeUpdate()");
+      oStmt.executeUpdate();
+      oStmt.close();
+    } // fi
+
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End DBLanguages.addLookup() : " + String.valueOf(!bAlreadyExists));
+    }
+
+    return !bAlreadyExists;
+  } // addLookup
+
+  // ----------------------------------------------------------
+
+  /**
    * <p>Add or update a lookup value for a given section</p>
    * This methods checks whether the lookup value exists and, if not, then inserts it.<br>
    * If lookup value already exists then it is updated.
@@ -1025,6 +1186,75 @@ public class DBLanguages {
       oStmt.close();
     }
 
+    if (DebugFile.trace) {
+      DebugFile.decIdent();
+      DebugFile.writeln("End DBLanguages.storeLookup()");
+    }
+  } // storeLookup
+
+  // ----------------------------------------------------------
+
+  /**
+   * <p>Add or update a lookup value for a given section</p>
+   * This methods checks whether the lookup value exists and, if not, then inserts it.<br>
+   * If lookup value already exists then it is updated.
+   * @param oConn JDCConnection
+   * @param sLookupTableName String Name of Lookup Table
+   * @param sGuOwner String GUID of Owner WorkArea
+   * @param sIdSection String Lookup Section name
+   * @param sVlLookUp String Lookup Internal Value
+   * @param oTranslations HashMap with one entry for each language.
+   * Language codes must be those from id_language column of k_lu_languages table.
+   * @return boolean <b>true</b> if value was added, <b>false</b> if it already existed
+   * @throws SQLException
+   * @since 7.0
+   */
+
+  public static void storeLookup (Connection oConn, String sLookupTableName,
+                                  String sGuOwner, String sIdSection, boolean bActive,
+                                  String sVlLookUp, String sTpLookUp, String sTxComments,
+                                  HashMap oTranslations)
+    throws SQLException {
+
+    if (DebugFile.trace) {
+      DebugFile.writeln("Begin DBLanguages.storeLookup([Connection], " + sLookupTableName + "," + sGuOwner + "," + sIdSection + "," + sVlLookUp + ", [HashMap])");
+      DebugFile.incIdent();
+    }
+
+    if (!addLookup(oConn, sLookupTableName, sGuOwner, sIdSection, bActive, sVlLookUp, sTpLookUp, sTxComments, oTranslations)) {
+      String sSQL = DB.bo_active+"=?,"+DB.tp_lookup+"=?,"+DB.tx_comments+"=?";
+      Iterator oKeys = oTranslations.keySet().iterator();
+      while (oKeys.hasNext()) {
+        sSQL += ","+DB.tr_+oKeys.next()+"=?";
+      } // wend
+      sSQL += " WHERE "+DB.gu_owner+"=? AND "+DB.id_section+"=? AND "+DB.vl_lookup+"=?";
+      if (DebugFile.trace)
+        DebugFile.writeln("Connection.prepareStatement(UPDATE "+sLookupTableName+" SET "+sSQL+")");
+      PreparedStatement oStmt = oConn.prepareStatement("UPDATE "+sLookupTableName+" SET "+sSQL);
+      oKeys = oTranslations.keySet().iterator();
+      int iParam = 1;
+      oStmt.setShort(iParam++, (short) (bActive ? 1 : 0));
+      if (null==sTpLookUp)
+        oStmt.setNull(iParam++, Types.VARCHAR);
+      else if (sTpLookUp.length()==0)
+        oStmt.setNull(iParam++, Types.VARCHAR);
+      else
+        oStmt.setString(iParam++, sTpLookUp);
+      if (null==sTxComments)
+          oStmt.setNull(iParam++, Types.VARCHAR);
+        else if (sTxComments.length()==0)
+          oStmt.setNull(iParam++, Types.VARCHAR);
+        else
+          oStmt.setString(iParam++, sTxComments);
+      while (oKeys.hasNext()) {
+        oStmt.setObject(iParam++, oTranslations.get(oKeys.next()), Types.VARCHAR);
+      } // wend
+      oStmt.setString(iParam++, sGuOwner);
+      oStmt.setString(iParam++, sIdSection);
+      oStmt.setString(iParam++, sVlLookUp);
+      oStmt.executeUpdate();
+      oStmt.close();
+    }
     if (DebugFile.trace) {
       DebugFile.decIdent();
       DebugFile.writeln("End DBLanguages.storeLookup()");
@@ -1137,4 +1367,5 @@ public class DBLanguages {
   private WeakHashMap oStateCacheText;
   private boolean bLoaded;
   private boolean bCountries;
+
 }

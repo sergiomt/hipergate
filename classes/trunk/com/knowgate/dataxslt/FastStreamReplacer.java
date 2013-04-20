@@ -1,6 +1,5 @@
 /*
   Copyright (C) 2003  Know Gate S.L. All rights reserved.
-                      C/Oña, 107 1º2 28050 Madrid (Spain)
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -167,8 +166,8 @@ public class FastStreamReplacer {
 
   // ----------------------------------------------------------
   /**
-   * Replace subtrings from a Stream.
-   * @param oInStream Input Stream containing substrings to be replaced.
+   * Replace subtrings from a StringBuffer.
+   * @param oStrBuff StringBuffer containing substrings to be replaced.
    * @param oMap Map with values to be replaced.<br>
    * Each map key will be replaced by its value.<br>
    * Map keys must appear in stream text as {#<i>key</i>}<br>

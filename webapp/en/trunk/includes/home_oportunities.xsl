@@ -44,10 +44,26 @@
         <TABLE CELLSPACING="8" BORDER="0">
 	  <TR>
 	    <TD COLSPAN="2">
-	      <A HREF="#" CLASS="linkplain" onclick="newOportunity()">New Opportunity</A>
+        <TABLE CELLSPACING="8" BORDER="0">
+          <TR>
+            <TD ALIGN="middle">
+              <IMG SRC="../images/images/crm/oportunities.png" BORDER="0" ALT=""/>
+            </TD>
+            <TD ALIGN="left" VALIGN="middle">
+              <TABLE>
+                <TR>
+                  <TD VALIGN="middle"><A HREF="#" CLASS="linkplain" onclick="newOportunity()">New Opportunity</A></TD>
+                </TR>
+                <TR>
+                  <TD VALIGN="middle"><INPUT TYPE="text" NAME="tl_oportunity" MAXLENGTH="50" SIZE="30" CLASS="combomini"/>&#160;<A HREF="#" onclick="searchOportunity();return false;" CLASS="linkplain">Search</A></TD>
+                </TR>
+              </TABLE>
+            </TD>
+          </TR>
+				</TABLE>
 	      <TABLE CELLSPACING="0" CELLPADDING="2" BORDER="0">
 	      <xsl:for-each select="oportunities/oportunity">
-	      <TR><TD COLSPAN="3"><A CLASS="linkplain" HREF="../crm/oportunity_listing_f.jsp?id_domain={$param_domain}&amp;n_domain=null&amp;gu_contact={gu_contact}&amp;where={where}&amp;field=tx_contact&amp;find={tx_contact_esc}&amp;show=oportunities&amp;skip=0&amp;selected=2&amp;subselected=2"><xsl:value-of select="tl_oportunity"/></A></TD></TR>	
+	      <TR><TD COLSPAN="3"><A CLASS="linkplain" TITLE="{tl_oportunity}" HREF="../crm/oportunity_listing_f.jsp?id_domain={$param_domain}&amp;n_domain=null&amp;gu_contact={gu_contact}&amp;where={where}&amp;field=tx_contact&amp;find={tx_contact_esc}&amp;show=oportunities&amp;skip=0&amp;selected=2&amp;subselected=2"><xsl:value-of select="substring(tl_oportunity,1,64)"/></A></TD></TR>	
 	      <xsl:if test="tx_contact!=''">
 	      <TR><TD COLSPAN="3"><FONT CLASS="textsmall"><I>(<xsl:value-of select="tx_contact"/>)</I></FONT></TD></TR>
 	      </xsl:if>

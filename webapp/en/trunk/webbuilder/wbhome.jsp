@@ -65,9 +65,9 @@
 
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD> 
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
   <!--
     function createNewsletter() {	  
       self.open("microsite_lookup_f.jsp?doctype=newsletter&gu_workarea=<%=gu_workarea%>&id_domain=<%=id_domain%>&n_domain=" + escape("<%=n_domain%>") + "&nm_table=k_microsites&id_language=<%=sLanguage%>&id_section=id_sector&tp_control=1&nm_control=gu_microsite&nm_coding=id_sector", "editgroup", "toolbar=no,directories=no,menubar=no,resizable=no,top=" + (screen.height-520)/2 + ",left=" + (screen.width-540)/2 + ",width=600,height=520");

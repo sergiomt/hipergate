@@ -41,7 +41,6 @@ import com.knowgate.clocial.Serials;
 import com.knowgate.debug.DebugFile;
 
 import com.knowgate.storage.Table;
-import com.knowgate.storage.Engine;
 import com.knowgate.storage.Record;
 import com.knowgate.storage.RecordSet;
 import com.knowgate.storage.DataSource;
@@ -68,7 +67,7 @@ public class SyndSearch extends RecordDelegator {
 	  put("nu_requests", nRequests);
 	  put("nu_results", nResults);
 	}
-
+	
     public void delete(Table oTbl) throws StorageException {
 	  Table oFkt = null;
 	  DataSource oDts = oTbl.getDataSource();

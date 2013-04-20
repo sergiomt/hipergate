@@ -33,20 +33,18 @@
 package com.knowgate.misc;
 
 import com.knowgate.debug.*;
-import com.knowgate.misc.Gadgets;
 
 import java.awt.*;
 import java.awt.image.*;
 
-import javax.servlet.*;
+import javax.servlet.ServletOutputStream;
 
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import com.sun.image.codec.jpeg.JPEGEncodeParam;
 
 /**
- * Create Image thumbnails
- * Requires Java 1.2+
+ * Create Image thumbnail
  * @deprecated Use com.knowgate.hipegate.Image
  */
 
@@ -98,7 +96,6 @@ public class Thumbnail {
       DebugFile.writeln("graphics2D created");
 
     // send thumbnail image to outputstream
-    String sOutFile = Gadgets.generateUUID() + ".tmp";
     ServletOutputStream out = sOutputStream;
     JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
     JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(thumbImage);

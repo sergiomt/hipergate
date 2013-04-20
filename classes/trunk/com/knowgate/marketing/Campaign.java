@@ -32,8 +32,11 @@
 
 package com.knowgate.marketing;
 
+import java.util.ArrayList;
+
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import com.knowgate.jdc.JDCConnection;
 
@@ -83,13 +86,21 @@ public class Campaign extends DBPersist {
 	  DebugFile.incIdent();
 	}    
 
-	DBSubset oActivities = new DBSubset(DB.k_activities, DB.gu_activity, DB.gu_campaign+"=?", 100);
-	int iActivities = oActivities.load(oConn, new Object[]{getString(DB.gu_campaign)});
+	ArrayList<String> aActivities = new ArrayList<String>();
+	PreparedStatement oDlte = oConn.prepareStatement("SELECT "+DB.gu_activity+" FROM "+DB.k_activities+" WHERE "+DB.gu_campaign+"=?");
+    oDlte.setString(1, getString(DB.gu_campaign));
+    ResultSet oRSet = oDlte.executeQuery();
+    while (oRSet.next()) {
+      aActivities.add(oRSet.getString(1));
+    }
+    oRSet.close();
+	oDlte.close();
+	
 	Activity oActy = new Activity();
-	for (int a=0; a<iActivities; a++) {
-	  oActy.replace(DB.gu_activity, oActivities.getString(0,a));
-	  oActy.delete(oConn);
-	} // next
+	for (String a : aActivities) {
+	  oActy.replace(DB.gu_activity, a);
+      oActy.delete(oConn);
+	}
 
     oStmt = oConn.prepareStatement("UPDATE "+DB.k_oportunities+" SET "+DB.gu_campaign+"=NULL WHERE "+DB.gu_campaign+"=?");
     oStmt.setString(1, getString(DB.gu_campaign));

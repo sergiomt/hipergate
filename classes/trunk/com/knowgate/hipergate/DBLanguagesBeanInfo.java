@@ -86,7 +86,9 @@ public class DBLanguagesBeanInfo extends SimpleBeanInfo {
         Class getStateSelectParams[] = { JDCConnection, LangString, LangString };
 
         Class getTermSelectParams[] = { JDCConnection, int.class, LangString };
-  								  	
+
+        Class getTermSelectWithScopeParams[] = { JDCConnection, int.class, LangString, LangString };
+        
         MethodDescriptor getHTMLCountrySelect =
             new MethodDescriptor(DBLanguages.class.getMethod("getHTMLCountrySelect", getHTMLCountrySelectParams));
 
@@ -95,6 +97,9 @@ public class DBLanguagesBeanInfo extends SimpleBeanInfo {
 
         MethodDescriptor getHTMLTermSelect =
             new MethodDescriptor(DBLanguages.class.getMethod("getHTMLTermSelect", getTermSelectParams));
+
+        MethodDescriptor getHTMLTermSelectWithScope =
+                new MethodDescriptor(DBLanguages.class.getMethod("getHTMLTermSelect", getTermSelectWithScopeParams));
 
         MethodDescriptor getPlainTextStateList =
             new MethodDescriptor(DBLanguages.class.getMethod("getPlainTextStateList", getStateSelectParams));
@@ -135,7 +140,7 @@ public class DBLanguagesBeanInfo extends SimpleBeanInfo {
             new MethodDescriptor(DBLanguages.class.getMethod("addLookup", addLookupParams));
 
         MethodDescriptor rv[] =
-            {toHTMLSelect, getHTMLSelectLookUp1, getHTMLSelectLookUp2, getHTMLSelectLookUp3, getLookUpTranslation, getLookUpMap, getHTMLCountrySelect, getHTMLStateSelect, getHTMLTermSelect, getPlainTextStateList, nextLookuUpProgressive, addLookup};
+            {toHTMLSelect, getHTMLSelectLookUp1, getHTMLSelectLookUp2, getHTMLSelectLookUp3, getLookUpTranslation, getLookUpMap, getHTMLCountrySelect, getHTMLStateSelect, getHTMLTermSelect, getHTMLTermSelectWithScope, getPlainTextStateList, nextLookuUpProgressive, addLookup};
         return rv;
     } catch (ClassNotFoundException e) {
          throw new Error(e.toString());

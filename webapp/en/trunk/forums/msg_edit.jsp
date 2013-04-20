@@ -125,15 +125,15 @@
 <HTML LANG="<% out.write(sLanguage); %>">
 <HEAD>
   <TITLE>hipergate :: Write Message</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/usrlang.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/datefuncs.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/xmlhttprequest.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
       function showCalendar(ctrl) {       
         var dtnw = new Date();
@@ -191,7 +191,7 @@
 				frm.tx_tags.value = "";
 				for (var t=0;t<tgs.length; t++) {
 				  if (tgs[t].selected) {
-				    frm.tx_tags.value += (frm.tx_tags.value.length==0 ? "" : ",") + tgs[t].value;
+				    frm.tx_tags.value += (frm.tx_tags.value.length==0 ? "" : ",") + tgs[t].value.trim();
 				  } // fi
 				}	// next
 				
@@ -203,18 +203,21 @@
       function addTag() {
         var frm = window.document.forms[0];
         var ttl = window.prompt("Type the name for the new tag","");
-        var tgs = frm.sel_tags.options;
-        var len = tgs.length;
-        for (var t=0; t<len; t++) {
-          if (tgs[t].value.toUpperCase()==ttl.toUpperCase()) {
-            alert ("Another tag with the same name already exists");
-            tgs[t].selected=true;
-            return false;
-          } // fi
-        } // next
-        var tgu = httpRequestText("forum_tag_add.jsp?gu_newsgroup=<%=gu_newsgrp%>&tl_tag="+escape(ttl));
-        comboPush (frm.sel_tags, ttl, tgu, false, true);
-        sortCombo (frm.sel_tags);
+        if (ttl) {
+        	ttl = ttl.trim();
+          var tgs = frm.sel_tags.options;
+          var len = tgs.length;
+          for (var t=0; t<len; t++) {
+            if (tgs[t].value.toUpperCase()==ttl.toUpperCase()) {
+              alert ("Another tag with the same name already exists");
+              tgs[t].selected=true;
+              return false;
+            } // fi
+          } // next
+          var tgu = httpRequestText("forum_tag_add.jsp?gu_newsgroup=<%=gu_newsgrp%>&tl_tag="+escape(ttl));
+          comboPush (frm.sel_tags, ttl, tgu, false, true);
+          sortCombo (frm.sel_tags);
+			  }
 			} // addTag
 			
     //-->

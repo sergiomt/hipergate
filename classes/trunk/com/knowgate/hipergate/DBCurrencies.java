@@ -52,7 +52,6 @@ import java.math.BigDecimal;
 import com.knowgate.debug.DebugFile;
 import com.knowgate.math.CurrencyCode;
 import com.knowgate.dataobjs.DB;
-import com.knowgate.jdc.JDCConnection;
 
 /**
  * Maintenance and query routines for k_lu_currencies and k_lu_currencies_history tables

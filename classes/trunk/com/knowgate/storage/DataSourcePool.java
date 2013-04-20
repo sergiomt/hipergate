@@ -31,15 +31,14 @@
 
 package com.knowgate.storage;
 
-import java.io.IOException;
-import java.io.FileNotFoundException;
-
 import java.util.Date;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.knowgate.jdc.JDCConnectionPool;
-import com.knowgate.berkeleydb.DBEnvironment;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+
+import com.knowgate.debug.DebugFile;
 
 public class DataSourcePool {
   
@@ -53,19 +52,21 @@ public class DataSourcePool {
 	try {
   	  if (bReadOnly || eEngine==Engine.JDBCRDBMS) {
   	    if (oReadOnly.empty()){
-  	      oRetDts = Manager.createDataSource(eEngine, sProfileName, true);
+  	      oRetDts = Factory.createDataSource(eEngine, sProfileName, true);
   	    } else {
   	      oRetDts = oReadOnly.pop();
   	    }
   	  } else {
-  	    oRetDts = Manager.createDataSource(eEngine, sProfileName, false);
+  	    oRetDts = Factory.createDataSource(eEngine, sProfileName, false);
   	  }
   	  if (oLastUse.containsKey(oRetDts)) oLastUse.remove(oRetDts);
 	  oLastUse.put(oRetDts, new Date());  
-	} catch (FileNotFoundException fnf) {
-	  throw new StorageException(fnf.getMessage(), fnf);
-	} catch (IOException ioe) {
-	  throw new StorageException(ioe.getMessage(), ioe);
+	} catch (Exception xcp) {
+		  try {
+			// if (DebugFile.trace)
+				DebugFile.writeln(com.knowgate.debug.StackTraceUtil.getStackTrace(xcp));
+		} catch (IOException ignore) { }
+	  throw new InstantiationException(xcp.getClass().getName()+" "+xcp.getMessage());	  
 	}
   	return oRetDts;
   } // get
@@ -75,7 +76,25 @@ public class DataSourcePool {
   	if (oLastUse.containsKey(oDts)) oLastUse.remove(oDts);
 	if (!oDts.isClosed()) {
   	  if (oDts.getEngine()==Engine.BERKELYDB) {
-	    ((DBEnvironment) oDts).closeTables();
+  		Class<?> oClsDbe;
+		try {
+		  oClsDbe = Class.forName("com.knowgate.berkeleydb.DBEnvironment");
+		} catch (ClassNotFoundException e) {
+		  throw new StorageException(e.getMessage(), e);
+		}
+  		try {
+			oClsDbe.getMethod("closeTables", new Class[]{}).invoke(oClsDbe.cast(oDts));
+		} catch (IllegalAccessException e) {
+		  throw new StorageException(e.getMessage(), e);
+		} catch (IllegalArgumentException e) {
+		  throw new StorageException(e.getMessage(), e);
+		} catch (InvocationTargetException e) {
+		  throw new StorageException(e.getMessage(), e);
+		} catch (NoSuchMethodException e) {
+		  throw new StorageException(e.getMessage(), e);
+		} catch (SecurityException e) {
+		  throw new StorageException(e.getMessage(), e);
+		}  	    
 	    if (oDts.isReadOnly()) {
 	      oReadOnly.push(oDts);
 	    } else {

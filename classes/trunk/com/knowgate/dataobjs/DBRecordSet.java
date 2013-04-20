@@ -6,13 +6,22 @@ import java.util.Collections;
 import com.knowgate.storage.Record;
 import com.knowgate.storage.RecordSet;
 import com.knowgate.storage.RecordColumnValueComparatorAsc;
+import com.knowgate.storage.RecordColumnValueComparatorDesc;
 
 public class DBRecordSet extends ArrayList<Record> implements RecordSet {
 	
+  private static final long serialVersionUID = 70000l;
+
   public void sort(String sColumnName) throws ArrayIndexOutOfBoundsException {
     if (size()>0) {
 	  Collections.sort(this, new RecordColumnValueComparatorAsc(sColumnName));
     }
+  }
+
+  public void sortDesc(String sColumnName) throws ArrayIndexOutOfBoundsException {
+    if (size()>0) {
+	  Collections.sort(this, new RecordColumnValueComparatorDesc(sColumnName));
+	}
   }
 
   public int find (String sColumnName, Object oValue) {

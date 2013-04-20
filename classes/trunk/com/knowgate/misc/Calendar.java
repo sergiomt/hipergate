@@ -34,6 +34,7 @@ package com.knowgate.misc;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.regex.Pattern;
 
 import com.knowgate.debug.DebugFile;
 
@@ -259,7 +260,6 @@ public class Calendar {
   	if (iFirstDayOfWeek<0 || iFirstDayOfWeek>6)
   	  throw new IllegalArgumentException("Week day must be between 0 and 6");
   	  	
-    Date dtToday = new Date();
     Date dtFirst = new Date();
     Date dtLast  = new Date();
     
@@ -320,4 +320,67 @@ public class Calendar {
   } // LastMonth
   
   
+  /**
+   * Verify that a string represents a valid date
+   * @param dtexpr String
+   * @param dtformat String Date format.
+   * "d"  for dates with format "yyyy-MM-dd"
+   * "s"  for dates with format "dd/MM/yyyy"
+   * "ts" for dates with format "yyyy-MM-dd HH:mm:ss"
+   * @since 7.0
+  */  
+  public static boolean isDate (String dtexpr, String dtformat) {
+	    String[] ser;
+	    boolean ret;
+	    int yy, mm, dd;
+	  
+	    if (dtformat.equals("d")) {
+	      if (Pattern.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}", dtexpr)) {
+	        ser = dtexpr.split("-");
+	        yy = Integer.parseInt(ser[0],10);
+	        mm = Integer.parseInt(ser[1],10)-1;
+	        dd = Integer.parseInt(ser[2],10);
+	      
+	        if (mm<1 || mm>12) {
+	          ret = false;
+	        }
+	        else if (dd>LastDay(mm-1,yy)) {
+	          ret = false;
+	        }
+	        else
+	          ret = true;                
+	      }
+	      else {
+	        ret = false;
+	      }
+	    } else if (dtformat.equals("s")) {
+	      if (Pattern.matches("[0-9]{2}/[0-9]{2}/[0-9]{4}", dtexpr)) {
+	        ser = dtexpr.split("/");
+	        yy = Integer.parseInt(ser[2],10);
+	        mm = Integer.parseInt(ser[1],10)-1;
+	        dd = Integer.parseInt(ser[0],10);
+	      
+	        if (mm<1 || mm>12) {
+	          ret = false;
+	        }
+	        else if (dd>LastDay(mm-1,yy)) {
+	          ret = false;
+	        }
+	        else
+	          ret = true;                
+	      }
+	      else {
+	        ret = false;
+	      }
+	    } else if (dtformat=="ts") {
+	      if (Pattern.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}.[0-9]{2}:[0-9]{2}:[0-9]{2}", dtexpr)) {
+	        ret = isDate(dtexpr.substring(0,10), "d");
+	      } else {
+	        ret = false;
+	      }      
+	    } else {
+	      ret = false;
+	    }	    
+	    return ret;
+	  } // isDate()
 }

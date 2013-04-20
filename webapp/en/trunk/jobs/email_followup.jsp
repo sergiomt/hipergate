@@ -74,9 +74,9 @@
 <HTML>
 <HEAD>
   <TITLE>hipergate :: Messages sent to the email account</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript">
         
     function viewJob(id) {
       window.open("job_modify_f.jsp?gu_job=" + id, "modifyjob_"+ id, "width=700,height=500,menubar=no,toolbar=no,directories=no,scrollbars=yes");          

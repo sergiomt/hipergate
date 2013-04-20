@@ -151,7 +151,8 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
     if (DebugFile.trace) DebugFile.writeln ("Begin DataStruct.connectOrigin(" + sDriver + "," + sURL + "," + sUsr + "," + sPwd + ")");
 
     // Carga el driver JDBC
-    Class oDriver = Class.forName(sDriver);
+    @SuppressWarnings("unused")
+	Class oDriver = Class.forName(sDriver);
 
     if (DebugFile.trace) DebugFile.writeln ("  " + sDriver + " JDBC driver loaded");
 
@@ -168,7 +169,8 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
     if (DebugFile.trace) DebugFile.writeln ("Begin DataStruct.connectTarget(" + sDriver + "," + sURL + "," + sUsr + "," + sPwd + ")");
 
     // Carga el driver JDBC
-    Class oDriver = Class.forName(sDriver);
+    @SuppressWarnings("unused")
+	Class oDriver = Class.forName(sDriver);
 
     if (DebugFile.trace) DebugFile.writeln ("  " + sDriver + " JDBC driver loaded");
 
@@ -254,7 +256,6 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
 
   public void disconnectAll() throws SQLException {
     // Cierra todos los cursores y las conexiones
-    int t;
 
     if (DebugFile.trace) DebugFile.writeln ("Begin DataStruct.disconnectAll()");
 
@@ -298,8 +299,6 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
     // Ejecuta los comandos <INIT>, <TERM>, <BEFORE> o <AFTER> definidos para este DataStruct
     CallableStatement oCall;
     Statement oStmt;
-    ResultSet rCount;
-    int cAffected;
     String sSQL;
     String sTable;
     ListIterator oIter;
@@ -671,9 +670,7 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
     // Método interno de soporte para leer un conjunto de final y almacenarlo
     // en una matriz bidimensional de objetos
 
-    int iPK;
     int iFetchBurst = 500; // Tamaño de ráfaga de lectura
-    int iSQLType;
     int cTransforms;
     Vector oRow;
     HashMap oTransforms;
@@ -683,10 +680,8 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
     ResultSetMetaData oRDat;
     DataRowSet oDatR;
     String sColName;
-    DataTblDef oMDat = OrMetaData[iTable];
     DataTransformation oDatT;
     PreparedStatement oStmt = OrStatements[iTable];
-    PreparedStatement oStmt2;
 
     // Asignar los parametros de la clave primaria para leer valores en origen
 
@@ -767,7 +762,7 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
         // Crear un vector para la fila
         oRow = new Vector(iCols);
         // Recorer cada columna y almacenar su valor en el vector fila
-        iPK = 0;
+
         for (int c=1; c<=iCols; c++) {
           try {
             // Obtener una referencia a la transformación para la columna actual
@@ -1186,7 +1181,6 @@ public class DataStruct extends DefaultHandler implements ContentHandler {
   public void endElement(String uri, String localName, String qname) throws SAXException {
     int    iComma;
     String sOrFld;
-    String sOrVal;
     String sTrFld;
     DataTransformation oTransform;
 

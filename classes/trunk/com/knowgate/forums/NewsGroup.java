@@ -45,8 +45,6 @@ import java.sql.Timestamp;
 
 import java.util.Date;
 
-import javax.xml.transform.TransformerException;
-
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
 import org.jibx.runtime.BindingDirectory;
@@ -55,9 +53,7 @@ import org.jibx.runtime.JiBXException;
 import com.knowgate.debug.DebugFile;
 import com.knowgate.jdc.JDCConnection;
 import com.knowgate.dataobjs.DB;
-import com.knowgate.dataobjs.DBBind;
 import com.knowgate.dataobjs.DBSubset;
-import com.knowgate.dataobjs.DBTable;
 
 import com.knowgate.hipergate.Category;
 import com.knowgate.hipergate.Product;

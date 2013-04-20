@@ -106,10 +106,10 @@
 <HTML>
 <HEAD>
   <TITLE>hipergate :: Member Listing</TITLE>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/cookies.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/combobox.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" SRC="../javascript/getparam.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/cookies.js"></SCRIPT>  
+  <SCRIPT SRC="../javascript/combobox.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT SRC="../javascript/getparam.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript">
 <%
           // [~//Escribir los nombres de instancias en Arrays JavaScript~]
@@ -228,7 +228,7 @@
     <!-- DynFloat -->
     <DIV id="divHolder" style="width:100px;height:20px;z-index:200;visibility:hidden;position:absolute;top:31px;left:0px"></DIV>
     <FORM name="divForm"><input type="hidden" name="divField" value=""></FORM>
-    <SCRIPT LANGUAGE="JavaScript" src="../javascript/dynfloat.js"></SCRIPT>    
+    <SCRIPT src="../javascript/dynfloat.js"></SCRIPT>    
     <!-- DynFloat -->
 
     <!-- RightMenuBody -->

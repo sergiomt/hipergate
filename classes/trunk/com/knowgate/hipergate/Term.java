@@ -230,6 +230,41 @@ public class Term extends DBPersist {
   // ---------------------------------------------------------------------------
 
   /**
+   * Get term numeric Id.
+   * @return int
+   * @since 7.0
+   */
+
+  public int id () {
+    int iId;
+
+    if (isNull("id_term1"))
+    	iId = getInt(DB.id_term+"0");
+    else if (isNull("id_term2"))
+    	iId = getInt(DB.id_term+"1");
+    else if (isNull("id_term3"))
+    	iId = getInt(DB.id_term+"2");
+    else if (isNull("id_term4"))
+    	iId = getInt(DB.id_term+"3");
+    else if (isNull("id_term5"))
+    	iId = getInt(DB.id_term+"4");
+    else if (isNull("id_term6"))
+    	iId = getInt(DB.id_term+"5");
+    else if (isNull("id_term7"))
+    	iId = getInt(DB.id_term+"6");
+    else if (isNull("id_term8"))
+    	iId = getInt(DB.id_term+"7");
+    else if (isNull("id_term9"))
+    	iId = getInt(DB.id_term+"8");
+    else
+    	iId = getInt(DB.id_term+"9");
+
+    return iId;
+  }
+ 
+  // ---------------------------------------------------------------------------
+
+  /**
    * Get Term Parent GUID
    * @param oConn Database Connection
    * @return Parent Term GUID or <b>null</b> if this is a root term
@@ -318,7 +353,7 @@ public class Term extends DBPersist {
 
       for (int t=0; t<iChilds; t++) {
         oChld = new Term();
-        Object oTbl = oChld.getTable(oConn); // Do not remove this line
+        oChld.getTable(oConn); // Do not remove this line
 
         for (int c=0; c<iCols; c++)
           oChld.put(aColArray[c], oChilds.get(c, t));
@@ -382,6 +417,29 @@ public class Term extends DBPersist {
 
     return oTermsList;
   } // getChilds
+
+  /**
+   * Check whether or not this term is child or grand child of another parent term
+   * @param oConn Database Connection
+   * @param iDomainId int Domain Numeric Unique Identifier
+   * @param sTxParent String Parent Term text
+   * @return
+   * @throws SQLException
+   * @since 7.0
+   */
+  public boolean isGrandChildOf(JDCConnection oConn, int iIdDomain, String sTxParent)
+    throws SQLException {
+    String sParentGUID = Term.getIdFromText(oConn, iIdDomain, sTxParent);
+    if (null==sParentGUID) throw new SQLException("Term.isGrandChildOf("+sTxParent+") Parent was not found");
+    Term oParent = new Term();
+    oParent.load(oConn, sParentGUID);
+    int iParentId = oParent.id();
+    boolean bIsGrandChild=false;
+    for (int l=1; l<level() && !bIsGrandChild; l++)
+      bIsGrandChild = (getInt(DB.id_term+String.valueOf(l))==iParentId);
+    return bIsGrandChild;
+
+  } // isGrandChildOf
 
   /**
    * Get a term GUID given its exact singular or plural name

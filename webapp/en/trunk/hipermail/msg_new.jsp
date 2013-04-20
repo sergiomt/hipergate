@@ -10,7 +10,7 @@
   final String replyall = "replyall";
   
   String action = request.getParameter("action");
-  String folder = request.getParameter("folder");
+  String folder = nullif(request.getParameter("folder"),"drafts");
   String id_message = request.getParameter("msgid");    
   String gu_mimemsg = nullif(request.getParameter("gu_mimemsg"));
   String gu_contact = nullif(request.getParameter("gu_contact"));
@@ -173,17 +173,17 @@
 <% if (bo_new) { %>
   <META HTTP-EQUIV="refresh" CONTENT="0; url=msg_new.jsp?gu_mimemsg=<%=sGuid+(id_message==null ? "" : "&msgid="+sId)+(gu_contact==null ? "" : "&gu_contact="+gu_contact)+(action==null ? "" : "&action="+action)+(folder==null ? "" : "&folder="+folder)+"&to="+Gadgets.URLEncode(sTo)%>">
 <% } else if (gu_mimemsg!=null) { %>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript">
     parent.frames[1].location = "<%="msg_attachs.jsp?msgid="+id_message + (folder==null ? "" : "&folder=" + folder) + "&gu_mimemsg=" + gu_mimemsg%>";
   </SCRIPT>
 <% } %>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../fckeditor/fckeditor.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>  
-  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+  <SCRIPT TYPE="text/javascript" SRC="../fckeditor/fckeditor.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/cookies.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/setskin.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/email.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/trim.js"></SCRIPT>
+  <SCRIPT TYPE="text/javascript" SRC="../javascript/combobox.js"></SCRIPT>  
+  <SCRIPT TYPE="text/javascript">
     <!--
       function validate() {
         var frm = document.forms[0];
@@ -434,7 +434,7 @@
       <TD VALIGN="top">
 <%  if (!bo_new) { 
       if (contenttype.equals("html")) { %>
-        <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+        <SCRIPT TYPE="text/javascript">
         <!--
         var oFCKeditor = new FCKeditor( 'MSGBODY' ) ;
         oFCKeditor.BasePath = "<%=request.getContextPath()%>/fckeditor/";       

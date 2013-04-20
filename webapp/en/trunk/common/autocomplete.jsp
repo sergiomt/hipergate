@@ -100,7 +100,7 @@
           nResults = oResults.load(oConn, new Object[]{gu_workarea,tx_like+"%"});		  
 		    }
       } else if (nullif(nm_table).equalsIgnoreCase("k_contact_doc_id")) {
-          nResults = oResults.load(oConn, new Object[]{gu_workarea,tx_like});		        	
+          nResults = oResults.load(oConn, new Object[]{gu_workarea,tx_like});
       } else if (nullif(nm_table).equalsIgnoreCase("k_contact_telephone")) {
           nResults = oResults.load(oConn, new Object[]{gu_workarea,tx_where,tx_like+"%",tx_like+"%",tx_like+"%",tx_like+"%",tx_like+"%"});
       } else {
@@ -115,8 +115,6 @@
 	    } else {
         if (nullif(nm_table).equalsIgnoreCase("k_contact_company"))
 	        nResults = oResults2.load(oConn, new Object[]{gu_workarea,tx_like,tx_like+"%",tx_like+"%"});
-			  else if (!nullif(nm_table).equalsIgnoreCase("k_contact_telephone"))
-	        nResults = oResults.load(oConn, new Object[]{gu_workarea,"%"+tx_like+"%"});
       }
     }
 

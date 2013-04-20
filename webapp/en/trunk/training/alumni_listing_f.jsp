@@ -9,7 +9,7 @@
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
     <TITLE>hipergate :: Students Listing</TITLE>
     <SCRIPT LANGUAGE="javascript" SRC="../javascript/getparam.js"></SCRIPT>
-    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" DEFER="defer">
+    <SCRIPT TYPE="text/javascript" DEFER="defer">
     <!--
       function setURL() {
       if (getURLParam("field")!=null && getURLParam("find")!=null)
